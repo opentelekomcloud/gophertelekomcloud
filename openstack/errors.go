@@ -3,9 +3,9 @@ package openstack
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
-	tokens2 "github.com/huaweicloud/golangsdk/openstack/identity/v2/tokens"
-	tokens3 "github.com/huaweicloud/golangsdk/openstack/identity/v3/tokens"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	tokens2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v2/tokens"
+	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
 )
 
 // ErrEndpointNotFound is the error when no suitable endpoint can be found

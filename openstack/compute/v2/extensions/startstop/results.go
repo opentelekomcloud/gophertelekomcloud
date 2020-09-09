@@ -1,6 +1,6 @@
 package startstop
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // StartResult is the response from a Start operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.

@@ -1,6 +1,6 @@
 package testing
 
-import "github.com/huaweicloud/golangsdk/openstack/vbs/v2/policies"
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/policies"
 
 const Output = `
 {

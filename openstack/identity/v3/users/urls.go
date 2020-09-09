@@ -1,6 +1,6 @@
 package users
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func listURL(client *golangsdk.ServiceClient) string {
 	return client.ServiceURL("users")

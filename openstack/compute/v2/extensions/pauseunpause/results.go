@@ -1,6 +1,6 @@
 package pauseunpause
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // PauseResult is the response from a Pause operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.

@@ -1,6 +1,6 @@
 package tracker
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const rootPath = "tracker"
 const trackerName = "system"

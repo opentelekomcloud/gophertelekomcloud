@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 // GetExpected represents the expected object from a Get request.

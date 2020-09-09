@@ -3,9 +3,9 @@ package regions
 import (
 	"encoding/json"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/internal"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Region helps manage related users.

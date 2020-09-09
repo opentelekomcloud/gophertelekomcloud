@@ -1,6 +1,6 @@
 package tenantnetworks
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "os-tenant-networks"
 

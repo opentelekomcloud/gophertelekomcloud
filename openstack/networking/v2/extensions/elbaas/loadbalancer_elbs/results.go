@@ -1,9 +1,9 @@
 package loadbalancer_elbs
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	// "github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/elbaas/listeners"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	// "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/elbaas/listeners"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	//"fmt"
 )
 

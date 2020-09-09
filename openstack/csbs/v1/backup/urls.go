@@ -1,6 +1,6 @@
 package backup
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const rootPath = "providers"
 const ProviderID = "fc4d5750-22e7-4798-8a46-f48f62c4c1da"

@@ -3,7 +3,7 @@ package testing
 import (
 	"testing"
 
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestBootFromNewVolume(t *testing.T) {

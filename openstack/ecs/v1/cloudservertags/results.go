@@ -1,7 +1,7 @@
 package cloudservertags
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type RespTags struct {

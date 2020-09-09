@@ -3,11 +3,11 @@ package testing
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	fake "github.com/huaweicloud/golangsdk/openstack/networking/v2/common"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/lbaas_v2/listeners"
-	"github.com/huaweicloud/golangsdk/pagination"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/listeners"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestListListeners(t *testing.T) {

@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestAuthenticatedHeaders(t *testing.T) {

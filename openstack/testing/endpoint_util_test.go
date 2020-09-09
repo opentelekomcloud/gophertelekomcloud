@@ -3,8 +3,8 @@ package testing
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestContainsProjectId(t *testing.T) {

@@ -1,7 +1,7 @@
 package resetstate
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // ServerState refers to the states usable in ResetState Action

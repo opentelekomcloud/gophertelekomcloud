@@ -1,7 +1,7 @@
 package elbaas
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Job struct {

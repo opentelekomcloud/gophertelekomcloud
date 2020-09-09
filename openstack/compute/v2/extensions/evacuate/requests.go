@@ -1,7 +1,7 @@
 package evacuate
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // EvacuateOptsBuilder allows extensions to add additional parameters to the

@@ -1,6 +1,6 @@
 package testing
 
-import "github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes"
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 
 const Output = `{
     "kind": "Host",

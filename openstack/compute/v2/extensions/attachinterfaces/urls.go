@@ -1,6 +1,6 @@
 package attachinterfaces
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func listInterfaceURL(client *golangsdk.ServiceClient, serverID string) string {
 	return client.ServiceURL("servers", serverID, "os-interface")

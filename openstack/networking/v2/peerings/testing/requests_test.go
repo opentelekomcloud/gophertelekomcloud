@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	fake "github.com/huaweicloud/golangsdk/openstack/networking/v2/common"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/peerings"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/peerings"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestListVpcPeerings(t *testing.T) {

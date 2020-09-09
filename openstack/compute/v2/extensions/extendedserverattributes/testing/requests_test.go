@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/extendedserverattributes"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/servers"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/extendedserverattributes"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestServerWithUsageExt(t *testing.T) {

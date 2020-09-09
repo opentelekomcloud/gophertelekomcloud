@@ -1,6 +1,6 @@
 package logtopics
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	resourcePath = "log-topics"

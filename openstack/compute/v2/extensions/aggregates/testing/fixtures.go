@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/aggregates"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/aggregates"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 // AggregateListBody is sample response to the List call

@@ -1,5 +1,5 @@
 # Package antiddos
-    import "github.com/huaweicloud/golangsdk/openstack/antiddos/v1/antiddos"
+    import "github.com/opentelekomcloud/gophertelekomcloud/openstack/antiddos/v1/antiddos"
 **[Overview](#overview)**  
 
 **[Index](#index)**  

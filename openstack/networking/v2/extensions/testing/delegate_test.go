@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"testing"
 
-	common "github.com/huaweicloud/golangsdk/openstack/common/extensions"
-	fake "github.com/huaweicloud/golangsdk/openstack/networking/v2/common"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions"
-	"github.com/huaweicloud/golangsdk/pagination"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	common "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestList(t *testing.T) {

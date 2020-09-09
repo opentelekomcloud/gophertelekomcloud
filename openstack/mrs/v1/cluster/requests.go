@@ -3,7 +3,7 @@ package cluster
 import (
 	"log"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{

@@ -1,7 +1,7 @@
 package flavors
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func listURL(client *golangsdk.ServiceClient) string {

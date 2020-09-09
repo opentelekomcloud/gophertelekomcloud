@@ -1,7 +1,7 @@
 package backups
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // UpdateResult represents the result of a update operation.

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/antiddos/v2/alarmreminding"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/antiddos/v2/alarmreminding"
 
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 var WarnAlertOutput = `

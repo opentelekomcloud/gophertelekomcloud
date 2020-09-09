@@ -3,15 +3,15 @@ package v3
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/acceptance/tools"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/domains"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/groups"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/projects"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/regions"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/roles"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/services"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/users"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/domains"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/groups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/regions"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/roles"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/services"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/users"
 )
 
 // CreateProject will create a project with a random name.

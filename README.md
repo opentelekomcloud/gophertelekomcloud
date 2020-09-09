@@ -1,8 +1,8 @@
 # Golangsdk: a Huawei clouds SDK for Golang
-[![Go Report Card](https://goreportcard.com/badge/github.com/huaweicloud/golangsdk?branch=master)](https://goreportcard.com/badge/github.com/huaweicloud/golangsdk)
-[![Build Status](https://travis-ci.org/huaweicloud/golangsdk.svg?branch=master)](https://travis-ci.org/huaweicloud/golangsdk)
-[![Coverage Status](https://coveralls.io/repos/github/huaweicloud/golangsdk/badge.svg?branch=master)](https://coveralls.io/github/huaweicloud/golangsdk?branch=master)
-[![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/huaweicloud/golangsdk/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud?branch=master)](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud)
+[![Build Status](https://travis-ci.org/opentelekomcloud/gophertelekomcloud.svg?branch=master)](https://travis-ci.org/opentelekomcloud/gophertelekomcloud)
+[![Coverage Status](https://coveralls.io/repos/github/opentelekomcloud/gophertelekomcloud/badge.svg?branch=master)](https://coveralls.io/github/opentelekomcloud/gophertelekomcloud?branch=master)
+[![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/LICENSE)
 
 Golangsdk is a Huawei clouds Go SDK.
 Golangsdk is based on [Gophercloud](https://github.com/gophercloud/gophercloud)
@@ -30,7 +30,7 @@ Golangsdk has added and removed some features to support Huawei clouds.
 
 ## Useful links
 
-* [Reference documentation](http://godoc.org/github.com/huaweicloud/golangsdk)
+* [Reference documentation](http://godoc.org/github.com/opentelekomcloud/gophertelekomcloud)
 * [Effective Go](https://golang.org/doc/effective_go.html)
 
 ## How to install
@@ -49,9 +49,9 @@ your projects, such as [godep](https://github.com/tools/godep). Once this is set
 golangsdk as a dependency like so:
 
 ```bash
-go get github.com/huaweicloud/golangsdk
+go get github.com/opentelekomcloud/gophertelekomcloud
 
-# Edit your code to import relevant packages from "github.com/huaweicloud/golangsdk"
+# Edit your code to import relevant packages from "github.com/opentelekomcloud/gophertelekomcloud"
 
 godep save ./...
 ```
@@ -84,9 +84,9 @@ explicitly, or tell Golangsdk to use environment variables:
 
 ```go
 import (
-  "github.com/huaweicloud/golangsdk"
-  "github.com/huaweicloud/golangsdk/openstack"
-  "github.com/huaweicloud/golangsdk/openstack/utils"
+  "github.com/opentelekomcloud/gophertelekomcloud"
+  "github.com/opentelekomcloud/gophertelekomcloud/openstack"
+  "github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 // Option 1: Pass in the values yourself
@@ -129,7 +129,7 @@ in the name and the flavor ID (database specification) we're
 interested in:
 
 ```go
-import "github.com/huaweicloud/golangsdk/openstack/rds/v1/instances"
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v1/instances"
 
 instance, err := instances.Create(client, instances.CreateOpts{
   Name:      "My new rds instance!",
@@ -139,7 +139,7 @@ instance, err := instances.Create(client, instances.CreateOpts{
 
 The above code sample creates a new rds instance with the parameters, and embodies the
 new resource in the `instance` variable (a
-[`instances.Instance`](http://godoc.org/github.com/huaweicloud/golangsdk) struct).
+[`instances.Instance`](http://godoc.org/github.com/opentelekomcloud/gophertelekomcloud) struct).
 
 ## Advanced Usage
 
@@ -156,7 +156,7 @@ See the [contributing guide](./.github/CONTRIBUTING.md).
 ## Help and feedback
 
 If you're struggling with something or have spotted a potential bug, feel free
-to submit an issue to our [bug tracker](https://github.com/huaweicloud/golangsdk/issues).
+to submit an issue to our [bug tracker](https://github.com/opentelekomcloud/gophertelekomcloud/issues).
 
 ## Thank You
 

@@ -1,6 +1,6 @@
 package backendecs
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	rootPath     = "elbaas"

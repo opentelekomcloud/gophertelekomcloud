@@ -1,8 +1,8 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/security/groups"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/security/rules"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/groups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/rules"
 )
 
 const SecurityGroupListResponse = `

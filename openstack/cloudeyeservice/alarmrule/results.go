@@ -3,7 +3,7 @@ package alarmrule
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type CreateResponse struct {

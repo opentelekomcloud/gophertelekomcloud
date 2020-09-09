@@ -1,7 +1,7 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/rbacpolicies"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/rbacpolicies"
 )
 
 const ListResponse = `

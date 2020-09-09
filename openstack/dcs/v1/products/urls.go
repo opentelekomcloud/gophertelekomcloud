@@ -3,7 +3,7 @@ package products
 import (
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // endpoint/products

@@ -1,6 +1,6 @@
 package routes
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "routes"
 const rootPath = "vpc"

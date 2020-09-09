@@ -1,6 +1,6 @@
 package imageimport
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // ImportMethod represents valid Import API method.
 type ImportMethod string

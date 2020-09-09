@@ -1,7 +1,7 @@
 package tags
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //ResourceTags represents the struct of one autoscaling group

@@ -1,7 +1,7 @@
 package whitelists
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // WhitelistGroup is a struct that contains the whitelist parameters.

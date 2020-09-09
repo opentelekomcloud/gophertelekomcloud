@@ -1,9 +1,9 @@
 package extensions
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	common "github.com/huaweicloud/golangsdk/openstack/common/extensions"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	common "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ExtractExtensions interprets a Page as a slice of Extensions.

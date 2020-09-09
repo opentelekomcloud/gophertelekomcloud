@@ -3,7 +3,7 @@ package auto_recovery
 import (
 	"log"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type UpdateOpts struct {

@@ -1,5 +1,5 @@
 # Package antiddos
-    import "github.com/huaweicloud/golangsdk/openstack/antiddos/v2/alarmreminding"
+    import "github.com/opentelekomcloud/gophertelekomcloud/openstack/antiddos/v2/alarmreminding"
 **[Overview](#overview)**  
 
 **[Index](#index)**  

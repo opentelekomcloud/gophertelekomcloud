@@ -1,6 +1,6 @@
 package ruletypes
 
-import "github.com/huaweicloud/golangsdk/pagination"
+import "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 
 // The result of listing the qos rule types
 type RuleType struct {

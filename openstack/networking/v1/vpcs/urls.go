@@ -1,6 +1,6 @@
 package vpcs
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "vpcs"
 

@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/db/v1/datastores"
-	"github.com/huaweicloud/golangsdk/openstack/db/v1/instances"
-	"github.com/huaweicloud/golangsdk/testhelper/fixture"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/datastores"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/instances"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/fixture"
 )
 
 var (

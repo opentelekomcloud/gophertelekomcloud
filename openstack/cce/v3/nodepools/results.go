@@ -1,8 +1,8 @@
 package nodepools
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
 
 //Describes the Node Pool Structure of cluster

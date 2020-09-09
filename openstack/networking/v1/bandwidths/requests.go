@@ -1,7 +1,7 @@
 package bandwidths
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //UpdateOptsBuilder is an interface by which can be able to build the request

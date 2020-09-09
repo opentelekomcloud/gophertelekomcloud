@@ -1,6 +1,6 @@
 package protectedinstances
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func rootURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("protected-instances")

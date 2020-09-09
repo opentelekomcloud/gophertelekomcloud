@@ -3,8 +3,8 @@ package testing
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestServiceURL(t *testing.T) {

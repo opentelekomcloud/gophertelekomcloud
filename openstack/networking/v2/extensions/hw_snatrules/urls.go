@@ -1,6 +1,6 @@
 package hw_snatrules
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "snat_rules"
 

@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	fake "github.com/huaweicloud/golangsdk/openstack/networking/v2/common"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/fwaas/firewalls"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/fwaas/routerinsertion"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/firewalls"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/routerinsertion"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestCreate(t *testing.T) {

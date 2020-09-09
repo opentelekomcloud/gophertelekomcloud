@@ -1,7 +1,7 @@
 package servers
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func getURL(client *golangsdk.ServiceClient, server_id string) string {

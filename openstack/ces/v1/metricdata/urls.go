@@ -1,6 +1,6 @@
 package metricdata
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // batch query metric data url
 func batchQueryMetricDataURL(c *golangsdk.ServiceClient) string {

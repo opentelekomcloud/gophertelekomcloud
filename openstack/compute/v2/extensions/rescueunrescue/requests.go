@@ -1,6 +1,6 @@
 package rescueunrescue
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // RescueOptsBuilder is an interface that allows extensions to override the
 // default structure of a Rescue request.

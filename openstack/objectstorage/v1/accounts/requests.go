@@ -1,6 +1,6 @@
 package accounts
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // GetOptsBuilder allows extensions to add additional headers to the Get
 // request.

@@ -1,7 +1,7 @@
 package instances
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 const resourcePath = "scaling_group_instance"

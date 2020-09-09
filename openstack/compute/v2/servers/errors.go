@@ -3,7 +3,7 @@ package servers
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // ErrNeitherImageIDNorImageNameProvided is the error when neither the image

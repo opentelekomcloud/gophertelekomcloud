@@ -1,7 +1,7 @@
 package bandwidths
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func GetURL(c *golangsdk.ServiceClient, bandwidthId string) string {

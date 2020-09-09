@@ -1,6 +1,6 @@
 package loggroups
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // Log group Create response
 type CreateResponse struct {

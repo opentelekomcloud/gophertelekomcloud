@@ -1,8 +1,6 @@
 package antiddos
 
-import (
-	"github.com/huaweicloud/golangsdk"
-)
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
 func CreateURL(c *golangsdk.ServiceClient, floatingIpId string) string {
 	return c.ServiceURL("antiddos", floatingIpId)

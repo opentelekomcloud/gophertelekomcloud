@@ -1,7 +1,7 @@
 package domains
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // ExtensionOpts allows extensions to add parameters to some requests

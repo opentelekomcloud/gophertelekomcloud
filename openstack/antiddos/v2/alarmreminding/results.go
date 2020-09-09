@@ -1,7 +1,7 @@
 package alarmreminding
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type commonResult struct {

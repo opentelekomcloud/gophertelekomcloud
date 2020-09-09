@@ -1,6 +1,6 @@
 package cluster
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type Cluster struct {
 	Status           string              `json:"status"`

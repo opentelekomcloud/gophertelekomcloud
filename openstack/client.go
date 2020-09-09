@@ -7,14 +7,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
-	tokens2 "github.com/huaweicloud/golangsdk/openstack/identity/v2/tokens"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/catalog"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/domains"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/projects"
-	tokens3 "github.com/huaweicloud/golangsdk/openstack/identity/v3/tokens"
-	"github.com/huaweicloud/golangsdk/openstack/utils"
-	"github.com/huaweicloud/golangsdk/pagination"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	tokens2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v2/tokens"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/catalog"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/domains"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
+	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 const (

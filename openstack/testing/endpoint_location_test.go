@@ -4,11 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack"
-	tokens2 "github.com/huaweicloud/golangsdk/openstack/identity/v2/tokens"
-	tokens3 "github.com/huaweicloud/golangsdk/openstack/identity/v3/tokens"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	tokens2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v2/tokens"
+	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 // Service catalog fixtures take too much vertical space!

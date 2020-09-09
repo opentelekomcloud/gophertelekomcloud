@@ -1,7 +1,7 @@
 package apiversions
 
 import (
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // APIVersion represents an API version for Neutron. It contains the status of

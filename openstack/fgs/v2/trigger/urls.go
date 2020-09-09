@@ -1,6 +1,6 @@
 package trigger
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	FGS     = "fgs"

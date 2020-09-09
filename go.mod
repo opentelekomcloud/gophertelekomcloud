@@ -1,4 +1,4 @@
-module github.com/huaweicloud/golangsdk
+module github.com/opentelekomcloud/gophertelekomcloud
 
 go 1.14
 

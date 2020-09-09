@@ -1,6 +1,6 @@
 package logstreams
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // Log stream Create response
 type CreateResponse struct {

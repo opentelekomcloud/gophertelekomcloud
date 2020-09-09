@@ -1,7 +1,7 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/cce/v3/clusters"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
 )
 
 const Output = `

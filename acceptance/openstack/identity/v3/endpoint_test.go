@@ -5,11 +5,11 @@ package v3
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/acceptance/clients"
-	"github.com/huaweicloud/golangsdk/acceptance/tools"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/endpoints"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/services"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/endpoints"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/services"
 )
 
 func TestEndpointsList(t *testing.T) {

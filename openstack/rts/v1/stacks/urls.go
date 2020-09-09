@@ -1,7 +1,7 @@
 package stacks
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func createURL(c *golangsdk.ServiceClient) string {

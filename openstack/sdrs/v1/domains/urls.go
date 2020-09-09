@@ -1,6 +1,6 @@
 package domains
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func getURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("active-domains")

@@ -1,7 +1,7 @@
 package replications
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Replication struct {

@@ -1,6 +1,6 @@
 package groups
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func createURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("api-groups")

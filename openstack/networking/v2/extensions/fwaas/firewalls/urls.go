@@ -1,6 +1,6 @@
 package firewalls
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	rootPath     = "fw"

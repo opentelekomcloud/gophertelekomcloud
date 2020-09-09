@@ -1,7 +1,7 @@
 package limits
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // GetOptsBuilder allows extensions to add additional parameters to the

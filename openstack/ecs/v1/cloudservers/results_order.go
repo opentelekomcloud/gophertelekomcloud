@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type OrderResponse struct {

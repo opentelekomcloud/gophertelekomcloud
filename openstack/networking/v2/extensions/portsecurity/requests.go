@@ -1,8 +1,8 @@
 package portsecurity
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/networks"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/ports"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/networks"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/ports"
 )
 
 // PortCreateOptsExt adds port security options to the base ports.CreateOpts.

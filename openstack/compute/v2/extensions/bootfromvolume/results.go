@@ -1,7 +1,7 @@
 package bootfromvolume
 
 import (
-	os "github.com/huaweicloud/golangsdk/openstack/compute/v2/servers"
+	os "github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 )
 
 // CreateResult temporarily contains the response from a Create call.

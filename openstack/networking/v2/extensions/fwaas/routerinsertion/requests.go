@@ -1,7 +1,7 @@
 package routerinsertion
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/fwaas/firewalls"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/firewalls"
 )
 
 // CreateOptsExt adds the RouterIDs option to the base CreateOpts.

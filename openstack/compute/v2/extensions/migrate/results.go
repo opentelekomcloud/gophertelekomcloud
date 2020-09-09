@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // MigrateResult is the response from a Migrate operation. Call its ExtractErr

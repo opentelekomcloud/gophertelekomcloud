@@ -1,7 +1,7 @@
 package hw_snatrules
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // SnatRule is a struct that represents a snat rule

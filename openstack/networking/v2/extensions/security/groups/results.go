@@ -1,9 +1,9 @@
 package groups
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/security/rules"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/rules"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // SecGroup represents a container for security group rules.

@@ -1,7 +1,7 @@
 package hw_snatrules
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // CreateOptsBuilder is an interface must satisfy to be used as Create

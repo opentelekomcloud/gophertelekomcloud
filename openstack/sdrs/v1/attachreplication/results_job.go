@@ -3,7 +3,7 @@ package attachreplication
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type JobResponse struct {

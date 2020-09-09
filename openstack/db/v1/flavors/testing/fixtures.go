@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/testhelper/fixture"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/fixture"
 )
 
 const flavor = `

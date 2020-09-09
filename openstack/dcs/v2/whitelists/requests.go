@@ -1,7 +1,7 @@
 package whitelists
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // WhitelistOptsBuilder is used for creating, updating, deleting instance whitelists parameters.

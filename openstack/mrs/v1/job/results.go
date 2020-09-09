@@ -1,6 +1,6 @@
 package job
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type Job struct {
 	ID             string `json:"id"`

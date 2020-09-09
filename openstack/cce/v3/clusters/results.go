@@ -3,7 +3,7 @@ package clusters
 import (
 	"encoding/json"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type ListCluster struct {

@@ -1,6 +1,6 @@
 package logstreams
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // CreateOptsBuilder is used for creating log stream parameters.
 type CreateOptsBuilder interface {

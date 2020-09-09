@@ -1,6 +1,6 @@
 package bandwidths
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func PostURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL(c.ProjectID, "bandwidths")

@@ -6,13 +6,13 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/availabilityzones"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/diskconfig"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/extendedstatus"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/servers"
-	"github.com/huaweicloud/golangsdk/pagination"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/availabilityzones"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/diskconfig"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/extendedstatus"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestListServers(t *testing.T) {

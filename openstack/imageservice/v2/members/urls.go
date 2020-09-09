@@ -1,6 +1,6 @@
 package members
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func imageMembersURL(c *golangsdk.ServiceClient, imageID string) string {
 	return c.ServiceURL("images", imageID, "members")

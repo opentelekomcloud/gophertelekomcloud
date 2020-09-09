@@ -1,6 +1,6 @@
 package services
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	rootPath     = "vpn"
