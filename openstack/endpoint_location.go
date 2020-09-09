@@ -15,8 +15,8 @@ to return. It's an error both when multiple endpoints match the provided
 criteria and when none do. The minimum that can be specified is a Type, but you
 will also often need to specify a Name and/or a Region depending on what's
 available on your OpenStack deployment.
-*/ent.
 */
+
 func V2EndpointURL(catalog *tokens2.ServiceCatalog, opts golangsdk.EndpointOpts) (string, error) {
 	// Extract Endpoints from the catalog entries that match the requested Type, Name if provided, and Region if provided.
 	var endpoints = make([]tokens2.Endpoint, 0, 1)
