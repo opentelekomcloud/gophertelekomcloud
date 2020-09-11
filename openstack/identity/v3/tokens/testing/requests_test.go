@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -145,7 +145,7 @@ func TestCreateTokenID(t *testing.T) {
 }
 
 func TestCreateProjectIDScope(t *testing.T) {
-	options := tokens.AuthOptions{UserID: "fenris", Password: "g0t0h311"}
+	options := tokens.AuthOptions{UserID: "someuser", Password: "somepassword"}
 	scope := &tokens.Scope{ProjectID: "123456"}
 	authTokenPost(t, options, scope, `
 		{
@@ -154,8 +154,8 @@ func TestCreateProjectIDScope(t *testing.T) {
 					"methods": ["password"],
 					"password": {
 						"user": {
-							"id": "fenris",
-							"password": "g0t0h311"
+							"id": "someuser",
+							"password": "somepassword"
 						}
 					}
 				},
@@ -170,7 +170,7 @@ func TestCreateProjectIDScope(t *testing.T) {
 }
 
 func TestCreateDomainIDScope(t *testing.T) {
-	options := tokens.AuthOptions{UserID: "fenris", Password: "g0t0h311"}
+	options := tokens.AuthOptions{UserID: "someuser", Password: "somepassword"}
 	scope := &tokens.Scope{DomainID: "1000"}
 	authTokenPost(t, options, scope, `
 		{
@@ -179,8 +179,8 @@ func TestCreateDomainIDScope(t *testing.T) {
 					"methods": ["password"],
 					"password": {
 						"user": {
-							"id": "fenris",
-							"password": "g0t0h311"
+							"id": "someuser",
+							"password": "somepassword"
 						}
 					}
 				},
@@ -195,7 +195,7 @@ func TestCreateDomainIDScope(t *testing.T) {
 }
 
 func TestCreateDomainNameScope(t *testing.T) {
-	options := tokens.AuthOptions{UserID: "fenris", Password: "g0t0h311"}
+	options := tokens.AuthOptions{UserID: "someuser", Password: "somepassword"}
 	scope := &tokens.Scope{DomainName: "evil-plans"}
 	authTokenPost(t, options, scope, `
                 {
@@ -204,8 +204,8 @@ func TestCreateDomainNameScope(t *testing.T) {
                                         "methods": ["password"],
                                         "password": {
                                                 "user": {
-                                                        "id": "fenris",
-                                                        "password": "g0t0h311"
+                                                        "id": "someuser",
+                                                        "password": "somepassword"
                                                 }
                                         }
                                 },
@@ -220,7 +220,7 @@ func TestCreateDomainNameScope(t *testing.T) {
 }
 
 func TestCreateProjectNameAndDomainIDScope(t *testing.T) {
-	options := tokens.AuthOptions{UserID: "fenris", Password: "g0t0h311"}
+	options := tokens.AuthOptions{UserID: "someuser", Password: "somepassword"}
 	scope := &tokens.Scope{ProjectName: "world-domination", DomainID: "1000"}
 	authTokenPost(t, options, scope, `
 		{
@@ -229,8 +229,8 @@ func TestCreateProjectNameAndDomainIDScope(t *testing.T) {
 					"methods": ["password"],
 					"password": {
 						"user": {
-							"id": "fenris",
-							"password": "g0t0h311"
+							"id": "someuser",
+							"password": "somepassword"
 						}
 					}
 				},
@@ -248,7 +248,7 @@ func TestCreateProjectNameAndDomainIDScope(t *testing.T) {
 }
 
 func TestCreateProjectNameAndDomainNameScope(t *testing.T) {
-	options := tokens.AuthOptions{UserID: "fenris", Password: "g0t0h311"}
+	options := tokens.AuthOptions{UserID: "someuser", Password: "somepassword"}
 	scope := &tokens.Scope{ProjectName: "world-domination", DomainName: "evil-plans"}
 	authTokenPost(t, options, scope, `
 		{
@@ -257,8 +257,8 @@ func TestCreateProjectNameAndDomainNameScope(t *testing.T) {
 					"methods": ["password"],
 					"password": {
 						"user": {
-							"id": "fenris",
-							"password": "g0t0h311"
+							"id": "someuser",
+							"password": "somepassword"
 						}
 					}
 				},
@@ -269,6 +269,48 @@ func TestCreateProjectNameAndDomainNameScope(t *testing.T) {
 						},
 						"name": "world-domination"
 					}
+				}
+			}
+		}
+	`)
+}
+
+func TestCreateApplicationCredentialIDAndSecret(t *testing.T) {
+	authTokenPost(t, tokens.AuthOptions{ApplicationCredentialID: "12345abcdef", ApplicationCredentialSecret: "mysecret"}, nil, `
+		{
+			"auth": {
+				"identity": {
+					"application_credential": {
+						"id": "12345abcdef",
+						"secret": "mysecret"
+					},
+					"methods": [
+						"application_credential"
+					]
+				}
+			}
+		}
+	`)
+}
+
+func TestCreateApplicationCredentialNameAndSecret(t *testing.T) {
+	authTokenPost(t, tokens.AuthOptions{ApplicationCredentialName: "myappcred", ApplicationCredentialSecret: "mysecret", Username: "someuser", DomainName: "evil-plans"}, nil, `
+		{
+			"auth": {
+				"identity": {
+					"application_credential": {
+						"name": "myappcred",
+						"secret": "mysecret",
+						"user": {
+							"name": "someuser",
+							"domain": {
+								"name": "evil-plans"
+							}
+						}
+					},
+					"methods": [
+						"application_credential"
+					]
 				}
 			}
 		}
@@ -316,6 +358,14 @@ func TestCreateFailureTokenIDUsername(t *testing.T) {
 
 func TestCreateFailureTokenIDUserID(t *testing.T) {
 	authTokenPostErr(t, tokens.AuthOptions{UserID: "something", TokenID: "12345"}, nil, true, golangsdk.ErrUserIDWithToken{})
+}
+
+func TestCreateFailureTokenIDDomainID(t *testing.T) {
+	authTokenPostErr(t, tokens.AuthOptions{DomainID: "something", TokenID: "12345"}, nil, true, golangsdk.ErrDomainIDWithToken{})
+}
+
+func TestCreateFailureTokenIDDomainName(t *testing.T) {
+	authTokenPostErr(t, tokens.AuthOptions{DomainName: "something", TokenID: "12345"}, nil, true, golangsdk.ErrDomainNameWithToken{})
 }
 
 func TestCreateFailureMissingUser(t *testing.T) {

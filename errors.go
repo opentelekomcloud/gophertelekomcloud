@@ -1,6 +1,10 @@
 package golangsdk
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
 
 // BaseError is an error type that all other error types embed.
 type BaseError struct {
@@ -43,15 +47,43 @@ func (e ErrInvalidInput) Error() string {
 	return e.choseErrString()
 }
 
+// ErrMissingEnvironmentVariable is the error when environment variable is required
+// in a particular situation but not provided by the user
+type ErrMissingEnvironmentVariable struct {
+	BaseError
+	EnvironmentVariable string
+}
+
+func (e ErrMissingEnvironmentVariable) Error() string {
+	e.DefaultErrString = fmt.Sprintf("Missing environment variable [%s]", e.EnvironmentVariable)
+	return e.choseErrString()
+}
+
+// ErrMissingAnyoneOfEnvironmentVariables is the error when anyone of the environment variables
+// is required in a particular situation but not provided by the user
+type ErrMissingAnyoneOfEnvironmentVariables struct {
+	BaseError
+	EnvironmentVariables []string
+}
+
+func (e ErrMissingAnyoneOfEnvironmentVariables) Error() string {
+	e.DefaultErrString = fmt.Sprintf(
+		"Missing one of the following environment variables [%s]",
+		strings.Join(e.EnvironmentVariables, ", "),
+	)
+	return e.choseErrString()
+}
+
 // ErrUnexpectedResponseCode is returned by the Request method when a response code other than
 // those listed in OkCodes is encountered.
 type ErrUnexpectedResponseCode struct {
 	BaseError
-	URL      string
-	Method   string
-	Expected []int
-	Actual   int
-	Body     []byte
+	URL            string
+	Method         string
+	Expected       []int
+	Actual         int
+	Body           []byte
+	ResponseHeader http.Header
 }
 
 func (e ErrUnexpectedResponseCode) Error() string {
@@ -60,6 +92,23 @@ func (e ErrUnexpectedResponseCode) Error() string {
 		e.Expected, e.Method, e.URL, e.Actual, e.Body,
 	)
 	return e.choseErrString()
+}
+
+// GetStatusCode returns the actual status code of the error.
+func (e ErrUnexpectedResponseCode) GetStatusCode() int {
+	return e.Actual
+}
+
+// StatusCodeError is a convenience interface to easily allow access to the
+// status code field of the various ErrDefault* types.
+//
+// By using this interface, you only have to make a single type cast of
+// the returned error to err.(StatusCodeError) and then call GetStatusCode()
+// instead of having a large switch statement checking for each of the
+// ErrDefault* types.
+type StatusCodeError interface {
+	Error() string
+	GetStatusCode() int
 }
 
 // ErrDefault400 is the default error type returned on a 400 HTTP response code.
@@ -92,6 +141,11 @@ type ErrDefault408 struct {
 	ErrUnexpectedResponseCode
 }
 
+// ErrDefault409 is the default error type returned on a 409 HTTP response code.
+type ErrDefault409 struct {
+	ErrUnexpectedResponseCode
+}
+
 // ErrDefault429 is the default error type returned on a 429 HTTP response code.
 type ErrDefault429 struct {
 	ErrUnexpectedResponseCode
@@ -118,14 +172,14 @@ func (e ErrDefault401) Error() string {
 	return "Authentication failed"
 }
 func (e ErrDefault403) Error() string {
-	return "Action Forbidden"
-}
-func (e ErrDefault404) Error() string {
 	e.DefaultErrString = fmt.Sprintf(
-		"Resource not found: [%s %s], error message: %s",
+		"Request forbidden: [%s %s], error message: %s",
 		e.Method, e.URL, e.Body,
 	)
 	return e.choseErrString()
+}
+func (e ErrDefault404) Error() string {
+	return "Resource not found"
 }
 func (e ErrDefault405) Error() string {
 	return "Method not allowed"
@@ -179,6 +233,12 @@ type Err405er interface {
 // from a 408 error.
 type Err408er interface {
 	Error408(ErrUnexpectedResponseCode) error
+}
+
+// Err409er is the interface resource error types implement to override the error message
+// from a 409 error.
+type Err409er interface {
+	Error409(ErrUnexpectedResponseCode) error
 }
 
 // Err429er is the interface resource error types implement to override the error message
@@ -420,4 +480,11 @@ type ErrScopeEmpty struct{ BaseError }
 
 func (e ErrScopeEmpty) Error() string {
 	return "You must provide either a Project or Domain in a Scope"
+}
+
+// ErrAppCredMissingSecret indicates that no Application Credential Secret was provided with Application Credential ID or Name
+type ErrAppCredMissingSecret struct{ BaseError }
+
+func (e ErrAppCredMissingSecret) Error() string {
+	return "You must provide an Application Credential Secret"
 }

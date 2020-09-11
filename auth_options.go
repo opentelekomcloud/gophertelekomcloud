@@ -82,14 +82,24 @@ type AuthOptions struct {
 	// authentication token ID.
 	TokenID string `json:"-"`
 
-	// AgencyNmae is the name of agnecy
-	AgencyName string `json:"-"`
+	// Scope determines the scoping of the authentication request.
+	Scope *AuthScope `json:"-"`
 
+	// AgencyName is the name of agnecy
+	AgencyName string `json:"-"`
 	// AgencyDomainName is the name of domain who created the agency
 	AgencyDomainName string `json:"-"`
-
 	// DelegatedProject is the name of delegated project
 	DelegatedProject string `json:"-"`
+}
+
+// AuthScope allows a created token to be limited to a specific domain or project.
+type AuthScope struct {
+	ProjectID   string
+	ProjectName string
+	DomainID    string
+	DomainName  string
+	System      bool
 }
 
 // ToTokenV2CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
@@ -125,6 +135,8 @@ func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
 	return map[string]interface{}{"auth": authMap}, nil
 }
 
+// ToTokenV3CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
+// interface in the v3 tokens package
 func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
 	type domainReq struct {
 		ID   *string `json:"id,omitempty"`
@@ -140,7 +152,7 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 	type userReq struct {
 		ID       *string    `json:"id,omitempty"`
 		Name     *string    `json:"name,omitempty"`
-		Password string     `json:"password"`
+		Password *string    `json:"password"`
 		Domain   *domainReq `json:"domain,omitempty"`
 	}
 
@@ -192,7 +204,9 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 		}
 	} else {
 		// Password authentication.
-		req.Auth.Identity.Methods = []string{"password"}
+		if opts.Password != "" {
+			req.Auth.Identity.Methods = append(req.Auth.Identity.Methods, "password")
+		}
 
 		// At least one of Username and UserID must be specified.
 		if opts.Username == "" && opts.UserID == "" {
@@ -216,23 +230,27 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 				}
 
 				// Configure the request for Username and Password authentication with a DomainID.
-				req.Auth.Identity.Password = &passwordReq{
-					User: userReq{
-						Name:     &opts.Username,
-						Password: opts.Password,
-						Domain:   &domainReq{ID: &opts.DomainID},
-					},
+				if opts.Password != "" {
+					req.Auth.Identity.Password = &passwordReq{
+						User: userReq{
+							Name:     &opts.Username,
+							Password: &opts.Password,
+							Domain:   &domainReq{ID: &opts.DomainID},
+						},
+					}
 				}
 			}
 
 			if opts.DomainName != "" {
 				// Configure the request for Username and Password authentication with a DomainName.
-				req.Auth.Identity.Password = &passwordReq{
-					User: userReq{
-						Name:     &opts.Username,
-						Password: opts.Password,
-						Domain:   &domainReq{Name: &opts.DomainName},
-					},
+				if opts.Password != "" {
+					req.Auth.Identity.Password = &passwordReq{
+						User: userReq{
+							Name:     &opts.Username,
+							Password: &opts.Password,
+							Domain:   &domainReq{Name: &opts.DomainName},
+						},
+					}
 				}
 			}
 		}
@@ -247,8 +265,13 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 			}
 
 			// Configure the request for UserID and Password authentication.
-			req.Auth.Identity.Password = &passwordReq{
-				User: userReq{ID: &opts.UserID, Password: opts.Password},
+			if opts.Password != "" {
+				req.Auth.Identity.Password = &passwordReq{
+					User: userReq{
+						ID:       &opts.UserID,
+						Password: &opts.Password,
+					},
+				}
 			}
 		}
 	}
@@ -265,111 +288,85 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 	return b, nil
 }
 
+// ToTokenV3ScopeMap builds a scope from AuthOptions and satisfies interface in
+// the v3 tokens package.
 func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
-	var scope scopeInfo
-
-	if opts.TenantID != "" {
-		scope.ProjectID = opts.TenantID
-	} else {
-		if opts.TenantName != "" {
-			scope.ProjectName = opts.TenantName
-			scope.DomainID = opts.DomainID
-			scope.DomainName = opts.DomainName
+	// For backwards compatibility.
+	// If AuthOptions.Scope was not set, try to determine it.
+	// This works well for common scenarios.
+	if opts.Scope == nil {
+		opts.Scope = new(AuthScope)
+		if opts.TenantID != "" {
+			opts.Scope.ProjectID = opts.TenantID
 		} else {
-			// support scoping to domain
-			scope.DomainID = opts.DomainID
-			scope.DomainName = opts.DomainName
+			if opts.TenantName != "" {
+				opts.Scope.ProjectName = opts.TenantName
+				opts.Scope.DomainID = opts.DomainID
+				opts.Scope.DomainName = opts.DomainName
+			}
 		}
 	}
-	return scope.BuildTokenV3ScopeMap()
-}
-
-func (opts *AuthOptions) CanReauth() bool {
-	return opts.AllowReauth
-}
-
-func (opts *AuthOptions) AuthTokenID() string {
-	return ""
-}
-
-func (opts *AuthOptions) AuthHeaderDomainID() string {
-	return ""
-}
-
-// Implements the method of AuthOptionsProvider
-func (opts AuthOptions) GetIdentityEndpoint() string {
-	return opts.IdentityEndpoint
-}
-
-type scopeInfo struct {
-	ProjectID   string
-	ProjectName string
-	DomainID    string
-	DomainName  string
-}
-
-func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
-	if scope.ProjectName != "" {
+	if opts.Scope.ProjectName != "" {
 		// ProjectName provided: either DomainID or DomainName must also be supplied.
 		// ProjectID may not be supplied.
-		if scope.DomainID == "" && scope.DomainName == "" {
+		if opts.Scope.DomainID == "" && opts.Scope.DomainName == "" {
 			return nil, ErrScopeDomainIDOrDomainName{}
 		}
-		if scope.ProjectID != "" {
+		if opts.Scope.ProjectID != "" {
 			return nil, ErrScopeProjectIDOrProjectName{}
 		}
 
-		if scope.DomainID != "" {
+		if opts.Scope.DomainID != "" {
 			// ProjectName + DomainID
 			return map[string]interface{}{
 				"project": map[string]interface{}{
-					"name":   &scope.ProjectName,
-					"domain": map[string]interface{}{"id": &scope.DomainID},
+					"name":   &opts.Scope.ProjectName,
+					"domain": map[string]interface{}{"id": &opts.Scope.DomainID},
 				},
 			}, nil
 		}
 
-		if scope.DomainName != "" {
+		if opts.Scope.DomainName != "" {
 			// ProjectName + DomainName
 			return map[string]interface{}{
 				"project": map[string]interface{}{
-					"name":   &scope.ProjectName,
-					"domain": map[string]interface{}{"name": &scope.DomainName},
+					"name":   &opts.Scope.ProjectName,
+					"domain": map[string]interface{}{"name": &opts.Scope.DomainName},
 				},
 			}, nil
 		}
-	} else if scope.ProjectID != "" {
+	} else if opts.Scope.ProjectID != "" {
 		// ProjectID provided. ProjectName, DomainID, and DomainName may not be provided.
-		if scope.DomainID != "" {
+		if opts.Scope.DomainID != "" {
 			return nil, ErrScopeProjectIDAlone{}
 		}
-		if scope.DomainName != "" {
+		if opts.Scope.DomainName != "" {
 			return nil, ErrScopeProjectIDAlone{}
 		}
 
 		// ProjectID
 		return map[string]interface{}{
 			"project": map[string]interface{}{
-				"id": &scope.ProjectID,
+				"id": &opts.Scope.ProjectID,
 			},
 		}, nil
-	} else if scope.DomainID != "" {
+	} else if opts.Scope.DomainID != "" {
 		// DomainID provided. ProjectID, ProjectName, and DomainName may not be provided.
-		if scope.DomainName != "" {
+		if opts.Scope.DomainName != "" {
 			return nil, ErrScopeDomainIDOrDomainName{}
 		}
 
 		// DomainID
 		return map[string]interface{}{
 			"domain": map[string]interface{}{
-				"id": &scope.DomainID,
+				"id": &opts.Scope.DomainID,
 			},
 		}, nil
-	} else if scope.DomainName != "" {
+	} else if opts.Scope.DomainName != "" {
 		// DomainName
 		return map[string]interface{}{
 			"domain": map[string]interface{}{
-				"name": &scope.DomainName,
+				"name": &opts.Scope.DomainName,
 			},
 		}, nil
 	}
@@ -377,9 +374,18 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
 	return nil, nil
 }
 
+func (opts AuthOptions) CanReauth() bool {
+	return opts.AllowReauth
+}
+
+// ToTokenV3HeadersMap allows AuthOptions to satisfy the AuthOptionsBuilder
+// interface in the v3 tokens package.
+func (opts *AuthOptions) ToTokenV3HeadersMap(map[string]interface{}) (map[string]string, error) {
+	return nil, nil
+}
+
 type AgencyAuthOptions struct {
-	TokenID          string
-	DomainID         string
+	*AuthOptions
 	AgencyName       string
 	AgencyDomainName string
 	DelegatedProject string
@@ -398,12 +404,10 @@ func (opts *AgencyAuthOptions) AuthHeaderDomainID() string {
 }
 
 func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
-	scope := scopeInfo{
-		ProjectName: opts.DelegatedProject,
-		DomainName:  opts.AgencyDomainName,
-	}
+	opts.TenantName = opts.DelegatedProject
+	opts.DomainName = opts.AgencyDomainName
 
-	return scope.BuildTokenV3ScopeMap()
+	return opts.AuthOptions.ToTokenV3ScopeMap()
 }
 
 func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {

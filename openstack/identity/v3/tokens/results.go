@@ -3,7 +3,7 @@ package tokens
 import (
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	gophercloud "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // Endpoint represents a single API endpoint offered by a service.
@@ -78,7 +78,7 @@ type Project struct {
 // commonResult is the response from a request. A commonResult has various
 // methods which can be used to extract different details about the result.
 type commonResult struct {
-	golangsdk.Result
+	gophercloud.Result
 }
 
 // Extract is a shortcut for ExtractToken.
@@ -99,6 +99,20 @@ func (r commonResult) ExtractToken() (*Token, error) {
 	s.ID = r.Header.Get("X-Subject-Token")
 
 	return &s, err
+}
+
+// ExtractTokenID implements the gophercloud.AuthResult interface. The returned
+// string is the same as the ID field of the Token struct returned from
+// ExtractToken().
+func (r CreateResult) ExtractTokenID() (string, error) {
+	return r.Header.Get("X-Subject-Token"), r.Err
+}
+
+// ExtractTokenID implements the gophercloud.AuthResult interface. The returned
+// string is the same as the ID field of the Token struct returned from
+// ExtractToken().
+func (r GetResult) ExtractTokenID() (string, error) {
+	return r.Header.Get("X-Subject-Token"), r.Err
 }
 
 // ExtractServiceCatalog returns the ServiceCatalog that was generated along
@@ -134,6 +148,15 @@ func (r commonResult) ExtractProject() (*Project, error) {
 	}
 	err := r.ExtractInto(&s)
 	return s.Project, err
+}
+
+// ExtractDomain returns Domain to which User is authorized.
+func (r commonResult) ExtractDomain() (*Domain, error) {
+	var s struct {
+		Domain *Domain `json:"domain"`
+	}
+	err := r.ExtractInto(&s)
+	return s.Domain, err
 }
 
 // CreateResult is the response from a Create request. Use ExtractToken()
