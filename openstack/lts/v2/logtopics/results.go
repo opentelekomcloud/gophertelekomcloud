@@ -1,6 +1,6 @@
 package logtopics
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // Log topic Create response
 type CreateResponse struct {

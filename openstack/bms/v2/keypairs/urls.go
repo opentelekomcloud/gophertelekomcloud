@@ -1,7 +1,7 @@
 package keypairs
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 const resourcePath = "os-keypairs"

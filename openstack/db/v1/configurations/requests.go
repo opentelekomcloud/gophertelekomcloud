@@ -1,9 +1,9 @@
 package configurations
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/db/v1/instances"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/instances"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // List will list all of the available configurations.

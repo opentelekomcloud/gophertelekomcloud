@@ -1,8 +1,8 @@
 package catalog
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/tokens"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CatalogPage is a single page of Service results.

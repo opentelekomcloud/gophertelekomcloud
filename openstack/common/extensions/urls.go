@@ -1,6 +1,6 @@
 package extensions
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // ExtensionURL generates the URL for an extension resource by name.
 func ExtensionURL(c *golangsdk.ServiceClient, name string) string {

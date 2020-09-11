@@ -1,8 +1,8 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/testhelper"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func createClient() *golangsdk.ServiceClient {

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	fake "github.com/huaweicloud/golangsdk/openstack/vbs/v2/common"
-	"github.com/huaweicloud/golangsdk/openstack/vbs/v2/policies"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/policies"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestCreateV2Policy(t *testing.T) {

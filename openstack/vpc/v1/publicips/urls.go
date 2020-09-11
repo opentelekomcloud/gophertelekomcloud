@@ -1,7 +1,7 @@
 package publicips
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func CreateURL(c *golangsdk.ServiceClient) string {

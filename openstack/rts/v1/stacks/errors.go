@@ -3,7 +3,7 @@ package stacks
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type ErrInvalidEnvironment struct {

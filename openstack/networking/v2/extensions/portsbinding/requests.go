@@ -1,7 +1,7 @@
 package portsbinding
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/ports"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/ports"
 )
 
 // CreateOptsExt adds port binding options to the base ports.CreateOpts.

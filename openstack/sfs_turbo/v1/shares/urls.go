@@ -1,6 +1,6 @@
 package shares
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // createURL used to assemble the URI of creating API
 func createURL(c *golangsdk.ServiceClient) string {

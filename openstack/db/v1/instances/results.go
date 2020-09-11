@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/db/v1/datastores"
-	"github.com/huaweicloud/golangsdk/openstack/db/v1/users"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/datastores"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/users"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Volume represents information about an attached volume for a database instance.

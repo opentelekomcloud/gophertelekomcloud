@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk/openstack/blockstorage/extensions/volumetenants"
-	"github.com/huaweicloud/golangsdk/openstack/blockstorage/v2/volumes"
-	"github.com/huaweicloud/golangsdk/pagination"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions/volumetenants"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestListWithExtensions(t *testing.T) {

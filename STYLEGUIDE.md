@@ -36,9 +36,6 @@
   append. It makes it difficult for the reviewer to see what's changed from one
   review to the next.
 
-- See [#583](https://github.com/huaweicloud/golangsdk/issues/583) as an example of a
-  well-formatted issue which contains all relevant information we need to review and approve.
-
 ## On Code
 
 - In re design: follow as closely as is reasonable the code already in the library.

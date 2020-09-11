@@ -1,6 +1,6 @@
 package images
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func listDetailURL(client *golangsdk.ServiceClient) string {
 	return client.ServiceURL("images", "detail")

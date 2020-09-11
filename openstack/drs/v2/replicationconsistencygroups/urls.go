@@ -1,6 +1,6 @@
 package replicationconsistencygroups
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // endpoint/os-vendor-replication-consistency-groups
 const resourcePath = "os-vendor-replication-consistency-groups"

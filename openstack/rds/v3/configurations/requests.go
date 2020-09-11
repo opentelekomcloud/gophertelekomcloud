@@ -1,7 +1,7 @@
 package configurations
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{

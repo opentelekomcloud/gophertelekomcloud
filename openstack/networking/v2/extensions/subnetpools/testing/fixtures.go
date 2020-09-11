@@ -3,7 +3,7 @@ package testing
 import (
 	"time"
 
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/subnetpools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/subnetpools"
 )
 
 const SubnetPoolsListResult = `

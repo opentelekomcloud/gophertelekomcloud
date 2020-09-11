@@ -7,14 +7,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
-	tokens2 "github.com/huaweicloud/golangsdk/openstack/identity/v2/tokens"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/catalog"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/domains"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/projects"
-	tokens3 "github.com/huaweicloud/golangsdk/openstack/identity/v3/tokens"
-	"github.com/huaweicloud/golangsdk/openstack/utils"
-	"github.com/huaweicloud/golangsdk/pagination"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	tokens2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v2/tokens"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/catalog"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/domains"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
+	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 const (
@@ -666,7 +666,6 @@ func NewElbV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, otcty
 
 // NewSmnServiceV2 creates a ServiceClient that may be used to access the v2 Simple Message Notification service.
 func NewSmnServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-
 	sc, err := initClientOpts(client, eo, "compute")
 	sc.Endpoint = strings.Replace(sc.Endpoint, "ecs", "smn", 1)
 	sc.ResourceBase = sc.Endpoint + "notifications/"
@@ -1126,14 +1125,4 @@ func InitServiceClientByName(client *golangsdk.ProviderClient, eo golangsdk.Endp
 
 	return sc, nil
 
-}
-
-//SberCloud IAM client
-func NewSberIamV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc := new(golangsdk.ServiceClient)
-	sc.ProviderClient = client
-	sc.Endpoint = fmt.Sprintf("https://iam.%s.hc.sbercloud.ru/v3/", eo.Region)
-	sc.ResourceBase = sc.Endpoint
-
-	return sc, nil
 }

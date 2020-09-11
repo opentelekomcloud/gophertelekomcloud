@@ -3,7 +3,7 @@ package tags
 import (
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // supported resourceType: "vpcs", "subnets", "publicips"

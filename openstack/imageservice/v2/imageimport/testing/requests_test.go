@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/imageservice/v2/imageimport"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fakeclient "github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/imageservice/v2/imageimport"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	fakeclient "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestGet(t *testing.T) {

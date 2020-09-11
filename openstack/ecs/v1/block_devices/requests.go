@@ -1,7 +1,7 @@
 package block_devices
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func Get(c *golangsdk.ServiceClient, server_id string, volume_id string) (r GetResult) {

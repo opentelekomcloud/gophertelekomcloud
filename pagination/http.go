@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // PageResult stores the HTTP response that returned the current page of results.

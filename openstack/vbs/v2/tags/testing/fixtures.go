@@ -1,7 +1,7 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/vbs/v2/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/tags"
 )
 
 const TagList = `

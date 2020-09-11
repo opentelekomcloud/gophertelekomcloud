@@ -1,6 +1,6 @@
 package task
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type Task struct {
 	ID       int64  `json:"id"`

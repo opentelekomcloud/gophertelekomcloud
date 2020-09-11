@@ -3,10 +3,10 @@ package testing
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/blockstorage/extensions/schedulerstats"
-	"github.com/huaweicloud/golangsdk/pagination"
-	"github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions/schedulerstats"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestListStoragePoolsDetail(t *testing.T) {

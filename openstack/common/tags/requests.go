@@ -1,7 +1,7 @@
 package tags
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //ActionOptsBuilder is an interface from which can build the request of creating/deleting tags

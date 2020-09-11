@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/groups"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/projects"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/users"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/groups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/users"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 // ListOutput provides a single page of User results.

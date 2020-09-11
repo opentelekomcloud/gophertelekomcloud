@@ -3,11 +3,11 @@ package peering
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/acceptance/clients"
-	"github.com/huaweicloud/golangsdk/acceptance/tools"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v1/vpcs"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/peerings"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/peerings"
 )
 
 func CreatePeeringResourcesNConn(t *testing.T, clientV2 *golangsdk.ServiceClient, peerClientV2 *golangsdk.ServiceClient,

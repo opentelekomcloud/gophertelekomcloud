@@ -1,6 +1,6 @@
 package replications
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // endpoint/os-vendor-replications
 const resourcePath = "os-vendor-replications"

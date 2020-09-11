@@ -1,10 +1,10 @@
 package instances
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	db "github.com/huaweicloud/golangsdk/openstack/db/v1/databases"
-	"github.com/huaweicloud/golangsdk/openstack/db/v1/users"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	db "github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/databases"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/db/v1/users"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsBuilder is the top-level interface for create options.

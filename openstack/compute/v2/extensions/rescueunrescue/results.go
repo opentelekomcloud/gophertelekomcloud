@@ -1,6 +1,6 @@
 package rescueunrescue
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type commonResult struct {
 	golangsdk.Result

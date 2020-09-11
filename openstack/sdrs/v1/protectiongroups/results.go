@@ -1,7 +1,7 @@
 package protectiongroups
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Group struct {

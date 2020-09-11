@@ -1,7 +1,7 @@
 package products
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // GetResponse response

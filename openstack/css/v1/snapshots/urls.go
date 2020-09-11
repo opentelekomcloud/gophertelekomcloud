@@ -1,6 +1,6 @@
 package snapshots
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // policyURL used to set or query the snapshot policy
 func policyURL(c *golangsdk.ServiceClient, clusterId string) string {

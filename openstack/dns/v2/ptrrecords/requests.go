@@ -1,7 +1,7 @@
 package ptrrecords
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // Get returns information about a ptr, given its ID.

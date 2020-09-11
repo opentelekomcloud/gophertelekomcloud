@@ -3,9 +3,9 @@ package loadbalancers
 import (
 	"log"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/elb"
-	"github.com/huaweicloud/golangsdk/openstack/utils"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/elb"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 // CreateOptsBuilder is the interface options structs have to satisfy in order

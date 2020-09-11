@@ -1,6 +1,6 @@
 package logtopics
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // CreateOptsBuilder is used for creating log group parameters.
 type CreateOptsBuilder interface {

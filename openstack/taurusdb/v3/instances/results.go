@@ -1,9 +1,9 @@
 package instances
 
 import (
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/common/structs"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type DataStore struct {

@@ -3,8 +3,8 @@ package nodepools
 import (
 	"reflect"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
 
 var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{

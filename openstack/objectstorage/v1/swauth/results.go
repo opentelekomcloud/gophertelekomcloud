@@ -1,7 +1,7 @@
 package swauth
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // GetAuthResult contains the response from the Auth request. Call its Extract

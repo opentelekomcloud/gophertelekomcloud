@@ -1,6 +1,6 @@
 package attachreplication
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func createURL(c *golangsdk.ServiceClient, instanceID string) string {
 	return c.ServiceURL("protected-instances", instanceID, "attachreplication")

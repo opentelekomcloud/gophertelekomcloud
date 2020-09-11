@@ -1,7 +1,7 @@
 package webtamperprotection_rules
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type WebTamper struct {

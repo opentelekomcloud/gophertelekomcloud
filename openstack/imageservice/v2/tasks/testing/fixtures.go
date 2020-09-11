@@ -3,7 +3,7 @@ package testing
 import (
 	"time"
 
-	"github.com/huaweicloud/golangsdk/openstack/imageservice/v2/tasks"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/imageservice/v2/tasks"
 )
 
 // TasksListResult represents raw server response from a server to a list call.

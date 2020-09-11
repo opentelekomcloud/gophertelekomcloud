@@ -1,7 +1,7 @@
 package limits
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 const resourcePath = "limits"

@@ -1,13 +1,13 @@
-# Golangsdk: a Huawei clouds SDK for Golang
-[![Go Report Card](https://goreportcard.com/badge/github.com/huaweicloud/golangsdk?branch=master)](https://goreportcard.com/badge/github.com/huaweicloud/golangsdk)
-[![Build Status](https://travis-ci.org/huaweicloud/golangsdk.svg?branch=master)](https://travis-ci.org/huaweicloud/golangsdk)
-[![Coverage Status](https://coveralls.io/repos/github/huaweicloud/golangsdk/badge.svg?branch=master)](https://coveralls.io/github/huaweicloud/golangsdk?branch=master)
-[![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/huaweicloud/golangsdk/blob/master/LICENSE)
+# Golangsdk: a OpenTelekomCloud SDK for Golang
+[![Go Report Card](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud?branch=master)](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud)
+[![Build Status](https://travis-ci.org/opentelekomcloud/gophertelekomcloud.svg?branch=master)](https://travis-ci.org/opentelekomcloud/gophertelekomcloud)
+[![Coverage Status](https://coveralls.io/repos/github/opentelekomcloud/gophertelekomcloud/badge.svg?branch=master)](https://coveralls.io/github/opentelekomcloud/gophertelekomcloud?branch=master)
+[![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/LICENSE)
 
-Golangsdk is a Huawei clouds Go SDK.
+Golangsdk is a OpenTelekomCloud clouds Go SDK.
 Golangsdk is based on [Gophercloud](https://github.com/gophercloud/gophercloud)
 which is an OpenStack Go SDK and has a great design.
-Golangsdk has added and removed some features to support Huawei clouds.
+Golangsdk has added and removed some features to support OpenTelekomCloud.
 
 ## Added features
 
@@ -30,7 +30,7 @@ Golangsdk has added and removed some features to support Huawei clouds.
 
 ## Useful links
 
-* [Reference documentation](http://godoc.org/github.com/huaweicloud/golangsdk)
+* [Reference documentation](http://godoc.org/github.com/opentelekomcloud/gophertelekomcloud)
 * [Effective Go](https://golang.org/doc/effective_go.html)
 
 ## How to install
@@ -49,9 +49,9 @@ your projects, such as [godep](https://github.com/tools/godep). Once this is set
 golangsdk as a dependency like so:
 
 ```bash
-go get github.com/huaweicloud/golangsdk
+go get github.com/opentelekomcloud/gophertelekomcloud
 
-# Edit your code to import relevant packages from "github.com/huaweicloud/golangsdk"
+# Edit your code to import relevant packages from "github.com/opentelekomcloud/gophertelekomcloud"
 
 godep save ./...
 ```
@@ -63,7 +63,7 @@ referenceable from your own source files when you use the `godep go` command.
 
 ### Credentials
 
-Because you'll be hitting an API, you will need to retrieve your Huawei clouds
+Because you'll be hitting an API, you will need to retrieve your OpenTelekomCloud
 credentials and either store them as environment variables or in your local Go
 files. The first method is recommended because it decouples credential
 information from source code, allowing you to push the latter to your version
@@ -84,9 +84,9 @@ explicitly, or tell Golangsdk to use environment variables:
 
 ```go
 import (
-  "github.com/huaweicloud/golangsdk"
-  "github.com/huaweicloud/golangsdk/openstack"
-  "github.com/huaweicloud/golangsdk/openstack/utils"
+  "github.com/opentelekomcloud/gophertelekomcloud"
+  "github.com/opentelekomcloud/gophertelekomcloud/openstack"
+  "github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 // Option 1: Pass in the values yourself
@@ -107,13 +107,13 @@ Once you have the `opts` variable, you can pass it in and get back a
 provider, err := openstack.AuthenticatedClient(opts)
 ```
 
-The `ProviderClient` is the top-level client that all of your Huawei clouds services
+The `ProviderClient` is the top-level client that all of your OpenTelekomCloud services
 derive from. The provider contains all of the authentication details that allow
 your Go code to access the API - such as the base URL and token ID.
 
 ### Provision a rds instance
 
-Once we have a base Provider, we inject it as a dependency into each Huawei clouds
+Once we have a base Provider, we inject it as a dependency into each OpenTelekomCloud
 service. In order to work with the rds API, we need a rds service
 client; which can be created like so:
 
@@ -129,7 +129,7 @@ in the name and the flavor ID (database specification) we're
 interested in:
 
 ```go
-import "github.com/huaweicloud/golangsdk/openstack/rds/v1/instances"
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v1/instances"
 
 instance, err := instances.Create(client, instances.CreateOpts{
   Name:      "My new rds instance!",
@@ -139,7 +139,7 @@ instance, err := instances.Create(client, instances.CreateOpts{
 
 The above code sample creates a new rds instance with the parameters, and embodies the
 new resource in the `instance` variable (a
-[`instances.Instance`](http://godoc.org/github.com/huaweicloud/golangsdk) struct).
+[`instances.Instance`](http://godoc.org/github.com/opentelekomcloud/gophertelekomcloud) struct).
 
 ## Advanced Usage
 
@@ -156,7 +156,7 @@ See the [contributing guide](./.github/CONTRIBUTING.md).
 ## Help and feedback
 
 If you're struggling with something or have spotted a potential bug, feel free
-to submit an issue to our [bug tracker](https://github.com/huaweicloud/golangsdk/issues).
+to submit an issue to our [bug tracker](https://github.com/opentelekomcloud/gophertelekomcloud/issues).
 
 ## Thank You
 

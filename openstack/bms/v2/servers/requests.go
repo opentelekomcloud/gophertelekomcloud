@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // SortDir is a type for specifying in which direction to sort a list of servers.

@@ -1,7 +1,7 @@
 package quotas
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // Get retrieves a particular Loadbalancer based on its unique ID.

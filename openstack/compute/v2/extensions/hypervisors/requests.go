@@ -3,8 +3,8 @@ package hypervisors
 import (
 	"strconv"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // List makes a request against the API to list hypervisors.

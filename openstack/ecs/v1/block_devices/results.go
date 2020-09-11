@@ -1,6 +1,6 @@
 package block_devices
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type VolumeAttachment struct {
 	PciAddress string `json:"pciAddress"`

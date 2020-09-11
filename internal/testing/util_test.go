@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/internal"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal"
 )
 
 func TestRemainingKeys(t *testing.T) {

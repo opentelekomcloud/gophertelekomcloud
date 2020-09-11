@@ -1,6 +1,6 @@
 package auto_recovery
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	rootPath     = "cloudservers"

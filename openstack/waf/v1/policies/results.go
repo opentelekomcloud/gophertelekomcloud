@@ -1,7 +1,7 @@
 package policies
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Policy struct {

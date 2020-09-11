@@ -3,7 +3,7 @@ package queues
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // endpoint/queues

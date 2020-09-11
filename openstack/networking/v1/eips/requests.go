@@ -1,7 +1,7 @@
 package eips
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //ApplyOptsBuilder is an interface by which can build the request body of public ip

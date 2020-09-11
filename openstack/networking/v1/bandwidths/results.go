@@ -1,7 +1,7 @@
 package bandwidths
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //BandWidth is a struct that represents a bandwidth

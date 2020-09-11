@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fakeclient "github.com/huaweicloud/golangsdk/testhelper/client"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	fakeclient "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 type imageEntry struct {

@@ -3,10 +3,10 @@ package testing
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/vbs/v2/backups"
-	fake "github.com/huaweicloud/golangsdk/openstack/vbs/v2/common"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/backups"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/common"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestListBackup(t *testing.T) {

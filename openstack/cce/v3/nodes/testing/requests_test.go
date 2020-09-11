@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	fake "github.com/huaweicloud/golangsdk/openstack/cce/v3/common"
-	"github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestListNode(t *testing.T) {

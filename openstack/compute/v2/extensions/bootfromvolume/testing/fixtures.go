@@ -1,8 +1,8 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/bootfromvolume"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/bootfromvolume"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 )
 
 var BaseCreateOpts = servers.CreateOpts{

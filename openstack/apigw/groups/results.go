@@ -3,7 +3,7 @@ package groups
 import (
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type UrlDomain struct {

@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/identity/v3/tokens"
-	"github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 // authTokenPost verifies that providing certain AuthOptions and Scope results in an expected JSON structure.

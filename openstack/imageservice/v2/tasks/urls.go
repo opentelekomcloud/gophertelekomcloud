@@ -4,8 +4,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/utils"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 const resourcePath = "tasks"

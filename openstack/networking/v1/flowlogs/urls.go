@@ -1,6 +1,6 @@
 package flowlogs
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func CreateURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL(c.ProjectID, "fl/flow_logs")

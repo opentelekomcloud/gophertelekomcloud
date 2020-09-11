@@ -1,6 +1,6 @@
 package shares
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 //For access rule create , update and delete
 func rootURL(c *golangsdk.ServiceClient, id string) string {

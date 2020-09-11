@@ -1,7 +1,7 @@
 package eips
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //ApplyResult is a struct which represents the result of apply public ip

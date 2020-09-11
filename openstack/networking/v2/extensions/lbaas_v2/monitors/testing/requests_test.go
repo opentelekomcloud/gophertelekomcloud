@@ -3,10 +3,10 @@ package testing
 import (
 	"testing"
 
-	fake "github.com/huaweicloud/golangsdk/openstack/networking/v2/common"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/lbaas_v2/monitors"
-	"github.com/huaweicloud/golangsdk/pagination"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/monitors"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestListHealthmonitors(t *testing.T) {

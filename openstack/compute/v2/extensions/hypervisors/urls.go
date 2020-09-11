@@ -1,6 +1,6 @@
 package hypervisors
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func hypervisorsListDetailURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("os-hypervisors", "detail")

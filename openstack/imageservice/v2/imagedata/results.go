@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // UploadResult is the result of an upload image operation. Call its ExtractErr

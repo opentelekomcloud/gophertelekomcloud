@@ -3,7 +3,7 @@ package cloudservers
 import (
 	"encoding/base64"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type CreateOpts struct {

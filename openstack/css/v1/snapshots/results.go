@@ -3,7 +3,7 @@ package snapshots
 import (
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // Policy contains all the information associated with a snapshot policy.

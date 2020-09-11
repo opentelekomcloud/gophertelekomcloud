@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // Upload uploads an image file.

@@ -1,7 +1,7 @@
 package testing
 
 import (
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/networks"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/networks"
 )
 
 const ListResponse = `

@@ -1,7 +1,7 @@
 package volumeactions
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // AttachOptsBuilder allows extensions to add additional parameters to the

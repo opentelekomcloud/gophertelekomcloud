@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/blockstorage/extensions/quotasets"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions/quotasets"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestGet(t *testing.T) {

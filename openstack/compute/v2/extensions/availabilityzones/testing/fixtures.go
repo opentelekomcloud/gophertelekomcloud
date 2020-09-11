@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	az "github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/availabilityzones"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	az "github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/availabilityzones"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 const GetOutput = `

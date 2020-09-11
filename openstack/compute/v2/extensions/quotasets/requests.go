@@ -1,7 +1,7 @@
 package quotasets
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // Get returns public data about a previously created QuotaSet.

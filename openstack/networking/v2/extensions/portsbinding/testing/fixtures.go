@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	fake "github.com/huaweicloud/golangsdk/openstack/networking/v2/common"
-	porttest "github.com/huaweicloud/golangsdk/openstack/networking/v2/ports/testing"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
+	porttest "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/ports/testing"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func HandleListSuccessfully(t *testing.T) {

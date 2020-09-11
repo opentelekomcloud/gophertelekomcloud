@@ -1,7 +1,7 @@
 package policies
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 //Create Result is a struct which represents the create result of policy

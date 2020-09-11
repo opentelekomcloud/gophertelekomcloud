@@ -1,7 +1,7 @@
 package whitelists
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // CreateOptsBuilder is the interface options structs have to satisfy in order

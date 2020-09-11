@@ -1,7 +1,7 @@
 package drill
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 var requestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{

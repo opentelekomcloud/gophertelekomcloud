@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/vpc/v1/publicips"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v1/publicips"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 var CreateOutput = `

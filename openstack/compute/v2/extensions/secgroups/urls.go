@@ -1,6 +1,6 @@
 package secgroups
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	secgrouppath = "os-security-groups"

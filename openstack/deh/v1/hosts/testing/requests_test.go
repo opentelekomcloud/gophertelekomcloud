@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	fake "github.com/huaweicloud/golangsdk/openstack/deh/v1/common"
-	"github.com/huaweicloud/golangsdk/openstack/deh/v1/hosts"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/deh/v1/common"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/deh/v1/hosts"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestGet(t *testing.T) {

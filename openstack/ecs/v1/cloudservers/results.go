@@ -3,7 +3,7 @@ package cloudservers
 import (
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type cloudServerResult struct {

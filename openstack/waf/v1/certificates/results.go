@@ -3,7 +3,7 @@ package certificates
 import (
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Certificate struct {

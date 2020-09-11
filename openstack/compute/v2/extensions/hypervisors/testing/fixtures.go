@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/extensions/hypervisors"
-	"github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/hypervisors"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 // The first hypervisor represents what the specification says (~Newton)

@@ -3,7 +3,7 @@ package groups_hcs
 import (
 	"log"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 const resourcePath = "scaling_group"

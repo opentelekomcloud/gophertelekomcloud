@@ -57,8 +57,8 @@ Alternatively, add the following to your `.bashrc`:
 ```bash
 golangsdktest() {
   if [[ -n $1 ]] && [[ -n $2 ]]; then
-    pushd  $GOPATH/src/github.com/huaweicloud/golangsdk
-    go test -v github.com/huaweicloud/golangsdk/acceptance/openstack/$1 -run "$2" | tee ~/golangsdk.log
+    pushd  $GOPATH/src/github.com/opentelekomcloud/gophertelekomcloud
+    go test -v github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/$1 -run "$2" | tee ~/golangsdk.log
     popd
 fi
 }

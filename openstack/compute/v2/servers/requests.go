@@ -4,10 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/flavors"
-	"github.com/huaweicloud/golangsdk/openstack/compute/v2/images"
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the

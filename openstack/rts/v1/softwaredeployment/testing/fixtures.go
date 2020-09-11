@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/rts/v1/softwaredeployment"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rts/v1/softwaredeployment"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 // CreateExpected represents the expected object from a Create request.

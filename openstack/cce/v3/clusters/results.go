@@ -3,7 +3,7 @@ package clusters
 import (
 	"encoding/json"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type ListCluster struct {
@@ -115,9 +115,9 @@ type Conditions struct {
 }
 
 type Endpoints struct {
-	//The address accessed within the user's subnet - Huawei
+	//The address accessed within the user's subnet - OpenTelekomCloud
 	Url string `json:"url"`
-	//Public network access address - Huawei
+	//Public network access address - OpenTelekomCloud
 	Type string `json:"type"`
 	//Internal network address - OTC
 	Internal string `json:"internal"`

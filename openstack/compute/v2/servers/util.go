@@ -1,6 +1,6 @@
 package servers
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // WaitForStatus will continually poll a server until it successfully
 // transitions to a specified status. It will do this for at most the number

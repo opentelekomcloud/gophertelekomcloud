@@ -1,6 +1,6 @@
 package softwaredeployment
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "software_deployments"
 

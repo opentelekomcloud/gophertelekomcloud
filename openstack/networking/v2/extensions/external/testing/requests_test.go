@@ -3,9 +3,9 @@ package testing
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/external"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/networks"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/external"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/networks"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestListExternal(t *testing.T) {

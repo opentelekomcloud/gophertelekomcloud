@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huaweicloud/golangsdk/openstack/sfs/v2/shares"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
-	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sfs/v2/shares"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestCreateShare(t *testing.T) {

@@ -1,7 +1,7 @@
 package volumes
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

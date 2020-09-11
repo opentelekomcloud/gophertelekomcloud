@@ -3,7 +3,7 @@ package tracker
 import (
 	"reflect"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // ListOpts allows the filtering and sorting of paginated collections through

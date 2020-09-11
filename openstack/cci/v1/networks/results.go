@@ -1,7 +1,7 @@
 package networks
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Network struct {

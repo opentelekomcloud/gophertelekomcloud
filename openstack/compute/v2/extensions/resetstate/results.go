@@ -1,7 +1,7 @@
 package resetstate
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // ResetResult is the response of a ResetState operation. Call its ExtractErr

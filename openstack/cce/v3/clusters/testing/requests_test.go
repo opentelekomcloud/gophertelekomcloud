@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/huaweicloud/golangsdk/openstack/cce/v3/clusters"
-	fake "github.com/huaweicloud/golangsdk/openstack/cce/v3/common"
-	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/common"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestGetV3Cluster(t *testing.T) {

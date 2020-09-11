@@ -1,6 +1,6 @@
 package cloudservers
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func createURL(sc *golangsdk.ServiceClient) string {
 	return sc.ServiceURL("cloudservers")

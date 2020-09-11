@@ -1,7 +1,7 @@
 package flavors
 
 import (
-	"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type DbFlavorsResp struct {

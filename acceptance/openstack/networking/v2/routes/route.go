@@ -3,9 +3,9 @@ package routes
 import (
 	"testing"
 
-	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/peerings"
-	"github.com/huaweicloud/golangsdk/openstack/networking/v2/routes"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/peerings"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/routes"
 )
 
 func CreateRoute(t *testing.T, clientV2 *golangsdk.ServiceClient, peeringConn *peerings.Peering) (*routes.Route, error) {

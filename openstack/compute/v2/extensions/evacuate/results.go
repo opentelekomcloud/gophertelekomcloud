@@ -1,7 +1,7 @@
 package evacuate
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // EvacuateResult is the response from an Evacuate operation.

@@ -3,7 +3,7 @@ package maintainwindows
 import (
 	"strings"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // endpoint/instances/maintain-windows

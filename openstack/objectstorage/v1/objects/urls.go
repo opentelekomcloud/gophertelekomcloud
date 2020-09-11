@@ -1,7 +1,7 @@
 package objects
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func listURL(c *golangsdk.ServiceClient, container string) string {

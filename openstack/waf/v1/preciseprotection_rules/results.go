@@ -1,7 +1,7 @@
 package preciseprotection_rules
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Precise struct {

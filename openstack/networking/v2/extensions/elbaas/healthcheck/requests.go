@@ -3,8 +3,8 @@ package healthcheck
 import (
 	"fmt"
 
-	"github.com/huaweicloud/golangsdk"
-	//"github.com/huaweicloud/golangsdk/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	//"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Constants that represent approved monitoring types.

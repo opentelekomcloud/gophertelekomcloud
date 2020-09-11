@@ -1,6 +1,6 @@
 package function
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	FGS      = "fgs"

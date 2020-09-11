@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type commonResult struct {

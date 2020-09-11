@@ -1,6 +1,6 @@
 package tokens
 
-import "github.com/huaweicloud/golangsdk"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
 func tokenURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("auth", "tokens")

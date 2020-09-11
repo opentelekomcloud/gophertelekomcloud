@@ -1,7 +1,7 @@
 package resetstate
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func actionURL(client *golangsdk.ServiceClient, id string) string {

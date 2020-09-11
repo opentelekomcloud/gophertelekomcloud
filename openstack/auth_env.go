@@ -3,7 +3,7 @@ package openstack
 import (
 	"os"
 
-	"github.com/huaweicloud/golangsdk"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 var nilOptions = golangsdk.AuthOptions{}

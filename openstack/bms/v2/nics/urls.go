@@ -1,7 +1,7 @@
 package nics
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func listURL(client *golangsdk.ServiceClient, serverId string) string {

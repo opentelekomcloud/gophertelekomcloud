@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // UpdateResult is returned from a call to the Update function.

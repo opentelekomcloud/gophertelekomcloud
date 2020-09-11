@@ -1,7 +1,7 @@
 package tags
 
 import (
-	"github.com/huaweicloud/golangsdk"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 func createURL(c *golangsdk.ServiceClient, resource_type, resource_id string) string {
