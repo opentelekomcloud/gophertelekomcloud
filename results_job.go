@@ -78,5 +78,5 @@ func GetJobEntity(client *ServiceClient, uri string, label string) (interface{},
 		}
 	}
 
-	return nil, fmt.Errorf("Unexpected conversion error in GetJobEntity.")
+	return nil, fmt.Errorf("unexpected conversion error in GetJobEntity")
 }

@@ -40,7 +40,7 @@ that might not ever work. One tip is to prefix your Pull Request issue title
 with [wip] - then people know it's a work in progress.
 
 We ask that you do not submit a feature that you have not spent time researching
-and testing first-hand in an actual Huawei clouds environment. While we appreciate
+and testing first-hand in an actual OpenTelekomCloud environment. While we appreciate
 the contribution, submitting code which you are unfamiliar with is a risk to the
 users who will ultimately use it. See our [acceptance tests readme](/acceptance)
 for information about how you can create a local development environment to

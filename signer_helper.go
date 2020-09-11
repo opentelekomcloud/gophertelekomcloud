@@ -57,8 +57,8 @@ func (cache *MemoryCache) Get(cacheKey string) string {
 	return cache.cacheHolder[cacheKey]
 }
 
-//caseInsencitiveStringArray represents string case insensitive sorting operations
-type caseInsencitiveStringArray []string
+//caseInsensitiveStringArray represents string case insensitive sorting operations
+type caseInsensitiveStringArray []string
 
 // noEscape specifies whether the character should be encoded or not
 var noEscape [256]bool
@@ -85,7 +85,7 @@ type SignOptions struct {
 	EnableCacheSignKey  bool   // Cache sign key for one day or not cache, cache is disabled by default
 	encodeUrl           bool   //internal use
 	SignAlgorithm       string //The algorithm used for sign, the default value is "SDK-HMAC-SHA256" if you don't set its value
-	TimeOffsetInseconds int64  // TimeOffsetInseconds is used for adjust x-sdk-date if set its value
+	TimeOffsetInSeconds int64  // TimeOffsetInSeconds is used for adjust x-sdk-date if set its value
 }
 
 // StringBuilder wraps bytes.Buffer to implement a high performance string builder
@@ -332,7 +332,7 @@ func encodeQueryString(queryValues url.Values) string {
 
 	i := 0
 
-	for k, _ := range queryValues {
+	for k := range queryValues {
 		keys[i] = urlEncode(k, false)
 		encodedVals[keys[i]] = k
 		i++
@@ -406,7 +406,7 @@ func getCanonicalizedHeaderString(req *http.Request) string {
 	var headers StringBuilder
 
 	keys := make([]string, 0)
-	for k, _ := range req.Header {
+	for k := range req.Header {
 		keys = append(keys, strings.TrimSpace(k))
 	}
 
@@ -433,7 +433,7 @@ func getSignedHeadersString(req *http.Request) string {
 	var headers StringBuilder
 
 	keys := make([]string, 0)
-	for k, _ := range req.Header {
+	for k := range req.Header {
 		keys = append(keys, strings.TrimSpace(k))
 	}
 
@@ -453,7 +453,7 @@ func getSignedHeadersString(req *http.Request) string {
 
 // addRequiredHeaders adds the required heads to http.request instance
 func addRequiredHeaders(req *http.Request, timeStr string) {
-	// golang handls port by default
+	// golang handles port by default
 	req.Header.Add("Host", req.URL.Host)
 	req.Header.Add("X-Sdk-Date", timeStr)
 }
@@ -464,22 +464,22 @@ func setRequiredHeaders(req *http.Request, timeStr string) {
 	req.Header.Del("Authorization")
 }
 
-func (s caseInsencitiveStringArray) Len() int {
+func (s caseInsensitiveStringArray) Len() int {
 	return len(s)
 }
-func (s caseInsencitiveStringArray) Swap(i, j int) {
+func (s caseInsensitiveStringArray) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
-func (s caseInsencitiveStringArray) Less(i, j int) bool {
+func (s caseInsensitiveStringArray) Less(i, j int) bool {
 	return strings.ToLower(s[i]) < strings.ToLower(s[j])
 }
 
 func caseInsensitiveSort(strSlice []string) {
-	sort.Sort(caseInsencitiveStringArray(strSlice))
+	sort.Sort(caseInsensitiveStringArray(strSlice))
 }
 
 func (signParas *reqSignParams) getSigningDateTimeMilli() int64 {
-	return (signParas.RequestTime.UTC().Unix() - signParas.TimeOffsetInseconds) * 1000
+	return (signParas.RequestTime.UTC().Unix() - signParas.TimeOffsetInSeconds) * 1000
 }
 
 func (signParas *reqSignParams) getSigningDateTime() time.Time {
@@ -506,7 +506,7 @@ func (signParas *reqSignParams) getScope() string {
 }
 
 func (buff *StringBuilder) Write(s string) *StringBuilder {
-	buff.builder.WriteString((s))
+	buff.builder.WriteString(s)
 	return buff
 }
 

@@ -1,13 +1,13 @@
-# Golangsdk: a Huawei clouds SDK for Golang
+# Golangsdk: a OpenTelekomCloud SDK for Golang
 [![Go Report Card](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud?branch=master)](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud)
 [![Build Status](https://travis-ci.org/opentelekomcloud/gophertelekomcloud.svg?branch=master)](https://travis-ci.org/opentelekomcloud/gophertelekomcloud)
 [![Coverage Status](https://coveralls.io/repos/github/opentelekomcloud/gophertelekomcloud/badge.svg?branch=master)](https://coveralls.io/github/opentelekomcloud/gophertelekomcloud?branch=master)
 [![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/LICENSE)
 
-Golangsdk is a Huawei clouds Go SDK.
+Golangsdk is a OpenTelekomCloud clouds Go SDK.
 Golangsdk is based on [Gophercloud](https://github.com/gophercloud/gophercloud)
 which is an OpenStack Go SDK and has a great design.
-Golangsdk has added and removed some features to support Huawei clouds.
+Golangsdk has added and removed some features to support OpenTelekomCloud.
 
 ## Added features
 
@@ -63,7 +63,7 @@ referenceable from your own source files when you use the `godep go` command.
 
 ### Credentials
 
-Because you'll be hitting an API, you will need to retrieve your Huawei clouds
+Because you'll be hitting an API, you will need to retrieve your OpenTelekomCloud
 credentials and either store them as environment variables or in your local Go
 files. The first method is recommended because it decouples credential
 information from source code, allowing you to push the latter to your version
@@ -107,13 +107,13 @@ Once you have the `opts` variable, you can pass it in and get back a
 provider, err := openstack.AuthenticatedClient(opts)
 ```
 
-The `ProviderClient` is the top-level client that all of your Huawei clouds services
+The `ProviderClient` is the top-level client that all of your OpenTelekomCloud services
 derive from. The provider contains all of the authentication details that allow
 your Go code to access the API - such as the base URL and token ID.
 
 ### Provision a rds instance
 
-Once we have a base Provider, we inject it as a dependency into each Huawei clouds
+Once we have a base Provider, we inject it as a dependency into each OpenTelekomCloud
 service. In order to work with the rds API, we need a rds service
 client; which can be created like so:
 

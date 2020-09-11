@@ -165,7 +165,7 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 		return optsMap, nil
 	}
 	// Return an error if the underlying type of 'opts' isn't a struct.
-	return nil, fmt.Errorf("Options type is not a struct.")
+	return nil, fmt.Errorf("options type is not a struct")
 }
 
 // EnabledState is a convenience type, mostly used in Create and Update
@@ -361,7 +361,7 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 					// Otherwise, the field is not set.
 					if len(tags) == 2 && tags[1] == "required" {
 						// And the field is required. Return an error.
-						return &url.URL{}, fmt.Errorf("Required query parameter [%s] not set.", f.Name)
+						return &url.URL{}, fmt.Errorf("required query parameter [%s] not set", f.Name)
 					}
 				}
 			}
@@ -370,7 +370,7 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 		return &url.URL{RawQuery: params.Encode()}, nil
 	}
 	// Return an error if the underlying type of 'opts' isn't a struct.
-	return nil, fmt.Errorf("Options type is not a struct.")
+	return nil, fmt.Errorf("options type is not a struct")
 }
 
 /*
@@ -446,7 +446,7 @@ func BuildHeaders(opts interface{}) (map[string]string, error) {
 		return optsMap, nil
 	}
 	// Return an error if the underlying type of 'opts' isn't a struct.
-	return optsMap, fmt.Errorf("Options type is not a struct.")
+	return optsMap, fmt.Errorf("options type is not a struct")
 }
 
 // IDSliceToQueryString takes a slice of elements and converts them into a query
