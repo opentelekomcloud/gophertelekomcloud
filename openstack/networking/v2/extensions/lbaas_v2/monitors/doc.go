@@ -30,7 +30,7 @@ Example to Create a Monitor
 		PoolID:        "84f1b61f-58c4-45bf-a8a9-2dafb9e5214d",
 		Delay:         20,
 		Timeout:       10,
-		MaxRetries:    5,
+		maxRetries:    5,
 		URLPath:       "/check",
 		ExpectedCodes: "200-299",
 	}
@@ -48,7 +48,7 @@ Example to Update a Monitor
 		Name:          "NewHealthmonitorName",
 		Delay:         3,
 		Timeout:       20,
-		MaxRetries:    10,
+		maxRetries:    10,
 		URLPath:       "/another_check",
 		ExpectedCodes: "301",
 	}

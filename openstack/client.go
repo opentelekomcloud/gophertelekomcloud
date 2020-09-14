@@ -6,8 +6,12 @@ import (
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/catalog"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/domains"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
 	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 const (
@@ -17,7 +21,7 @@ const (
 )
 
 /*
-NewClient prepares an unauthenticated ProviderClient instance.
+OldNewClient prepares an unauthenticated ProviderClient instance.
 Most users will probably prefer using the AuthenticatedClient function
 instead.
 
@@ -27,10 +31,10 @@ service that's used for authentication explicitly, for example.
 A basic example of using this would be:
 
 	ao, err := openstack.AuthOptionsFromEnv()
-	provider, err := openstack.NewClient(ao.IdentityEndpoint)
+	provider, err := openstack.OldNewClient(ao.IdentityEndpoint)
 	client, err := openstack.NewIdentityV3(provider, golangsdk.EndpointOpts{})
 */
-func NewClient(endpoint string) (*golangsdk.ProviderClient, error) {
+func OldNewClient(endpoint string) (*golangsdk.ProviderClient, error) {
 	base, err := utils.BaseEndpoint(endpoint)
 	if err != nil {
 		return nil, err
@@ -49,7 +53,7 @@ func NewClient(endpoint string) (*golangsdk.ProviderClient, error) {
 
 /*
 AuthenticatedClient logs in to an OpenStack cloud found at the identity endpoint
-specified by the options, acquires a token, and returns a Provider Client
+specified by the options, acquires a token, and returns a Provider client
 instance that's ready to operate.
 
 If the full path to a versioned identity endpoint was specified  (example:
@@ -68,7 +72,7 @@ Example:
 	})
 */
 func AuthenticatedClient(options golangsdk.AuthOptions) (*golangsdk.ProviderClient, error) {
-	client, err := NewClient(options.IdentityEndpoint)
+	client, err := OldNewClient(options.IdentityEndpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -96,12 +100,137 @@ func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOption
 		return fmt.Errorf("unrecognized identity version: %s", chosen.ID)
 	}
 
+	if options.AKSKAuthOptions != nil {
+		return v3AKSKAuth(client, endpoint, &options, golangsdk.EndpointOpts{})
+	}
 	return v3auth(client, endpoint, &options, golangsdk.EndpointOpts{})
 }
 
-// AuthenticateV3 explicitly authenticates against the identity v3 service.
-func AuthenticateV3(client *golangsdk.ProviderClient, options tokens3.AuthOptionsBuilder, eo golangsdk.EndpointOpts) error {
-	return v3auth(client, "", options, eo)
+func getProjectID(client *golangsdk.ServiceClient, name string) (string, error) {
+	opts := projects.ListOpts{
+		Name: name,
+	}
+	allPages, err := projects.List(client, opts).AllPages()
+	if err != nil {
+		return "", err
+	}
+
+	extractProjects, err := projects.ExtractProjects(allPages)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(extractProjects) < 1 {
+		return "", fmt.Errorf("[DEBUG] cannot find the tenant: %s", name)
+	}
+
+	return extractProjects[0].ID, nil
+}
+
+func getDomainID(name string, client *golangsdk.ServiceClient) (string, error) {
+	old := client.Endpoint
+	defer func() { client.Endpoint = old }()
+
+	client.Endpoint = old + "auth/"
+
+	opts := domains.ListOpts{
+		Name: name,
+	}
+	allPages, err := domains.List(client, &opts).AllPages()
+	if err != nil {
+		return "", fmt.Errorf("llist domains failed, err=%s", err)
+	}
+
+	all, err := domains.ExtractDomains(allPages)
+	if err != nil {
+		return "", fmt.Errorf("extract domains failed, err=%s", err)
+	}
+
+	count := len(all)
+	switch count {
+	case 0:
+		err := &golangsdk.ErrResourceNotFound{}
+		err.ResourceType = "iam"
+		err.Name = name
+		return "", err
+	case 1:
+		return all[0].ID, nil
+	default:
+		err := &golangsdk.ErrMultipleResourcesFound{}
+		err.ResourceType = "iam"
+		err.Name = name
+		err.Count = count
+		return "", err
+	}
+}
+
+func setProjectIDDomainID(client *golangsdk.ProviderClient, opts tokens3.AuthOptionsBuilder, eo golangsdk.EndpointOpts) error {
+	v3Client, err := NewIdentityV3(client, eo)
+	if err != nil {
+		return err
+	}
+	options := opts.(*golangsdk.AuthOptions)
+	if options.Scope.ProjectID == "" && options.Scope.ProjectName != "" {
+		id, err := getProjectID(v3Client, options.Scope.ProjectName)
+		if err != nil {
+			return err
+		}
+		options.Scope.ProjectID = id
+	}
+
+	if options.Scope.DomainID == "" && options.Scope.DomainName != "" {
+		id, err := getDomainID(options.Scope.DomainName, v3Client)
+		if err != nil {
+			options.Scope.DomainID = ""
+		} else {
+			options.Scope.DomainID = id
+		}
+	}
+	client.ProjectID = options.Scope.ProjectID
+	client.DomainID = options.Scope.DomainID
+	return nil
+}
+
+func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.AuthOptionsBuilder, eo golangsdk.EndpointOpts) error {
+	v3Client, err := NewIdentityV3(client, eo)
+	if err != nil {
+		return err
+	}
+	// Override the generated service endpoint with the one returned by the version endpoint.
+	if endpoint != "" {
+		v3Client.Endpoint = endpoint
+	}
+	options := opts.(*golangsdk.AuthOptions)
+
+	client.AKSKAuthOptions = options.AKSKAuthOptions
+
+	if err := setProjectIDDomainID(client, opts, eo); err != nil {
+		return err
+	}
+
+	var entries = make([]tokens3.CatalogEntry, 0, 1)
+	err = catalog.List(v3Client).EachPage(func(page pagination.Page) (bool, error) {
+		catalogList, err := catalog.ExtractServiceCatalog(page)
+		if err != nil {
+			return false, err
+		}
+
+		entries = append(entries, catalogList...)
+
+		return true, nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
+		return V3EndpointURL(&tokens3.ServiceCatalog{
+			Entries: entries,
+		}, opts)
+	}
+	return nil
 }
 
 func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.AuthOptionsBuilder, eo golangsdk.EndpointOpts) error {
@@ -115,7 +244,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		v3Client.Endpoint = endpoint
 	}
 
-	var catalog *tokens3.ServiceCatalog
+	var serviceCatalog *tokens3.ServiceCatalog
 
 	var tokenID string
 	// passthroughToken allows to passthrough the token without a scope
@@ -146,7 +275,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 			return err
 		}
 
-		catalog, err = result.ExtractServiceCatalog()
+		serviceCatalog, err = result.ExtractServiceCatalog()
 		if err != nil {
 			return err
 		}
@@ -158,7 +287,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 			return err
 		}
 
-		catalog, err = result.ExtractServiceCatalog()
+		serviceCatalog, err = result.ExtractServiceCatalog()
 		if err != nil {
 			return err
 		}
@@ -171,7 +300,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		tac := *client
 		tac.SetThrowaway(true)
 		tac.ReauthFunc = nil
-		tac.SetTokenAndAuthResult(nil)
+		_ = tac.SetTokenAndAuthResult(nil)
 		var tao tokens3.AuthOptionsBuilder
 		switch ot := opts.(type) {
 		case *golangsdk.AuthOptions:
@@ -194,8 +323,13 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 			return nil
 		}
 	}
+
+	if err := setProjectIDDomainID(client, opts, eo); err != nil {
+		return err
+	}
+
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
-		return V3EndpointURL(catalog, opts)
+		return V3EndpointURL(serviceCatalog, opts)
 	}
 
 	return nil
@@ -248,10 +382,10 @@ func initClientOpts(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts,
 	return sc, nil
 }
 
-// initcommonServiceClient create a ServiceClient which can not get from clientType directly.
+// initCommonServiceClient create a ServiceClient which can not get from clientType directly.
 // firstly, we initialize a service client by "volumev2" type, the endpoint likes https://evs.{region}.{xxx.com}/v2/{project_id}
 // then we replace the endpoint with the specified srv and version.
-func initcommonServiceClient(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, srv string, version string) (*golangsdk.ServiceClient, error) {
+func initCommonServiceClient(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, srv string, version string) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "volumev2")
 	if err != nil {
 		return nil, err
@@ -869,13 +1003,13 @@ func NewDDSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 
 // NewLTSV2 creates a ServiceClient that may be used to access the LTS service.
 func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initcommonServiceClient(client, eo, "lts", "v2.0")
+	sc, err := initCommonServiceClient(client, eo, "lts", "v2.0")
 	return sc, err
 }
 
 // NewHuaweiLTSV2 creates a ServiceClient that may be used to access the Huawei Cloud LTS service.
 func NewHuaweiLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initcommonServiceClient(client, eo, "lts", "v2")
+	sc, err := initCommonServiceClient(client, eo, "lts", "v2")
 	return sc, err
 }
 

@@ -27,7 +27,7 @@ func TestAuthenticatedClient(t *testing.T) {
 		t.Errorf("No token ID assigned to the client")
 	}
 
-	t.Logf("Client successfully acquired a token: %v", client.TokenID)
+	t.Logf("client successfully acquired a token: %v", client.TokenID)
 
 	// Find the storage service in the service catalog.
 	storage, err := openstack.NewObjectStorageV1(client, golangsdk.EndpointOpts{
@@ -49,7 +49,7 @@ func TestReauth(t *testing.T) {
 	// Allow reauth
 	ao.AllowReauth = true
 
-	provider, err := openstack.NewClient(ao.IdentityEndpoint)
+	provider, err := openstack.OldNewClient(ao.IdentityEndpoint)
 	if err != nil {
 		t.Fatalf("Unable to create provider: %v", err)
 	}

@@ -415,6 +415,19 @@ func (client *ProviderClient) doRequest(method, url string, options *RequestOpts
 
 	prereqtok := req.Header.Get("X-Auth-Token")
 
+	if client.AKSKAuthOptions != nil && client.AKSKAuthOptions.Access != "" {
+		Sign(req, SignOptions{
+			AccessKey: client.AKSKAuthOptions.Access,
+			SecretKey: client.AKSKAuthOptions.Secret,
+		})
+		if client.ProjectID != "" {
+			req.Header.Set("X-Project-Id", client.ProjectID)
+		}
+		if client.DomainID != "" {
+			req.Header.Set("X-Domain-Id", client.DomainID)
+		}
+	}
+
 	// Issue the request.
 	resp, err := client.HTTPClient.Do(req)
 	if err != nil {
@@ -547,15 +560,6 @@ func (client *ProviderClient) doRequest(method, url string, options *RequestOpts
 			return resp, err
 		}
 		if err := json.NewDecoder(resp.Body).Decode(options.JSONResponse); err != nil {
-			return nil, err
-		}
-	}
-
-	// Close unused body to allow the HTTP connection to be reused
-	if !options.KeepResponseBody && options.JSONResponse == nil {
-		defer resp.Body.Close()
-		// read till EOF, otherwise the connection will be closed and cannot be reused
-		if _, err := io.Copy(ioutil.Discard, resp.Body); err != nil {
 			return nil, err
 		}
 	}

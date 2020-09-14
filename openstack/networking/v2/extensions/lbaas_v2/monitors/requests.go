@@ -168,12 +168,12 @@ func (opts CreateOpts) ToMonitorCreateMap() (map[string]interface{}, error) {
 
  Here is an example config struct to use when creating a PING or TCP Monitor:
 
- CreateOpts{Type: TypePING, Delay: 20, Timeout: 10, MaxRetries: 3}
- CreateOpts{Type: TypeTCP, Delay: 20, Timeout: 10, MaxRetries: 3}
+ CreateOpts{Type: TypePING, Delay: 20, Timeout: 10, maxRetries: 3}
+ CreateOpts{Type: TypeTCP, Delay: 20, Timeout: 10, maxRetries: 3}
 
  Here is an example config struct to use when creating a HTTP(S) Monitor:
 
- CreateOpts{Type: TypeHTTP, Delay: 20, Timeout: 10, MaxRetries: 3,
+ CreateOpts{Type: TypeHTTP, Delay: 20, Timeout: 10, maxRetries: 3,
  HttpMethod: "HEAD", ExpectedCodes: "200", PoolID: "2c946bfc-1804-43ab-a2ff-58f6a762b505"}
 */
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {

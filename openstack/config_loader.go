@@ -7,10 +7,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 const (
@@ -89,8 +89,14 @@ func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
 	domainID := e.GetEnv("DOMAIN_ID")
 	domainName := e.GetEnv("DOMAIN_NAME")
 
-	access := noEnv.GetEnv("ACCESS_KEY", "AWS_ACCESS_KEY_ID")
-	secret := noEnv.GetEnv("SECRET_KEY", "AWS_SECRET_ACCESS_KEY")
+	access := noEnv.GetEnv("AWS_ACCESS_KEY_ID")
+	if access == "" {
+		access = e.GetEnv("ACCESS_KEY", "ACCESS_KEY_ID")
+	}
+	secret := noEnv.GetEnv("AWS_ACCESS_KEY_SECRET")
+	if secret == "" {
+		secret = e.GetEnv("SECRET_KEY", "ACCESS_KEY_SECRET")
+	}
 
 	agencyName := e.GetEnv("AGENCY", "AGENCY_NAME")
 
@@ -128,7 +134,7 @@ type env struct {
 }
 
 func NewEnv(prefix string) Env {
-	if !strings.HasSuffix(prefix, "_") {
+	if prefix != "" && !strings.HasSuffix(prefix, "_") {
 		prefix += "_"
 	}
 	return &env{Prefix: prefix}
@@ -155,17 +161,20 @@ func (e *env) CloudFromEnv() *Cloud {
 			Username:          authOpts.Username,
 			UserID:            authOpts.UserID,
 			Password:          authOpts.Password,
-			ProjectName:       authOpts.TenantName,
-			ProjectID:         authOpts.TenantID,
+			ProjectName:       authOpts.Scope.ProjectName,
+			ProjectID:         authOpts.Scope.ProjectID,
 			UserDomainName:    e.GetEnv("USER_DOMAIN_NAME"),
 			UserDomainID:      e.GetEnv("USER_DOMAIN_ID"),
 			ProjectDomainName: e.GetEnv("PROJECT_DOMAIN_NAME"),
 			ProjectDomainID:   e.GetEnv("PROJECT_DOMAIN_ID"),
-			DomainName:        authOpts.DomainName,
-			DomainID:          authOpts.DomainID,
+			DomainName:        authOpts.Scope.DomainName,
+			DomainID:          authOpts.Scope.DomainID,
 			DefaultDomain:     e.GetEnv("DEFAULT_DOMAIN"),
 			AccessKey:         authOpts.AKSKAuthOptions.Access,
 			SecretKey:         authOpts.AKSKAuthOptions.Secret,
+			AgencyName:        authOpts.AgencyName,
+			AgencyDomainName:  authOpts.AgencyDomainName,
+			DelegatedProject:  authOpts.DelegatedProject,
 		},
 		AuthType:           AuthType(e.GetEnv("AUTH_TYPE")),
 		RegionName:         e.GetEnv("REGION_NAME", "REGION_ID"),
@@ -206,7 +215,7 @@ type Config struct {
 	Clouds       map[string]Cloud `yaml:"clouds" json:"clouds"`
 }
 
-// AuthType represents a valid method of authentication.
+// AuthType represents a valid method of authentication: `password`, `token`, `aksk`
 type AuthType string
 
 // AuthInfo represents the auth section of a cloud entry or
@@ -279,6 +288,13 @@ type AuthInfo struct {
 	// AK/SK auth means
 	AccessKey string `yaml:"ak,omitempty" json:"access_key,omitempty"`
 	SecretKey string `yaml:"sk,omitempty" json:"secret_key,omitempty"`
+
+	// OTC Agency config
+	AgencyName string `yaml:"agency_name,omitempty" json:"agency_name,omitempty"`
+	// AgencyDomainName is the name of domain who created the agency
+	AgencyDomainName string `json:"-"`
+	// DelegatedProject is the name of delegated project
+	DelegatedProject string `json:"-"`
 }
 
 // Cloud represents an entry in a clouds.yaml/public-clouds.yaml/secure.yaml file.
@@ -321,7 +337,7 @@ func loadFile(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
 		return nil, err
@@ -398,7 +414,7 @@ func mergeClouds(cloud, override interface{}) (*Cloud, error) {
 		return nil, err
 	}
 	var mergedCloud Cloud
-	mergedInterface := mergeInterfaces(overrideInterface, cloudInterface)
+	mergedInterface := utils.MergeInterfaces(overrideInterface, cloudInterface)
 	mergedJson, err := json.Marshal(mergedInterface)
 	if err != nil {
 		return nil, err
@@ -407,56 +423,6 @@ func mergeClouds(cloud, override interface{}) (*Cloud, error) {
 		return nil, err
 	}
 	return &mergedCloud, nil
-}
-
-// merges two interfaces. In cases where a value is defined for both 'overridingInterface' and
-// 'inferiorInterface' the value in 'overridingInterface' will take precedence.
-func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interface{} {
-	switch overriding := overridingInterface.(type) {
-	case map[string]interface{}:
-		interfaceMap, ok := inferiorInterface.(map[string]interface{})
-		if !ok {
-			return overriding
-		}
-		for k, v := range interfaceMap {
-			if overridingValue, ok := overriding[k]; ok {
-				overriding[k] = mergeInterfaces(overridingValue, v)
-			} else {
-				overriding[k] = v
-			}
-		}
-	case []interface{}:
-		list, ok := inferiorInterface.([]interface{})
-		if !ok {
-			return overriding
-		}
-		for i := range list {
-			overriding = append(overriding, list[i])
-		}
-		return overriding
-	case nil:
-		// mergeClouds(nil, map[string]interface{...}) -> map[string]interface{...}
-		v, ok := inferiorInterface.(map[string]interface{})
-		if ok {
-			return v
-		}
-	}
-	// We don't want to override with empty values
-	if reflect.DeepEqual(overridingInterface, nil) || reflect.DeepEqual(reflect.Zero(reflect.TypeOf(overridingInterface)).Interface(), overridingInterface) {
-		return inferiorInterface
-	} else {
-		return overridingInterface
-	}
-}
-
-func prepend(item string, slice []string) []string {
-	newSize := len(slice) + 1
-	result := make([]string, newSize, newSize)
-	result[0] = item
-	for i, v := range slice {
-		result[i+1] = v
-	}
-	return result
 }
 
 func mergeWithSecure(cloudConfig *Config, securePath string) *Config {
@@ -497,19 +463,21 @@ func (e *env) LoadOpenstackConfig() (*Config, error) {
 
 	// find config files
 	if c := e.GetEnv("CLIENT_CONFIG_FILE"); c != "" {
-		configs = prepend(c, configs)
+		configs = utils.PrependString(c, configs)
 	}
 	configPath := selectExisting(configFiles)
 	if s := e.GetEnv("CLIENT_SECURE_FILE"); s != "" {
-		secure = prepend(s, secure)
+		secure = utils.PrependString(s, secure)
 	}
 	securePath := selectExisting(secureFiles)
 	if v := e.GetEnv("CLIENT_VENDOR_FILE"); v != "" {
-		vendors = prepend(v, vendors)
+		vendors = utils.PrependString(v, vendors)
 	}
 	vendorPath := selectExisting(vendors)
 
-	cloudConfig := new(Config)
+	cloudConfig := &Config{
+		Clouds: map[string]Cloud{},
+	}
 
 	// load clouds.yaml
 	if configPath != "" {
@@ -539,7 +507,7 @@ func (e *env) LoadOpenstackConfig() (*Config, error) {
 
 	cloudName := e.GetEnv("CLOUD")
 	if cloudName == "" && len(cloudConfig.Clouds) == 1 {
-		for k, _ := range cloudConfig.Clouds {
+		for k := range cloudConfig.Clouds {
 			cloudName = k
 		}
 	}

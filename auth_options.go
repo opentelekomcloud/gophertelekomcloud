@@ -85,7 +85,7 @@ type AuthOptions struct {
 	// Scope determines the scoping of the authentication request.
 	Scope *AuthScope `json:"-"`
 
-	// AgencyName is the name of agnecy
+	// AgencyName is the name of agency
 	AgencyName string `json:"-"`
 	// AgencyDomainName is the name of domain who created the agency
 	AgencyDomainName string `json:"-"`
@@ -111,12 +111,6 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 	type domainReq struct {
 		ID   *string `json:"id,omitempty"`
 		Name *string `json:"name,omitempty"`
-	}
-
-	type projectReq struct {
-		Domain *domainReq `json:"domain,omitempty"`
-		Name   *string    `json:"name,omitempty"`
-		ID     *string    `json:"id,omitempty"`
 	}
 
 	type userReq struct {
@@ -190,12 +184,12 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 			}
 
 			// Either DomainID or DomainName must also be specified.
-			if opts.DomainID == "" && opts.DomainName == "" {
+			if opts.Scope.DomainID == "" && opts.Scope.DomainName == "" {
 				return nil, ErrDomainIDOrDomainName{}
 			}
 
-			if opts.DomainID != "" {
-				if opts.DomainName != "" {
+			if opts.Scope.DomainID != "" {
+				if opts.Scope.DomainName != "" {
 					return nil, ErrDomainIDOrDomainName{}
 				}
 
@@ -205,20 +199,20 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 						User: userReq{
 							Name:     &opts.Username,
 							Password: &opts.Password,
-							Domain:   &domainReq{ID: &opts.DomainID},
+							Domain:   &domainReq{ID: &opts.Scope.DomainID},
 						},
 					}
 				}
 			}
 
-			if opts.DomainName != "" {
+			if opts.Scope.DomainName != "" {
 				// Configure the request for Username and Password authentication with a DomainName.
 				if opts.Password != "" {
 					req.Auth.Identity.Password = &passwordReq{
 						User: userReq{
 							Name:     &opts.Username,
 							Password: &opts.Password,
-							Domain:   &domainReq{Name: &opts.DomainName},
+							Domain:   &domainReq{Name: &opts.Scope.DomainName},
 						},
 					}
 				}
@@ -227,10 +221,10 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 
 		if opts.UserID != "" {
 			// If UserID is specified, neither DomainID nor DomainName may be.
-			if opts.DomainID != "" {
+			if opts.Scope.DomainID != "" {
 				return nil, ErrDomainIDWithUserID{}
 			}
-			if opts.DomainName != "" {
+			if opts.Scope.DomainName != "" {
 				return nil, ErrDomainNameWithUserID{}
 			}
 

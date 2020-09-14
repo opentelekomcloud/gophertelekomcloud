@@ -20,6 +20,8 @@ const (
 	// AvailabilityInternal indicates that an endpoint is only available within
 	// the cluster's internal network.
 	AvailabilityInternal Availability = "internal"
+
+	defaultRegion = "eu-de"
 )
 
 // EndpointOpts specifies search criteria used by queries against an
@@ -69,6 +71,9 @@ type EndpointLocator func(EndpointOpts) (string, error)
 func (eo *EndpointOpts) ApplyDefaults(t string) {
 	if eo.Type == "" {
 		eo.Type = t
+	}
+	if eo.Region == "" {
+		eo.Region = defaultRegion
 	}
 	if eo.Availability == "" {
 		eo.Availability = AvailabilityPublic
