@@ -28,7 +28,7 @@ func (ua *UserAgent) Prepend(s ...string) {
 	ua.prepend = append(s, ua.prepend...)
 }
 
-// Join concatenates all the user-defined User-Agend strings with the default
+// Join concatenates all the user-defined User-Agent strings with the default
 // Gophercloud User-Agent string.
 func (ua *UserAgent) Join() string {
 	uaSlice := append(ua.prepend, DefaultUserAgent)
@@ -43,7 +43,7 @@ func (ua *UserAgent) Join() string {
 // credentials are required.
 type ProviderClient struct {
 	// IdentityBase is the base URL used for a particular provider's identity
-	// service - it will be used when issuing authenticatation requests. It
+	// service - it will be used when issuing authentication requests. It
 	// should point to the root resource of the identity service, not a specific
 	// identity version.
 	IdentityBase string
@@ -60,6 +60,9 @@ type ProviderClient struct {
 
 	// ProjectID is the ID of project to which User is authorized.
 	ProjectID string
+
+	// DomainID is the ID of project to which User is authorized.
+	DomainID string
 
 	// AKSKAuthOptions provides the value for AK/SK authentication, it should be nil if you use token authentication,
 	// Otherwise, it must have a value

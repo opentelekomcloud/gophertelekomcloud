@@ -91,6 +91,9 @@ type AuthOptions struct {
 	AgencyDomainName string `json:"-"`
 	// DelegatedProject is the name of delegated project
 	DelegatedProject string `json:"-"`
+
+	// AK/SK for AWS-like auth
+	AKSKAuthOptions *AKSKAuthOptions
 }
 
 // AuthScope allows a created token to be limited to a specific domain or project.
@@ -100,39 +103,6 @@ type AuthScope struct {
 	DomainID    string
 	DomainName  string
 	System      bool
-}
-
-// ToTokenV2CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
-// interface in the v2 tokens package
-func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
-	// Populate the request map.
-	authMap := make(map[string]interface{})
-
-	if opts.Username != "" {
-		if opts.Password != "" {
-			authMap["passwordCredentials"] = map[string]interface{}{
-				"username": opts.Username,
-				"password": opts.Password,
-			}
-		} else {
-			return nil, ErrMissingInput{Argument: "Password"}
-		}
-	} else if opts.TokenID != "" {
-		authMap["token"] = map[string]interface{}{
-			"id": opts.TokenID,
-		}
-	} else {
-		return nil, ErrMissingInput{Argument: "Username"}
-	}
-
-	if opts.TenantID != "" {
-		authMap["tenantId"] = opts.TenantID
-	}
-	if opts.TenantName != "" {
-		authMap["tenantName"] = opts.TenantName
-	}
-
-	return map[string]interface{}{"auth": authMap}, nil
 }
 
 // ToTokenV3CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder

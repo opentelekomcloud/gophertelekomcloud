@@ -112,6 +112,33 @@ func (client *ServiceClient) Delete(url string, opts *RequestOpts) (*http.Respon
 	return client.Request("DELETE", url, opts)
 }
 
+// DeleteWithBody calls `Request` with the "DELETE" HTTP verb.
+func (client *ServiceClient) DeleteWithBody(url string, JSONBody interface{}, opts *RequestOpts) (*http.Response, error) {
+	if opts == nil {
+		opts = new(RequestOpts)
+	}
+	client.initReqOpts(url, JSONBody, nil, opts)
+	return client.Request("DELETE", url, opts)
+}
+
+// Delete calls `Request` with the "DELETE" HTTP verb.
+func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
+	if opts == nil {
+		opts = new(RequestOpts)
+	}
+	client.initReqOpts(url, nil, JSONResponse, opts)
+	return client.Request("DELETE", url, opts)
+}
+
+// DeleteWithBodyResp calls `Request` with the "DELETE" HTTP verb.
+func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody interface{}, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
+	if opts == nil {
+		opts = new(RequestOpts)
+	}
+	client.initReqOpts(url, JSONBody, JSONResponse, opts)
+	return client.Request("DELETE", url, opts)
+}
+
 // Head calls `Request` with the "HEAD" HTTP verb.
 func (client *ServiceClient) Head(url string, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {

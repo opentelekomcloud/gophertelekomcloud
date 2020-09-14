@@ -28,7 +28,7 @@ A basic example of using this would be:
 
 	ao, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.NewClient(ao.IdentityEndpoint)
-	client, err := openstack.NewIdentityV3(provider, gophercloud.EndpointOpts{})
+	client, err := openstack.NewIdentityV3(provider, golangsdk.EndpointOpts{})
 */
 func NewClient(endpoint string) (*golangsdk.ProviderClient, error) {
 	base, err := utils.BaseEndpoint(endpoint)
@@ -63,7 +63,7 @@ Example:
 
 	ao, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(ao)
-	client, err := openstack.NewNetworkV2(provider, gophercloud.EndpointOpts{
+	client, err := openstack.NewNetworkV2(provider, golangsdk.EndpointOpts{
 		Region: os.Getenv("OS_REGION_NAME"),
 	})
 */
@@ -83,7 +83,9 @@ func AuthenticatedClient(options golangsdk.AuthOptions) (*golangsdk.ProviderClie
 // Authenticate or re-authenticate against the most recent identity service
 // supported at the provided endpoint.
 func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOptions) error {
-	versions := []*utils.Version{{ID: v3, Priority: 30, Suffix: "/v3/"}}
+	versions := []*utils.Version{
+		{ID: v3, Priority: 30, Suffix: "/v3/"},
+	}
 
 	chosen, endpoint, err := utils.ChooseVersion(client, versions)
 	if err != nil {
@@ -169,7 +171,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		tac := *client
 		tac.SetThrowaway(true)
 		tac.ReauthFunc = nil
-		_ = tac.SetTokenAndAuthResult(nil)
+		tac.SetTokenAndAuthResult(nil)
 		var tao tokens3.AuthOptionsBuilder
 		switch ot := opts.(type) {
 		case *golangsdk.AuthOptions:
@@ -197,27 +199,6 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 	}
 
 	return nil
-}
-
-// NewIdentityV2 creates a ServiceClient that may be used to interact with the
-// v2 identity service.
-func NewIdentityV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	endpoint := client.IdentityBase + "v2.0/"
-	clientType := "identity"
-	var err error
-	if !reflect.DeepEqual(eo, golangsdk.EndpointOpts{}) {
-		eo.ApplyDefaults(clientType)
-		endpoint, err = client.EndpointLocator(eo)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &golangsdk.ServiceClient{
-		ProviderClient: client,
-		Endpoint:       endpoint,
-		Type:           clientType,
-	}, nil
 }
 
 // NewIdentityV3 creates a ServiceClient that may be used to access the v3
