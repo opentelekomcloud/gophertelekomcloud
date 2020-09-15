@@ -68,6 +68,9 @@ type ProviderClient struct {
 	// Otherwise, it must have a value
 	AKSKAuthOptions *AKSKAuthOptions
 
+	// Region is region name, e.g. `eu-de`
+	Region string
+
 	// EndpointLocator describes how this provider discovers the endpoints for
 	// its constituent services.
 	EndpointLocator EndpointLocator

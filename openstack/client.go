@@ -342,6 +342,7 @@ func NewIdentityV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 	clientType := "identity"
 	var err error
 	if !reflect.DeepEqual(eo, golangsdk.EndpointOpts{}) {
+		eo.Region = client.Region
 		eo.ApplyDefaults(clientType)
 		endpoint, err = client.EndpointLocator(eo)
 		if err != nil {
@@ -371,6 +372,7 @@ func NewIdentityV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 
 func initClientOpts(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, clientType string) (*golangsdk.ServiceClient, error) {
 	sc := new(golangsdk.ServiceClient)
+	eo.Region = client.Region
 	eo.ApplyDefaults(clientType)
 	url, err := client.EndpointLocator(eo)
 	if err != nil {

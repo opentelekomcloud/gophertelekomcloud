@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
@@ -193,6 +193,7 @@ func (c *client) AuthenticatedClient() (*golangsdk.ProviderClient, error) {
 	client := new(golangsdk.ProviderClient)
 	client.IdentityBase = base
 	client.IdentityEndpoint = endpoint
+	client.Region = cloudConfig.RegionName
 	client.UseTokenLock()
 
 	opts, err := info2opts(&authInfo, cloudConfig.AuthType)
