@@ -60,9 +60,15 @@ func fileList(name string) []string {
 
 // This is helper for env-prefixed loading
 type Env interface {
+	// CloudFromEnv constructs cloud configuration with values from <prefixed> env vars
 	CloudFromEnv() *Cloud
+	// GetEnv finds first non-empty <prefixed> env variable to be used
 	GetEnv(keys ...string) string
+	// GetPrefix returns used prefix
 	GetPrefix() string
+
+	// AuthenticatedClient is the main meaning on `Env`, providing prefix-based
+	// way to get authenticated client
 	AuthenticatedClient() (*golangsdk.ProviderClient, error)
 }
 
@@ -70,6 +76,7 @@ type env struct {
 	Prefix string
 }
 
+// NewEnv create new <prefixed> env loader
 func NewEnv(prefix string) Env {
 	if prefix != "" && !strings.HasSuffix(prefix, "_") {
 		prefix += "_"
