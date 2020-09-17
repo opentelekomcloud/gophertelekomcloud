@@ -63,7 +63,7 @@ type Env interface {
 	// GetEnv finds first non-empty <prefixed> env variable to be used
 	GetEnv(keys ...string) string
 	// GetPrefix returns used prefix
-	GetPrefix() string
+	Prefix() string
 	// Cloud returns full cloud configuration
 	Cloud() (*Cloud, error)
 	// AuthenticatedClient is the main meaning on `Env`, providing prefix-based
@@ -87,7 +87,7 @@ func NewEnv(prefix string) Env {
 	return &env{prefix: prefix}
 }
 
-func (e *env) GetPrefix() string {
+func (e *env) Prefix() string {
 	return e.prefix
 }
 
