@@ -60,20 +60,23 @@ func fileList(name string) []string {
 
 // This is helper for env-prefixed loading
 type Env interface {
-	// CloudFromEnv constructs cloud configuration with values from <prefixed> env vars
-	CloudFromEnv() *Cloud
 	// GetEnv finds first non-empty <prefixed> env variable to be used
 	GetEnv(keys ...string) string
 	// GetPrefix returns used prefix
-	GetPrefix() string
-
+	Prefix() string
+	// Cloud returns full cloud configuration
+	Cloud() (*Cloud, error)
 	// AuthenticatedClient is the main meaning on `Env`, providing prefix-based
 	// way to get authenticated client
 	AuthenticatedClient() (*golangsdk.ProviderClient, error)
+
+	// cloudFromEnv constructs cloud configuration with values from <prefixed> env vars
+	cloudFromEnv() *Cloud
 }
 
 type env struct {
-	Prefix string
+	prefix string
+	cloud  *Cloud
 }
 
 // NewEnv create new <prefixed> env loader
@@ -81,14 +84,14 @@ func NewEnv(prefix string) Env {
 	if prefix != "" && !strings.HasSuffix(prefix, "_") {
 		prefix += "_"
 	}
-	return &env{Prefix: prefix}
+	return &env{prefix: prefix}
 }
 
-func (e *env) GetPrefix() string {
-	return e.Prefix
+func (e *env) Prefix() string {
+	return e.prefix
 }
 
-func (e *env) CloudFromEnv() *Cloud {
+func (e *env) cloudFromEnv() *Cloud {
 	authOpts, _ := AuthOptionsFromEnv(e)
 	verify := true
 	if v := e.GetEnv("INSECURE"); v != "" {
@@ -144,7 +147,7 @@ func (e *env) CloudFromEnv() *Cloud {
 // GetEnv returns first non-empty value of given environment variables
 func (e *env) GetEnv(keys ...string) string {
 	for _, key := range keys {
-		if value := os.Getenv(e.Prefix + key); value != "" {
+		if value := os.Getenv(e.prefix + key); value != "" {
 			return value
 		}
 	}
@@ -428,6 +431,25 @@ func mergeWithVendors(cloudConfig *Config, vendorPath string) *Config {
 	return cc
 }
 
+// Cloud get cloud merged from configuration and env variables
+func (e *env) Cloud() (*Cloud, error) {
+	if e.cloud != nil {
+		return e.cloud, nil
+	}
+	config, err := e.loadOpenstackConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to authenticate client")
+	}
+	cloud, err := mergeClouds(
+		config.Clouds[config.DefaultCloud],
+		e.cloudFromEnv(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
+	}
+	return cloud, err
+}
+
 // LoadCloudConfig utilize all existing cloud configurations to create cloud configuration:
 // env variables, clouds.yaml, secure.yaml, clouds-public.yaml
 func (e *env) loadOpenstackConfig() (*Config, error) {
@@ -480,9 +502,9 @@ func (e *env) loadOpenstackConfig() (*Config, error) {
 		envVarKey = defaultEnvVarKey
 	}
 	if _, ok := cloudConfig.Clouds[envVarKey]; ok {
-		return nil, fmt.Errorf("%sCLOUD_NAME=`%s` duplicates cloud defined in file", e.Prefix, envVarKey)
+		return nil, fmt.Errorf("%sCLOUD_NAME=`%s` duplicates cloud defined in file", e.prefix, envVarKey)
 	}
-	cloudConfig.Clouds[envVarKey] = *NewEnv(envVarKey).CloudFromEnv()
+	cloudConfig.Clouds[envVarKey] = *NewEnv(envVarKey).cloudFromEnv()
 
 	cloudName := e.GetEnv("CLOUD")
 	if cloudName == "" && len(cloudConfig.Clouds) == 1 {
@@ -565,16 +587,9 @@ func info2opts(authInfo *authInfo, authType AuthType) (golangsdk.AuthOptionsProv
 // AuthenticatedClient create new client based on used env prefix
 // this uses LoadOpenstackConfig inside
 func (e *env) AuthenticatedClient() (*golangsdk.ProviderClient, error) {
-	config, err := e.loadOpenstackConfig()
+	cloud, err := e.Cloud()
 	if err != nil {
-		return nil, fmt.Errorf("failed to authenticate client")
-	}
-	cloud, err := mergeClouds(
-		config.Clouds[config.DefaultCloud],
-		e.CloudFromEnv(),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
+		return nil, err
 	}
 	opts, err := info2opts(&cloud.AuthInfo, cloud.AuthType)
 	if err != nil {
