@@ -77,8 +77,6 @@ func NewEnv(prefix string) Env {
 	return &env{Prefix: prefix}
 }
 
-var noEnv = NewEnv("")
-
 func (e *env) GetPrefix() string {
 	return e.Prefix
 }
@@ -88,6 +86,15 @@ func (e *env) CloudFromEnv() *Cloud {
 	verify := true
 	if v := e.GetEnv("INSECURE"); v != "" {
 		verify = v != "1" && v != "true"
+	}
+	aws := NewEnv("AWS_")
+	access := aws.GetEnv("ACCESS_KEY_ID")
+	if access == "" {
+		access = e.GetEnv("ACCESS_KEY", "ACCESS_KEY_ID", "AK")
+	}
+	secret := aws.GetEnv("ACCESS_KEY_SECRET")
+	if secret == "" {
+		secret = e.GetEnv("SECRET_KEY", "ACCESS_KEY_SECRET", "SK")
 	}
 	cloud := &Cloud{
 		Cloud:   e.GetEnv("CLOUD"),
@@ -107,8 +114,8 @@ func (e *env) CloudFromEnv() *Cloud {
 			DomainName:        authOpts.DomainName,
 			DomainID:          authOpts.DomainID,
 			DefaultDomain:     e.GetEnv("DEFAULT_DOMAIN"),
-			AccessKey:         authOpts.AccessKey,
-			SecretKey:         authOpts.SecretKey,
+			AccessKey:         access,
+			SecretKey:         secret,
 			AgencyName:        authOpts.AgencyName,
 			AgencyDomainName:  authOpts.AgencyDomainName,
 			DelegatedProject:  authOpts.DelegatedProject,

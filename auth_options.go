@@ -82,11 +82,6 @@ type AuthOptions struct {
 	// authentication token ID.
 	TokenID string `json:"-"`
 
-	// AccessKey provide key for AK/SK auth
-	AccessKey string
-	// SecretKey provide key for AK/SK auth
-	SecretKey string
-
 	// AgencyName is the name of agency
 	AgencyName string `json:"-"`
 
@@ -95,6 +90,39 @@ type AuthOptions struct {
 
 	// DelegatedProject is the name of delegated project
 	DelegatedProject string `json:"-"`
+}
+
+// ToTokenV2CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
+// interface in the v2 tokens package
+func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
+	// Populate the request map.
+	authMap := make(map[string]interface{})
+
+	if opts.Username != "" {
+		if opts.Password != "" {
+			authMap["passwordCredentials"] = map[string]interface{}{
+				"username": opts.Username,
+				"password": opts.Password,
+			}
+		} else {
+			return nil, ErrMissingInput{Argument: "Password"}
+		}
+	} else if opts.TokenID != "" {
+		authMap["token"] = map[string]interface{}{
+			"id": opts.TokenID,
+		}
+	} else {
+		return nil, ErrMissingInput{Argument: "Username"}
+	}
+
+	if opts.TenantID != "" {
+		authMap["tenantId"] = opts.TenantID
+	}
+	if opts.TenantName != "" {
+		authMap["tenantName"] = opts.TenantName
+	}
+
+	return map[string]interface{}{"auth": authMap}, nil
 }
 
 func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {

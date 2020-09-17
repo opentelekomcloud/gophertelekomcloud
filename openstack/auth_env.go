@@ -23,7 +23,7 @@ To use this function, first set the OS_* environment variables (for example,
 by sourcing an `openrc` file), then:
 
 	opts, err := openstack.AuthOptionsFromEnv()
-	provider, err := openstack.OldAuthenticatedClient(opts)
+	provider, err := openstack.AuthenticatedClient(opts)
 */
 func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
 	e := NewEnv(defaultPrefix)
@@ -31,40 +31,19 @@ func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
 		e = envs[0]
 	}
 
-	authURL := e.GetEnv("AUTH_URL")
-	token := e.GetEnv("TOKEN", "TOKEN_ID")
-	username := e.GetEnv("USERNAME")
-	userID := e.GetEnv("USERID", "USER_ID")
-	password := e.GetEnv("PASSWORD")
-	projectID := e.GetEnv("PROJECT_ID", "TENANT_ID")
-	projectName := e.GetEnv("PROJECT_NAME", "TENANT_NAME")
-	domainID := e.GetEnv("DOMAIN_ID")
-	domainName := e.GetEnv("DOMAIN_NAME")
-
-	access := noEnv.GetEnv("AWS_ACCESS_KEY_ID")
-	if access == "" {
-		access = e.GetEnv("ACCESS_KEY", "ACCESS_KEY_ID")
-	}
-	secret := noEnv.GetEnv("AWS_ACCESS_KEY_SECRET")
-	if secret == "" {
-		secret = e.GetEnv("SECRET_KEY", "ACCESS_KEY_SECRET")
-	}
-
 	ao := golangsdk.AuthOptions{
-		IdentityEndpoint: authURL,
-		Username:         username,
-		UserID:           userID,
-		Password:         password,
-		DomainID:         domainID,
-		DomainName:       domainName,
-		TenantID:         projectID,
-		TenantName:       projectName,
-		TokenID:          token,
-		AccessKey:        access,
-		SecretKey:        secret,
-		AgencyName:       e.GetEnv("AGENCY_NAME"),
-		AgencyDomainName: e.GetEnv("AGENCY_DOMAIN_NAME"),
-		DelegatedProject: e.GetEnv("DELEGATED_PROJECT"),
+		IdentityEndpoint: e.GetEnv("AUTH_URL"),
+		Username:         e.GetEnv("USERNAME"),
+		UserID:           e.GetEnv("USERID", "USER_ID"),
+		Password:         e.GetEnv("PASSWORD"),
+		DomainID:         e.GetEnv("DOMAIN_ID"),
+		DomainName:       e.GetEnv("DOMAIN_NAME"),
+		TenantID:         e.GetEnv("PROJECT_ID", "TENANT_ID"),
+		TenantName:       e.GetEnv("PROJECT_NAME", "TENANT_NAME"),
+		TokenID:          e.GetEnv("TOKEN", "TOKEN_ID"),
+		AgencyName:       e.GetEnv("AGENCY_NAME", "TARGET_AGENCY_NAME"),
+		AgencyDomainName: e.GetEnv("AGENCY_DOMAIN_NAME", "TARGET_DOMAIN_NAME"),
+		DelegatedProject: e.GetEnv("DELEGATED_PROJECT", "TARGET_DOMAIN_NAME"),
 	}
 	return ao, nil
 }
