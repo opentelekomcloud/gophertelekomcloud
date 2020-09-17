@@ -499,7 +499,7 @@ func (e *env) loadOpenstackConfig() (*Config, error) {
 	return cloudConfig, nil
 }
 
-func info2opts(authInfo *authInfo, authType AuthType) (*golangsdk.AuthOptions, error) {
+func info2opts(authInfo *authInfo, authType AuthType) (golangsdk.AuthOptionsProvider, error) {
 	// project scope
 	if authInfo.ProjectID != "" || authInfo.ProjectName != "" {
 		if authInfo.ProjectDomainName != "" {
@@ -519,7 +519,7 @@ func info2opts(authInfo *authInfo, authType AuthType) (*golangsdk.AuthOptions, e
 		}
 	}
 
-	ao := &golangsdk.AuthOptions{
+	ao := golangsdk.AuthOptions{
 		IdentityEndpoint: authInfo.AuthURL,
 		TokenID:          authInfo.Token,
 		Username:         authInfo.Username,
@@ -545,7 +545,21 @@ func info2opts(authInfo *authInfo, authType AuthType) (*golangsdk.AuthOptions, e
 		err := golangsdk.ErrMissingInput{Argument: "auth_url"}
 		return nil, err
 	}
-	return ao, nil
+	if authInfo.AccessKey == "" {
+		return ao, nil
+	}
+	return golangsdk.AKSKAuthOptions{
+		IdentityEndpoint: ao.IdentityEndpoint,
+		ProjectId:        ao.TenantID,
+		ProjectName:      ao.TenantName,
+		Domain:           ao.DomainName,
+		DomainID:         ao.DomainID,
+		AccessKey:        authInfo.AccessKey,
+		SecretKey:        authInfo.SecretKey,
+		AgencyName:       ao.AgencyName,
+		AgencyDomainName: ao.AgencyDomainName,
+		DelegatedProject: ao.DelegatedProject,
+	}, nil
 }
 
 // AuthenticatedClient create new client based on used env prefix
@@ -564,9 +578,9 @@ func (e *env) AuthenticatedClient() (*golangsdk.ProviderClient, error) {
 	}
 	opts, err := info2opts(&cloud.AuthInfo, cloud.AuthType)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert authInfo to AuthOpts with env vars: %s", err)
+		return nil, fmt.Errorf("failed to convert authInfo to AuthOptsBuilder with env vars: %s", err)
 	}
-	client, err := AuthenticatedClient(*opts)
+	client, err := AuthenticatedClient(opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate client: %s", err)
 	}
