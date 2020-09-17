@@ -547,6 +547,10 @@ func info2opts(authInfo *authInfo, authType AuthType) (golangsdk.AuthOptionsProv
 		Username:         authInfo.Username,
 		UserID:           authInfo.UserID,
 		Password:         authInfo.Password,
+		DomainID:         authInfo.DomainID,
+		DomainName:       authInfo.DomainName,
+		TenantID:         authInfo.ProjectID,
+		TenantName:       authInfo.ProjectName,
 	}
 
 	// If an auth_type of "token" was specified, then make sure
