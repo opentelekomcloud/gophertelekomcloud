@@ -1,12 +1,8 @@
 package openstack
 
 import (
-	"os"
-
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
-
-var nilOptions = golangsdk.AuthOptions{}
 
 /*
 AuthOptionsFromEnv fills out an identity.AuthOptions structure with the
@@ -29,51 +25,25 @@ by sourcing an `openrc` file), then:
 	opts, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(opts)
 */
-func AuthOptionsFromEnv() (golangsdk.AuthOptions, error) {
-	authURL := os.Getenv("OS_AUTH_URL")
-	username := os.Getenv("OS_USERNAME")
-	userID := os.Getenv("OS_USERID")
-	password := os.Getenv("OS_PASSWORD")
-	tenantID := os.Getenv("OS_TENANT_ID")
-	tenantName := os.Getenv("OS_TENANT_NAME")
-	domainID := os.Getenv("OS_DOMAIN_ID")
-	domainName := os.Getenv("OS_DOMAIN_NAME")
-
-	// If OS_PROJECT_ID is set, overwrite tenantID with the value.
-	if v := os.Getenv("OS_PROJECT_ID"); v != "" {
-		tenantID = v
-	}
-
-	// If OS_PROJECT_NAME is set, overwrite tenantName with the value.
-	if v := os.Getenv("OS_PROJECT_NAME"); v != "" {
-		tenantName = v
-	}
-
-	if authURL == "" {
-		err := golangsdk.ErrMissingInput{Argument: "authURL"}
-		return nilOptions, err
-	}
-
-	if username == "" && userID == "" {
-		err := golangsdk.ErrMissingInput{Argument: "username"}
-		return nilOptions, err
-	}
-
-	if password == "" {
-		err := golangsdk.ErrMissingInput{Argument: "password"}
-		return nilOptions, err
+func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
+	e := NewEnv(defaultPrefix)
+	if len(envs) > 0 {
+		e = envs[0]
 	}
 
 	ao := golangsdk.AuthOptions{
-		IdentityEndpoint: authURL,
-		UserID:           userID,
-		Username:         username,
-		Password:         password,
-		TenantID:         tenantID,
-		TenantName:       tenantName,
-		DomainID:         domainID,
-		DomainName:       domainName,
+		IdentityEndpoint: e.GetEnv("AUTH_URL"),
+		Username:         e.GetEnv("USERNAME"),
+		UserID:           e.GetEnv("USERID", "USER_ID"),
+		Password:         e.GetEnv("PASSWORD"),
+		DomainID:         e.GetEnv("DOMAIN_ID"),
+		DomainName:       e.GetEnv("DOMAIN_NAME"),
+		TenantID:         e.GetEnv("PROJECT_ID", "TENANT_ID"),
+		TenantName:       e.GetEnv("PROJECT_NAME", "TENANT_NAME"),
+		TokenID:          e.GetEnv("TOKEN", "TOKEN_ID"),
+		AgencyName:       e.GetEnv("AGENCY_NAME", "TARGET_AGENCY_NAME"),
+		AgencyDomainName: e.GetEnv("AGENCY_DOMAIN_NAME", "TARGET_DOMAIN_NAME"),
+		DelegatedProject: e.GetEnv("DELEGATED_PROJECT", "TARGET_DOMAIN_NAME"),
 	}
-
 	return ao, nil
 }

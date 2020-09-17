@@ -91,8 +91,8 @@ Example:
 		Region: os.Getenv("OS_REGION_NAME"),
 	})
 */
-func AuthenticatedClient(options golangsdk.AuthOptions) (*golangsdk.ProviderClient, error) {
-	client, err := NewClient(options.IdentityEndpoint)
+func AuthenticatedClient(options golangsdk.AuthOptionsProvider) (*golangsdk.ProviderClient, error) {
+	client, err := NewClient(options.GetIdentityEndpoint())
 	if err != nil {
 		return nil, err
 	}

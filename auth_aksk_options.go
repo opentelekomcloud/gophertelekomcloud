@@ -27,10 +27,10 @@ type AKSKAuthOptions struct {
 	BssDomain   string
 	BssDomainID string
 
-	AccessKey string //Access Key
-	SecretKey string //Secret key
+	AccessKey string // Access Key
+	SecretKey string // Secret key
 
-	// AgencyNmae is the name of agnecy
+	// AgencyName is the name of agency
 	AgencyName string
 
 	// AgencyDomainName is the name of domain who created the agency

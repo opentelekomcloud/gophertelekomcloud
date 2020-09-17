@@ -82,7 +82,7 @@ type AuthOptions struct {
 	// authentication token ID.
 	TokenID string `json:"-"`
 
-	// AgencyNmae is the name of agnecy
+	// AgencyName is the name of agency
 	AgencyName string `json:"-"`
 
 	// AgencyDomainName is the name of domain who created the agency
