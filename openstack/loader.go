@@ -77,6 +77,10 @@ type Env interface {
 type env struct {
 	prefix string
 	cloud  *Cloud
+
+	// Unstable make env ignore lazy cloud loading and
+	// refresh it every time it's requested
+	Unstable bool
 }
 
 // NewEnv create new <prefixed> env loader
@@ -433,21 +437,21 @@ func mergeWithVendors(cloudConfig *Config, vendorPath string) *Config {
 
 // Cloud get cloud merged from configuration and env variables
 func (e *env) Cloud() (*Cloud, error) {
-	if e.cloud != nil {
-		return e.cloud, nil
+	if e.cloud == nil || e.Unstable {
+		config, err := e.loadOpenstackConfig()
+		if err != nil {
+			return nil, fmt.Errorf("failed to authenticate client: %s", err)
+		}
+		cloud, err := mergeClouds(
+			config.Clouds[config.DefaultCloud],
+			e.cloudFromEnv(),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
+		}
+		e.cloud = cloud
 	}
-	config, err := e.loadOpenstackConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to authenticate client")
-	}
-	cloud, err := mergeClouds(
-		config.Clouds[config.DefaultCloud],
-		e.cloudFromEnv(),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
-	}
-	return cloud, err
+	return e.cloud, nil
 }
 
 // LoadCloudConfig utilize all existing cloud configurations to create cloud configuration:
