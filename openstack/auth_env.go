@@ -1,12 +1,8 @@
 package openstack
 
 import (
-	"os"
-
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
-
-var nilOptions = golangsdk.AuthOptions{}
 
 /*
 AuthOptionsFromEnv fills out an identity.AuthOptions structure with the
@@ -27,53 +23,48 @@ To use this function, first set the OS_* environment variables (for example,
 by sourcing an `openrc` file), then:
 
 	opts, err := openstack.AuthOptionsFromEnv()
-	provider, err := openstack.AuthenticatedClient(opts)
+	provider, err := openstack.OldAuthenticatedClient(opts)
 */
-func AuthOptionsFromEnv() (golangsdk.AuthOptions, error) {
-	authURL := os.Getenv("OS_AUTH_URL")
-	username := os.Getenv("OS_USERNAME")
-	userID := os.Getenv("OS_USERID")
-	password := os.Getenv("OS_PASSWORD")
-	tenantID := os.Getenv("OS_TENANT_ID")
-	tenantName := os.Getenv("OS_TENANT_NAME")
-	domainID := os.Getenv("OS_DOMAIN_ID")
-	domainName := os.Getenv("OS_DOMAIN_NAME")
-
-	// If OS_PROJECT_ID is set, overwrite tenantID with the value.
-	if v := os.Getenv("OS_PROJECT_ID"); v != "" {
-		tenantID = v
+func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
+	e := NewEnv(defaultPrefix)
+	if len(envs) > 0 {
+		e = envs[0]
 	}
 
-	// If OS_PROJECT_NAME is set, overwrite tenantName with the value.
-	if v := os.Getenv("OS_PROJECT_NAME"); v != "" {
-		tenantName = v
-	}
+	authURL := e.GetEnv("AUTH_URL")
+	token := e.GetEnv("TOKEN", "TOKEN_ID")
+	username := e.GetEnv("USERNAME")
+	userID := e.GetEnv("USERID", "USER_ID")
+	password := e.GetEnv("PASSWORD")
+	projectID := e.GetEnv("PROJECT_ID", "TENANT_ID")
+	projectName := e.GetEnv("PROJECT_NAME", "TENANT_NAME")
+	domainID := e.GetEnv("DOMAIN_ID")
+	domainName := e.GetEnv("DOMAIN_NAME")
 
-	if authURL == "" {
-		err := golangsdk.ErrMissingInput{Argument: "authURL"}
-		return nilOptions, err
+	access := noEnv.GetEnv("AWS_ACCESS_KEY_ID")
+	if access == "" {
+		access = e.GetEnv("ACCESS_KEY", "ACCESS_KEY_ID")
 	}
-
-	if username == "" && userID == "" {
-		err := golangsdk.ErrMissingInput{Argument: "username"}
-		return nilOptions, err
-	}
-
-	if password == "" {
-		err := golangsdk.ErrMissingInput{Argument: "password"}
-		return nilOptions, err
+	secret := noEnv.GetEnv("AWS_ACCESS_KEY_SECRET")
+	if secret == "" {
+		secret = e.GetEnv("SECRET_KEY", "ACCESS_KEY_SECRET")
 	}
 
 	ao := golangsdk.AuthOptions{
 		IdentityEndpoint: authURL,
-		UserID:           userID,
 		Username:         username,
+		UserID:           userID,
 		Password:         password,
-		TenantID:         tenantID,
-		TenantName:       tenantName,
 		DomainID:         domainID,
 		DomainName:       domainName,
+		TenantID:         projectID,
+		TenantName:       projectName,
+		TokenID:          token,
+		AccessKey:        access,
+		SecretKey:        secret,
+		AgencyName:       e.GetEnv("AGENCY_NAME"),
+		AgencyDomainName: e.GetEnv("AGENCY_DOMAIN_NAME"),
+		DelegatedProject: e.GetEnv("DELEGATED_PROJECT"),
 	}
-
 	return ao, nil
 }
