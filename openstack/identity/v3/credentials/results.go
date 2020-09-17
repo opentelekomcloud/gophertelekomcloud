@@ -51,9 +51,9 @@ type GetResult struct {
 	credentialResult
 }
 
-// CredentialUpdateResult is the response from an Update operation. Call its Extract
+// UpdateResult is the response from an Update operation. Call its Extract
 // method to interpret it as a Role.
-type CredentialUpdateResult struct {
+type UpdateResult struct {
 	credentialResult
 }
 
