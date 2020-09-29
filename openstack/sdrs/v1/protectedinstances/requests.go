@@ -2,11 +2,8 @@ package protectedinstances
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -16,19 +13,19 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new instance.
 type CreateOpts struct {
-	//Group ID
+	// Group ID
 	GroupID string `json:"server_group_id" required:"true"`
-	//Server ID
+	// Server ID
 	ServerID string `json:"server_id" required:"true"`
-	//Instance Name
+	// Instance Name
 	Name string `json:"name" required:"true"`
-	//Instance Description
+	// Instance Description
 	Description string `json:"description,omitempty"`
-	//Cluster ID
+	// Cluster ID
 	ClusterID string `json:"cluster_id,omitempty"`
-	//Subnet ID
+	// Subnet ID
 	SubnetID string `json:"primary_subnet_id,omitempty"`
-	//IP Address
+	// IP Address
 	IpAddress string `json:"primary_ip_address,omitempty"`
 }
 
@@ -57,7 +54,7 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update an Instance.
 type UpdateOpts struct {
-	//Instance name
+	// Instance name
 	Name string `json:"name" required:"true"`
 }
 
@@ -80,7 +77,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 
 // Get retrieves a particular Instance based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
@@ -92,9 +89,9 @@ type DeleteOptsBuilder interface {
 
 // DeleteOpts contains all the values needed to delete an Instance.
 type DeleteOpts struct {
-	//Delete Target Server
+	// Delete Target Server
 	DeleteTargetServer bool `json:"delete_target_server,omitempty"`
-	//Delete Target Eip
+	// Delete Target Eip
 	DeleteTargetEip bool `json:"delete_target_eip,omitempty"`
 }
 

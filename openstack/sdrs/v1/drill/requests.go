@@ -2,11 +2,8 @@ package drill
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var requestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -73,7 +70,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 
 // Get retrieves a particular dr-drill based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &requestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 

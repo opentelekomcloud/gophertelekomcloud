@@ -2,11 +2,8 @@ package ccattackprotection_rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -64,14 +61,14 @@ func Create(c *golangsdk.ServiceClient, policyID string, opts CreateOptsBuilder)
 
 // Get retrieves a particular cc attack rule based on its unique ID.
 func Get(c *golangsdk.ServiceClient, policyID, ruleID string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, policyID, ruleID), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, policyID, ruleID), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
 // Delete will permanently delete a particular cc attack rule based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, policyID, ruleID string) (r DeleteResult) {
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{204},
-		MoreHeaders: RequestOpts.MoreHeaders}
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.Delete(resourceURL(c, policyID, ruleID), reqOpt)
 	return
 }

@@ -2,11 +2,8 @@ package domains
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -16,28 +13,28 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new backup.
 type CreateOpts struct {
-	//Domain name
+	// Domain name
 	HostName string `json:"hostname" required:"true"`
-	//Certificate ID
+	// Certificate ID
 	CertificateId string `json:"certificateid,omitempty"`
-	//The original server information
+	// The original server information
 	Server []ServerOpts `json:"server" required:"true"`
-	//Whether proxy is configured
+	// Whether proxy is configured
 	Proxy *bool `json:"proxy" required:"true"`
-	//The type of the source IP header
+	// The type of the source IP header
 	SipHeaderName string `json:"sip_header_name,omitempty"`
-	//The HTTP request header for identifying the real source IP.
+	// The HTTP request header for identifying the real source IP.
 	SipHeaderList []string `json:"sip_header_list,omitempty"`
 }
 
 type ServerOpts struct {
-	//Protocol type of the client
+	// Protocol type of the client
 	ClientProtocol string `json:"client_protocol" required:"true"`
-	//Protocol used by WAF to forward client requests to the server
+	// Protocol used by WAF to forward client requests to the server
 	ServerProtocol string `json:"server_protocol" required:"true"`
-	//IP address or domain name of the web server that the client accesses.
+	// IP address or domain name of the web server that the client accesses.
 	Address string `json:"address" required:"true"`
-	//Port number used by the web server
+	// Port number used by the web server
 	Port string `json:"port" required:"true"`
 }
 
@@ -66,15 +63,15 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a Domain.
 type UpdateOpts struct {
-	//Certificate ID
+	// Certificate ID
 	CertificateId string `json:"certificateid,omitempty"`
-	//The original server information
+	// The original server information
 	Server []ServerOpts `json:"server,omitempty"`
-	//Whether proxy is configured
+	// Whether proxy is configured
 	Proxy *bool `json:"proxy,omitempty"`
-	//The type of the source IP header
+	// The type of the source IP header
 	SipHeaderName string `json:"sip_header_name,omitempty"`
-	//The HTTP request header for identifying the real source IP.
+	// The HTTP request header for identifying the real source IP.
 	SipHeaderList []string `json:"sip_header_list,omitempty"`
 }
 
@@ -97,14 +94,14 @@ func Update(c *golangsdk.ServiceClient, domainID string, opts UpdateOptsBuilder)
 
 // Get retrieves a particular Domain based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
 // Delete will permanently delete a particular Domain based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{204},
-		MoreHeaders: RequestOpts.MoreHeaders}
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.Delete(resourceURL(c, id), reqOpt)
 	return
 }

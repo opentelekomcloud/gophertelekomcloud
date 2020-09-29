@@ -2,11 +2,8 @@ package replications
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -16,13 +13,13 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new replication.
 type CreateOpts struct {
-	//Protection Group ID
+	// Protection Group ID
 	GroupID string `json:"server_group_id" required:"true"`
-	//Volume ID
+	// Volume ID
 	VolumeID string `json:"volume_id" required:"true"`
-	//Replication Name
+	// Replication Name
 	Name string `json:"name" required:"true"`
-	//Replication Description
+	// Replication Description
 	Description string `json:"description,omitempty"`
 }
 
@@ -51,7 +48,7 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a Replication.
 type UpdateOpts struct {
-	//Replication name
+	// Replication name
 	Name string `json:"name" required:"true"`
 }
 
@@ -74,7 +71,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 
 // Get retrieves a particular Replication based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
@@ -86,9 +83,9 @@ type DeleteOptsBuilder interface {
 
 // DeleteOpts contains all the values needed to delete a Replication.
 type DeleteOpts struct {
-	//Group ID
+	// Group ID
 	GroupID string `json:"server_group_id,omitempty"`
-	//Delete Target Volume
+	// Delete Target Volume
 	DeleteVolume bool `json:"delete_target_volume,omitempty"`
 }
 

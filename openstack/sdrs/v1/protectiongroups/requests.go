@@ -2,11 +2,8 @@ package protectiongroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -16,19 +13,19 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new group.
 type CreateOpts struct {
-	//Group Name
+	// Group Name
 	Name string `json:"name" required:"true"`
-	//Group Description
+	// Group Description
 	Description string `json:"description,omitempty"`
-	//The source AZ of a protection group
+	// The source AZ of a protection group
 	SourceAZ string `json:"source_availability_zone" required:"true"`
-	//The target AZ of a protection group
+	// The target AZ of a protection group
 	TargetAZ string `json:"target_availability_zone" required:"true"`
-	//An active-active domain
+	// An active-active domain
 	DomainID string `json:"domain_id" required:"true"`
-	//ID of the source VPC
+	// ID of the source VPC
 	SourceVpcID string `json:"source_vpc_id" required:"true"`
-	//Deployment model
+	// Deployment model
 	DrType string `json:"dr_type,omitempty"`
 }
 
@@ -57,7 +54,7 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a Group.
 type UpdateOpts struct {
-	//Group name
+	// Group name
 	Name string `json:"name" required:"true"`
 }
 
@@ -80,21 +77,20 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 
 // Get retrieves a particular Group based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
 // Delete will permanently delete a particular Group based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r JobResult) {
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders}
+	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.DeleteWithResponse(resourceURL(c, id), &r.Body, reqOpt)
 	return
 }
 
 // EnableOpts contains all the values needed to enable protection for a Group.
 type EnableOpts struct {
-	//Empty
+	// Empty
 }
 
 // ToGroupEnableMap builds a create request body from EnableOpts.
@@ -117,7 +113,7 @@ func Enable(c *golangsdk.ServiceClient, id string) (r JobResult) {
 
 // DisableOpts contains all the values needed to disable protection for a Group.
 type DisableOpts struct {
-	//Empty
+	// Empty
 }
 
 // ToGroupDisableMap builds a create request body from DisableOpts.
