@@ -2,11 +2,8 @@ package configurations
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -16,20 +13,20 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new configuration.
 type CreateOpts struct {
-	//Configuration Name
+	// Configuration Name
 	Name string `json:"name" required:"true"`
-	//Configuration Description
+	// Configuration Description
 	Description string `json:"description,omitempty"`
-	//Configuration Values
+	// Configuration Values
 	Values map[string]string `json:"values,omitempty"`
-	//Database Object
+	// Database Object
 	DataStore DataStore `json:"datastore" required:"true"`
 }
 
 type DataStore struct {
-	//DB Engine
+	// DB Engine
 	Type string `json:"type" required:"true"`
-	//DB version
+	// DB version
 	Version string `json:"version" required:"true"`
 }
 
@@ -47,7 +44,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 	}
 	_, r.Err = c.Post(rootURL(c), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders, JSONBody: nil,
 	})
 	return
 }
@@ -60,11 +57,11 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a Configuration.
 type UpdateOpts struct {
-	//Configuration Name
+	// Configuration Name
 	Name string `json:"name,omitempty"`
-	//Configuration Description
+	// Configuration Description
 	Description string `json:"description,omitempty"`
-	//Configuration Values
+	// Configuration Values
 	Values map[string]string `json:"values,omitempty"`
 }
 
@@ -81,21 +78,20 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 		return
 	}
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders}
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.Put(resourceURL(c, id), b, nil, reqOpt)
 	return
 }
 
 // Get retrieves a particular Configuration based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
 // Delete will permanently delete a particular Configuration based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders}
+	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.Delete(resourceURL(c, id), reqOpt)
 	return
 }

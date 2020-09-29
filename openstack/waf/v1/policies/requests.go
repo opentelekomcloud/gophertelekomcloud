@@ -2,11 +2,8 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -105,14 +102,14 @@ func UpdateHosts(c *golangsdk.ServiceClient, policyID string, opts UpdateHostsOp
 
 // Get retrieves a particular policy based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &RequestOpts)
+	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
 // Delete will permanently delete a particular policy based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{204},
-		MoreHeaders: RequestOpts.MoreHeaders}
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.Delete(resourceURL(c, id), reqOpt)
 	return
 }

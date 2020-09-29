@@ -2,19 +2,16 @@ package instances
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
-
-//CreateOptsBuilder is used for creating instance parameters.
-//any struct providing the parameters should implement this interface
+// CreateOptsBuilder is used for creating instance parameters.
+// any struct providing the parameters should implement this interface
 type CreateOptsBuilder interface {
 	ToInstanceCreateMap() (map[string]interface{}, error)
 }
 
-//CreateOpts is a struct that contains all the parameters.
+// CreateOpts is a struct that contains all the parameters.
 type CreateOpts struct {
 	Name string `json:"name" required:"true"`
 
@@ -51,7 +48,7 @@ func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "instance")
 }
 
-//Create an instance with given parameters.
+// Create an instance with given parameters.
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToInstanceCreateMap()
 	if err != nil {
@@ -61,12 +58,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{202},
-		MoreHeaders: RequestOpts.MoreHeaders,
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
 	})
 	return
 }
 
-//delete an instance via id
+// delete an instance via id
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	b := make(map[string]interface{})
 	_, r.Err = client.DeleteWithBody(resourceURL(client, id), b, &golangsdk.RequestOpts{
@@ -75,8 +72,8 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	return
 }
 
-//get an instance with detailed information by id
+// get an instance with detailed information by id
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, &RequestOpts)
+	_, r.Err = client.Get(resourceURL(client, id), &r.Body, openstack.StdRequestOpts())
 	return
 }
