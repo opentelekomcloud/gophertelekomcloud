@@ -130,7 +130,7 @@ func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOption
 			return v3auth(client, endpoint, &authOptions, golangsdk.EndpointOpts{})
 		default:
 			// The switch statement must be out of date from the versions list.
-			return fmt.Errorf("Unrecognized identity version: %s", chosen.ID)
+			return fmt.Errorf("unrecognized identity version: %s", chosen.ID)
 		}
 	} else {
 		akskAuthOptions, isAkSkOptions := options.(golangsdk.AKSKAuthOptions)
@@ -144,7 +144,6 @@ func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOption
 		}
 		return fmt.Errorf("Unrecognized auth options provider: %s", reflect.TypeOf(options))
 	}
-
 }
 
 // AuthenticateV2 explicitly authenticates against the identity v2 endpoint.
@@ -179,7 +178,7 @@ func v2auth(client *golangsdk.ProviderClient, endpoint string, options golangsdk
 		return err
 	}
 
-	catalog, err := result.ExtractServiceCatalog()
+	serviceCatalog, err := result.ExtractServiceCatalog()
 	if err != nil {
 		return err
 	}
@@ -193,7 +192,7 @@ func v2auth(client *golangsdk.ProviderClient, endpoint string, options golangsdk
 	client.TokenID = token.ID
 	client.ProjectID = token.Tenant.ID
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
-		return V2EndpointURL(catalog, opts)
+		return V2EndpointURL(serviceCatalog, opts)
 	}
 
 	return nil
@@ -227,7 +226,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		return err
 	}
 
-	catalog, err := result.ExtractServiceCatalog()
+	serviceCatalog, err := result.ExtractServiceCatalog()
 	if err != nil {
 		return err
 	}
@@ -245,7 +244,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		}
 	}
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
-		return V3EndpointURL(catalog, opts)
+		return V3EndpointURL(serviceCatalog, opts)
 	}
 
 	return nil
@@ -275,7 +274,7 @@ func getEntryByServiceId(entries []tokens3.CatalogEntry, serviceId string) *toke
 		return nil
 	}
 
-	for idx, _ := range entries {
+	for idx := range entries {
 		if entries[idx].ID == serviceId {
 			return &entries[idx]
 		}
@@ -293,17 +292,17 @@ func getProjectID(client *golangsdk.ServiceClient, name string) (string, error) 
 		return "", err
 	}
 
-	projects, err := projects.ExtractProjects(allPages)
+	extractProjects, err := projects.ExtractProjects(allPages)
 
 	if err != nil {
 		return "", err
 	}
 
-	if len(projects) < 1 {
+	if len(extractProjects) < 1 {
 		return "", fmt.Errorf("[DEBUG] cannot find the tenant: %s", name)
 	}
 
-	return projects[0].ID, nil
+	return extractProjects[0].ID, nil
 }
 
 func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golangsdk.AKSKAuthOptions, eo golangsdk.EndpointOpts) error {
@@ -413,7 +412,7 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 		return err
 	}
 
-	catalog, err := result.ExtractServiceCatalog()
+	serviceCatalog, err := result.ExtractServiceCatalog()
 	if err != nil {
 		return err
 	}
@@ -429,7 +428,7 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 	}
 
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
-		return V3EndpointURL(catalog, opts)
+		return V3EndpointURL(serviceCatalog, opts)
 	}
 
 	client.AKSKAuthOptions.AccessKey = ""
@@ -447,12 +446,12 @@ func getDomainID(name string, client *golangsdk.ServiceClient) (string, error) {
 	}
 	allPages, err := domains.List(client, &opts).AllPages()
 	if err != nil {
-		return "", fmt.Errorf("List domains failed, err=%s", err)
+		return "", fmt.Errorf("list domains failed, err=%s", err)
 	}
 
 	all, err := domains.ExtractDomains(allPages)
 	if err != nil {
-		return "", fmt.Errorf("Extract domains failed, err=%s", err)
+		return "", fmt.Errorf("extract domains failed, err=%s", err)
 	}
 
 	count := len(all)
@@ -525,12 +524,12 @@ func NewIdentityV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 func initClientOpts(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, clientType string) (*golangsdk.ServiceClient, error) {
 	sc := new(golangsdk.ServiceClient)
 	eo.ApplyDefaults(clientType)
-	url, err := client.EndpointLocator(eo)
+	locator, err := client.EndpointLocator(eo)
 	if err != nil {
 		return sc, err
 	}
 	sc.ProviderClient = client
-	sc.Endpoint = url
+	sc.Endpoint = locator
 	sc.Type = clientType
 	return sc, nil
 }
@@ -547,15 +546,6 @@ func initcommonServiceClient(client *golangsdk.ProviderClient, eo golangsdk.Endp
 	e := strings.Replace(sc.Endpoint, "v2", version, 1)
 	sc.Endpoint = strings.Replace(e, "evs", srv, 1)
 	sc.ResourceBase = sc.Endpoint
-	return sc, err
-}
-
-// TODO: Need to change to apig client type from apig once available
-// ApiGateWayV1 creates a service client that is used for Huawei cloud for API gateway.
-func ApiGateWayV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "network")
-	sc.Endpoint = strings.Replace(sc.Endpoint, "vpc", "apig", 1)
-	sc.ResourceBase = sc.Endpoint + "v1.0/apigw/"
 	return sc, err
 }
 
@@ -614,11 +604,6 @@ func NewCDNV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 // orchestration service.
 func NewOrchestrationV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "orchestration")
-}
-
-// NewDBV1 creates a ServiceClient that may be used to access the v1 DB service.
-func NewDBV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initClientOpts(client, eo, "database")
 }
 
 // NewDNSV2 creates a ServiceClient that may be used to access the v2 DNS
@@ -943,14 +928,6 @@ func NewMAASV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*go
 	return sc, err
 }
 
-// MAASV1 creates a ServiceClient that may be used with the v1 MAAS service.
-func MAASV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "network")
-	sc.Endpoint = "https://oms.myhuaweicloud.com/v1/"
-	sc.ResourceBase = sc.Endpoint + client.ProjectID + "/"
-	return sc, err
-}
-
 func NewHwAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "volumev2")
 	if err != nil {
@@ -1022,15 +999,6 @@ func SDRSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golan
 	return sc, err
 }
 
-// CCIV1 creates a ServiceClient that may be used with the v1 CCI service.
-func CCIV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "network")
-	sc.Endpoint = strings.Replace(sc.Endpoint, "vpc", "cci", 1)
-	sc.Endpoint = sc.Endpoint + "apis/networking.cci.io/v1beta1/"
-	sc.ResourceBase = sc.Endpoint
-	return sc, err
-}
-
 // TMSV1 creates a ServiceClient that may be used with the v1 TMS service.
 func TMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "network")
@@ -1053,8 +1021,6 @@ func NewBSSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 
 func NewSDKClient(c *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, serviceType string) (*golangsdk.ServiceClient, error) {
 	switch serviceType {
-	case "mls":
-		return NewMLSV1(c, eo)
 	case "dws":
 		return NewDWSClient(c, eo)
 	case "nat":
@@ -1082,34 +1048,11 @@ func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
-// NewHuaweiLTSV2 creates a ServiceClient that may be used to access the Huawei Cloud LTS service.
-func NewHuaweiLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initcommonServiceClient(client, eo, "lts", "v2")
-	return sc, err
-}
-
-// NewFGSV2 creates a ServiceClient that may be used with the v2 as
-// package.
-func NewFGSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "fgsv2")
-	return sc, err
-}
-
 // NewVPCV1 creates a ServiceClient that may be used with the v1 network
 // package.
 func NewVPCV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "vpc")
 	return sc, err
-}
-
-// NewGeminiDBV3 creates a ServiceClient that may be used with the GeminiDB service.
-func NewGeminiDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc := new(golangsdk.ServiceClient)
-	sc.ProviderClient = client
-	sc.Endpoint = fmt.Sprintf("https://gaussdb-nosql.%s.myhuaweicloud.com", eo.Region)
-	sc.ResourceBase = fmt.Sprintf("%s/v3/%s/", sc.Endpoint, client.ProjectID)
-
-	return sc, nil
 }
 
 // InitServiceClientByName create a ServiceClient which was assembled by service and region name.
