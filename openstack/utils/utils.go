@@ -1,7 +1,9 @@
 package utils
 
 import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"reflect"
+	"strings"
 )
 
 func DeleteNotPassParams(params *map[string]interface{}, notPassParams []string) {
@@ -67,4 +69,15 @@ func In(item interface{}, slice interface{}) bool {
 		}
 	}
 	return false
+}
+
+// GetRegion returns the region that was specified in the auth options. If a
+// region was not set, the provider-level region is checked. The provider-level
+// region can either be set by the region argument or by OS_REGION_NAME.
+func GetRegion(authOpts golangsdk.AuthOptions) string {
+	n := authOpts.TenantName
+	if n == "" {
+		n = authOpts.DelegatedProject
+	}
+	return strings.Split(n, "_")[0]
 }
