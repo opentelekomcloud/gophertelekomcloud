@@ -36,7 +36,7 @@ func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
 		Username:         e.GetEnv("USERNAME"),
 		UserID:           e.GetEnv("USERID", "USER_ID"),
 		Password:         e.GetEnv("PASSWORD"),
-		DomainID:         e.GetEnv("DOMAIN_ID"),
+		DomainID:         e.GetEnv("DOMAIN_ID", "USER_DOMAIN_ID", "PROJECT_DOMAIN_ID"),
 		DomainName:       e.GetEnv("DOMAIN_NAME", "USER_DOMAIN_NAME", "PROJECT_DOMAIN_NAME"),
 		TenantID:         e.GetEnv("PROJECT_ID", "TENANT_ID"),
 		TenantName:       e.GetEnv("PROJECT_NAME", "TENANT_NAME"),
