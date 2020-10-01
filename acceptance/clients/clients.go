@@ -184,25 +184,6 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
-// NewDBV1Client returns a *ServiceClient for making calls
-// to the OpenStack Database v1 API. An error will be returned
-// if authentication or client creation was not possible.
-func NewDBV1Client() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewDBV1(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
-}
-
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
@@ -220,62 +201,6 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 	return openstack.NewDNSV2(client, golangsdk.EndpointOpts{
 		Region: os.Getenv("OS_REGION_NAME"),
 	})
-}
-
-// NewIdentityV2Client returns a *ServiceClient for making calls
-// to the OpenStack Identity v2 API. An error will be returned
-// if authentication or client creation was not possible.
-func NewIdentityV2Client() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewIdentityV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
-}
-
-// NewIdentityV2AdminClient returns a *ServiceClient for making calls
-// to the Admin Endpoint of the OpenStack Identity v2 API. An error
-// will be returned if authentication or client creation was not possible.
-func NewIdentityV2AdminClient() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewIdentityV2(client, golangsdk.EndpointOpts{
-		Region:       os.Getenv("OS_REGION_NAME"),
-		Availability: golangsdk.AvailabilityAdmin,
-	})
-}
-
-// NewIdentityV2UnauthenticatedClient returns an unauthenticated *ServiceClient
-// for the OpenStack Identity v2 API. An error  will be returned if
-// authentication or client creation was not possible.
-func NewIdentityV2UnauthenticatedClient() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.NewClient(ao.IdentityEndpoint)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewIdentityV2(client, golangsdk.EndpointOpts{})
 }
 
 // NewIdentityV3Client returns a *ServiceClient for making calls
