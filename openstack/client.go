@@ -727,3 +727,12 @@ func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	sc, err := initCommonServiceClient(client, eo, "lts", "v2.0")
 	return sc, err
 }
+
+func NewSDKClient(c *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, serviceType string) (*golangsdk.ServiceClient, error) {
+	switch serviceType {
+	case "nat":
+		return NewNatV2(c, eo)
+	}
+
+	return initClientOpts(c, eo, serviceType)
+}
