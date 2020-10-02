@@ -140,6 +140,15 @@ func AuthenticateV3(client *golangsdk.ProviderClient, options tokens3.AuthOption
 	return v3auth(client, "", options, eo)
 }
 
+type token3Result interface {
+	Extract() (*tokens3.Token, error)
+	ExtractToken() (*tokens3.Token, error)
+	ExtractServiceCatalog() (*tokens3.ServiceCatalog, error)
+	ExtractUser() (*tokens3.User, error)
+	ExtractRoles() ([]tokens3.Role, error)
+	ExtractProject() (*tokens3.Project, error)
+}
+
 func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.AuthOptionsBuilder, eo golangsdk.EndpointOpts) error {
 	// Override the generated service endpoint with the one returned by the version endpoint.
 	v3Client, err := NewIdentityV3(client, eo)
@@ -151,7 +160,13 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		v3Client.Endpoint = endpoint
 	}
 
-	result := tokens3.Create(v3Client, opts)
+	var result token3Result
+
+	if opts.AuthTokenID() != "" {
+		result = tokens3.Get(v3Client, opts.AuthTokenID())
+	} else {
+		result = tokens3.Create(v3Client, opts)
+	}
 
 	token, err := result.ExtractToken()
 	if err != nil {
@@ -539,9 +554,9 @@ func NewImageServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOp
 // NewOtcV1 creates a ServiceClient that may be used with the v1 network package.
 func NewElbV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, otctype string) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "compute")
-	//fmt.Printf("client=%+v.\n", sc)
+	// fmt.Printf("client=%+v.\n", sc)
 	sc.Endpoint = strings.Replace(strings.Replace(sc.Endpoint, "ecs", otctype, 1), "/v2/", "/v1.0/", 1)
-	//fmt.Printf("url=%s.\n", sc.Endpoint)
+	// fmt.Printf("url=%s.\n", sc.Endpoint)
 	sc.ResourceBase = sc.Endpoint
 	sc.Type = otctype
 	return sc, err
@@ -574,8 +589,8 @@ func NewRdsTagV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*
 	return sc, err
 }
 
-//NewAutoScalingService creates a ServiceClient that may be used to access the
-//auto-scaling service of huawei public cloud
+// NewAutoScalingService creates a ServiceClient that may be used to access the
+// auto-scaling service of huawei public cloud
 func NewAutoScalingService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "volumev2")
 	if err != nil {
