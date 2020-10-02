@@ -80,7 +80,7 @@ Example:
 	ao, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(ao)
 	client, err := openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 */
 func AuthenticatedClient(options golangsdk.AuthOptionsProvider) (*golangsdk.ProviderClient, error) {

@@ -2,6 +2,7 @@ package utils
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -80,4 +81,13 @@ func GetRegion(authOpts golangsdk.AuthOptions) string {
 		n = authOpts.DelegatedProject
 	}
 	return strings.Split(n, "_")[0]
+}
+
+//getenv returns value from env is present or default value
+func Getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
 }

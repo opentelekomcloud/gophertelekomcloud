@@ -13,6 +13,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
+const defaultRegion = "eu-de"
+
 // AcceptanceTestChoices contains image and flavor selections for use by the acceptance tests.
 type AcceptanceTestChoices struct {
 	// ImageID contains the ID of a valid image.
@@ -124,7 +126,7 @@ func NewBlockStorageV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewBlockStorageV1(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -143,7 +145,7 @@ func NewBlockStorageV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewBlockStorageV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -162,7 +164,7 @@ func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewBlockStorageV3(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -181,7 +183,7 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewComputeV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -200,7 +202,7 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewDNSV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -219,7 +221,7 @@ func NewIdentityV3Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewIdentityV3(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -255,7 +257,7 @@ func NewImageServiceV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewImageServiceV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -274,7 +276,7 @@ func NewNetworkV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV1(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: os.Getenv("OS_REGION_NAME"),
 	})
 }
 
@@ -298,7 +300,7 @@ func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV1(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -317,7 +319,7 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -341,7 +343,7 @@ func NewPeerNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -360,7 +362,7 @@ func NewObjectStorageV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewObjectStorageV1(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
@@ -379,7 +381,7 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewSharedFileSystemV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
 	})
 }
 
