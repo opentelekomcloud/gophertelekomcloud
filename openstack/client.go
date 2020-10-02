@@ -163,6 +163,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 	var result token3Result
 
 	if opts.AuthTokenID() != "" {
+		v3Client.SetToken(opts.AuthTokenID())
 		result = tokens3.Get(v3Client, opts.AuthTokenID())
 	} else {
 		result = tokens3.Create(v3Client, opts)
