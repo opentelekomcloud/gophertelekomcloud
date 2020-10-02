@@ -31,8 +31,7 @@ func TestAuthenticatedClient(t *testing.T) {
 
 	// Find the storage service in the service catalog.
 	storage, err := openstack.NewObjectStorageV1(client, golangsdk.EndpointOpts{
-		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
-	})
+		Region: utils.GetRegion()})
 	if err != nil {
 		t.Errorf("Unable to locate a storage service: %v", err)
 	} else {
@@ -61,7 +60,7 @@ func TestReauth(t *testing.T) {
 
 	t.Logf("Creating a compute client")
 	_, err = openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
-		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
+		Region: utils.GetRegion(ao),
 	})
 	if err != nil {
 		t.Fatalf("Unable to create compute client: %v", err)
@@ -78,7 +77,7 @@ func TestReauth(t *testing.T) {
 
 	t.Logf("Creating a compute client")
 	_, err = openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
-		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
+		Region: utils.GetRegion(ao),
 	})
 	if err != nil {
 		t.Fatalf("Unable to create compute client: %v", err)

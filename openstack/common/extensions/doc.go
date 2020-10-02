@@ -23,7 +23,7 @@ Example of Retrieving Compute Extensions
 	ao, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(ao)
 	computeClient, err := openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
-		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
+		Region: utils.GetRegion(ao),
 	})
 
 	allPages, err := extensions.List(computeClient).Allpages()
@@ -39,7 +39,7 @@ Example of Retrieving Network Extensions
 	ao, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(ao)
 	networkClient, err := openstack.NewNetworkV2(provider, golangsdk.EndpointOpts{
-		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
+		Region: utils.GetRegion(ao),
 	})
 
 	allPages, err := extensions.List(networkClient).Allpages()

@@ -119,7 +119,7 @@ client; which can be created like so:
 
 ```go
 client, err := openstack.NewRdsServiceV1(provider, golangsdk.EndpointOpts{
-  Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
+  Region: utils.GetRegion(ao),
 })
 ```
 

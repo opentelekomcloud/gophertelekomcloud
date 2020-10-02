@@ -8,7 +8,7 @@ Example of Creating a Service Client
 	ao, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(ao)
 	client, err := openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: utils.Getenv("OS_REGION_NAME", defaultRegion),
+		Region: utils.GetRegion(ao),
 	})
 */
 package openstack

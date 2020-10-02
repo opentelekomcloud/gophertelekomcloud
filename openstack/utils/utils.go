@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const defaultRegion = "eu-de"
+
 func DeleteNotPassParams(params *map[string]interface{}, notPassParams []string) {
 	for _, i := range notPassParams {
 		delete(*params, i)
@@ -80,11 +82,14 @@ func GetRegion(authOpts golangsdk.AuthOptions) string {
 	if n == "" {
 		n = authOpts.DelegatedProject
 	}
-	return strings.Split(n, "_")[0]
+	if len(n) == 0 {
+		return strings.Split(n, "_")[0]
+	}
+	return getenv("OS_REGION_NAME", defaultRegion)
 }
 
 //getenv returns value from env is present or default value
-func Getenv(key, fallback string) string {
+func getenv(key, fallback string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
 		return fallback
