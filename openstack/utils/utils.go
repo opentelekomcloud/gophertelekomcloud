@@ -75,23 +75,24 @@ func In(item interface{}, slice interface{}) bool {
 }
 
 // GetRegion returns the region that was specified in the auth options. If a
-// region was not set, the provider-level region is checked. The provider-level
-// region can either be set by the region argument or by OS_REGION_NAME.
+// region was not set, the provider-level region is checked. If the provider-level
+// region was not set, it returns value from env or defaultRegion
 func GetRegion(authOpts golangsdk.AuthOptions) string {
 	n := authOpts.TenantName
 	if n == "" {
 		n = authOpts.DelegatedProject
 	}
+	defRegion := defaultRegion
 	if len(n) != 0 {
-		return strings.Split(n, "_")[0]
+		defRegion = strings.Split(n, "_")[0]
 	}
-	return getenv("OS_REGION_NAME", defaultRegion)
+	return getenv("OS_REGION_NAME", defRegion)
 }
 
 //getenv returns value from env is present or default value
 func getenv(key, fallback string) string {
 	value := os.Getenv(key)
-	if len(value) == 0 {
+	if value == "" {
 		return fallback
 	}
 	return value
