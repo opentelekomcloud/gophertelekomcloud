@@ -82,7 +82,7 @@ func GetRegion(authOpts golangsdk.AuthOptions) string {
 	if n == "" {
 		n = authOpts.DelegatedProject
 	}
-	if len(n) == 0 {
+	if len(n) != 0 {
 		return strings.Split(n, "_")[0]
 	}
 	return getenv("OS_REGION_NAME", defaultRegion)
