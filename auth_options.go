@@ -289,11 +289,11 @@ func (opts *AuthOptions) CanReauth() bool {
 }
 
 func (opts *AuthOptions) AuthTokenID() string {
-	return ""
+	return opts.TokenID
 }
 
 func (opts *AuthOptions) AuthHeaderDomainID() string {
-	return ""
+	return opts.DomainID
 }
 
 // Implements the method of AuthOptionsProvider
