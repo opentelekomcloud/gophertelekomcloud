@@ -5,6 +5,7 @@ package clients
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 	"os"
 	"strings"
 
@@ -123,7 +124,7 @@ func NewBlockStorageV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewBlockStorageV1(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -142,8 +143,7 @@ func NewBlockStorageV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewBlockStorageV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
+		Region: utils.GetRegion(ao)})
 }
 
 // NewBlockStorageV3Client returns a *ServiceClient for making calls
@@ -161,7 +161,7 @@ func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewBlockStorageV3(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -180,26 +180,7 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewComputeV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
-}
-
-// NewDBV1Client returns a *ServiceClient for making calls
-// to the OpenStack Database v1 API. An error will be returned
-// if authentication or client creation was not possible.
-func NewDBV1Client() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewDBV1(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -218,64 +199,8 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewDNSV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
-}
-
-// NewIdentityV2Client returns a *ServiceClient for making calls
-// to the OpenStack Identity v2 API. An error will be returned
-// if authentication or client creation was not possible.
-func NewIdentityV2Client() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewIdentityV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
-}
-
-// NewIdentityV2AdminClient returns a *ServiceClient for making calls
-// to the Admin Endpoint of the OpenStack Identity v2 API. An error
-// will be returned if authentication or client creation was not possible.
-func NewIdentityV2AdminClient() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewIdentityV2(client, golangsdk.EndpointOpts{
-		Region:       os.Getenv("OS_REGION_NAME"),
-		Availability: golangsdk.AvailabilityAdmin,
-	})
-}
-
-// NewIdentityV2UnauthenticatedClient returns an unauthenticated *ServiceClient
-// for the OpenStack Identity v2 API. An error  will be returned if
-// authentication or client creation was not possible.
-func NewIdentityV2UnauthenticatedClient() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := openstack.NewClient(ao.IdentityEndpoint)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewIdentityV2(client, golangsdk.EndpointOpts{})
 }
 
 // NewIdentityV3Client returns a *ServiceClient for making calls
@@ -293,7 +218,7 @@ func NewIdentityV3Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewIdentityV3(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -329,7 +254,7 @@ func NewImageServiceV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewImageServiceV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -348,7 +273,7 @@ func NewNetworkV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV1(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -372,7 +297,7 @@ func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV1(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -391,7 +316,7 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -415,7 +340,7 @@ func NewPeerNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -434,7 +359,7 @@ func NewObjectStorageV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewObjectStorageV1(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 
@@ -453,7 +378,7 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewSharedFileSystemV2(client, golangsdk.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: utils.GetRegion(ao),
 	})
 }
 

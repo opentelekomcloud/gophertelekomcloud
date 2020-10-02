@@ -14,17 +14,16 @@ import (
 func TestSubnetList(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	if err != nil {
-		t.Fatalf("Unable to create a subnet : %v", err)
+		t.Fatalf("Unable to create NetworkV1 client : %v", err)
 	}
 	allPages, err := subnets.List(client, subnets.ListOpts{})
 	tools.PrintResource(t, allPages)
-
 }
 
 func TestSubnetsCRUD(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	if err != nil {
-		t.Fatalf("Unable to create a subnet : %v", err)
+		t.Fatalf("Unable to create NetworkV1 client: %v", err)
 	}
 
 	// Create a subnet
@@ -64,7 +63,6 @@ func TestSubnetsCRUD(t *testing.T) {
 }
 
 func createSubnetNResources(t *testing.T, client *golangsdk.ServiceClient) (*subnets.Subnet, error) {
-
 	vpcName := tools.RandomString("TESTACC-", 8)
 
 	createOpts := vpcs.CreateOpts{
@@ -151,7 +149,7 @@ func waitForSubnetToActive(client *golangsdk.ServiceClient, subnetID string, sec
 
 		//If subnet status is other than Active, send error
 		if n.Status == "DOWN" || n.Status == "ERROR" {
-			return false, fmt.Errorf("Subnet status: '%s'", n.Status)
+			return false, fmt.Errorf("subnet status: '%s'", n.Status)
 		}
 
 		return false, nil

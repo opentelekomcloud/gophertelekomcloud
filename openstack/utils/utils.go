@@ -1,8 +1,13 @@
 package utils
 
 import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"os"
 	"reflect"
+	"strings"
 )
+
+const defaultRegion = "eu-de"
 
 func DeleteNotPassParams(params *map[string]interface{}, notPassParams []string) {
 	for _, i := range notPassParams {
@@ -67,4 +72,28 @@ func In(item interface{}, slice interface{}) bool {
 		}
 	}
 	return false
+}
+
+// GetRegion returns the region that was specified in the auth options. If a
+// region was not set it returns value from env OS_REGION_NAME or defaultRegion
+// "eu-de"
+func GetRegion(authOpts golangsdk.AuthOptions) string {
+	n := authOpts.TenantName
+	if n == "" {
+		n = authOpts.DelegatedProject
+	}
+	defRegion := defaultRegion
+	if len(n) != 0 {
+		defRegion = strings.Split(n, "_")[0]
+	}
+	return getenv("OS_REGION_NAME", defRegion)
+}
+
+//getenv returns value from env is present or default value
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+	return value
 }

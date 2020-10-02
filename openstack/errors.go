@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	tokens2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v2/tokens"
 	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
 )
 
@@ -22,17 +21,6 @@ type ErrInvalidAvailabilityProvided struct{ golangsdk.ErrInvalidInput }
 
 func (e ErrInvalidAvailabilityProvided) Error() string {
 	return fmt.Sprintf("Unexpected availability in endpoint query: %s", e.Value)
-}
-
-// ErrMultipleMatchingEndpointsV2 is the error when more than one endpoint
-// for the given options is found in the v2 catalog
-type ErrMultipleMatchingEndpointsV2 struct {
-	golangsdk.BaseError
-	Endpoints []tokens2.Endpoint
-}
-
-func (e ErrMultipleMatchingEndpointsV2) Error() string {
-	return fmt.Sprintf("Discovered %d matching endpoints: %#v", len(e.Endpoints), e.Endpoints)
 }
 
 // ErrMultipleMatchingEndpointsV3 is the error when more than one endpoint
