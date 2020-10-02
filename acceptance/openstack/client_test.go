@@ -1,11 +1,10 @@
-// +build acceptance
-
 package openstack
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 	"testing"
 	"time"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
@@ -31,7 +30,7 @@ func TestAuthenticatedClient(t *testing.T) {
 
 	// Find the storage service in the service catalog.
 	storage, err := openstack.NewObjectStorageV1(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion()})
+		Region: utils.GetRegion(ao)})
 	if err != nil {
 		t.Errorf("Unable to locate a storage service: %v", err)
 	} else {
