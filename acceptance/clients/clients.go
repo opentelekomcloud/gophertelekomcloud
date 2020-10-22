@@ -13,6 +13,33 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
+var (
+	OS_FLAVOR_ID         = os.Getenv("OS_FLAVOR_ID")
+	OS_FLAVOR_NAME       = os.Getenv("OS_FLAVOR_NAME")
+	OS_IMAGE_ID          = os.Getenv("OS_IMAGE_ID")
+	OS_IMAGE_NAME        = os.Getenv("OS_IMAGE_NAME")
+	OS_NETWORK_ID        = os.Getenv("OS_NETWORK_ID")
+	OS_POOL_NAME         = os.Getenv("OS_POOL_NAME")
+	OS_REGION_NAME       = os.Getenv("OS_REGION_NAME")
+	OS_ACCESS_KEY        = os.Getenv("OS_ACCESS_KEY")
+	OS_SECRET_KEY        = os.Getenv("OS_SECRET_KEY")
+	OS_AVAILABILITY_ZONE = os.Getenv("OS_AVAILABILITY_ZONE")
+	OS_VPC_ID            = os.Getenv("OS_VPC_ID")
+	OS_SUBNET_ID         = os.Getenv("OS_SUBNET_ID")
+	OS_TENANT_ID         = os.Getenv("OS_TENANT_ID")
+	OS_KEYPAIR_NAME      = os.Getenv("OS_KEYPAIR_NAME")
+	OS_TENANT_NAME       = getTenantName()
+	OS_USER_ID           = os.Getenv("OS_USER_ID")
+)
+
+func getTenantName() string {
+	tn := os.Getenv("OS_TENANT_NAME")
+	if tn == "" {
+		tn = os.Getenv("OS_PROJECT_NAME")
+	}
+	return tn
+}
+
 // AcceptanceTestChoices contains image and flavor selections for use by the acceptance tests.
 type AcceptanceTestChoices struct {
 	// ImageID contains the ID of a valid image.
@@ -378,6 +405,21 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewSharedFileSystemV2(client, golangsdk.EndpointOpts{
+		Region: utils.GetRegion(ao),
+	})
+}
+
+func NewRdsV3() (*golangsdk.ServiceClient, error) {
+	ao, err := openstack.AuthOptionsFromEnv()
+	if err != nil {
+		return nil, err
+	}
+	client, err := openstack.AuthenticatedClient(ao)
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewRDSV3(client, golangsdk.EndpointOpts{
 		Region: utils.GetRegion(ao),
 	})
 }
