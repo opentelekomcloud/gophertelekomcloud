@@ -104,11 +104,8 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // group based on its unique ID and RetryTimeout.
 func DeleteWithRetry(c *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
-		response, err := c.Delete(resourceURL(c, id), nil)
-		if err != nil {
-			return false, err
-		}
-		if response.StatusCode == 202 || response.StatusCode == 204 {
+		_, err := c.Delete(resourceURL(c, id), nil)
+		if err == nil {
 			return true, nil
 		}
 		return false, nil
