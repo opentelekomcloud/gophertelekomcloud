@@ -130,8 +130,11 @@ func DeleteWithRetry(c *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
 		_, err := c.Delete(resourceURL(c, id), nil)
 		if err != nil {
-			time.Sleep(10 * time.Second)
-			return false, nil
+			if _, ok := err.(golangsdk.ErrDefault409); ok {
+				time.Sleep(10 * time.Second)
+				return false, nil
+			}
+			return false, err
 		}
 		return true, nil
 	})
