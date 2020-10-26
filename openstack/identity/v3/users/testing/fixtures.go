@@ -114,6 +114,31 @@ const UpdateOutput = `
 }
 `
 
+// UpdateExtendedRequest provides the input to as Update request.
+const UpdateExtendedRequest = `
+{
+    "user": {
+        "enabled": false,
+        "email": "email@generic.otc"
+    }
+}
+`
+
+// UpdateExtendedOutput provides an update result.
+const UpdateExtendedOutput = `
+{
+    "user": {
+        "default_project_id": "263fd9",
+        "domain_id": "1789d1",
+        "enabled": false,
+        "id": "9fe1d3",
+        "name": "jsmith",
+        "pwd_status": false,
+        "email": "email@generic.otc"
+    }
+}
+`
+
 // ListGroupsOutput provides a ListGroups result.
 const ListGroupsOutput = `
 {
@@ -215,6 +240,16 @@ var SecondUserUpdated = users.User{
 	Enabled:          false,
 	ID:               "9fe1d3",
 	Name:             "jsmith",
+}
+
+// SecondUserUpdated is how SecondUser should look after an Update.
+var ThirdUserUpdated = users.User{
+	DefaultProjectID: "263fd9",
+	DomainID:         "1789d1",
+	Enabled:          false,
+	ID:               "9fe1d3",
+	Name:             "jsmith",
+	Email:            "email@generic.otc",
 }
 
 // ExpectedUsersSlice is the slice of users expected to be returned from ListOutput.
@@ -326,10 +361,23 @@ func HandleUpdateUserSuccessfully(t *testing.T) {
 	th.Mux.HandleFunc("/users/9fe1d3", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PATCH")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
-		th.TestJSONRequest(t, r, UpdateRequest)
+		th.TestJSONRequest(t, r, UpdateExtendedRequest)
 
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, UpdateOutput)
+	})
+}
+
+// HandleUpdateUserSuccessfully creates an HTTP handler at `/users` on the
+// test handler mux that tests user update.
+func HandleExtendedUpdateUserSuccessfully(t *testing.T) {
+	th.Mux.HandleFunc("/OS-USER/users/9fe1d3", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PUT")
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
+		th.TestJSONRequest(t, r, UpdateExtendedRequest)
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, UpdateExtendedOutput)
 	})
 }
 
