@@ -7,7 +7,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	"testing"
-	"time"
 )
 
 func TestRdsList(t *testing.T) {
@@ -128,7 +127,6 @@ func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsId string) {
 	if err != nil {
 		t.Fatalf("Unable to delete RDSv3: %s", err)
 	}
-	time.Sleep(4 * time.Minute)
 	t.Logf("RDSv3 instance deleted: %s", rdsId)
 
 	deleteSecGroup(t, rds.Instances[0].SecurityGroupId)
@@ -181,7 +179,7 @@ func deleteSecGroup(t *testing.T, sgID string) {
 	if err != nil {
 		t.Fatalf("Unable to create Networkv2 client: %s", err)
 	}
-	err = groups.Delete(nwClient, sgID).ExtractErr()
+	err = groups.DeleteWithRetry(nwClient, sgID, 600)
 	if err != nil {
 		t.Fatalf("Unable to delete networking_secgroup: %s, err: %s", sgID, err)
 	}
