@@ -128,7 +128,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 func DeleteWithRetry(c *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
 		_, err := c.Delete(resourceURL(c, id), nil)
-		if err != nil {
+		if err == nil {
 			return true, nil
 		}
 		return false, nil
