@@ -3,6 +3,7 @@ package secgroups
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"time"
 )
 
 func commonList(client *golangsdk.ServiceClient, url string) pagination.Pager {
@@ -105,10 +106,11 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 func DeleteWithRetry(c *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
 		_, err := c.Delete(resourceURL(c, id), nil)
-		if err == nil {
-			return true, nil
+		if err != nil {
+			time.Sleep(10 * time.Second)
+			return false, err
 		}
-		return false, nil
+		return true, nil
 	})
 }
 

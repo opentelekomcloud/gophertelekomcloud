@@ -3,6 +3,7 @@ package groups
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"time"
 )
 
 // ListOpts allows the filtering and sorting of paginated collections through
@@ -128,10 +129,11 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 func DeleteWithRetry(c *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
 		_, err := c.Delete(resourceURL(c, id), nil)
-		if err == nil {
-			return true, nil
+		if err != nil {
+			time.Sleep(10 * time.Second)
+			return false, err
 		}
-		return false, nil
+		return true, nil
 	})
 }
 
