@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"time"
 )
 
 // ListOpts allows the filtering and sorting of paginated collections through
