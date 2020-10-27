@@ -1,12 +1,13 @@
+---
 - project:
-    name: gophercloud/gophercloud
+    merge-mode: squash-merge
+    vars:
+      functest_project_name: "eu-de_zuul_go"
     check:
       jobs:
-        - gophercloud-unittest
-        - gophercloud-acceptance-test
-    recheck-mitaka:
+        - golangci-lint
+        - golang-make-vet
+    gate:
       jobs:
-        - gophercloud-acceptance-test-mitaka
-    recheck-pike:
-      jobs:
-        - gophercloud-acceptance-test-pike
+        - golangci-lint
+        - golang-make-vet
