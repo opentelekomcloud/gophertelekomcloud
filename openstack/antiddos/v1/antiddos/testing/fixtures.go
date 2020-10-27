@@ -42,7 +42,8 @@ func HandleCreateSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateRequest)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, CreateOutput)
+		_, err := fmt.Fprintf(w, CreateOutput)
+		th.AssertNoErr(t, err)
 	})
 }
 

@@ -23,7 +23,8 @@ func TestListFlavors(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
@@ -237,7 +238,7 @@ func TestFlavorAccessesList(t *testing.T) {
 	})
 
 	expected := []flavors.FlavorAccess{
-		flavors.FlavorAccess{
+		{
 			FlavorID: "12345678",
 			TenantID: "2f954bcf047c4ee9b09a37d49ae6db54",
 		},
@@ -285,7 +286,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 	})
 
 	expected := []flavors.FlavorAccess{
-		flavors.FlavorAccess{
+		{
 			FlavorID: "12345678",
 			TenantID: "2f954bcf047c4ee9b09a37d49ae6db54",
 		},

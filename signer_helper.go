@@ -42,7 +42,7 @@ func (cache *MemoryCache) Add(cacheKey string, cacheData string) {
 
 	if len(cache.cacheKeys) >= cache.MaxCount && len(cache.cacheKeys) > 1 {
 		delete(cache.cacheHolder, cache.cacheKeys[0]) // delete first item
-		cache.cacheKeys = append(cache.cacheKeys[1:]) // pop first one
+		cache.cacheKeys = cache.cacheKeys[1:]         // pop first one
 	}
 
 	cache.cacheHolder[cacheKey] = cacheData

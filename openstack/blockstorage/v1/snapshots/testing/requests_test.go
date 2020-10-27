@@ -18,7 +18,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	snapshots.List(client.ServiceClient(), &snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	err := snapshots.List(client.ServiceClient(), &snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := snapshots.ExtractSnapshots(page)
 		if err != nil {
@@ -51,7 +51,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
-
+	th.AssertNoErr(t, err)
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)
 	}

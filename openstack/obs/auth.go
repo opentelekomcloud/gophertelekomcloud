@@ -25,9 +25,9 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 	isAkSkEmpty := obsClient.conf.securityProvider == nil || obsClient.conf.securityProvider.ak == "" || obsClient.conf.securityProvider.sk == ""
 	if isAkSkEmpty == false && obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
-			params[HEADER_STS_TOKEN_OBS] = obsClient.conf.securityProvider.securityToken
+			params[HeaderStsTokenObs] = obsClient.conf.securityProvider.securityToken
 		} else {
-			params[HEADER_STS_TOKEN_AMZ] = obsClient.conf.securityProvider.securityToken
+			params[HeaderStsTokenAmz] = obsClient.conf.securityProvider.securityToken
 		}
 	}
 	requestUrl, canonicalizedUrl := obsClient.conf.formatUrls(bucketName, objectKey, params, true)
@@ -45,20 +45,20 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 		doLog(LEVEL_WARN, "No ak/sk provided, skip to construct authorization")
 	} else {
 		if isV4 {
-			date, parseDateErr := time.Parse(RFC1123_FORMAT, headers[HEADER_DATE_CAMEL][0])
+			date, parseDateErr := time.Parse(Rfc1123Format, headers[HeaderDateCamel][0])
 			if parseDateErr != nil {
 				doLog(LEVEL_WARN, "Failed to parse date with reason: %v", parseDateErr)
 				return "", parseDateErr
 			}
-			delete(headers, HEADER_DATE_CAMEL)
-			shortDate := date.Format(SHORT_DATE_FORMAT)
-			longDate := date.Format(LONG_DATE_FORMAT)
-			if len(headers[HEADER_HOST_CAMEL]) != 0 {
-				index := strings.LastIndex(headers[HEADER_HOST_CAMEL][0], ":")
+			delete(headers, HeaderDateCamel)
+			shortDate := date.Format(ShortDateFormat)
+			longDate := date.Format(LongDateFormat)
+			if len(headers[HeaderHostCamel]) != 0 {
+				index := strings.LastIndex(headers[HeaderHostCamel][0], ":")
 				if index != -1 {
-					port := headers[HEADER_HOST_CAMEL][0][index+1:]
+					port := headers[HeaderHostCamel][0][index+1:]
 					if port == "80" || port == "443" {
-						headers[HEADER_HOST_CAMEL] = []string{headers[HEADER_HOST_CAMEL][0][:index]}
+						headers[HeaderHostCamel] = []string{headers[HeaderHostCamel][0][:index]}
 					}
 				}
 
@@ -67,11 +67,11 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 			signedHeaders, _headers := getSignedHeaders(headers)
 
 			credential, scope := getCredential(obsClient.conf.securityProvider.ak, obsClient.conf.region, shortDate)
-			params[PARAM_ALGORITHM_AMZ_CAMEL] = V4_HASH_PREFIX
-			params[PARAM_CREDENTIAL_AMZ_CAMEL] = credential
-			params[PARAM_DATE_AMZ_CAMEL] = longDate
-			params[PARAM_EXPIRES_AMZ_CAMEL] = Int64ToString(expires)
-			params[PARAM_SIGNEDHEADERS_AMZ_CAMEL] = strings.Join(signedHeaders, ";")
+			params[ParamAlgorithmAmzCamel] = V4HashPrefix
+			params[ParamCredentialAmzCamel] = credential
+			params[ParamDateAmzCamel] = longDate
+			params[ParamExpiresAmzCamel] = Int64ToString(expires)
+			params[ParamSignedheadersAmzCamel] = strings.Join(signedHeaders, ";")
 
 			requestUrl, canonicalizedUrl = obsClient.conf.formatUrls(bucketName, objectKey, params, true)
 			parsedRequestUrl, _err := url.Parse(requestUrl)
@@ -80,20 +80,20 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 				return "", _err
 			}
 
-			stringToSign := getV4StringToSign(method, canonicalizedUrl, parsedRequestUrl.RawQuery, scope, longDate, UNSIGNED_PAYLOAD, signedHeaders, _headers)
+			stringToSign := getV4StringToSign(method, canonicalizedUrl, parsedRequestUrl.RawQuery, scope, longDate, UnsignedPayload, signedHeaders, _headers)
 			signature := getSignature(stringToSign, obsClient.conf.securityProvider.sk, obsClient.conf.region, shortDate)
 
-			requestUrl += fmt.Sprintf("&%s=%s", PARAM_SIGNATURE_AMZ_CAMEL, UrlEncode(signature, false))
+			requestUrl += fmt.Sprintf("&%s=%s", ParamSignatureAmzCamel, UrlEncode(signature, false))
 
 		} else {
-			originDate := headers[HEADER_DATE_CAMEL][0]
-			date, parseDateErr := time.Parse(RFC1123_FORMAT, originDate)
+			originDate := headers[HeaderDateCamel][0]
+			date, parseDateErr := time.Parse(Rfc1123Format, originDate)
 			if parseDateErr != nil {
 				doLog(LEVEL_WARN, "Failed to parse date with reason: %v", parseDateErr)
 				return "", parseDateErr
 			}
 			expires += date.Unix()
-			headers[HEADER_DATE_CAMEL] = []string{Int64ToString(expires)}
+			headers[HeaderDateCamel] = []string{Int64ToString(expires)}
 
 			stringToSign := getV2StringToSign(method, canonicalizedUrl, headers, obsClient.conf.signature == SignatureObs)
 			signature := UrlEncode(Base64Encode(HmacSha1([]byte(obsClient.conf.securityProvider.sk), []byte(stringToSign))), false)
@@ -102,7 +102,7 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 			} else {
 				requestUrl += "&"
 			}
-			delete(headers, HEADER_DATE_CAMEL)
+			delete(headers, HeaderDateCamel)
 
 			if obsClient.conf.signature != SignatureObs {
 				requestUrl += "AWS"
@@ -119,9 +119,9 @@ func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params m
 	isAkSkEmpty := obsClient.conf.securityProvider == nil || obsClient.conf.securityProvider.ak == "" || obsClient.conf.securityProvider.sk == ""
 	if isAkSkEmpty == false && obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
-			headers[HEADER_STS_TOKEN_OBS] = []string{obsClient.conf.securityProvider.securityToken}
+			headers[HeaderStsTokenObs] = []string{obsClient.conf.securityProvider.securityToken}
 		} else {
-			headers[HEADER_STS_TOKEN_AMZ] = []string{obsClient.conf.securityProvider.securityToken}
+			headers[HeaderStsTokenAmz] = []string{obsClient.conf.securityProvider.securityToken}
 		}
 	}
 	isObs := obsClient.conf.signature == SignatureObs
@@ -146,45 +146,45 @@ func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params m
 		sk := obsClient.conf.securityProvider.sk
 		var authorization string
 		if isV4 {
-			headers[HEADER_CONTENT_SHA256_AMZ] = []string{EMPTY_CONTENT_SHA256}
+			headers[HeaderContentSha256Amz] = []string{EmptyContentSha256}
 			ret := v4Auth(ak, sk, obsClient.conf.region, method, canonicalizedUrl, parsedRequestUrl.RawQuery, headers)
-			authorization = fmt.Sprintf("%s Credential=%s,SignedHeaders=%s,Signature=%s", V4_HASH_PREFIX, ret["Credential"], ret["SignedHeaders"], ret["Signature"])
+			authorization = fmt.Sprintf("%s Credential=%s,SignedHeaders=%s,Signature=%s", V4HashPrefix, ret["Credential"], ret["SignedHeaders"], ret["Signature"])
 		} else {
 			ret := v2Auth(ak, sk, method, canonicalizedUrl, headers, isObs)
-			hashPrefix := V2_HASH_PREFIX
+			hashPrefix := V2HashPrefix
 			if isObs {
-				hashPrefix = OBS_HASH_PREFIX
+				hashPrefix = ObsHashPrefix
 			}
 			authorization = fmt.Sprintf("%s %s:%s", hashPrefix, ak, ret["Signature"])
 		}
-		headers[HEADER_AUTH_CAMEL] = []string{authorization}
+		headers[HeaderAuthCamel] = []string{authorization}
 	}
 	return
 }
 
 func prepareHostAndDate(headers map[string][]string, hostName string, isV4 bool) {
-	headers[HEADER_HOST_CAMEL] = []string{hostName}
-	if date, ok := headers[HEADER_DATE_AMZ]; ok {
+	headers[HeaderHostCamel] = []string{hostName}
+	if date, ok := headers[HeaderDateAmz]; ok {
 		flag := false
 		if len(date) == 1 {
 			if isV4 {
-				if t, err := time.Parse(LONG_DATE_FORMAT, date[0]); err == nil {
-					headers[HEADER_DATE_CAMEL] = []string{FormatUtcToRfc1123(t)}
+				if t, err := time.Parse(LongDateFormat, date[0]); err == nil {
+					headers[HeaderDateCamel] = []string{FormatUtcToRfc1123(t)}
 					flag = true
 				}
 			} else {
 				if strings.HasSuffix(date[0], "GMT") {
-					headers[HEADER_DATE_CAMEL] = []string{date[0]}
+					headers[HeaderDateCamel] = []string{date[0]}
 					flag = true
 				}
 			}
 		}
 		if !flag {
-			delete(headers, HEADER_DATE_AMZ)
+			delete(headers, HeaderDateAmz)
 		}
 	}
-	if _, ok := headers[HEADER_DATE_CAMEL]; !ok {
-		headers[HEADER_DATE_CAMEL] = []string{FormatUtcToRfc1123(time.Now().UTC())}
+	if _, ok := headers[HeaderDateCamel]; !ok {
+		headers[HeaderDateCamel] = []string{FormatUtcToRfc1123(time.Now().UTC())}
 	}
 }
 
@@ -205,9 +205,9 @@ func attachHeaders(headers map[string][]string, isObs bool) string {
 	for key, value := range headers {
 		_key := strings.ToLower(strings.TrimSpace(key))
 		if _key != "" {
-			prefixheader := HEADER_PREFIX
+			prefixheader := HeaderPrefix
 			if isObs {
-				prefixheader = HEADER_PREFIX_OBS
+				prefixheader = HeaderPrefixObs
 			}
 			if _key == "content-md5" || _key == "content-type" || _key == "date" || strings.HasPrefix(_key, prefixheader) {
 				keys = append(keys, _key)
@@ -224,23 +224,23 @@ func attachHeaders(headers map[string][]string, isObs bool) string {
 			keys = append(keys, interestedHeader)
 		}
 	}
-	dateCamelHeader := PARAM_DATE_AMZ_CAMEL
-	dataHeader := HEADER_DATE_AMZ
+	dateCamelHeader := ParamDateAmzCamel
+	dataHeader := HeaderDateAmz
 	if isObs {
-		dateCamelHeader = PARAM_DATE_OBS_CAMEL
-		dataHeader = HEADER_DATE_OBS
+		dateCamelHeader = ParamDateObsCamel
+		dataHeader = HeaderDateObs
 	}
-	if _, ok := _headers[HEADER_DATE_CAMEL]; ok {
+	if _, ok := _headers[HeaderDateCamel]; ok {
 		if _, ok := _headers[dataHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
+			_headers[HeaderDateCamel] = []string{""}
 		} else if _, ok := headers[dateCamelHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
+			_headers[HeaderDateCamel] = []string{""}
 		}
-	} else if _, ok := _headers[strings.ToLower(HEADER_DATE_CAMEL)]; ok {
+	} else if _, ok := _headers[strings.ToLower(HeaderDateCamel)]; ok {
 		if _, ok := _headers[dataHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
+			_headers[HeaderDateCamel] = []string{""}
 		} else if _, ok := headers[dateCamelHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
+			_headers[HeaderDateCamel] = []string{""}
 		}
 	}
 
@@ -249,11 +249,11 @@ func attachHeaders(headers map[string][]string, isObs bool) string {
 	stringToSign := make([]string, 0, len(keys))
 	for _, key := range keys {
 		var value string
-		prefixHeader := HEADER_PREFIX
-		prefixMetaHeader := HEADER_PREFIX_META
+		prefixHeader := HeaderPrefix
+		prefixMetaHeader := HeaderPrefixMeta
 		if isObs {
-			prefixHeader = HEADER_PREFIX_OBS
-			prefixMetaHeader = HEADER_PREFIX_META_OBS
+			prefixHeader = HeaderPrefixObs
+			prefixMetaHeader = HeaderPrefixMetaObs
 		}
 		if strings.HasPrefix(key, prefixHeader) {
 			if strings.HasPrefix(key, prefixMetaHeader) {
@@ -287,7 +287,7 @@ func v2Auth(ak, sk, method, canonicalizedUrl string, headers map[string][]string
 }
 
 func getScope(region, shortDate string) string {
-	return fmt.Sprintf("%s/%s/%s/%s", shortDate, region, V4_SERVICE_NAME, V4_SERVICE_SUFFIX)
+	return fmt.Sprintf("%s/%s/%s/%s", shortDate, region, V4ServiceName, V4ServiceSuffix)
 }
 
 func getCredential(ak, region, shortDate string) (string, string) {
@@ -323,7 +323,7 @@ func getV4StringToSign(method, canonicalizedUrl, queryUrl, scope, longDate, payl
 	doLog(LEVEL_DEBUG, "The v4 auth canonicalRequest:\n%s", _canonicalRequest)
 
 	stringToSign := make([]string, 0, 7)
-	stringToSign = append(stringToSign, V4_HASH_PREFIX)
+	stringToSign = append(stringToSign, V4HashPrefix)
 	stringToSign = append(stringToSign, "\n")
 	stringToSign = append(stringToSign, longDate)
 	stringToSign = append(stringToSign, "\n")
@@ -355,10 +355,10 @@ func getSignedHeaders(headers map[string][]string) ([]string, map[string][]strin
 }
 
 func getSignature(stringToSign, sk, region, shortDate string) string {
-	key := HmacSha256([]byte(V4_HASH_PRE+sk), []byte(shortDate))
+	key := HmacSha256([]byte(V4HashPre+sk), []byte(shortDate))
 	key = HmacSha256(key, []byte(region))
-	key = HmacSha256(key, []byte(V4_SERVICE_NAME))
-	key = HmacSha256(key, []byte(V4_SERVICE_SUFFIX))
+	key = HmacSha256(key, []byte(V4ServiceName))
+	key = HmacSha256(key, []byte(V4ServiceSuffix))
 	return Hex(HmacSha256(key, []byte(stringToSign)))
 }
 
@@ -368,42 +368,42 @@ func V4Auth(ak, sk, region, method, canonicalizedUrl, queryUrl string, headers m
 
 func v4Auth(ak, sk, region, method, canonicalizedUrl, queryUrl string, headers map[string][]string) map[string]string {
 	var t time.Time
-	if val, ok := headers[HEADER_DATE_AMZ]; ok {
+	if val, ok := headers[HeaderDateAmz]; ok {
 		var err error
-		t, err = time.Parse(LONG_DATE_FORMAT, val[0])
+		t, err = time.Parse(LongDateFormat, val[0])
 		if err != nil {
 			t = time.Now().UTC()
 		}
-	} else if val, ok := headers[PARAM_DATE_AMZ_CAMEL]; ok {
+	} else if val, ok := headers[ParamDateAmzCamel]; ok {
 		var err error
-		t, err = time.Parse(LONG_DATE_FORMAT, val[0])
+		t, err = time.Parse(LongDateFormat, val[0])
 		if err != nil {
 			t = time.Now().UTC()
 		}
-	} else if val, ok := headers[HEADER_DATE_CAMEL]; ok {
+	} else if val, ok := headers[HeaderDateCamel]; ok {
 		var err error
-		t, err = time.Parse(RFC1123_FORMAT, val[0])
+		t, err = time.Parse(Rfc1123Format, val[0])
 		if err != nil {
 			t = time.Now().UTC()
 		}
-	} else if val, ok := headers[strings.ToLower(HEADER_DATE_CAMEL)]; ok {
+	} else if val, ok := headers[strings.ToLower(HeaderDateCamel)]; ok {
 		var err error
-		t, err = time.Parse(RFC1123_FORMAT, val[0])
+		t, err = time.Parse(Rfc1123Format, val[0])
 		if err != nil {
 			t = time.Now().UTC()
 		}
 	} else {
 		t = time.Now().UTC()
 	}
-	shortDate := t.Format(SHORT_DATE_FORMAT)
-	longDate := t.Format(LONG_DATE_FORMAT)
+	shortDate := t.Format(ShortDateFormat)
+	longDate := t.Format(LongDateFormat)
 
 	signedHeaders, _headers := getSignedHeaders(headers)
 
 	credential, scope := getCredential(ak, region, shortDate)
 
-	payload := EMPTY_CONTENT_SHA256
-	if val, ok := headers[HEADER_CONTENT_SHA256_AMZ]; ok {
+	payload := EmptyContentSha256
+	if val, ok := headers[HeaderContentSha256Amz]; ok {
 		payload = val[0]
 	}
 	stringToSign := getV4StringToSign(method, canonicalizedUrl, queryUrl, scope, longDate, payload, signedHeaders, _headers)

@@ -68,8 +68,8 @@ func (obsClient ObsClient) CreateBrowserBasedSignature(input *CreateBrowserBased
 	}
 
 	date := time.Now().UTC()
-	shortDate := date.Format(SHORT_DATE_FORMAT)
-	longDate := date.Format(LONG_DATE_FORMAT)
+	shortDate := date.Format(ShortDateFormat)
+	longDate := date.Format(LongDateFormat)
 
 	credential, _ := getCredential(obsClient.conf.securityProvider.ak, obsClient.conf.region, shortDate)
 
@@ -77,16 +77,16 @@ func (obsClient ObsClient) CreateBrowserBasedSignature(input *CreateBrowserBased
 		input.Expires = 300
 	}
 
-	expiration := date.Add(time.Second * time.Duration(input.Expires)).Format(ISO8601_DATE_FORMAT)
-	params[PARAM_ALGORITHM_AMZ_CAMEL] = V4_HASH_PREFIX
-	params[PARAM_CREDENTIAL_AMZ_CAMEL] = credential
-	params[PARAM_DATE_AMZ_CAMEL] = longDate
+	expiration := date.Add(time.Second * time.Duration(input.Expires)).Format(Iso8601DateFormat)
+	params[ParamAlgorithmAmzCamel] = V4HashPrefix
+	params[ParamCredentialAmzCamel] = credential
+	params[ParamDateAmzCamel] = longDate
 
 	if obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
-			params[HEADER_STS_TOKEN_OBS] = obsClient.conf.securityProvider.securityToken
+			params[HeaderStsTokenObs] = obsClient.conf.securityProvider.securityToken
 		} else {
-			params[HEADER_STS_TOKEN_AMZ] = obsClient.conf.securityProvider.securityToken
+			params[HeaderStsTokenAmz] = obsClient.conf.securityProvider.securityToken
 		}
 	}
 
@@ -131,9 +131,9 @@ func (obsClient ObsClient) CreateBrowserBasedSignature(input *CreateBrowserBased
 	output = &CreateBrowserBasedSignatureOutput{
 		OriginPolicy: originPolicy,
 		Policy:       policy,
-		Algorithm:    params[PARAM_ALGORITHM_AMZ_CAMEL],
-		Credential:   params[PARAM_CREDENTIAL_AMZ_CAMEL],
-		Date:         params[PARAM_DATE_AMZ_CAMEL],
+		Algorithm:    params[ParamAlgorithmAmzCamel],
+		Credential:   params[ParamCredentialAmzCamel],
+		Date:         params[ParamDateAmzCamel],
 		Signature:    signature,
 	}
 	return
@@ -141,7 +141,7 @@ func (obsClient ObsClient) CreateBrowserBasedSignature(input *CreateBrowserBased
 
 func (obsClient ObsClient) ListBucketsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *ListBucketsOutput, err error) {
 	output = &ListBucketsOutput{}
-	err = obsClient.doHttpWithSignedUrl("ListBuckets", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("ListBuckets", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -150,7 +150,7 @@ func (obsClient ObsClient) ListBucketsWithSignedUrl(signedUrl string, actualSign
 
 func (obsClient ObsClient) CreateBucketWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("CreateBucket", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("CreateBucket", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -159,7 +159,7 @@ func (obsClient ObsClient) CreateBucketWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) DeleteBucketWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("DeleteBucket", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteBucket", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -168,7 +168,7 @@ func (obsClient ObsClient) DeleteBucketWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) SetBucketStoragePolicyWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketStoragePolicy", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketStoragePolicy", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -177,7 +177,7 @@ func (obsClient ObsClient) SetBucketStoragePolicyWithSignedUrl(signedUrl string,
 
 func (obsClient ObsClient) GetBucketStoragePolicyWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketStoragePolicyOutput, err error) {
 	output = &GetBucketStoragePolicyOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketStoragePolicy", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketStoragePolicy", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -186,11 +186,11 @@ func (obsClient ObsClient) GetBucketStoragePolicyWithSignedUrl(signedUrl string,
 
 func (obsClient ObsClient) ListObjectsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *ListObjectsOutput, err error) {
 	output = &ListObjectsOutput{}
-	err = obsClient.doHttpWithSignedUrl("ListObjects", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("ListObjects", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
-		if location, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
+		if location, ok := output.ResponseHeaders[HeaderBucketRegion]; ok {
 			output.Location = location[0]
 		}
 	}
@@ -199,11 +199,11 @@ func (obsClient ObsClient) ListObjectsWithSignedUrl(signedUrl string, actualSign
 
 func (obsClient ObsClient) ListVersionsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *ListVersionsOutput, err error) {
 	output = &ListVersionsOutput{}
-	err = obsClient.doHttpWithSignedUrl("ListVersions", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("ListVersions", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
-		if location, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
+		if location, ok := output.ResponseHeaders[HeaderBucketRegion]; ok {
 			output.Location = location[0]
 		}
 	}
@@ -212,7 +212,7 @@ func (obsClient ObsClient) ListVersionsWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) ListMultipartUploadsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *ListMultipartUploadsOutput, err error) {
 	output = &ListMultipartUploadsOutput{}
-	err = obsClient.doHttpWithSignedUrl("ListMultipartUploads", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("ListMultipartUploads", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -221,7 +221,7 @@ func (obsClient ObsClient) ListMultipartUploadsWithSignedUrl(signedUrl string, a
 
 func (obsClient ObsClient) SetBucketQuotaWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketQuota", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketQuota", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -230,7 +230,7 @@ func (obsClient ObsClient) SetBucketQuotaWithSignedUrl(signedUrl string, actualS
 
 func (obsClient ObsClient) GetBucketQuotaWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketQuotaOutput, err error) {
 	output = &GetBucketQuotaOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketQuota", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketQuota", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -239,7 +239,7 @@ func (obsClient ObsClient) GetBucketQuotaWithSignedUrl(signedUrl string, actualS
 
 func (obsClient ObsClient) HeadBucketWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("HeadBucket", HTTP_HEAD, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("HeadBucket", HttpHead, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -248,7 +248,7 @@ func (obsClient ObsClient) HeadBucketWithSignedUrl(signedUrl string, actualSigne
 
 func (obsClient ObsClient) GetBucketMetadataWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketMetadataOutput, err error) {
 	output = &GetBucketMetadataOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketMetadata", HTTP_HEAD, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketMetadata", HttpHead, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -259,7 +259,7 @@ func (obsClient ObsClient) GetBucketMetadataWithSignedUrl(signedUrl string, actu
 
 func (obsClient ObsClient) GetBucketStorageInfoWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketStorageInfoOutput, err error) {
 	output = &GetBucketStorageInfoOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketStorageInfo", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketStorageInfo", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -268,7 +268,7 @@ func (obsClient ObsClient) GetBucketStorageInfoWithSignedUrl(signedUrl string, a
 
 func (obsClient ObsClient) GetBucketLocationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketLocationOutput, err error) {
 	output = &GetBucketLocationOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketLocation", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketLocation", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -277,7 +277,7 @@ func (obsClient ObsClient) GetBucketLocationWithSignedUrl(signedUrl string, actu
 
 func (obsClient ObsClient) SetBucketAclWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketAcl", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketAcl", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -286,7 +286,7 @@ func (obsClient ObsClient) SetBucketAclWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) GetBucketAclWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketAclOutput, err error) {
 	output = &GetBucketAclOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketAcl", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketAcl", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -295,7 +295,7 @@ func (obsClient ObsClient) GetBucketAclWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) SetBucketPolicyWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketPolicy", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketPolicy", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -304,7 +304,7 @@ func (obsClient ObsClient) SetBucketPolicyWithSignedUrl(signedUrl string, actual
 
 func (obsClient ObsClient) GetBucketPolicyWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketPolicyOutput, err error) {
 	output = &GetBucketPolicyOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketPolicy", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, false)
+	err = obsClient.doHttpWithSignedUrl("GetBucketPolicy", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, false)
 	if err != nil {
 		output = nil
 	}
@@ -313,7 +313,7 @@ func (obsClient ObsClient) GetBucketPolicyWithSignedUrl(signedUrl string, actual
 
 func (obsClient ObsClient) DeleteBucketPolicyWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("DeleteBucketPolicy", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteBucketPolicy", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -322,7 +322,7 @@ func (obsClient ObsClient) DeleteBucketPolicyWithSignedUrl(signedUrl string, act
 
 func (obsClient ObsClient) SetBucketCorsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketCors", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketCors", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -331,7 +331,7 @@ func (obsClient ObsClient) SetBucketCorsWithSignedUrl(signedUrl string, actualSi
 
 func (obsClient ObsClient) GetBucketCorsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketCorsOutput, err error) {
 	output = &GetBucketCorsOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketCors", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketCors", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -340,7 +340,7 @@ func (obsClient ObsClient) GetBucketCorsWithSignedUrl(signedUrl string, actualSi
 
 func (obsClient ObsClient) DeleteBucketCorsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("DeleteBucketCors", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteBucketCors", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -349,7 +349,7 @@ func (obsClient ObsClient) DeleteBucketCorsWithSignedUrl(signedUrl string, actua
 
 func (obsClient ObsClient) SetBucketVersioningWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketVersioning", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketVersioning", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -358,7 +358,7 @@ func (obsClient ObsClient) SetBucketVersioningWithSignedUrl(signedUrl string, ac
 
 func (obsClient ObsClient) GetBucketVersioningWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketVersioningOutput, err error) {
 	output = &GetBucketVersioningOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketVersioning", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketVersioning", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -367,7 +367,7 @@ func (obsClient ObsClient) GetBucketVersioningWithSignedUrl(signedUrl string, ac
 
 func (obsClient ObsClient) SetBucketWebsiteConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketWebsiteConfiguration", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketWebsiteConfiguration", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -376,7 +376,7 @@ func (obsClient ObsClient) SetBucketWebsiteConfigurationWithSignedUrl(signedUrl 
 
 func (obsClient ObsClient) GetBucketWebsiteConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketWebsiteConfigurationOutput, err error) {
 	output = &GetBucketWebsiteConfigurationOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketWebsiteConfiguration", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketWebsiteConfiguration", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -385,7 +385,7 @@ func (obsClient ObsClient) GetBucketWebsiteConfigurationWithSignedUrl(signedUrl 
 
 func (obsClient ObsClient) DeleteBucketWebsiteConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("DeleteBucketWebsiteConfiguration", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteBucketWebsiteConfiguration", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -394,7 +394,7 @@ func (obsClient ObsClient) DeleteBucketWebsiteConfigurationWithSignedUrl(signedU
 
 func (obsClient ObsClient) SetBucketLoggingConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketLoggingConfiguration", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketLoggingConfiguration", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -403,7 +403,7 @@ func (obsClient ObsClient) SetBucketLoggingConfigurationWithSignedUrl(signedUrl 
 
 func (obsClient ObsClient) GetBucketLoggingConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketLoggingConfigurationOutput, err error) {
 	output = &GetBucketLoggingConfigurationOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketLoggingConfiguration", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketLoggingConfiguration", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -412,7 +412,7 @@ func (obsClient ObsClient) GetBucketLoggingConfigurationWithSignedUrl(signedUrl 
 
 func (obsClient ObsClient) SetBucketLifecycleConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketLifecycleConfiguration", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketLifecycleConfiguration", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -421,7 +421,7 @@ func (obsClient ObsClient) SetBucketLifecycleConfigurationWithSignedUrl(signedUr
 
 func (obsClient ObsClient) GetBucketLifecycleConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketLifecycleConfigurationOutput, err error) {
 	output = &GetBucketLifecycleConfigurationOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketLifecycleConfiguration", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketLifecycleConfiguration", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -430,7 +430,7 @@ func (obsClient ObsClient) GetBucketLifecycleConfigurationWithSignedUrl(signedUr
 
 func (obsClient ObsClient) DeleteBucketLifecycleConfigurationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("DeleteBucketLifecycleConfiguration", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteBucketLifecycleConfiguration", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -439,7 +439,7 @@ func (obsClient ObsClient) DeleteBucketLifecycleConfigurationWithSignedUrl(signe
 
 func (obsClient ObsClient) SetBucketTaggingWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketTagging", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketTagging", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -448,7 +448,7 @@ func (obsClient ObsClient) SetBucketTaggingWithSignedUrl(signedUrl string, actua
 
 func (obsClient ObsClient) GetBucketTaggingWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketTaggingOutput, err error) {
 	output = &GetBucketTaggingOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketTagging", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketTagging", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -457,7 +457,7 @@ func (obsClient ObsClient) GetBucketTaggingWithSignedUrl(signedUrl string, actua
 
 func (obsClient ObsClient) DeleteBucketTaggingWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("DeleteBucketTagging", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteBucketTagging", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -466,7 +466,7 @@ func (obsClient ObsClient) DeleteBucketTaggingWithSignedUrl(signedUrl string, ac
 
 func (obsClient ObsClient) SetBucketNotificationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetBucketNotification", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetBucketNotification", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -475,7 +475,7 @@ func (obsClient ObsClient) SetBucketNotificationWithSignedUrl(signedUrl string, 
 
 func (obsClient ObsClient) GetBucketNotificationWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetBucketNotificationOutput, err error) {
 	output = &GetBucketNotificationOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetBucketNotification", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetBucketNotification", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -484,7 +484,7 @@ func (obsClient ObsClient) GetBucketNotificationWithSignedUrl(signedUrl string, 
 
 func (obsClient ObsClient) DeleteObjectWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *DeleteObjectOutput, err error) {
 	output = &DeleteObjectOutput{}
-	err = obsClient.doHttpWithSignedUrl("DeleteObject", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteObject", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -495,7 +495,7 @@ func (obsClient ObsClient) DeleteObjectWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) DeleteObjectsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *DeleteObjectsOutput, err error) {
 	output = &DeleteObjectsOutput{}
-	err = obsClient.doHttpWithSignedUrl("DeleteObjects", HTTP_POST, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("DeleteObjects", HttpPost, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -504,7 +504,7 @@ func (obsClient ObsClient) DeleteObjectsWithSignedUrl(signedUrl string, actualSi
 
 func (obsClient ObsClient) SetObjectAclWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("SetObjectAcl", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("SetObjectAcl", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -513,11 +513,11 @@ func (obsClient ObsClient) SetObjectAclWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) GetObjectAclWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetObjectAclOutput, err error) {
 	output = &GetObjectAclOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetObjectAcl", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetObjectAcl", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
-		if versionId, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+		if versionId, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 			output.VersionId = versionId[0]
 		}
 	}
@@ -526,7 +526,7 @@ func (obsClient ObsClient) GetObjectAclWithSignedUrl(signedUrl string, actualSig
 
 func (obsClient ObsClient) RestoreObjectWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("RestoreObject", HTTP_POST, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("RestoreObject", HttpPost, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -535,7 +535,7 @@ func (obsClient ObsClient) RestoreObjectWithSignedUrl(signedUrl string, actualSi
 
 func (obsClient ObsClient) GetObjectMetadataWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetObjectMetadataOutput, err error) {
 	output = &GetObjectMetadataOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetObjectMetadata", HTTP_HEAD, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetObjectMetadata", HttpHead, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -546,7 +546,7 @@ func (obsClient ObsClient) GetObjectMetadataWithSignedUrl(signedUrl string, actu
 
 func (obsClient ObsClient) GetObjectWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *GetObjectOutput, err error) {
 	output = &GetObjectOutput{}
-	err = obsClient.doHttpWithSignedUrl("GetObject", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("GetObject", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -557,7 +557,7 @@ func (obsClient ObsClient) GetObjectWithSignedUrl(signedUrl string, actualSigned
 
 func (obsClient ObsClient) PutObjectWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *PutObjectOutput, err error) {
 	output = &PutObjectOutput{}
-	err = obsClient.doHttpWithSignedUrl("PutObject", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("PutObject", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -584,9 +584,9 @@ func (obsClient ObsClient) PutFileWithSignedUrl(signedUrl string, actualSignedRe
 		fileReaderWrapper.reader = fd
 
 		var contentLength int64
-		if value, ok := actualSignedRequestHeaders[HEADER_CONTENT_LENGTH_CAMEL]; ok {
+		if value, ok := actualSignedRequestHeaders[HeaderContentLengthCamel]; ok {
 			contentLength = StringToInt64(value[0], -1)
-		} else if value, ok := actualSignedRequestHeaders[HEADER_CONTENT_LENGTH]; ok {
+		} else if value, ok := actualSignedRequestHeaders[HeaderContentLength]; ok {
 			contentLength = StringToInt64(value[0], -1)
 		} else {
 			contentLength = stat.Size()
@@ -599,7 +599,7 @@ func (obsClient ObsClient) PutFileWithSignedUrl(signedUrl string, actualSignedRe
 	}
 
 	output = &PutObjectOutput{}
-	err = obsClient.doHttpWithSignedUrl("PutObject", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("PutObject", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -610,7 +610,7 @@ func (obsClient ObsClient) PutFileWithSignedUrl(signedUrl string, actualSignedRe
 
 func (obsClient ObsClient) CopyObjectWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *CopyObjectOutput, err error) {
 	output = &CopyObjectOutput{}
-	err = obsClient.doHttpWithSignedUrl("CopyObject", HTTP_PUT, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("CopyObject", HttpPut, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -621,7 +621,7 @@ func (obsClient ObsClient) CopyObjectWithSignedUrl(signedUrl string, actualSigne
 
 func (obsClient ObsClient) AbortMultipartUploadWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doHttpWithSignedUrl("AbortMultipartUpload", HTTP_DELETE, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("AbortMultipartUpload", HttpDelete, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -630,7 +630,7 @@ func (obsClient ObsClient) AbortMultipartUploadWithSignedUrl(signedUrl string, a
 
 func (obsClient ObsClient) InitiateMultipartUploadWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *InitiateMultipartUploadOutput, err error) {
 	output = &InitiateMultipartUploadOutput{}
-	err = obsClient.doHttpWithSignedUrl("InitiateMultipartUpload", HTTP_POST, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("InitiateMultipartUpload", HttpPost, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -641,7 +641,7 @@ func (obsClient ObsClient) InitiateMultipartUploadWithSignedUrl(signedUrl string
 
 func (obsClient ObsClient) UploadPartWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *UploadPartOutput, err error) {
 	output = &UploadPartOutput{}
-	err = obsClient.doHttpWithSignedUrl("UploadPart", HTTP_PUT, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("UploadPart", HttpPut, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -652,7 +652,7 @@ func (obsClient ObsClient) UploadPartWithSignedUrl(signedUrl string, actualSigne
 
 func (obsClient ObsClient) CompleteMultipartUploadWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader) (output *CompleteMultipartUploadOutput, err error) {
 	output = &CompleteMultipartUploadOutput{}
-	err = obsClient.doHttpWithSignedUrl("CompleteMultipartUpload", HTTP_POST, signedUrl, actualSignedRequestHeaders, data, output, true)
+	err = obsClient.doHttpWithSignedUrl("CompleteMultipartUpload", HttpPost, signedUrl, actualSignedRequestHeaders, data, output, true)
 	if err != nil {
 		output = nil
 	} else {
@@ -663,7 +663,7 @@ func (obsClient ObsClient) CompleteMultipartUploadWithSignedUrl(signedUrl string
 
 func (obsClient ObsClient) ListPartsWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *ListPartsOutput, err error) {
 	output = &ListPartsOutput{}
-	err = obsClient.doHttpWithSignedUrl("ListParts", HTTP_GET, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("ListParts", HttpGet, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	}
@@ -672,7 +672,7 @@ func (obsClient ObsClient) ListPartsWithSignedUrl(signedUrl string, actualSigned
 
 func (obsClient ObsClient) CopyPartWithSignedUrl(signedUrl string, actualSignedRequestHeaders http.Header) (output *CopyPartOutput, err error) {
 	output = &CopyPartOutput{}
-	err = obsClient.doHttpWithSignedUrl("CopyPart", HTTP_PUT, signedUrl, actualSignedRequestHeaders, nil, output, true)
+	err = obsClient.doHttpWithSignedUrl("CopyPart", HttpPut, signedUrl, actualSignedRequestHeaders, nil, output, true)
 	if err != nil {
 		output = nil
 	} else {

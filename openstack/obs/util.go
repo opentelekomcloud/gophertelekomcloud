@@ -212,8 +212,8 @@ func copyHeaders(m map[string][]string) (ret map[string][]string) {
 
 func parseHeaders(headers map[string][]string) (signature string, region string, signedHeaders string) {
 	signature = "v2"
-	if receviedAuthorization, ok := headers[strings.ToLower(HEADER_AUTH_CAMEL)]; ok && len(receviedAuthorization) > 0 {
-		if strings.HasPrefix(receviedAuthorization[0], V4_HASH_PREFIX) {
+	if receviedAuthorization, ok := headers[strings.ToLower(HeaderAuthCamel)]; ok && len(receviedAuthorization) > 0 {
+		if strings.HasPrefix(receviedAuthorization[0], V4HashPrefix) {
 			signature = "v4"
 			matches := v4AuthRegex.FindStringSubmatch(receviedAuthorization[0])
 			if len(matches) >= 3 {
@@ -225,7 +225,7 @@ func parseHeaders(headers map[string][]string) (signature string, region string,
 				signedHeaders = matches[2]
 			}
 
-		} else if strings.HasPrefix(receviedAuthorization[0], V2_HASH_PREFIX) {
+		} else if strings.HasPrefix(receviedAuthorization[0], V2HashPrefix) {
 			signature = "v2"
 		}
 	}
@@ -246,16 +246,16 @@ func getIsObs(isTemporary bool, querys []string, headers map[string][]string) bo
 	if isTemporary {
 		for _, value := range querys {
 			keyPrefix := strings.ToLower(value)
-			if strings.HasPrefix(keyPrefix, HEADER_PREFIX) {
+			if strings.HasPrefix(keyPrefix, HeaderPrefix) {
 				isObs = false
-			} else if strings.HasPrefix(value, HEADER_ACCESSS_KEY_AMZ) {
+			} else if strings.HasPrefix(value, HeaderAccesssKeyAmz) {
 				isObs = false
 			}
 		}
 	} else {
-		for key, _ := range headers {
+		for key := range headers {
 			keyPrefix := strings.ToLower(key)
-			if strings.HasPrefix(keyPrefix, HEADER_PREFIX) {
+			if strings.HasPrefix(keyPrefix, HeaderPrefix) {
 				isObs = false
 				break
 			}
@@ -265,10 +265,7 @@ func getIsObs(isTemporary bool, querys []string, headers map[string][]string) bo
 }
 
 func GetV2Authorization(ak, sk, method, bucketName, objectKey, queryUrl string, headers map[string][]string) (ret map[string]string) {
-
-	if strings.HasPrefix(queryUrl, "?") {
-		queryUrl = queryUrl[1:]
-	}
+	queryUrl = strings.TrimPrefix(queryUrl, "?")
 
 	method = strings.ToUpper(method)
 
@@ -299,7 +296,7 @@ func GetV2Authorization(ak, sk, method, bucketName, objectKey, queryUrl string, 
 	}
 	headers = copyHeaders(headers)
 	pathStyle := false
-	if receviedHost, ok := headers[HEADER_HOST]; ok && len(receviedHost) > 0 && !strings.HasPrefix(receviedHost[0], bucketName+".") {
+	if receviedHost, ok := headers[HeaderHost]; ok && len(receviedHost) > 0 && !strings.HasPrefix(receviedHost[0], bucketName+".") {
 		pathStyle = true
 	}
 	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk},
@@ -308,16 +305,13 @@ func GetV2Authorization(ak, sk, method, bucketName, objectKey, queryUrl string, 
 	conf.signature = SignatureObs
 	_, canonicalizedURL := conf.formatUrls(bucketName, objectKey, params, false)
 	ret = v2Auth(ak, sk, method, canonicalizedURL, headers, true)
-	v2HashPrefix := OBS_HASH_PREFIX
-	ret[HEADER_AUTH_CAMEL] = fmt.Sprintf("%s %s:%s", v2HashPrefix, ak, ret["Signature"])
+	v2HashPrefix := ObsHashPrefix
+	ret[HeaderAuthCamel] = fmt.Sprintf("%s %s:%s", v2HashPrefix, ak, ret["Signature"])
 	return
 }
 
 func GetAuthorization(ak, sk, method, bucketName, objectKey, queryUrl string, headers map[string][]string) (ret map[string]string) {
-
-	if strings.HasPrefix(queryUrl, "?") {
-		queryUrl = queryUrl[1:]
-	}
+	queryUrl = strings.TrimPrefix(queryUrl, "?")
 
 	method = strings.ToUpper(method)
 
@@ -363,7 +357,7 @@ func GetAuthorization(ak, sk, method, bucketName, objectKey, queryUrl string, he
 	isObs := getIsObs(isTemporary, querysResult, headers)
 	headers = copyHeaders(headers)
 	pathStyle := false
-	if receviedHost, ok := headers[HEADER_HOST]; ok && len(receviedHost) > 0 && !strings.HasPrefix(receviedHost[0], bucketName+".") {
+	if receviedHost, ok := headers[HeaderHost]; ok && len(receviedHost) > 0 && !strings.HasPrefix(receviedHost[0], bucketName+".") {
 		pathStyle = true
 	}
 	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk},
@@ -388,7 +382,7 @@ func GetAuthorization(ak, sk, method, bucketName, objectKey, queryUrl string, he
 				_headers[headerKey] = headers[headerKey]
 			}
 			ret = v4Auth(ak, sk, region, method, canonicalizedUrl, parsedRequestUrl.RawQuery, _headers)
-			ret[HEADER_AUTH_CAMEL] = fmt.Sprintf("%s Credential=%s,SignedHeaders=%s,Signature=%s", V4_HASH_PREFIX, ret["Credential"], ret["SignedHeaders"], ret["Signature"])
+			ret[HeaderAuthCamel] = fmt.Sprintf("%s Credential=%s,SignedHeaders=%s,Signature=%s", V4HashPrefix, ret["Credential"], ret["SignedHeaders"], ret["Signature"])
 		} else if signature == "v2" {
 			if isObs {
 				conf.signature = SignatureObs
@@ -397,11 +391,11 @@ func GetAuthorization(ak, sk, method, bucketName, objectKey, queryUrl string, he
 			}
 			_, canonicalizedUrl := conf.formatUrls(bucketName, objectKey, params, false)
 			ret = v2Auth(ak, sk, method, canonicalizedUrl, headers, isObs)
-			v2HashPrefix := V2_HASH_PREFIX
+			v2HashPrefix := V2HashPrefix
 			if isObs {
-				v2HashPrefix = OBS_HASH_PREFIX
+				v2HashPrefix = ObsHashPrefix
 			}
-			ret[HEADER_AUTH_CAMEL] = fmt.Sprintf("%s %s:%s", v2HashPrefix, ak, ret["Signature"])
+			ret[HeaderAuthCamel] = fmt.Sprintf("%s %s:%s", v2HashPrefix, ak, ret["Signature"])
 		}
 		return
 	}
@@ -414,15 +408,15 @@ func getTemporaryAuthorization(ak, sk, method, bucketName, objectKey, signature 
 	if signature == "v4" {
 		conf.signature = SignatureV4
 
-		longDate, ok := params[PARAM_DATE_AMZ_CAMEL]
+		longDate, ok := params[ParamDateAmzCamel]
 		if !ok {
-			longDate = params[HEADER_DATE_AMZ]
+			longDate = params[HeaderDateAmz]
 		}
 		shortDate := longDate[:8]
 
-		credential, ok := params[PARAM_CREDENTIAL_AMZ_CAMEL]
+		credential, ok := params[ParamCredentialAmzCamel]
 		if !ok {
-			credential = params[strings.ToLower(PARAM_CREDENTIAL_AMZ_CAMEL)]
+			credential = params[strings.ToLower(ParamCredentialAmzCamel)]
 		}
 
 		_credential := UrlDecodeWithoutError(credential)
@@ -435,33 +429,33 @@ func getTemporaryAuthorization(ak, sk, method, bucketName, objectKey, signature 
 
 		_, scope := getCredential(ak, region, shortDate)
 
-		expires, ok := params[PARAM_EXPIRES_AMZ_CAMEL]
+		expires, ok := params[ParamExpiresAmzCamel]
 		if !ok {
-			expires = params[strings.ToLower(PARAM_EXPIRES_AMZ_CAMEL)]
+			expires = params[strings.ToLower(ParamExpiresAmzCamel)]
 		}
 
-		signedHeaders, ok := params[PARAM_SIGNEDHEADERS_AMZ_CAMEL]
+		signedHeaders, ok := params[ParamSignedheadersAmzCamel]
 		if !ok {
-			signedHeaders = params[strings.ToLower(PARAM_SIGNEDHEADERS_AMZ_CAMEL)]
+			signedHeaders = params[strings.ToLower(ParamSignedheadersAmzCamel)]
 		}
 
-		algorithm, ok := params[PARAM_ALGORITHM_AMZ_CAMEL]
+		algorithm, ok := params[ParamAlgorithmAmzCamel]
 		if !ok {
-			algorithm = params[strings.ToLower(PARAM_ALGORITHM_AMZ_CAMEL)]
+			algorithm = params[strings.ToLower(ParamAlgorithmAmzCamel)]
 		}
 
-		if _, ok := params[PARAM_SIGNATURE_AMZ_CAMEL]; ok {
-			delete(params, PARAM_SIGNATURE_AMZ_CAMEL)
-		} else if _, ok := params[strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL)]; ok {
-			delete(params, strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL))
+		if _, ok := params[ParamSignatureAmzCamel]; ok {
+			delete(params, ParamSignatureAmzCamel)
+		} else if _, ok := params[strings.ToLower(ParamSignatureAmzCamel)]; ok {
+			delete(params, strings.ToLower(ParamSignatureAmzCamel))
 		}
 
 		ret = make(map[string]string, 6)
-		ret[PARAM_ALGORITHM_AMZ_CAMEL] = algorithm
-		ret[PARAM_CREDENTIAL_AMZ_CAMEL] = credential
-		ret[PARAM_DATE_AMZ_CAMEL] = longDate
-		ret[PARAM_EXPIRES_AMZ_CAMEL] = expires
-		ret[PARAM_SIGNEDHEADERS_AMZ_CAMEL] = signedHeaders
+		ret[ParamAlgorithmAmzCamel] = algorithm
+		ret[ParamCredentialAmzCamel] = credential
+		ret[ParamDateAmzCamel] = longDate
+		ret[ParamExpiresAmzCamel] = expires
+		ret[ParamSignedheadersAmzCamel] = signedHeaders
 
 		requestUrl, canonicalizedUrl := conf.formatUrls(bucketName, objectKey, params, false)
 		parsedRequestUrl, _err := url.Parse(requestUrl)
@@ -469,8 +463,8 @@ func getTemporaryAuthorization(ak, sk, method, bucketName, objectKey, signature 
 			doLog(LEVEL_WARN, "Failed to parse requestUrl with reason: %v", _err)
 			return nil
 		}
-		stringToSign := getV4StringToSign(method, canonicalizedUrl, parsedRequestUrl.RawQuery, scope, longDate, UNSIGNED_PAYLOAD, strings.Split(signedHeaders, ";"), headers)
-		ret[PARAM_SIGNATURE_AMZ_CAMEL] = UrlEncode(getSignature(stringToSign, sk, region, shortDate), false)
+		stringToSign := getV4StringToSign(method, canonicalizedUrl, parsedRequestUrl.RawQuery, scope, longDate, UnsignedPayload, strings.Split(signedHeaders, ";"), headers)
+		ret[ParamSignatureAmzCamel] = UrlEncode(getSignature(stringToSign, sk, region, shortDate), false)
 	} else if signature == "v2" {
 		if isObs {
 			conf.signature = SignatureObs
@@ -482,7 +476,7 @@ func getTemporaryAuthorization(ak, sk, method, bucketName, objectKey, signature 
 		if !ok {
 			expires = params["expires"]
 		}
-		headers[HEADER_DATE_CAMEL] = []string{expires}
+		headers[HeaderDateCamel] = []string{expires}
 		stringToSign := getV2StringToSign(method, canonicalizedUrl, headers, isObs)
 		ret = make(map[string]string, 3)
 		ret["Signature"] = UrlEncode(Base64Encode(HmacSha1([]byte(sk), []byte(stringToSign))), false)

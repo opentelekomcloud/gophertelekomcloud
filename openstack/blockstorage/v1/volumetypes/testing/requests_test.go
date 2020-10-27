@@ -19,7 +19,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	volumetypes.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	err := volumetypes.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := volumetypes.ExtractVolumeTypes(page)
 		if err != nil {
@@ -46,6 +46,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)

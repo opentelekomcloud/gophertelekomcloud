@@ -34,14 +34,14 @@ func prepareHeaders(headers map[string][]string, meta bool, isObs bool) map[stri
 				continue
 			}
 			_key := strings.ToLower(key)
-			if _, ok := allowed_request_http_header_metadata_names[_key]; !ok && !strings.HasPrefix(key, HEADER_PREFIX) && !strings.HasPrefix(key, HEADER_PREFIX_OBS) {
+			if _, ok := allowed_request_http_header_metadata_names[_key]; !ok && !strings.HasPrefix(key, HeaderPrefix) && !strings.HasPrefix(key, HeaderPrefixObs) {
 				if !meta {
 					continue
 				}
 				if !isObs {
-					_key = HEADER_PREFIX_META + _key
+					_key = HeaderPrefixMeta + _key
 				} else {
-					_key = HEADER_PREFIX_META_OBS + _key
+					_key = HeaderPrefixMetaObs + _key
 				}
 			} else {
 				_key = key
@@ -108,17 +108,17 @@ func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string
 	}
 
 	switch method {
-	case HTTP_GET:
+	case HttpGet:
 		resp, respError = obsClient.doHttpGet(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_POST:
+	case HttpPost:
 		resp, respError = obsClient.doHttpPost(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_PUT:
+	case HttpPut:
 		resp, respError = obsClient.doHttpPut(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_DELETE:
+	case HttpDelete:
 		resp, respError = obsClient.doHttpDelete(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_HEAD:
+	case HttpHead:
 		resp, respError = obsClient.doHttpHead(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_OPTIONS:
+	case HttpOptions:
 		resp, respError = obsClient.doHttpOptions(bucketName, objectKey, params, headers, data, repeatable)
 	default:
 		respError = errors.New("Unexpect http method error")
@@ -141,32 +141,32 @@ func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string
 
 func (obsClient ObsClient) doHttpGet(bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_GET, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
+	return obsClient.doHttp(HttpGet, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpHead(bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_HEAD, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
+	return obsClient.doHttp(HttpHead, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpOptions(bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_OPTIONS, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
+	return obsClient.doHttp(HttpOptions, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpDelete(bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_DELETE, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
+	return obsClient.doHttp(HttpDelete, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpPut(bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_PUT, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
+	return obsClient.doHttp(HttpPut, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpPost(bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_POST, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
+	return obsClient.doHttp(HttpPost, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl string, actualSignedRequestHeaders http.Header, data io.Reader, output IBaseModel, xmlResult bool) (respError error) {
@@ -182,23 +182,23 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 	doLog(LEVEL_INFO, "Do %s with signedUrl %s...", action, signedUrl)
 
 	req.Header = actualSignedRequestHeaders
-	if value, ok := req.Header[HEADER_HOST_CAMEL]; ok {
+	if value, ok := req.Header[HeaderHostCamel]; ok {
 		req.Host = value[0]
-		delete(req.Header, HEADER_HOST_CAMEL)
-	} else if value, ok := req.Header[HEADER_HOST]; ok {
+		delete(req.Header, HeaderHostCamel)
+	} else if value, ok := req.Header[HeaderHost]; ok {
 		req.Host = value[0]
-		delete(req.Header, HEADER_HOST)
+		delete(req.Header, HeaderHost)
 	}
 
-	if value, ok := req.Header[HEADER_CONTENT_LENGTH_CAMEL]; ok {
+	if value, ok := req.Header[HeaderContentLengthCamel]; ok {
 		req.ContentLength = StringToInt64(value[0], -1)
-		delete(req.Header, HEADER_CONTENT_LENGTH_CAMEL)
-	} else if value, ok := req.Header[HEADER_CONTENT_LENGTH]; ok {
+		delete(req.Header, HeaderContentLengthCamel)
+	} else if value, ok := req.Header[HeaderContentLength]; ok {
 		req.ContentLength = StringToInt64(value[0], -1)
-		delete(req.Header, HEADER_CONTENT_LENGTH)
+		delete(req.Header, HeaderContentLength)
 	}
 
-	req.Header[HEADER_USER_AGENT_CAMEL] = []string{USER_AGENT}
+	req.Header[HeaderUserAgentCamel] = []string{UserAgent}
 	start := GetCurrentTimestamp()
 	resp, err = obsClient.httpClient.Do(req)
 	if isInfoLogEnabled() {
@@ -301,17 +301,17 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 		doLog(LEVEL_DEBUG, "Do request with url [%s] and method [%s]", requestUrl, method)
 
 		if isDebugLogEnabled() {
-			auth := headers[HEADER_AUTH_CAMEL]
-			delete(headers, HEADER_AUTH_CAMEL)
+			auth := headers[HeaderAuthCamel]
+			delete(headers, HeaderAuthCamel)
 			doLog(LEVEL_DEBUG, "Request headers: %v", headers)
-			headers[HEADER_AUTH_CAMEL] = auth
+			headers[HeaderAuthCamel] = auth
 		}
 
 		for key, value := range headers {
-			if key == HEADER_HOST_CAMEL {
+			if key == HeaderHostCamel {
 				req.Host = value[0]
 				delete(headers, key)
-			} else if key == HEADER_CONTENT_LENGTH_CAMEL {
+			} else if key == HeaderContentLengthCamel {
 				req.ContentLength = StringToInt64(value[0], -1)
 				delete(headers, key)
 			} else {
@@ -321,7 +321,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 
 		lastRequest = req
 
-		req.Header[HEADER_USER_AGENT_CAMEL] = []string{USER_AGENT}
+		req.Header[HeaderUserAgentCamel] = []string{UserAgent}
 
 		if lastRequest != nil {
 			req.Host = lastRequest.Host
@@ -351,13 +351,13 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 				resp = nil
 				break
 			} else if resp.StatusCode >= 300 && resp.StatusCode < 400 {
-				if location := resp.Header.Get(HEADER_LOCATION_CAMEL); location != "" && redirectCount < maxRedirectCount {
+				if location := resp.Header.Get(HeaderLocationCamel); location != "" && redirectCount < maxRedirectCount {
 					redirectUrl = location
 					doLog(LEVEL_WARN, "Redirect request to %s", redirectUrl)
 					msg = resp.Status
 					maxRetryCount++
 					redirectCount++
-					if resp.StatusCode == 302 && method == HTTP_GET {
+					if resp.StatusCode == 302 && method == HttpGet {
 						redirectFlag = true
 					} else {
 						redirectFlag = false
@@ -379,8 +379,8 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 				}
 				resp = nil
 			}
-			if _, ok := headers[HEADER_AUTH_CAMEL]; ok {
-				delete(headers, HEADER_AUTH_CAMEL)
+			if _, ok := headers[HeaderAuthCamel]; ok {
+				delete(headers, HeaderAuthCamel)
 			}
 			doLog(LEVEL_WARN, "Failed to send request with reason:%v, will try again", msg)
 			if r, ok := _data.(*strings.Reader); ok {

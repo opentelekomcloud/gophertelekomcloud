@@ -25,7 +25,8 @@ func SetupHandler(t *testing.T, url, method, requestBody, responseBody string, s
 		w.WriteHeader(status)
 
 		if responseBody != "" {
-			fmt.Fprintf(w, responseBody)
+			_, err := fmt.Fprintf(w, responseBody)
+			th.AssertNoErr(t, err)
 		}
 	})
 }

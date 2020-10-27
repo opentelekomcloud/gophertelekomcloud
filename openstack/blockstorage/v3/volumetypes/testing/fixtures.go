@@ -17,7 +17,8 @@ func MockListResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":

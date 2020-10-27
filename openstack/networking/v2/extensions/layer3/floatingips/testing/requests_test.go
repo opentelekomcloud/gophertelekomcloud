@@ -107,10 +107,11 @@ func TestInvalidNextPageURLs(t *testing.T) {
 		fmt.Fprintf(w, `{"floatingips": [{}], "floatingips_links": {}}`)
 	})
 
-	floatingips.List(fake.ServiceClient(), floatingips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	err := floatingips.List(fake.ServiceClient(), floatingips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		floatingips.ExtractFloatingIPs(page)
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 }
 
 func TestRequiredFieldsForCreate(t *testing.T) {

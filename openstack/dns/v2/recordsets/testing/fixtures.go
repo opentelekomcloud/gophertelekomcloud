@@ -207,7 +207,8 @@ func HandleListByZoneSuccessfully(t *testing.T) {
 			th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 			w.Header().Add("Content-Type", "application/json")
-			r.ParseForm()
+			err := r.ParseForm()
+			th.AssertNoErr(t, err)
 			marker := r.Form.Get("marker")
 			switch marker {
 			case "f7b10e9b-0cae-4a91-b162-562bc6096648":
@@ -370,7 +371,7 @@ func HandleDeleteSuccessfully(t *testing.T) {
 			th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 			w.WriteHeader(http.StatusAccepted)
-			//w.Header().Add("Content-Type", "application/json")
-			//fmt.Fprintf(w, DeleteZoneResponse)
+			// w.Header().Add("Content-Type", "application/json")
+			// fmt.Fprintf(w, DeleteZoneResponse)
 		})
 }

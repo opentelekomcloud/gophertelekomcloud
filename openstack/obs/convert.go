@@ -28,8 +28,8 @@ func cleanHeaderPrefix(header http.Header) map[string][]string {
 	for key, value := range header {
 		if len(value) > 0 {
 			key = strings.ToLower(key)
-			if strings.HasPrefix(key, HEADER_PREFIX) || strings.HasPrefix(key, HEADER_PREFIX_OBS) {
-				key = key[len(HEADER_PREFIX):]
+			if strings.HasPrefix(key, HeaderPrefix) || strings.HasPrefix(key, HeaderPrefixObs) {
+				key = key[len(HeaderPrefix):]
 			}
 			responseHeaders[key] = value
 		}
@@ -289,7 +289,7 @@ func convertTransitionsToXml(transitions []Transition, isObs bool) string {
 			if transition.Days > 0 {
 				temp = fmt.Sprintf("<Days>%d</Days>", transition.Days)
 			} else if !transition.Date.IsZero() {
-				temp = fmt.Sprintf("<Date>%s</Date>", transition.Date.UTC().Format(ISO8601_MIDNIGHT_DATE_FORMAT))
+				temp = fmt.Sprintf("<Date>%s</Date>", transition.Date.UTC().Format(Iso8601MidnightDateFormat))
 			}
 			if temp != "" {
 				if !isObs {
@@ -314,7 +314,7 @@ func convertExpirationToXml(expiration Expiration) string {
 	if expiration.Days > 0 {
 		return fmt.Sprintf("<Expiration><Days>%d</Days></Expiration>", expiration.Days)
 	} else if !expiration.Date.IsZero() {
-		return fmt.Sprintf("<Expiration><Date>%s</Date></Expiration>", expiration.Date.UTC().Format(ISO8601_MIDNIGHT_DATE_FORMAT))
+		return fmt.Sprintf("<Expiration><Date>%s</Date></Expiration>", expiration.Date.UTC().Format(Iso8601MidnightDateFormat))
 	}
 	return ""
 }
@@ -487,17 +487,17 @@ func ConvertCompleteMultipartUploadInputToXml(input CompleteMultipartUploadInput
 }
 
 func parseSseHeader(responseHeaders map[string][]string) (sseHeader ISseHeader) {
-	if ret, ok := responseHeaders[HEADER_SSEC_ENCRYPTION]; ok {
+	if ret, ok := responseHeaders[HeaderSsecEncryption]; ok {
 		sseCHeader := SseCHeader{Encryption: ret[0]}
-		if ret, ok = responseHeaders[HEADER_SSEC_KEY_MD5]; ok {
+		if ret, ok = responseHeaders[HeaderSsecKeyMd5]; ok {
 			sseCHeader.KeyMD5 = ret[0]
 		}
 		sseHeader = sseCHeader
-	} else if ret, ok := responseHeaders[HEADER_SSEKMS_ENCRYPTION]; ok {
+	} else if ret, ok := responseHeaders[HeaderSsekmsEncryption]; ok {
 		sseKmsHeader := SseKmsHeader{Encryption: ret[0]}
-		if ret, ok = responseHeaders[HEADER_SSEKMS_KEY]; ok {
+		if ret, ok = responseHeaders[HeaderSsekmsKey]; ok {
 			sseKmsHeader.Key = ret[0]
-		} else if ret, ok = responseHeaders[HEADER_SSEKMS_ENCRYPT_KEY_OBS]; ok {
+		} else if ret, ok = responseHeaders[HeaderSsekmsEncryptKeyObs]; ok {
 			sseKmsHeader.Key = ret[0]
 		}
 		sseHeader = sseKmsHeader
@@ -506,65 +506,65 @@ func parseSseHeader(responseHeaders map[string][]string) (sseHeader ISseHeader) 
 }
 
 func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
-	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 		output.VersionId = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_WEBSITE_REDIRECT_LOCATION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderWebsiteRedirectLocation]; ok {
 		output.WebsiteRedirectLocation = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_EXPIRATION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderExpiration]; ok {
 		output.Expiration = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_RESTORE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderRestore]; ok {
 		output.Restore = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_OBJECT_TYPE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderObjectType]; ok {
 		output.Restore = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_NEXT_APPEND_POSITION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderNextAppendPosition]; ok {
 		output.Restore = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderStorageClass2]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ETAG]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderEtag]; ok {
 		output.ETag = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_TYPE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentType]; ok {
 		output.ContentType = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolAllowOrigin]; ok {
 		output.AllowOrigin = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_HEADERS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolAllowHeaders]; ok {
 		output.AllowHeader = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_MAX_AGE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolMaxAge]; ok {
 		output.MaxAgeSeconds = StringToInt(ret[0], 0)
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_METHODS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolAllowMethods]; ok {
 		output.AllowMethod = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolExposeHeaders]; ok {
 		output.ExposeHeader = ret[0]
 	}
 
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
-	if ret, ok := output.ResponseHeaders[HEADER_LASTMODIFIED]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderLastmodified]; ok {
 		ret, err := time.Parse(time.RFC1123, ret[0])
 		if err == nil {
 			output.LastModified = ret
 		}
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_LENGTH]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentLength]; ok {
 		output.ContentLength = StringToInt64(ret[0], 0)
 	}
 
 	output.Metadata = make(map[string]string)
 
 	for key, value := range output.ResponseHeaders {
-		if strings.HasPrefix(key, PREFIX_META) {
-			_key := key[len(PREFIX_META):]
+		if strings.HasPrefix(key, PrefixMeta) {
+			_key := key[len(PrefixMeta):]
 			output.ResponseHeaders[_key] = value
 			output.Metadata[_key] = value[0]
 			delete(output.ResponseHeaders, key)
@@ -574,24 +574,24 @@ func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
 }
 
 func ParseCopyObjectOutput(output *CopyObjectOutput) {
-	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 		output.VersionId = ret[0]
 	}
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
-	if ret, ok := output.ResponseHeaders[HEADER_COPY_SOURCE_VERSION_ID]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderCopySourceVersionId]; ok {
 		output.CopySourceVersionId = ret[0]
 	}
 }
 
 func ParsePutObjectOutput(output *PutObjectOutput) {
-	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 		output.VersionId = ret[0]
 	}
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
-	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderStorageClass2]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ETAG]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderEtag]; ok {
 		output.ETag = ret[0]
 	}
 }
@@ -602,14 +602,14 @@ func ParseInitiateMultipartUploadOutput(output *InitiateMultipartUploadOutput) {
 
 func ParseUploadPartOutput(output *UploadPartOutput) {
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
-	if ret, ok := output.ResponseHeaders[HEADER_ETAG]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderEtag]; ok {
 		output.ETag = ret[0]
 	}
 }
 
 func ParseCompleteMultipartUploadOutput(output *CompleteMultipartUploadOutput) {
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
-	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 		output.VersionId = ret[0]
 	}
 }
@@ -619,74 +619,74 @@ func ParseCopyPartOutput(output *CopyPartOutput) {
 }
 
 func ParseGetBucketMetadataOutput(output *GetBucketMetadataOutput) {
-	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderStorageClass]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
-	} else if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
+	} else if ret, ok := output.ResponseHeaders[HeaderStorageClass2]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_VERSION_OBS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderVersionObs]; ok {
 		output.Version = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderBucketRegion]; ok {
 		output.Location = ret[0]
-	} else if ret, ok := output.ResponseHeaders[HEADER_BUCKET_LOCATION_OBS]; ok {
+	} else if ret, ok := output.ResponseHeaders[HeaderBucketLocationObs]; ok {
 		output.Location = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolAllowOrigin]; ok {
 		output.AllowOrigin = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_HEADERS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolAllowHeaders]; ok {
 		output.AllowHeader = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_MAX_AGE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolMaxAge]; ok {
 		output.MaxAgeSeconds = StringToInt(ret[0], 0)
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_METHODS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolAllowMethods]; ok {
 		output.AllowMethod = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderAccessConrtolExposeHeaders]; ok {
 		output.ExposeHeader = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_EPID_HEADERS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderEpidHeaders]; ok {
 		output.Epid = ret[0]
 	}
 }
 
 func ParseSetObjectMetadataOutput(output *SetObjectMetadataOutput) {
-	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderStorageClass]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
-	} else if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
+	} else if ret, ok := output.ResponseHeaders[HeaderStorageClass2]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_METADATA_DIRECTIVE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderMetadataDirective]; ok {
 		output.MetadataDirective = MetadataDirectiveType(ret[0])
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CACHE_CONTROL]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderCacheControl]; ok {
 		output.CacheControl = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_DISPOSITION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentDisposition]; ok {
 		output.ContentDisposition = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_ENCODING]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentEncoding]; ok {
 		output.ContentEncoding = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_LANGUAGE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentLanguage]; ok {
 		output.ContentLanguage = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_TYPE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentType]; ok {
 		output.ContentType = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_EXPIRES]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderExpires]; ok {
 		output.Expires = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_WEBSITE_REDIRECT_LOCATION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderWebsiteRedirectLocation]; ok {
 		output.WebsiteRedirectLocation = ret[0]
 	}
 	output.Metadata = make(map[string]string)
 
 	for key, value := range output.ResponseHeaders {
-		if strings.HasPrefix(key, PREFIX_META) {
-			_key := key[len(PREFIX_META):]
+		if strings.HasPrefix(key, PrefixMeta) {
+			_key := key[len(PrefixMeta):]
 			output.ResponseHeaders[_key] = value
 			output.Metadata[_key] = value[0]
 			delete(output.ResponseHeaders, key)
@@ -694,33 +694,33 @@ func ParseSetObjectMetadataOutput(output *SetObjectMetadataOutput) {
 	}
 }
 func ParseDeleteObjectOutput(output *DeleteObjectOutput) {
-	if versionId, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+	if versionId, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 		output.VersionId = versionId[0]
 	}
 
-	if deleteMarker, ok := output.ResponseHeaders[HEADER_DELETE_MARKER]; ok {
+	if deleteMarker, ok := output.ResponseHeaders[HeaderDeleteMarker]; ok {
 		output.DeleteMarker = deleteMarker[0] == "true"
 	}
 }
 
 func ParseGetObjectOutput(output *GetObjectOutput) {
 	ParseGetObjectMetadataOutput(&output.GetObjectMetadataOutput)
-	if ret, ok := output.ResponseHeaders[HEADER_DELETE_MARKER]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderDeleteMarker]; ok {
 		output.DeleteMarker = ret[0] == "true"
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CACHE_CONTROL]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderCacheControl]; ok {
 		output.CacheControl = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_DISPOSITION]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentDisposition]; ok {
 		output.ContentDisposition = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_ENCODING]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentEncoding]; ok {
 		output.ContentEncoding = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_LANGUAGE]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderContentLanguage]; ok {
 		output.ContentLanguage = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_EXPIRES]; ok {
+	if ret, ok := output.ResponseHeaders[HeaderExpires]; ok {
 		output.Expires = ret[0]
 	}
 }
@@ -775,7 +775,7 @@ func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResu
 	baseModel.setStatusCode(resp.StatusCode)
 	responseHeaders := cleanHeaderPrefix(resp.Header)
 	baseModel.setResponseHeaders(responseHeaders)
-	if values, ok := responseHeaders[HEADER_REQUEST_ID]; ok {
+	if values, ok := responseHeaders[HeaderRequestId]; ok {
 		baseModel.setRequestId(values[0])
 	}
 	return

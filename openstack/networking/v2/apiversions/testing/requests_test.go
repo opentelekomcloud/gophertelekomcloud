@@ -41,7 +41,7 @@ func TestListVersions(t *testing.T) {
 
 	count := 0
 
-	apiversions.ListVersions(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	err := apiversions.ListVersions(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := apiversions.ExtractAPIVersions(page)
 		if err != nil {
@@ -60,6 +60,7 @@ func TestListVersions(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)

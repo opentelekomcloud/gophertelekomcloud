@@ -992,7 +992,8 @@ func HandleMetadataResetSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(`{ "metadata": {"foo":"bar", "this":"that"}}`))
+		_, err := w.Write([]byte(`{ "metadata": {"foo":"bar", "this":"that"}}`))
+		th.AssertNoErr(t, err)
 	})
 }
 
@@ -1010,7 +1011,8 @@ func HandleMetadataUpdateSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(`{ "metadata": {"foo":"baz", "this":"those"}}`))
+		_, err := w.Write([]byte(`{ "metadata": {"foo":"baz", "this":"those"}}`))
+		th.AssertNoErr(t, err)
 	})
 }
 

@@ -193,7 +193,7 @@ func (conf *config) initConfigWithDefault() error {
 	}
 
 	if conf.signature == "" {
-		conf.signature = DEFAULT_SIGNATURE
+		conf.signature = DefaultSignature
 	}
 
 	urlHolder := &urlHolder{}
@@ -232,37 +232,37 @@ func (conf *config) initConfigWithDefault() error {
 
 	conf.region = strings.TrimSpace(conf.region)
 	if conf.region == "" {
-		conf.region = DEFAULT_REGION
+		conf.region = DefaultRegion
 	}
 
 	if conf.connectTimeout <= 0 {
-		conf.connectTimeout = DEFAULT_CONNECT_TIMEOUT
+		conf.connectTimeout = DefaultConnectTimeout
 	}
 
 	if conf.socketTimeout <= 0 {
-		conf.socketTimeout = DEFAULT_SOCKET_TIMEOUT
+		conf.socketTimeout = DefaultSocketTimeout
 	}
 
 	conf.finalTimeout = conf.socketTimeout * 10
 
 	if conf.headerTimeout <= 0 {
-		conf.headerTimeout = DEFAULT_HEADER_TIMEOUT
+		conf.headerTimeout = DefaultHeaderTimeout
 	}
 
 	if conf.idleConnTimeout < 0 {
-		conf.idleConnTimeout = DEFAULT_IDLE_CONN_TIMEOUT
+		conf.idleConnTimeout = DefaultIdleConnTimeout
 	}
 
 	if conf.maxRetryCount < 0 {
-		conf.maxRetryCount = DEFAULT_MAX_RETRY_COUNT
+		conf.maxRetryCount = DefaultMaxRetryCount
 	}
 
 	if conf.maxConnsPerHost <= 0 {
-		conf.maxConnsPerHost = DEFAULT_MAX_CONN_PER_HOST
+		conf.maxConnsPerHost = DefaultMaxConnPerHost
 	}
 
 	if conf.maxRedirectCount < 0 {
-		conf.maxRedirectCount = DEFAULT_MAX_REDIRECT_COUNT
+		conf.maxRedirectCount = DefaultMaxRedirectCount
 	}
 
 	conf.proxyUrl = strings.TrimSpace(conf.proxyUrl)
@@ -400,10 +400,10 @@ func (conf *config) formatUrls(bucketName, objectKey string, params map[string]s
 			}
 			lowerKey := strings.ToLower(key)
 			_, ok := allowed_resource_parameter_names[lowerKey]
-			prefixHeader := HEADER_PREFIX
+			prefixHeader := HeaderPrefix
 			isObs := conf.signature == SignatureObs
 			if isObs {
-				prefixHeader = HEADER_PREFIX_OBS
+				prefixHeader = HeaderPrefixObs
 			}
 			ok = ok || strings.HasPrefix(lowerKey, prefixHeader)
 			if ok {

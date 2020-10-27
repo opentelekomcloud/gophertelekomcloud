@@ -68,7 +68,7 @@ func Update(c *golangsdk.ServiceClient, hostID string, opts UpdateOptsBuilder) (
 	return
 }
 
-//Deletes the DeH using the specified hostID.
+// Deletes the DeH using the specified hostID.
 func Delete(c *golangsdk.ServiceClient, hostid string) (r DeleteResult) {
 	_, r.Err = c.Delete(resourceURL(c, hostid), nil)
 	return
@@ -171,6 +171,9 @@ func ListServer(c *golangsdk.ServiceClient, id string, opts ListServerOpts) ([]S
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
 
 	allservers, err := ExtractServers(pages)
 	if err != nil {

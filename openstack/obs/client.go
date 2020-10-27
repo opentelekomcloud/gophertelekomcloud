@@ -45,7 +45,7 @@ func New(ak, sk, endpoint string, configurers ...configurer) (*ObsClient, error)
 
 	if isWarnLogEnabled() {
 		info := make([]string, 3)
-		info[0] = fmt.Sprintf("[OBS SDK Version=%s", obs_sdk_version)
+		info[0] = fmt.Sprintf("[OBS SDK Version=%s", obsSdkVersion)
 		info[1] = fmt.Sprintf("Endpoint=%s", conf.endpoint)
 		accessMode := "Virtual Hosting"
 		if conf.pathStyle {
@@ -76,7 +76,7 @@ func (obsClient ObsClient) ListBuckets(input *ListBucketsInput) (output *ListBuc
 		input = &ListBucketsInput{}
 	}
 	output = &ListBucketsOutput{}
-	err = obsClient.doActionWithoutBucket("ListBuckets", HTTP_GET, input, output)
+	err = obsClient.doActionWithoutBucket("ListBuckets", HttpGet, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -88,7 +88,7 @@ func (obsClient ObsClient) CreateBucket(input *CreateBucketInput) (output *BaseM
 		return nil, errors.New("CreateBucketInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("CreateBucket", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("CreateBucket", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -97,7 +97,7 @@ func (obsClient ObsClient) CreateBucket(input *CreateBucketInput) (output *BaseM
 
 func (obsClient ObsClient) DeleteBucket(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("DeleteBucket", HTTP_DELETE, bucketName, defaultSerializable, output)
+	err = obsClient.doActionWithBucket("DeleteBucket", HttpDelete, bucketName, defaultSerializable, output)
 	if err != nil {
 		output = nil
 	}
@@ -109,7 +109,7 @@ func (obsClient ObsClient) SetBucketStoragePolicy(input *SetBucketStoragePolicyI
 		return nil, errors.New("SetBucketStoragePolicyInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketStoragePolicy", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketStoragePolicy", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -119,7 +119,7 @@ func (obsClient ObsClient) getBucketStoragePolicyS3(bucketName string) (output *
 	output = &GetBucketStoragePolicyOutput{}
 	var outputS3 *getBucketStoragePolicyOutputS3
 	outputS3 = &getBucketStoragePolicyOutputS3{}
-	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HTTP_GET, bucketName, newSubResourceSerial(SubResourceStoragePolicy), outputS3)
+	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HttpGet, bucketName, newSubResourceSerial(SubResourceStoragePolicy), outputS3)
 	if err != nil {
 		output = nil
 		return
@@ -133,7 +133,7 @@ func (obsClient ObsClient) getBucketStoragePolicyObs(bucketName string) (output 
 	output = &GetBucketStoragePolicyOutput{}
 	var outputObs *getBucketStoragePolicyOutputObs
 	outputObs = &getBucketStoragePolicyOutputObs{}
-	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HTTP_GET, bucketName, newSubResourceSerial(SubResourceStorageClass), outputObs)
+	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HttpGet, bucketName, newSubResourceSerial(SubResourceStorageClass), outputObs)
 	if err != nil {
 		output = nil
 		return
@@ -154,11 +154,11 @@ func (obsClient ObsClient) ListObjects(input *ListObjectsInput) (output *ListObj
 		return nil, errors.New("ListObjectsInput is nil")
 	}
 	output = &ListObjectsOutput{}
-	err = obsClient.doActionWithBucket("ListObjects", HTTP_GET, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("ListObjects", HttpGet, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	} else {
-		if location, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
+		if location, ok := output.ResponseHeaders[HeaderBucketRegion]; ok {
 			output.Location = location[0]
 		}
 	}
@@ -170,11 +170,11 @@ func (obsClient ObsClient) ListVersions(input *ListVersionsInput) (output *ListV
 		return nil, errors.New("ListVersionsInput is nil")
 	}
 	output = &ListVersionsOutput{}
-	err = obsClient.doActionWithBucket("ListVersions", HTTP_GET, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("ListVersions", HttpGet, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	} else {
-		if location, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
+		if location, ok := output.ResponseHeaders[HeaderBucketRegion]; ok {
 			output.Location = location[0]
 		}
 	}
@@ -186,7 +186,7 @@ func (obsClient ObsClient) ListMultipartUploads(input *ListMultipartUploadsInput
 		return nil, errors.New("ListMultipartUploadsInput is nil")
 	}
 	output = &ListMultipartUploadsOutput{}
-	err = obsClient.doActionWithBucket("ListMultipartUploads", HTTP_GET, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("ListMultipartUploads", HttpGet, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -198,7 +198,7 @@ func (obsClient ObsClient) SetBucketQuota(input *SetBucketQuotaInput) (output *B
 		return nil, errors.New("SetBucketQuotaInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketQuota", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketQuota", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -207,7 +207,7 @@ func (obsClient ObsClient) SetBucketQuota(input *SetBucketQuotaInput) (output *B
 
 func (obsClient ObsClient) GetBucketQuota(bucketName string) (output *GetBucketQuotaOutput, err error) {
 	output = &GetBucketQuotaOutput{}
-	err = obsClient.doActionWithBucket("GetBucketQuota", HTTP_GET, bucketName, newSubResourceSerial(SubResourceQuota), output)
+	err = obsClient.doActionWithBucket("GetBucketQuota", HttpGet, bucketName, newSubResourceSerial(SubResourceQuota), output)
 	if err != nil {
 		output = nil
 	}
@@ -216,7 +216,7 @@ func (obsClient ObsClient) GetBucketQuota(bucketName string) (output *GetBucketQ
 
 func (obsClient ObsClient) HeadBucket(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("HeadBucket", HTTP_HEAD, bucketName, defaultSerializable, output)
+	err = obsClient.doActionWithBucket("HeadBucket", HttpHead, bucketName, defaultSerializable, output)
 	if err != nil {
 		output = nil
 	}
@@ -225,7 +225,7 @@ func (obsClient ObsClient) HeadBucket(bucketName string) (output *BaseModel, err
 
 func (obsClient ObsClient) GetBucketMetadata(input *GetBucketMetadataInput) (output *GetBucketMetadataOutput, err error) {
 	output = &GetBucketMetadataOutput{}
-	err = obsClient.doActionWithBucket("GetBucketMetadata", HTTP_HEAD, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("GetBucketMetadata", HttpHead, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -236,7 +236,7 @@ func (obsClient ObsClient) GetBucketMetadata(input *GetBucketMetadataInput) (out
 
 func (obsClient ObsClient) SetObjectMetadata(input *SetObjectMetadataInput) (output *SetObjectMetadataOutput, err error) {
 	output = &SetObjectMetadataOutput{}
-	err = obsClient.doActionWithBucketAndKey("SetObjectMetadata", HTTP_PUT, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("SetObjectMetadata", HttpPut, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -247,7 +247,7 @@ func (obsClient ObsClient) SetObjectMetadata(input *SetObjectMetadataInput) (out
 
 func (obsClient ObsClient) GetBucketStorageInfo(bucketName string) (output *GetBucketStorageInfoOutput, err error) {
 	output = &GetBucketStorageInfoOutput{}
-	err = obsClient.doActionWithBucket("GetBucketStorageInfo", HTTP_GET, bucketName, newSubResourceSerial(SubResourceStorageInfo), output)
+	err = obsClient.doActionWithBucket("GetBucketStorageInfo", HttpGet, bucketName, newSubResourceSerial(SubResourceStorageInfo), output)
 	if err != nil {
 		output = nil
 	}
@@ -258,7 +258,7 @@ func (obsClient ObsClient) getBucketLocationS3(bucketName string) (output *GetBu
 	output = &GetBucketLocationOutput{}
 	var outputS3 *getBucketLocationOutputS3
 	outputS3 = &getBucketLocationOutputS3{}
-	err = obsClient.doActionWithBucket("GetBucketLocation", HTTP_GET, bucketName, newSubResourceSerial(SubResourceLocation), outputS3)
+	err = obsClient.doActionWithBucket("GetBucketLocation", HttpGet, bucketName, newSubResourceSerial(SubResourceLocation), outputS3)
 	if err != nil {
 		output = nil
 	} else {
@@ -271,7 +271,7 @@ func (obsClient ObsClient) getBucketLocationObs(bucketName string) (output *GetB
 	output = &GetBucketLocationOutput{}
 	var outputObs *getBucketLocationOutputObs
 	outputObs = &getBucketLocationOutputObs{}
-	err = obsClient.doActionWithBucket("GetBucketLocation", HTTP_GET, bucketName, newSubResourceSerial(SubResourceLocation), outputObs)
+	err = obsClient.doActionWithBucket("GetBucketLocation", HttpGet, bucketName, newSubResourceSerial(SubResourceLocation), outputObs)
 	if err != nil {
 		output = nil
 	} else {
@@ -292,7 +292,7 @@ func (obsClient ObsClient) SetBucketAcl(input *SetBucketAclInput) (output *BaseM
 		return nil, errors.New("SetBucketAclInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketAcl", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketAcl", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -302,7 +302,7 @@ func (obsClient ObsClient) getBucketAclObs(bucketName string) (output *GetBucket
 	output = &GetBucketAclOutput{}
 	var outputObs *getBucketAclOutputObs
 	outputObs = &getBucketAclOutputObs{}
-	err = obsClient.doActionWithBucket("GetBucketAcl", HTTP_GET, bucketName, newSubResourceSerial(SubResourceAcl), outputObs)
+	err = obsClient.doActionWithBucket("GetBucketAcl", HttpGet, bucketName, newSubResourceSerial(SubResourceAcl), outputObs)
 	if err != nil {
 		output = nil
 	} else {
@@ -328,7 +328,7 @@ func (obsClient ObsClient) GetBucketAcl(bucketName string) (output *GetBucketAcl
 	if obsClient.conf.signature == SignatureObs {
 		return obsClient.getBucketAclObs(bucketName)
 	}
-	err = obsClient.doActionWithBucket("GetBucketAcl", HTTP_GET, bucketName, newSubResourceSerial(SubResourceAcl), output)
+	err = obsClient.doActionWithBucket("GetBucketAcl", HttpGet, bucketName, newSubResourceSerial(SubResourceAcl), output)
 	if err != nil {
 		output = nil
 	}
@@ -340,7 +340,7 @@ func (obsClient ObsClient) SetBucketPolicy(input *SetBucketPolicyInput) (output 
 		return nil, errors.New("SetBucketPolicy is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketPolicy", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketPolicy", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -349,7 +349,7 @@ func (obsClient ObsClient) SetBucketPolicy(input *SetBucketPolicyInput) (output 
 
 func (obsClient ObsClient) GetBucketPolicy(bucketName string) (output *GetBucketPolicyOutput, err error) {
 	output = &GetBucketPolicyOutput{}
-	err = obsClient.doActionWithBucketV2("GetBucketPolicy", HTTP_GET, bucketName, newSubResourceSerial(SubResourcePolicy), output)
+	err = obsClient.doActionWithBucketV2("GetBucketPolicy", HttpGet, bucketName, newSubResourceSerial(SubResourcePolicy), output)
 	if err != nil {
 		output = nil
 	}
@@ -358,7 +358,7 @@ func (obsClient ObsClient) GetBucketPolicy(bucketName string) (output *GetBucket
 
 func (obsClient ObsClient) DeleteBucketPolicy(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("DeleteBucketPolicy", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourcePolicy), output)
+	err = obsClient.doActionWithBucket("DeleteBucketPolicy", HttpDelete, bucketName, newSubResourceSerial(SubResourcePolicy), output)
 	if err != nil {
 		output = nil
 	}
@@ -370,7 +370,7 @@ func (obsClient ObsClient) SetBucketCors(input *SetBucketCorsInput) (output *Bas
 		return nil, errors.New("SetBucketCorsInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketCors", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketCors", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -379,7 +379,7 @@ func (obsClient ObsClient) SetBucketCors(input *SetBucketCorsInput) (output *Bas
 
 func (obsClient ObsClient) GetBucketCors(bucketName string) (output *GetBucketCorsOutput, err error) {
 	output = &GetBucketCorsOutput{}
-	err = obsClient.doActionWithBucket("GetBucketCors", HTTP_GET, bucketName, newSubResourceSerial(SubResourceCors), output)
+	err = obsClient.doActionWithBucket("GetBucketCors", HttpGet, bucketName, newSubResourceSerial(SubResourceCors), output)
 	if err != nil {
 		output = nil
 	}
@@ -388,7 +388,7 @@ func (obsClient ObsClient) GetBucketCors(bucketName string) (output *GetBucketCo
 
 func (obsClient ObsClient) DeleteBucketCors(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("DeleteBucketCors", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourceCors), output)
+	err = obsClient.doActionWithBucket("DeleteBucketCors", HttpDelete, bucketName, newSubResourceSerial(SubResourceCors), output)
 	if err != nil {
 		output = nil
 	}
@@ -400,7 +400,7 @@ func (obsClient ObsClient) SetBucketVersioning(input *SetBucketVersioningInput) 
 		return nil, errors.New("SetBucketVersioningInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketVersioning", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketVersioning", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -409,7 +409,7 @@ func (obsClient ObsClient) SetBucketVersioning(input *SetBucketVersioningInput) 
 
 func (obsClient ObsClient) GetBucketVersioning(bucketName string) (output *GetBucketVersioningOutput, err error) {
 	output = &GetBucketVersioningOutput{}
-	err = obsClient.doActionWithBucket("GetBucketVersioning", HTTP_GET, bucketName, newSubResourceSerial(SubResourceVersioning), output)
+	err = obsClient.doActionWithBucket("GetBucketVersioning", HttpGet, bucketName, newSubResourceSerial(SubResourceVersioning), output)
 	if err != nil {
 		output = nil
 	}
@@ -421,7 +421,7 @@ func (obsClient ObsClient) SetBucketWebsiteConfiguration(input *SetBucketWebsite
 		return nil, errors.New("SetBucketWebsiteConfigurationInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketWebsiteConfiguration", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketWebsiteConfiguration", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -430,7 +430,7 @@ func (obsClient ObsClient) SetBucketWebsiteConfiguration(input *SetBucketWebsite
 
 func (obsClient ObsClient) GetBucketWebsiteConfiguration(bucketName string) (output *GetBucketWebsiteConfigurationOutput, err error) {
 	output = &GetBucketWebsiteConfigurationOutput{}
-	err = obsClient.doActionWithBucket("GetBucketWebsiteConfiguration", HTTP_GET, bucketName, newSubResourceSerial(SubResourceWebsite), output)
+	err = obsClient.doActionWithBucket("GetBucketWebsiteConfiguration", HttpGet, bucketName, newSubResourceSerial(SubResourceWebsite), output)
 	if err != nil {
 		output = nil
 	}
@@ -439,7 +439,7 @@ func (obsClient ObsClient) GetBucketWebsiteConfiguration(bucketName string) (out
 
 func (obsClient ObsClient) DeleteBucketWebsiteConfiguration(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("DeleteBucketWebsiteConfiguration", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourceWebsite), output)
+	err = obsClient.doActionWithBucket("DeleteBucketWebsiteConfiguration", HttpDelete, bucketName, newSubResourceSerial(SubResourceWebsite), output)
 	if err != nil {
 		output = nil
 	}
@@ -451,7 +451,7 @@ func (obsClient ObsClient) SetBucketLoggingConfiguration(input *SetBucketLogging
 		return nil, errors.New("SetBucketLoggingConfigurationInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketLoggingConfiguration", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketLoggingConfiguration", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -460,7 +460,7 @@ func (obsClient ObsClient) SetBucketLoggingConfiguration(input *SetBucketLogging
 
 func (obsClient ObsClient) GetBucketLoggingConfiguration(bucketName string) (output *GetBucketLoggingConfigurationOutput, err error) {
 	output = &GetBucketLoggingConfigurationOutput{}
-	err = obsClient.doActionWithBucket("GetBucketLoggingConfiguration", HTTP_GET, bucketName, newSubResourceSerial(SubResourceLogging), output)
+	err = obsClient.doActionWithBucket("GetBucketLoggingConfiguration", HttpGet, bucketName, newSubResourceSerial(SubResourceLogging), output)
 	if err != nil {
 		output = nil
 	}
@@ -472,7 +472,7 @@ func (obsClient ObsClient) SetBucketLifecycleConfiguration(input *SetBucketLifec
 		return nil, errors.New("SetBucketLifecycleConfigurationInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketLifecycleConfiguration", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketLifecycleConfiguration", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -481,7 +481,7 @@ func (obsClient ObsClient) SetBucketLifecycleConfiguration(input *SetBucketLifec
 
 func (obsClient ObsClient) GetBucketLifecycleConfiguration(bucketName string) (output *GetBucketLifecycleConfigurationOutput, err error) {
 	output = &GetBucketLifecycleConfigurationOutput{}
-	err = obsClient.doActionWithBucket("GetBucketLifecycleConfiguration", HTTP_GET, bucketName, newSubResourceSerial(SubResourceLifecycle), output)
+	err = obsClient.doActionWithBucket("GetBucketLifecycleConfiguration", HttpGet, bucketName, newSubResourceSerial(SubResourceLifecycle), output)
 	if err != nil {
 		output = nil
 	}
@@ -490,7 +490,7 @@ func (obsClient ObsClient) GetBucketLifecycleConfiguration(bucketName string) (o
 
 func (obsClient ObsClient) DeleteBucketLifecycleConfiguration(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("DeleteBucketLifecycleConfiguration", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourceLifecycle), output)
+	err = obsClient.doActionWithBucket("DeleteBucketLifecycleConfiguration", HttpDelete, bucketName, newSubResourceSerial(SubResourceLifecycle), output)
 	if err != nil {
 		output = nil
 	}
@@ -502,7 +502,7 @@ func (obsClient ObsClient) SetBucketTagging(input *SetBucketTaggingInput) (outpu
 		return nil, errors.New("SetBucketTaggingInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketTagging", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketTagging", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -511,7 +511,7 @@ func (obsClient ObsClient) SetBucketTagging(input *SetBucketTaggingInput) (outpu
 
 func (obsClient ObsClient) GetBucketTagging(bucketName string) (output *GetBucketTaggingOutput, err error) {
 	output = &GetBucketTaggingOutput{}
-	err = obsClient.doActionWithBucket("GetBucketTagging", HTTP_GET, bucketName, newSubResourceSerial(SubResourceTagging), output)
+	err = obsClient.doActionWithBucket("GetBucketTagging", HttpGet, bucketName, newSubResourceSerial(SubResourceTagging), output)
 	if err != nil {
 		output = nil
 	}
@@ -520,7 +520,7 @@ func (obsClient ObsClient) GetBucketTagging(bucketName string) (output *GetBucke
 
 func (obsClient ObsClient) DeleteBucketTagging(bucketName string) (output *BaseModel, err error) {
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("DeleteBucketTagging", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourceTagging), output)
+	err = obsClient.doActionWithBucket("DeleteBucketTagging", HttpDelete, bucketName, newSubResourceSerial(SubResourceTagging), output)
 	if err != nil {
 		output = nil
 	}
@@ -532,7 +532,7 @@ func (obsClient ObsClient) SetBucketNotification(input *SetBucketNotificationInp
 		return nil, errors.New("SetBucketNotificationInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucket("SetBucketNotification", HTTP_PUT, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("SetBucketNotification", HttpPut, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -544,7 +544,7 @@ func (obsClient ObsClient) GetBucketNotification(bucketName string) (output *Get
 		return obsClient.getBucketNotificationS3(bucketName)
 	}
 	output = &GetBucketNotificationOutput{}
-	err = obsClient.doActionWithBucket("GetBucketNotification", HTTP_GET, bucketName, newSubResourceSerial(SubResourceNotification), output)
+	err = obsClient.doActionWithBucket("GetBucketNotification", HttpGet, bucketName, newSubResourceSerial(SubResourceNotification), output)
 	if err != nil {
 		output = nil
 	}
@@ -553,7 +553,7 @@ func (obsClient ObsClient) GetBucketNotification(bucketName string) (output *Get
 
 func (obsClient ObsClient) getBucketNotificationS3(bucketName string) (output *GetBucketNotificationOutput, err error) {
 	outputS3 := &getBucketNotificationOutputS3{}
-	err = obsClient.doActionWithBucket("GetBucketNotification", HTTP_GET, bucketName, newSubResourceSerial(SubResourceNotification), outputS3)
+	err = obsClient.doActionWithBucket("GetBucketNotification", HttpGet, bucketName, newSubResourceSerial(SubResourceNotification), outputS3)
 	if err != nil {
 		return nil, err
 	}
@@ -583,7 +583,7 @@ func (obsClient ObsClient) DeleteObject(input *DeleteObjectInput) (output *Delet
 		return nil, errors.New("DeleteObjectInput is nil")
 	}
 	output = &DeleteObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("DeleteObject", HTTP_DELETE, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("DeleteObject", HttpDelete, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -597,7 +597,7 @@ func (obsClient ObsClient) DeleteObjects(input *DeleteObjectsInput) (output *Del
 		return nil, errors.New("DeleteObjectsInput is nil")
 	}
 	output = &DeleteObjectsOutput{}
-	err = obsClient.doActionWithBucket("DeleteObjects", HTTP_POST, input.Bucket, input, output)
+	err = obsClient.doActionWithBucket("DeleteObjects", HttpPost, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -609,7 +609,7 @@ func (obsClient ObsClient) SetObjectAcl(input *SetObjectAclInput) (output *BaseM
 		return nil, errors.New("SetObjectAclInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucketAndKey("SetObjectAcl", HTTP_PUT, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("SetObjectAcl", HttpPut, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -621,11 +621,11 @@ func (obsClient ObsClient) GetObjectAcl(input *GetObjectAclInput) (output *GetOb
 		return nil, errors.New("GetObjectAclInput is nil")
 	}
 	output = &GetObjectAclOutput{}
-	err = obsClient.doActionWithBucketAndKey("GetObjectAcl", HTTP_GET, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("GetObjectAcl", HttpGet, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
-		if versionId, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+		if versionId, ok := output.ResponseHeaders[HeaderVersionId]; ok {
 			output.VersionId = versionId[0]
 		}
 	}
@@ -637,7 +637,7 @@ func (obsClient ObsClient) RestoreObject(input *RestoreObjectInput) (output *Bas
 		return nil, errors.New("RestoreObjectInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucketAndKey("RestoreObject", HTTP_POST, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("RestoreObject", HttpPost, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -649,7 +649,7 @@ func (obsClient ObsClient) GetObjectMetadata(input *GetObjectMetadataInput) (out
 		return nil, errors.New("GetObjectMetadataInput is nil")
 	}
 	output = &GetObjectMetadataOutput{}
-	err = obsClient.doActionWithBucketAndKey("GetObjectMetadata", HTTP_HEAD, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("GetObjectMetadata", HttpHead, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -663,7 +663,7 @@ func (obsClient ObsClient) GetObject(input *GetObjectInput) (output *GetObjectOu
 		return nil, errors.New("GetObjectInput is nil")
 	}
 	output = &GetObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("GetObject", HTTP_GET, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("GetObject", HttpGet, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -692,9 +692,9 @@ func (obsClient ObsClient) PutObject(input *PutObjectInput) (output *PutObjectOu
 		}
 	}
 	if repeatable {
-		err = obsClient.doActionWithBucketAndKey("PutObject", HTTP_PUT, input.Bucket, input.Key, input, output)
+		err = obsClient.doActionWithBucketAndKey("PutObject", HttpPut, input.Bucket, input.Key, input, output)
 	} else {
-		err = obsClient.doActionWithBucketAndKeyUnRepeatable("PutObject", HTTP_PUT, input.Bucket, input.Key, input, output)
+		err = obsClient.doActionWithBucketAndKeyUnRepeatable("PutObject", HttpPut, input.Bucket, input.Key, input, output)
 	}
 	if err != nil {
 		output = nil
@@ -748,7 +748,7 @@ func (obsClient ObsClient) PutFile(input *PutFileInput) (output *PutObjectOutput
 	}
 
 	output = &PutObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("PutFile", HTTP_PUT, _input.Bucket, _input.Key, _input, output)
+	err = obsClient.doActionWithBucketAndKey("PutFile", HttpPut, _input.Bucket, _input.Key, _input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -770,7 +770,7 @@ func (obsClient ObsClient) CopyObject(input *CopyObjectInput) (output *CopyObjec
 	}
 
 	output = &CopyObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("CopyObject", HTTP_PUT, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("CopyObject", HttpPut, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -787,7 +787,7 @@ func (obsClient ObsClient) AbortMultipartUpload(input *AbortMultipartUploadInput
 		return nil, errors.New("UploadId is empty")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucketAndKey("AbortMultipartUpload", HTTP_DELETE, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("AbortMultipartUpload", HttpDelete, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -806,7 +806,7 @@ func (obsClient ObsClient) InitiateMultipartUpload(input *InitiateMultipartUploa
 	}
 
 	output = &InitiateMultipartUploadOutput{}
-	err = obsClient.doActionWithBucketAndKey("InitiateMultipartUpload", HTTP_POST, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("InitiateMultipartUpload", HttpPost, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -873,9 +873,9 @@ func (obsClient ObsClient) UploadPart(_input *UploadPartInput) (output *UploadPa
 		repeatable = true
 	}
 	if repeatable {
-		err = obsClient.doActionWithBucketAndKey("UploadPart", HTTP_PUT, input.Bucket, input.Key, input, output)
+		err = obsClient.doActionWithBucketAndKey("UploadPart", HttpPut, input.Bucket, input.Key, input, output)
 	} else {
-		err = obsClient.doActionWithBucketAndKeyUnRepeatable("UploadPart", HTTP_PUT, input.Bucket, input.Key, input, output)
+		err = obsClient.doActionWithBucketAndKeyUnRepeatable("UploadPart", HttpPut, input.Bucket, input.Key, input, output)
 	}
 	if err != nil {
 		output = nil
@@ -899,7 +899,7 @@ func (obsClient ObsClient) CompleteMultipartUpload(input *CompleteMultipartUploa
 	sort.Sort(parts)
 
 	output = &CompleteMultipartUploadOutput{}
-	err = obsClient.doActionWithBucketAndKey("CompleteMultipartUpload", HTTP_POST, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("CompleteMultipartUpload", HttpPost, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -916,7 +916,7 @@ func (obsClient ObsClient) ListParts(input *ListPartsInput) (output *ListPartsOu
 		return nil, errors.New("UploadId is empty")
 	}
 	output = &ListPartsOutput{}
-	err = obsClient.doActionWithBucketAndKey("ListParts", HTTP_GET, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("ListParts", HttpGet, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -938,7 +938,7 @@ func (obsClient ObsClient) CopyPart(input *CopyPartInput) (output *CopyPartOutpu
 	}
 
 	output = &CopyPartOutput{}
-	err = obsClient.doActionWithBucketAndKey("CopyPart", HTTP_PUT, input.Bucket, input.Key, input, output)
+	err = obsClient.doActionWithBucketAndKey("CopyPart", HttpPut, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {

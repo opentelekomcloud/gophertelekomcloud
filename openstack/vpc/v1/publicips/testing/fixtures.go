@@ -42,7 +42,8 @@ func HandleCreateSuccessfully(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, CreateOutput)
+		_, err := fmt.Fprintf(w, CreateOutput)
+		th.AssertNoErr(t, err)
 	})
 }
 
