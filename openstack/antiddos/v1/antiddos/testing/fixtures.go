@@ -160,13 +160,15 @@ func HandleListStatusSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		ip := r.Form.Get("ip")
 		limit := r.Form.Get("limit")
 		offset := r.Form.Get("offset")
 		status := r.Form.Get("status")
 		if ip == "49." && limit == "2" && offset == "1" && status == "notConfig" {
-			fmt.Fprintf(w, ListStatusOutput)
+			_, err := fmt.Fprintf(w, ListStatusOutput)
+			th.AssertNoErr(t, err)
 		}
 	})
 }
@@ -530,7 +532,7 @@ var WeeklyReportOutput = `
 }
 `
 
-//init the loc
+// init the loc
 var responsePeriodTime = time.Date(2018, 3, 1, 0, 0, 0, 0, time.UTC)
 
 var WeeklyReportResponse = antiddos.WeeklyReportResponse{

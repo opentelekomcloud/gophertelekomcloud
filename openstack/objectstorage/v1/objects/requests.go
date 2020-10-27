@@ -208,7 +208,9 @@ func (opts CreateOpts) ToObjectCreateParams() (io.Reader, map[string]string, str
 	if _, err := io.Copy(hash, readSeeker); err != nil {
 		return nil, nil, "", err
 	}
-	readSeeker.Seek(0, io.SeekStart)
+	if _, err := readSeeker.Seek(0, io.SeekStart); err != nil {
+		return nil, nil, "", err
+	}
 
 	h["ETag"] = fmt.Sprintf("%x", hash.Sum(nil))
 
@@ -493,7 +495,9 @@ func CreateTempURL(c *golangsdk.ServiceClient, containerName, objectName string,
 	objectPath = opts.Split + objectPath
 	body := fmt.Sprintf("%s\n%d\n%s", opts.Method, expiry, objectPath)
 	hash := hmac.New(sha1.New, secretKey)
-	hash.Write([]byte(body))
+	if _, err := hash.Write([]byte(body)); err != nil {
+		return "", err
+	}
 	hexsum := fmt.Sprintf("%x", hash.Sum(nil))
 	return fmt.Sprintf("%s%s?temp_url_sig=%s&temp_url_expires=%d", baseURL, objectPath, hexsum, expiry), nil
 }

@@ -187,6 +187,7 @@ service_db:
 			},
 		},
 	}
-	env.Parse()
+	err = env.Parse()
+	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expectedParsed, env.Parsed)
 }

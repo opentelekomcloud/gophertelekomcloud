@@ -22,7 +22,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, err := fmt.Fprintf(w, `
 {
     "floatingips": [
         {
@@ -50,11 +50,12 @@ func TestList(t *testing.T) {
     ]
 }
 			`)
+		th.AssertNoErr(t, err)
 	})
 
 	count := 0
 
-	floatingips.List(fake.ServiceClient(), floatingips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	err := floatingips.List(fake.ServiceClient(), floatingips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := floatingips.ExtractFloatingIPs(page)
 		if err != nil {
@@ -89,6 +90,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)

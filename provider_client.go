@@ -307,7 +307,10 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 				}
 				if options.RawBody != nil {
 					if seeker, ok := options.RawBody.(io.Seeker); ok {
-						seeker.Seek(0, 0)
+						_, err := seeker.Seek(0, 0)
+						if err != nil {
+							return nil, err
+						}
 					}
 				}
 				resp, err = client.Request(method, url, options)

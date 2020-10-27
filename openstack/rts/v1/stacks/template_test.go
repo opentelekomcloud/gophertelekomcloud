@@ -143,6 +143,7 @@ resources:
 			},
 		},
 	}
-	te.Parse()
+	err = te.Parse()
+	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expectedParsed, te.Parsed)
 }

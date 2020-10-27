@@ -187,33 +187,6 @@ const (
 var (
 	interested_headers = []string{"content-md5", "content-type", "date"}
 
-	allowed_response_http_header_metadata_names = map[string]bool{
-		"content-type":                  true,
-		"content-md5":                   true,
-		"content-length":                true,
-		"content-language":              true,
-		"expires":                       true,
-		"origin":                        true,
-		"cache-control":                 true,
-		"content-disposition":           true,
-		"content-encoding":              true,
-		"x-default-storage-class":       true,
-		"location":                      true,
-		"date":                          true,
-		"etag":                          true,
-		"host":                          true,
-		"last-modified":                 true,
-		"content-range":                 true,
-		"x-reserved":                    true,
-		"x-reserved-indicator":          true,
-		"access-control-allow-origin":   true,
-		"access-control-allow-headers":  true,
-		"access-control-max-age":        true,
-		"access-control-allow-methods":  true,
-		"access-control-expose-headers": true,
-		"connection":                    true,
-	}
-
 	allowed_request_http_header_metadata_names = map[string]bool{
 		"content-type":                   true,
 		"content-md5":                    true,
