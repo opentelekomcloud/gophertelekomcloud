@@ -11,14 +11,14 @@ import (
 // the API. Filtering is achieved by passing in struct field values that map to
 // the floating IP attributes you want to see returned.
 type ListOpts struct {
-	//ID is the unique identifier for the vpc_peering_connection.
+	// ID is the unique identifier for the vpc_peering_connection.
 	ID string `q:"id"`
 
-	//Name is the human readable name for the vpc_peering_connection. It does not have to be
+	// Name is the human readable name for the vpc_peering_connection. It does not have to be
 	// unique.
 	Name string `q:"name"`
 
-	//Status indicates whether or not a vpc_peering_connection is currently operational.
+	// Status indicates whether or not a vpc_peering_connection is currently operational.
 	Status string `q:"status"`
 
 	// TenantId indicates  vpc_peering_connection avalable in specific tenant.
@@ -60,6 +60,9 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Peering, error) {
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return PeeringConnectionPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
 
 	allPeeringConns, err := ExtractPeerings(pages)
 	if err != nil {
@@ -134,24 +137,24 @@ func Reject(c *golangsdk.ServiceClient, id string) (r RejectResult) {
 	return
 }
 
-//CreateOptsBuilder is an interface by which can build the request body of vpc peering connection.
+// CreateOptsBuilder is an interface by which can build the request body of vpc peering connection.
 type CreateOptsBuilder interface {
 	ToPeeringCreateMap() (map[string]interface{}, error)
 }
 
-//CreateOpts is a struct which is used to create vpc peering connection.
+// CreateOpts is a struct which is used to create vpc peering connection.
 type CreateOpts struct {
 	Name           string  `json:"name"`
 	RequestVpcInfo VpcInfo `json:"request_vpc_info" required:"true"`
 	AcceptVpcInfo  VpcInfo `json:"accept_vpc_info" required:"true"`
 }
 
-//ToVpcPeeringCreateMap builds a create request body from CreateOpts.
+// ToVpcPeeringCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToPeeringCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "peering")
 }
 
-//Create is a method by which can access to create the vpc peering connection.
+// Create is a method by which can access to create the vpc peering connection.
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToPeeringCreateMap()
 	if err != nil {
@@ -164,28 +167,28 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-//Delete is a method by which can be able to delete a vpc peering connection.
+// Delete is a method by which can be able to delete a vpc peering connection.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = client.Delete(resourceURL(client, id), nil)
 	return
 }
 
-//UpdateOptsBuilder is an interface by which can be able to build the request body of vpc peering connection.
+// UpdateOptsBuilder is an interface by which can be able to build the request body of vpc peering connection.
 type UpdateOptsBuilder interface {
 	ToVpcPeeringUpdateMap() (map[string]interface{}, error)
 }
 
-//UpdateOpts is a struct which represents the request body of update method.
+// UpdateOpts is a struct which represents the request body of update method.
 type UpdateOpts struct {
 	Name string `json:"name,omitempty"`
 }
 
-//ToVpcPeeringUpdateMap builds a update request body from UpdateOpts.
+// ToVpcPeeringUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToVpcPeeringUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "peering")
 }
 
-//Update is a method which can be able to update the name of vpc peering connection.
+// Update is a method which can be able to update the name of vpc peering connection.
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToVpcPeeringUpdateMap()
 	if err != nil {

@@ -198,9 +198,8 @@ func copyHeaders(m map[string][]string) (ret map[string][]string) {
 		ret = make(map[string][]string, len(m))
 		for key, values := range m {
 			_values := make([]string, 0, len(values))
-			for _, value := range values {
-				_values = append(_values, value)
-			}
+			_values = append(_values, values...)
+
 			ret[strings.ToLower(key)] = _values
 		}
 	} else {

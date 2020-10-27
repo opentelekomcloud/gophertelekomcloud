@@ -117,22 +117,20 @@ func (obsClient ObsClient) SetBucketStoragePolicy(input *SetBucketStoragePolicyI
 }
 func (obsClient ObsClient) getBucketStoragePolicyS3(bucketName string) (output *GetBucketStoragePolicyOutput, err error) {
 	output = &GetBucketStoragePolicyOutput{}
-	var outputS3 *getBucketStoragePolicyOutputS3
-	outputS3 = &getBucketStoragePolicyOutputS3{}
+	var outputS3 = &getBucketStoragePolicyOutputS3{}
 	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HttpGet, bucketName, newSubResourceSerial(SubResourceStoragePolicy), outputS3)
 	if err != nil {
 		output = nil
 		return
 	}
 	output.BaseModel = outputS3.BaseModel
-	output.StorageClass = fmt.Sprintf("%s", outputS3.StorageClass)
+	output.StorageClass = string(outputS3.StorageClass)
 	return
 }
 
 func (obsClient ObsClient) getBucketStoragePolicyObs(bucketName string) (output *GetBucketStoragePolicyOutput, err error) {
 	output = &GetBucketStoragePolicyOutput{}
-	var outputObs *getBucketStoragePolicyOutputObs
-	outputObs = &getBucketStoragePolicyOutputObs{}
+	var outputObs = &getBucketStoragePolicyOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HttpGet, bucketName, newSubResourceSerial(SubResourceStorageClass), outputObs)
 	if err != nil {
 		output = nil
@@ -256,8 +254,7 @@ func (obsClient ObsClient) GetBucketStorageInfo(bucketName string) (output *GetB
 
 func (obsClient ObsClient) getBucketLocationS3(bucketName string) (output *GetBucketLocationOutput, err error) {
 	output = &GetBucketLocationOutput{}
-	var outputS3 *getBucketLocationOutputS3
-	outputS3 = &getBucketLocationOutputS3{}
+	var outputS3 = &getBucketLocationOutputS3{}
 	err = obsClient.doActionWithBucket("GetBucketLocation", HttpGet, bucketName, newSubResourceSerial(SubResourceLocation), outputS3)
 	if err != nil {
 		output = nil

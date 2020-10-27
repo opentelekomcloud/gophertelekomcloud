@@ -63,7 +63,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	vips.List(fake.ServiceClient(), vips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	err := vips.List(fake.ServiceClient(), vips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := vips.ExtractVIPs(page)
 		if err != nil {
@@ -110,6 +110,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)

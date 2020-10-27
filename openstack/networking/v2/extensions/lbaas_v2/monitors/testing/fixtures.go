@@ -132,7 +132,8 @@ func HandleHealthmonitorListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":

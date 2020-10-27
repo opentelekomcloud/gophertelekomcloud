@@ -23,7 +23,7 @@ import (
 func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, expires int64) (requestUrl string, err error) {
 	isAkSkEmpty := obsClient.conf.securityProvider == nil || obsClient.conf.securityProvider.ak == "" || obsClient.conf.securityProvider.sk == ""
-	if isAkSkEmpty == false && obsClient.conf.securityProvider.securityToken != "" {
+	if !isAkSkEmpty && obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
 			params[HeaderStsTokenObs] = obsClient.conf.securityProvider.securityToken
 		} else {
@@ -117,7 +117,7 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, hostName string) (requestUrl string, err error) {
 	isAkSkEmpty := obsClient.conf.securityProvider == nil || obsClient.conf.securityProvider.ak == "" || obsClient.conf.securityProvider.sk == ""
-	if isAkSkEmpty == false && obsClient.conf.securityProvider.securityToken != "" {
+	if !isAkSkEmpty && obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
 			headers[HeaderStsTokenObs] = []string{obsClient.conf.securityProvider.securityToken}
 		} else {

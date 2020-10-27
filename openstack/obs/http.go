@@ -27,27 +27,25 @@ import (
 
 func prepareHeaders(headers map[string][]string, meta bool, isObs bool) map[string][]string {
 	_headers := make(map[string][]string, len(headers))
-	if headers != nil {
-		for key, value := range headers {
-			key = strings.TrimSpace(key)
-			if key == "" {
+	for key, value := range headers {
+		key = strings.TrimSpace(key)
+		if key == "" {
+			continue
+		}
+		_key := strings.ToLower(key)
+		if _, ok := allowed_request_http_header_metadata_names[_key]; !ok && !strings.HasPrefix(key, HeaderPrefix) && !strings.HasPrefix(key, HeaderPrefixObs) {
+			if !meta {
 				continue
 			}
-			_key := strings.ToLower(key)
-			if _, ok := allowed_request_http_header_metadata_names[_key]; !ok && !strings.HasPrefix(key, HeaderPrefix) && !strings.HasPrefix(key, HeaderPrefixObs) {
-				if !meta {
-					continue
-				}
-				if !isObs {
-					_key = HeaderPrefixMeta + _key
-				} else {
-					_key = HeaderPrefixMetaObs + _key
-				}
+			if !isObs {
+				_key = HeaderPrefixMeta + _key
 			} else {
-				_key = key
+				_key = HeaderPrefixMetaObs + _key
 			}
-			_headers[_key] = value
+		} else {
+			_key = key
 		}
+		_headers[_key] = value
 	}
 	return _headers
 }
@@ -133,7 +131,7 @@ func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string
 	}
 
 	if isDebugLogEnabled() {
-		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, (GetCurrentTimestamp() - start))
+		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, GetCurrentTimestamp()-start)
 	}
 
 	return respError
@@ -202,7 +200,7 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 	start := GetCurrentTimestamp()
 	resp, err = obsClient.httpClient.Do(req)
 	if isInfoLogEnabled() {
-		doLog(LEVEL_INFO, "Do http request cost %d ms", (GetCurrentTimestamp() - start))
+		doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
 	}
 
 	var msg interface{}
@@ -230,7 +228,7 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 	}
 
 	if isDebugLogEnabled() {
-		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, (GetCurrentTimestamp() - start))
+		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, GetCurrentTimestamp()-start)
 	}
 
 	return
@@ -331,7 +329,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 		start := GetCurrentTimestamp()
 		resp, err = obsClient.httpClient.Do(req)
 		if isInfoLogEnabled() {
-			doLog(LEVEL_INFO, "Do http request cost %d ms", (GetCurrentTimestamp() - start))
+			doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
 		}
 
 		var msg interface{}
