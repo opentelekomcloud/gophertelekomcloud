@@ -1,9 +1,10 @@
 package secgroups
 
 import (
+	"time"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"time"
 )
 
 func commonList(client *golangsdk.ServiceClient, url string) pagination.Pager {
