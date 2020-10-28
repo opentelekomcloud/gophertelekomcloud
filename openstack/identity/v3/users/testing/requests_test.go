@@ -106,6 +106,22 @@ func TestUpdateUser(t *testing.T) {
 	th.CheckDeepEquals(t, SecondUserUpdated, *actual)
 }
 
+func TestExtendedUpdateUser(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+	HandleExtendedUpdateUserSuccessfully(t)
+
+	iFalse := false
+	updateOpts := users.ExtendedUpdateOpts{
+		Enabled: &iFalse,
+		Email:   "email@generic.otc",
+	}
+
+	actual, err := users.ExtendedUpdate(client.ServiceClient(), "9fe1d3", updateOpts).Extract()
+	th.AssertNoErr(t, err)
+	th.CheckDeepEquals(t, ThirdUserUpdated, *actual)
+}
+
 func TestDeleteUser(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
