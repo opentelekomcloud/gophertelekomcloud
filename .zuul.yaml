@@ -1,7 +1,8 @@
 ---
-- job: golang-lint
-  parent: golangci-lint
-  voting: false
+- job:
+    name: golang-lint
+    parent: golangci-lint
+    voting: false
 
 - project:
     merge-mode: squash-merge
