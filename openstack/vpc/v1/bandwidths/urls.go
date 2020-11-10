@@ -5,13 +5,13 @@ import (
 )
 
 func GetURL(c *golangsdk.ServiceClient, bandwidthId string) string {
-	return c.ServiceURL("bandwidths", bandwidthId)
+	return c.ServiceURL(c.ProjectID, "bandwidths", bandwidthId)
 }
 
 func ListURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("bandwidths")
+	return c.ServiceURL(c.ProjectID, "bandwidths")
 }
 
 func UpdateURL(c *golangsdk.ServiceClient, bandwidthId string) string {
-	return c.ServiceURL("bandwidths", bandwidthId)
+	return c.ServiceURL(c.ProjectID, "bandwidths", bandwidthId)
 }
