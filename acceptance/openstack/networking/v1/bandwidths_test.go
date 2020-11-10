@@ -2,23 +2,13 @@ package v1
 
 import (
 	"testing"
-	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/bandwidths"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/eips"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v1/bandwidths"
 )
-
-func TestBandwidthsList(t *testing.T) {
-	client, err := clients.NewNetworkV1Client()
-	if err != nil {
-		t.Fatalf("Unable to create NetworkV1 client : %v", err)
-	}
-	allPages, err := bandwidths.List(client, bandwidths.ListOpts{}).AllPages()
-	tools.PrintResource(t, allPages)
-}
 
 func TestBandwidthsUpdate(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
@@ -26,6 +16,7 @@ func TestBandwidthsUpdate(t *testing.T) {
 		t.Fatalf("Unable to create NetworkV1 client: %v", err)
 	}
 	bandwidthSize := 100
+
 	// Create eip/bandwidth
 	eip, err := createEipResource(t, client, bandwidthSize)
 	if err != nil {
@@ -42,7 +33,6 @@ func TestBandwidthsUpdate(t *testing.T) {
 	updateOpts := bandwidths.UpdateOpts{
 		Size: newBandWidthSize,
 	}
-
 	updatedBand, err := bandwidths.Update(client, eip.BandwidthID, updateOpts).Extract()
 	if err != nil {
 		t.Fatalf("Unable to update bandwidth: %s", err)
@@ -77,12 +67,11 @@ func createEipResource(t *testing.T, nwClient *golangsdk.ServiceClient, bandwidt
 		return nil, err
 	}
 
-	// wait to be active
+	// wait to be DOWN
 	t.Logf("Waitting for eip %s to be active", eip.ID)
-	// if err := waitForEipToActive(nwClient, eip.ID, 600); err != nil {
-	// 	t.Fatalf("Error creating eip: %s", err)
-	// }
-	time.Sleep(20 * time.Second)
+	if err := waitForEipToActive(nwClient, eip.ID, 600); err != nil {
+		t.Fatalf("Error creating eip: %s", err)
+	}
 	newEip, err := eips.Get(nwClient, eip.ID).Extract()
 	if err != nil {
 		t.Fatalf("adasdasd")
@@ -101,11 +90,11 @@ func deleteEipResource(t *testing.T, nwClient *golangsdk.ServiceClient, eipId st
 		t.Fatalf("Error delete eip: %s", eipId)
 	}
 
-	// wait to be active
+	// wait to be deleted
 	t.Logf("Waitting for eip %s to be deleted", eipId)
-	// if err := waitForEipToDelete(nwClient, eipId, 600); err != nil {
-	// 	t.Fatalf("Error wait for deleting eip: %s", err)
-	// }
+	if err := waitForEipToDelete(nwClient, eipId, 600); err != nil {
+		t.Fatalf("Error wait for deleting eip: %s", err)
+	}
 
 	t.Logf("Deleted eip/bandwidth: %s", eipId)
 }
