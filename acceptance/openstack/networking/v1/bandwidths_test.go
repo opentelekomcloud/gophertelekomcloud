@@ -68,13 +68,13 @@ func createEipResource(t *testing.T, nwClient *golangsdk.ServiceClient, bandwidt
 	}
 
 	// wait to be DOWN
-	t.Logf("Waitting for eip %s to be active", eip.ID)
+	t.Logf("Waiting for eip %s to be active", eip.ID)
 	if err := waitForEipToActive(nwClient, eip.ID, 600); err != nil {
 		t.Fatalf("Error creating eip: %s", err)
 	}
 	newEip, err := eips.Get(nwClient, eip.ID).Extract()
 	if err != nil {
-		t.Fatalf("adasdasd")
+		t.Fatalf("Error reading eip: %s", err)
 	}
 
 	t.Logf("Created eip/bandwidth: %s", bandName)
