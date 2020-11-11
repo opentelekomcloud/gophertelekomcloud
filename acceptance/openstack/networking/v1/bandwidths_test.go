@@ -120,6 +120,7 @@ func waitForEipToDelete(client *golangsdk.ServiceClient, eipId string, secs int)
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
 			}
+			return false, err
 		}
 
 		return false, nil
