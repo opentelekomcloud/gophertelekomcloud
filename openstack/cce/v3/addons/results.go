@@ -17,7 +17,7 @@ type Addon struct {
 	Status Status `json:"status"`
 }
 
-//Metadata required to create an addon
+// Metadata required to create an addon
 type MetaData struct {
 	// Addon unique name
 	Name string `json:"name"`
@@ -29,7 +29,7 @@ type MetaData struct {
 	Annotations map[string]string `json:"annotaions"`
 }
 
-//Specifications to create an addon
+// Specifications to create an addon
 type Spec struct {
 	// For the addon version.
 	Version string `json:"version" required:"true"`
@@ -48,13 +48,13 @@ type Spec struct {
 }
 
 type Status struct {
-	//The state of the addon
+	// The state of the addon
 	Status string `json:"status"`
-	//Reasons for the addon to become current
+	// Reasons for the addon to become current
 	Reason string `json:"reason"`
-	//Error Message
+	// Error Message
 	Message string `json:"message"`
-	//The target versions of the addon
+	// The target versions of the addon
 	TargetVersions []string `json:"targetVersions"`
 }
 
