@@ -4,7 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
 
@@ -27,14 +27,14 @@ type CreateOpts struct {
 }
 
 type CreateMetadata struct {
-	Anno Annotations `json:"annotations" required:"true"`
+	Annotations Annotations `json:"annotations" required:"true"`
 }
 
 type Annotations struct {
 	AddonInstallType string `json:"addon.install/type" required:"true"`
 }
 
-//Specifications to create an addon
+// Specifications to create an addon
 type RequestSpec struct {
 	// For the addon version.
 	Version string `json:"version" required:"true"`
@@ -47,7 +47,8 @@ type RequestSpec struct {
 }
 
 type Values struct {
-	Basic map[string]string `json:"basic" required:"true"`
+	Basic    map[string]interface{} `json:"basic" required:"true"`
+	Advanced map[string]interface{} `json:"custom,omitempty"`
 }
 
 // ToAddonCreateMap builds a create request body from CreateOpts.
@@ -57,20 +58,20 @@ func (opts CreateOpts) ToAddonCreateMap() (map[string]interface{}, error) {
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // addon.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder, cluster_id string) (r CreateResult) {
+func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId string) (r CreateResult) {
 	b, err := opts.ToAddonCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, cluster_id), b, &r.Body, reqOpt)
+	_, r.Err = c.Post(rootURL(c, clusterId), b, &r.Body, reqOpt)
 	return
 }
 
 // Get retrieves a particular addon based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id, cluster_id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id, cluster_id), &r.Body, &golangsdk.RequestOpts{
+func Get(c *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
+	_, r.Err = c.Get(resourceURL(c, id, clusterId), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -78,8 +79,8 @@ func Get(c *golangsdk.ServiceClient, id, cluster_id string) (r GetResult) {
 }
 
 // Delete will permanently delete a particular addon based on its unique ID.
-func Delete(c *golangsdk.ServiceClient, id, cluster_id string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, id, cluster_id), &golangsdk.RequestOpts{
+func Delete(c *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
+	_, r.Err = c.Delete(resourceURL(c, id, clusterId), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
