@@ -5,12 +5,12 @@ package clients
 
 import (
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 	"os"
 	"strings"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 var (
@@ -30,6 +30,8 @@ var (
 	OS_KEYPAIR_NAME      = os.Getenv("OS_KEYPAIR_NAME")
 	OS_TENANT_NAME       = getTenantName()
 	OS_USER_ID           = os.Getenv("OS_USER_ID")
+
+	osEnv = openstack.NewEnv("OS_")
 )
 
 func getTenantName() string {
@@ -332,19 +334,16 @@ func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v2 API. An error will be returned if authentication
 // or client creation was not possible.
 func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
-	ao, err := openstack.AuthOptionsFromEnv()
+	cloud, err := osEnv.Cloud()
+	if err != nil {
+		return nil, err
+	}
+	client, err := osEnv.AuthenticatedClient()
 	if err != nil {
 		return nil, err
 	}
 
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
-	})
+	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{Region: cloud.RegionName})
 }
 
 // NewPeerNetworkV2Client returns a *ServiceClient for making calls to the
@@ -422,6 +421,19 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	return openstack.NewRDSV3(client, golangsdk.EndpointOpts{
 		Region: utils.GetRegion(ao),
 	})
+}
+
+// NewWafV1Client returns authenticated WAF v1 client
+func NewWafV1Client() (*golangsdk.ServiceClient, error) {
+	cloud, err := osEnv.Cloud()
+	if err != nil {
+		return nil, err
+	}
+	client, err := osEnv.AuthenticatedClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewWAFV1(client, golangsdk.EndpointOpts{Region: cloud.RegionName})
 }
 
 func UpdatePeerTenantDetails(ao *golangsdk.AuthOptions) error {
