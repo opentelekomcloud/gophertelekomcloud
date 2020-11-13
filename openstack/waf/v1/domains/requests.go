@@ -35,7 +35,7 @@ type ServerOpts struct {
 	// IP address or domain name of the web server that the client accesses.
 	Address string `json:"address" required:"true"`
 	// Port number used by the web server
-	Port string `json:"port" required:"true"`
+	Port int `json:"port" required:"true"`
 }
 
 // ToDomainCreateMap builds a create request body from CreateOpts.
