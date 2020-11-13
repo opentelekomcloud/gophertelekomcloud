@@ -16,7 +16,7 @@ type CreateOpts struct {
 	// Domain name
 	HostName string `json:"hostname" required:"true"`
 	// Certificate ID
-	CertificateId string `json:"certificateid,omitempty"`
+	CertificateId string `json:"certificate_id,omitempty"`
 	// The original server information
 	Server []ServerOpts `json:"server" required:"true"`
 	// Whether proxy is configured
