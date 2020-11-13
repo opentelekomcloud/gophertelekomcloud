@@ -8,10 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 var (
