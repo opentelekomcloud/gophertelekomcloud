@@ -423,8 +423,8 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	})
 }
 
-// NewWafV1 returns authenticated WAF v1 client
-func NewWafV1() (*golangsdk.ServiceClient, error) {
+// NewWafV1Client returns authenticated WAF v1 client
+func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 	cloud, err := osEnv.Cloud()
 	if err != nil {
 		return nil, err

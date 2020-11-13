@@ -71,9 +71,9 @@ func cleanupCertificate(t *testing.T, client *golangsdk.ServiceClient, certID st
 
 // TestDomainLifecycle is simple "all-in-one" test for waf domain
 func TestDomainLifecycle(t *testing.T) {
-	client, err := clients.NewWafV1()
+	client, err := clients.NewWafV1Client()
 	if err != nil {
-		t.Fatalf("Unable to create a RDSv3 client: %s", err)
+		t.Fatalf("Unable to create a WAFv1 client: %s", err)
 	}
 
 	ip := prepareIp(t)
