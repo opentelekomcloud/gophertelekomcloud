@@ -31,6 +31,8 @@ var (
 	OS_KEYPAIR_NAME      = os.Getenv("OS_KEYPAIR_NAME")
 	OS_TENANT_NAME       = getTenantName()
 	OS_USER_ID           = os.Getenv("OS_USER_ID")
+
+	osEnv = openstack.NewEnv("OS_")
 )
 
 func getTenantName() string {
@@ -333,12 +335,11 @@ func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v2 API. An error will be returned if authentication
 // or client creation was not possible.
 func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
-	env := openstack.NewEnv("OS_")
-	cloud, err := env.Cloud()
+	cloud, err := osEnv.Cloud()
 	if err != nil {
 		return nil, err
 	}
-	client, err := env.AuthenticatedClient()
+	client, err := osEnv.AuthenticatedClient()
 	if err != nil {
 		return nil, err
 	}
@@ -425,12 +426,11 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 
 // NewWafV1 returns authenticated WAF v1 client
 func NewWafV1() (*golangsdk.ServiceClient, error) {
-	env := openstack.NewEnv("OS_")
-	cloud, err := env.Cloud()
+	cloud, err := osEnv.Cloud()
 	if err != nil {
 		return nil, err
 	}
-	client, err := env.AuthenticatedClient()
+	client, err := osEnv.AuthenticatedClient()
 	if err != nil {
 		return nil, err
 	}
