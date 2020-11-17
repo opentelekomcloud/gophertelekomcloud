@@ -31,12 +31,12 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
 		return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
-	allpolicy, err := ExtractBackupPolicies(pages)
+	allPolicy, err := ExtractBackupPolicies(pages)
 	if err != nil {
 		return nil, err
 	}
 
-	return FilterPolicies(allpolicy, opts)
+	return FilterPolicies(allPolicy, opts)
 }
 
 func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, error) {
@@ -77,7 +77,7 @@ func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, err
 func getStructPolicyField(v *BackupPolicy, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -111,7 +111,7 @@ type Resource struct {
 
 type ScheduledOperation struct {
 	Description         string              `json:"description,omitempty"`
-	Enabled             bool                `json:"enabled"`
+	Enabled             bool                `json:"enabled" required:"true"`
 	Name                string              `json:"name,omitempty"`
 	OperationType       string              `json:"operation_type" required:"true"`
 	OperationDefinition OperationDefinition `json:"operation_definition" required:"true"`
@@ -121,9 +121,14 @@ type ScheduledOperation struct {
 type OperationDefinition struct {
 	MaxBackups            int    `json:"max_backups,omitempty"`
 	RetentionDurationDays int    `json:"retention_duration_days,omitempty"`
-	Permanent             bool   `json:"permanent"`
+	Permanent             bool   `json:"permanent,omitempty"`
 	PlanId                string `json:"plan_id,omitempty"`
 	ProviderId            string `json:"provider_id,omitempty"`
+	DayBackups            int    `json:"day_backups,omitempty"`
+	WeekBackups           int    `json:"week_backups,omitempty"`
+	MonthBackups          int    `json:"month_backups,omitempty"`
+	YearBackups           int    `json:"year_backups,omitempty"`
+	TimeZone              int    `json:"timezone,omitempty"`
 }
 
 type Trigger struct {
@@ -162,8 +167,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Get will get a single backup policy with specific ID.
 // call the Extract method on the GetResult.
-func Get(client *golangsdk.ServiceClient, policy_id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, policy_id), &r.Body, &golangsdk.RequestOpts{
+func Get(client *golangsdk.ServiceClient, policyId string) (r GetResult) {
+	_, r.Err = client.Get(resourceURL(client, policyId), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:  []int{200},
 		JSONBody: nil,
 	})
@@ -203,21 +208,21 @@ func (opts UpdateOpts) ToPoliciesUpdateMap() (map[string]interface{}, error) {
 
 // Update allows backup policies to be updated.
 // call the Extract method on the UpdateResult.
-func Update(c *golangsdk.ServiceClient, policy_id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(c *golangsdk.ServiceClient, policyId string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToPoliciesUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(resourceURL(c, policy_id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Put(resourceURL(c, policyId), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // Delete will delete an existing backup policy.
-func Delete(client *golangsdk.ServiceClient, policy_id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, policy_id), &golangsdk.RequestOpts{
+func Delete(client *golangsdk.ServiceClient, policyId string) (r DeleteResult) {
+	_, r.Err = client.Delete(resourceURL(client, policyId), &golangsdk.RequestOpts{
 		OkCodes:      []int{200},
 		JSONResponse: nil,
 	})
