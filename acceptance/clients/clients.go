@@ -408,6 +408,7 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewRdsV3 returns authenticated RDS v3 client
 func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	ao, err := openstack.AuthOptionsFromEnv()
 	if err != nil {
@@ -434,6 +435,19 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 	return openstack.NewWAFV1(client, golangsdk.EndpointOpts{Region: cloud.RegionName})
+}
+
+// NewCsbsV1Client returns authenticated CSBS v1 client
+func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
+	cloud, err := osEnv.Cloud()
+	if err != nil {
+		return nil, err
+	}
+	client, err := osEnv.AuthenticatedClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCSBSService(client, golangsdk.EndpointOpts{Region: cloud.RegionName})
 }
 
 func UpdatePeerTenantDetails(ao *golangsdk.AuthOptions) error {
