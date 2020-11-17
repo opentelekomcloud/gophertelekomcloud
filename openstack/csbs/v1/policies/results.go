@@ -216,7 +216,7 @@ func (r cuResult) Extract() (*CreateBackupPolicy, error) {
 // BackupPolicyPage is the page returned by a pager when traversing over a
 // collection of backup policies.
 type BackupPolicyPage struct {
-	pagination.LinkedPageBase
+	pagination.SinglePageBase
 }
 
 // NextPageURL is invoked when a paginated collection of backup policies has reached

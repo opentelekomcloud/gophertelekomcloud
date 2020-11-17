@@ -1,16 +1,27 @@
 package policies
 
 import (
-	"reflect"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
+// ListOptsBuilder allows extensions to add additional parameters to the List
+// request.
+type ListOptsBuilder interface {
+	ToPolicyListQuery() (string, error)
+}
+
+// ToPolicyListQuery formats a ListOpts into a query string.
+func (opts ListOpts) ToPolicyListQuery() (string, error) {
+	query, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
+	return query.String(), nil
+}
+
 type ListOpts struct {
-	ID         string `json:"id"`
 	Name       string `q:"name"`
-	Status     string `json:"status"`
 	Sort       string `q:"sort"`
 	Limit      int    `q:"limit"`
 	Marker     string `q:"marker"`
@@ -21,63 +32,19 @@ type ListOpts struct {
 // List returns a Pager which allows you to iterate over a collection of
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
-	if err != nil {
-		return nil, err
-	}
-	u := rootURL(c) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
-
-	allPolicy, err := ExtractBackupPolicies(pages)
-	if err != nil {
-		return nil, err
-	}
-
-	return FilterPolicies(allPolicy, opts)
-}
-
-func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, error) {
-
-	var refinedPolicies []BackupPolicy
-	var matched bool
-	m := map[string]interface{}{}
-
-	if opts.ID != "" {
-		m["ID"] = opts.ID
-	}
-	if opts.Status != "" {
-		m["Status"] = opts.Status
-	}
-
-	if len(m) > 0 && len(policies) > 0 {
-		for _, policy := range policies {
-			matched = true
-
-			for key, value := range m {
-				if sVal := getStructPolicyField(&policy, key); !(sVal == value) {
-					matched = false
-				}
-			}
-
-			if matched {
-				refinedPolicies = append(refinedPolicies, policy)
-			}
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := rootURL(client)
+	if opts != nil {
+		query, err := opts.ToPolicyListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
 		}
-
-	} else {
-		refinedPolicies = policies
+		url += query
 	}
 
-	return refinedPolicies, nil
-}
-
-func getStructPolicyField(v *BackupPolicy, field string) string {
-	r := reflect.ValueOf(v)
-	f := reflect.Indirect(r).FieldByName(field)
-	return f.String()
+	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+		return BackupPolicyPage{pagination.SinglePageBase(r)}
+	})
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -128,7 +95,7 @@ type OperationDefinition struct {
 	WeekBackups           int    `json:"week_backups,omitempty"`
 	MonthBackups          int    `json:"month_backups,omitempty"`
 	YearBackups           int    `json:"year_backups,omitempty"`
-	TimeZone              int    `json:"timezone,omitempty"`
+	TimeZone              string `json:"timezone,omitempty"`
 }
 
 type Trigger struct {
