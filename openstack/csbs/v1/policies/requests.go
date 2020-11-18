@@ -10,8 +10,8 @@ import (
 type ListOpts struct {
 	ID         string `json:"id"`
 	Name       string `q:"name"`
-	Status     string `json:"status"`
 	Sort       string `q:"sort"`
+	Status     string `json:"status"`
 	Limit      int    `q:"limit"`
 	Marker     string `q:"marker"`
 	Offset     int    `q:"offset"`
@@ -21,26 +21,27 @@ type ListOpts struct {
 // List returns a Pager which allows you to iterate over a collection of
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
+	query, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return nil, err
 	}
-	u := rootURL(c) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
+	url := rootURL(client) + query.String()
+	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
-
-	allPolicy, err := ExtractBackupPolicies(pages)
+	if err != nil {
+		return nil, err
+	}
+	policies, err := ExtractBackupPolicies(pages)
 	if err != nil {
 		return nil, err
 	}
 
-	return FilterPolicies(allPolicy, opts)
+	return FilterPolicies(policies, opts)
 }
 
 func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, error) {
-
 	var refinedPolicies []BackupPolicy
 	var matched bool
 	m := map[string]interface{}{}
@@ -51,7 +52,6 @@ func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, err
 	if opts.Status != "" {
 		m["Status"] = opts.Status
 	}
-
 	if len(m) > 0 && len(policies) > 0 {
 		for _, policy := range policies {
 			matched = true
@@ -66,11 +66,9 @@ func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, err
 				refinedPolicies = append(refinedPolicies, policy)
 			}
 		}
-
 	} else {
 		refinedPolicies = policies
 	}
-
 	return refinedPolicies, nil
 }
 
@@ -128,7 +126,7 @@ type OperationDefinition struct {
 	WeekBackups           int    `json:"week_backups,omitempty"`
 	MonthBackups          int    `json:"month_backups,omitempty"`
 	YearBackups           int    `json:"year_backups,omitempty"`
-	TimeZone              int    `json:"timezone,omitempty"`
+	TimeZone              string `json:"timezone,omitempty"`
 }
 
 type Trigger struct {
@@ -169,8 +167,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, policyId string) (r GetResult) {
 	_, r.Err = client.Get(resourceURL(client, policyId), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:  []int{200},
-		JSONBody: nil,
+		OkCodes: []int{200},
 	})
 
 	return

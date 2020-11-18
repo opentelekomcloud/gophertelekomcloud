@@ -439,15 +439,18 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 
 // NewCsbsV1Client returns authenticated CSBS v1 client
 func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
-	cloud, err := osEnv.Cloud()
+	ao, err := openstack.AuthOptionsFromEnv()
 	if err != nil {
 		return nil, err
 	}
-	client, err := osEnv.AuthenticatedClient()
+	client, err := openstack.AuthenticatedClient(ao)
 	if err != nil {
 		return nil, err
 	}
-	return openstack.NewCSBSService(client, golangsdk.EndpointOpts{Region: cloud.RegionName})
+
+	return openstack.NewCSBSService(client, golangsdk.EndpointOpts{
+		Region: utils.GetRegion(ao),
+	})
 }
 
 func UpdatePeerTenantDetails(ao *golangsdk.AuthOptions) error {
