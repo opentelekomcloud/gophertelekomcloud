@@ -17,17 +17,12 @@ func TestPoliciesList(t *testing.T) {
 	}
 
 	listOpts := policies.ListOpts{}
-	backupPolicies, err := policies.List(client, listOpts).AllPages()
+	backupPolicies, err := policies.List(client, listOpts)
 	if err != nil {
 		t.Fatalf("Unable fetch CSBSv1 policies pages: %s", err)
 	}
 
-	policiesExtracted, err := policies.ExtractBackupPolicies(backupPolicies)
-	if err != nil {
-		t.Fatalf("Unable to extract policies: %s", err)
-	}
-
-	for _, policy := range policiesExtracted {
+	for _, policy := range backupPolicies {
 		tools.PrintResource(t, policy)
 	}
 }

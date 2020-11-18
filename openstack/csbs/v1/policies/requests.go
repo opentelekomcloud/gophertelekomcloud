@@ -1,28 +1,17 @@
 package policies
 
 import (
+	"reflect"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the List
-// request.
-type ListOptsBuilder interface {
-	ToPolicyListQuery() (string, error)
-}
-
-// ToPolicyListQuery formats a ListOpts into a query string.
-func (opts ListOpts) ToPolicyListQuery() (string, error) {
-	query, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return "", err
-	}
-	return query.String(), nil
-}
-
 type ListOpts struct {
+	ID         string `json:"id"`
 	Name       string `q:"name"`
 	Sort       string `q:"sort"`
+	Status     string `json:"status"`
 	Limit      int    `q:"limit"`
 	Marker     string `q:"marker"`
 	Offset     int    `q:"offset"`
@@ -32,20 +21,61 @@ type ListOpts struct {
 // List returns a Pager which allows you to iterate over a collection of
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := rootURL(client)
-	if opts != nil {
-		query, err := opts.ToPolicyListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
+	query, err := golangsdk.BuildQueryString(&opts)
+	if err != nil {
+		return nil, err
 	}
-	page := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	url := rootURL(client) + query.String()
+	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return BackupPolicyPage{pagination.SinglePageBase(r)}
-	})
+	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
+	policies, err := ExtractBackupPolicies(pages)
+	if err != nil {
+		return nil, err
+	}
 
-	return page
+	return FilterPolicies(policies, opts)
+}
+
+func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, error) {
+	var refinedPolicies []BackupPolicy
+	var matched bool
+	m := map[string]interface{}{}
+
+	if opts.ID != "" {
+		m["ID"] = opts.ID
+	}
+	if opts.Status != "" {
+		m["Status"] = opts.Status
+	}
+	if len(m) > 0 && len(policies) > 0 {
+		for _, policy := range policies {
+			matched = true
+
+			for key, value := range m {
+				if sVal := getStructPolicyField(&policy, key); !(sVal == value) {
+					matched = false
+				}
+			}
+
+			if matched {
+				refinedPolicies = append(refinedPolicies, policy)
+			}
+		}
+	} else {
+		refinedPolicies = policies
+	}
+	return refinedPolicies, nil
+}
+
+func getStructPolicyField(v *BackupPolicy, field string) string {
+	r := reflect.ValueOf(v)
+	f := reflect.Indirect(r).FieldByName(field)
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
