@@ -63,7 +63,7 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	defer deleteCSBSPolicy(t, client, policy.ID)
 	tools.PrintResource(t, policy)
 
-	err = updateCSBSPolicy(t, client, policy.ID)
+	err = updateCSBSPolicy(client, policy.ID)
 	if err != nil {
 		t.Fatalf("Unable to update CSBSv1 policy: %s", err)
 	}
@@ -79,7 +79,8 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 	t.Logf("Attempting to create CSBSv1 policy")
 
 	// These values were got from HelpCenter request example
-	triggerPattern := "BEGIN:VCALENDAR\\r\\nBEGIN:VEVENT\\r\\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\\r\\nEND:VEVENT\\r\\nEND:VCALENDAR\\r\\n"
+	triggerPattern := "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n"
+
 	providerId := "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
 
 	policyName := tools.RandomString("policy-init-", 5)
@@ -141,13 +142,15 @@ func deleteCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, policyId st
 	t.Logf("Deleted CSBSv1 Policy: %s", policyId)
 }
 
-func updateCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, policyId string) error {
-	t.Logf("Attempting to increase volume size")
+func updateCSBSPolicy(client *golangsdk.ServiceClient, policyId string) error {
 	policyNameUpdate := tools.RandomString("policy-update-", 5)
 	policyDescriptionUpdate := tools.RandomString("description-update-", 10)
 	updateOpts := policies.UpdateOpts{
 		Description: policyDescriptionUpdate,
 		Name:        policyNameUpdate,
+		Parameters: policies.PolicyParam{
+			Common: map[string]string{},
+		},
 	}
 
 	err := policies.Update(client, policyId, updateOpts).Err
@@ -186,7 +189,15 @@ func createComputeInstance(client *golangsdk.ServiceClient) (*servers.Server, er
 	createOpts := servers.CreateOpts{
 		Name:             computeName,
 		SecurityGroups:   []string{"default"},
+		FlavorName:       clients.OS_FLAVOR_NAME,
+		ImageRef:         clients.OS_IMAGE_ID,
 		AvailabilityZone: clients.OS_AVAILABILITY_ZONE,
+		ServiceClient:    client,
+		Networks: []servers.Network{
+			{
+				UUID: clients.OS_NETWORK_ID,
+			},
+		},
 	}
 
 	server, err := servers.Create(client, createOpts).Extract()
