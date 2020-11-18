@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/policies"
 )
 
@@ -34,11 +35,28 @@ func TestPoliciesList(t *testing.T) {
 func TestPoliciesLifeCycle(t *testing.T) {
 	client, err := clients.NewCsbsV1Client()
 	if err != nil {
-		t.Fatalf("Unable to create a CSBSv1 client: %s", err)
+		t.Fatalf("Unable to create CSBSv1 client: %s", err)
 	}
 
+	computeClient, err := clients.NewComputeV2Client()
+	if err != nil {
+		t.Fatalf("Unable to create ComputeV2 client: %s", err)
+	}
+
+	server, err := createComputeInstance(computeClient)
+	if err != nil {
+		t.Fatalf("Error creating compute instance: %s", err)
+	}
+
+	defer func() {
+		err = deleteComputeInstance(computeClient, server.ID)
+		if err != nil {
+			t.Fatalf("Error deleting compute instance: %s", err)
+		}
+	}()
+
 	// Create CSBSv1 policy
-	policy, err := createCSBSPolicy(t, client)
+	policy, err := createCSBSPolicy(t, client, server.ID)
 	if err != nil {
 		t.Fatalf("Unable to create CSBSv1 policy: %s", err)
 	}
@@ -57,7 +75,7 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	tools.PrintResource(t, policyUpdate)
 }
 
-func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient) (*policies.CreateBackupPolicy, error) {
+func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.CreateBackupPolicy, error) {
 	t.Logf("Attempting to create CSBSv1 policy")
 
 	// These values were got from HelpCenter request example
@@ -70,8 +88,17 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient) (*policies.
 	createOpts := policies.CreateOpts{
 		Description: policyDescription,
 		Name:        policyName,
-		Parameters:  policies.PolicyParam{},
-		ProviderId:  providerId,
+		Parameters: policies.PolicyParam{
+			Common: map[string]string{},
+		},
+		Resources: []policies.Resource{
+			{
+				Id:   serverId,
+				Type: "OS::Nova::Server",
+				Name: "resource1",
+			},
+		},
+		ProviderId: providerId,
 		ScheduledOperations: []policies.ScheduledOperation{
 			{
 				Enabled:             false,
@@ -149,6 +176,66 @@ func waitForCSBSPolicyDelete(client *golangsdk.ServiceClient, secs int, policyId
 		_, err := policies.Get(client, policyId).Extract()
 		if _, ok := err.(golangsdk.ErrDefault404); ok {
 			return true, nil
+		}
+		return false, nil
+	})
+}
+
+func createComputeInstance(client *golangsdk.ServiceClient) (*servers.Server, error) {
+	computeName := tools.RandomString("csbs-acc-", 5)
+	createOpts := servers.CreateOpts{
+		Name:             computeName,
+		SecurityGroups:   []string{"default"},
+		AvailabilityZone: clients.OS_AVAILABILITY_ZONE,
+	}
+
+	server, err := servers.Create(client, createOpts).Extract()
+	if err != nil {
+		return nil, err
+	}
+	err = waitForComputeInstanceAvailable(client, 600, server.ID)
+	if err != nil {
+		return nil, err
+	}
+	return server, nil
+}
+
+func deleteComputeInstance(client *golangsdk.ServiceClient, instanceId string) error {
+	err := servers.Delete(client, instanceId).ExtractErr()
+	if err != nil {
+		return err
+	}
+	err = waitForComputeInstanceDelete(client, 600, instanceId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func waitForComputeInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceId string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		server, err := servers.Get(client, instanceId).Extract()
+		if err != nil {
+			return false, err
+		}
+		if server.Status == "ACTIVE" {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+func waitForComputeInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceId string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		server, err := servers.Get(client, instanceId).Extract()
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
+		}
+		if server.Status == "ERROR" {
+			return false, err
 		}
 		return false, nil
 	})
