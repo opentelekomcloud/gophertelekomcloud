@@ -41,10 +41,11 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += query
 	}
-
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	page := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return BackupPolicyPage{pagination.SinglePageBase(r)}
 	})
+
+	return page
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -136,8 +137,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, policyId string) (r GetResult) {
 	_, r.Err = client.Get(resourceURL(client, policyId), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:  []int{200},
-		JSONBody: nil,
+		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
 
 	return
