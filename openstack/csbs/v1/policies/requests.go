@@ -28,7 +28,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error
 	}
 	url := rootURL(client) + query.String()
 	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return BackupPolicyPage{pagination.SinglePageBase(r)}
+		return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 	if err != nil {
 		return nil, err
