@@ -137,8 +137,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, policyId string) (r GetResult) {
 	_, r.Err = client.Get(resourceURL(client, policyId), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		OkCodes: []int{200},
 	})
 
 	return
