@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
 )
 
@@ -34,7 +35,26 @@ func TestDdsLifeCycle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a DDSv3 client: %s", err)
 	}
-	ddsInstance, err := createDdsInstance(t, client)
+	computeClient, err := clients.NewComputeV2Client()
+	if err != nil {
+		t.Fatalf("Unable to create a ComputeV2 client: %s", err)
+	}
+	securityGroupPages, err := secgroups.List(computeClient).AllPages()
+	if err != nil {
+		t.Fatalf("Unable to query secgroup pages: %s", err)
+	}
+	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
+	var sgId string
+	for _, val := range securityGroups {
+		if val.Name == "default" {
+			sgId = val.ID
+		}
+	}
+	if sgId == "" {
+		t.Fatalf("Unable to find default secgroup")
+	}
+
+	ddsInstance, err := createDdsInstance(t, client, sgId)
 	if err != nil {
 		t.Fatalf("Unable to create DDSv3 instance: %s", err)
 	}
@@ -56,12 +76,9 @@ func TestDdsLifeCycle(t *testing.T) {
 	tools.PrintResource(t, newDdsInstance.Instances[0])
 }
 
-func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instance, error) {
+func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient, securityGroupId string) (*instances.Instance, error) {
 	t.Logf("Attempting to create DDSv3 replica set instance")
 	ddsName := tools.RandomString("test-acc-", 8)
-
-	// This value got from tenant default security group
-	defaultSgId := "88a47a36-1b69-41b5-bef8-f74a2a85933f"
 
 	createOpts := instances.CreateOpts{
 		Name: ddsName,
@@ -74,7 +91,7 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) (*instance
 		AvailabilityZone: clients.OS_AVAILABILITY_ZONE,
 		VpcId:            clients.OS_VPC_ID,
 		SubnetId:         clients.OS_NETWORK_ID,
-		SecurityGroupId:  defaultSgId,
+		SecurityGroupId:  securityGroupId,
 		Password:         "5ecurePa55w0rd@",
 		Mode:             "ReplicaSet",
 		Flavor: []instances.Flavor{
