@@ -8,7 +8,7 @@ import (
 )
 
 type CreateOpts struct {
-	Name             string         `json:"name"  required:"true"`
+	Name             string         `json:"name" required:"true"`
 	DataStore        DataStore      `json:"datastore" required:"true"`
 	Region           string         `json:"region" required:"true"`
 	AvailabilityZone string         `json:"availability_zone" required:"true"`
@@ -17,10 +17,10 @@ type CreateOpts struct {
 	SecurityGroupId  string         `json:"security_group_id" required:"true"`
 	Password         string         `json:"password" required:"true"`
 	DiskEncryptionId string         `json:"disk_encryption_id,omitempty"`
-	Ssl              string         `json:"ssl_option,omitempty"`
 	Mode             string         `json:"mode" required:"true"`
 	Flavor           []Flavor       `json:"flavor" required:"true"`
-	BackupStrategy   BackupStrategy `json:"backup_strategy,omitempty"`
+	BackupStrategy   BackupStrategy `json:"backup_strategy" required:"true"`
+	Ssl              string         `json:"ssl_option,omitempty"`
 }
 
 type DataStore struct {
@@ -62,7 +62,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateInstanceBuilder) (r Crea
 	}
 
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
+		OkCodes: []int{200, 202},
 	})
 	return
 }

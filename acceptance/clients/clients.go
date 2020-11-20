@@ -453,8 +453,23 @@ func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
-func UpdatePeerTenantDetails(ao *golangsdk.AuthOptions) error {
+// NewDdsV3Client returns authenticated DDS v3 client
+func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
+	ao, err := openstack.AuthOptionsFromEnv()
+	if err != nil {
+		return nil, err
+	}
+	client, err := openstack.AuthenticatedClient(ao)
+	if err != nil {
+		return nil, err
+	}
 
+	return openstack.NewDDSServiceV3(client, golangsdk.EndpointOpts{
+		Region: utils.GetRegion(ao),
+	})
+}
+
+func UpdatePeerTenantDetails(ao *golangsdk.AuthOptions) error {
 	if peerTenantID := os.Getenv("OS_Peer_Tenant_ID"); peerTenantID != "" {
 		ao.TenantID = peerTenantID
 		ao.TenantName = ""
