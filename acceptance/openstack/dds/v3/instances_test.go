@@ -34,12 +34,30 @@ func TestDdsLifeCycle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a DDSv3 client: %s", err)
 	}
-	_, err = createDdsInstance(t, client)
+	ddsInstance, err := createDdsInstance(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create DDSv3 instance: %s", err)
+	}
+	defer deleteDdsInstance(t, client, ddsInstance.Id)
 
-	return
+	tools.PrintResource(t, ddsInstance)
+	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
+	allPages, err := instances.List(client, listOpts).AllPages()
+	if err != nil {
+		t.Fatalf("Unable to query DDSv3 instance: %s", err)
+	}
+	newDdsInstance, err := instances.ExtractInstances(allPages)
+	if err != nil {
+		t.Fatalf("Error extracting DDSv3 instances: %s", err)
+	}
+	if newDdsInstance.TotalCount == 0 {
+		t.Fatalf("DDSv3 instance wasn't found: %s", err)
+	}
+	tools.PrintResource(t, newDdsInstance.Instances[0])
 }
 
 func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instance, error) {
+	t.Logf("Attempting to create DDSv3 replica set instance")
 	ddsName := tools.RandomString("test-acc-", 8)
 
 	// This value got from tenant default security group
@@ -72,19 +90,72 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) (*instance
 			StartTime: "08:15-09:15",
 		},
 	}
-	createResult := instances.Create(client, createOpts)
-	ddsInstance, err := createResult.Extract()
+	ddsInstance, err := instances.Create(client, createOpts).Extract()
 	if err != nil {
 		return nil, err
 	}
-	jobResponse, err := createResult.ExtractJobResponse()
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
 	if err != nil {
 		return nil, err
 	}
-
-	if err = instances.WaitForJobCompleted(client, 600, jobResponse.JobID); err != nil {
-		return nil, err
-	}
+	t.Logf("DDSv3 replica set instance successfully created: %s", ddsInstance.Id)
 
 	return ddsInstance, nil
+}
+
+func deleteDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceId string) {
+	t.Logf("Attempting to delete DDSv3 instance: %s", instanceId)
+
+	_, err := instances.Delete(client, instanceId).Extract()
+	if err != nil {
+		t.Fatalf("Unable to delete DDSv3 instance: %s", err)
+	}
+	err = waitForInstanceDelete(client, 600, instanceId)
+	if err != nil {
+		t.Fatalf("Error waiting delete DDSv3 instance: %s", err)
+	}
+	t.Logf("DDSv3 instance deleted successfully: %s", instanceId)
+}
+
+func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceId string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		listOpts := instances.ListInstanceOpts{
+			Id: instanceId,
+		}
+		allPages, err := instances.List(client, listOpts).AllPages()
+		if err != nil {
+			return false, err
+		}
+		ddsInstances, err := instances.ExtractInstances(allPages)
+		if err != nil {
+			return false, err
+		}
+		if ddsInstances.TotalCount == 1 {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceId string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		listOpts := instances.ListInstanceOpts{
+			Id: instanceId,
+		}
+		allPages, err := instances.List(client, listOpts).AllPages()
+		if err != nil {
+			return false, err
+		}
+		ddsInstances, err := instances.ExtractInstances(allPages)
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
+		}
+		if ddsInstances.TotalCount == 0 {
+			return true, nil
+		}
+		return false, nil
+	})
 }
