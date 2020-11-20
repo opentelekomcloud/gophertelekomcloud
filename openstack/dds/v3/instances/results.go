@@ -17,6 +17,7 @@ type Instance struct {
 	Id               string            `json:"id"`
 	Name             string            `json:"name"`
 	DataStore        DataStore         `json:"datastore"`
+	CreatedAt        string            `json:"created"`
 	Status           string            `json:"status"`
 	Region           string            `json:"region"`
 	AvailabilityZone string            `json:"availability_zone"`
@@ -24,10 +25,11 @@ type Instance struct {
 	SubnetId         string            `json:"subnet_id"`
 	SecurityGroupId  string            `json:"security_group_id"`
 	DiskEncryptionId string            `json:"disk_encryption_id"`
-	Ssl              string            `json:"ssl_option"`
 	Mode             string            `json:"mode"`
 	Flavor           []FlavorOpt       `json:"flavor"`
 	BackupStrategy   BackupStrategyOpt `json:"backup_strategy"`
+	Ssl              string            `json:"ssl_option"`
+	JobId            string            `json:"job_id"`
 }
 
 type FlavorOpt struct {
