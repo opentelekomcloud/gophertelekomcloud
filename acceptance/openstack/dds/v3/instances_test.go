@@ -2,7 +2,6 @@ package v3
 
 import (
 	"testing"
-	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -39,7 +38,6 @@ func TestDdsLifeCycle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create DDSv3 instance: %s", err)
 	}
-	time.Sleep(4 * time.Minute)
 	defer deleteDdsInstance(t, client, ddsInstance.Id)
 
 	tools.PrintResource(t, ddsInstance)
@@ -132,8 +130,8 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 		if err != nil {
 			return false, err
 		}
-		status := ddsInstances.Instances[0].Status
-		if ddsInstances.TotalCount == 1 && status == "normal" {
+		actions := ddsInstances.Instances[0].Actions
+		if ddsInstances.TotalCount == 1 && len(actions) == 0 {
 			return true, nil
 		}
 		return false, nil

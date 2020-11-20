@@ -17,7 +17,7 @@ type Instance struct {
 	Id               string            `json:"id"`
 	Name             string            `json:"name"`
 	DataStore        DataStore         `json:"datastore"`
-	CreatedAd        string            `json:"created"`
+	CreatedAt        string            `json:"created"`
 	Status           string            `json:"status"`
 	Region           string            `json:"region"`
 	AvailabilityZone string            `json:"availability_zone"`
