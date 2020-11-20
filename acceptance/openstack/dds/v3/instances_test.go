@@ -48,6 +48,7 @@ func TestDdsLifeCycle(t *testing.T) {
 	for _, val := range securityGroups {
 		if val.Name == "default" {
 			sgId = val.ID
+			break
 		}
 	}
 	if sgId == "" {
@@ -147,9 +148,12 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 		if err != nil {
 			return false, err
 		}
-		actions := ddsInstances.Instances[0].Actions
-		if ddsInstances.TotalCount == 1 && len(actions) == 0 {
-			return true, nil
+		if ddsInstances.TotalCount == 1 {
+			dds := ddsInstances.Instances
+			if len(dds) == 1 && len(dds[0].Actions) == 0 {
+				return true, nil
+			}
+			return false, nil
 		}
 		return false, nil
 	})
