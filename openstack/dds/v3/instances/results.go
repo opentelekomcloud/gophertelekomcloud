@@ -82,7 +82,7 @@ type InstanceResponse struct {
 	Id                string         `json:"id"`
 	Name              string         `json:"name"`
 	Status            string         `json:"status"`
-	Port              int            `json:"port"`
+	Port              int            `json:"port,string"`
 	Mode              string         `json:"mode"`
 	Region            string         `json:"region"`
 	DataStore         DataStore      `json:"datastore"`
