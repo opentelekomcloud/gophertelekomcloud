@@ -75,7 +75,7 @@ type ListResult struct {
 }
 
 func (r ListResult) Extract() ([]BandWidth, error) {
-	var s []BandWidth
-	err := r.ExtractIntoSlicePtr(&s, "bandwidths")
-	return s, err
+	var bws []BandWidth
+	err := r.ExtractIntoSlicePtr(&bws, "bandwidths")
+	return bws, err
 }
