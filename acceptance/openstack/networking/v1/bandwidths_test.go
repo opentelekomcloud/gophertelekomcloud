@@ -47,6 +47,39 @@ func TestBandwidthsUpdate(t *testing.T) {
 	tools.PrintResource(t, newBandWidth)
 }
 
+func TestBandwidthsList(t *testing.T) {
+	client, err := clients.NewNetworkV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create NetworkV1 client: %v", err)
+	}
+	bandwidthSize := 1
+
+	// Create eip/bandwidth
+	eip, err := createEipResource(t, client, bandwidthSize)
+	if err != nil {
+		t.Fatalf("Unable to create eip/banwidth pair: %s", err)
+	}
+
+	// Delete an eip
+	defer deleteEipResource(t, client, eip.ID)
+
+	// Query a bandwidth
+	existingBandwidths, err := bandwidths.List(client, bandwidths.ListOpts{
+		ShareType: "PER",
+	}).Extract()
+	if err != nil {
+		t.Fatalf("Unable to list bandwidths: %s", err)
+	}
+
+	for _, b := range existingBandwidths {
+		if b.ID == eip.BandwidthID {
+			t.Logf("Bandwith with ID %s is in bandwidth list", b.ID)
+			return
+		}
+	}
+	t.Errorf("Failed to find created bandwidth")
+}
+
 func createEipResource(t *testing.T, nwClient *golangsdk.ServiceClient, bandwidthSize int) (*eips.PublicIp, error) {
 	bandName := tools.RandomString("testacc-", 8)
 
