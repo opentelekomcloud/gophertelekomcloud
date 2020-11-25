@@ -196,7 +196,20 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 			return v3auth(client, endpoint, opts, eo)
 		}
 	}
+
+	clientRegion := ""
+	if aOpts, ok := opts.(*golangsdk.AuthOptions); ok {
+		if aOpts.TenantName == "" && project != nil {
+			aOpts.TenantName = project.Name
+		}
+		clientRegion = utils.GetRegion(*aOpts)
+	}
+
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
+		// use client region as default one
+		if opts.Region == "" && clientRegion != "" {
+			opts.Region = clientRegion
+		}
 		return V3EndpointURL(serviceCatalog, opts)
 	}
 

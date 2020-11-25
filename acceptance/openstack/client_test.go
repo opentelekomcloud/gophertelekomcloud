@@ -1,13 +1,14 @@
 package openstack
 
 import (
+	"os"
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 )
 
 func TestAuthenticatedClient(t *testing.T) {
@@ -35,6 +36,32 @@ func TestAuthenticatedClient(t *testing.T) {
 		t.Errorf("Unable to locate a storage service: %v", err)
 	} else {
 		t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
+	}
+}
+
+func TestAuthTokenNoRegion(t *testing.T) {
+	osEnv := openstack.NewEnv("OS_")
+	preClient, err := osEnv.AuthenticatedClient()
+	if err != nil {
+		t.Fatalf("Failed to auth client: %s", err)
+	}
+
+	envPrefix := tools.RandomString("", 5)
+	if err := os.Setenv(envPrefix+"_TOKEN", preClient.Token()); err != nil {
+		t.Errorf("Failed to set token: %s", err)
+	}
+	if err := os.Setenv(envPrefix+"_AUTH_URL", preClient.IdentityEndpoint); err != nil {
+		t.Errorf("Failed to set auth url: %s", err)
+	}
+
+	env := openstack.NewEnv(envPrefix)
+	client, err := env.AuthenticatedClient()
+	if err != nil {
+		t.Errorf("Failed to auth client: %s", err)
+	}
+	_, err = openstack.NewComputeV2(client, golangsdk.EndpointOpts{})
+	if err != nil {
+		t.Errorf("Failed to get compute client: %s", err)
 	}
 }
 
