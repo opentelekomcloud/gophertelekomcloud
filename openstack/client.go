@@ -798,6 +798,11 @@ func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewCBR creates a ServiceClient that can be used to access CBR v3 service
+func NewCBR(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cbr")
+}
+
 func NewSDKClient(c *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, serviceType string) (*golangsdk.ServiceClient, error) {
 	switch serviceType {
 	case "nat":
