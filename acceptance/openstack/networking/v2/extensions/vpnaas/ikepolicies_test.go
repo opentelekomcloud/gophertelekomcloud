@@ -102,7 +102,7 @@ func updateIkePolicy(t *testing.T, client *golangsdk.ServiceClient, ikePolicy st
 		AuthAlgorithm: ikepolicies.AuthAlgorithm("sha1"),
 	}
 
-	if err := ikepolicies.Update(client, updateOpts, ikePolicy).Err; err != nil {
+	if err := ikepolicies.Update(client, ikePolicy, updateOpts).Err; err != nil {
 		return err
 	}
 	t.Logf("Ike Policy successfully updated: %s", ikePolicy)
