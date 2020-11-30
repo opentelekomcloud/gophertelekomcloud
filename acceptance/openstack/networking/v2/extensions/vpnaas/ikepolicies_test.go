@@ -63,13 +63,13 @@ func createIkePolicy(t *testing.T, client *golangsdk.ServiceClient) (*ikepolicie
 	createIkePolicyOpts := ikepolicies.CreateOpts{
 		Description:           "some ike policy description",
 		Name:                  policyName,
-		AuthAlgorithm:         "md5",
-		EncryptionAlgorithm:   "3des",
-		PFS:                   "group1",
-		Phase1NegotiationMode: "main",
-		IKEVersion:            "v1",
+		AuthAlgorithm:         ikepolicies.AuthAlgorithm("md5"),
+		EncryptionAlgorithm:   ikepolicies.EncryptionAlgorithm("3des"),
+		PFS:                   ikepolicies.PFS("group1"),
+		Phase1NegotiationMode: ikepolicies.Phase1NegotiationMode("main"),
+		IKEVersion:            ikepolicies.IKEVersion("v1"),
 		Lifetime: ikepolicies.LifetimeCreateOpts{
-			Units: "seconds",
+			Units: ikepolicies.Unit("seconds"),
 			Value: 1800,
 		},
 	}
@@ -99,7 +99,7 @@ func updateIkePolicy(t *testing.T, client *golangsdk.ServiceClient, ikePolicy st
 
 	updateOpts := ikepolicies.UpdateOpts{
 		Name:          policyNewName,
-		AuthAlgorithm: "sha1",
+		AuthAlgorithm: ikepolicies.AuthAlgorithm("sha1"),
 	}
 
 	if err := ikepolicies.Update(client, updateOpts, ikePolicy).Err; err != nil {
