@@ -59,6 +59,9 @@ type ProviderClient struct {
 	// ProjectID is the ID of project to which User is authorized.
 	ProjectID string
 
+	// UserID is the ID of the authorized user
+	UserID string
+
 	// DomainID is the ID of project to which User is authorized.
 	DomainID string
 
