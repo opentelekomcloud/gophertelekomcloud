@@ -5,33 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type AuthAlgorithm string
-type EncryptionAlgorithm string
-type PFS string
-type Unit string
-type IKEVersion string
-type Phase1NegotiationMode string
-
-const (
-	AuthAlgorithmMD5          AuthAlgorithm         = "md5"
-	AuthAlgorithmSHA1         AuthAlgorithm         = "sha1"
-	AuthAlgorithmSHA256       AuthAlgorithm         = "sha2-256"
-	AuthAlgorithmSHA384       AuthAlgorithm         = "sha2-384"
-	AuthAlgorithmSHA512       AuthAlgorithm         = "sha2-512"
-	EncryptionAlgorithm3DES   EncryptionAlgorithm   = "3des"
-	EncryptionAlgorithmAES128 EncryptionAlgorithm   = "aes-128"
-	EncryptionAlgorithmAES256 EncryptionAlgorithm   = "aes-256"
-	EncryptionAlgorithmAES192 EncryptionAlgorithm   = "aes-192"
-	UnitSeconds               Unit                  = "seconds"
-	UnitKilobytes             Unit                  = "kilobytes"
-	PFSGroup2                 PFS                   = "group2"
-	PFSGroup5                 PFS                   = "group5"
-	PFSGroup14                PFS                   = "group14"
-	IKEVersionv1              IKEVersion            = "v1"
-	IKEVersionv2              IKEVersion            = "v2"
-	Phase1NegotiationModeMain Phase1NegotiationMode = "main"
-)
-
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
@@ -55,29 +28,29 @@ type CreateOpts struct {
 	// AuthAlgorithm is the authentication hash algorithm.
 	// Valid values are sha1, sha256, sha384, sha512.
 	// The default is sha1.
-	AuthAlgorithm AuthAlgorithm `json:"auth_algorithm,omitempty"`
+	AuthAlgorithm string `json:"auth_algorithm,omitempty"`
 
 	// EncryptionAlgorithm is the encryption algorithm.
 	// A valid value is 3des, aes-128, aes-192, aes-256, and so on.
 	// Default is aes-128.
-	EncryptionAlgorithm EncryptionAlgorithm `json:"encryption_algorithm,omitempty"`
+	EncryptionAlgorithm string `json:"encryption_algorithm,omitempty"`
 
 	// PFS is the Perfect forward secrecy mode.
-	// A valid value is Group2, Group5, Group14, and so on.
+	// A valid value is Group1, Group2, Group5, Group14, and so on.
 	// Default is Group5.
-	PFS PFS `json:"pfs,omitempty"`
+	PFS string `json:"pfs,omitempty"`
 
 	// The IKE mode.
 	// A valid value is main, which is the default.
-	Phase1NegotiationMode Phase1NegotiationMode `json:"phase1_negotiation_mode,omitempty"`
+	Phase1NegotiationMode string `json:"phase1_negotiation_mode,omitempty"`
 
 	// The IKE version.
-	// A valid value is v1 or v2.
+	// A valid values are v1 v2.
 	// Default is v1.
-	IKEVersion IKEVersion `json:"ike_version,omitempty"`
+	IKEVersion string `json:"ike_version,omitempty"`
 
-	//Lifetime is the lifetime of the security association
-	Lifetime *LifetimeCreateOpts `json:"lifetime,omitempty"`
+	// Lifetime is the lifetime of the security association
+	Lifetime LifetimeCreateOpts `json:"lifetime,omitempty"`
 }
 
 // The lifetime consists of a unit and integer value
@@ -85,7 +58,7 @@ type CreateOpts struct {
 type LifetimeCreateOpts struct {
 	// Units is the units for the lifetime of the security association
 	// Default unit is seconds
-	Units Unit `json:"units,omitempty"`
+	Units string `json:"units,omitempty"`
 
 	// The lifetime value.
 	// Must be a positive integer.
@@ -148,6 +121,9 @@ type ListOpts struct {
 // ToPolicyListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToPolicyListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -175,20 +151,20 @@ type UpdateOptsBuilder interface {
 }
 
 type LifetimeUpdateOpts struct {
-	Units Unit `json:"units,omitempty"`
-	Value int  `json:"value,omitempty"`
+	Units string `json:"units,omitempty"`
+	Value int    `json:"value,omitempty"`
 }
 
 // UpdateOpts contains the values used when updating an IKE policy
 type UpdateOpts struct {
-	Description           *string               `json:"description,omitempty"`
-	Name                  *string               `json:"name,omitempty"`
-	AuthAlgorithm         AuthAlgorithm         `json:"auth_algorithm,omitempty"`
-	EncryptionAlgorithm   EncryptionAlgorithm   `json:"encryption_algorithm,omitempty"`
-	PFS                   PFS                   `json:"pfs,omitempty"`
-	Lifetime              *LifetimeUpdateOpts   `json:"lifetime,omitempty"`
-	Phase1NegotiationMode Phase1NegotiationMode `json:"phase_1_negotiation_mode,omitempty"`
-	IKEVersion            IKEVersion            `json:"ike_version,omitempty"`
+	Description           string             `json:"description,omitempty"`
+	Name                  string             `json:"name,omitempty"`
+	AuthAlgorithm         string             `json:"auth_algorithm,omitempty"`
+	EncryptionAlgorithm   string             `json:"encryption_algorithm,omitempty"`
+	PFS                   string             `json:"pfs,omitempty"`
+	Lifetime              LifetimeUpdateOpts `json:"lifetime,omitempty"`
+	Phase1NegotiationMode string             `json:"phase_1_negotiation_mode,omitempty"`
+	IKEVersion            string             `json:"ike_version,omitempty"`
 }
 
 // ToPolicyUpdateMap casts an UpdateOpts struct to a map.
