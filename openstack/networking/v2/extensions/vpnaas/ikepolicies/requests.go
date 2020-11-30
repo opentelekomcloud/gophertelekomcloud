@@ -77,7 +77,7 @@ type CreateOpts struct {
 	IKEVersion IKEVersion `json:"ike_version,omitempty"`
 
 	// Lifetime is the lifetime of the security association
-	Lifetime *LifetimeCreateOpts `json:"lifetime,omitempty"`
+	Lifetime LifetimeCreateOpts `json:"lifetime,omitempty"`
 }
 
 // The lifetime consists of a unit and integer value
@@ -184,12 +184,12 @@ type LifetimeUpdateOpts struct {
 
 // UpdateOpts contains the values used when updating an IKE policy
 type UpdateOpts struct {
-	Description           *string               `json:"description,omitempty"`
-	Name                  *string               `json:"name,omitempty"`
+	Description           string                `json:"description,omitempty"`
+	Name                  string                `json:"name,omitempty"`
 	AuthAlgorithm         AuthAlgorithm         `json:"auth_algorithm,omitempty"`
 	EncryptionAlgorithm   EncryptionAlgorithm   `json:"encryption_algorithm,omitempty"`
 	PFS                   PFS                   `json:"pfs,omitempty"`
-	Lifetime              *LifetimeUpdateOpts   `json:"lifetime,omitempty"`
+	Lifetime              LifetimeUpdateOpts    `json:"lifetime,omitempty"`
 	Phase1NegotiationMode Phase1NegotiationMode `json:"phase_1_negotiation_mode,omitempty"`
 	IKEVersion            IKEVersion            `json:"ike_version,omitempty"`
 }

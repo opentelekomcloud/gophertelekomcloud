@@ -68,7 +68,7 @@ func createIkePolicy(t *testing.T, client *golangsdk.ServiceClient) (*ikepolicie
 		PFS:                   ikepolicies.PFS("group1"),
 		Phase1NegotiationMode: ikepolicies.Phase1NegotiationMode("main"),
 		IKEVersion:            ikepolicies.IKEVersion("v1"),
-		Lifetime: &ikepolicies.LifetimeCreateOpts{
+		Lifetime: ikepolicies.LifetimeCreateOpts{
 			Units: ikepolicies.Unit("seconds"),
 			Value: 1800,
 		},
@@ -98,7 +98,7 @@ func updateIkePolicy(t *testing.T, client *golangsdk.ServiceClient, ikePolicy st
 	policyNewName := tools.RandomString("update-ike-", 8)
 
 	updateOpts := ikepolicies.UpdateOpts{
-		Name:          &policyNewName,
+		Name:          policyNewName,
 		AuthAlgorithm: ikepolicies.AuthAlgorithm("sha1"),
 	}
 
