@@ -12,6 +12,26 @@ type Unit string
 type IKEVersion string
 type Phase1NegotiationMode string
 
+const (
+	AuthAlgorithmMD5          AuthAlgorithm         = "md5"
+	AuthAlgorithmSHA1         AuthAlgorithm         = "sha1"
+	AuthAlgorithmSHA256       AuthAlgorithm         = "sha2-256"
+	AuthAlgorithmSHA384       AuthAlgorithm         = "sha2-384"
+	AuthAlgorithmSHA512       AuthAlgorithm         = "sha2-512"
+	EncryptionAlgorithm3DES   EncryptionAlgorithm   = "3des"
+	EncryptionAlgorithmAES128 EncryptionAlgorithm   = "aes-128"
+	EncryptionAlgorithmAES256 EncryptionAlgorithm   = "aes-256"
+	EncryptionAlgorithmAES192 EncryptionAlgorithm   = "aes-192"
+	UnitSeconds               Unit                  = "seconds"
+	UnitKilobytes             Unit                  = "kilobytes"
+	PFSGroup2                 PFS                   = "group2"
+	PFSGroup5                 PFS                   = "group5"
+	PFSGroup14                PFS                   = "group14"
+	IKEVersionv1              IKEVersion            = "v1"
+	IKEVersionv2              IKEVersion            = "v2"
+	Phase1NegotiationModeMain Phase1NegotiationMode = "main"
+)
+
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
