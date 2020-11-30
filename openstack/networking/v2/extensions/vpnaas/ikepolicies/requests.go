@@ -173,7 +173,7 @@ func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update allows IKE policies to be updated.
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(c *golangsdk.ServiceClient, opts UpdateOptsBuilder, id string) (r UpdateResult) {
 	b, err := opts.ToPolicyUpdateMap()
 	if err != nil {
 		r.Err = err

@@ -334,16 +334,18 @@ func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v2 API. An error will be returned if authentication
 // or client creation was not possible.
 func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
-	cloud, err := osEnv.Cloud()
+	ao, err := openstack.AuthOptionsFromEnv()
 	if err != nil {
 		return nil, err
 	}
-	client, err := osEnv.AuthenticatedClient()
+	client, err := openstack.AuthenticatedClient(ao)
 	if err != nil {
 		return nil, err
 	}
 
-	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{Region: cloud.RegionName})
+	return openstack.NewNetworkV2(client, golangsdk.EndpointOpts{
+		Region: utils.GetRegion(ao),
+	})
 }
 
 // NewPeerNetworkV2Client returns a *ServiceClient for making calls to the
