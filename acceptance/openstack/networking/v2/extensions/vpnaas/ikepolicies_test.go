@@ -98,7 +98,7 @@ func updateIkePolicy(t *testing.T, client *golangsdk.ServiceClient, ikePolicy st
 	policyNewName := tools.RandomString("update-ike-", 8)
 
 	updateOpts := ikepolicies.UpdateOpts{
-		Name:          &policyNewName,
+		Name:          policyNewName,
 		AuthAlgorithm: ikepolicies.AuthAlgorithm("sha1"),
 	}
 
