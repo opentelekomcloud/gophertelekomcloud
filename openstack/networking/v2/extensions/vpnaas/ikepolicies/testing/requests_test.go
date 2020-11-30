@@ -60,7 +60,7 @@ func TestCreate(t *testing.T) {
 		TenantID:    "9145d91459d248b1b02fdaca97c6a75d",
 		Name:        "policy",
 		Description: "IKE policy",
-		IKEVersion:  "v1",
+		IKEVersion:  ikepolicies.IKEVersionv2,
 	}
 
 	actual, err := ikepolicies.Create(fake.ServiceClient(), options).Extract()
@@ -276,9 +276,9 @@ func TestUpdate(t *testing.T) {
 	updatedName := "updatedname"
 	updatedDescription := "updated policy"
 	options := ikepolicies.UpdateOpts{
-		Name:        updatedName,
-		Description: updatedDescription,
-		Lifetime: ikepolicies.LifetimeUpdateOpts{
+		Name:        &updatedName,
+		Description: &updatedDescription,
+		Lifetime: &ikepolicies.LifetimeUpdateOpts{
 			Value: 7000,
 		},
 	}
