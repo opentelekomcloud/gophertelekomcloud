@@ -27,6 +27,16 @@ func TestAuthenticatedClient(t *testing.T) {
 		t.Errorf("No token ID assigned to the client")
 	}
 
+	if client.ProjectID == "" {
+		t.Errorf("Project ID is not set for the client")
+	}
+	if client.UserID == "" {
+		t.Errorf("User ID is not set for the client")
+	}
+	if client.DomainID == "" {
+		t.Errorf("Domain ID is not set for the client")
+	}
+
 	t.Logf("Client successfully acquired a token: %v", client.TokenID)
 
 	// Find the storage service in the service catalog.
