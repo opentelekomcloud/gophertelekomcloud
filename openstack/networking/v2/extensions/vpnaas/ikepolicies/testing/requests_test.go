@@ -276,9 +276,9 @@ func TestUpdate(t *testing.T) {
 	updatedName := "updatedname"
 	updatedDescription := "updated policy"
 	options := ikepolicies.UpdateOpts{
-		Name:        &updatedName,
-		Description: &updatedDescription,
-		Lifetime: &ikepolicies.LifetimeUpdateOpts{
+		Name:        updatedName,
+		Description: updatedDescription,
+		Lifetime: ikepolicies.LifetimeUpdateOpts{
 			Value: 7000,
 		},
 	}
