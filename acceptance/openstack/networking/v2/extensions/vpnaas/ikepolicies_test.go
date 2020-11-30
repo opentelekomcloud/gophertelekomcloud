@@ -68,7 +68,7 @@ func createIkePolicy(t *testing.T, client *golangsdk.ServiceClient) (*ikepolicie
 		PFS:                   ikepolicies.PFS("group1"),
 		Phase1NegotiationMode: ikepolicies.Phase1NegotiationMode("main"),
 		IKEVersion:            ikepolicies.IKEVersion("v1"),
-		Lifetime: ikepolicies.LifetimeCreateOpts{
+		Lifetime: &ikepolicies.LifetimeCreateOpts{
 			Units: ikepolicies.Unit("seconds"),
 			Value: 1800,
 		},
