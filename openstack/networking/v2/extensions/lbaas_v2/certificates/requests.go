@@ -12,8 +12,6 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
-	Marker      string `q:"marker"`
-	Limit       int    `q:"limit"`
 	ID          string `q:"id"`
 	Name        string `q:"name"`
 	Description string `q:"description"`
@@ -23,6 +21,8 @@ type ListOpts struct {
 	Certificate string `q:"certificate"`
 	CreateTime  string `q:"create_time"`
 	UpdateTime  string `q:"update_time"`
+	Limit       int    `q:"limit"`
+	Marker      string `q:"marker"`
 }
 
 // ToCertificateListQuery formats a ListOpts into a query string.
