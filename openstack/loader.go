@@ -539,7 +539,7 @@ func getAuthType(val AuthType) AuthType {
 			return AuthType(opt)
 		}
 	}
-	return ""
+	return val
 }
 
 // AuthOptionsFromInfo builds auth options from auth info and type. Returns either AuthOptions or AKSKAuthOptions
@@ -595,21 +595,21 @@ func AuthOptionsFromInfo(authInfo *AuthInfo, authType AuthType) (golangsdk.AuthO
 		err := golangsdk.ErrMissingInput{Argument: "auth_url"}
 		return nil, err
 	}
-	if explicitAuthType == "token" || explicitAuthType == "password" || authInfo.AccessKey == "" {
-		return ao, nil
+	if explicitAuthType == "aksk" || (explicitAuthType == "" && authInfo.AccessKey != "") {
+		return golangsdk.AKSKAuthOptions{
+			IdentityEndpoint: ao.IdentityEndpoint,
+			ProjectId:        ao.TenantID,
+			ProjectName:      ao.TenantName,
+			Domain:           ao.DomainName,
+			DomainID:         ao.DomainID,
+			AccessKey:        authInfo.AccessKey,
+			SecretKey:        authInfo.SecretKey,
+			AgencyName:       ao.AgencyName,
+			AgencyDomainName: ao.AgencyDomainName,
+			DelegatedProject: ao.DelegatedProject,
+		}, nil
 	}
-	return golangsdk.AKSKAuthOptions{
-		IdentityEndpoint: ao.IdentityEndpoint,
-		ProjectId:        ao.TenantID,
-		ProjectName:      ao.TenantName,
-		Domain:           ao.DomainName,
-		DomainID:         ao.DomainID,
-		AccessKey:        authInfo.AccessKey,
-		SecretKey:        authInfo.SecretKey,
-		AgencyName:       ao.AgencyName,
-		AgencyDomainName: ao.AgencyDomainName,
-		DelegatedProject: ao.DelegatedProject,
-	}, nil
+	return ao, nil
 }
 
 // AuthenticatedClient create new client based on used env prefix
