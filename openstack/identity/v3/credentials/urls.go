@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	rootPath        = "OS-CREDENTIAL"
-	credentialsPath = "credentials"
+	rootPath           = "OS-CREDENTIAL"
+	credentialsPath    = "credentials"
+	tmpCredentialsPath = "securitytokens"
 )
 
 func broken30Url(serviceUrl string) string {
@@ -33,4 +34,8 @@ func updateURL(client *golangsdk.ServiceClient, credID string) string {
 
 func deleteURL(client *golangsdk.ServiceClient, credID string) string {
 	return broken30Url(client.ServiceURL(rootPath, credentialsPath, credID))
+}
+
+func createTempURL(client *golangsdk.ServiceClient) string {
+	return broken30Url(client.ServiceURL(rootPath, tmpCredentialsPath))
 }
