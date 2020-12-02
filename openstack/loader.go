@@ -352,19 +352,19 @@ func mergeWithVendor(config *Config, vendor *VendorConfig) (*Config, error) {
 	return config, nil
 }
 
-func mergeCloudConfigs(config, override *Config) (*Config, error) {
+func mergeCloudConfigs(config, fallback *Config) (*Config, error) {
 	resultClouds := &Config{
 		Clouds: map[string]Cloud{},
 	}
-	for k, cfg := range config.Clouds {
-		if over, ok := override.Clouds[k]; ok {
-			cld, err := mergeClouds(cfg, over)
+	for profile, cfg := range config.Clouds {
+		if fallback, ok := fallback.Clouds[profile]; ok {
+			cld, err := mergeClouds(cfg, fallback)
 			if err != nil {
 				return nil, err
 			}
-			resultClouds.Clouds[k] = *cld
+			resultClouds.Clouds[profile] = *cld
 		} else {
-			resultClouds.Clouds[k] = cfg
+			resultClouds.Clouds[profile] = cfg
 		}
 	}
 	return resultClouds, nil
@@ -380,9 +380,9 @@ func selectExisting(files []string) string {
 }
 
 // mergeClouds merges two Config recursively (the AuthInfo also gets merged).
-// In case both Config define a value, the value in the 'override' cloud takes precedence
-func mergeClouds(cloud, override interface{}) (*Cloud, error) {
-	overrideJson, err := json.Marshal(override)
+// In case both Config define a value, the value in the 'cloud' cloud takes precedence
+func mergeClouds(cloud, fallback interface{}) (*Cloud, error) {
+	overrideJson, err := json.Marshal(fallback)
 	if err != nil {
 		return nil, err
 	}
@@ -390,8 +390,8 @@ func mergeClouds(cloud, override interface{}) (*Cloud, error) {
 	if err != nil {
 		return nil, err
 	}
-	var overrideInterface interface{}
-	err = json.Unmarshal(overrideJson, &overrideInterface)
+	var fallbackInterface interface{}
+	err = json.Unmarshal(overrideJson, &fallbackInterface)
 	if err != nil {
 		return nil, err
 	}
@@ -401,7 +401,7 @@ func mergeClouds(cloud, override interface{}) (*Cloud, error) {
 		return nil, err
 	}
 	var mergedCloud Cloud
-	mergedInterface := utils.MergeInterfaces(overrideInterface, cloudInterface)
+	mergedInterface := utils.MergeInterfaces(cloudInterface, fallbackInterface)
 	mergedJson, err := json.Marshal(mergedInterface)
 	if err != nil {
 		return nil, err
