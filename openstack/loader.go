@@ -252,7 +252,7 @@ type AuthInfo struct {
 	SecretKey string `yaml:"sk,omitempty" json:"sk,omitempty"`
 
 	// OTC Agency config
-	AgencyName string `yaml:"agency_name,omitempty" json:"agency_name,omitempty"`
+	AgencyName string `yaml:"target_agency_name,omitempty" json:"agency_name,omitempty"`
 	// AgencyDomainName is the name of domain who created the agency
 	AgencyDomainName string `yaml:"target_domain_id,omitempty" json:"target_domain_id,omitempty"`
 	// DelegatedProject is the name of delegated project
