@@ -8,7 +8,7 @@ import (
 type Certificate struct {
 	ID           string `json:"id"`
 	TenantID     string `json:"tenant_id"`
-	AdminStateUp string `json:"admin_state_up"`
+	AdminStateUp bool   `json:"admin_state_up"`
 	Name         string `json:"name"`
 	Description  string `json:"description"`
 	Type         string `json:"type"`

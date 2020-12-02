@@ -60,7 +60,7 @@ type CreateOptsBuilder interface {
 // operation.
 type CreateOpts struct {
 	TenantID     string `json:"tenant_id,omitempty"`
-	AdminStateUp bool   `json:"admin_state_up,omitempty"`
+	AdminStateUp *bool  `json:"admin_state_up,omitempty"`
 	Name         string `json:"name,omitempty"`
 	Description  string `json:"description,omitempty"`
 	Type         string `json:"type,omitempty"`
@@ -110,7 +110,7 @@ type UpdateOptsBuilder interface {
 // UpdateOpts is the common options struct used in this package's Update
 // operation.
 type UpdateOpts struct {
-	AdminStateUp bool   `json:"admin_state_up,omitempty"`
+	AdminStateUp *bool  `json:"admin_state_up,omitempty"`
 	Name         string `json:"name,omitempty"`
 	Description  string `json:"description,omitempty"`
 	Domain       string `json:"domain,omitempty"`
