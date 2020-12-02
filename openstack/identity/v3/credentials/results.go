@@ -74,3 +74,29 @@ func (lr ListResult) Extract() ([]Credential, error) {
 type DeleteResult struct {
 	golangsdk.ErrResult
 }
+
+type TemporaryCredential struct {
+	// Expiration time
+	ExpiresAt string `json:"expires_at"`
+
+	// AK
+	AccessKey string `json:"access"`
+
+	// SK, returned only during creation
+	SecretKey string `json:"secret"`
+
+	// Used for subsequent replacement of an SK or token.
+	SecurityToken string `json:"securitytoken"`
+}
+
+type CreateTemporaryResult struct {
+	golangsdk.Result
+}
+
+func (r CreateTemporaryResult) Extract() (*TemporaryCredential, error) {
+	var s struct {
+		Credential *TemporaryCredential `json:"credential"`
+	}
+	err := r.ExtractInto(&s)
+	return s.Credential, err
+}
