@@ -35,7 +35,7 @@ func TestIkePolicyLifeCycle(t *testing.T) {
 		t.Fatalf("Unable to create a NetworkingV2 client: %s", err)
 	}
 
-	// Create Ike Policy instance
+	// Create Ike Policy
 	ikePolicy, err := createIkePolicy(t, client)
 	if err != nil {
 		t.Fatalf("Unable to create Ike Policy: %s", err)

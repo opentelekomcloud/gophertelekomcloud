@@ -6,15 +6,18 @@ import (
 )
 
 type Certificate struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Type        string `json:"type"`
-	Domain      string `json:"domain"`
-	PrivateKey  string `json:"private_key"`
-	Certificate string `json:"certificate"`
-	CreateTime  string `json:"create_time"`
-	UpdateTime  string `json:"update_time"`
+	ID           string `json:"id"`
+	TenantID     string `json:"tenant_id"`
+	AdminStateUp bool   `json:"admin_state_up"`
+	Name         string `json:"name"`
+	Description  string `json:"description"`
+	Type         string `json:"type"`
+	Domain       string `json:"domain"`
+	PrivateKey   string `json:"private_key"`
+	Certificate  string `json:"certificate"`
+	ExpireTime   string `json:"expire_time"`
+	CreateTime   string `json:"create_time"`
+	UpdateTime   string `json:"update_time"`
 }
 
 // CertificatePage is the page returned by a pager when traversing over a
