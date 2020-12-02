@@ -117,7 +117,7 @@ type CreateTemporaryOpts struct {
 	DomainID   string `json:"domain_id,omitempty"`
 
 	// Name of the agency created by a delegating party
-	AgencyName string `json:"agency_name"`
+	AgencyName string `json:"agency_name,omitempty"`
 }
 
 // ToTempCredentialCreateMap
