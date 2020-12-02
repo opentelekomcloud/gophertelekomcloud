@@ -12,6 +12,8 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
+	Marker      string `q:"marker"`
+	Limit       int    `q:"limit"`
 	ID          string `q:"id"`
 	Name        string `q:"name"`
 	Description string `q:"description"`
@@ -19,13 +21,16 @@ type ListOpts struct {
 	Domain      string `q:"domain"`
 	PrivateKey  string `q:"private_key"`
 	Certificate string `q:"certificate"`
-	Limit       int    `q:"limit"`
-	Marker      string `q:"marker"`
+	CreateTime  string `q:"create_time"`
+	UpdateTime  string `q:"update_time"`
 }
 
 // ToCertificateListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToCertificateListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -54,12 +59,14 @@ type CreateOptsBuilder interface {
 // CreateOpts is the common options struct used in this package's Create
 // operation.
 type CreateOpts struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Type        string `json:"type,omitempty"`
-	Domain      string `json:"domain,omitempty"`
-	PrivateKey  string `json:"private_key,omitempty"`
-	Certificate string `json:"certificate" required:"true"`
+	TenantID     string `json:"tenant_id,omitempty"`
+	AdminStateUp bool   `json:"admin_state_up,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Description  string `json:"description,omitempty"`
+	Type         string `json:"type,omitempty"`
+	Domain       string `json:"domain,omitempty"`
+	PrivateKey   string `json:"private_key,omitempty"`
+	Certificate  string `json:"certificate" required:"true"`
 }
 
 // ToCertificateCreateMap casts a CreateOpts struct to a map.
@@ -103,11 +110,12 @@ type UpdateOptsBuilder interface {
 // UpdateOpts is the common options struct used in this package's Update
 // operation.
 type UpdateOpts struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Domain      string `json:"domain,omitempty"`
-	PrivateKey  string `json:"private_key,omitempty"`
-	Certificate string `json:"certificate,omitempty"`
+	AdminStateUp bool   `json:"admin_state_up,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Description  string `json:"description,omitempty"`
+	Domain       string `json:"domain,omitempty"`
+	PrivateKey   string `json:"private_key,omitempty"`
+	Certificate  string `json:"certificate,omitempty"`
 }
 
 // ToCertificateUpdateMap casts a UpdateOpts struct to a map.
@@ -123,7 +131,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (r UpdateRes
 		return
 	}
 	_, r.Err = c.Put(resourceURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{200, 202},
 	})
 	return
 }
