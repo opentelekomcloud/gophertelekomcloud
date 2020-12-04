@@ -728,11 +728,7 @@ func NewCSBSService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts)
 
 // NewCSSService creates a ServiceClient that can be used to access the Cloud Search service.
 func NewCSSService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "css")
-	if err != nil {
-		return nil, err
-	}
-	return sc, err
+	return initClientOpts(client, eo, "css")
 }
 
 // NewVBS creates a service client that is used for VBS.
