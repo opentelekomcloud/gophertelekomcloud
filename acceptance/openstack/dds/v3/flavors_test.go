@@ -15,7 +15,7 @@ func TestDdsFlavorsList(t *testing.T) {
 	}
 
 	listFlavorOpts := flavors.ListOpts{
-		Region: clients.OS_REGION_NAME,
+		Region: clients.EnvOS.GetEnv("OS_REGION_NAME"),
 	}
 	allPages, err := flavors.List(client, listFlavorOpts).AllPages()
 	if err != nil {

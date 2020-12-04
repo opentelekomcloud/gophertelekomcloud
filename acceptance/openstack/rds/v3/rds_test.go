@@ -77,10 +77,10 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instan
 		Port:             "8635",
 		Password:         "acc-test-password1!",
 		FlavorRef:        "rds.pg.c2.medium",
-		Region:           clients.OS_REGION_NAME,
-		AvailabilityZone: clients.OS_AVAILABILITY_ZONE,
-		VpcId:            clients.OS_VPC_ID,
-		SubnetId:         clients.OS_NETWORK_ID,
+		Region:           clients.EnvOS.GetEnv("REGION_NAME"),
+		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
+		VpcId:            clients.EnvOS.GetEnv("VPC_ID"),
+		SubnetId:         clients.EnvOS.GetEnv("NETWORK_ID"),
 		SecurityGroupId:  sg.ID,
 
 		Volume: &instances.Volume{
@@ -164,7 +164,7 @@ func createSecGroup(sgName string) (*groups.SecGroup, error) {
 	}
 	sgOpts := groups.CreateOpts{
 		Name:     sgName,
-		TenantID: clients.OS_TENANT_ID,
+		TenantID: clients.EnvOS.GetEnv("OS_TENANT_ID"),
 	}
 	sg, err := groups.Create(nwClient, sgOpts).Extract()
 	if err != nil {
