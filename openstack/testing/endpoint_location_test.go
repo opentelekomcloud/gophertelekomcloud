@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -107,17 +106,6 @@ func TestV3EndpointNone(t *testing.T) {
 	})
 	expected := &golangsdk.ErrEndpointNotFound{}
 	th.CheckEquals(t, expected.Error(), actual.Error())
-}
-
-func TestV3EndpointMultiple(t *testing.T) {
-	_, err := openstack.V3EndpointURL(&catalog3, golangsdk.EndpointOpts{
-		Type:         "same",
-		Region:       "same",
-		Availability: golangsdk.AvailabilityPublic,
-	})
-	if !strings.HasPrefix(err.Error(), "Discovered 2 matching endpoints:") {
-		t.Errorf("Received unexpected error: %v", err)
-	}
 }
 
 func TestV3EndpointBadAvailability(t *testing.T) {
