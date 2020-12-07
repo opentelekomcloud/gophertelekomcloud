@@ -726,6 +726,11 @@ func NewCSBSService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts)
 	return sc, err
 }
 
+// NewCBRService create a ServiceClient that can be used to access the Cloud Backup and Recovery service.
+func NewCBRService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cbr")
+}
+
 // NewCSSService creates a ServiceClient that can be used to access the Cloud Search service.
 func NewCSSService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "css")
