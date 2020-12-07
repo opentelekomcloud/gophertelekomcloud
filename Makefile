@@ -5,7 +5,7 @@ exec_name := gophertelekomcloud
 
 
 default: test
-test: vet acceptance
+test: test-unit
 
 fmt:
 	@echo Running go fmt
@@ -17,13 +17,11 @@ lint:
 
 vet:
 	@echo "go vet ."
-	@go vet $$(go list ./... | grep -v vendor/) ; if [ $$? -eq 1 ]; then \
-		echo ""; \
-		echo "Vet found suspicious constructs. Please check the reported constructs"; \
-		echo "and fix them if necessary before submitting the code for review."; \
-		exit 1; \
-	fi
+	@go vet ./...
 
-acceptance:
+test-unit:
+	@go test ./openstack/... -race -parallel 4
+
+test-acc:
 	@echo "Starting acceptance tests..."
 	@go test ./... -race -covermode=atomic -coverprofile=coverage.txt -timeout 20m -v

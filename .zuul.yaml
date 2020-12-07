@@ -12,8 +12,9 @@
       jobs:
         - golang-lint
         - golang-make-vet
+        - golang-make-test
     gate:
       jobs:
         - golang-lint
         - golang-make-vet
-
+        - golang-make-test
