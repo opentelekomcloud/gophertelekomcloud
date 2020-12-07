@@ -184,13 +184,13 @@ func createComputeInstance(client *golangsdk.ServiceClient) (*servers.Server, er
 	createOpts := servers.CreateOpts{
 		Name:             computeName,
 		SecurityGroups:   []string{"default"},
-		FlavorName:       clients.OS_FLAVOR_NAME,
-		ImageRef:         clients.OS_IMAGE_ID,
-		AvailabilityZone: clients.OS_AVAILABILITY_ZONE,
+		FlavorName:       clients.EnvOS.GetEnv("FLAVOR_NAME"),
+		ImageRef:         clients.EnvOS.GetEnv("IMAGE_ID"),
+		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
 		ServiceClient:    client,
 		Networks: []servers.Network{
 			{
-				UUID: clients.OS_NETWORK_ID,
+				UUID: clients.EnvOS.GetEnv("NETWORK_ID"),
 			},
 		},
 	}
