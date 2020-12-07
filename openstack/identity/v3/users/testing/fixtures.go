@@ -361,7 +361,7 @@ func HandleUpdateUserSuccessfully(t *testing.T) {
 	th.Mux.HandleFunc("/users/9fe1d3", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PATCH")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
-		th.TestJSONRequest(t, r, UpdateExtendedRequest)
+		th.TestJSONRequest(t, r, UpdateRequest)
 
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, UpdateOutput)
