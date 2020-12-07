@@ -24,4 +24,4 @@ test-unit:
 
 test-acc:
 	@echo "Starting acceptance tests..."
-	@go test ./... -race -covermode=atomic -coverprofile=coverage.txt -timeout 20m -v
+	@go test ./acceptance/... -race -covermode=atomic -coverprofile=coverage.txt -timeout 20m -v
