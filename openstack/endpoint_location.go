@@ -31,17 +31,19 @@ func V3EndpointURL(catalog *tokens3.ServiceCatalog, opts golangsdk.EndpointOpts)
 					return "", err
 				}
 				if opts.Availability == golangsdk.Availability(endpoint.Interface) &&
-					(endpoint.Region == opts.Region ||
-						(opts.Region == "" && endpoint.Region == "*")) {
+					(opts.Region == "" || endpoint.Region == opts.Region) {
 					endpoints = append(endpoints, endpoint)
 				}
 			}
 		}
 	}
 
-	// Report an error if the options were ambiguous.
+	// If multiple endpoints were found, use the first result
+	// and disregard the other endpoints.
+	//
+	// This behavior matches the Python library. See GH-1764.
 	if len(endpoints) > 1 {
-		return "", ErrMultipleMatchingEndpointsV3{Endpoints: endpoints}
+		endpoints = endpoints[0:1]
 	}
 
 	// Extract the URL from the matching Endpoint.
