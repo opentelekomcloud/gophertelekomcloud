@@ -141,3 +141,12 @@ func (r taskResult) Extract() (*OperationLog, error) {
 	}
 	return s.Operation, err
 }
+
+func ExtractTasks(r pagination.Page) ([]OperationLog, error) {
+	var s []OperationLog
+	err := r.(TaskPage).Result.ExtractIntoSlicePtr(&s, "operation_log")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
