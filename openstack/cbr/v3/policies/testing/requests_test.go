@@ -22,5 +22,24 @@ func TestCreateV3Policy(t *testing.T) {
 	actual, err := policies.Create(fake.ServiceClient(), createOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expectedCreateResponseData, actual)
+}
 
+func TestDeleteV3Policy(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+	handlePolicyDeletion(t)
+
+	err := policies.Delete(fake.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").ExtractErr()
+	th.AssertNoErr(t, err)
+}
+
+func TestUpdateV3Policy(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+	handlePolicyUpdate(t)
+
+	updateId := "cbb3ce6f-3332-4e7c-b98e-77290d8471ff"
+	actual, err := policies.Update(fake.ServiceClient(), updateId, updateOpts).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, expectedCreateResponseData, actual)
 }
