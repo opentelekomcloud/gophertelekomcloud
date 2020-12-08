@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	expectedRequest = `{
+	expectedRequest = `
+{
   "policy" : {
     "name" : "policy001",
     "operation_definition" : {
@@ -30,7 +31,8 @@ const (
     }
   }
 }`
-	expectedCreateResponse = `{
+	expectedCreateResponse = `
+{
   "policy" : {
     "name" : "policy001",
     "enabled" : true,
@@ -50,6 +52,33 @@ const (
       "month_backups" : 0,
       "week_backups" : 0,
       "timezone" : "UTC+08:00"
+    },
+    "operation_type" : "backup",
+    "id" : "cbb3ce6f-3332-4e7c-b98e-77290d8471ff"
+  }
+}`
+	expectedUpdateResponse = `
+{
+  "policy" : {
+    "name" : "policy001",
+    "enabled" : true,
+    "trigger" : {
+      "properties" : {
+        "pattern" : [ "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;BYHOUR=14;BYMINUTE=00" ],
+        "start_time" : "2019-05-08 06:57:05"
+      },
+      "type" : "time",
+      "id" : "d67269a6-5369-42d7-8150-5254bd446328",
+      "name" : "default"
+    },
+    "operation_definition" : {
+      "max_backups" : 0,
+      "year_backups" : 0,
+      "day_backups" : 0,
+      "month_backups" : 0,
+      "week_backups" : 0,
+      "timezone" : "UTC+08:00",
+      "retention_duration_days": 1
     },
     "operation_type" : "backup",
     "id" : "cbb3ce6f-3332-4e7c-b98e-77290d8471ff"
@@ -100,6 +129,31 @@ var (
 			},
 		},
 	}
+	updateEnabled = true
+	updateOpts    = policies.UpdateOpts{
+		Enabled: &updateEnabled,
+		Name:    "policy001",
+		OperationDefinition: &policies.PolicyODCreate{
+			DailyBackups:          0,
+			WeekBackups:           0,
+			YearBackups:           0,
+			MonthBackups:          0,
+			MaxBackups:            1,
+			RetentionDurationDays: 1,
+			Timezone:              "UTC+08:00",
+		},
+		Trigger: &policies.Trigger{
+			Properties: policies.TriggerProperties{
+				Pattern: []string{
+					"FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;BYHOUR=14;BYMINUTE=00",
+				},
+			},
+		},
+	}
+	listOpts = policies.ListOpts{
+		OperationType: "",
+		VaultID:       "",
+	}
 )
 
 func handlePolicyCreation(t *testing.T) {
@@ -109,5 +163,24 @@ func handlePolicyCreation(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprintf(w, expectedCreateResponse)
+	})
+}
+
+func handlePolicyDeletion(t *testing.T) {
+	th.Mux.HandleFunc("/policies/d32019d3-bc6e-4319-9c1d-6722fc136a22", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
+func handlePolicyUpdate(t *testing.T) {
+	th.Mux.HandleFunc("/policies/cbb3ce6f-3332-4e7c-b98e-77290d8471ff", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PUT")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = fmt.Fprintf(w, expectedUpdateResponse)
 	})
 }
