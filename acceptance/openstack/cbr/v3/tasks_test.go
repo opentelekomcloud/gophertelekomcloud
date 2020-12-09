@@ -6,23 +6,19 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/tasks"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestTaskListAll(t *testing.T) {
 	client, err := clients.NewCbrV3Client()
-	if err != nil {
-		t.Fatalf("Unable to create a CBRv3 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	listOpts := tasks.ListOpts{}
 	pages, err := tasks.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to fetch CBR tasks pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
 	tasksList, err := tasks.ExtractTasks(pages)
-	if err != nil {
-		t.Fatalf("Unable to extract CBR tasks pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	for _, task := range tasksList {
 		tools.PrintResource(t, task)

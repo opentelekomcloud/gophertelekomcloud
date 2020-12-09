@@ -20,41 +20,41 @@ type TaskPage struct {
 }
 
 type OperationLog struct {
-	CheckpointID  string      `json:"checkpoint_id"`
-	CreatedAt     string      `json:"created_at"`
-	EndedAt       string      `json:"ended_at"`
-	ErrorInfo     OpErrorInfo `json:"error_info"`
-	ExtraInfo     OpExtraInfo `json:"extra_info"`
-	ID            string      `json:"id"`
-	OperationType string      `json:"operation_type"`
-	PolicyID      string      `json:"policy_id"`
-	ProjectID     string      `json:"project_id"`
-	ProviderID    string      `json:"provider_id"`
-	StartedAt     string      `json:"started_at"`
-	Status        string      `json:"status"`
-	UpdatedAt     string      `json:"updated_at"`
-	VaultID       string      `json:"vault_id"`
-	VaultName     string      `json:"vault_name"`
+	CheckpointID  string             `json:"checkpoint_id"`
+	CreatedAt     string             `json:"created_at"`
+	EndedAt       string             `json:"ended_at"`
+	ErrorInfo     OperationErrorInfo `json:"error_info"`
+	ExtraInfo     OperationExtraInfo `json:"extra_info"`
+	ID            string             `json:"id"`
+	OperationType string             `json:"operation_type"`
+	PolicyID      string             `json:"policy_id"`
+	ProjectID     string             `json:"project_id"`
+	ProviderID    string             `json:"provider_id"`
+	StartedAt     string             `json:"started_at"`
+	Status        string             `json:"status"`
+	UpdatedAt     string             `json:"updated_at"`
+	VaultID       string             `json:"vault_id"`
+	VaultName     string             `json:"vault_name"`
 }
 
-type OpErrorInfo struct {
+type OperationErrorInfo struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
 
-type OpExtraInfo struct {
-	Backup          OpExtendInfoBackup          `json:"backup"`
-	Common          OpExtendInfoCommon          `json:"common"`
-	Delete          OpExtendInfoDelete          `json:"delete"`
-	Sync            OpExtendInfoSync            `json:"sync"`
-	RemoveResources OpExtendInfoRemoveResources `json:"remove_resources"`
-	Replication     OpExtendInfoReplication     `json:"replication"`
-	Resource        Resource                    `json:"resource"`
-	Restore         OpExtendInfoRestore         `json:"restore"`
-	VaultDelete     OpExtendInfoVaultDelete     `json:"vault_delete"`
+type OperationExtraInfo struct {
+	Backup          OperationExtendInfoBackup          `json:"backup"`
+	Common          OperationExtendInfoCommon          `json:"common"`
+	Delete          OperationExtendInfoDelete          `json:"delete"`
+	Sync            OperationExtendInfoSync            `json:"sync"`
+	RemoveResources OperationExtendInfoRemoveResources `json:"remove_resources"`
+	Replication     OpExtendInfoReplication            `json:"replication"`
+	Resource        Resource                           `json:"resource"`
+	Restore         OpExtendInfoRestore                `json:"restore"`
+	VaultDelete     OpExtendInfoVaultDelete            `json:"vault_delete"`
 }
 
-type OpExtendInfoBackup struct {
+type OperationExtendInfoBackup struct {
 	AppConsistencyErrorCode    string `json:"app_consistency_error_code"`
 	AppConsistencyErrorMessage string `json:"app_consistency_error_message"`
 	AppConsistencyStatus       string `json:"app_consistency_status"`
@@ -63,24 +63,24 @@ type OpExtendInfoBackup struct {
 	Incremental                string `json:"incremental"`
 }
 
-type OpExtendInfoCommon struct {
+type OperationExtendInfoCommon struct {
 	Progress  int    `json:"progress"`
 	RequestID string `json:"request_id"`
 	TaskID    string `json:"task_id"`
 }
 
-type OpExtendInfoDelete struct {
+type OperationExtendInfoDelete struct {
 	BackupID   string `json:"backup_id"`
 	BackupName string `json:"backup_name"`
 }
 
-type OpExtendInfoSync struct {
+type OperationExtendInfoSync struct {
 	SyncBackupNum    int `json:"sync_backup_num"`
 	DeleteBackupNum  int `json:"delete_backup_num"`
 	ErrSyncBackupNum int `json:"err_sync_backup_num"`
 }
 
-type OpExtendInfoRemoveResources struct {
+type OperationExtendInfoRemoveResources struct {
 	FailCount  int        `json:"fail_count"`
 	TotalCount int        `json:"total_count"`
 	Resources  []Resource `json:"resources"`
