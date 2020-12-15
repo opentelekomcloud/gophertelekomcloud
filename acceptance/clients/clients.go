@@ -253,6 +253,27 @@ func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewCceV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := cloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCCE(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+}
+
+func NewCceV3AddonClient() (*golangsdk.ServiceClient, error) {
+	cc, err := cloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	client, err := openstack.NewCCE(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+	if err != nil {
+		return nil, err
+	}
+	client.ResourceBase = fmt.Sprintf("%sapi/v3/", client.Endpoint)
+	return client, nil
+}
+
 func NewCbrV3Client() (*golangsdk.ServiceClient, error) {
 	cc, err := cloudAndClient()
 	if err != nil {
