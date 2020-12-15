@@ -17,7 +17,7 @@ func rootURL(client *golangsdk.ServiceClient, clusterID string) string {
 }
 
 func resourceURL(client *golangsdk.ServiceClient, id, clusterID string) string {
-	return CCEServiceURL(client, clusterID, rootPath, id+"?clusterID="+clusterID)
+	return CCEServiceURL(client, clusterID, rootPath, id+"?cluster_id="+clusterID)
 }
 
 func CCEServiceURL(client *golangsdk.ServiceClient, clusterID string, parts ...string) string {
