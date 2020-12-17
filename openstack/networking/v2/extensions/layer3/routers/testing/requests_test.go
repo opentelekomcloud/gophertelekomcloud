@@ -360,8 +360,7 @@ func TestAllRoutesRemoved(t *testing.T) {
 		`)
 	})
 
-	var r []routers.Route
-	options := routers.UpdateOpts{Routes: r}
+	options := routers.UpdateOpts{Routes: []routers.Route{}}
 
 	n, err := routers.Update(fake.ServiceClient(), "4e8e5957-649f-477b-9e5b-f1f75b21c03c", options).Extract()
 	th.AssertNoErr(t, err)

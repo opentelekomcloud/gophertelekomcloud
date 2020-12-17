@@ -3,7 +3,6 @@ package testing
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
@@ -74,10 +73,10 @@ func TestListFlavors(t *testing.T) {
 		}
 	})
 
-	pages := 0
+	pageCount := 0
 	// Get public and private flavors
 	err := flavors.ListDetail(fake.ServiceClient(), nil).EachPage(func(page pagination.Page) (bool, error) {
-		pages++
+		pageCount += 1
 
 		actual, err := flavors.ExtractFlavors(page)
 		if err != nil {
@@ -90,17 +89,16 @@ func TestListFlavors(t *testing.T) {
 			{ID: "3", Name: "m1.medium", VCPUs: 2, Disk: 40, RAM: 4096, Swap: 1000, IsPublic: false, Ephemeral: 0},
 		}
 
-		if !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Expected %#v, but was %#v", expected, actual)
-		}
+		th.AssertDeepEquals(t, expected, actual)
 
 		return true, nil
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if pages != 1 {
-		t.Errorf("Expected one page, got %d", pages)
+	th.AssertEquals(t, 1, pageCount)
+	if pageCount != 1 {
+		t.Errorf("Expected one page, got %d", pageCount)
 	}
 }
 
@@ -142,9 +140,7 @@ func TestGetFlavor(t *testing.T) {
 		RxTxFactor: 1,
 		Swap:       0,
 	}
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestCreateFlavor(t *testing.T) {
@@ -194,9 +190,7 @@ func TestCreateFlavor(t *testing.T) {
 		RxTxFactor: 1,
 		Swap:       0,
 	}
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestDeleteFlavor(t *testing.T) {
@@ -246,10 +240,7 @@ func TestFlavorAccessesList(t *testing.T) {
 
 	actual, err := flavors.ExtractAccesses(allPages)
 	th.AssertNoErr(t, err)
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestFlavorAccessAdd(t *testing.T) {
@@ -295,10 +286,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 
 	actual, err := flavors.AddAccess(fake.ServiceClient(), "12345678", addAccessOpts).Extract()
 	th.AssertNoErr(t, err)
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestFlavorAccessRemove(t *testing.T) {
@@ -326,17 +314,13 @@ func TestFlavorAccessRemove(t *testing.T) {
 			`)
 	})
 
-	var expected []flavors.FlavorAccess
 	removeAccessOpts := flavors.RemoveAccessOpts{
 		Tenant: "2f954bcf047c4ee9b09a37d49ae6db54",
 	}
 
 	actual, err := flavors.RemoveAccess(fake.ServiceClient(), "12345678", removeAccessOpts).Extract()
 	th.AssertNoErr(t, err)
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, []flavors.FlavorAccess{}, actual)
 }
 
 func TestFlavorExtraSpecsList(t *testing.T) {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"reflect"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
@@ -112,19 +111,13 @@ func TestListImages(t *testing.T) {
 			},
 		}
 
-		if !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Unexpected page contents: expected %#v, got %#v", expected, actual)
-		}
+		th.AssertDeepEquals(t, expected, actual)
 
 		return false, nil
 	})
 
-	if err != nil {
-		t.Fatalf("EachPage error: %v", err)
-	}
-	if pages != 1 {
-		t.Errorf("Expected one page, got %d", pages)
-	}
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, pages)
 }
 
 func TestGetImage(t *testing.T) {
@@ -163,9 +156,7 @@ func TestGetImage(t *testing.T) {
 	})
 
 	actual, err := images.Get(fake.ServiceClient(), "12345678").Extract()
-	if err != nil {
-		t.Fatalf("Unexpected error from Get: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	expected := &images.Image{
 		Status:   "ACTIVE",
@@ -187,9 +178,7 @@ func TestGetImage(t *testing.T) {
 		},
 	}
 
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but got %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestNextPageURL(t *testing.T) {
