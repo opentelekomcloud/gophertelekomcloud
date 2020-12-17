@@ -298,6 +298,6 @@ func prettify(v reflect.Value, indent int, buf *bytes.Buffer) {
 		case io.ReadSeeker, io.Reader:
 			format = "buffer(%p)"
 		}
-		_, _ = fmt.Fprintf(buf, format, v.Interface())
+		_, _ = fmt.Fprint(buf, format, v.Interface())
 	}
 }

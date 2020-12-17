@@ -101,7 +101,7 @@ resources:
 		th.TestMethod(t, r, "GET")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, myNovaContent)
+		_, _ = fmt.Fprint(w, myNovaContent)
 	})
 
 	client := fakeClient{BaseClient: getHTTPClient()}

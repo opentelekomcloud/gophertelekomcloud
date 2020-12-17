@@ -79,9 +79,9 @@ func HandleListSuccessfully(t *testing.T, output string) {
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			_, _ = fmt.Fprintf(w, output)
+			_, _ = fmt.Fprint(w, output)
 		case "49181cd6-169a-4130-9455-31185bbfc5bf":
-			_, _ = fmt.Fprintf(w, `{"resources":[]}`)
+			_, _ = fmt.Fprint(w, `{"resources":[]}`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}

@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/users"
@@ -207,7 +205,6 @@ const ListProjectsOutput = `
 `
 
 // FirstUser is the first user in the List request.
-var nilTime time.Time
 var FirstUser = users.User{
 	DomainID: "default",
 	Enabled:  true,
@@ -216,7 +213,6 @@ var FirstUser = users.User{
 }
 
 // SecondUser is the second user in the List request.
-var SecondUserPasswordExpiresAt, _ = time.Parse(golangsdk.RFC3339MilliNoZ, "2016-11-06T15:32:17.000000")
 var SecondUser = users.User{
 	DefaultProjectID: "263fd9",
 	DomainID:         "1789d1",
@@ -311,7 +307,7 @@ func HandleListUsersSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 }
 
@@ -325,7 +321,7 @@ func HandleGetUserSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -338,7 +334,7 @@ func HandleCreateUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -351,7 +347,7 @@ func HandleCreateNoOptionsUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateNoOptionsRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = fmt.Fprintf(w, GetOutputNoOptions)
+		_, _ = fmt.Fprint(w, GetOutputNoOptions)
 	})
 }
 
@@ -364,7 +360,7 @@ func HandleUpdateUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateRequest)
 
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprint(w, UpdateOutput)
 	})
 }
 
@@ -377,7 +373,7 @@ func HandleExtendedUpdateUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateExtendedRequest)
 
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, UpdateExtendedOutput)
+		_, _ = fmt.Fprint(w, UpdateExtendedOutput)
 	})
 }
 
@@ -402,7 +398,7 @@ func HandleListUserGroupsSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, ListGroupsOutput)
+		_, _ = fmt.Fprint(w, ListGroupsOutput)
 	})
 }
 
@@ -416,7 +412,7 @@ func HandleListUserProjectsSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, ListProjectsOutput)
+		_, _ = fmt.Fprint(w, ListProjectsOutput)
 	})
 }
 
@@ -430,6 +426,6 @@ func HandleListInGroupSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 }

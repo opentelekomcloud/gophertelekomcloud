@@ -35,7 +35,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "endpoint_group": {
         "description": "",
@@ -89,7 +89,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "endpoint_group": {
         "description": "",
@@ -134,7 +134,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 		{
 	"endpoint_groups": [
 		{
@@ -222,7 +222,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "endpoint_group": {
         "description": "updated description",

@@ -22,7 +22,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "security_group_rules": [
         {
@@ -127,7 +127,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "security_group_rule": {
         "direction": "ingress",
@@ -188,7 +188,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "security_group_rule": {
         "direction": "egress",

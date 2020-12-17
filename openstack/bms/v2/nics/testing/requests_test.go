@@ -21,7 +21,7 @@ func TestListNIC(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "interfaceAttachments": [
         {
@@ -91,7 +91,7 @@ func TestGetNIC(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "interfaceAttachment": {
         "port_state": "ACTIVE",

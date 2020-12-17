@@ -104,7 +104,7 @@ func TestListAccessRights(t *testing.T) {
 		th.TestJSONRequest(t, r, listAccessRightsRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, listAccessRightsResponse)
+		_, _ = fmt.Fprint(w, listAccessRightsResponse)
 	})
 
 	c := client.ServiceClient()
@@ -136,7 +136,7 @@ func TestGrantAcessRight(t *testing.T) {
 		th.TestJSONRequest(t, r, grantAccessRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, grantAccessResponse)
+		_, _ = fmt.Fprint(w, grantAccessResponse)
 	})
 
 	c := client.ServiceClient()
@@ -186,7 +186,7 @@ func TestGetExportLocationsSuccess(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, getExportLocationsResponse)
+		_, _ = fmt.Fprint(w, getExportLocationsResponse)
 	})
 
 	c := client.ServiceClient()
@@ -212,7 +212,7 @@ func TestListShare(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, listResponse)
+		_, _ = fmt.Fprint(w, listResponse)
 	})
 
 	// count := 0

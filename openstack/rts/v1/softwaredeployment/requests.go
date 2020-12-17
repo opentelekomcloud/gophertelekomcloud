@@ -37,6 +37,9 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Deployment, error) 
 	pages, err := pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
 		return DeploymentPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
 
 	allConfigs, err := ExtractDeployments(pages)
 	if err != nil {

@@ -24,7 +24,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, nettest.ListResponse)
+		_, _ = fmt.Fprint(w, nettest.ListResponse)
 	})
 
 	type NetworkWithExt struct {
@@ -59,7 +59,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, nettest.GetResponse)
+		_, _ = fmt.Fprint(w, nettest.GetResponse)
 	})
 
 	var s struct {
@@ -90,7 +90,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, nettest.CreateResponse)
+		_, _ = fmt.Fprint(w, nettest.CreateResponse)
 	})
 
 	var s struct {
@@ -141,7 +141,7 @@ func TestCreateWithMultipleProvider(t *testing.T) {
 		`)
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
 	"network": {
 		"status": "ACTIVE",
@@ -202,7 +202,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, nettest.UpdateResponse)
+		_, _ = fmt.Fprint(w, nettest.UpdateResponse)
 	})
 
 	var s struct {

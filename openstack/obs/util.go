@@ -28,10 +28,12 @@ import (
 	"time"
 )
 
-var regex = regexp.MustCompile("^[\u4e00-\u9fa5]$")
-var ipRegex = regexp.MustCompile("^((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)$")
-var v4AuthRegex = regexp.MustCompile("Credential=(.+?),SignedHeaders=(.+?),Signature=.+")
-var regionRegex = regexp.MustCompile(".+/\\d+/(.+?)/.+")
+var (
+	regex       = regexp.MustCompile("^[\u4e00-\u9fa5]$")
+	ipRegex     = regexp.MustCompile(`^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$`)
+	v4AuthRegex = regexp.MustCompile(`Credential=(.+?),SignedHeaders=(.+?),Signature=.+`)
+	regionRegex = regexp.MustCompile(`.+/\d+/(.+?)/.+`)
+)
 
 func StringContains(src string, subStr string, subTranscoding string) string {
 	return strings.Replace(src, subStr, subTranscoding, -1)
@@ -198,9 +200,7 @@ func copyHeaders(m map[string][]string) (ret map[string][]string) {
 		ret = make(map[string][]string, len(m))
 		for key, values := range m {
 			_values := make([]string, 0, len(values))
-			for _, value := range values {
-				_values = append(_values, value)
-			}
+			_values = append(_values, values...)
 			ret[strings.ToLower(key)] = _values
 		}
 	} else {
@@ -266,9 +266,7 @@ func getIsObs(isTemporary bool, querys []string, headers map[string][]string) bo
 
 func GetV2Authorization(ak, sk, method, bucketName, objectKey, queryUrl string, headers map[string][]string) (ret map[string]string) {
 
-	if strings.HasPrefix(queryUrl, "?") {
-		queryUrl = queryUrl[1:]
-	}
+	queryUrl = strings.TrimPrefix(queryUrl, "?")
 
 	method = strings.ToUpper(method)
 
@@ -315,9 +313,7 @@ func GetV2Authorization(ak, sk, method, bucketName, objectKey, queryUrl string, 
 
 func GetAuthorization(ak, sk, method, bucketName, objectKey, queryUrl string, headers map[string][]string) (ret map[string]string) {
 
-	if strings.HasPrefix(queryUrl, "?") {
-		queryUrl = queryUrl[1:]
-	}
+	queryUrl = strings.TrimPrefix(queryUrl, "?")
 
 	method = strings.ToUpper(method)
 
@@ -450,11 +446,8 @@ func getTemporaryAuthorization(ak, sk, method, bucketName, objectKey, signature 
 			algorithm = params[strings.ToLower(PARAM_ALGORITHM_AMZ_CAMEL)]
 		}
 
-		if _, ok := params[PARAM_SIGNATURE_AMZ_CAMEL]; ok {
-			delete(params, PARAM_SIGNATURE_AMZ_CAMEL)
-		} else if _, ok := params[strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL)]; ok {
-			delete(params, strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL))
-		}
+		delete(params, PARAM_SIGNATURE_AMZ_CAMEL)
+		delete(params, strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL))
 
 		ret = make(map[string]string, 6)
 		ret[PARAM_ALGORITHM_AMZ_CAMEL] = algorithm

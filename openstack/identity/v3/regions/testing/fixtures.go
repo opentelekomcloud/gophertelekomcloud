@@ -172,7 +172,7 @@ func HandleListRegionsSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 }
 
@@ -186,7 +186,7 @@ func HandleGetRegionSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -199,7 +199,7 @@ func HandleCreateRegionSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -212,7 +212,7 @@ func HandleUpdateRegionSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateRequest)
 
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprint(w, UpdateOutput)
 	})
 }
 

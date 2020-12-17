@@ -21,7 +21,7 @@ func TestListVpcPeerings(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "peerings": [
         {
@@ -129,7 +129,7 @@ func TestCreateVpcPeeringConnection(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "peering": {
         "status": "PENDING_ACCEPTANCE",
@@ -181,7 +181,7 @@ func TestUpdateVpcPeeringConnection(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "peering": {
         "status": "PENDING_ACCEPTANCE",
@@ -238,7 +238,7 @@ func TestAcceptVpcPeering(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, ` {
+		_, _ = fmt.Fprint(w, ` {
     "status": "ACTIVE",
     "name": "test_peering",
     "tenant_id": "17fbda95add24720a4038ba4b1c705ed",
@@ -278,7 +278,7 @@ func TestRejectVpcPeering(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, ` {
+		_, _ = fmt.Fprint(w, ` {
     "status": "ACTIVE",
     "name": "test_peering",
     "tenant_id": "17fbda95add24720a4038ba4b1c705ed",

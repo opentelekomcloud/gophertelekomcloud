@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, SubnetPoolsListResult)
+		_, _ = fmt.Fprint(w, SubnetPoolsListResult)
 	})
 
 	count := 0
@@ -63,7 +63,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, SubnetPoolGetResult)
+		_, _ = fmt.Fprint(w, SubnetPoolGetResult)
 	})
 
 	s, err := subnetpools.Get(fake.ServiceClient(), "0a738452-8057-4ad3-89c2-92f6a74afa76").Extract()
@@ -103,7 +103,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, SubnetPoolCreateResult)
+		_, _ = fmt.Fprint(w, SubnetPoolCreateResult)
 	})
 
 	opts := subnetpools.CreateOpts{
@@ -145,7 +145,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, SubnetPoolUpdateResponse)
+		_, _ = fmt.Fprint(w, SubnetPoolUpdateResponse)
 	})
 
 	nullString := ""

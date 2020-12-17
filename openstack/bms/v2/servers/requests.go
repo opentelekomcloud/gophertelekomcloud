@@ -95,6 +95,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allservers, err := ExtractServers(pages)
 	if err != nil {
 		return nil, err

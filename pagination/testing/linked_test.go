@@ -44,7 +44,7 @@ func createLinked() pagination.Pager {
 
 	testhelper.Mux.HandleFunc("/page3", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `{ "ints": [7, 8, 9], "links": { "next": null } }`)
+		_, _ = fmt.Fprint(w, `{ "ints": [7, 8, 9], "links": { "next": null } }`)
 	})
 
 	client := createClient()

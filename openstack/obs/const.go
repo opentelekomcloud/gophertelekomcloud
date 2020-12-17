@@ -12,113 +12,11 @@
 
 package obs
 
+import "net/http"
+
 const (
-	obs_sdk_version        = "3.19.11"
-	USER_AGENT             = "obs-sdk-go/" + obs_sdk_version
-	HEADER_PREFIX          = "x-amz-"
-	HEADER_PREFIX_META     = "x-amz-meta-"
-	HEADER_PREFIX_OBS      = "x-obs-"
-	HEADER_PREFIX_META_OBS = "x-obs-meta-"
-	HEADER_DATE_AMZ        = "x-amz-date"
-	HEADER_DATE_OBS        = "x-obs-date"
-	HEADER_STS_TOKEN_AMZ   = "x-amz-security-token"
-	HEADER_STS_TOKEN_OBS   = "x-obs-security-token"
-	HEADER_ACCESSS_KEY_AMZ = "AWSAccessKeyId"
-	PREFIX_META            = "meta-"
-
-	HEADER_CONTENT_SHA256_AMZ               = "x-amz-content-sha256"
-	HEADER_ACL_AMZ                          = "x-amz-acl"
-	HEADER_ACL_OBS                          = "x-obs-acl"
-	HEADER_ACL                              = "acl"
-	HEADER_LOCATION_AMZ                     = "location"
-	HEADER_BUCKET_LOCATION_OBS              = "bucket-location"
-	HEADER_COPY_SOURCE                      = "copy-source"
-	HEADER_COPY_SOURCE_RANGE                = "copy-source-range"
-	HEADER_RANGE                            = "Range"
-	HEADER_STORAGE_CLASS                    = "x-default-storage-class"
-	HEADER_STORAGE_CLASS_OBS                = "x-obs-storage-class"
-	HEADER_VERSION_OBS                      = "version"
-	HEADER_GRANT_READ_OBS                   = "grant-read"
-	HEADER_GRANT_WRITE_OBS                  = "grant-write"
-	HEADER_GRANT_READ_ACP_OBS               = "grant-read-acp"
-	HEADER_GRANT_WRITE_ACP_OBS              = "grant-write-acp"
-	HEADER_GRANT_FULL_CONTROL_OBS           = "grant-full-control"
-	HEADER_GRANT_READ_DELIVERED_OBS         = "grant-read-delivered"
-	HEADER_GRANT_FULL_CONTROL_DELIVERED_OBS = "grant-full-control-delivered"
-	HEADER_REQUEST_ID                       = "request-id"
-	HEADER_BUCKET_REGION                    = "bucket-region"
-	HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN      = "access-control-allow-origin"
-	HEADER_ACCESS_CONRTOL_ALLOW_HEADERS     = "access-control-allow-headers"
-	HEADER_ACCESS_CONRTOL_MAX_AGE           = "access-control-max-age"
-	HEADER_ACCESS_CONRTOL_ALLOW_METHODS     = "access-control-allow-methods"
-	HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS    = "access-control-expose-headers"
-	HEADER_EPID_HEADERS                     = "epid"
-	HEADER_VERSION_ID                       = "version-id"
-	HEADER_COPY_SOURCE_VERSION_ID           = "copy-source-version-id"
-	HEADER_DELETE_MARKER                    = "delete-marker"
-	HEADER_WEBSITE_REDIRECT_LOCATION        = "website-redirect-location"
-	HEADER_METADATA_DIRECTIVE               = "metadata-directive"
-	HEADER_EXPIRATION                       = "expiration"
-	HEADER_EXPIRES_OBS                      = "x-obs-expires"
-	HEADER_RESTORE                          = "restore"
-	HEADER_OBJECT_TYPE                      = "object-type"
-	HEADER_NEXT_APPEND_POSITION             = "next-append-position"
-	HEADER_STORAGE_CLASS2                   = "storage-class"
-	HEADER_CONTENT_LENGTH                   = "content-length"
-	HEADER_CONTENT_TYPE                     = "content-type"
-	HEADER_CONTENT_LANGUAGE                 = "content-language"
-	HEADER_EXPIRES                          = "expires"
-	HEADER_CACHE_CONTROL                    = "cache-control"
-	HEADER_CONTENT_DISPOSITION              = "content-disposition"
-	HEADER_CONTENT_ENCODING                 = "content-encoding"
-
-	HEADER_ETAG         = "etag"
-	HEADER_LASTMODIFIED = "last-modified"
-
-	HEADER_COPY_SOURCE_IF_MATCH            = "copy-source-if-match"
-	HEADER_COPY_SOURCE_IF_NONE_MATCH       = "copy-source-if-none-match"
-	HEADER_COPY_SOURCE_IF_MODIFIED_SINCE   = "copy-source-if-modified-since"
-	HEADER_COPY_SOURCE_IF_UNMODIFIED_SINCE = "copy-source-if-unmodified-since"
-
-	HEADER_IF_MATCH            = "If-Match"
-	HEADER_IF_NONE_MATCH       = "If-None-Match"
-	HEADER_IF_MODIFIED_SINCE   = "If-Modified-Since"
-	HEADER_IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
-
-	HEADER_SSEC_ENCRYPTION = "server-side-encryption-customer-algorithm"
-	HEADER_SSEC_KEY        = "server-side-encryption-customer-key"
-	HEADER_SSEC_KEY_MD5    = "server-side-encryption-customer-key-MD5"
-
-	HEADER_SSEKMS_ENCRYPTION      = "server-side-encryption"
-	HEADER_SSEKMS_KEY             = "server-side-encryption-aws-kms-key-id"
-	HEADER_SSEKMS_ENCRYPT_KEY_OBS = "server-side-encryption-kms-key-id"
-
-	HEADER_SSEC_COPY_SOURCE_ENCRYPTION = "copy-source-server-side-encryption-customer-algorithm"
-	HEADER_SSEC_COPY_SOURCE_KEY        = "copy-source-server-side-encryption-customer-key"
-	HEADER_SSEC_COPY_SOURCE_KEY_MD5    = "copy-source-server-side-encryption-customer-key-MD5"
-
-	HEADER_SSEKMS_KEY_AMZ = "x-amz-server-side-encryption-aws-kms-key-id"
-
-	HEADER_SSEKMS_KEY_OBS = "x-obs-server-side-encryption-kms-key-id"
-
-	HEADER_SUCCESS_ACTION_REDIRECT = "success_action_redirect"
-
-	HEADER_DATE_CAMEL                          = "Date"
-	HEADER_HOST_CAMEL                          = "Host"
-	HEADER_HOST                                = "host"
-	HEADER_AUTH_CAMEL                          = "Authorization"
-	HEADER_MD5_CAMEL                           = "Content-MD5"
-	HEADER_LOCATION_CAMEL                      = "Location"
-	HEADER_CONTENT_LENGTH_CAMEL                = "Content-Length"
-	HEADER_CONTENT_TYPE_CAML                   = "Content-Type"
-	HEADER_USER_AGENT_CAMEL                    = "User-Agent"
-	HEADER_ORIGIN_CAMEL                        = "Origin"
-	HEADER_ACCESS_CONTROL_REQUEST_HEADER_CAMEL = "Access-Control-Request-Headers"
-	HEADER_CACHE_CONTROL_CAMEL                 = "Cache-Control"
-	HEADER_CONTENT_DISPOSITION_CAMEL           = "Content-Disposition"
-	HEADER_CONTENT_ENCODING_CAMEL              = "Content-Encoding"
-	HEADER_CONTENT_LANGUAGE_CAMEL              = "Content-Language"
-	HEADER_EXPIRES_CAMEL                       = "Expires"
+	obs_sdk_version = "3.19.11"
+	PREFIX_META     = "meta-"
 
 	PARAM_VERSION_ID                   = "versionId"
 	PARAM_RESPONSE_CONTENT_TYPE        = "response-content-type"
@@ -176,6 +74,103 @@ const (
 	HTTP_OPTIONS = "OPTIONS"
 )
 
+var (
+	USER_AGENT                              = http.CanonicalHeaderKey("obs-sdk-go/" + obs_sdk_version)
+	HEADER_PREFIX                           = http.CanonicalHeaderKey("x-amz-")
+	HEADER_PREFIX_META                      = http.CanonicalHeaderKey("x-amz-meta-")
+	HEADER_PREFIX_OBS                       = http.CanonicalHeaderKey("x-obs-")
+	HEADER_PREFIX_META_OBS                  = http.CanonicalHeaderKey("x-obs-meta-")
+	HEADER_DATE_AMZ                         = http.CanonicalHeaderKey("x-amz-date")
+	HEADER_DATE_OBS                         = http.CanonicalHeaderKey("x-obs-date")
+	HEADER_STS_TOKEN_AMZ                    = http.CanonicalHeaderKey("x-amz-security-token")
+	HEADER_STS_TOKEN_OBS                    = http.CanonicalHeaderKey("x-obs-security-token")
+	HEADER_ACCESSS_KEY_AMZ                  = http.CanonicalHeaderKey("AWSAccessKeyId")
+	HEADER_CONTENT_SHA256_AMZ               = http.CanonicalHeaderKey("x-amz-content-sha256")
+	HEADER_ACL_AMZ                          = http.CanonicalHeaderKey("x-amz-acl")
+	HEADER_ACL_OBS                          = http.CanonicalHeaderKey("x-obs-acl")
+	HEADER_ACL                              = http.CanonicalHeaderKey("acl")
+	HEADER_LOCATION_AMZ                     = http.CanonicalHeaderKey("location")
+	HEADER_BUCKET_LOCATION_OBS              = http.CanonicalHeaderKey("bucket-location")
+	HEADER_COPY_SOURCE                      = http.CanonicalHeaderKey("copy-source")
+	HEADER_COPY_SOURCE_RANGE                = http.CanonicalHeaderKey("copy-source-range")
+	HEADER_RANGE                            = http.CanonicalHeaderKey("Range")
+	HEADER_STORAGE_CLASS                    = http.CanonicalHeaderKey("x-default-storage-class")
+	HEADER_STORAGE_CLASS_OBS                = http.CanonicalHeaderKey("x-obs-storage-class")
+	HEADER_VERSION_OBS                      = http.CanonicalHeaderKey("version")
+	HEADER_GRANT_READ_OBS                   = http.CanonicalHeaderKey("grant-read")
+	HEADER_GRANT_WRITE_OBS                  = http.CanonicalHeaderKey("grant-write")
+	HEADER_GRANT_READ_ACP_OBS               = http.CanonicalHeaderKey("grant-read-acp")
+	HEADER_GRANT_WRITE_ACP_OBS              = http.CanonicalHeaderKey("grant-write-acp")
+	HEADER_GRANT_FULL_CONTROL_OBS           = http.CanonicalHeaderKey("grant-full-control")
+	HEADER_GRANT_READ_DELIVERED_OBS         = http.CanonicalHeaderKey("grant-read-delivered")
+	HEADER_GRANT_FULL_CONTROL_DELIVERED_OBS = http.CanonicalHeaderKey("grant-full-control-delivered")
+	HEADER_REQUEST_ID                       = http.CanonicalHeaderKey("request-id")
+	HEADER_BUCKET_REGION                    = http.CanonicalHeaderKey("bucket-region")
+	HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN      = http.CanonicalHeaderKey("access-control-allow-origin")
+	HEADER_ACCESS_CONRTOL_ALLOW_HEADERS     = http.CanonicalHeaderKey("access-control-allow-headers")
+	HEADER_ACCESS_CONRTOL_MAX_AGE           = http.CanonicalHeaderKey("access-control-max-age")
+	HEADER_ACCESS_CONRTOL_ALLOW_METHODS     = http.CanonicalHeaderKey("access-control-allow-methods")
+	HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS    = http.CanonicalHeaderKey("access-control-expose-headers")
+	HEADER_EPID_HEADERS                     = http.CanonicalHeaderKey("epid")
+	HEADER_VERSION_ID                       = http.CanonicalHeaderKey("version-id")
+	HEADER_COPY_SOURCE_VERSION_ID           = http.CanonicalHeaderKey("copy-source-version-id")
+	HEADER_DELETE_MARKER                    = http.CanonicalHeaderKey("delete-marker")
+	HEADER_WEBSITE_REDIRECT_LOCATION        = http.CanonicalHeaderKey("website-redirect-location")
+	HEADER_METADATA_DIRECTIVE               = http.CanonicalHeaderKey("metadata-directive")
+	HEADER_EXPIRATION                       = http.CanonicalHeaderKey("expiration")
+	HEADER_EXPIRES_OBS                      = http.CanonicalHeaderKey("x-obs-expires")
+	HEADER_RESTORE                          = http.CanonicalHeaderKey("restore")
+	HEADER_OBJECT_TYPE                      = http.CanonicalHeaderKey("object-type")
+	HEADER_NEXT_APPEND_POSITION             = http.CanonicalHeaderKey("next-append-position")
+	HEADER_STORAGE_CLASS2                   = http.CanonicalHeaderKey("storage-class")
+	HEADER_CONTENT_LENGTH                   = http.CanonicalHeaderKey("content-length")
+	HEADER_CONTENT_TYPE                     = http.CanonicalHeaderKey("content-type")
+	HEADER_CONTENT_LANGUAGE                 = http.CanonicalHeaderKey("content-language")
+	HEADER_EXPIRES                          = http.CanonicalHeaderKey("expires")
+	HEADER_CACHE_CONTROL                    = http.CanonicalHeaderKey("cache-control")
+	HEADER_CONTENT_DISPOSITION              = http.CanonicalHeaderKey("content-disposition")
+	HEADER_CONTENT_ENCODING                 = http.CanonicalHeaderKey("content-encoding")
+	HEADER_ETAG                             = http.CanonicalHeaderKey("etag")
+	HEADER_LASTMODIFIED                     = http.CanonicalHeaderKey("last-modified")
+	HEADER_COPY_SOURCE_IF_MATCH             = http.CanonicalHeaderKey("copy-source-if-match")
+	HEADER_COPY_SOURCE_IF_NONE_MATCH        = http.CanonicalHeaderKey("copy-source-if-none-match")
+	HEADER_COPY_SOURCE_IF_MODIFIED_SINCE    = http.CanonicalHeaderKey("copy-source-if-modified-since")
+	HEADER_COPY_SOURCE_IF_UNMODIFIED_SINCE  = http.CanonicalHeaderKey("copy-source-if-unmodified-since")
+	HEADER_IF_MATCH                         = http.CanonicalHeaderKey("If-Match")
+	HEADER_IF_NONE_MATCH                    = http.CanonicalHeaderKey("If-None-Match")
+	HEADER_IF_MODIFIED_SINCE                = http.CanonicalHeaderKey("If-Modified-Since")
+	HEADER_IF_UNMODIFIED_SINCE              = http.CanonicalHeaderKey("If-Unmodified-Since")
+	HEADER_SSEC_ENCRYPTION                  = http.CanonicalHeaderKey("server-side-encryption-customer-algorithm")
+	HEADER_SSEC_KEY                         = http.CanonicalHeaderKey("server-side-encryption-customer-key")
+	HEADER_SSEC_KEY_MD5                     = http.CanonicalHeaderKey("server-side-encryption-customer-key-MD5")
+	HEADER_SSEKMS_ENCRYPTION                = http.CanonicalHeaderKey("server-side-encryption")
+	HEADER_SSEKMS_KEY                       = http.CanonicalHeaderKey("server-side-encryption-aws-kms-key-id")
+	HEADER_SSEKMS_ENCRYPT_KEY_OBS           = http.CanonicalHeaderKey("server-side-encryption-kms-key-id")
+	HEADER_SSEC_COPY_SOURCE_ENCRYPTION      = http.CanonicalHeaderKey("copy-source-server-side-encryption-customer-algorithm")
+	HEADER_SSEC_COPY_SOURCE_KEY             = http.CanonicalHeaderKey("copy-source-server-side-encryption-customer-key")
+	HEADER_SSEC_COPY_SOURCE_KEY_MD5         = http.CanonicalHeaderKey("copy-source-server-side-encryption-customer-key-MD5")
+	HEADER_SSEKMS_KEY_AMZ                   = http.CanonicalHeaderKey("x-amz-server-side-encryption-aws-kms-key-id")
+	HEADER_SSEKMS_KEY_OBS                   = http.CanonicalHeaderKey("x-obs-server-side-encryption-kms-key-id")
+	HEADER_SUCCESS_ACTION_REDIRECT          = http.CanonicalHeaderKey("success_action_redirect")
+
+	HEADER_DATE_CAMEL                          = http.CanonicalHeaderKey("Date")
+	HEADER_HOST_CAMEL                          = http.CanonicalHeaderKey("Host")
+	HEADER_HOST                                = http.CanonicalHeaderKey("host")
+	HEADER_AUTH_CAMEL                          = http.CanonicalHeaderKey("Authorization")
+	HEADER_MD5_CAMEL                           = http.CanonicalHeaderKey("Content-MD5")
+	HEADER_LOCATION_CAMEL                      = http.CanonicalHeaderKey("Location")
+	HEADER_CONTENT_LENGTH_CAMEL                = http.CanonicalHeaderKey("Content-Length")
+	HEADER_CONTENT_TYPE_CAML                   = http.CanonicalHeaderKey("Content-Type")
+	HEADER_USER_AGENT_CAMEL                    = http.CanonicalHeaderKey("User-Agent")
+	HEADER_ORIGIN_CAMEL                        = http.CanonicalHeaderKey("Origin")
+	HEADER_ACCESS_CONTROL_REQUEST_HEADER_CAMEL = http.CanonicalHeaderKey("Access-Control-Request-Headers")
+	HEADER_CACHE_CONTROL_CAMEL                 = http.CanonicalHeaderKey("Cache-Control")
+	HEADER_CONTENT_DISPOSITION_CAMEL           = http.CanonicalHeaderKey("Content-Disposition")
+	HEADER_CONTENT_ENCODING_CAMEL              = http.CanonicalHeaderKey("Content-Encoding")
+	HEADER_CONTENT_LANGUAGE_CAMEL              = http.CanonicalHeaderKey("Content-Language")
+	HEADER_EXPIRES_CAMEL                       = http.CanonicalHeaderKey("Expires")
+)
+
 type SignatureType string
 
 const (
@@ -185,36 +180,9 @@ const (
 )
 
 var (
-	interested_headers = []string{"content-md5", "content-type", "date"}
+	interestedHeaders = []string{"content-md5", "content-type", "date"}
 
-	allowed_response_http_header_metadata_names = map[string]bool{
-		"content-type":                  true,
-		"content-md5":                   true,
-		"content-length":                true,
-		"content-language":              true,
-		"expires":                       true,
-		"origin":                        true,
-		"cache-control":                 true,
-		"content-disposition":           true,
-		"content-encoding":              true,
-		"x-default-storage-class":       true,
-		"location":                      true,
-		"date":                          true,
-		"etag":                          true,
-		"host":                          true,
-		"last-modified":                 true,
-		"content-range":                 true,
-		"x-reserved":                    true,
-		"x-reserved-indicator":          true,
-		"access-control-allow-origin":   true,
-		"access-control-allow-headers":  true,
-		"access-control-max-age":        true,
-		"access-control-allow-methods":  true,
-		"access-control-expose-headers": true,
-		"connection":                    true,
-	}
-
-	allowed_request_http_header_metadata_names = map[string]bool{
+	allowedRequestHttpHeaderMetadataNames = map[string]bool{
 		"content-type":                   true,
 		"content-md5":                    true,
 		"content-length":                 true,
@@ -240,7 +208,7 @@ var (
 		"content-range":                  true,
 	}
 
-	allowed_resource_parameter_names = map[string]bool{
+	allowedResourceParameterNames = map[string]bool{
 		"acl":                          true,
 		"backtosource":                 true,
 		"policy":                       true,
@@ -281,7 +249,7 @@ var (
 		"x-image-save-object":          true,
 	}
 
-	mime_types = map[string]string{
+	mimeTypes = map[string]string{
 		"001":     "application/x-001",
 		"301":     "application/x-301",
 		"323":     "text/h323",

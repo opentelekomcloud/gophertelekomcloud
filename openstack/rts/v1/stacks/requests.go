@@ -154,6 +154,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]ListedStack, error) {
 		return StackPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allStacks, err := ExtractStacks(pages)
 	if err != nil {
 		return nil, err

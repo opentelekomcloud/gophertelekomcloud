@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestDdsList(t *testing.T) {
@@ -44,6 +45,7 @@ func TestDdsLifeCycle(t *testing.T) {
 		t.Fatalf("Unable to query secgroup pages: %s", err)
 	}
 	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
+	th.AssertNoErr(t, err)
 	var sgId string
 	for _, val := range securityGroups {
 		if val.Name == "default" {

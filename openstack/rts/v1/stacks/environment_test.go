@@ -140,7 +140,7 @@ service_db:
 		th.TestMethod(t, r, "GET")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, environmentContent)
+		_, _ = fmt.Fprint(w, environmentContent)
 	})
 
 	fakeDBURL := strings.Join([]string{baseurl, "my_db.yaml"}, "/")
@@ -152,7 +152,7 @@ service_db:
 		th.TestMethod(t, r, "GET")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, dbContent)
+		_, _ = fmt.Fprint(w, dbContent)
 	})
 
 	client := fakeClient{BaseClient: getHTTPClient()}

@@ -28,28 +28,28 @@ import (
 
 func prepareHeaders(headers map[string][]string, meta bool, isObs bool) map[string][]string {
 	_headers := make(map[string][]string, len(headers))
-	if headers != nil {
-		for key, value := range headers {
-			key = strings.TrimSpace(key)
-			if key == "" {
+
+	for key, value := range headers {
+		key = strings.TrimSpace(key)
+		if key == "" {
+			continue
+		}
+		_key := strings.ToLower(key)
+		if _, ok := allowedRequestHttpHeaderMetadataNames[_key]; !ok && !strings.HasPrefix(key, HEADER_PREFIX) && !strings.HasPrefix(key, HEADER_PREFIX_OBS) {
+			if !meta {
 				continue
 			}
-			_key := strings.ToLower(key)
-			if _, ok := allowed_request_http_header_metadata_names[_key]; !ok && !strings.HasPrefix(key, HEADER_PREFIX) && !strings.HasPrefix(key, HEADER_PREFIX_OBS) {
-				if !meta {
-					continue
-				}
-				if !isObs {
-					_key = HEADER_PREFIX_META + _key
-				} else {
-					_key = HEADER_PREFIX_META_OBS + _key
-				}
+			if !isObs {
+				_key = HEADER_PREFIX_META + _key
 			} else {
-				_key = key
+				_key = HEADER_PREFIX_META_OBS + _key
 			}
-			_headers[_key] = value
+		} else {
+			_key = key
 		}
+		_headers[_key] = value
 	}
+
 	return _headers
 }
 
@@ -267,7 +267,6 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 		}
 	}
 
-	var lastRequest *http.Request
 	redirectFlag := false
 	for i, redirectCount := 0, 0; i <= maxRetryCount; i++ {
 		if redirectUrl != "" {
@@ -308,6 +307,13 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 			headers[HEADER_AUTH_CAMEL] = auth
 		}
 
+		if req == nil {
+			return nil, fmt.Errorf("error building a requiest, `req` is nil")
+		}
+
+		if req.Header == nil {
+			req.Header = make(http.Header)
+		}
 		for key, value := range headers {
 			if key == HEADER_HOST_CAMEL {
 				req.Host = value[0]
@@ -320,14 +326,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 			}
 		}
 
-		lastRequest = req
-
 		req.Header[HEADER_USER_AGENT_CAMEL] = []string{USER_AGENT}
-
-		if lastRequest != nil {
-			req.Host = lastRequest.Host
-			req.ContentLength = lastRequest.ContentLength
-		}
 
 		start := GetCurrentTimestamp()
 		resp, err = obsClient.httpClient.Do(req)
@@ -380,9 +379,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 				}
 				resp = nil
 			}
-			if _, ok := headers[HEADER_AUTH_CAMEL]; ok {
-				delete(headers, HEADER_AUTH_CAMEL)
-			}
+			delete(headers, HEADER_AUTH_CAMEL)
 			doLog(LEVEL_WARN, "Failed to send request with reason:%v, will try again", msg)
 			if r, ok := _data.(*strings.Reader); ok {
 				_, err := r.Seek(0, 0)

@@ -24,7 +24,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, CreateResponse)
+		_, _ = fmt.Fprint(w, CreateResponse)
 	})
 
 	options := rbacpolicies.CreateOpts{
@@ -50,7 +50,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, GetResponse)
+		_, _ = fmt.Fprint(w, GetResponse)
 	})
 
 	n, err := rbacpolicies.Get(fake.ServiceClient(), "2cf7523a-93b5-4e69-9360-6c6bf986bb7c").Extract()
@@ -69,7 +69,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, ListResponse)
+		_, _ = fmt.Fprint(w, ListResponse)
 	})
 
 	client := fake.ServiceClient()
@@ -104,7 +104,7 @@ func TestListWithAllPages(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, ListResponse)
+		_, _ = fmt.Fprint(w, ListResponse)
 	})
 
 	client := fake.ServiceClient()
@@ -157,7 +157,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, UpdateResponse)
+		_, _ = fmt.Fprint(w, UpdateResponse)
 	})
 
 	options := rbacpolicies.UpdateOpts{TargetTenant: "9d766060b6354c9e8e2da44cab0e8f38"}

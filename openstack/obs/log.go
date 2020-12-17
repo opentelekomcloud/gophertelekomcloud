@@ -13,7 +13,6 @@
 package obs
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -205,7 +204,7 @@ func InitLogWithCacheCnt(logFullPath string, maxLogSize int64, backups int, leve
 
 		stat, err := os.Stat(_fullPath)
 		if err == nil && stat.IsDir() {
-			return errors.New(fmt.Sprintf("logFullPath:[%s] is a directory", _fullPath))
+			return fmt.Errorf("logFullPath:[%s] is a directory", _fullPath)
 		} else if err := os.MkdirAll(filepath.Dir(_fullPath), os.ModePerm); err != nil {
 			return err
 		}

@@ -211,9 +211,9 @@ func HandleListByZoneSuccessfully(t *testing.T) {
 			marker := r.Form.Get("marker")
 			switch marker {
 			case "f7b10e9b-0cae-4a91-b162-562bc6096648":
-				_, _ = fmt.Fprintf(w, ListByZoneOutputLimited)
+				_, _ = fmt.Fprint(w, ListByZoneOutputLimited)
 			case "":
-				_, _ = fmt.Fprintf(w, ListByZoneOutput)
+				_, _ = fmt.Fprint(w, ListByZoneOutput)
 			}
 		})
 }
@@ -226,7 +226,7 @@ func HandleGetSuccessfully(t *testing.T) {
 			th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 			w.Header().Add("Content-Type", "application/json")
-			_, _ = fmt.Fprintf(w, GetOutput)
+			_, _ = fmt.Fprint(w, GetOutput)
 		})
 }
 
@@ -281,7 +281,7 @@ func HandleCreateSuccessfully(t *testing.T) {
 
 			w.WriteHeader(http.StatusCreated)
 			w.Header().Add("Content-Type", "application/json")
-			_, _ = fmt.Fprintf(w, CreateRecordSetResponse)
+			_, _ = fmt.Fprint(w, CreateRecordSetResponse)
 		})
 }
 
@@ -332,7 +332,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 
 			w.WriteHeader(http.StatusOK)
 			w.Header().Add("Content-Type", "application/json")
-			_, _ = fmt.Fprintf(w, UpdateRecordSetResponse)
+			_, _ = fmt.Fprint(w, UpdateRecordSetResponse)
 		})
 }
 
@@ -371,6 +371,6 @@ func HandleDeleteSuccessfully(t *testing.T) {
 
 			w.WriteHeader(http.StatusAccepted)
 			// w.Header().Add("Content-Type", "application/json")
-			// _,_ = fmt.Fprintf(w, DeleteZoneResponse)
+			// _,_ = fmt.Fprint(w, DeleteZoneResponse)
 		})
 }

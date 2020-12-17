@@ -25,6 +25,7 @@ func TestExtractPassword_no_pwd_data(t *testing.T) {
 	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: dejson}}
 
 	pwd, err := resp.ExtractPassword(nil)
+	th.AssertNoErr(t, err)
 	th.AssertEquals(t, pwd, "")
 }
 

@@ -33,6 +33,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]SoftwareConfig, error) {
 		return SoftwareConfigPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allConfigs, err := ExtractSoftwareConfigs(pages)
 	if err != nil {
 		return nil, err

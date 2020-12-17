@@ -21,7 +21,7 @@ func TestListServers(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "servers": [
 {
@@ -107,7 +107,7 @@ func TestGetServer(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "server": {
         "tenant_id": "17fbda95add24720a4038ba4b1c705ed",

@@ -42,7 +42,7 @@ func (cache *MemoryCache) Add(cacheKey string, cacheData string) {
 
 	if len(cache.cacheKeys) >= cache.MaxCount && len(cache.cacheKeys) > 1 {
 		delete(cache.cacheHolder, cache.cacheKeys[0]) // delete first item
-		cache.cacheKeys = append(cache.cacheKeys[1:]) // pop first one
+		cache.cacheKeys = cache.cacheKeys[1:]         // pop first one
 	}
 
 	cache.cacheHolder[cacheKey] = cacheData
@@ -236,14 +236,14 @@ func buildSignKey(signParam reqSignParams) []byte {
 // HmacSha256 implements the  Keyed-Hash Message Authentication Code computation
 func HmacSha256(data string, key []byte) []byte {
 	mac := hmac.New(sha256.New, key)
-	mac.Write([]byte(data))
+	_, _ = mac.Write([]byte(data))
 	return mac.Sum(nil)
 }
 
 // HashSha256 is a wrapper for sha256 implementation
 func HashSha256(msg []byte) []byte {
 	sh256 := sha256.New()
-	sh256.Write(msg)
+	_, _ = sh256.Write(msg)
 
 	return sh256.Sum(nil)
 }

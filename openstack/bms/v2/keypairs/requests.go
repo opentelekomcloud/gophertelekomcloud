@@ -20,6 +20,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
 		return KeyPairPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allkeypairs, err := ExtractKeyPairs(pages)
 	if err != nil {
 		return nil, err

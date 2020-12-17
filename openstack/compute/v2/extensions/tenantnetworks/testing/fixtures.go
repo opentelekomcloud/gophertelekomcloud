@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/tenantnetworks"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -41,7 +40,6 @@ const GetOutput = `
 `
 
 // FirstNetwork is the first result in ListOutput.
-var nilTime time.Time
 var FirstNetwork = tenantnetworks.Network{
 	CIDR: "10.0.0.0/29",
 	ID:   "20c8acc0-f747-4d71-a389-46d078ebf047",
@@ -66,7 +64,7 @@ func HandleListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 }
 
@@ -78,6 +76,6 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }

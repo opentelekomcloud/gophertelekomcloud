@@ -47,6 +47,6 @@ func HandleGetSuccessfully(t *testing.T, output string) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, output)
+		_, _ = fmt.Fprint(w, output)
 	})
 }

@@ -22,7 +22,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "pools":[
       {
@@ -122,7 +122,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "pool": {
         "status": "PENDING_CREATE",
@@ -180,7 +180,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "pool":{
       "id":"332abe93-f488-41ba-870b-2ac66be7f853",
@@ -228,7 +228,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "pool":{
       "status":"PENDING_UPDATE",
@@ -294,7 +294,7 @@ func TestAssociateHealthMonitor(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		_, _ = fmt.Fprintf(w, `{}`)
+		_, _ = fmt.Fprint(w, `{}`)
 	})
 
 	_, err := pools.AssociateMonitor(fake.ServiceClient(), "332abe93-f488-41ba-870b-2ac66be7f853", "b624decf-d5d3-4c66-9a3d-f047e7786181").Extract()

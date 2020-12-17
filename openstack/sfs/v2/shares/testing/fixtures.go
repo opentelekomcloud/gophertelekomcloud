@@ -75,7 +75,7 @@ func MockCreateResponse(t *testing.T) {
 		th.TestJSONRequest(t, r, createRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, createResponse)
+		_, _ = fmt.Fprint(w, createResponse)
 	})
 }
 
@@ -139,7 +139,7 @@ func MockUpdateResponse(t *testing.T) {
 		th.TestJSONRequest(t, r, updateRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, updateResponse)
+		_, _ = fmt.Fprint(w, updateResponse)
 	})
 }
 
@@ -192,7 +192,7 @@ func MockGetResponse(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprint(w, getResponse)
 	})
 }
 

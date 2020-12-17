@@ -23,7 +23,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprint(w, getResponse)
 	})
 
 	s, err := policies.Get(fake.ServiceClient(), policies_id).Extract()
@@ -49,7 +49,7 @@ func TestCreate(t *testing.T) {
 		th.TestJSONRequest(t, r, createRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, createResponse)
+		_, _ = fmt.Fprint(w, createResponse)
 	})
 
 	options := &policies.CreateOpts{
@@ -115,7 +115,7 @@ func TestUpdate(t *testing.T) {
 		th.TestJSONRequest(t, r, updateRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, updateResponse)
+		_, _ = fmt.Fprint(w, updateResponse)
 	})
 
 	options := &policies.UpdateOpts{
@@ -157,7 +157,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, listResponse)
+		_, _ = fmt.Fprint(w, listResponse)
 	})
 
 	actual, err := policies.List(fake.ServiceClient(), policies.ListOpts{})

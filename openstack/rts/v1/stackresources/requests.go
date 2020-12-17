@@ -44,6 +44,9 @@ func List(client *golangsdk.ServiceClient, stackName string, opts ListOpts) ([]R
 	pages, err := pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
 		return ResourcePage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
 
 	allResources, err := ExtractResources(pages)
 	if err != nil {

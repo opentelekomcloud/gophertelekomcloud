@@ -82,7 +82,7 @@ func (opts AllTenantsOpts) ToUsageAllTenantsQuery() (string, error) {
 		params.Add("end", opts.End.Format(golangsdk.RFC3339MilliNoZ))
 	}
 
-	if opts.Detailed == true {
+	if opts.Detailed {
 		params.Add("detailed", "1")
 	}
 

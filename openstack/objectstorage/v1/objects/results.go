@@ -351,7 +351,6 @@ func (r *CreateHeader) UnmarshalJSON(b []byte) error {
 
 // CreateResult represents the result of a create operation.
 type CreateResult struct {
-	checksum string
 	golangsdk.HeaderResult
 }
 

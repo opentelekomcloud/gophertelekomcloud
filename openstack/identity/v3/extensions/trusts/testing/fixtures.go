@@ -18,7 +18,7 @@ func HandleCreateTokenWithTrustID(t *testing.T, _ tokens.AuthOptionsBuilder, req
 		testhelper.TestJSONRequest(t, r, requestJSON)
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
     "token": {
         "expires_at": "2013-02-27T18:30:59.999999Z",
         "issued_at": "2013-02-27T16:30:59.999999Z",

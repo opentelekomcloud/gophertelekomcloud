@@ -21,7 +21,7 @@ func TestListSubnet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "subnets": [
         {
@@ -112,7 +112,7 @@ func TestGetSubnet(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "subnet": {
         "id": "aab2f0ef-b08b-4f34-9e1a-9f1d8da1afcb",
@@ -183,7 +183,7 @@ func TestCreateSubnet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "subnet": {
         "id": "6b0cf733-f496-4159-9df1-d74c3584a9f7",
@@ -256,7 +256,7 @@ func TestUpdateSubnet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "subnet": {
         "id": "83e3bddc-b9ed-4614-a0dc-8a997095a86c",

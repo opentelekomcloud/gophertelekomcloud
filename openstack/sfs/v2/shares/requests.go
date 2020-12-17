@@ -84,6 +84,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Share, error) {
 		return SharePage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allShares, err := ExtractShares(pages)
 	if err != nil {
 		return nil, err

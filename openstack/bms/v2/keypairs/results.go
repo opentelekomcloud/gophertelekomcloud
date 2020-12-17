@@ -1,7 +1,6 @@
 package keypairs
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -48,18 +47,4 @@ func ExtractKeyPairs(r pagination.Page) ([]KeyPair, error) {
 		results[i] = pair.KeyPair
 	}
 	return results, err
-}
-
-type keyPairResult struct {
-	golangsdk.Result
-}
-
-// Extract is a method that attempts to interpret any KeyPair resource response
-// as a KeyPair struct.
-func (r keyPairResult) Extract() (*KeyPair, error) {
-	var s struct {
-		KeyPair *KeyPair `json:"keypair"`
-	}
-	err := r.ExtractInto(&s)
-	return s.KeyPair, err
 }

@@ -55,8 +55,7 @@ func MergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 }
 
 func PrependString(item string, slice []string) []string {
-	newSize := len(slice) + 1
-	result := make([]string, newSize, newSize)
+	result := make([]string, len(slice)+1)
 	result[0] = item
 	for i, v := range slice {
 		result[i+1] = v
@@ -80,9 +79,8 @@ func GetRegion(authOpts golangsdk.AuthOptions) string {
 	region := ""
 	if n == "" {
 		n = authOpts.DelegatedProject
-	} else {
-		region = strings.Split(n, "_")[0]
 	}
+	region = strings.Split(n, "_")[0]
 	return getenv("OS_REGION_NAME", region)
 }
 

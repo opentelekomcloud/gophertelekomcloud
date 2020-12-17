@@ -98,9 +98,9 @@ func HandleStoragePoolsListSuccessfully(t *testing.T) {
 
 		_ = r.ParseForm()
 		if r.FormValue("detail") == "true" {
-			_, _ = fmt.Fprintf(w, StoragePoolsListBodyDetail)
+			_, _ = fmt.Fprint(w, StoragePoolsListBodyDetail)
 		} else {
-			_, _ = fmt.Fprintf(w, StoragePoolsListBody)
+			_, _ = fmt.Fprint(w, StoragePoolsListBody)
 		}
 	})
 }

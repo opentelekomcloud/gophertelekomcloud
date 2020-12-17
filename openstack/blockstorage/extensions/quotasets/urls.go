@@ -15,7 +15,3 @@ func getDefaultsURL(c *golangsdk.ServiceClient, projectID string) string {
 func updateURL(c *golangsdk.ServiceClient, projectID string) string {
 	return getURL(c, projectID)
 }
-
-func deleteURL(c *golangsdk.ServiceClient, projectID string) string {
-	return getURL(c, projectID)
-}

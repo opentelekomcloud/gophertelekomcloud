@@ -12,8 +12,6 @@ import (
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
-const tokenID = "blerb"
-
 func TestListFlavors(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -70,7 +68,7 @@ func TestListFlavors(t *testing.T) {
 					}
 				`, th.Server.URL)
 		case "2":
-			_, _ = fmt.Fprintf(w, `{ "flavors": [] }`)
+			_, _ = fmt.Fprint(w, `{ "flavors": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -115,7 +113,7 @@ func TestGetFlavor(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 				"flavor": {
 					"id": "1",
@@ -158,7 +156,7 @@ func TestCreateFlavor(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 				"flavor": {
 					"id": "1",
@@ -224,7 +222,7 @@ func TestFlavorAccessesList(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			  "flavor_access": [
 			    {
@@ -272,7 +270,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			  "flavor_access": [
 			    {
@@ -321,7 +319,7 @@ func TestFlavorAccessRemove(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			  "flavor_access": []
 			}

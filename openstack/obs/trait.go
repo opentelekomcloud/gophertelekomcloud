@@ -450,7 +450,6 @@ func (input GetObjectMetadataInput) trans(isObs bool) (params map[string]string,
 }
 
 func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
-	params = make(map[string]string)
 	params = map[string]string{string(SubResourceMetadata): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -777,7 +776,7 @@ func (parts partSlice) Swap(i, j int) {
 
 type readerWrapper struct {
 	reader      io.Reader
-	mark        int64
+	mark        int64 // nolint: structcheck
 	totalCount  int64
 	readedCount int64
 }

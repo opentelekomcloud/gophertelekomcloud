@@ -61,7 +61,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprint(w, getResponse)
 	})
 }
 
@@ -95,7 +95,7 @@ func HandleCreateSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintf(w, output)
+		_, _ = fmt.Fprint(w, output)
 	})
 }
 

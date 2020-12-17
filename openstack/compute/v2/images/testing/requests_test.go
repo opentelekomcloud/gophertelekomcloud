@@ -26,7 +26,7 @@ func TestListImages(t *testing.T) {
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			_, _ = fmt.Fprintf(w, `
+			_, _ = fmt.Fprint(w, `
 				{
 					"images": [
 						{
@@ -64,7 +64,7 @@ func TestListImages(t *testing.T) {
 				}
 			`)
 		case "2":
-			_, _ = fmt.Fprintf(w, `{ "images": [] }`)
+			_, _ = fmt.Fprint(w, `{ "images": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -136,7 +136,7 @@ func TestGetImage(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 				"image": {
 					"status": "ACTIVE",

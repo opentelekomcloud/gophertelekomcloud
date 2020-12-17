@@ -43,11 +43,11 @@ func createMarkerPaged(t *testing.T) pagination.Pager {
 		ms := r.Form["marker"]
 		switch {
 		case len(ms) == 0:
-			_, _ = fmt.Fprintf(w, "aaa\nbbb\nccc")
+			_, _ = fmt.Fprint(w, "aaa\nbbb\nccc")
 		case len(ms) == 1 && ms[0] == "ccc":
-			_, _ = fmt.Fprintf(w, "ddd\neee\nfff")
+			_, _ = fmt.Fprint(w, "ddd\neee\nfff")
 		case len(ms) == 1 && ms[0] == "fff":
-			_, _ = fmt.Fprintf(w, "ggg\nhhh\niii")
+			_, _ = fmt.Fprint(w, "ggg\nhhh\niii")
 		case len(ms) == 1 && ms[0] == "iii":
 			w.WriteHeader(http.StatusNoContent)
 		default:

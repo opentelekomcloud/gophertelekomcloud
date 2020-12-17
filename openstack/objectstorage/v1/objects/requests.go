@@ -499,7 +499,7 @@ func CreateTempURL(c *golangsdk.ServiceClient, containerName, objectName string,
 	objectPath = opts.Split + objectPath
 	body := fmt.Sprintf("%s\n%d\n%s", opts.Method, expiry, objectPath)
 	hash := hmac.New(sha1.New, secretKey)
-	hash.Write([]byte(body))
+	_, _ = hash.Write([]byte(body))
 	hexsum := fmt.Sprintf("%x", hash.Sum(nil))
 	return fmt.Sprintf("%s%s?temp_url_sig=%s&temp_url_expires=%d", baseURL, objectPath, hexsum, expiry), nil
 }

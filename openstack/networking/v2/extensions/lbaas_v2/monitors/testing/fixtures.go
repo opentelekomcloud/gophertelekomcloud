@@ -136,9 +136,9 @@ func HandleHealthmonitorListSuccessfully(t *testing.T) {
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			_, _ = fmt.Fprintf(w, HealthmonitorsListBody)
+			_, _ = fmt.Fprint(w, HealthmonitorsListBody)
 		case "556c8345-28d8-4f84-a246-e04380b0461d":
-			_, _ = fmt.Fprintf(w, `{ "healthmonitors": [] }`)
+			_, _ = fmt.Fprint(w, `{ "healthmonitors": [] }`)
 		default:
 			t.Fatalf("/v2.0/lbaas/healthmonitors invoked with unexpected marker=[%s]", marker)
 		}
@@ -167,7 +167,7 @@ func HandleHealthmonitorCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -178,7 +178,7 @@ func HandleHealthmonitorGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		_, _ = fmt.Fprintf(w, SingleHealthmonitorBody)
+		_, _ = fmt.Fprint(w, SingleHealthmonitorBody)
 	})
 }
 
@@ -210,6 +210,6 @@ func HandleHealthmonitorUpdateSuccessfully(t *testing.T) {
 			}
 		}`)
 
-		_, _ = fmt.Fprintf(w, PostUpdateHealthmonitorBody)
+		_, _ = fmt.Fprint(w, PostUpdateHealthmonitorBody)
 	})
 }

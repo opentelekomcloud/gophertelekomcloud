@@ -399,7 +399,7 @@ func (conf *config) formatUrls(bucketName, objectKey string, params map[string]s
 				_value = ""
 			}
 			lowerKey := strings.ToLower(key)
-			_, ok := allowed_resource_parameter_names[lowerKey]
+			_, ok := allowedResourceParameterNames[lowerKey]
 			prefixHeader := HEADER_PREFIX
 			isObs := conf.signature == SignatureObs
 			if isObs {
