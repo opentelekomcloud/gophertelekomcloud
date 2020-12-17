@@ -101,7 +101,7 @@ resources:
 		th.TestMethod(t, r, "GET")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, myNovaContent)
+		_, _ = fmt.Fprintf(w, myNovaContent)
 	})
 
 	client := fakeClient{BaseClient: getHTTPClient()}
@@ -143,6 +143,6 @@ resources:
 			},
 		},
 	}
-	te.Parse()
+	_ = te.Parse()
 	th.AssertDeepEquals(t, expectedParsed, te.Parsed)
 }

@@ -264,7 +264,7 @@ func HandleListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateListBody)
+		_, _ = fmt.Fprintf(w, AggregateListBody)
 	})
 }
 
@@ -274,7 +274,7 @@ func HandleCreateSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateCreateBody)
+		_, _ = fmt.Fprintf(w, AggregateCreateBody)
 	})
 }
 
@@ -295,7 +295,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateGetBody)
+		_, _ = fmt.Fprintf(w, AggregateGetBody)
 	})
 }
 
@@ -306,7 +306,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateUpdateBody)
+		_, _ = fmt.Fprintf(w, AggregateUpdateBody)
 	})
 }
 
@@ -317,7 +317,7 @@ func HandleAddHostSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateAddHostBody)
+		_, _ = fmt.Fprintf(w, AggregateAddHostBody)
 	})
 }
 
@@ -328,7 +328,7 @@ func HandleRemoveHostSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateRemoveHostBody)
+		_, _ = fmt.Fprintf(w, AggregateRemoveHostBody)
 	})
 }
 
@@ -339,6 +339,6 @@ func HandleSetMetadataSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, AggregateSetMetadataBody)
+		_, _ = fmt.Fprintf(w, AggregateSetMetadataBody)
 	})
 }

@@ -17,13 +17,13 @@ func TestList(t *testing.T) {
 	HandleListExtensionsSuccessfully(t)
 
 	count := 0
-	extensions.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	err := extensions.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := extensions.ExtractExtensions(page)
 		th.AssertNoErr(t, err)
 
 		expected := []common.Extension{
-			common.Extension{
+			{
 				Updated:     "2013-01-20T00:00:00-00:00",
 				Name:        "Neutron Service Type Management",
 				Links:       []interface{}{},
@@ -36,6 +36,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 	th.CheckEquals(t, 1, count)
 }
 

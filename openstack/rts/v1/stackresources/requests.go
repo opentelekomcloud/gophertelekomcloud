@@ -17,19 +17,19 @@ type ListOptsBuilder interface {
 // the API. Filtering is achieved by passing in struct field values that map to
 // the rts attributes you want to see returned.
 type ListOpts struct {
-	//Specifies the logical resource ID of the resource.
+	// Specifies the logical resource ID of the resource.
 	LogicalID string `q:"logical_resource_id"`
 
-	//Name is the human readable name for the Resource.
+	// Name is the human readable name for the Resource.
 	Name string `q:"resource_name"`
 
-	//Specifies the Physical resource ID of the resource.
+	// Specifies the Physical resource ID of the resource.
 	PhysicalID string `q:"physical_resource_id"`
 
-	//Status indicates whether or not a subnet is currently operational.
+	// Status indicates whether or not a subnet is currently operational.
 	Status string `q:"resource_status"`
 
-	//Specifies the resource type that are defined in the template.
+	// Specifies the resource type that are defined in the template.
 	Type string `q:"resource_type"`
 }
 
@@ -100,5 +100,5 @@ func FilterResources(resources []Resource, opts ListOpts) ([]Resource, error) {
 func getStructField(v *Resource, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }

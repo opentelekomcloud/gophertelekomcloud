@@ -21,7 +21,7 @@ func TestListRuleTypes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprint(w, ListRuleTypesResponse)
+		_, _ = fmt.Fprint(w, ListRuleTypesResponse)
 	})
 
 	page, err := ruletypes.ListRuleTypes(fake.ServiceClient()).AllPages()

@@ -32,7 +32,7 @@ func TestCreateSuccessful(t *testing.T) {
     `)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
       {
         "endpoint": {
           "id": "12",
@@ -79,7 +79,7 @@ func TestListEndpoints(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 				"endpoints": [
 					{
@@ -114,7 +114,7 @@ func TestListEndpoints(t *testing.T) {
 	})
 
 	count := 0
-	endpoints.List(client.ServiceClient(), endpoints.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = endpoints.List(client.ServiceClient(), endpoints.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := endpoints.ExtractEndpoints(page)
 		if err != nil {
@@ -162,7 +162,7 @@ func TestUpdateEndpoint(t *testing.T) {
 		}
 	`)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 		{
 			"endpoint": {
 				"id": "12",

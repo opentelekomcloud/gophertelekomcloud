@@ -78,7 +78,7 @@ func HandleListSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, output)
+		_, _ = fmt.Fprintf(w, output)
 	})
 }
 
@@ -118,7 +118,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprintf(w, getResponse)
 	})
 }
 
@@ -141,7 +141,7 @@ func HandleCreateSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "Accept", "application/json")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, output)
+		_, _ = fmt.Fprintf(w, output)
 	})
 }
 
@@ -181,6 +181,6 @@ func HandleRestoreSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, output)
+		_, _ = fmt.Fprintf(w, output)
 	})
 }

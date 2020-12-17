@@ -17,7 +17,7 @@ func MockListResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
     {
       "volume_types": [
         {
@@ -45,7 +45,7 @@ func MockGetResponse(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "volume_type": {
         "name": "vol-type-001",

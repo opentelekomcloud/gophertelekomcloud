@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, nettest.ListResponse)
+		_, _ = fmt.Fprintf(w, nettest.ListResponse)
 	})
 
 	type NetworkWithExternalExt struct {
@@ -53,7 +53,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, nettest.GetResponse)
+		_, _ = fmt.Fprintf(w, nettest.GetResponse)
 	})
 
 	var s struct {
@@ -82,7 +82,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, CreateResponse)
+		_, _ = fmt.Fprintf(w, CreateResponse)
 	})
 
 	iTrue := true
@@ -117,7 +117,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, UpdateResponse)
+		_, _ = fmt.Fprintf(w, UpdateResponse)
 	})
 
 	iTrue := true

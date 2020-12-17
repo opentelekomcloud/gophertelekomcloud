@@ -311,7 +311,7 @@ func HandleListUsersSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprintf(w, ListOutput)
 	})
 }
 
@@ -325,7 +325,7 @@ func HandleGetUserSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprintf(w, GetOutput)
 	})
 }
 
@@ -338,7 +338,7 @@ func HandleCreateUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprintf(w, GetOutput)
 	})
 }
 
@@ -351,7 +351,7 @@ func HandleCreateNoOptionsUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateNoOptionsRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, GetOutputNoOptions)
+		_, _ = fmt.Fprintf(w, GetOutputNoOptions)
 	})
 }
 
@@ -364,7 +364,7 @@ func HandleUpdateUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateRequest)
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprintf(w, UpdateOutput)
 	})
 }
 
@@ -377,7 +377,7 @@ func HandleExtendedUpdateUserSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateExtendedRequest)
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, UpdateExtendedOutput)
+		_, _ = fmt.Fprintf(w, UpdateExtendedOutput)
 	})
 }
 
@@ -402,7 +402,7 @@ func HandleListUserGroupsSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, ListGroupsOutput)
+		_, _ = fmt.Fprintf(w, ListGroupsOutput)
 	})
 }
 
@@ -416,7 +416,7 @@ func HandleListUserProjectsSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, ListProjectsOutput)
+		_, _ = fmt.Fprintf(w, ListProjectsOutput)
 	})
 }
 
@@ -430,6 +430,6 @@ func HandleListInGroupSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprintf(w, ListOutput)
 	})
 }

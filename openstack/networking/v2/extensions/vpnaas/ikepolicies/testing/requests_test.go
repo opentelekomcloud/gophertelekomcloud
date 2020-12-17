@@ -34,7 +34,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "ikepolicy":{
         "name": "policy",
@@ -96,7 +96,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "ikepolicy":{
         "name": "policy",
@@ -164,7 +164,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 		{
 	"ikepolicies": [
 		{
@@ -190,7 +190,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	ikepolicies.List(fake.ServiceClient(), ikepolicies.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = ikepolicies.List(fake.ServiceClient(), ikepolicies.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := ikepolicies.ExtractPolicies(page)
 		if err != nil {
@@ -251,7 +251,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "ikepolicy": {
         "name": "updatedname",

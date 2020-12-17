@@ -18,7 +18,7 @@ type PostPaid struct {
 	TenantID            string         `json:"tenant_id"`
 	PublicipInfo        []PublicipInfo `json:"publicip_info"`
 	EnterpriseProjectID string         `json:"enterprise_project_id"`
-	//BillingInfo         string         `json:"billing_info"`
+	// BillingInfo         string         `json:"billing_info"`
 }
 
 type PublicipInfo struct {

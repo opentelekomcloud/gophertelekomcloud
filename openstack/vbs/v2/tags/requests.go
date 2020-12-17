@@ -18,9 +18,9 @@ type CreateOpts struct {
 // Tag is a structure of key value pair, used for create ,
 // update and delete operations.
 type Tag struct {
-	//tag key
+	// tag key
 	Key string `json:"key" required:"true"`
-	//tag value
+	// tag value
 	Value string `json:"value" required:"true"`
 }
 
@@ -29,7 +29,7 @@ func (opts CreateOpts) ToTagCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//Adds a tag to a backup policy based on the values in CreateOpts. To extract
+// Adds a tag to a backup policy based on the values in CreateOpts. To extract
 // the tag object from the response, call the Extract method on the
 // CreateResult.
 func Create(client *golangsdk.ServiceClient, policyID string, opts CreateOptsBuilder) (r CreateResult) {
@@ -43,7 +43,7 @@ func Create(client *golangsdk.ServiceClient, policyID string, opts CreateOptsBui
 	return
 }
 
-//deletes a tag ,specified in the key for a backup policy.
+// deletes a tag ,specified in the key for a backup policy.
 func Delete(c *golangsdk.ServiceClient, policyID string, key string) (r DeleteResult) {
 	_, r.Err = c.Delete(deleteURL(c, policyID, key), nil)
 	return
@@ -63,26 +63,26 @@ type ListOptsBuilder interface {
 
 // ListOpts contains all the values needed to ListResources the policy details based on tags.
 type ListOpts struct {
-	//Number of queried records. This parameter is not displayed if action is set to count.
+	// Number of queried records. This parameter is not displayed if action is set to count.
 	Limit string `json:"limit,omitempty"`
-	//Query index,this parameter is not displayed if action is set to count.
+	// Query index,this parameter is not displayed if action is set to count.
 	Offset string `json:"offset,omitempty"`
-	//Backup policies with these tags will be filtered.
+	// Backup policies with these tags will be filtered.
 	// This list can have a maximum of 10 tags.
 	Tags []Tags `json:"tags,omitempty"`
-	//Backup policies with any tags in this list will be filtered.
+	// Backup policies with any tags in this list will be filtered.
 	AnyTags []Tags `json:"tags_any,omitempty"`
-	//Backup policies without these tags will be filtered.
+	// Backup policies without these tags will be filtered.
 	NotTags []Tags `json:"not_tags,omitempty"`
-	//Backup policies without any of these tags will be filtered.
+	// Backup policies without any of these tags will be filtered.
 	NotAnyTags []Tags `json:"not_tags_any,omitempty"`
-	//Operator. Possible values are filter and count.
+	// Operator. Possible values are filter and count.
 	Action string `json:"action" required:"true"`
 }
 type Tags struct {
-	//Tag key
+	// Tag key
 	Key string `json:"key" required:"true"`
-	//list of values
+	// list of values
 	Values []string `json:"values" required:"true"`
 }
 
@@ -91,7 +91,7 @@ func (opts ListOpts) ToTagsListMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//ListResources retrives a backup policy details using tags.To extract
+// ListResources retrives a backup policy details using tags.To extract
 // the tag object from the response, call the ExtractResources method on the
 // QueryResults.
 func ListResources(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r QueryResults) {
@@ -114,13 +114,13 @@ type BatchOptsBuilder interface {
 
 // BatchOpts contains all the values needed to perform BatchAction on the policy tags.
 type BatchOpts struct {
-	//List of tags to perform batch operation
+	// List of tags to perform batch operation
 	Tags []Tag `json:"tags,omitempty"`
-	//Operator , Possible values are:create, update,delete
+	// Operator , Possible values are:create, update,delete
 	Action ActionType `json:"action" required:"true"`
 }
 
-//ActionType specifies the type of batch operation action to be performed
+// ActionType specifies the type of batch operation action to be performed
 type ActionType string
 
 var (
@@ -137,7 +137,7 @@ func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//BatchAction is used to create ,update or delete the tags of a specified backup policy.
+// BatchAction is used to create ,update or delete the tags of a specified backup policy.
 func BatchAction(client *golangsdk.ServiceClient, policyID string, opts BatchOptsBuilder) (r ActionResults) {
 	b, err := opts.ToTagsBatchMap()
 	if err != nil {

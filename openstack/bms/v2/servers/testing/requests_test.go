@@ -21,14 +21,14 @@ func TestListServers(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "servers": [
 {
-        "tenant_id": "17fbda95add24720a4038ba4b1c705ed",  
+        "tenant_id": "17fbda95add24720a4038ba4b1c705ed",
         "id": "1d3bf3ae-bc4a-4890-86f8-8c31a6eb764f",
         "user_id": "aec83183a5b54cf2bc28812d1dc5509e",
-        "name": "BMS-1",  	
+        "name": "BMS-1",
 "key_name": "KeyPair-click2cloud",
         "flavor": {
             "links": [
@@ -38,15 +38,15 @@ func TestListServers(t *testing.T) {
                 }
             ],
             "id": "physical.o2.medium"
-        },       
+        },
         "status": "ACTIVE"
 
     },
 {
-        "tenant_id": "17fbda95add24720a4038ba4b1c705ed",  
+        "tenant_id": "17fbda95add24720a4038ba4b1c705ed",
         "id": "1d3bf3ae-bc4a-4890-86f8-8c31a6eb764r",
         "user_id": "aec83183a5b54cf2bc28812d1dc5509e",
-        "name": "BMS-2",    		
+        "name": "BMS-2",
 "key_name": "KeyPair-click2cloud",
         "flavor": {
             "links": [
@@ -56,7 +56,7 @@ func TestListServers(t *testing.T) {
                 }
             ],
             "id": "physical.o2.medium"
-        },       
+        },
         "status": "ACTIVE"
     }
 ]
@@ -107,13 +107,13 @@ func TestGetServer(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "server": {
-        "tenant_id": "17fbda95add24720a4038ba4b1c705ed",  
+        "tenant_id": "17fbda95add24720a4038ba4b1c705ed",
         "id": "1d3bf3ae-bc4a-4890-86f8-8c31a6eb764f",
         "user_id": "aec83183a5b54cf2bc28812d1dc5509e",
-        "name": "BMS-1",        
+        "name": "BMS-1",
         "status": "ACTIVE"
     }
 }

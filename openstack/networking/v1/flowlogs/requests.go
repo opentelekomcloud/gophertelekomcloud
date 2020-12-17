@@ -39,18 +39,21 @@ type ListOpts struct {
 	// Specifies the VPC flow log status, the value can be ACTIVE, DOWN or ERROR.
 	Status string `q:"status"`
 
-	//Specifies the number of records returned on each page.
-	//The value ranges from 0 to intmax.
+	// Specifies the number of records returned on each page.
+	// The value ranges from 0 to intmax.
 	Limit int `q:"limit"`
 
-	//Specifies the resource ID of pagination query.
-	//If the parameter is left blank, only resources on the first page are queried.
+	// Specifies the resource ID of pagination query.
+	// If the parameter is left blank, only resources on the first page are queried.
 	Marker string `q:"marker"`
 }
 
 // ToFlowLogsListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToFlowLogsListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -87,7 +90,7 @@ type CreateOpts struct {
 	// Specifies the unique resource ID.
 	ResourceID string `json:"resource_id" required:"true"`
 
-	//Specifies the type of traffic to log. The value can be all, accept and reject.
+	// Specifies the type of traffic to log. The value can be all, accept and reject.
 	TrafficType string `json:"traffic_type" required:"true"`
 
 	// Specifies the log group ID.

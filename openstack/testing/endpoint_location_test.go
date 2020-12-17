@@ -105,6 +105,9 @@ func TestV3EndpointNone(t *testing.T) {
 		Availability: golangsdk.AvailabilityPublic,
 	})
 	expected := &golangsdk.ErrEndpointNotFound{}
+	if actual == nil {
+		t.Fatalf("Expected error")
+	}
 	th.CheckEquals(t, expected.Error(), actual.Error())
 }
 
@@ -115,5 +118,8 @@ func TestV3EndpointBadAvailability(t *testing.T) {
 		Region:       "same",
 		Availability: "wat",
 	})
+	if err == nil {
+		t.Fatalf("Expected error")
+	}
 	th.CheckEquals(t, "Unexpected availability in endpoint query: wat", err.Error())
 }

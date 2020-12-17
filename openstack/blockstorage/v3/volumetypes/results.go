@@ -34,11 +34,11 @@ func (r VolumeTypePage) IsEmpty() (bool, error) {
 	return len(volumetypes) == 0, err
 }
 
-func (page VolumeTypePage) NextPageURL() (string, error) {
+func (r VolumeTypePage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"volume_type_links"`
 	}
-	err := page.ExtractInto(&s)
+	err := r.ExtractInto(&s)
 	if err != nil {
 		return "", err
 	}

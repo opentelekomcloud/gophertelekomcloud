@@ -148,6 +148,10 @@ func Update(c *golangsdk.ServiceClient, bandwidthID string, opts UpdateOpts) (in
 	onDemandData, onDemandErr := r.Extract()
 	orderData, orderErr := r.ExtractOrderID()
 
+	if orderErr != nil {
+		return nil, orderErr
+	}
+
 	if orderData.OrderID != "" {
 		return orderData, orderErr
 	}

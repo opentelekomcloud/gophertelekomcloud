@@ -75,9 +75,9 @@ type Server struct {
 	// Updated and Created contain ISO-8601 timestamps of when the state of the server last changed, and when it was created.
 	Updated time.Time `json:"updated"`
 	Created time.Time `json:"created"`
-	//Specifies the nova-compute status.
+	// Specifies the nova-compute status.
 	HostStatus string `json:"host_status"`
-	//Specifies the host ID of the BMS.
+	// Specifies the host ID of the BMS.
 	HostID string `json:"hostid"`
 	// Progress ranges from 0..100.
 	// A request made against the server completes only once Progress reaches 100.
@@ -102,44 +102,44 @@ type Server struct {
 	AdminPass string `json:"adminPass"`
 	// SecurityGroups includes the security groups that this instance has applied to it
 	SecurityGroups []SecurityGroups `json:"security_groups"`
-	//Specifies the BMS tag.
-	//Added in micro version 2.26.
+	// Specifies the BMS tag.
+	// Added in micro version 2.26.
 	Tags []string `json:"tags"`
-	//Specifies whether a BMS is locked
+	// Specifies whether a BMS is locked
 	Locked      bool   `json:"locked"`
 	ConfigDrive string `json:"config_drive"`
-	//Specifies the AZ ID. This is an extended attribute.
+	// Specifies the AZ ID. This is an extended attribute.
 	AvailabilityZone string `json:"OS-EXT-AZ:availability_zone"`
-	//Specifies the disk configuration mode. This is an extended attribute.
+	// Specifies the disk configuration mode. This is an extended attribute.
 	DiskConfig string `json:"OS-DCF:diskConfig"`
-	//Specifies the name of a host on the hypervisor.
+	// Specifies the name of a host on the hypervisor.
 	// It is an extended attribute provided by the Nova driver
 	HostName string `json:"OS-EXT-SRV-ATTR:hostname"`
-	//Specifies the server description.
+	// Specifies the server description.
 	Description string `json:"description"`
-	//Specifies the job status of the BMS. This is an extended attribute.
+	// Specifies the job status of the BMS. This is an extended attribute.
 	TaskState string `json:"OS-EXT-STS:task_state"`
-	//Specifies the power status of the BMS. This is an extended attribute
+	// Specifies the power status of the BMS. This is an extended attribute
 	PowerState int `json:"OS-EXT-STS:power_state"`
-	//Specifies the UUID of the kernel image when the AMI image is used
+	// Specifies the UUID of the kernel image when the AMI image is used
 	KernelId string `json:"OS-EXT-SRV-ATTR:kernel_id"`
-	//Specifies the host name of the BMS. This is an extended attribute
+	// Specifies the host name of the BMS. This is an extended attribute
 	Host string `json:"OS-EXT-SRV-ATTR:host"`
-	//Specifies the UUID of the Ramdisk image when the AMI image is used.
+	// Specifies the UUID of the Ramdisk image when the AMI image is used.
 	RamdiskId string `json:"OS-EXT-SRV-ATTR:ramdisk_id"`
-	//Specifies the BMS startup sequence in the batch BMS creation scenario.
+	// Specifies the BMS startup sequence in the batch BMS creation scenario.
 	Launch_index int `json:"OS-EXT-SRV-ATTR:launch_index"`
-	//Specifies the user data specified during BMS creation.
+	// Specifies the user data specified during BMS creation.
 	UserData string `json:"OS-EXT-SRV-ATTR:user_data"`
-	//Specifies the reserved BMS IDs in the batch BMS creation scenario.
+	// Specifies the reserved BMS IDs in the batch BMS creation scenario.
 	ReservationID string `json:"OS-EXT-SRV-ATTR:reservation_id"`
-	//Specifies the device name of the BMS system disk
+	// Specifies the device name of the BMS system disk
 	RootDevicName string `json:"OS-EXT-SRV-ATTR:root_device_name"`
-	//Specifies the name of a host on the hypervisor.
+	// Specifies the name of a host on the hypervisor.
 	HypervisorHostName string `json:"OS-EXT-SRV-ATTR:hypervisor_hostname"`
-	//Specifies the BMS status. This is an extended attribute.
+	// Specifies the BMS status. This is an extended attribute.
 	VMState string `json:"OS-EXT-STS:vm_state"`
-	//Specifies the BMS ID. This is an extended attribute.
+	// Specifies the BMS ID. This is an extended attribute.
 	InstanceName string `json:"OS-EXT-SRV-ATTR:instance_name"`
 }
 

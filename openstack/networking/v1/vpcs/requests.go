@@ -21,7 +21,7 @@ type ListOpts struct {
 	// unique.
 	Name string `json:"name"`
 
-	//Specifies the range of available subnets in the VPC.
+	// Specifies the range of available subnets in the VPC.
 	CIDR string `json:"cidr"`
 
 	// Status indicates whether or not a vpc is currently operational.
@@ -92,7 +92,7 @@ func FilterVPCs(vpcs []Vpc, opts ListOpts) ([]Vpc, error) {
 func getStructField(v *Vpc, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

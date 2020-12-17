@@ -24,7 +24,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, nettest.ListResponse)
+		_, _ = fmt.Fprintf(w, nettest.ListResponse)
 	})
 
 	type NetworkWithExt struct {
@@ -59,7 +59,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, nettest.GetResponse)
+		_, _ = fmt.Fprintf(w, nettest.GetResponse)
 	})
 
 	var s struct {
@@ -90,7 +90,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, nettest.CreateResponse)
+		_, _ = fmt.Fprintf(w, nettest.CreateResponse)
 	})
 
 	var s struct {
@@ -141,7 +141,7 @@ func TestCreateWithMultipleProvider(t *testing.T) {
 		`)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
 	"network": {
 		"status": "ACTIVE",
@@ -168,8 +168,8 @@ func TestCreateWithMultipleProvider(t *testing.T) {
 
 	iTrue := true
 	segments := []provider.Segment{
-		provider.Segment{NetworkType: "vxlan", PhysicalNetwork: "br-ex", SegmentationID: 666},
-		provider.Segment{NetworkType: "vxlan", PhysicalNetwork: "br-ex", SegmentationID: 615},
+		{NetworkType: "vxlan", PhysicalNetwork: "br-ex", SegmentationID: 666},
+		{NetworkType: "vxlan", PhysicalNetwork: "br-ex", SegmentationID: 615},
 	}
 
 	networkCreateOpts := networks.CreateOpts{
@@ -202,7 +202,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, nettest.UpdateResponse)
+		_, _ = fmt.Fprintf(w, nettest.UpdateResponse)
 	})
 
 	var s struct {

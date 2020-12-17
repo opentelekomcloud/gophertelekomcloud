@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"testing"
 
+	"golang.org/x/crypto/ssh"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
-	"golang.org/x/crypto/ssh"
 )
 
 // Fail - No password in JSON.

@@ -10,13 +10,13 @@ import (
 // ListOpts allows the filtering and sorting of paginated collections through
 // the API.
 type ListOpts struct {
-	//Specifies the ID of the instance deployed by the software configuration.
+	// Specifies the ID of the instance deployed by the software configuration.
 	ServerId string `q:"server_id"`
-	//Specifies the ID of this deployment resource.
+	// Specifies the ID of this deployment resource.
 	Id string
-	//Specifies the ID of the software configuration resource running on an instance.
+	// Specifies the ID of the software configuration resource running on an instance.
 	ConfigId string
-	//Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
+	// Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
 	Status string
 	// Specifies the stack action that triggers this deployment resource.
 	Action string
@@ -93,7 +93,7 @@ func FilterDeployments(deployments []Deployment, opts ListOpts) ([]Deployment, e
 func getStructField(v *Deployment, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -107,17 +107,17 @@ type CreateOptsBuilder interface {
 type CreateOpts struct {
 	// Specifies the stack action that triggers this deployment resource.
 	Action string `json:"action,omitempty"`
-	//Specifies the ID of the software configuration resource running on an instance.
+	// Specifies the ID of the software configuration resource running on an instance.
 	ConfigId string `json:"config_id" required:"true"`
-	//Specifies input data stored in the form of a key-value pair.
+	// Specifies input data stored in the form of a key-value pair.
 	InputValues map[string]interface{} `json:"input_values,omitempty"`
-	//Specifies the ID of the instance deployed by the software configuration.
+	// Specifies the ID of the instance deployed by the software configuration.
 	ServerId string `json:"server_id" required:"true"`
-	//Specifies the ID of the authenticated tenant who can perform operations on the deployment resources.
+	// Specifies the ID of the authenticated tenant who can perform operations on the deployment resources.
 	TenantId string `json:"stack_user_project_id,omitempty"`
-	//Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
+	// Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
 	Status string `json:"status,omitempty"`
-	//Specifies the cause of the current deployment resource status.
+	// Specifies the cause of the current deployment resource status.
 	StatusReason string `json:"status_reason,omitempty"`
 }
 
@@ -144,33 +144,33 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
-//UpdateOptsBuilder is an interface by which can be able to build the request body of software deployment.
+// UpdateOptsBuilder is an interface by which can be able to build the request body of software deployment.
 type UpdateOptsBuilder interface {
 	ToSoftwareDeploymentUpdateMap() (map[string]interface{}, error)
 }
 
-//UpdateOpts is a struct which represents the request body of update method.
+// UpdateOpts is a struct which represents the request body of update method.
 type UpdateOpts struct {
 	// Specifies the stack action that triggers this deployment resource.
 	Action string `json:"action,omitempty"`
-	//Specifies the ID of the software configuration resource running on an instance.
+	// Specifies the ID of the software configuration resource running on an instance.
 	ConfigId string `json:"config_id" required:"true"`
-	//Specifies input data stored in the form of a key-value pair.
+	// Specifies input data stored in the form of a key-value pair.
 	InputValues map[string]interface{} `json:"input_values,omitempty"`
-	//Specifies output data stored in the form of a key-value pair.
+	// Specifies output data stored in the form of a key-value pair.
 	OutputValues map[string]interface{} `json:"output_values" required:"true"`
-	//Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
+	// Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
 	Status string `json:"status,omitempty"`
-	//Specifies the cause of the current deployment resource status.
+	// Specifies the cause of the current deployment resource status.
 	StatusReason string `json:"status_reason,omitempty"`
 }
 
-//ToSoftwareDeploymentUpdateMap builds a update request body from UpdateOpts.
+// ToSoftwareDeploymentUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToSoftwareDeploymentUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//Update is a method which can be able to update the name of software deployment.
+// Update is a method which can be able to update the name of software deployment.
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToSoftwareDeploymentUpdateMap()
 	if err != nil {

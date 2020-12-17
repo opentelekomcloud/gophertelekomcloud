@@ -147,7 +147,7 @@ func HandleSuccessfulRequest(t *testing.T, httpMethod, uriPath, jsonOutput strin
 			th.TestFormValues(t, r, uriQueryParams)
 		}
 
-		fmt.Fprintf(w, jsonOutput)
+		_, _ = fmt.Fprintf(w, jsonOutput)
 	})
 }
 

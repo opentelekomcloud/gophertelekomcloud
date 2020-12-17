@@ -65,6 +65,9 @@ type ListOpts struct {
 // ToTaskListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToTaskListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

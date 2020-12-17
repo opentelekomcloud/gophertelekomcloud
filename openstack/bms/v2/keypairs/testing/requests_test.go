@@ -21,7 +21,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprintf(w, ListOutput)
 	})
 
 	actual, err := keypairs.List(client.ServiceClient(), keypairs.ListOpts{})

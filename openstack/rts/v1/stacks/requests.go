@@ -203,7 +203,7 @@ func FilterStacks(stacks []ListedStack, opts ListOpts) ([]ListedStack, error) {
 func getStructField(v *ListedStack, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 func Get(c *golangsdk.ServiceClient, stackName string) (r GetResult) {

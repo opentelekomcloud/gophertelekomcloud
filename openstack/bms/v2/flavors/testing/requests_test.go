@@ -22,7 +22,7 @@ func TestListFlavor(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "flavors": [
         {
@@ -72,7 +72,7 @@ func TestListFlavor(t *testing.T) {
 			`)
 	})
 
-	//count := 0
+	// count := 0
 
 	actual, err := flavors.List(fake.ServiceClient(), flavors.ListOpts{})
 	if err != nil {

@@ -28,7 +28,7 @@ func authTokenPost(t *testing.T, options tokens.AuthOptions, scope *tokens.Scope
 		testhelper.TestJSONRequest(t, r, requestJSON)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprintf(w, `{
 			"token": {
 				"expires_at": "2014-10-02T13:45:00.000000Z"
 			}
@@ -288,7 +288,7 @@ func TestCreateExtractsTokenFromResponse(t *testing.T) {
 		w.Header().Add("X-Subject-Token", "aaa111")
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprintf(w, `{
 			"token": {
 				"expires_at": "2014-10-02T13:45:00.000000Z"
 			}
@@ -425,7 +425,7 @@ func TestGetRequest(t *testing.T) {
 		testhelper.TestHeader(t, r, "X-Subject-Token", "abcdef12345")
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{ "token": { "expires_at": "2014-08-29T13:10:01.000000Z" } }
 		`)
 	})
@@ -437,7 +437,7 @@ func TestGetRequest(t *testing.T) {
 
 	expected, _ := time.Parse(time.UnixDate, "Fri Aug 29 13:10:01 UTC 2014")
 	if token.ExpiresAt != expected {
-		t.Errorf("Expected expiration time %s, but was %s", expected.Format(time.UnixDate), time.Time(token.ExpiresAt).Format(time.UnixDate))
+		t.Errorf("Expected expiration time %s, but was %s", expected.Format(time.UnixDate), token.ExpiresAt.Format(time.UnixDate))
 	}
 }
 
@@ -534,7 +534,7 @@ func TestNoTokenInResponse(t *testing.T) {
 
 	testhelper.Mux.HandleFunc("/auth/tokens", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `{}`)
+		_, _ = fmt.Fprintf(w, `{}`)
 	})
 
 	options := tokens.AuthOptions{UserID: "me", Password: "squirrel!"}

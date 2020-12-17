@@ -40,15 +40,15 @@ func (opts SingleTenantOpts) ToUsageSingleTenantQuery() (string, error) {
 
 // SingleTenant returns usage data about a single tenant.
 func SingleTenant(client *golangsdk.ServiceClient, tenantID string, opts SingleTenantOptsBuilder) pagination.Pager {
-	url := getTenantURL(client, tenantID)
+	u := getTenantURL(client, tenantID)
 	if opts != nil {
 		query, err := opts.ToUsageSingleTenantQuery()
 		if err != nil {
 			return pagination.Pager{Err: err}
 		}
-		url += query
+		u += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
 		return SingleTenantPage{pagination.LinkedPageBase{PageResult: r}}
 	})
 }
@@ -92,15 +92,15 @@ func (opts AllTenantsOpts) ToUsageAllTenantsQuery() (string, error) {
 
 // AllTenants returns usage data about all tenants.
 func AllTenants(client *golangsdk.ServiceClient, opts AllTenantsOptsBuilder) pagination.Pager {
-	url := allTenantsURL(client)
+	u := allTenantsURL(client)
 	if opts != nil {
 		query, err := opts.ToUsageAllTenantsQuery()
 		if err != nil {
 			return pagination.Pager{Err: err}
 		}
-		url += query
+		u += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
 		return AllTenantsPage{pagination.LinkedPageBase{PageResult: r}}
 	})
 }

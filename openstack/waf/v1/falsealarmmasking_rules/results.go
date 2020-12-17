@@ -13,13 +13,13 @@ type ListResponse struct {
 }
 
 type AlarmMasking struct {
-	//False Alarm Masking Rule ID
+	// False Alarm Masking Rule ID
 	Id string `json:"id"`
-	//False Alarm Maksing Rule URL
+	// False Alarm Maksing Rule URL
 	Url string `json:"url"`
-	//Rule ID
+	// Rule ID
 	Rule string `json:"rule"`
-	//Policy ID
+	// Policy ID
 	PolicyID string `json:"policyid"`
 }
 

@@ -77,8 +77,8 @@ type UpdateOpts struct {
 	HealthcheckInterval    int    `json:"healthcheck_interval,omitempty"`
 }
 
-func (u UpdateOpts) IsNeedUpdate() (bool, error) {
-	d, e := u.ToHealthCheckUpdateMap()
+func (opts UpdateOpts) IsNeedUpdate() (bool, error) {
+	d, e := opts.ToHealthCheckUpdateMap()
 	if e == nil {
 		return len(d) != 0, nil
 	}

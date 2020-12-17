@@ -116,7 +116,7 @@ type Output struct {
 	Description string `json:"description"`
 
 	// The name of the export associated with the output.
-	//ExportName *string `json:"name"`
+	// ExportName *string `json:"name"`
 
 	// The key associated with the output.
 	OutputKey *string `json:"output_key"`
@@ -216,7 +216,7 @@ func prettify(v reflect.Value, indent int, buf *bytes.Buffer) {
 	case reflect.Struct:
 		strtype := v.Type().String()
 		if strtype == "time.Time" {
-			fmt.Fprintf(buf, "%s", v.Interface())
+			_, _ = fmt.Fprintf(buf, "%s", v.Interface())
 			break
 		} else if strings.HasPrefix(strtype, "io.") {
 			buf.WriteString("<buffer>")
@@ -225,7 +225,7 @@ func prettify(v reflect.Value, indent int, buf *bytes.Buffer) {
 
 		buf.WriteString("{\n")
 
-		names := []string{}
+		var names []string
 		for i := 0; i < v.Type().NumField(); i++ {
 			name := v.Type().Field(i).Name
 			f := v.Field(i)
@@ -253,7 +253,7 @@ func prettify(v reflect.Value, indent int, buf *bytes.Buffer) {
 	case reflect.Slice:
 		strtype := v.Type().String()
 		if strtype == "[]uint8" {
-			fmt.Fprintf(buf, "<binary> len %d", v.Len())
+			_, _ = fmt.Fprintf(buf, "<binary> len %d", v.Len())
 			break
 		}
 
@@ -288,7 +288,7 @@ func prettify(v reflect.Value, indent int, buf *bytes.Buffer) {
 		buf.WriteString("\n" + strings.Repeat(" ", indent) + "}")
 	default:
 		if !v.IsValid() {
-			fmt.Fprint(buf, "<invalid value>")
+			_, _ = fmt.Fprint(buf, "<invalid value>")
 			return
 		}
 		format := "%v"
@@ -298,6 +298,6 @@ func prettify(v reflect.Value, indent int, buf *bytes.Buffer) {
 		case io.ReadSeeker, io.Reader:
 			format = "buffer(%p)"
 		}
-		fmt.Fprintf(buf, format, v.Interface())
+		_, _ = fmt.Fprintf(buf, format, v.Interface())
 	}
 }

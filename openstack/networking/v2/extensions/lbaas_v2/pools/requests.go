@@ -35,6 +35,9 @@ type ListOpts struct {
 // ToPoolListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToPoolListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -221,6 +224,9 @@ type ListMembersOpts struct {
 // ToMemberListQuery formats a ListOpts into a query string.
 func (opts ListMembersOpts) ToMembersListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

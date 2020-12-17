@@ -84,7 +84,7 @@ func FilterBackups(backup []Backup, opts ListOpts) ([]Backup, error) {
 func getStructField(v *Backup, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -95,22 +95,22 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new backup.
 type CreateOpts struct {
-	//ID of the disk to be backed up
+	// ID of the disk to be backed up
 	VolumeId string `json:"volume_id" required:"true"`
-	//Snapshot ID of the disk to be backed up
+	// Snapshot ID of the disk to be backed up
 	SnapshotId string `json:"snapshot_id,omitempty" `
-	//Backup name, which cannot start with autobk
+	// Backup name, which cannot start with autobk
 	Name string `json:"name" required:"true"`
-	//Backup description
+	// Backup description
 	Description string `json:"description,omitempty"`
-	//List of tags to be configured for the backup resources
+	// List of tags to be configured for the backup resources
 	Tags []Tag `json:"tags,omitempty"`
 }
 
 type Tag struct {
-	//Tag key
+	// Tag key
 	Key string `json:"key" required:"true"`
-	//Tag value
+	// Tag value
 	Value string `json:"value" required:"true"`
 }
 
@@ -141,7 +141,7 @@ type RestoreOptsBuilder interface {
 
 // BackupRestoreOpts contains all the values needed to create a new backup.
 type BackupRestoreOpts struct {
-	//ID of the disk to be backed up
+	// ID of the disk to be backed up
 	VolumeId string `json:"volume_id" required:"true"`
 }
 
@@ -164,8 +164,8 @@ func CreateBackupRestore(c *golangsdk.ServiceClient, id string, opts RestoreOpts
 }
 
 // Get retrieves a particular backup based on its unique ID. To extract
-//// the Backup object from the response, call the Extract method on the
-//// GetResult.
+// // the Backup object from the response, call the Extract method on the
+// // GetResult.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = c.Get(resourceURL(c, id), &r.Body, nil)
 	return

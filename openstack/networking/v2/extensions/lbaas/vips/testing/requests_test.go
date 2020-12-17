@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "vips":[
          {
@@ -63,7 +63,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	vips.List(fake.ServiceClient(), vips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = vips.List(fake.ServiceClient(), vips.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := vips.ExtractVIPs(page)
 		if err != nil {
@@ -142,7 +142,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vip": {
         "status": "PENDING_CREATE",
@@ -225,7 +225,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vip": {
         "status": "ACTIVE",
@@ -282,7 +282,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vip": {
         "status": "PENDING_UPDATE",

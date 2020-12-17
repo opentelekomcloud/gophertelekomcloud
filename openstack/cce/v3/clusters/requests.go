@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
 
@@ -90,7 +90,7 @@ func GetStructNestedField(v *Clusters, field string, structDriller []string) str
 		r = reflect.ValueOf(f)
 	}
 	f1 := reflect.Indirect(r).FieldByName(field)
-	return string(f1.String())
+	return f1.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

@@ -7,7 +7,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json",
 		"X-Openstack-Manila-Api-Version": "2.9"},
 }
@@ -125,7 +125,7 @@ func FilterShares(shares []Share, opts ListOpts) ([]Share, error) {
 func getStructField(v *Share, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -295,7 +295,7 @@ func (opts DeleteAccessOpts) ToDeleteAccessMap() (map[string]interface{}, error)
 	return golangsdk.BuildRequestBody(opts, "os-deny_access")
 }
 
-//Deletes the Access Rule
+// Deletes the Access Rule
 func DeleteAccess(client *golangsdk.ServiceClient, share_id string, opts DeleteAccessOptsBuilder) (r DeleteAccessResult) {
 	b, err := opts.ToDeleteAccessMap()
 	if err != nil {
@@ -308,7 +308,7 @@ func DeleteAccess(client *golangsdk.ServiceClient, share_id string, opts DeleteA
 	return
 }
 
-//Gets the Mount/Export Locations of the SFS specified
+// Gets the Mount/Export Locations of the SFS specified
 func GetExportLocations(client *golangsdk.ServiceClient, id string) (r GetExportLocationsResult) {
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders}

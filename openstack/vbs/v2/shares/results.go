@@ -9,60 +9,60 @@ import (
 )
 
 type Share struct {
-	//Details about the source backup
+	// Details about the source backup
 	Backup Backup `json:"backup"`
-	//Backup ID
+	// Backup ID
 	BackupID string `json:"backup_id"`
-	//Backup share ID
+	// Backup share ID
 	ID string `json:"id"`
-	//ID of the project with which the backup is shared
+	// ID of the project with which the backup is shared
 	ToProjectID string `json:"to_project_id"`
-	//ID of the project that shares the backup
+	// ID of the project that shares the backup
 	FromProjectID string `json:"from_project_id"`
-	//Creation time of the backup share
+	// Creation time of the backup share
 	CreatedAt time.Time `json:"-"`
-	//Update time of the backup share
+	// Update time of the backup share
 	UpdatedAt time.Time `json:"-"`
-	//Whether the backup has been deleted
+	// Whether the backup has been deleted
 	Deleted string `json:"deleted"`
-	//Deletion time
+	// Deletion time
 	DeletedAt time.Time `json:"-"`
 }
 
 type Backup struct {
-	//Backup ID
+	// Backup ID
 	ID string `json:"id"`
-	//Backup name
+	// Backup name
 	Name string `json:"name"`
-	//Backup status
+	// Backup status
 	Status string `json:"status"`
-	//Backup description
+	// Backup description
 	Description string `json:"description"`
-	//AZ where the backup resides
+	// AZ where the backup resides
 	AvailabilityZone string `json:"availability_zone"`
-	//Source volume ID of the backup
+	// Source volume ID of the backup
 	VolumeID string `json:"volume_id"`
-	//Cause of the backup failure
+	// Cause of the backup failure
 	FailReason string `json:"fail_reason"`
-	//Backup size
+	// Backup size
 	Size int `json:"size"`
-	//Number of objects on OBS for the disk data
+	// Number of objects on OBS for the disk data
 	ObjectCount int `json:"object_count"`
-	//Container of the backup
+	// Container of the backup
 	Container string `json:"container"`
-	//Backup creation time
+	// Backup creation time
 	CreatedAt time.Time `json:"-"`
-	//Backup metadata
+	// Backup metadata
 	ServiceMetadata string `json:"service_metadata"`
-	//Time when the backup was updated
+	// Time when the backup was updated
 	UpdatedAt time.Time `json:"-"`
-	//Current time
+	// Current time
 	DataTimeStamp time.Time `json:"-"`
-	//Whether a dependent backup exists
+	// Whether a dependent backup exists
 	DependentBackups bool `json:"has_dependent_backups"`
-	//ID of the snapshot associated with the backup
+	// ID of the snapshot associated with the backup
 	SnapshotID string `json:"snapshot_id"`
-	//Whether the backup is an incremental backup
+	// Whether the backup is an incremental backup
 	IsIncremental bool `json:"is_incremental"`
 }
 

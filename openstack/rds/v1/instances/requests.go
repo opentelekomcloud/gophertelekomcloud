@@ -4,12 +4,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 }
 
-//CreateOpsBuilder is used for creating instance parameters.
-//any struct providing the parameters should implement this interface
+// CreateOpsBuilder is used for creating instance parameters.
+// any struct providing the parameters should implement this interface
 type CreateOpsBuilder interface {
 	ToInstanceCreateMap() (map[string]interface{}, error)
 }
@@ -39,7 +39,7 @@ type UpdateFlavorOps struct {
 	FlavorRef string `json:"flavorRef"`
 }
 
-//CreateOps is a struct that contains all the parameters.
+// CreateOps is a struct that contains all the parameters.
 type CreateOps struct {
 	Name string `json:"name" required:"true"`
 
@@ -114,7 +114,7 @@ func (ops UpdateFlavorOps) ToInstanceFlavorUpdateMap() (map[string]interface{}, 
 	return golangsdk.BuildRequestBody(ops, "resize")
 }
 
-//Create a instance with given parameters.
+// Create a instance with given parameters.
 func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder) (r CreateResult) {
 	b, err := ops.ToInstanceCreateMap()
 	if err != nil {
@@ -172,7 +172,7 @@ func UpdateFlavorRef(client *golangsdk.ServiceClient, ops UpdateFlavorOpsBuilder
 	return
 }
 
-//delete a instance via id
+// delete a instance via id
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	RequestOpts.OkCodes = []int{202}
 	RequestOpts.JSONBody = nil
@@ -184,7 +184,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	return
 }
 
-//get a instance with detailed information by id
+// get a instance with detailed information by id
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 
 	_, r.Err = client.Get(getURL(client, id), &r.Body, &golangsdk.RequestOpts{
@@ -194,7 +194,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
-//list all the instances
+// list all the instances
 func List(client *golangsdk.ServiceClient) (r ListResult) {
 
 	_, r.Err = client.Get(listURL(client), &r.Body, &golangsdk.RequestOpts{

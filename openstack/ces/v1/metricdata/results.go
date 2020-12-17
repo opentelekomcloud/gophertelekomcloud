@@ -13,7 +13,7 @@ type MetricData struct {
 	// letters, lowercase letters, digits, and underscores.
 	MetricName string `json:"metric_name"`
 
-	//Specifies the list of the metric dimensions.
+	// Specifies the list of the metric dimensions.
 	Dimensions []Dimension `json:"dimensions"`
 	Datapoints []Data      `json:"datapoints"`
 

@@ -30,7 +30,7 @@ func TestCreateTag(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "tags": [
         "__type_baremetal"
@@ -71,7 +71,7 @@ func TestGetTags(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "tags": [
         "__type_baremetal"

@@ -115,7 +115,7 @@ func TestRequiredPoolCreateOpts(t *testing.T) {
 		t.Fatalf("Expected error, got none")
 	}
 	res = pools.Create(fake.ServiceClient(), pools.CreateOpts{
-		LBMethod:       pools.LBMethod("invalid"),
+		LBMethod:       "invalid",
 		Protocol:       pools.ProtocolHTTPS,
 		LoadbalancerID: "69055154-f603-4a28-8951-7cc2d9e54a9a",
 	})
@@ -125,7 +125,7 @@ func TestRequiredPoolCreateOpts(t *testing.T) {
 
 	res = pools.Create(fake.ServiceClient(), pools.CreateOpts{
 		LBMethod:       pools.LBMethodRoundRobin,
-		Protocol:       pools.Protocol("invalid"),
+		Protocol:       "invalid",
 		LoadbalancerID: "69055154-f603-4a28-8951-7cc2d9e54a9a",
 	})
 	if res.Err == nil {

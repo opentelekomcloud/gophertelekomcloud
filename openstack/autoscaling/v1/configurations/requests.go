@@ -67,7 +67,7 @@ func (opts CreateOpts) ToConfigurationCreateMap() (map[string]interface{}, error
 	return b, nil
 }
 
-//InstanceConfigOpts is an inner struct of CreateOpts
+// InstanceConfigOpts is an inner struct of CreateOpts
 type InstanceConfigOpts struct {
 	ID          string            `json:"instance_id,omitempty"`
 	FlavorRef   string            `json:"flavorRef,omitempty"`
@@ -79,10 +79,10 @@ type InstanceConfigOpts struct {
 	// UserData contains configuration information or scripts to use upon launch.
 	// Create will base64-encode it for you, if it isn't already.
 	UserData []byte                 `json:"-"`
-	Metadata map[string]interface{} `json:"metadata,omitempty"` //TODO not sure the type
+	Metadata map[string]interface{} `json:"metadata,omitempty"` // TODO not sure the type
 }
 
-//DiskOpts is an inner struct of InstanceConfigOpts
+// DiskOpts is an inner struct of InstanceConfigOpts
 type DiskOpts struct {
 	Size       int               `json:"size" required:"true"`
 	VolumeType string            `json:"volume_type" required:"true"`
@@ -110,8 +110,8 @@ type BandwidthOpts struct {
 	ChargingMode string
 }
 
-//Create is a method by which can be able to access to create a configuration
-//of autoscaling
+// Create is a method by which can be able to access to create a configuration
+// of autoscaling
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToConfigurationCreateMap()
 	if err != nil {
@@ -124,14 +124,14 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-//Get is a method by which can be able to access to get a configuration of
-//autoscaling detailed information
+// Get is a method by which can be able to access to get a configuration of
+// autoscaling detailed information
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
 	return
 }
 
-//Delete
+// Delete
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = client.Delete(deleteURL(client, id), nil)
 	return
@@ -148,10 +148,13 @@ type ListOpts struct {
 
 func (opts ListOpts) ToConfigurationListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
-//List is method that can be able to list all configurations of autoscaling service
+// List is method that can be able to list all configurations of autoscaling service
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(client)
 	if opts != nil {

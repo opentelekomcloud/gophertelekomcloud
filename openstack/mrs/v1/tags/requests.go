@@ -4,15 +4,15 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 }
 
 // Tag is a structure of key value pair.
 type Tag struct {
-	//tag key
+	// tag key
 	Key string `json:"key" required:"true"`
-	//tag value
+	// tag value
 	Value string `json:"value" required:"true"`
 }
 
@@ -24,13 +24,13 @@ type BatchOptsBuilder interface {
 
 // BatchOpts contains all the values needed to perform BatchAction on the instance tags.
 type BatchOpts struct {
-	//List of tags to perform batch operation
+	// List of tags to perform batch operation
 	Tags []Tag `json:"tags,omitempty"`
-	//Operator , Possible values are:create, update,delete
+	// Operator , Possible values are:create, update,delete
 	Action ActionType `json:"action" required:"true"`
 }
 
-//ActionType specifies the type of batch operation action to be performed
+// ActionType specifies the type of batch operation action to be performed
 type ActionType string
 
 var (
@@ -45,7 +45,7 @@ func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//BatchAction is used to create ,update or delete the tags of a specified instance.
+// BatchAction is used to create ,update or delete the tags of a specified instance.
 func BatchAction(client *golangsdk.ServiceClient, clusterID string, opts BatchOptsBuilder) (r ActionResults) {
 	b, err := opts.ToTagsBatchMap()
 	if err != nil {

@@ -154,7 +154,7 @@ func (opts *AuthOptions) AuthHeaderDomainID() string {
 	return ""
 }
 
-func subjectTokenHeaders(c *golangsdk.ServiceClient, subjectToken string) map[string]string {
+func subjectTokenHeaders(_ *golangsdk.ServiceClient, subjectToken string) map[string]string {
 	return map[string]string{
 		"X-Subject-Token": subjectToken,
 	}

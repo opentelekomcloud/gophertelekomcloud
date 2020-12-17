@@ -3,7 +3,7 @@ package loadbalancer_elbs
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	//"fmt"
+	// "fmt"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the
@@ -41,6 +41,9 @@ type ListOpts struct {
 // ToLoadbalancerListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToLoadBalancerListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -52,7 +55,7 @@ func (opts ListOpts) ToLoadBalancerListQuery() (string, error) {
 // tenant who submits the request, unless an admin user submits the request.
 func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := rootURL(c)
-	//fmt.Printf("url=%s.\n", url)
+	// fmt.Printf("url=%s.\n", url)
 	if opts != nil {
 		query, err := opts.ToLoadBalancerListQuery()
 		if err != nil {
@@ -134,7 +137,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 		r.Err = err
 		return
 	}
-	//fmt.Printf("Create (%+v): rootURL: %s, b=%+v.\n", c, rootURL(c), b)
+	// fmt.Printf("Create (%+v): rootURL: %s, b=%+v.\n", c, rootURL(c), b)
 	_, r.Err = c.Post(rootURL(c), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})

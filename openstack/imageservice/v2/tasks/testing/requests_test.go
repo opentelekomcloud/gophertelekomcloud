@@ -23,12 +23,12 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, TasksListResult)
+		_, _ = fmt.Fprintf(w, TasksListResult)
 	})
 
 	count := 0
 
-	tasks.List(fakeclient.ServiceClient(), tasks.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = tasks.List(fakeclient.ServiceClient(), tasks.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := tasks.ExtractTasks(page)
 		if err != nil {
@@ -62,7 +62,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, TasksGetResult)
+		_, _ = fmt.Fprintf(w, TasksGetResult)
 	})
 
 	s, err := tasks.Get(fakeclient.ServiceClient(), "1252f636-1246-4319-bfba-c47cde0efbe0").Extract()
@@ -100,7 +100,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, TaskCreateResult)
+		_, _ = fmt.Fprintf(w, TaskCreateResult)
 	})
 
 	opts := tasks.CreateOpts{

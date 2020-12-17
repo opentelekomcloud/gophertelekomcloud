@@ -33,7 +33,7 @@ func mockListGroupsResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, listGroupsJSON)
+		_, _ = fmt.Fprintf(w, listGroupsJSON)
 	})
 }
 
@@ -46,7 +46,7 @@ func mockListGroupsByServerResponse(t *testing.T, serverID string) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, listGroupsJSON)
+		_, _ = fmt.Fprintf(w, listGroupsJSON)
 	})
 }
 
@@ -67,7 +67,7 @@ func mockCreateGroupResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group": {
     "description": "something",
@@ -99,7 +99,7 @@ func mockUpdateGroupResponse(t *testing.T, groupID string) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group": {
     "description": "something",
@@ -122,7 +122,7 @@ func mockGetGroupsResponse(t *testing.T, groupID string) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group": {
     "description": "default",
@@ -160,7 +160,7 @@ func mockGetNumericIDGroupResponse(t *testing.T, groupID int) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
 	"security_group": {
 		"id": %d
@@ -179,7 +179,7 @@ func mockGetNumericIDGroupRuleResponse(t *testing.T, groupID int) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group": {
     "id": %d,
@@ -224,7 +224,7 @@ func mockAddRuleResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group_rule": {
     "from_port": 22,
@@ -260,7 +260,7 @@ func mockAddRuleResponseICMPZero(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group_rule": {
     "from_port": 0,

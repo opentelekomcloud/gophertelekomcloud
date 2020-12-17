@@ -75,6 +75,9 @@ type ImageDateQuery struct {
 // ToImageListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToImageListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	params := q.Query()
 
 	if opts.CreatedAtQuery != nil {
@@ -99,15 +102,15 @@ func (opts ListOpts) ToImageListQuery() (string, error) {
 
 // List implements images list request
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	u := listURL(client)
 	if opts != nil {
 		query, err := opts.ToImageListQuery()
 		if err != nil {
 			return pagination.Pager{Err: err}
 		}
-		url += query
+		u += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
 		imagePage := ImagePage{
 			serviceURL:     client.ServiceURL(),
 			LinkedPageBase: pagination.LinkedPageBase{PageResult: r},
@@ -155,7 +158,7 @@ type CreateByOBSOpts struct {
 	ImageUrl string `json:"image_url" required:"true"`
 	// the minimum size of the system disk in the unit of GB
 	MinDisk int `json:"min_disk" required:"true"`
-	//whether automatic configuration is enabled，the value can be true or false
+	// whether automatic configuration is enabled，the value can be true or false
 	IsConfig bool `json:"is_config,omitempty"`
 	// the master key used for encrypting an image
 	CmkId string `json:"cmk_id,omitempty"`

@@ -79,7 +79,7 @@ func HandleGetSingleTenantSuccessfully(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprint(w, GetSingleTenant)
+		_, _ = fmt.Fprint(w, GetSingleTenant)
 	})
 }
 
@@ -229,7 +229,7 @@ func HandleGetAllTenantsSuccessfully(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprint(w, GetAllTenants)
+		_, _ = fmt.Fprint(w, GetAllTenants)
 	})
 }
 

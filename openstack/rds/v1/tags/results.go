@@ -5,14 +5,14 @@ import (
 )
 
 type Tag struct {
-	//tag key
+	// tag key
 	Key string `json:"key"`
-	//tag value
+	// tag value
 	Value string `json:"value"`
 }
 
 type RespTags struct {
-	//contains list of tags, i.e.key value pair
+	// contains list of tags, i.e.key value pair
 	Tags []Tag `json:"tags"`
 }
 

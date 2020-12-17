@@ -110,11 +110,11 @@ func (r VolumePage) IsEmpty() (bool, error) {
 	return len(volumes) == 0, err
 }
 
-func (page VolumePage) NextPageURL() (string, error) {
+func (r VolumePage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"volumes_links"`
 	}
-	err := page.ExtractInto(&s)
+	err := r.ExtractInto(&s)
 	if err != nil {
 		return "", err
 	}

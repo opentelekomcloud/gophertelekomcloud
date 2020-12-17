@@ -60,6 +60,9 @@ type ListOpts struct {
 // ToServerListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToServerListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -713,13 +716,15 @@ func CreateImage(client *golangsdk.ServiceClient, id string, opts CreateImageOpt
 	resp, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	r.Err = err
+	if err != nil {
+		r.Err = err
+		return
+	}
 	r.Header = resp.Header
 	return
 }
 
-// IDFromName is a convienience function that returns a server's ID given its
-// name.
+// IDFromName is a convenience function that returns a server's ID given its name.
 func IDFromName(client *golangsdk.ServiceClient, name string) (string, error) {
 	count := 0
 	id := ""

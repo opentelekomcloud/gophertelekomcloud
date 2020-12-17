@@ -22,11 +22,11 @@ func TestListImages(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprintf(w, `
 				{
 					"images": [
 						{
@@ -64,7 +64,7 @@ func TestListImages(t *testing.T) {
 				}
 			`)
 		case "2":
-			fmt.Fprintf(w, `{ "images": [] }`)
+			_, _ = fmt.Fprintf(w, `{ "images": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -136,7 +136,7 @@ func TestGetImage(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 				"image": {
 					"status": "ACTIVE",

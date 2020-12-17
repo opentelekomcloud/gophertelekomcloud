@@ -12,16 +12,16 @@ type Route struct {
 	// Specifies the next hop. If the route type is peering, enter the VPC peering connection ID.
 	NextHop string `json:"nexthop"`
 
-	//Specifies the destination IP address or CIDR block.
+	// Specifies the destination IP address or CIDR block.
 	Destination string `json:"destination"`
 
 	// Specifies the VPC for which a route is to be added.
 	VPC_ID string `json:"vpc_id"`
 
-	//Specifies the tenant ID. Only the administrator can specify the tenant ID of other tenants.
+	// Specifies the tenant ID. Only the administrator can specify the tenant ID of other tenants.
 	Tenant_Id string `json:"tenant_id"`
 
-	//Specifies the route ID.
+	// Specifies the route ID.
 	RouteID string `json:"id"`
 }
 

@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
 
@@ -78,7 +78,7 @@ func GetStructNestedField(v *Nodes, field string, structDriller []string) string
 		r = reflect.ValueOf(f)
 	}
 	f1 := reflect.Indirect(r).FieldByName(field)
-	return string(f1.String())
+	return f1.String()
 }
 
 type FilterStruct struct {

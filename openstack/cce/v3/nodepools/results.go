@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
 
-//Describes the Node Pool Structure of cluster
+// Describes the Node Pool Structure of cluster
 type ListNodePool struct {
 	// API type, fixed value "List"
 	Kind string `json:"kind"`
@@ -31,9 +31,9 @@ type NodePool struct {
 
 // Metadata of the node pool
 type Metadata struct {
-	//Node Pool name
+	// Node Pool name
 	Name string `json:"name"`
-	//Node Pool ID
+	// Node Pool ID
 	Id string `json:"uid"`
 }
 

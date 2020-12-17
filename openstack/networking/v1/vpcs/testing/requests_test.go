@@ -21,7 +21,7 @@ func TestListVpc(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vpcs": [
         {
@@ -53,7 +53,7 @@ func TestListVpc(t *testing.T) {
 			`)
 	})
 
-	//count := 0
+	// count := 0
 
 	actual, err := vpcs.List(fake.ServiceClient(), vpcs.ListOpts{})
 	if err != nil {
@@ -101,7 +101,7 @@ func TestGetVpc(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vpc": {
         "id": "abda1f6e-ae7c-4ff5-8d06-53425dc11f34",
@@ -153,7 +153,7 @@ func TestCreateVpc(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vpc": {
         "id": "97e01fc2-e39e-4cfc-abf6-1d0886d120af",
@@ -200,7 +200,7 @@ func TestUpdateVpc(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
     "vpc": {
         "id": "97e01fc2-e39e-4cfc-abf6-1d0886d120af",

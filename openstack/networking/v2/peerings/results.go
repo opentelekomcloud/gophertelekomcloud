@@ -11,7 +11,7 @@ type VpcInfo struct {
 }
 
 // Peering represents a Neutron VPC peering connection.
-//Manage and perform other operations on VPC peering connections,
+// Manage and perform other operations on VPC peering connections,
 // including querying VPC peering connections as well as
 // creating, querying, deleting, and updating a VPC peering connection.
 type Peering struct {
@@ -97,7 +97,7 @@ func (r commonResult) ExtractResult() (Peering, error) {
 		// Status indicates whether or not a vpc is currently operational.
 		RequestVpcInfo VpcInfo `json:"request_vpc_info"`
 
-		//Provides informaion about shared snat
+		// Provides informaion about shared snat
 		AcceptVpcInfo VpcInfo `json:"accept_vpc_info"`
 	}
 	err1 := r.ExtractInto(&s)

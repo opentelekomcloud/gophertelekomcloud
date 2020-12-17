@@ -16,7 +16,7 @@ type PublicIPRequest struct {
 	// be a valid IP address in the available IP address segment.
 	IpAddress string `json:"ip_address,omitempty"`
 
-	//Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
+	// Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
 	IPVersion int `json:"ip_version,omitempty"`
 }
 
@@ -55,7 +55,7 @@ type CreateOpts struct {
 	// Specifies the bandwidth objects.
 	Bandwidth BandWidth `json:"bandwidth" required:"true"`
 	//	Enterprise project ID. The maximum length is 36 bytes, with the U-ID format of the hyphen "-", or the string "0".
-	//When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
+	// When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
@@ -103,7 +103,7 @@ type ListOpts struct {
 	// value ranges from 0 to intmax.
 	Limit int `q:"limit"`
 
-	//Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
+	// Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
 	IPVersion int `q:"ip_version"`
 
 	// enterprise_project_id
@@ -117,6 +117,9 @@ type ListOptsBuilder interface {
 
 func (opts ListOpts) ToListPublicIPQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -139,7 +142,7 @@ type UpdateOpts struct {
 	// Specifies the port ID.
 	PortId string `json:"port_id,omitempty"`
 
-	//Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
+	// Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
 	IPVersion int `json:"ip_version,omitempty"`
 }
 

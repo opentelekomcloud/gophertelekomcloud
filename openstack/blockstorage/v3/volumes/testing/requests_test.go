@@ -19,7 +19,7 @@ func TestListWithExtensions(t *testing.T) {
 
 	count := 0
 
-	volumes.List(client.ServiceClient(), &volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = volumes.List(client.ServiceClient(), &volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := volumes.ExtractVolumes(page)
 		if err != nil {
@@ -48,9 +48,9 @@ func TestListWithExtensions(t *testing.T) {
 				Encrypted:          false,
 				Metadata:           map[string]string{"foo": "bar"},
 				Multiattach:        false,
-				//TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
-				//ReplicationDriverData:     "",
-				//ReplicationExtendedStatus: "",
+				// TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
+				// ReplicationDriverData:     "",
+				// ReplicationExtendedStatus: "",
 				ReplicationStatus: "disabled",
 				Size:              75,
 				SnapshotID:        "",
@@ -71,9 +71,9 @@ func TestListWithExtensions(t *testing.T) {
 				Encrypted:          false,
 				Metadata:           map[string]string{},
 				Multiattach:        false,
-				//TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
-				//ReplicationDriverData:     "",
-				//ReplicationExtendedStatus: "",
+				// TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
+				// ReplicationDriverData:     "",
+				// ReplicationExtendedStatus: "",
 				ReplicationStatus: "disabled",
 				Size:              75,
 				SnapshotID:        "",
@@ -147,9 +147,9 @@ func TestListAll(t *testing.T) {
 			Encrypted:          false,
 			Metadata:           map[string]string{"foo": "bar"},
 			Multiattach:        false,
-			//TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
-			//ReplicationDriverData:     "",
-			//ReplicationExtendedStatus: "",
+			// TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
+			// ReplicationDriverData:     "",
+			// ReplicationExtendedStatus: "",
 			ReplicationStatus: "disabled",
 			Size:              75,
 			SnapshotID:        "",
@@ -170,9 +170,9 @@ func TestListAll(t *testing.T) {
 			Encrypted:          false,
 			Metadata:           map[string]string{},
 			Multiattach:        false,
-			//TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
-			//ReplicationDriverData:     "",
-			//ReplicationExtendedStatus: "",
+			// TenantID:                  "304dc00909ac4d0da6c62d816bcb3459",
+			// ReplicationDriverData:     "",
+			// ReplicationExtendedStatus: "",
 			ReplicationStatus: "disabled",
 			Size:              75,
 			SnapshotID:        "",

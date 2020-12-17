@@ -5,55 +5,55 @@ import (
 )
 
 type Policy struct {
-	//Policy ID
+	// Policy ID
 	Id string `json:"id"`
-	//Policy Name
+	// Policy Name
 	Name string `json:"name"`
-	//Protective Action
+	// Protective Action
 	Action Action `json:"action"`
-	//Protection Switches
+	// Protection Switches
 	Options Options `json:"options"`
-	//Protection Level
+	// Protection Level
 	Level int `json:"level"`
-	//Detection Mode
+	// Detection Mode
 	FullDetection bool `json:"full_detection"`
-	//Domain IDs
+	// Domain IDs
 	Hosts []string `json:"hosts"`
 }
 
 type Action struct {
-	//Protective Action
+	// Protective Action
 	Category string `json:"category" required:"true"`
 }
 
 type Options struct {
-	//Whether Basic Web Protection is enabled
+	// Whether Basic Web Protection is enabled
 	WebAttack *bool `json:"webattack,omitempty"`
-	//Whether General Check in Basic Web Protection is enabled
+	// Whether General Check in Basic Web Protection is enabled
 	Common *bool `json:"common,omitempty"`
-	//Whether the master crawler detection switch in Basic Web Protection is enabled
+	// Whether the master crawler detection switch in Basic Web Protection is enabled
 	Crawler *bool `json:"crawler,omitempty"`
-	//Whether the Search Engine switch in Basic Web Protection is enabled
+	// Whether the Search Engine switch in Basic Web Protection is enabled
 	CrawlerEngine *bool `json:"crawler_engine,omitempty"`
-	//Whether the Scanner switch in Basic Web Protection is enabled
+	// Whether the Scanner switch in Basic Web Protection is enabled
 	CrawlerScanner *bool `json:"crawler_scanner,omitempty"`
-	//Whether the Script Tool switch in Basic Web Protection is enabled
+	// Whether the Script Tool switch in Basic Web Protection is enabled
 	CrawlerScript *bool `json:"crawler_script,omitempty"`
-	//Whether detection of other crawlers in Basic Web Protection is enabled
+	// Whether detection of other crawlers in Basic Web Protection is enabled
 	CrawlerOther *bool `json:"crawler_other,omitempty"`
-	//Whether webshell detection in Basic Web Protection is enabled
+	// Whether webshell detection in Basic Web Protection is enabled
 	WebShell *bool `json:"webshell,omitempty"`
-	//Whether CC Attack Protection is enabled
+	// Whether CC Attack Protection is enabled
 	Cc *bool `json:"cc,omitempty"`
-	//Whether Precise Protection is enabled
+	// Whether Precise Protection is enabled
 	Custom *bool `json:"custom,omitempty"`
-	//Whether Blacklist and Whitelist is enabled
+	// Whether Blacklist and Whitelist is enabled
 	WhiteblackIp *bool `json:"whiteblackip,omitempty"`
-	//Whether Data Masking is enabled
+	// Whether Data Masking is enabled
 	Privacy *bool `json:"privacy,omitempty"`
-	//Whether False Alarm Masking is enabled
+	// Whether False Alarm Masking is enabled
 	Ignore *bool `json:"ignore,omitempty"`
-	//Whether Web Tamper Protection is enabled
+	// Whether Web Tamper Protection is enabled
 	AntiTamper *bool `json:"antitamper,omitempty"`
 }
 

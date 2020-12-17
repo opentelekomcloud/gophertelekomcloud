@@ -15,6 +15,7 @@ package obs
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"math/rand"
 	"net"
@@ -133,7 +134,7 @@ func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string
 	}
 
 	if isDebugLogEnabled() {
-		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, (GetCurrentTimestamp() - start))
+		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, GetCurrentTimestamp()-start)
 	}
 
 	return respError
@@ -202,7 +203,7 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 	start := GetCurrentTimestamp()
 	resp, err = obsClient.httpClient.Do(req)
 	if isInfoLogEnabled() {
-		doLog(LEVEL_INFO, "Do http request cost %d ms", (GetCurrentTimestamp() - start))
+		doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
 	}
 
 	var msg interface{}
@@ -230,7 +231,7 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 	}
 
 	if isDebugLogEnabled() {
-		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, (GetCurrentTimestamp() - start))
+		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, GetCurrentTimestamp()-start)
 	}
 
 	return
@@ -292,11 +293,11 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 		}
 
 		req, err := http.NewRequest(method, requestUrl, _data)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build a request: %s", err)
+		}
 		if obsClient.conf.ctx != nil {
 			req = req.WithContext(obsClient.conf.ctx)
-		}
-		if err != nil {
-			return nil, err
 		}
 		doLog(LEVEL_DEBUG, "Do request with url [%s] and method [%s]", requestUrl, method)
 
@@ -331,7 +332,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 		start := GetCurrentTimestamp()
 		resp, err = obsClient.httpClient.Do(req)
 		if isInfoLogEnabled() {
-			doLog(LEVEL_INFO, "Do http request cost %d ms", (GetCurrentTimestamp() - start))
+			doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
 		}
 
 		var msg interface{}

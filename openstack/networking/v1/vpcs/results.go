@@ -27,7 +27,7 @@ type Vpc struct {
 	// unique.
 	Name string `json:"name"`
 
-	//Specifies the range of available subnets in the VPC.
+	// Specifies the range of available subnets in the VPC.
 	CIDR string `json:"cidr"`
 
 	// Status indicates whether or not a vpc is currently operational.
@@ -36,7 +36,7 @@ type Vpc struct {
 	// Routes are a collection of static routes that the vpc will host.
 	Routes []Route `json:"routes"`
 
-	//Provides informaion about shared snat
+	// Provides informaion about shared snat
 	EnableSharedSnat bool `json:"enable_shared_snat"`
 }
 

@@ -124,13 +124,13 @@ func HandleListSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "Accept", "application/json")
 
 		w.Header().Set("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, output)
+			_, _ = fmt.Fprintf(w, output)
 		case "93940999-7d40-44ae-8de4-19624e7b8d18":
-			fmt.Fprintf(w, `{"events":[]}`)
+			_, _ = fmt.Fprintf(w, `{"events":[]}`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}

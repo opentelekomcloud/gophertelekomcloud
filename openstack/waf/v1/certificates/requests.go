@@ -13,11 +13,11 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new certificate.
 type CreateOpts struct {
-	//Certificate name
+	// Certificate name
 	Name string `json:"name" required:"true"`
-	//Certificate content
+	// Certificate content
 	Content string `json:"content" required:"true"`
-	//Private Key
+	// Private Key
 	Key string `json:"key" required:"true"`
 }
 
@@ -46,7 +46,7 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a certificate.
 type UpdateOpts struct {
-	//Certificate name
+	// Certificate name
 	Name string `json:"name,omitempty"`
 }
 

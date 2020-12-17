@@ -72,19 +72,19 @@ type CreateOps struct {
 	// Format: HH:mm:ss
 	MaintainEnd string `json:"maintain_end,omitempty"`
 
-	//This parameter is mandatory when a Kafka instance is created.
-	//Indicates the maximum number of topics in a Kafka instance.
+	// This parameter is mandatory when a Kafka instance is created.
+	// Indicates the maximum number of topics in a Kafka instance.
 	PartitionNum int `json:"partition_num,omitempty"`
 
-	//Indicates whether to enable SSL-encrypted access.
+	// Indicates whether to enable SSL-encrypted access.
 	SslEnable bool `json:"ssl_enable"`
 
-	//This parameter is mandatory if the engine is kafka.
-	//Indicates the baseline bandwidth of a Kafka instance, that is,
-	//the maximum amount of data transferred per unit time. Unit: byte/s.
+	// This parameter is mandatory if the engine is kafka.
+	// Indicates the baseline bandwidth of a Kafka instance, that is,
+	// the maximum amount of data transferred per unit time. Unit: byte/s.
 	Specification string `json:"specification,omitempty"`
 
-	//Indicates the storage I/O specification. For details on how to select a disk type
+	// Indicates the storage I/O specification. For details on how to select a disk type
 	StorageSpecCode string `json:"storage_spec_code,omitempty"`
 }
 
@@ -114,12 +114,12 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	return
 }
 
-//UpdateOptsBuilder is an interface which can build the map paramter of update function
+// UpdateOptsBuilder is an interface which can build the map paramter of update function
 type UpdateOptsBuilder interface {
 	ToInstanceUpdateMap() (map[string]interface{}, error)
 }
 
-//UpdateOpts is a struct which represents the parameters of update function
+// UpdateOpts is a struct which represents the parameters of update function
 type UpdateOpts struct {
 	// Indicates the name of an instance.
 	// An instance name starts with a letter,

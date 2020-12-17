@@ -30,7 +30,7 @@ func MockAttachResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -50,7 +50,7 @@ func MockBeginDetachingResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -70,7 +70,7 @@ func MockDetachResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -95,7 +95,7 @@ func MockUploadImageResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprintf(w, `
 {
     "os-volume_upload_image": {
         "container_format": "bare",
@@ -142,7 +142,7 @@ func MockReserveResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -162,7 +162,7 @@ func MockUnreserveResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -193,7 +193,7 @@ func MockInitializeConnectionResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{
+			_, _ = fmt.Fprintf(w, `{
 "connection_info": {
     "data": {
       "target_portals": [
@@ -250,7 +250,7 @@ func MockTerminateConnectionResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -273,7 +273,7 @@ func MockExtendSizeResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			fmt.Fprintf(w, `{}`)
+			_, _ = fmt.Fprintf(w, `{}`)
 		})
 }
 

@@ -41,7 +41,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder, lId string) (r e
 		return
 	}
 
-	//API takes an array of these...
+	// API takes an array of these...
 	body := []map[string]interface{}{b}
 	log.Printf("[DEBUG] create ELB-BackendECS url:%q, body=%#v", rootURL(c, lId), body)
 
@@ -60,6 +60,9 @@ type getOpts struct {
 
 func (opts getOpts) ToBackendECSListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

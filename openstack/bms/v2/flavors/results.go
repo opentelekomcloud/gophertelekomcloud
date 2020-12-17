@@ -52,7 +52,7 @@ type Flavor struct {
 
 	SortKey string `json:"sort_key"`
 
-	//SortDir sets the direction, and is either `asc' or `desc'
+	// SortDir sets the direction, and is either `asc' or `desc'
 	SortDir string `json:"sort_dir"`
 }
 

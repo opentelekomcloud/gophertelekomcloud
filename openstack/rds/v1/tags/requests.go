@@ -4,20 +4,20 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 }
 
 // Tag is a structure of key value pair.
 type CreateOpts struct {
-	//tag key
+	// tag key
 	Key string `json:"key" required:"true"`
-	//tag value
+	// tag value
 	Value string `json:"value" required:"true"`
 }
 
 type DeleteOpts struct {
-	//tag key
+	// tag key
 	Key string `json:"key" required:"true"`
 }
 

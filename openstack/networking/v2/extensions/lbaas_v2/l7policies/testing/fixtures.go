@@ -118,7 +118,7 @@ func HandleL7PolicyCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprintf(w, response)
 	})
 }
 
@@ -181,13 +181,13 @@ func HandleL7PolicyListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, L7PoliciesListBody)
+			_, _ = fmt.Fprintf(w, L7PoliciesListBody)
 		case "45e08a3e-a78f-4b40-a229-1e7e23eee1ab":
-			fmt.Fprintf(w, `{ "l7policies": [] }`)
+			_, _ = fmt.Fprintf(w, `{ "l7policies": [] }`)
 		default:
 			t.Fatalf("/v2.0/lbaas/l7policies invoked with unexpected marker=[%s]", marker)
 		}
@@ -201,7 +201,7 @@ func HandleL7PolicyGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, SingleL7PolicyBody)
+		_, _ = fmt.Fprintf(w, SingleL7PolicyBody)
 	})
 }
 
@@ -229,7 +229,7 @@ func HandleL7PolicyUpdateSuccessfully(t *testing.T) {
 			}
 		}`)
 
-		fmt.Fprintf(w, PostUpdateL7PolicyBody)
+		_, _ = fmt.Fprintf(w, PostUpdateL7PolicyBody)
 	})
 }
 
@@ -265,7 +265,7 @@ func HandleRuleCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprintf(w, response)
 	})
 }
 
@@ -304,13 +304,13 @@ func HandleRuleListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, RulesListBody)
+			_, _ = fmt.Fprintf(w, RulesListBody)
 		case "45e08a3e-a78f-4b40-a229-1e7e23eee1ab":
-			fmt.Fprintf(w, `{ "rules": [] }`)
+			_, _ = fmt.Fprintf(w, `{ "rules": [] }`)
 		default:
 			t.Fatalf("/v2.0/lbaas/l7policies/8a1412f0-4c32-4257-8b07-af4770b604fd/rules invoked with unexpected marker=[%s]", marker)
 		}
@@ -324,7 +324,7 @@ func HandleRuleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, SingleRuleBody)
+		_, _ = fmt.Fprintf(w, SingleRuleBody)
 	})
 }
 
@@ -371,6 +371,6 @@ func HandleRuleUpdateSuccessfully(t *testing.T) {
 			}
 		}`)
 
-		fmt.Fprintf(w, PostUpdateRuleBody)
+		_, _ = fmt.Fprintf(w, PostUpdateRuleBody)
 	})
 }

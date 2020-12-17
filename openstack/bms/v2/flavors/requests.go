@@ -14,8 +14,8 @@ type ListOptsBuilder interface {
 	ToFlavorListQuery() (string, error)
 }
 
-//The AccessType arguement is optional, and if it is not supplied, OpenStack
-//returns the PublicAccess flavors.
+// The AccessType arguement is optional, and if it is not supplied, OpenStack
+// returns the PublicAccess flavors.
 type AccessType string
 
 const (
@@ -35,10 +35,10 @@ const (
 // the API. Filtering is achieved by passing in struct field values that map to
 // the flavor attributes you want to see returned.
 type ListOpts struct {
-	//Specifies the name of the BMS flavor
+	// Specifies the name of the BMS flavor
 	Name string
 
-	//Specifies the ID of the BMS flavor
+	// Specifies the ID of the BMS flavor
 	ID string
 
 	// MinDisk and MinRAM, if provided, elides flavors which do not meet your
@@ -51,10 +51,10 @@ type ListOpts struct {
 	// If IsPublic not provided, flavors for the current project are returned.
 	AccessType AccessType `q:"is_public"`
 
-	//SortKey allows you to sort by a particular attribute
+	// SortKey allows you to sort by a particular attribute
 	SortKey string `q:"sort_key"`
 
-	//SortDir sets the direction, and is either `asc' or `desc'
+	// SortDir sets the direction, and is either `asc' or `desc'
 	SortDir string `q:"sort_dir"`
 }
 
@@ -76,7 +76,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 	return FilterFlavors(allFlavors, opts)
 }
 
-//FilterFlavors used to filter flavors using Id and Name
+// FilterFlavors used to filter flavors using Id and Name
 func FilterFlavors(flavors []Flavor, opts ListOpts) ([]Flavor, error) {
 
 	var refinedFlavors []Flavor
@@ -120,5 +120,5 @@ func FilterFlavors(flavors []Flavor, opts ListOpts) ([]Flavor, error) {
 func getStructField(v *Flavor, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }

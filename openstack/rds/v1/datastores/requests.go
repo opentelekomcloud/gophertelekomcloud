@@ -4,11 +4,11 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 }
 
-//list the version informations about a specified type of database
+// list the version informations about a specified type of database
 func List(client *golangsdk.ServiceClient, dataStoreName string) (r ListResult) {
 
 	_, r.Err = client.Get(listURL(client, dataStoreName), &r.Body, &golangsdk.RequestOpts{

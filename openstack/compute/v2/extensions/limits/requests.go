@@ -19,6 +19,9 @@ type GetOpts struct {
 // ToLimitsQuery formats a GetOpts into a query string.
 func (opts GetOpts) ToLimitsQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

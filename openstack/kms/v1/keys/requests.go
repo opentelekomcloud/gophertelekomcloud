@@ -2,7 +2,7 @@ package keys
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	//"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	// "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type CreateOpts struct {
@@ -271,7 +271,7 @@ func ListAllKeys(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r ListR
 	return
 }
 
-//func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r GetResult) {
+// func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r GetResult) {
 //	//url := listURL(client)
 //	//if opts != nil {
 //	//	query, err := opts.ToKeyListQuery()
@@ -293,4 +293,4 @@ func ListAllKeys(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r ListR
 //	//return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 //	//	return KeyPage{pagination.LinkedPageBase{PageResult: r}}
 //	//})
-//}
+// }

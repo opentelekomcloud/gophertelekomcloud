@@ -147,7 +147,7 @@ func waitForSubnetToActive(client *golangsdk.ServiceClient, subnetID string, sec
 			return true, nil
 		}
 
-		//If subnet status is other than Active, send error
+		// If subnet status is other than Active, send error
 		if n.Status == "DOWN" || n.Status == "ERROR" {
 			return false, fmt.Errorf("subnet status: '%s'", n.Status)
 		}

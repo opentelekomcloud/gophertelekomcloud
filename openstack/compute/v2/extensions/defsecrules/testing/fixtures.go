@@ -19,7 +19,7 @@ func mockListRulesResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group_default_rules": [
     {
@@ -56,7 +56,7 @@ func mockCreateRuleResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group_default_rule": {
     "from_port": 80,
@@ -91,7 +91,7 @@ func mockCreateRuleResponseICMPZero(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group_default_rule": {
     "from_port": 0,
@@ -116,7 +116,7 @@ func mockGetRuleResponse(t *testing.T, ruleID string) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 {
   "security_group_default_rule": {
     "id": "{ruleID}",

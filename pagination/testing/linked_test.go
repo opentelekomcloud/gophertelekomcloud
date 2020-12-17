@@ -29,22 +29,22 @@ func ExtractLinkedInts(r pagination.Page) ([]int, error) {
 	return s.Ints, err
 }
 
-func createLinked(t *testing.T) pagination.Pager {
+func createLinked() pagination.Pager {
 	testhelper.SetupHTTP()
 
 	testhelper.Mux.HandleFunc("/page1", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{ "ints": [1, 2, 3], "links": { "next": "%s/page2" } }`, testhelper.Server.URL)
+		_, _ = fmt.Fprintf(w, `{ "ints": [1, 2, 3], "links": { "next": "%s/page2" } }`, testhelper.Server.URL)
 	})
 
 	testhelper.Mux.HandleFunc("/page2", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{ "ints": [4, 5, 6], "links": { "next": "%s/page3" } }`, testhelper.Server.URL)
+		_, _ = fmt.Fprintf(w, `{ "ints": [4, 5, 6], "links": { "next": "%s/page3" } }`, testhelper.Server.URL)
 	})
 
 	testhelper.Mux.HandleFunc("/page3", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{ "ints": [7, 8, 9], "links": { "next": null } }`)
+		_, _ = fmt.Fprintf(w, `{ "ints": [7, 8, 9], "links": { "next": null } }`)
 	})
 
 	client := createClient()
@@ -57,7 +57,7 @@ func createLinked(t *testing.T) pagination.Pager {
 }
 
 func TestEnumerateLinked(t *testing.T) {
-	pager := createLinked(t)
+	pager := createLinked()
 	defer testhelper.TeardownHTTP()
 
 	callCount := 0
@@ -99,7 +99,7 @@ func TestEnumerateLinked(t *testing.T) {
 }
 
 func TestAllPagesLinked(t *testing.T) {
-	pager := createLinked(t)
+	pager := createLinked()
 	defer testhelper.TeardownHTTP()
 
 	page, err := pager.AllPages()

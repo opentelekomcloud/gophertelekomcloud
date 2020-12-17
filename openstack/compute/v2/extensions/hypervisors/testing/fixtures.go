@@ -228,7 +228,7 @@ func HandleHypervisorsStatisticsSuccessfully(t *testing.T) {
 		testhelper.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, HypervisorsStatisticsBody)
+		_, _ = fmt.Fprintf(w, HypervisorsStatisticsBody)
 	})
 }
 
@@ -238,7 +238,7 @@ func HandleHypervisorListSuccessfully(t *testing.T) {
 		testhelper.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, HypervisorListBody)
+		_, _ = fmt.Fprintf(w, HypervisorListBody)
 	})
 }
 
@@ -249,7 +249,7 @@ func HandleHypervisorGetSuccessfully(t *testing.T) {
 		testhelper.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, HypervisorGetBody)
+		_, _ = fmt.Fprintf(w, HypervisorGetBody)
 	})
 }
 
@@ -260,6 +260,6 @@ func HandleHypervisorUptimeSuccessfully(t *testing.T) {
 		testhelper.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, HypervisorUptimeBody)
+		_, _ = fmt.Fprintf(w, HypervisorUptimeBody)
 	})
 }

@@ -105,7 +105,7 @@ func GetStructNestedField(v *Share, field string, structDriller []string) string
 		r = reflect.ValueOf(f)
 	}
 	f1 := reflect.Indirect(r).FieldByName(field)
-	return string(f1.String())
+	return f1.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -116,9 +116,9 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new share.
 type CreateOpts struct {
-	//ID of the backup to be shared
+	// ID of the backup to be shared
 	BackupID string `json:"backup_id" required:"true"`
-	//IDs of projects with which the backup is shared
+	// IDs of projects with which the backup is shared
 	ToProjectIDs []string `json:"to_project_ids" required:"true"`
 }
 
@@ -147,23 +147,26 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
-//DeleteOptsBuilder is an interface which can be able to build the query string
-//of share deletion.
+// DeleteOptsBuilder is an interface which can be able to build the query string
+// of share deletion.
 type DeleteOptsBuilder interface {
 	ToShareDeleteQuery() (string, error)
 }
 
 type DeleteOpts struct {
-	//Whether the ID in the URL is a backup share ID or a backup ID
+	// Whether the ID in the URL is a backup share ID or a backup ID
 	IsBackupID bool `q:"is_backup_id"`
 }
 
 func (opts DeleteOpts) ToShareDeleteQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
-//Delete is a method by which can be able to delete one or all shares of a backup.
+// Delete is a method by which can be able to delete one or all shares of a backup.
 func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOptsBuilder) (r DeleteResult) {
 	url := resourceURL(client, id)
 	if opts != nil {

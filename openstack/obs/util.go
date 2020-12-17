@@ -253,7 +253,7 @@ func getIsObs(isTemporary bool, querys []string, headers map[string][]string) bo
 			}
 		}
 	} else {
-		for key, _ := range headers {
+		for key := range headers {
 			keyPrefix := strings.ToLower(key)
 			if strings.HasPrefix(keyPrefix, HEADER_PREFIX) {
 				isObs = false

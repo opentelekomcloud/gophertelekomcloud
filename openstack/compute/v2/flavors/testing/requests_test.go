@@ -23,11 +23,11 @@ func TestListFlavors(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprintf(w, `
 					{
 						"flavors": [
 							{
@@ -70,7 +70,7 @@ func TestListFlavors(t *testing.T) {
 					}
 				`, th.Server.URL)
 		case "2":
-			fmt.Fprintf(w, `{ "flavors": [] }`)
+			_, _ = fmt.Fprintf(w, `{ "flavors": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -115,7 +115,7 @@ func TestGetFlavor(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 				"flavor": {
 					"id": "1",
@@ -158,7 +158,7 @@ func TestCreateFlavor(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 				"flavor": {
 					"id": "1",
@@ -224,7 +224,7 @@ func TestFlavorAccessesList(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 			  "flavor_access": [
 			    {
@@ -237,7 +237,7 @@ func TestFlavorAccessesList(t *testing.T) {
 	})
 
 	expected := []flavors.FlavorAccess{
-		flavors.FlavorAccess{
+		{
 			FlavorID: "12345678",
 			TenantID: "2f954bcf047c4ee9b09a37d49ae6db54",
 		},
@@ -272,7 +272,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 			  "flavor_access": [
 			    {
@@ -285,7 +285,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 	})
 
 	expected := []flavors.FlavorAccess{
-		flavors.FlavorAccess{
+		{
 			FlavorID: "12345678",
 			TenantID: "2f954bcf047c4ee9b09a37d49ae6db54",
 		},
@@ -321,14 +321,14 @@ func TestFlavorAccessRemove(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 			  "flavor_access": []
 			}
 			`)
 	})
 
-	expected := []flavors.FlavorAccess{}
+	var expected []flavors.FlavorAccess
 	removeAccessOpts := flavors.RemoveAccessOpts{
 		Tenant: "2f954bcf047c4ee9b09a37d49ae6db54",
 	}

@@ -42,7 +42,7 @@ func HandleCreateSuccessfully(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, CreateOutput)
+		_, _ = fmt.Fprintf(w, CreateOutput)
 	})
 }
 
@@ -79,7 +79,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprintf(w, UpdateOutput)
 	})
 }
 
@@ -119,7 +119,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprintf(w, GetOutput)
 	})
 }
 
@@ -227,9 +227,9 @@ func HandleListSuccessfully(t *testing.T) {
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, ListOutput)
+			_, _ = fmt.Fprintf(w, ListOutput)
 		case "3faa05bd-d878-44e2-a363-f6672a9761d3":
-			fmt.Fprintf(w, `{"publicips": []}`)
+			_, _ = fmt.Fprintf(w, `{"publicips": []}`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -242,6 +242,6 @@ func HandleDeleteSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, "")
+		_, _ = fmt.Fprintf(w, "")
 	})
 }

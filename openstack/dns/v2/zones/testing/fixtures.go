@@ -149,7 +149,7 @@ func HandleListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprintf(w, ListOutput)
 	})
 }
 
@@ -160,7 +160,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprintf(w, GetOutput)
 	})
 }
 
@@ -212,7 +212,7 @@ func HandleCreateSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, CreateZoneResponse)
+		_, _ = fmt.Fprintf(w, CreateZoneResponse)
 	})
 }
 
@@ -259,7 +259,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 
 			w.WriteHeader(http.StatusOK)
 			w.Header().Add("Content-Type", "application/json")
-			fmt.Fprintf(w, UpdateZoneResponse)
+			_, _ = fmt.Fprintf(w, UpdateZoneResponse)
 		})
 }
 
@@ -297,6 +297,6 @@ func HandleDeleteSuccessfully(t *testing.T) {
 
 			w.WriteHeader(http.StatusAccepted)
 			w.Header().Add("Content-Type", "application/json")
-			fmt.Fprintf(w, DeleteZoneResponse)
+			_, _ = fmt.Fprintf(w, DeleteZoneResponse)
 		})
 }

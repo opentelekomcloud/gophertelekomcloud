@@ -747,7 +747,7 @@ func ConvertRequestToIoReader(req interface{}) (io.Reader, error) {
 	return nil, err
 }
 
-func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResult bool, isObs bool) (err error) {
+func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResult bool, _ bool) (err error) {
 	readCloser, ok := baseModel.(IReadCloser)
 	if !ok {
 		defer resp.Body.Close()

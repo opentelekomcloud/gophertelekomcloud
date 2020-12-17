@@ -21,25 +21,25 @@ type ListOpts struct {
 	// unique.
 	Name string `json:"name"`
 
-	//Specifies the network segment on which the subnet resides.
+	// Specifies the network segment on which the subnet resides.
 	CIDR string `json:"cidr"`
 
 	// Status indicates whether or not a subnet is currently operational.
 	Status string `json:"status"`
 
-	//Specifies the gateway of the subnet.
+	// Specifies the gateway of the subnet.
 	GatewayIP string `json:"gateway_ip"`
 
-	//Specifies the IP address of DNS server 1 on the subnet.
+	// Specifies the IP address of DNS server 1 on the subnet.
 	PRIMARY_DNS string `json:"primary_dns"`
 
-	//Specifies the IP address of DNS server 2 on the subnet.
+	// Specifies the IP address of DNS server 2 on the subnet.
 	SECONDARY_DNS string `json:"secondary_dns"`
 
-	//Identifies the availability zone (AZ) to which the subnet belongs.
+	// Identifies the availability zone (AZ) to which the subnet belongs.
 	AvailabilityZone string `json:"availability_zone"`
 
-	//Specifies the ID of the VPC to which the subnet belongs.
+	// Specifies the ID of the VPC to which the subnet belongs.
 	VPC_ID string `json:"vpc_id"`
 }
 
@@ -123,7 +123,7 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 func getStructField(v *Subnet, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -181,7 +181,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	//ToSubnetUpdateMap() (map[string]interface{}, error)
+	// ToSubnetUpdateMap() (map[string]interface{}, error)
 	ToSubnetUpdateMap() (map[string]interface{}, error)
 }
 

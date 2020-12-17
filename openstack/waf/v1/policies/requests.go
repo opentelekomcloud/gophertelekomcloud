@@ -13,7 +13,7 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new policy.
 type CreateOpts struct {
-	//Policy name
+	// Policy name
 	Name string `json:"name" required:"true"`
 }
 
@@ -42,15 +42,15 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a policy.
 type UpdateOpts struct {
-	//Policy name
+	// Policy name
 	Name string `json:"name,omitempty"`
-	//Protective Action
+	// Protective Action
 	Action *Action `json:"action,omitempty"`
-	//Protection Switches
+	// Protection Switches
 	Options *Options `json:"options,omitempty"`
-	//Protection Level
+	// Protection Level
 	Level int `json:"level,omitempty"`
-	//Detection Mode
+	// Detection Mode
 	FullDetection *bool `json:"full_detection,omitempty"`
 }
 
@@ -79,7 +79,7 @@ type UpdateHostsOptsBuilder interface {
 
 // UpdateHostsOpts contains all the values needed to update a policy hosts.
 type UpdateHostsOpts struct {
-	//Domain IDs
+	// Domain IDs
 	Hosts []string `json:"hosts" required:"true"`
 }
 

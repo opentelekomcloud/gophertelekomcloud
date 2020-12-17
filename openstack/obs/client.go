@@ -27,7 +27,7 @@ type ObsClient struct {
 	httpClient *http.Client
 }
 
-func New(ak, sk, endpoint string, configurers ...configurer) (*ObsClient, error) {
+func New(ak, sk, endpoint string, configurers ...Configurer) (*ObsClient, error) {
 	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk}, endpoint: endpoint}
 	conf.maxRetryCount = -1
 	conf.maxRedirectCount = -1

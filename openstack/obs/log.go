@@ -54,7 +54,7 @@ func getDefaultLogConf() logConfType {
 		level:        LEVEL_WARN,
 		logToConsole: false,
 		logFullPath:  "",
-		maxLogSize:   1024 * 1024 * 30, //30MB
+		maxLogSize:   1024 * 1024 * 30, // 30MB
 		backups:      10,
 	}
 }
@@ -84,7 +84,7 @@ func (lw *loggerWrapper) doInit() {
 func (lw *loggerWrapper) rotate() {
 	stat, err := lw.fd.Stat()
 	if err != nil {
-		lw.fd.Close()
+		_ = lw.fd.Close()
 		panic(err)
 	}
 	if stat.Size() >= logConf.maxLogSize {
@@ -92,7 +92,7 @@ func (lw *loggerWrapper) rotate() {
 		if _err != nil {
 			panic(err)
 		}
-		lw.fd.Close()
+		_ = lw.fd.Close()
 		if lw.index > logConf.backups {
 			lw.index = 1
 		}
@@ -134,7 +134,7 @@ func (lw *loggerWrapper) doWrite() {
 		msg, ok := <-lw.ch
 		if !ok {
 			lw.doFlush()
-			lw.fd.Close()
+			_ = lw.fd.Close()
 			break
 		}
 		if len(lw.queue) >= lw.cacheCount {
@@ -155,7 +155,7 @@ func (lw *loggerWrapper) Printf(format string, v ...interface{}) {
 
 var consoleLogger *log.Logger
 var fileLogger *loggerWrapper
-var lock *sync.RWMutex = new(sync.RWMutex)
+var lock = new(sync.RWMutex)
 
 func isDebugLogEnabled() bool {
 	return logConf.level <= LEVEL_DEBUG
@@ -218,7 +218,7 @@ func InitLogWithCacheCnt(logFullPath string, maxLogSize int64, backups int, leve
 		if stat == nil {
 			stat, err = os.Stat(_fullPath)
 			if err != nil {
-				fd.Close()
+				_ = fd.Close()
 				return err
 			}
 		}
@@ -237,7 +237,7 @@ func InitLogWithCacheCnt(logFullPath string, maxLogSize int64, backups int, leve
 		}
 
 		if err = filepath.Walk(filepath.Dir(_fullPath), walkFunc); err != nil {
-			fd.Close()
+			_ = fd.Close()
 			return err
 		}
 

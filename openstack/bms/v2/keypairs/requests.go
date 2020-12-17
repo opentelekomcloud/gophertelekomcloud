@@ -13,7 +13,7 @@ type ListOpts struct {
 	Name string `json:"name"`
 }
 
-/// List returns a Pager that allows you to iterate over a collection of KeyPairs.
+// / List returns a Pager that allows you to iterate over a collection of KeyPairs.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
 	u := listURL(c)
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
@@ -28,7 +28,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
 	return FilterKeyPairs(allkeypairs, opts)
 }
 
-//FilterKeyPairs used to filter keypairs using name
+// FilterKeyPairs used to filter keypairs using name
 func FilterKeyPairs(keypairs []KeyPair, opts ListOpts) ([]KeyPair, error) {
 
 	var refinedKeypairs []KeyPair
@@ -64,5 +64,5 @@ func FilterKeyPairs(keypairs []KeyPair, opts ListOpts) ([]KeyPair, error) {
 func getStructKeyPairField(v *KeyPair, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }

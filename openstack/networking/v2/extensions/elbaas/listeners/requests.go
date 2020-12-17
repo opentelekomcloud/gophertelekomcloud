@@ -32,6 +32,9 @@ type ListOpts struct {
 // ToListenerListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToListenerListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -261,7 +264,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (r UpdateRes
 // Delete will permanently delete a particular Listeners based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	url := resourceURL(c, id)
-	//fmt.Printf("Delete listener url: %s.\n", url)
+	// fmt.Printf("Delete listener url: %s.\n", url)
 	_, r.Err = c.Delete(url, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})

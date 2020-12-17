@@ -22,7 +22,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprintf(w, getResponse)
 	})
 
 	s, err := hosts.Get(client.ServiceClient(), HostID).Extract()
@@ -52,10 +52,10 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, listResponse)
+		_, _ = fmt.Fprintf(w, listResponse)
 	})
 
-	//count := 0
+	// count := 0
 
 	host, err := hosts.List(client.ServiceClient(), hosts.ListOpts{}).AllPages()
 
@@ -103,7 +103,7 @@ func TestListServer(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, listserverResponse)
+		_, _ = fmt.Fprintf(w, listserverResponse)
 	})
 
 	actual, err := hosts.ListServer(client.ServiceClient(), HostID, hosts.ListServerOpts{})
@@ -155,7 +155,7 @@ func TestAllocateDeH(t *testing.T) {
 		th.TestJSONRequest(t, r, allocateRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, allocateResponse)
+		_, _ = fmt.Fprintf(w, allocateResponse)
 	})
 
 	c := client.ServiceClient()

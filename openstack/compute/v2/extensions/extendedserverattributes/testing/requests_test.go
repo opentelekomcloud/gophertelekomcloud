@@ -20,7 +20,7 @@ func TestServerWithUsageExt(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, ServerWithAttributesExtResult)
+		_, _ = fmt.Fprintf(w, ServerWithAttributesExtResult)
 	})
 
 	type serverAttributesExt struct {
