@@ -34,37 +34,32 @@ func TestRdsList(t *testing.T) {
 
 func TestRdsCRUD(t *testing.T) {
 	client, err := clients.NewRdsV3()
-	if err != nil {
-		t.Fatalf("Unable to create a RDSv3 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
 
 	// Create RDSv3 instance
-	rds := createRDS(t, client)
+	rds := createRDS(t, client, cc.RegionName)
 	defer deleteRDS(t, client, rds.Id)
 
 	tools.PrintResource(t, rds)
 
 	err = updateRDS(t, client, rds.Id)
-	if err != nil {
-		t.Fatalf("Unable to update RDSv3 instance: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, rds)
 
 	listOpts := instances.ListRdsInstanceOpts{
 		Id: rds.Id,
 	}
 	allPages, err := instances.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to get all RDS pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	newRds, err := instances.ExtractRdsInstances(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract RDS pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, newRds)
 }
 
-func createRDS(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
+func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
 	prefix := "rds-acc-"
 	rdsName := tools.RandomString(prefix, 8)
 	sgName := tools.RandomString(prefix, 8)
@@ -76,9 +71,6 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient) *instances.Instanc
 		az = "eu-de-01"
 	}
 
-	cld, err := clients.EnvOS.Cloud()
-	th.AssertNoErr(t, err)
-
 	subnet := nwv1.CreateNetwork(t, prefix, az)
 	defer nwv1.DeleteNetwork(t, subnet)
 
@@ -87,7 +79,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient) *instances.Instanc
 		Port:             "8635",
 		Password:         "acc-test-password1!",
 		FlavorRef:        "rds.pg.c2.medium",
-		Region:           cld.RegionName,
+		Region:           region,
 		AvailabilityZone: az,
 		VpcId:            subnet.VPC_ID,
 		SubnetId:         subnet.ID,

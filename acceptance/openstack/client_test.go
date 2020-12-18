@@ -9,7 +9,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -45,7 +44,7 @@ func TestAuthTokenNoRegion(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	envPrefix := tools.RandomString("", 5)
-	th.AssertNoErr(t, os.Setenv(envPrefix+"_TOKEN", preClient.IdentityEndpoint))
+	th.AssertNoErr(t, os.Setenv(envPrefix+"_TOKEN", preClient.TokenID))
 	th.AssertNoErr(t, os.Setenv(envPrefix+"_AUTH_URL", preClient.IdentityEndpoint))
 
 	env := openstack.NewEnv(envPrefix)
@@ -55,38 +54,20 @@ func TestAuthTokenNoRegion(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func setEnvToken(t *testing.T) {
-	cc, err := clients.CloudAndClient()
-	th.AssertNoErr(t, err)
-	if cc.AuthInfo.Token == "" {
-		t.Fatalf("No token is set in client")
-	}
-	th.AssertNoErr(t, os.Setenv("OS_TOKEN", cc.AuthInfo.Token))
-}
-
-func unsetEnvToken(t *testing.T) {
-	th.AssertNoErr(t, os.Unsetenv("OS_TOKEN"))
-}
-
 func TestReauth(t *testing.T) {
-	setEnvToken(t)
-	defer unsetEnvToken(t)
-
-	ao, err := openstack.AuthOptionsFromEnv()
+	cloud, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
-	// Allow reauth
+	opts, err := openstack.AuthOptionsFromInfo(&cloud.AuthInfo, cloud.AuthType)
+	ao := opts.(golangsdk.AuthOptions)
 	ao.AllowReauth = true
 
-	provider, err := openstack.NewClient(ao.IdentityEndpoint)
-	th.AssertNoErr(t, err)
-
-	err = openstack.Authenticate(provider, ao)
+	scl, err := openstack.AuthenticatedClient(ao)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Creating a compute client")
-	_, err = openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+	_, err = openstack.NewComputeV2(scl, golangsdk.EndpointOpts{
+		Region: cloud.RegionName,
 	})
 	th.AssertNoErr(t, err)
 
@@ -94,11 +75,11 @@ func TestReauth(t *testing.T) {
 	time.Sleep(1 * time.Second)
 	t.Logf("Attempting to reauthenticate")
 
-	th.AssertNoErr(t, provider.ReauthFunc())
+	th.AssertNoErr(t, scl.ReauthFunc())
 
 	t.Logf("Creating a compute client")
-	_, err = openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao),
+	_, err = openstack.NewComputeV2(scl, golangsdk.EndpointOpts{
+		Region: cloud.RegionName,
 	})
 	th.AssertNoErr(t, err)
 }
