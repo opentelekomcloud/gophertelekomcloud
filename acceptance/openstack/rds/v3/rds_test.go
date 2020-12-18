@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
@@ -33,6 +32,8 @@ func TestRdsList(t *testing.T) {
 }
 
 func TestRdsCRUD(t *testing.T) {
+	t.Skip("RDS deletion is never magic process")
+
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
@@ -71,8 +72,11 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		az = "eu-de-01"
 	}
 
-	subnet := nwv1.CreateNetwork(t, prefix, az)
-	defer nwv1.DeleteNetwork(t, subnet)
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	}
 
 	createRdsOpts := instances.CreateRdsOpts{
 		Name:             rdsName,
@@ -81,8 +85,8 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		FlavorRef:        "rds.pg.c2.medium",
 		Region:           region,
 		AvailabilityZone: az,
-		VpcId:            subnet.VPC_ID,
-		SubnetId:         subnet.ID,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
 		SecurityGroupId:  sg.ID,
 
 		Volume: &instances.Volume{
