@@ -64,8 +64,13 @@ func setEnvToken(t *testing.T) {
 	th.AssertNoErr(t, os.Setenv("OS_TOKEN", cc.AuthInfo.Token))
 }
 
+func unsetEnvToken(t *testing.T) {
+	th.AssertNoErr(t, os.Unsetenv("OS_TOKEN"))
+}
+
 func TestReauth(t *testing.T) {
 	setEnvToken(t)
+	defer unsetEnvToken(t)
 
 	ao, err := openstack.AuthOptionsFromEnv()
 	th.AssertNoErr(t, err)
