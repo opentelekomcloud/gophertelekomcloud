@@ -93,6 +93,9 @@ type ListOpts struct {
 // ToImageListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToImageListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	params := q.Query()
 
 	if opts.CreatedAtQuery != nil {
@@ -120,15 +123,15 @@ func (opts ListOpts) ToImageListQuery() (string, error) {
 
 // List implements image list request.
 func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(c)
+	u := listURL(c)
 	if opts != nil {
 		query, err := opts.ToImageListQuery()
 		if err != nil {
 			return pagination.Pager{Err: err}
 		}
-		url += query
+		u += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		imagePage := ImagePage{
 			serviceURL:     c.ServiceURL(),
 			LinkedPageBase: pagination.LinkedPageBase{PageResult: r},

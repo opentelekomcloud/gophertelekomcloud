@@ -18,7 +18,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	volumes.List(client.ServiceClient(), &volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = volumes.List(client.ServiceClient(), &volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := volumes.ExtractVolumes(page)
 		if err != nil {

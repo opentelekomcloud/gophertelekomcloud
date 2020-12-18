@@ -33,6 +33,9 @@ type ListOpts struct {
 // ToNetworkListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToNetworkListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

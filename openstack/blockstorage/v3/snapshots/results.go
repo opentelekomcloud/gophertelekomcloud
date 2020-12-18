@@ -84,11 +84,11 @@ func (r SnapshotPage) IsEmpty() (bool, error) {
 	return len(volumes) == 0, err
 }
 
-func (page SnapshotPage) NextPageURL() (string, error) {
+func (r SnapshotPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"snapshots_links"`
 	}
-	err := page.ExtractInto(&s)
+	err := r.ExtractInto(&s)
 	if err != nil {
 		return "", err
 	}

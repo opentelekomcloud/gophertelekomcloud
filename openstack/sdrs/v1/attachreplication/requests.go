@@ -4,7 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 }
 

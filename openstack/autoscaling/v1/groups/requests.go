@@ -5,12 +5,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-//CreateGroupBuilder is an interface from which can build the request of creating group
+// CreateGroupBuilder is an interface from which can build the request of creating group
 type CreateOptsBuilder interface {
 	ToGroupCreateMap() (map[string]interface{}, error)
 }
 
-//CreateGroupOps is a struct contains the parameters of creating group
+// CreateGroupOps is a struct contains the parameters of creating group
 type CreateOpts struct {
 	Name                      string              `json:"scaling_group_name" required:"true"`
 	ConfigurationID           string              `json:"scaling_configuration_id,omitempty"`
@@ -50,7 +50,7 @@ func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//CreateGroup is a method of creating group
+// CreateGroup is a method of creating group
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToGroupCreateMap()
 	if err != nil {
@@ -63,13 +63,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-//DeleteGroup is a method of deleting a group by group id
+// DeleteGroup is a method of deleting a group by group id
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = client.Delete(deleteURL(client, id), nil)
 	return
 }
 
-//GetGroup is a method of getting the detailed information of the group by id
+// GetGroup is a method of getting the detailed information of the group by id
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
 	return
@@ -88,6 +88,9 @@ type ListOpts struct {
 // ToGroupListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToGroupListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -106,12 +109,12 @@ func List(client *golangsdk.ServiceClient, ops ListOptsBuilder) pagination.Pager
 	})
 }
 
-//UpdateOptsBuilder is an interface which can build the map paramter of update function
+// UpdateOptsBuilder is an interface which can build the map paramter of update function
 type UpdateOptsBuilder interface {
 	ToGroupUpdateMap() (map[string]interface{}, error)
 }
 
-//UpdateOpts is a struct which represents the parameters of update function
+// UpdateOpts is a struct which represents the parameters of update function
 type UpdateOpts struct {
 	Name                      string              `json:"scaling_group_name,omitempty"`
 	DesireInstanceNumber      int                 `json:"desire_instance_number"`
@@ -136,8 +139,8 @@ func (opts UpdateOpts) ToGroupUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//Update is a method which can be able to update the group via accessing to the
-//autoscaling service with Put method and parameters
+// Update is a method which can be able to update the group via accessing to the
+// autoscaling service with Put method and parameters
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	body, err := opts.ToGroupUpdateMap()
 	if err != nil {
@@ -175,7 +178,7 @@ func doAction(client *golangsdk.ServiceClient, id string, opts ActionOptsBuilder
 	return
 }
 
-//Enable is an operation by which can make the group enable service
+// Enable is an operation by which can make the group enable service
 func Enable(client *golangsdk.ServiceClient, id string) (r ActionResult) {
 	opts := ActionOpts{
 		Action: "resume",
@@ -183,7 +186,7 @@ func Enable(client *golangsdk.ServiceClient, id string) (r ActionResult) {
 	return doAction(client, id, opts)
 }
 
-//Disable is an operation by which can be able to pause the group
+// Disable is an operation by which can be able to pause the group
 func Disable(client *golangsdk.ServiceClient, id string) (r ActionResult) {
 	opts := ActionOpts{
 		Action: "pause",

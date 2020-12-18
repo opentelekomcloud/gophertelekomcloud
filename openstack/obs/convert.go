@@ -106,7 +106,7 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 			xml = append(xml, "</Grantee>")
 		} else if grant.Grantee.URI == GroupAllUsers {
 			xml = append(xml, "<Grant><Grantee>")
-			xml = append(xml, fmt.Sprintf("<Canned>Everyone</Canned>"))
+			xml = append(xml, "<Canned>Everyone</Canned>")
 			xml = append(xml, "</Grantee>")
 		} else {
 			return strings.Join(xml, "")
@@ -117,7 +117,7 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	if isObs && isBucket {
 		xml = append(xml, fmt.Sprintf("<Delivered>%t</Delivered>", grant.Delivered))
 	}
-	xml = append(xml, fmt.Sprintf("</Grant>"))
+	xml = append(xml, "</Grant>")
 	return strings.Join(xml, "")
 }
 
@@ -449,7 +449,7 @@ func ConverntObsRestoreToXml(restoreObjectInput RestoreObjectInput) string {
 	if restoreObjectInput.Tier != "Bulk" {
 		xml = append(xml, fmt.Sprintf("<RestoreJob><Tier>%s</Tier></RestoreJob>", restoreObjectInput.Tier))
 	}
-	xml = append(xml, fmt.Sprintf("</RestoreRequest>"))
+	xml = append(xml, "</RestoreRequest>")
 	data := strings.Join(xml, "")
 	return data
 }
@@ -747,7 +747,7 @@ func ConvertRequestToIoReader(req interface{}) (io.Reader, error) {
 	return nil, err
 }
 
-func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResult bool, isObs bool) (err error) {
+func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResult bool, _ bool) (err error) {
 	readCloser, ok := baseModel.(IReadCloser)
 	if !ok {
 		defer resp.Body.Close()

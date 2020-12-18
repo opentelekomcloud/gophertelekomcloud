@@ -4,7 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 }
 
@@ -16,11 +16,11 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a Backup.
 type UpdateOpts struct {
-	//Keep Days
+	// Keep Days
 	KeepDays *int `json:"keep_days" required:"true"`
-	//Start Time
+	// Start Time
 	StartTime string `json:"start_time,omitempty"`
-	//Period
+	// Period
 	Period string `json:"period,omitempty"`
 }
 

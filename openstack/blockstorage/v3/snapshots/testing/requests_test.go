@@ -18,7 +18,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	snapshots.List(client.ServiceClient(), &snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = snapshots.List(client.ServiceClient(), &snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := snapshots.ExtractSnapshots(page)
 		if err != nil {

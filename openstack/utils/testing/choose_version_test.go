@@ -12,7 +12,7 @@ import (
 
 func setupVersionHandler() {
 	testhelper.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprintf(w, `
 			{
 				"versions": {
 					"values": [

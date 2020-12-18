@@ -65,11 +65,11 @@ type commonResult struct {
 
 // Extract is a function that accepts a result and extracts a router.
 func (r commonResult) Extract() (*Backend, error) {
-	//fmt.Printf("Extracting Backend...\n")
+	// fmt.Printf("Extracting Backend...\n")
 	var Backends []Backend
 	err := r.ExtractInto(&Backends)
 	if err != nil {
-		//fmt.Printf("Error: %s.\n", err.Error())
+		// fmt.Printf("Error: %s.\n", err.Error())
 		return nil, err
 	} else {
 		if len(Backends) == 0 {

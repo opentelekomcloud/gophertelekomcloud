@@ -96,11 +96,11 @@ func HandleStoragePoolsListSuccessfully(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 
-		r.ParseForm()
+		_ = r.ParseForm()
 		if r.FormValue("detail") == "true" {
-			fmt.Fprintf(w, StoragePoolsListBodyDetail)
+			_, _ = fmt.Fprint(w, StoragePoolsListBodyDetail)
 		} else {
-			fmt.Fprintf(w, StoragePoolsListBody)
+			_, _ = fmt.Fprint(w, StoragePoolsListBody)
 		}
 	})
 }

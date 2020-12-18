@@ -23,7 +23,7 @@ import (
 func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, expires int64) (requestUrl string, err error) {
 	isAkSkEmpty := obsClient.conf.securityProvider == nil || obsClient.conf.securityProvider.ak == "" || obsClient.conf.securityProvider.sk == ""
-	if isAkSkEmpty == false && obsClient.conf.securityProvider.securityToken != "" {
+	if !isAkSkEmpty && obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
 			params[HEADER_STS_TOKEN_OBS] = obsClient.conf.securityProvider.securityToken
 		} else {
@@ -97,7 +97,7 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 
 			stringToSign := getV2StringToSign(method, canonicalizedUrl, headers, obsClient.conf.signature == SignatureObs)
 			signature := UrlEncode(Base64Encode(HmacSha1([]byte(obsClient.conf.securityProvider.sk), []byte(stringToSign))), false)
-			if strings.Index(requestUrl, "?") < 0 {
+			if !strings.Contains(requestUrl, "?") {
 				requestUrl += "?"
 			} else {
 				requestUrl += "&"
@@ -117,7 +117,7 @@ func (obsClient ObsClient) doAuthTemporary(method, bucketName, objectKey string,
 func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params map[string]string,
 	headers map[string][]string, hostName string) (requestUrl string, err error) {
 	isAkSkEmpty := obsClient.conf.securityProvider == nil || obsClient.conf.securityProvider.ak == "" || obsClient.conf.securityProvider.sk == ""
-	if isAkSkEmpty == false && obsClient.conf.securityProvider.securityToken != "" {
+	if !isAkSkEmpty && obsClient.conf.securityProvider.securityToken != "" {
 		if obsClient.conf.signature == SignatureObs {
 			headers[HEADER_STS_TOKEN_OBS] = []string{obsClient.conf.securityProvider.securityToken}
 		} else {
@@ -218,7 +218,7 @@ func attachHeaders(headers map[string][]string, isObs bool) string {
 		}
 	}
 
-	for _, interestedHeader := range interested_headers {
+	for _, interestedHeader := range interestedHeaders {
 		if _, ok := _headers[interestedHeader]; !ok {
 			_headers[interestedHeader] = []string{""}
 			keys = append(keys, interestedHeader)
@@ -305,7 +305,7 @@ func getV4StringToSign(method, canonicalizedUrl, queryUrl, scope, longDate, payl
 	canonicalRequest = append(canonicalRequest, "\n")
 
 	for _, signedHeader := range signedHeaders {
-		values, _ := headers[signedHeader]
+		values := headers[signedHeader]
 		for _, value := range values {
 			canonicalRequest = append(canonicalRequest, signedHeader)
 			canonicalRequest = append(canonicalRequest, ":")

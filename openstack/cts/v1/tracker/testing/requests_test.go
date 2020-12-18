@@ -25,7 +25,7 @@ func TestCreate(t *testing.T) {
 			th.TestJSONRequest(t, r, createRequest)
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
-			fmt.Fprintf(w, createResponse)
+			_, _ = fmt.Fprint(w, createResponse)
 		})
 
 	options := &tracker.CreateOptsWithSMN{
@@ -59,7 +59,7 @@ func TestUpdate(t *testing.T) {
 		th.TestJSONRequest(t, r, updateRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, updateResponse)
+		_, _ = fmt.Fprint(w, updateResponse)
 	})
 
 	options := &tracker.UpdateOptsWithSMN{
@@ -110,7 +110,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprint(w, getResponse)
 	})
 
 	actual, err := tracker.List(fake.ServiceClient(), tracker.ListOpts{})

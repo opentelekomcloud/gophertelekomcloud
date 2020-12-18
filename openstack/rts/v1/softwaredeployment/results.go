@@ -8,23 +8,23 @@ import (
 type Deployment struct {
 	// Specifies the stack action that triggers this deployment resource.
 	Action string `json:"action"`
-	//Specifies the ID of the software Deployments resource running on an instance.
+	// Specifies the ID of the software Deployments resource running on an instance.
 	ConfigId string `json:"config_id"`
-	//Specifies the creation time. The timestamp format is ISO 8601: CCYY-MM-DDThh:mm:ss±hh:mm
+	// Specifies the creation time. The timestamp format is ISO 8601: CCYY-MM-DDThh:mm:ss±hh:mm
 	CreationTime golangsdk.JSONRFC3339NoZ `json:"creation_time"`
-	//Specifies the ID of this deployment resource.
+	// Specifies the ID of this deployment resource.
 	Id string `json:"id"`
-	//Specifies input data stored in the form of a key-value pair.
+	// Specifies input data stored in the form of a key-value pair.
 	InputValues map[string]interface{} `json:"input_values"`
-	//Specifies output data stored in the form of a key-value pair.
+	// Specifies output data stored in the form of a key-value pair.
 	OutputValues map[string]interface{} `json:"output_values"`
-	//Specifies the ID of the instance deployed by the software Deployments.
+	// Specifies the ID of the instance deployed by the software Deployments.
 	ServerId string `json:"server_id"`
-	//Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
+	// Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
 	Status string `json:"status"`
-	//Specifies the cause of the current deployment resource status.
+	// Specifies the cause of the current deployment resource status.
 	StatusReason string `json:"status_reason"`
-	//Specifies the updated time. The timestamp format is ISO 8601: CCYY-MM-DDThh:mm:ss±hh:mm
+	// Specifies the updated time. The timestamp format is ISO 8601: CCYY-MM-DDThh:mm:ss±hh:mm
 	UpdatedTime golangsdk.JSONRFC3339NoZ `json:"updated_time"`
 }
 

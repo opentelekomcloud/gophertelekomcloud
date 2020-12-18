@@ -100,8 +100,8 @@ type ServicePage struct {
 }
 
 // IsEmpty returns true if the ServicePage contains no results.
-func (p ServicePage) IsEmpty() (bool, error) {
-	services, err := ExtractServices(p)
+func (r ServicePage) IsEmpty() (bool, error) {
+	services, err := ExtractServices(r)
 	return len(services) == 0, err
 }
 

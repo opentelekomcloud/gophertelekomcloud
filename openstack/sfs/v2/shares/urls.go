@@ -2,7 +2,7 @@ package shares
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-//For access rule create , update and delete
+// For access rule create , update and delete
 func rootURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("shares", id, "action")
 }
@@ -20,7 +20,7 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("shares", id)
 }
 
-//For access rule create , update and delete
+// For access rule create , update and delete
 func listURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("shares", "detail")
 }

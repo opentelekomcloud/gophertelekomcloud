@@ -27,7 +27,7 @@ type ObsClient struct {
 	httpClient *http.Client
 }
 
-func New(ak, sk, endpoint string, configurers ...configurer) (*ObsClient, error) {
+func New(ak, sk, endpoint string, configurers ...Configurer) (*ObsClient, error) {
 	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk}, endpoint: endpoint}
 	conf.maxRetryCount = -1
 	conf.maxRedirectCount = -1
@@ -117,22 +117,20 @@ func (obsClient ObsClient) SetBucketStoragePolicy(input *SetBucketStoragePolicyI
 }
 func (obsClient ObsClient) getBucketStoragePolicyS3(bucketName string) (output *GetBucketStoragePolicyOutput, err error) {
 	output = &GetBucketStoragePolicyOutput{}
-	var outputS3 *getBucketStoragePolicyOutputS3
-	outputS3 = &getBucketStoragePolicyOutputS3{}
+	var outputS3 = &getBucketStoragePolicyOutputS3{}
 	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HTTP_GET, bucketName, newSubResourceSerial(SubResourceStoragePolicy), outputS3)
 	if err != nil {
 		output = nil
 		return
 	}
 	output.BaseModel = outputS3.BaseModel
-	output.StorageClass = fmt.Sprintf("%s", outputS3.StorageClass)
+	output.StorageClass = string(outputS3.StorageClass)
 	return
 }
 
 func (obsClient ObsClient) getBucketStoragePolicyObs(bucketName string) (output *GetBucketStoragePolicyOutput, err error) {
 	output = &GetBucketStoragePolicyOutput{}
-	var outputObs *getBucketStoragePolicyOutputObs
-	outputObs = &getBucketStoragePolicyOutputObs{}
+	var outputObs = &getBucketStoragePolicyOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketStoragePolicy", HTTP_GET, bucketName, newSubResourceSerial(SubResourceStorageClass), outputObs)
 	if err != nil {
 		output = nil
@@ -256,8 +254,7 @@ func (obsClient ObsClient) GetBucketStorageInfo(bucketName string) (output *GetB
 
 func (obsClient ObsClient) getBucketLocationS3(bucketName string) (output *GetBucketLocationOutput, err error) {
 	output = &GetBucketLocationOutput{}
-	var outputS3 *getBucketLocationOutputS3
-	outputS3 = &getBucketLocationOutputS3{}
+	var outputS3 = &getBucketLocationOutputS3{}
 	err = obsClient.doActionWithBucket("GetBucketLocation", HTTP_GET, bucketName, newSubResourceSerial(SubResourceLocation), outputS3)
 	if err != nil {
 		output = nil
@@ -269,8 +266,7 @@ func (obsClient ObsClient) getBucketLocationS3(bucketName string) (output *GetBu
 }
 func (obsClient ObsClient) getBucketLocationObs(bucketName string) (output *GetBucketLocationOutput, err error) {
 	output = &GetBucketLocationOutput{}
-	var outputObs *getBucketLocationOutputObs
-	outputObs = &getBucketLocationOutputObs{}
+	var outputObs = &getBucketLocationOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketLocation", HTTP_GET, bucketName, newSubResourceSerial(SubResourceLocation), outputObs)
 	if err != nil {
 		output = nil
@@ -300,8 +296,7 @@ func (obsClient ObsClient) SetBucketAcl(input *SetBucketAclInput) (output *BaseM
 }
 func (obsClient ObsClient) getBucketAclObs(bucketName string) (output *GetBucketAclOutput, err error) {
 	output = &GetBucketAclOutput{}
-	var outputObs *getBucketAclOutputObs
-	outputObs = &getBucketAclOutputObs{}
+	var outputObs = &getBucketAclOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketAcl", HTTP_GET, bucketName, newSubResourceSerial(SubResourceAcl), outputObs)
 	if err != nil {
 		output = nil
@@ -678,7 +673,7 @@ func (obsClient ObsClient) PutObject(input *PutObjectInput) (output *PutObjectOu
 	}
 
 	if input.ContentType == "" && input.Key != "" {
-		if contentType, ok := mime_types[strings.ToLower(input.Key[strings.LastIndex(input.Key, ".")+1:])]; ok {
+		if contentType, ok := mimeTypes[strings.ToLower(input.Key[strings.LastIndex(input.Key, ".")+1:])]; ok {
 			input.ContentType = contentType
 		}
 	}
@@ -740,9 +735,9 @@ func (obsClient ObsClient) PutFile(input *PutFileInput) (output *PutObjectOutput
 	_input.Body = body
 
 	if _input.ContentType == "" && _input.Key != "" {
-		if contentType, ok := mime_types[strings.ToLower(_input.Key[strings.LastIndex(_input.Key, ".")+1:])]; ok {
+		if contentType, ok := mimeTypes[strings.ToLower(_input.Key[strings.LastIndex(_input.Key, ".")+1:])]; ok {
 			_input.ContentType = contentType
-		} else if contentType, ok := mime_types[strings.ToLower(sourceFile[strings.LastIndex(sourceFile, ".")+1:])]; ok {
+		} else if contentType, ok := mimeTypes[strings.ToLower(sourceFile[strings.LastIndex(sourceFile, ".")+1:])]; ok {
 			_input.ContentType = contentType
 		}
 	}
@@ -800,7 +795,7 @@ func (obsClient ObsClient) InitiateMultipartUpload(input *InitiateMultipartUploa
 	}
 
 	if input.ContentType == "" && input.Key != "" {
-		if contentType, ok := mime_types[strings.ToLower(input.Key[strings.LastIndex(input.Key, ".")+1:])]; ok {
+		if contentType, ok := mimeTypes[strings.ToLower(input.Key[strings.LastIndex(input.Key, ".")+1:])]; ok {
 			input.ContentType = contentType
 		}
 	}

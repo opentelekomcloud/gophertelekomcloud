@@ -320,6 +320,10 @@ func FindRole(t *testing.T, client *golangsdk.ServiceClient) (*roles.Role, error
 		break
 	}
 
+	if role == nil {
+		t.Fatalf("failed to find a role")
+	}
+
 	t.Logf("Successfully found a role %s with ID %s", role.Name, role.ID)
 
 	return role, nil

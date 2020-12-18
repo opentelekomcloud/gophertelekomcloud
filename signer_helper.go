@@ -42,7 +42,7 @@ func (cache *MemoryCache) Add(cacheKey string, cacheData string) {
 
 	if len(cache.cacheKeys) >= cache.MaxCount && len(cache.cacheKeys) > 1 {
 		delete(cache.cacheHolder, cache.cacheKeys[0]) // delete first item
-		cache.cacheKeys = append(cache.cacheKeys[1:]) // pop first one
+		cache.cacheKeys = cache.cacheKeys[1:]         // pop first one
 	}
 
 	cache.cacheHolder[cacheKey] = cacheData
@@ -57,7 +57,7 @@ func (cache *MemoryCache) Get(cacheKey string) string {
 	return cache.cacheHolder[cacheKey]
 }
 
-//caseInsensitiveStringArray represents string case insensitive sorting operations
+// caseInsensitiveStringArray represents string case insensitive sorting operations
 type caseInsensitiveStringArray []string
 
 // noEscape specifies whether the character should be encoded or not
@@ -72,25 +72,25 @@ func init() {
 			i == '.' ||
 			i == '-' ||
 			i == '_' ||
-			i == '~' //java-sdk-core 3.0.1 HttpUtils.urlEncode
+			i == '~' // java-sdk-core 3.0.1 HttpUtils.urlEncode
 	}
 }
 
 // SignOptions represents the options during signing http request, it is concurency safely
 type SignOptions struct {
-	AccessKey           string //Access Key
-	SecretKey           string //Secret key
+	AccessKey           string // Access Key
+	SecretKey           string // Secret key
 	RegionName          string // Region name
 	ServiceName         string // Service Name
 	EnableCacheSignKey  bool   // Cache sign key for one day or not cache, cache is disabled by default
-	encodeUrl           bool   //internal use
-	SignAlgorithm       string //The algorithm used for sign, the default value is "SDK-HMAC-SHA256" if you don't set its value
+	encodeUrl           bool   // internal use
+	SignAlgorithm       string // The algorithm used for sign, the default value is "SDK-HMAC-SHA256" if you don't set its value
 	TimeOffsetInSeconds int64  // TimeOffsetInSeconds is used for adjust x-sdk-date if set its value
 }
 
 // StringBuilder wraps bytes.Buffer to implement a high performance string builder
 type StringBuilder struct {
-	builder bytes.Buffer //string storage
+	builder bytes.Buffer // string storage
 }
 
 // reqSignParams represents the option values used for signing http request
@@ -112,13 +112,13 @@ const SignAlgorithmHMACSHA256 = "SDK-HMAC-SHA256"
 // The header key of content hash value
 const ContentSha256HeaderKey = "x-sdk-content-sha256"
 
-//A regular for searching empty string
+// A regular for searching empty string
 var spaceRegexp = regexp.MustCompile(`\s+`)
 
 // cache sign key
 var cache = NewCache(300)
 
-//Sign manipulates the http.Request instance with some required authentication headers for SK/SK auth
+// Sign manipulates the http.Request instance with some required authentication headers for SK/SK auth
 func Sign(req *http.Request, signOptions SignOptions) {
 	signOptions.AccessKey = strings.TrimSpace(signOptions.AccessKey)
 	signOptions.SecretKey = strings.TrimSpace(signOptions.SecretKey)
@@ -130,8 +130,8 @@ func Sign(req *http.Request, signOptions SignOptions) {
 		Req:         req,
 	}
 
-	//t, _ := time.Parse(time.RFC3339, "2018-04-15T04:28:22+00:00")
-	//signParams.RequestTime = t
+	// t, _ := time.Parse(time.RFC3339, "2018-04-15T04:28:22+00:00")
+	// signParams.RequestTime = t
 
 	if signParams.SignAlgorithm == "" {
 		signParams.SignAlgorithm = SignAlgorithmHMACSHA256
@@ -158,7 +158,7 @@ func Sign(req *http.Request, signOptions SignOptions) {
 	req.Header.Set("Authorization", buildAuthorizationHeader(signParams, signature))
 }
 
-//ReSign manipulates the http.Request instance with some required authentication headers for SK/SK auth
+// ReSign manipulates the http.Request instance with some required authentication headers for SK/SK auth
 func ReSign(req *http.Request, signOptions SignOptions) {
 	signOptions.AccessKey = strings.TrimSpace(signOptions.AccessKey)
 	signOptions.SecretKey = strings.TrimSpace(signOptions.SecretKey)
@@ -204,7 +204,7 @@ func deriveSigningKey(signParam reqSignParams) []byte {
 
 		if cacheData != "" {
 			var signKey signKeyCacheEntry
-			json.Unmarshal([]byte(cacheData), &signKey)
+			_ = json.Unmarshal([]byte(cacheData), &signKey)
 
 			if signKey.NumberOfDaysSinceEpoch == signParam.getDaysSinceEpon() {
 				return signKey.Key
@@ -233,17 +233,17 @@ func buildSignKey(signParam reqSignParams) []byte {
 	return computeSignature("sdk_request", kService, signParam.SignAlgorithm)
 }
 
-//HmacSha256 implements the  Keyed-Hash Message Authentication Code computation
+// HmacSha256 implements the  Keyed-Hash Message Authentication Code computation
 func HmacSha256(data string, key []byte) []byte {
 	mac := hmac.New(sha256.New, key)
-	mac.Write([]byte(data))
+	_, _ = mac.Write([]byte(data))
 	return mac.Sum(nil)
 }
 
 // HashSha256 is a wrapper for sha256 implementation
 func HashSha256(msg []byte) []byte {
 	sh256 := sha256.New()
-	sh256.Write(msg)
+	_, _ = sh256.Write(msg)
 
 	return sh256.Sum(nil)
 }
@@ -308,9 +308,9 @@ func getCanonicalizedResourcePath(signParas reqSignParams) string {
 
 // urlEncode encodes url path and url querystring according to the following rules:
 // The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
-//The special characters ".", "-", "*", and "_" remain the same.
-//The space character " " is converted into a plus sign "%20".
-//All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.
+// The special characters ".", "-", "*", and "_" remain the same.
+// The space character " " is converted into a plus sign "%20".
+// All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.
 func urlEncode(url string, urlPath bool) string {
 	var buf bytes.Buffer
 	for i := 0; i < len(url); i++ {
@@ -318,7 +318,7 @@ func urlEncode(url string, urlPath bool) string {
 		if noEscape[c] || (c == '/' && urlPath) {
 			buf.WriteByte(c)
 		} else {
-			fmt.Fprintf(&buf, "%%%02X", c)
+			_, _ = fmt.Fprintf(&buf, "%%%02X", c)
 		}
 	}
 
@@ -376,7 +376,7 @@ func createCanonicalRequest(signParas reqSignParams, contentSha256 string) strin
 func calculateContentHash(req *http.Request) string {
 	encodeParas := ""
 
-	//post and content is null use queryString as content -- according to document
+	// post and content is null use queryString as content -- according to document
 	if usePayloadForQueryParameters(req) {
 		encodeParas = req.URL.Query().Encode()
 	} else {

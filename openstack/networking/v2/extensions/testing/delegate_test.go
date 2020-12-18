@@ -22,7 +22,7 @@ func TestList(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "extensions": [
         {
@@ -40,7 +40,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	extensions.List(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	_ = extensions.List(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := extensions.ExtractExtensions(page)
 		if err != nil {
@@ -81,7 +81,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "extension": {
         "updated": "2013-02-03T10:00:00-00:00",

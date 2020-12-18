@@ -209,8 +209,8 @@ func TestGetServer(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleServerGetSuccessfully(t)
 
-	client := client.ServiceClient()
-	actual, err := servers.Get(client, "1234asdf").Extract()
+	serviceClient := client.ServiceClient()
+	actual, err := servers.Get(serviceClient, "1234asdf").Extract()
 	if err != nil {
 		t.Fatalf("Unexpected Get error: %v", err)
 	}
@@ -223,8 +223,8 @@ func TestGetFaultyServer(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleServerGetFaultSuccessfully(t)
 
-	client := client.ServiceClient()
-	actual, err := servers.Get(client, "1234asdf").Extract()
+	serviceClient := client.ServiceClient()
+	actual, err := servers.Get(serviceClient, "1234asdf").Extract()
 	if err != nil {
 		t.Fatalf("Unexpected Get error: %v", err)
 	}
@@ -265,8 +265,8 @@ func TestUpdateServer(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleServerUpdateSuccessfully(t)
 
-	client := client.ServiceClient()
-	actual, err := servers.Update(client, "1234asdf", servers.UpdateOpts{Name: "new-name"}).Extract()
+	serviceClient := client.ServiceClient()
+	actual, err := servers.Update(serviceClient, "1234asdf", servers.UpdateOpts{Name: "new-name"}).Extract()
 	if err != nil {
 		t.Fatalf("Unexpected Update error: %v", err)
 	}

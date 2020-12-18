@@ -38,7 +38,7 @@ func TestCreateV2Policy(t *testing.T) {
 `)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 	createOptions := policies.CreateOpts{Name: "Test_Policy", ScheduledPolicy: policies.ScheduledPolicy{StartTime: "12:00", Status: "ON", Frequency: 1, RententionNum: 10, RemainFirstBackup: "Y"}, Tags: []policies.Tag{{Key: "key", Value: "value"}}}
 	actual, err := policies.Create(fake.ServiceClient(), createOptions).Extract()
@@ -71,7 +71,7 @@ func TestUpdateV2Policy(t *testing.T) {
 `)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprint(w, UpdateOutput)
 	})
 	updateOptions := policies.UpdateOpts{Name: "Test_02", ScheduledPolicy: policies.UpdateSchedule{StartTime: "10:00", Status: "ON", Frequency: 1, RententionNum: 10, RemainFirstBackup: "Y"}}
 	update, err := policies.Update(fake.ServiceClient(), "af8a20b0-117d-4fc3-ae53-aa3968a4f870", updateOptions).Extract()
@@ -90,8 +90,8 @@ func TestDeleteV2Policy(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	delete := policies.Delete(fake.ServiceClient(), "af8a20b0-117d-4fc3-ae53-aa3968a4f870")
-	th.AssertNoErr(t, delete.Err)
+	deleteResult := policies.Delete(fake.ServiceClient(), "af8a20b0-117d-4fc3-ae53-aa3968a4f870")
+	th.AssertNoErr(t, deleteResult.Err)
 }
 
 func TestListV2Policy(t *testing.T) {
@@ -106,7 +106,7 @@ func TestListV2Policy(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 
 	actual, err := policies.List(fake.ServiceClient(), policies.ListOpts{})
@@ -140,7 +140,7 @@ func TestAssociateV2Policy(t *testing.T) {
 `)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, AssociateOutput)
+		_, _ = fmt.Fprint(w, AssociateOutput)
 	})
 	AssoOpts := policies.AssociateOpts{PolicyID: "915d1fd8-63cb-4054-a2b0-2778210e3a75", Resources: []policies.AssociateResource{{ResourceID: "0f187b65-8d0e-4fc0-9096-3b55d330531e", ResourceType: "volume"}}}
 	associate, err := policies.Associate(fake.ServiceClient(), AssoOpts).ExtractResource()
@@ -170,7 +170,7 @@ func TestDisassociateV2Policy(t *testing.T) {
 `)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, DisssociateOutput)
+		_, _ = fmt.Fprint(w, DisssociateOutput)
 	})
 	options := policies.DisassociateOpts{Resources: []policies.DisassociateResource{{ResourceID: "0f187b65-8d0e-4fc0-9096-3b55d330531e"}}}
 	associate, err := policies.Disassociate(fake.ServiceClient(), "915d1fd8-63cb-4054-a2b0-2778210e3a75", options).ExtractResource()

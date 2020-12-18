@@ -57,11 +57,11 @@ func (r *Capabilities) UnmarshalJSON(b []byte) error {
 	// value, "unknown", or "infinite"
 	parseCapacity := func(capacity interface{}) float64 {
 		if capacity != nil {
-			switch capacity.(type) {
+			switch capacity := capacity.(type) {
 			case float64:
-				return capacity.(float64)
+				return capacity
 			case string:
-				if capacity.(string) == "infinite" {
+				if capacity == "infinite" {
 					return math.Inf(1)
 				}
 			}

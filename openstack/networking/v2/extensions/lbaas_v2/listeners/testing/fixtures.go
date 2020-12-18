@@ -136,13 +136,13 @@ func HandleListenerListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, ListenersListBody)
+			_, _ = fmt.Fprint(w, ListenersListBody)
 		case "45e08a3e-a78f-4b40-a229-1e7e23eee1ab":
-			fmt.Fprintf(w, `{ "listeners": [] }`)
+			_, _ = fmt.Fprint(w, `{ "listeners": [] }`)
 		default:
 			t.Fatalf("/v2.0/lbaas/listeners invoked with unexpected marker=[%s]", marker)
 		}
@@ -169,7 +169,7 @@ func HandleListenerCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -180,7 +180,7 @@ func HandleListenerGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, SingleListenerBody)
+		_, _ = fmt.Fprint(w, SingleListenerBody)
 	})
 }
 
@@ -208,6 +208,6 @@ func HandleListenerUpdateSuccessfully(t *testing.T) {
 			}
 		}`)
 
-		fmt.Fprintf(w, PostUpdateListenerBody)
+		_, _ = fmt.Fprint(w, PostUpdateListenerBody)
 	})
 }

@@ -17,7 +17,7 @@ func TestListVersions(t *testing.T) {
 
 	count := 0
 
-	apiversions.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	_ = apiversions.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := apiversions.ExtractAPIVersions(page)
 		th.AssertNoErr(t, err)

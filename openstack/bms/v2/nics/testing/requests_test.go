@@ -21,7 +21,7 @@ func TestListNIC(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "interfaceAttachments": [
         {
@@ -47,13 +47,13 @@ func TestListNIC(t *testing.T) {
             "port_id": "a5fff9e7-65e1-4e46-95da-263d66ff4a7a",
             "net_id": "68cf7e29-b770-4951-be66-9b3f16297732",
             "mac_addr": "fa:16:3e:83:dc:08"
-        }	
+        }
     ]
 }
 			`)
 	})
 
-	//count := 0
+	// count := 0
 
 	actual, err := nics.List(fake.ServiceClient(), "2bff7a8a-3934-4f79-b1d6-53dc5540f00e", nics.ListOpts{})
 	if err != nil {
@@ -91,7 +91,7 @@ func TestGetNIC(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "interfaceAttachment": {
         "port_state": "ACTIVE",

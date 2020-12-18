@@ -5,7 +5,7 @@ import (
 )
 
 type Tags struct {
-	//Specifies the tags of a BMS
+	// Specifies the tags of a BMS
 	Tags []string `json:"tags"`
 }
 

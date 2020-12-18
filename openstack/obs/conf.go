@@ -72,104 +72,104 @@ func (conf config) String() string {
 	)
 }
 
-type configurer func(conf *config)
+type Configurer func(conf *config)
 
-func WithSslVerify(sslVerify bool) configurer {
+func WithSslVerify(sslVerify bool) Configurer {
 	return WithSslVerifyAndPemCerts(sslVerify, nil)
 }
 
-func WithSslVerifyAndPemCerts(sslVerify bool, pemCerts []byte) configurer {
+func WithSslVerifyAndPemCerts(sslVerify bool, pemCerts []byte) Configurer {
 	return func(conf *config) {
 		conf.sslVerify = sslVerify
 		conf.pemCerts = pemCerts
 	}
 }
 
-func WithHeaderTimeout(headerTimeout int) configurer {
+func WithHeaderTimeout(headerTimeout int) Configurer {
 	return func(conf *config) {
 		conf.headerTimeout = headerTimeout
 	}
 }
 
-func WithProxyUrl(proxyUrl string) configurer {
+func WithProxyUrl(proxyUrl string) Configurer {
 	return func(conf *config) {
 		conf.proxyUrl = proxyUrl
 	}
 }
 
-func WithMaxConnections(maxConnsPerHost int) configurer {
+func WithMaxConnections(maxConnsPerHost int) Configurer {
 	return func(conf *config) {
 		conf.maxConnsPerHost = maxConnsPerHost
 	}
 }
 
-func WithPathStyle(pathStyle bool) configurer {
+func WithPathStyle(pathStyle bool) Configurer {
 	return func(conf *config) {
 		conf.pathStyle = pathStyle
 	}
 }
 
-func WithSignature(signature SignatureType) configurer {
+func WithSignature(signature SignatureType) Configurer {
 	return func(conf *config) {
 		conf.signature = signature
 	}
 }
 
-func WithRegion(region string) configurer {
+func WithRegion(region string) Configurer {
 	return func(conf *config) {
 		conf.region = region
 	}
 }
 
-func WithConnectTimeout(connectTimeout int) configurer {
+func WithConnectTimeout(connectTimeout int) Configurer {
 	return func(conf *config) {
 		conf.connectTimeout = connectTimeout
 	}
 }
 
-func WithSocketTimeout(socketTimeout int) configurer {
+func WithSocketTimeout(socketTimeout int) Configurer {
 	return func(conf *config) {
 		conf.socketTimeout = socketTimeout
 	}
 }
 
-func WithIdleConnTimeout(idleConnTimeout int) configurer {
+func WithIdleConnTimeout(idleConnTimeout int) Configurer {
 	return func(conf *config) {
 		conf.idleConnTimeout = idleConnTimeout
 	}
 }
 
-func WithMaxRetryCount(maxRetryCount int) configurer {
+func WithMaxRetryCount(maxRetryCount int) Configurer {
 	return func(conf *config) {
 		conf.maxRetryCount = maxRetryCount
 	}
 }
 
-func WithSecurityToken(securityToken string) configurer {
+func WithSecurityToken(securityToken string) Configurer {
 	return func(conf *config) {
 		conf.securityProvider.securityToken = securityToken
 	}
 }
 
-func WithHttpTransport(transport *http.Transport) configurer {
+func WithHttpTransport(transport *http.Transport) Configurer {
 	return func(conf *config) {
 		conf.transport = transport
 	}
 }
 
-func WithRequestContext(ctx context.Context) configurer {
+func WithRequestContext(ctx context.Context) Configurer {
 	return func(conf *config) {
 		conf.ctx = ctx
 	}
 }
 
-func WithCustomDomainName(cname bool) configurer {
+func WithCustomDomainName(cname bool) Configurer {
 	return func(conf *config) {
 		conf.cname = cname
 	}
 }
 
-func WithMaxRedirectCount(maxRedirectCount int) configurer {
+func WithMaxRedirectCount(maxRedirectCount int) Configurer {
 	return func(conf *config) {
 		conf.maxRedirectCount = maxRedirectCount
 	}
@@ -272,7 +272,7 @@ func (conf *config) initConfigWithDefault() error {
 func (conf *config) getTransport() error {
 	if conf.transport == nil {
 		conf.transport = &http.Transport{
-			Dial: func(network, addr string) (net.Conn, error) {
+			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 				conn, err := net.DialTimeout(network, addr, time.Second*time.Duration(conf.connectTimeout))
 				if err != nil {
 					return nil, err
@@ -306,7 +306,7 @@ func (conf *config) getTransport() error {
 	return nil
 }
 
-func checkRedirectFunc(req *http.Request, via []*http.Request) error {
+func checkRedirectFunc(_ *http.Request, _ []*http.Request) error {
 	return http.ErrUseLastResponse
 }
 
@@ -373,7 +373,7 @@ func (conf *config) formatUrls(bucketName, objectKey string, params map[string]s
 	}
 
 	keys := make([]string, 0, len(params))
-	for key, _ := range params {
+	for key := range params {
 		keys = append(keys, strings.TrimSpace(key))
 	}
 	sort.Strings(keys)
@@ -399,7 +399,7 @@ func (conf *config) formatUrls(bucketName, objectKey string, params map[string]s
 				_value = ""
 			}
 			lowerKey := strings.ToLower(key)
-			_, ok := allowed_resource_parameter_names[lowerKey]
+			_, ok := allowedResourceParameterNames[lowerKey]
 			prefixHeader := HEADER_PREFIX
 			isObs := conf.signature == SignatureObs
 			if isObs {

@@ -6,9 +6,9 @@ import (
 
 // Tag is a structure of key value pair.
 type Tag struct {
-	//tag key
+	// tag key
 	Key string `json:"key" required:"true"`
-	//tag value
+	// tag value
 	Value string `json:"value" required:"true"`
 }
 
@@ -20,13 +20,13 @@ type BatchOptsBuilder interface {
 
 // BatchOpts contains all the values needed to perform BatchAction on the image tags.
 type BatchOpts struct {
-	//List of tags to perform batch operation
+	// List of tags to perform batch operation
 	Tags []Tag `json:"tags,omitempty"`
-	//Operator , Possible values are:create or delete
+	// Operator , Possible values are:create or delete
 	Action ActionType `json:"action" required:"true"`
 }
 
-//ActionType specifies the type of batch operation action to be performed
+// ActionType specifies the type of batch operation action to be performed
 type ActionType string
 
 var (
@@ -41,7 +41,7 @@ func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//BatchAction is used to create ,update or delete the tags of a specified image.
+// BatchAction is used to create ,update or delete the tags of a specified image.
 func BatchAction(client *golangsdk.ServiceClient, imageID string, opts BatchOptsBuilder) (r ActionResults) {
 	b, err := opts.ToTagsBatchMap()
 	if err != nil {

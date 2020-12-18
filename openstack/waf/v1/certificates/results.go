@@ -7,11 +7,11 @@ import (
 )
 
 type Certificate struct {
-	//Certificate ID
+	// Certificate ID
 	Id string `json:"id"`
-	//Certificate Name
+	// Certificate Name
 	Name string `json:"name"`
-	//When the certificate expires
+	// When the certificate expires
 	ExpireTime time.Time `json:"expireTime"`
 }
 

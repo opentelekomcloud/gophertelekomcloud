@@ -16,7 +16,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	extensions.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	_ = extensions.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := extensions.ExtractExtensions(page)
 		th.AssertNoErr(t, err)

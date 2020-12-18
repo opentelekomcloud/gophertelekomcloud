@@ -5,28 +5,28 @@ import (
 )
 
 type Instance struct {
-	//Instance ID
+	// Instance ID
 	Id string `json:"id"`
-	//Instance Name
+	// Instance Name
 	Name string `json:"name"`
-	//Instance Description
+	// Instance Description
 	Description string `json:"description"`
-	//Protection Group ID
+	// Protection Group ID
 	GroupID string `json:"server_group_id"`
-	//Instance Status
+	// Instance Status
 	Status string `json:"status"`
-	//Source Server
+	// Source Server
 	SourceServer string `json:"source_server"`
-	//Target Server
+	// Target Server
 	TargetServer string `json:"target_server"`
-	//Attachment
+	// Attachment
 	Attachment []Attachment `json:"attachment"`
 }
 
 type Attachment struct {
-	//Replication ID
+	// Replication ID
 	Replication string `json:"replication"`
-	//Device Name
+	// Device Name
 	Device string `json:"device"`
 }
 

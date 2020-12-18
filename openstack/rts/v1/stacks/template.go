@@ -52,7 +52,7 @@ func (t *Template) getFileContents(te interface{}, ignoreIf igFunc, recurse bool
 	if t.fileMaps == nil {
 		t.fileMaps = make(map[string]string)
 	}
-	switch te.(type) {
+	switch te := te.(type) {
 	// if te is a map
 	case map[string]interface{}, map[interface{}]interface{}:
 		teMap, err := toStringKeys(te)
@@ -107,9 +107,8 @@ func (t *Template) getFileContents(te interface{}, ignoreIf igFunc, recurse bool
 		return nil
 	// if te is a slice, call the function on each element of the slice.
 	case []interface{}:
-		teSlice := te.([]interface{})
-		for i := range teSlice {
-			if err := t.getFileContents(teSlice[i], ignoreIf, recurse); err != nil {
+		for i := range te {
+			if err := t.getFileContents(te[i], ignoreIf, recurse); err != nil {
 				return err
 			}
 		}

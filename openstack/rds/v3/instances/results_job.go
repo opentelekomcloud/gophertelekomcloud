@@ -2,6 +2,7 @@ package instances
 
 import (
 	"fmt"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 

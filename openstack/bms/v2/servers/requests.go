@@ -40,11 +40,11 @@ type ListOpts struct {
 	// ID uniquely identifies this server amongst all other servers,
 	// including those not accessible to the current tenant.
 	ID string
-	//ID of the user to which the BMS belongs.
+	// ID of the user to which the BMS belongs.
 	UserID string
-	//Contains the nova-compute status
+	// Contains the nova-compute status
 	HostStatus string
-	//Contains the host ID of the BMS.
+	// Contains the host ID of the BMS.
 	HostID string
 	// KeyName indicates which public key was injected into the server on launch.
 	KeyName string
@@ -56,28 +56,28 @@ type ListOpts struct {
 	FlavorID string `q:"flavor"`
 	// Specifies the BMS status.
 	Status string `q:"status"`
-	//Filters out the BMSs that have been updated since the changes-since time.
+	// Filters out the BMSs that have been updated since the changes-since time.
 	// The parameter is in ISO 8601 time format, for example, 2013-06-09T06:42:18Z.
 	ChangesSince string `q:"changes-since"`
-	//Specifies whether to query the BMSs of all tenants. This parameter is available only to administrators.
+	// Specifies whether to query the BMSs of all tenants. This parameter is available only to administrators.
 	// The value can be 0 (do not query the BMSs of all tenants) or 1 (query the BMSs of all tenants).
 	AllTenants int `q:"all_tenants"`
-	//Specifies the IP address. This parameter supports fuzzy matching.
+	// Specifies the IP address. This parameter supports fuzzy matching.
 	IP string `q:"ip"`
-	//Specifies the tag list. Returns BMSs that match all tags. Use commas (,) to separate multiple tags
+	// Specifies the tag list. Returns BMSs that match all tags. Use commas (,) to separate multiple tags
 	Tags string `q:"tags"`
-	//Specifies the tag list. Returns BMSs that match any tag
+	// Specifies the tag list. Returns BMSs that match any tag
 	TagsAny string `q:"tags-any"`
-	//Specifies the tag list. Returns BMSs that do not match all tags.
+	// Specifies the tag list. Returns BMSs that do not match all tags.
 	NotTags string `q:"not-tags"`
-	//Specifies the tag list. Returns BMSs that do not match any of the tags.
+	// Specifies the tag list. Returns BMSs that do not match any of the tags.
 	NotTagsAny string `q:"not-tags-any"`
-	//Specifies the BMS sorting attribute, which can be the BMS UUID (uuid), BMS status (vm_state),
+	// Specifies the BMS sorting attribute, which can be the BMS UUID (uuid), BMS status (vm_state),
 	// BMS name (display_name), BMS task status (task_state), power status (power_state),
 	// creation time (created_at), last time when the BMS is updated (updated_at), and availability zone
 	// (availability_zone). You can specify multiple sort_key and sort_dir pairs.
 	SortKey SortKey `q:"sort_key"`
-	//Specifies the sorting direction, i.e. asc or desc.
+	// Specifies the sorting direction, i.e. asc or desc.
 	SortDir SortDir `q:"sort_dir"`
 }
 
@@ -94,6 +94,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+
+	if err != nil {
+		return nil, err
+	}
 
 	allservers, err := ExtractServers(pages)
 	if err != nil {
@@ -155,7 +159,7 @@ func FilterServers(servers []Server, opts ListOpts) ([]Server, error) {
 func getStructServerField(v *Server, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // Get requests details on a single server, by ID.

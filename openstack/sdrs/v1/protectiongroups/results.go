@@ -5,21 +5,21 @@ import (
 )
 
 type Group struct {
-	//Group ID
+	// Group ID
 	Id string `json:"id"`
-	//Group Name
+	// Group Name
 	Name string `json:"name"`
-	//Group Description
+	// Group Description
 	Description string `json:"description"`
-	//The source AZ of a protection group
+	// The source AZ of a protection group
 	SourceAZ string `json:"source_availability_zone"`
-	//The target AZ of a protection group
+	// The target AZ of a protection group
 	TargetAZ string `json:"target_availability_zone"`
-	//An active-active domain
+	// An active-active domain
 	DomainID string `json:"domain_id"`
-	//ID of the source VPC
+	// ID of the source VPC
 	SourceVpcID string `json:"source_vpc_id"`
-	//Deployment model
+	// Deployment model
 	DrType string `json:"dr_type"`
 }
 

@@ -19,7 +19,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	volumetypes.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	_ = volumetypes.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := volumetypes.ExtractVolumeTypes(page)
 		if err != nil {
@@ -86,7 +86,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "volume_type": {
         "name": "vol-type-001",

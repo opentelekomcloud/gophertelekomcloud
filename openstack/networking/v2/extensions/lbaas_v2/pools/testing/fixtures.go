@@ -138,13 +138,13 @@ func HandlePoolListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, PoolsListBody)
+			_, _ = fmt.Fprint(w, PoolsListBody)
 		case "45e08a3e-a78f-4b40-a229-1e7e23eee1ab":
-			fmt.Fprintf(w, `{ "pools": [] }`)
+			_, _ = fmt.Fprint(w, `{ "pools": [] }`)
 		default:
 			t.Fatalf("/v2.0/lbaas/pools invoked with unexpected marker=[%s]", marker)
 		}
@@ -169,7 +169,7 @@ func HandlePoolCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -180,7 +180,7 @@ func HandlePoolGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, SinglePoolBody)
+		_, _ = fmt.Fprint(w, SinglePoolBody)
 	})
 }
 
@@ -208,7 +208,7 @@ func HandlePoolUpdateSuccessfully(t *testing.T) {
 			}
 		}`)
 
-		fmt.Fprintf(w, PostUpdatePoolBody)
+		_, _ = fmt.Fprint(w, PostUpdatePoolBody)
 	})
 }
 
@@ -312,13 +312,13 @@ func HandleMemberListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, MembersListBody)
+			_, _ = fmt.Fprint(w, MembersListBody)
 		case "45e08a3e-a78f-4b40-a229-1e7e23eee1ab":
-			fmt.Fprintf(w, `{ "members": [] }`)
+			_, _ = fmt.Fprint(w, `{ "members": [] }`)
 		default:
 			t.Fatalf("/v2.0/lbaas/pools/332abe93-f488-41ba-870b-2ac66be7f853/members invoked with unexpected marker=[%s]", marker)
 		}
@@ -344,7 +344,7 @@ func HandleMemberCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -355,7 +355,7 @@ func HandleMemberGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, SingleMemberBody)
+		_, _ = fmt.Fprint(w, SingleMemberBody)
 	})
 }
 
@@ -383,6 +383,6 @@ func HandleMemberUpdateSuccessfully(t *testing.T) {
 			}
 		}`)
 
-		fmt.Fprintf(w, PostUpdateMemberBody)
+		_, _ = fmt.Fprint(w, PostUpdateMemberBody)
 	})
 }

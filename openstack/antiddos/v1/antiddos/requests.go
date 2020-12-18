@@ -94,6 +94,9 @@ type GetTaskOptsBuilder interface {
 
 func (opts GetTaskOpts) ToGetTaskQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -139,6 +142,9 @@ type ListLogsOptsBuilder interface {
 
 func (opts ListLogsOpts) ToListLogsQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -232,7 +238,7 @@ func FilterDdosStatus(ddosStatus []DdosStatus, opts ListStatusOpts) ([]DdosStatu
 func getStructField(v *DdosStatus, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 type UpdateOpts struct {
@@ -280,7 +286,7 @@ func Update(client *golangsdk.ServiceClient, floatingIpId string, opts UpdateOpt
 type WeeklyReportOpts struct {
 	// Start date of a seven-day period
 	PeriodStartDate time.Time `q:""`
-	//PeriodStartDate string `q:"period_start_date"`
+	// PeriodStartDate string `q:"period_start_date"`
 }
 
 type WeeklyReportOptsBuilder interface {
@@ -288,7 +294,7 @@ type WeeklyReportOptsBuilder interface {
 }
 
 func (opts WeeklyReportOpts) ToWeeklyReportQuery() (string, error) {
-	return "?period_start_date=" + strconv.FormatInt(time.Time(opts.PeriodStartDate).Unix()*1000, 10), nil //q.String(), err
+	return "?period_start_date=" + strconv.FormatInt(opts.PeriodStartDate.Unix()*1000, 10), nil // q.String(), err
 }
 
 func WeeklyReport(client *golangsdk.ServiceClient, opts WeeklyReportOptsBuilder) (r WeeklyReportResult) {

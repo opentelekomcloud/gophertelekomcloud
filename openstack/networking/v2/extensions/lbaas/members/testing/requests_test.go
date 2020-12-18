@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "members":[
       {
@@ -53,7 +53,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	members.List(fake.ServiceClient(), members.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = members.List(fake.ServiceClient(), members.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := members.ExtractMembers(page)
 		if err != nil {
@@ -117,7 +117,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
   "member": {
     "id": "975592ca-e308-48ad-8298-731935ee9f45",
@@ -153,7 +153,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "member":{
       "id":"975592ca-e308-48ad-8298-731935ee9f45",
@@ -200,7 +200,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "member":{
       "status":"PENDING_UPDATE",

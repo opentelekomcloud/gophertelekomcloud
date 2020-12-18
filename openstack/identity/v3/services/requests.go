@@ -72,6 +72,9 @@ type ListOpts struct {
 // ToServiceListMap builds a list query from the list options.
 func (opts ListOpts) ToServiceListMap() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

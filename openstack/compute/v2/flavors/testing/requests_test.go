@@ -3,7 +3,6 @@ package testing
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
@@ -11,8 +10,6 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
-
-const tokenID = "blerb"
 
 func TestListFlavors(t *testing.T) {
 	th.SetupHTTP()
@@ -23,11 +20,11 @@ func TestListFlavors(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprintf(w, `
 					{
 						"flavors": [
 							{
@@ -70,16 +67,16 @@ func TestListFlavors(t *testing.T) {
 					}
 				`, th.Server.URL)
 		case "2":
-			fmt.Fprintf(w, `{ "flavors": [] }`)
+			_, _ = fmt.Fprint(w, `{ "flavors": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
 	})
 
-	pages := 0
+	pageCount := 0
 	// Get public and private flavors
 	err := flavors.ListDetail(fake.ServiceClient(), nil).EachPage(func(page pagination.Page) (bool, error) {
-		pages++
+		pageCount += 1
 
 		actual, err := flavors.ExtractFlavors(page)
 		if err != nil {
@@ -92,17 +89,16 @@ func TestListFlavors(t *testing.T) {
 			{ID: "3", Name: "m1.medium", VCPUs: 2, Disk: 40, RAM: 4096, Swap: 1000, IsPublic: false, Ephemeral: 0},
 		}
 
-		if !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Expected %#v, but was %#v", expected, actual)
-		}
+		th.AssertDeepEquals(t, expected, actual)
 
 		return true, nil
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if pages != 1 {
-		t.Errorf("Expected one page, got %d", pages)
+	th.AssertEquals(t, 1, pageCount)
+	if pageCount != 1 {
+		t.Errorf("Expected one page, got %d", pageCount)
 	}
 }
 
@@ -115,7 +111,7 @@ func TestGetFlavor(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 				"flavor": {
 					"id": "1",
@@ -144,9 +140,7 @@ func TestGetFlavor(t *testing.T) {
 		RxTxFactor: 1,
 		Swap:       0,
 	}
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestCreateFlavor(t *testing.T) {
@@ -158,7 +152,7 @@ func TestCreateFlavor(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 				"flavor": {
 					"id": "1",
@@ -196,9 +190,7 @@ func TestCreateFlavor(t *testing.T) {
 		RxTxFactor: 1,
 		Swap:       0,
 	}
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestDeleteFlavor(t *testing.T) {
@@ -224,7 +216,7 @@ func TestFlavorAccessesList(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			  "flavor_access": [
 			    {
@@ -237,7 +229,7 @@ func TestFlavorAccessesList(t *testing.T) {
 	})
 
 	expected := []flavors.FlavorAccess{
-		flavors.FlavorAccess{
+		{
 			FlavorID: "12345678",
 			TenantID: "2f954bcf047c4ee9b09a37d49ae6db54",
 		},
@@ -248,10 +240,7 @@ func TestFlavorAccessesList(t *testing.T) {
 
 	actual, err := flavors.ExtractAccesses(allPages)
 	th.AssertNoErr(t, err)
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestFlavorAccessAdd(t *testing.T) {
@@ -272,7 +261,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			  "flavor_access": [
 			    {
@@ -285,7 +274,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 	})
 
 	expected := []flavors.FlavorAccess{
-		flavors.FlavorAccess{
+		{
 			FlavorID: "12345678",
 			TenantID: "2f954bcf047c4ee9b09a37d49ae6db54",
 		},
@@ -297,10 +286,7 @@ func TestFlavorAccessAdd(t *testing.T) {
 
 	actual, err := flavors.AddAccess(fake.ServiceClient(), "12345678", addAccessOpts).Extract()
 	th.AssertNoErr(t, err)
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestFlavorAccessRemove(t *testing.T) {
@@ -321,24 +307,20 @@ func TestFlavorAccessRemove(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			  "flavor_access": []
 			}
 			`)
 	})
 
-	expected := []flavors.FlavorAccess{}
 	removeAccessOpts := flavors.RemoveAccessOpts{
 		Tenant: "2f954bcf047c4ee9b09a37d49ae6db54",
 	}
 
 	actual, err := flavors.RemoveAccess(fake.ServiceClient(), "12345678", removeAccessOpts).Extract()
 	th.AssertNoErr(t, err)
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expected %#v, but was %#v", expected, actual)
-	}
+	th.AssertDeepEquals(t, []flavors.FlavorAccess{}, actual)
 }
 
 func TestFlavorExtraSpecsList(t *testing.T) {

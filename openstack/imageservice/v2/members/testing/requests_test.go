@@ -51,12 +51,12 @@ func TestMemberListSuccessfully(t *testing.T) {
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		pages++
 		t.Logf("Page %v", page)
-		members, err := members.ExtractMembers(page)
+		memberList, err := members.ExtractMembers(page)
 		if err != nil {
 			return false, err
 		}
 
-		for _, i := range members {
+		for _, i := range memberList {
 			t.Logf("%s\t%s\t%s\t%s\t\n", i.ImageID, i.MemberID, i.Status, i.Schema)
 			count++
 		}
@@ -81,12 +81,12 @@ func TestMemberListEmpty(t *testing.T) {
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		pages++
 		t.Logf("Page %v", page)
-		members, err := members.ExtractMembers(page)
+		memberList, err := members.ExtractMembers(page)
 		if err != nil {
 			return false, err
 		}
 
-		for _, i := range members {
+		for _, i := range memberList {
 			t.Logf("%s\t%s\t%s\t%s\t\n", i.ImageID, i.MemberID, i.Status, i.Schema)
 			count++
 		}
@@ -110,7 +110,7 @@ func TestShowMemberDetails(t *testing.T) {
 
 	th.AssertNoErr(t, err)
 	if md == nil {
-		t.Errorf("Expected non-nil value for md")
+		t.Fatalf("Expected non-nil value for md")
 	}
 
 	createdAt, err := time.Parse(time.RFC3339, "2013-11-26T07:21:21Z")

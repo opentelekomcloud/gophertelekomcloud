@@ -464,12 +464,12 @@ var (
 		TenantID: "fcad67a6189847c4aecfa3c81a05783b",
 		Metadata: map[string]string{},
 		SecurityGroups: []map[string]interface{}{
-			map[string]interface{}{
+			{
 				"name": "default",
 			},
 		},
 		VolumesAttached: []map[string]string{
-			map[string]string{
+			{
 				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
 			},
 		},
@@ -527,12 +527,12 @@ var (
 		TenantID: "fcad67a6189847c4aecfa3c81a05783b",
 		Metadata: map[string]string{},
 		SecurityGroups: []map[string]interface{}{
-			map[string]interface{}{
+			{
 				"name": "default",
 			},
 		},
 		VolumesAttached: []map[string]string{
-			map[string]string{
+			{
 				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
 			},
 		},
@@ -584,12 +584,12 @@ var (
 		TenantID: "fcad67a6189847c4aecfa3c81a05783b",
 		Metadata: map[string]string{},
 		SecurityGroups: []map[string]interface{}{
-			map[string]interface{}{
+			{
 				"name": "default",
 			},
 		},
 		VolumesAttached: []map[string]string{
-			map[string]string{
+			{
 				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
 			},
 		},
@@ -630,7 +630,7 @@ func HandleServerCreationSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 
 	th.Mux.HandleFunc("/images/detail", func(w http.ResponseWriter, r *http.Request) {
@@ -638,11 +638,11 @@ func HandleServerCreationSuccessfully(t *testing.T, response string) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprint(w, `
 				{
 					"images": [
 						{
@@ -671,7 +671,7 @@ func HandleServerCreationSuccessfully(t *testing.T, response string) {
 				}
 			`)
 		case "2":
-			fmt.Fprintf(w, `{ "images": [] }`)
+			_, _ = fmt.Fprint(w, `{ "images": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -682,11 +682,11 @@ func HandleServerCreationSuccessfully(t *testing.T, response string) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprintf(w, `
 						{
 							"flavors": [
 								{
@@ -715,7 +715,7 @@ func HandleServerCreationSuccessfully(t *testing.T, response string) {
 						}
 					`, th.Server.URL)
 		case "2":
-			fmt.Fprintf(w, `{ "flavors": [] }`)
+			_, _ = fmt.Fprint(w, `{ "flavors": [] }`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -739,7 +739,7 @@ func HandleServerCreationWithCustomFieldSuccessfully(t *testing.T, response stri
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -760,7 +760,7 @@ func HandleServerCreationWithUserdata(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -783,7 +783,7 @@ func HandleServerCreationWithMetadata(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -794,13 +794,13 @@ func HandleServerListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, ServerListBody)
+			_, _ = fmt.Fprint(w, ServerListBody)
 		case "9e5476bd-a4ec-4653-93d6-72c93aa682ba":
-			fmt.Fprintf(w, `{ "servers": [] }`)
+			_, _ = fmt.Fprint(w, `{ "servers": [] }`)
 		default:
 			t.Fatalf("/servers/detail invoked with unexpected marker=[%s]", marker)
 		}
@@ -836,7 +836,7 @@ func HandleServerGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, SingleServerBody)
+		_, _ = fmt.Fprint(w, SingleServerBody)
 	})
 }
 
@@ -848,7 +848,7 @@ func HandleServerGetFaultSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, FaultyServerBody)
+		_, _ = fmt.Fprint(w, FaultyServerBody)
 	})
 }
 
@@ -861,7 +861,7 @@ func HandleServerUpdateSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestJSONRequest(t, r, `{ "server": { "name": "new-name" } }`)
 
-		fmt.Fprintf(w, SingleServerBody)
+		_, _ = fmt.Fprint(w, SingleServerBody)
 	})
 }
 
@@ -897,7 +897,7 @@ func HandleShowConsoleOutputSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -919,7 +919,7 @@ func HandleRebuildSuccessfully(t *testing.T, response string) {
 
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, response)
+		_, _ = fmt.Fprint(w, response)
 	})
 }
 
@@ -932,7 +932,7 @@ func HandleMetadatumGetSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(`{ "meta": {"foo":"bar"}}`))
+		_, _ = w.Write([]byte(`{ "meta": {"foo":"bar"}}`))
 	})
 }
 
@@ -949,7 +949,7 @@ func HandleMetadatumCreateSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(`{ "meta": {"foo":"bar"}}`))
+		_, _ = w.Write([]byte(`{ "meta": {"foo":"bar"}}`))
 	})
 }
 
@@ -971,7 +971,7 @@ func HandleMetadataGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json")
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{ "metadata": {"foo":"bar", "this":"that"}}`))
+		_, _ = w.Write([]byte(`{ "metadata": {"foo":"bar", "this":"that"}}`))
 	})
 }
 
@@ -989,7 +989,7 @@ func HandleMetadataResetSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(`{ "metadata": {"foo":"bar", "this":"that"}}`))
+		_, _ = w.Write([]byte(`{ "metadata": {"foo":"bar", "this":"that"}}`))
 	})
 }
 
@@ -1007,13 +1007,13 @@ func HandleMetadataUpdateSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(`{ "metadata": {"foo":"baz", "this":"those"}}`))
+		_, _ = w.Write([]byte(`{ "metadata": {"foo":"baz", "this":"those"}}`))
 	})
 }
 
 // ListAddressesExpected represents an expected repsonse from a ListAddresses request.
 var ListAddressesExpected = map[string][]servers.Address{
-	"public": []servers.Address{
+	"public": {
 		{
 			Version: 4,
 			Address: "50.56.176.35",
@@ -1023,7 +1023,7 @@ var ListAddressesExpected = map[string][]servers.Address{
 			Address: "2001:4800:790e:510:be76:4eff:fe04:84a8",
 		},
 	},
-	"private": []servers.Address{
+	"private": {
 		{
 			Version: 4,
 			Address: "10.180.3.155",
@@ -1038,7 +1038,7 @@ func HandleAddressListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"addresses": {
 				"public": [
 				{
@@ -1080,7 +1080,7 @@ func HandleNetworkAddressListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"public": [
 			{
 				"version": 4,
@@ -1112,6 +1112,6 @@ func HandlePasswordGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 
-		fmt.Fprintf(w, ServerPasswordBody)
+		_, _ = fmt.Fprint(w, ServerPasswordBody)
 	})
 }

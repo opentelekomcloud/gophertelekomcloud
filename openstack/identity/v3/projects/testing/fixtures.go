@@ -136,7 +136,7 @@ func HandleListProjectsSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 }
 
@@ -150,7 +150,7 @@ func HandleGetProjectSuccessfully(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -163,7 +163,7 @@ func HandleCreateProjectSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -187,6 +187,6 @@ func HandleUpdateProjectSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateRequest)
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprint(w, UpdateOutput)
 	})
 }

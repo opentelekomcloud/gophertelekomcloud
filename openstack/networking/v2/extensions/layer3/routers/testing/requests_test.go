@@ -22,7 +22,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "routers": [
         {
@@ -67,7 +67,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	routers.List(fake.ServiceClient(), routers.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = routers.List(fake.ServiceClient(), routers.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := routers.ExtractRouters(page)
 		if err != nil {
@@ -147,7 +147,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "router": {
         "status": "ACTIVE",
@@ -206,7 +206,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "router": {
         "status": "ACTIVE",
@@ -280,7 +280,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "router": {
         "status": "ACTIVE",
@@ -342,7 +342,7 @@ func TestAllRoutesRemoved(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "router": {
         "status": "ACTIVE",
@@ -360,8 +360,7 @@ func TestAllRoutesRemoved(t *testing.T) {
 		`)
 	})
 
-	r := []routers.Route{}
-	options := routers.UpdateOpts{Routes: r}
+	options := routers.UpdateOpts{Routes: []routers.Route{}}
 
 	n, err := routers.Update(fake.ServiceClient(), "4e8e5957-649f-477b-9e5b-f1f75b21c03c", options).Extract()
 	th.AssertNoErr(t, err)
@@ -401,7 +400,7 @@ func TestAddInterface(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "subnet_id": "0d32a837-8069-4ec3-84c4-3eef3e10b188",
     "tenant_id": "017d8de156df4177889f31a9bd6edc00",
@@ -450,7 +449,7 @@ func TestRemoveInterface(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
 		"subnet_id": "0d32a837-8069-4ec3-84c4-3eef3e10b188",
 		"tenant_id": "017d8de156df4177889f31a9bd6edc00",

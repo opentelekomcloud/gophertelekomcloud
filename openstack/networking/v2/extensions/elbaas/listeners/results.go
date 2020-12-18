@@ -3,7 +3,7 @@ package listeners
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	//"fmt"
+	// "fmt"
 )
 
 type LoadBalancerID struct {
@@ -102,14 +102,14 @@ type commonResult struct {
 
 // Extract is a function that accepts a result and extracts a router.
 func (r commonResult) Extract() (*Listener, error) {
-	//fmt.Printf("Extracting Listener...\n")
+	// fmt.Printf("Extracting Listener...\n")
 	l := new(Listener)
 	err := r.ExtractInto(l)
 	if err != nil {
-		//fmt.Printf("Error: %s.\n", err.Error())
+		// fmt.Printf("Error: %s.\n", err.Error())
 		return nil, err
 	} else {
-		//fmt.Printf("Returning extract: %+v.\n", l)
+		// fmt.Printf("Returning extract: %+v.\n", l)
 		return l, nil
 	}
 }

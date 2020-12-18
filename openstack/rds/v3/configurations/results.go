@@ -5,47 +5,47 @@ import (
 )
 
 type ConfigurationCreate struct {
-	//Configuration ID
+	// Configuration ID
 	Id string `json:"id"`
-	//Configuration Name
+	// Configuration Name
 	Name string `json:"name"`
-	//Database version Name
+	// Database version Name
 	DatastoreVersionName string `json:"datastore_version_name"`
-	//Database Name
+	// Database Name
 	DatastoreName string `json:"datastore_name"`
-	//Configuration Description
+	// Configuration Description
 	Description string `json:"description"`
 }
 
 type Configuration struct {
-	//Configuration ID
+	// Configuration ID
 	Id string `json:"id"`
-	//Configuration Name
+	// Configuration Name
 	Name string `json:"name"`
-	//Database version Name
+	// Database version Name
 	DatastoreVersionName string `json:"datastore_version_name"`
-	//Database Name
+	// Database Name
 	DatastoreName string `json:"datastore_name"`
-	//Configuration Description
+	// Configuration Description
 	Description string `json:"description"`
-	//Configuration Parameters
+	// Configuration Parameters
 	Parameters []Parameter `json:"configuration_parameters"`
 }
 
 type Parameter struct {
-	//Parameter Name
+	// Parameter Name
 	Name string `json:"name"`
-	//Parameter value
+	// Parameter value
 	Value string `json:"value"`
-	//Whether a restart is required
+	// Whether a restart is required
 	RestartRequired bool `json:"restart_required"`
-	//Whether the parameter is read-only
+	// Whether the parameter is read-only
 	ReadOnly bool `json:"readonly"`
-	//Parameter value range
+	// Parameter value range
 	ValueRange string `json:"value_range"`
-	//Parameter type
+	// Parameter type
 	Type string `json:"type"`
-	//Parameter description
+	// Parameter description
 	Description string `json:"description"`
 }
 

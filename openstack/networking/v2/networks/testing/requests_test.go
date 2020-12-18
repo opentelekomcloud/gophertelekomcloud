@@ -23,13 +23,13 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ListResponse)
+		_, _ = fmt.Fprint(w, ListResponse)
 	})
 
 	client := fake.ServiceClient()
 	count := 0
 
-	networks.List(client, networks.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = networks.List(client, networks.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := networks.ExtractNetworks(page)
 		if err != nil {
@@ -58,7 +58,7 @@ func TestListWithExtensions(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ListResponse)
+		_, _ = fmt.Fprint(w, ListResponse)
 	})
 
 	client := fake.ServiceClient()
@@ -93,7 +93,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, GetResponse)
+		_, _ = fmt.Fprint(w, GetResponse)
 	})
 
 	n, err := networks.Get(fake.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").Extract()
@@ -112,7 +112,7 @@ func TestGetWithExtensions(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, GetResponse)
+		_, _ = fmt.Fprint(w, GetResponse)
 	})
 
 	var networkWithExtensions struct {
@@ -140,7 +140,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, CreateResponse)
+		_, _ = fmt.Fprint(w, CreateResponse)
 	})
 
 	iTrue := true
@@ -164,7 +164,7 @@ func TestCreateWithOptionalFields(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateOptionalFieldsRequest)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `{}`)
+		_, _ = fmt.Fprint(w, `{}`)
 	})
 
 	iTrue := true
@@ -193,7 +193,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, UpdateResponse)
+		_, _ = fmt.Fprint(w, UpdateResponse)
 	})
 
 	iTrue, iFalse := true, false
@@ -234,7 +234,7 @@ func TestCreatePortSecurity(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, CreatePortSecurityResponse)
+		_, _ = fmt.Fprint(w, CreatePortSecurityResponse)
 	})
 
 	var networkWithExtensions struct {
@@ -271,7 +271,7 @@ func TestUpdatePortSecurity(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, UpdatePortSecurityResponse)
+		_, _ = fmt.Fprint(w, UpdatePortSecurityResponse)
 	})
 
 	var networkWithExtensions struct {

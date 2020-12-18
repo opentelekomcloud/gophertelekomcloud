@@ -3,7 +3,7 @@ package firewall_groups
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	//"fmt"
+	// "fmt"
 )
 
 // FirewallGroup is an OpenStack firewall_group.
@@ -25,9 +25,9 @@ type commonResult struct {
 // Extract is a function that accepts a result and extracts a firewall.
 func (r commonResult) Extract() (*FirewallGroup, error) {
 	var s FirewallGroup
-	//fmt.Printf("Extracting %s.\n", r.PrettyPrintJSON())
+	// fmt.Printf("Extracting %s.\n", r.PrettyPrintJSON())
 	err := r.ExtractInto(&s)
-	//fmt.Printf("Extracted %+v.\n", s)
+	// fmt.Printf("Extracted %+v.\n", s)
 	return &s, err
 }
 

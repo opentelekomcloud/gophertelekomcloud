@@ -20,18 +20,18 @@ func TestListNode(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "kind": "List",
     "apiVersion": "v3",
 	"items":
-	[ 
+	[
        {
             "kind": "Host",
             "apiVersion": "v3",
             "metadata": {
                 "name": "test-node-1234",
-                "uid": "b99acd73-5d7c-11e8-8e76-0255ac101929"               
+                "uid": "b99acd73-5d7c-11e8-8e76-0255ac101929"
             },
             "spec": {
                 "flavor": "s1.medium",
@@ -108,7 +108,7 @@ func TestGetV3Node(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 
 	actual, err := nodes.Get(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926").Extract()
@@ -172,7 +172,7 @@ func TestCreateV3Node(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 	options := nodes.CreateOpts{Kind: "Node",
 		ApiVersion: "v3",
@@ -209,7 +209,7 @@ func TestUpdateV3Node(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 	options := nodes.UpdateOpts{Metadata: nodes.UpdateMetadata{Name: "test-node"}}
 	actual, err := nodes.Update(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926", options).Extract()
@@ -242,7 +242,7 @@ func TestGetV3Job(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, JobOutput)
+		_, _ = fmt.Fprint(w, JobOutput)
 	})
 
 	actual, err := nodes.GetJobDetails(fake.ServiceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f").ExtractJob()

@@ -154,6 +154,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]ListedStack, error) {
 		return StackPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allStacks, err := ExtractStacks(pages)
 	if err != nil {
 		return nil, err
@@ -203,7 +207,7 @@ func FilterStacks(stacks []ListedStack, opts ListOpts) ([]ListedStack, error) {
 func getStructField(v *ListedStack, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 func Get(c *golangsdk.ServiceClient, stackName string) (r GetResult) {

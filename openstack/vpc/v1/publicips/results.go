@@ -25,7 +25,7 @@ type PublicIP struct {
 	// Specifies the obtained elastic IPv6 address.
 	PublicIpV6Address string `json:"public_ipv6_address"`
 
-	//Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
+	// Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
 	IPVersion int `json:"ip_version"`
 
 	// Specifies the private IP address bound to the elastic IP
@@ -54,7 +54,7 @@ type PublicIP struct {
 	BandwidthName string `json:"bandwidth_name"`
 
 	//	Enterprise project ID. The maximum length is 36 bytes, with the U-ID format of the hyphen "-", or the string "0".
-	//When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
+	// When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
@@ -82,7 +82,7 @@ type PublicIPCreateResp struct {
 	// Specifies the obtained elastic IPv6 address.
 	PublicIpV6Address string `json:"public_ipv6_address"`
 
-	//Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
+	// Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
 	IPVersion int `json:"ip_version"`
 
 	// Specifies the tenant ID of the operator.
@@ -95,7 +95,7 @@ type PublicIPCreateResp struct {
 	BandwidthSize int `json:"bandwidth_size"`
 
 	//	Enterprise project ID. The maximum length is 36 bytes, with the U-ID format of the hyphen "-", or the string "0".
-	//When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
+	// When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
@@ -119,7 +119,7 @@ type PublicIPUpdateResp struct {
 	// Specifies the obtained elastic IPv6 address.
 	PublicIpV6Address string `json:"public_ipv6_address"`
 
-	//Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
+	// Value range: 4, 6, respectively, to create ipv4 and ipv6, when not created ipv4 by default
 	IPVersion int `json:"ip_version"`
 
 	// Specifies the port ID.
@@ -144,7 +144,7 @@ type PublicIPUpdateResp struct {
 	BandwidthName string `json:"bandwidth_name"`
 
 	//	Enterprise project ID. The maximum length is 36 bytes, with the U-ID format of the hyphen "-", or the string "0".
-	//When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
+	// When creating an elastic public IP address, bind the enterprise project ID to the elastic public network IP.
 	EnterpriseProjectId string `json:"enterprise_project_id"`
 }
 type commonResult struct {

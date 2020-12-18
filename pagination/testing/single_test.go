@@ -37,7 +37,7 @@ func setupSinglePaged() pagination.Pager {
 
 	testhelper.Mux.HandleFunc("/only", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{ "ints": [1, 2, 3] }`)
+		_, _ = fmt.Fprint(w, `{ "ints": [1, 2, 3] }`)
 	})
 
 	createPage := func(r pagination.PageResult) pagination.Page {

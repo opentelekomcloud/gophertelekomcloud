@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-//Describes the Node Structure of cluster
+// Describes the Node Structure of cluster
 type ListNode struct {
 	// API type, fixed value "List"
 	Kind string `json:"kind"`
@@ -31,13 +31,13 @@ type Nodes struct {
 
 // Metadata required to create a node
 type Metadata struct {
-	//Node name
+	// Node name
 	Name string `json:"name"`
-	//Node ID
+	// Node ID
 	Id string `json:"uid"`
 	// Node tag, key value pair format
 	Labels map[string]string `json:"labels,omitempty"`
-	//Node annotation, keyvalue pair format
+	// Node annotation, keyvalue pair format
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
@@ -105,7 +105,7 @@ type Status struct {
 	ServerID string `json:"ServerID"`
 	// Elastic IP of the node
 	PublicIP string `json:"PublicIP"`
-	//Private IP of the node
+	// Private IP of the node
 	PrivateIP string `json:"privateIP"`
 	// The ID of the Job that is operating asynchronously in the Node
 	JobID string `json:"jobID"`
@@ -113,7 +113,7 @@ type Status struct {
 	Reason string `json:"reason"`
 	// Details of the node transitioning to the current state
 	Message string `json:"message"`
-	//The status of each component in the Node
+	// The status of each component in the Node
 	Conditions Conditions `json:"conditions"`
 }
 
@@ -180,11 +180,11 @@ type BandwidthOpts struct {
 }
 
 type Conditions struct {
-	//The type of component
+	// The type of component
 	Type string `json:"type"`
-	//The state of the component
+	// The state of the component
 	Status string `json:"status"`
-	//The reason that the component becomes current
+	// The reason that the component becomes current
 	Reason string `json:"reason"`
 }
 
@@ -198,7 +198,7 @@ type Job struct {
 	Metadata JobMetadata `json:"metadata"`
 	// Node detailed parameters
 	Spec JobSpec `json:"spec"`
-	//Node status information
+	// Node status information
 	Status JobStatus `json:"status"`
 }
 

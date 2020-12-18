@@ -55,7 +55,7 @@ func (r *NetworkProviderExt) UnmarshalJSON(b []byte) error {
 	case float64:
 		r.SegmentationID = strconv.FormatFloat(t, 'f', -1, 64)
 	case string:
-		r.SegmentationID = string(t)
+		r.SegmentationID = t
 	}
 
 	return nil

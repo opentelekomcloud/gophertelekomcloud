@@ -8,19 +8,19 @@ import (
 type SoftwareConfig struct {
 	// Specifies the software configuration input.
 	Inputs []map[string]interface{} `json:"inputs"`
-	//Specifies the name of the software configuration.
+	// Specifies the name of the software configuration.
 	Name string `json:"name"`
-	//Specifies the software configuration output.
+	// Specifies the software configuration output.
 	Outputs []map[string]interface{} `json:"outputs"`
-	//Specifies the time when a configuration is created.
+	// Specifies the time when a configuration is created.
 	CreationTime golangsdk.JSONRFC3339NoZ `json:"creation_time"`
-	//Specifies the name of the software configuration group.
+	// Specifies the name of the software configuration group.
 	Group string `json:"group"`
-	//Specifies the configuration code.
+	// Specifies the configuration code.
 	Config string `json:"config"`
-	//Specifies configuration options.
+	// Specifies configuration options.
 	Options map[string]interface{} `json:"options"`
-	//Specifies the software configuration ID.
+	// Specifies the software configuration ID.
 	Id string `json:"id"`
 }
 

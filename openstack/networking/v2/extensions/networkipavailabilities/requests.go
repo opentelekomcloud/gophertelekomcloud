@@ -34,6 +34,9 @@ type ListOpts struct {
 // ToNetworkIPAvailabilityListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToNetworkIPAvailabilityListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

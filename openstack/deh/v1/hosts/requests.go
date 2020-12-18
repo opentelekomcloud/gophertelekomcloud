@@ -68,7 +68,7 @@ func Update(c *golangsdk.ServiceClient, hostID string, opts UpdateOptsBuilder) (
 	return
 }
 
-//Deletes the DeH using the specified hostID.
+// Deletes the DeH using the specified hostID.
 func Delete(c *golangsdk.ServiceClient, hostid string) (r DeleteResult) {
 	_, r.Err = c.Delete(resourceURL(c, hostid), nil)
 	return
@@ -110,6 +110,9 @@ type ListOptsBuilder interface {
 // ToRegionListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToHostListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -171,6 +174,9 @@ func ListServer(c *golangsdk.ServiceClient, id string, opts ListServerOpts) ([]S
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
 
 	allservers, err := ExtractServers(pages)
 	if err != nil {
@@ -224,5 +230,5 @@ func FilterServers(servers []Server, opts ListServerOpts) ([]Server, error) {
 func getStructServerField(v *Server, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }

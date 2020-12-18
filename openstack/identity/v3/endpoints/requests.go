@@ -71,6 +71,9 @@ type ListOpts struct {
 // ToEndpointListParams builds a list request from the List options.
 func (opts ListOpts) ToEndpointListParams() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

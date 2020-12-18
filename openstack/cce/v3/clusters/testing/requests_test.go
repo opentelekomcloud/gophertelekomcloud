@@ -19,7 +19,7 @@ func TestGetV3Cluster(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 
 	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Extract()
@@ -38,7 +38,7 @@ func TestGetV3ClusterOTC(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, OutputOTC)
+		_, _ = fmt.Fprint(w, OutputOTC)
 	})
 
 	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Extract()
@@ -60,10 +60,10 @@ func TestListV3Cluster(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ListOutput)
+		_, _ = fmt.Fprint(w, ListOutput)
 	})
 
-	//count := 0
+	// count := 0
 
 	actual, err := clusters.List(fake.ServiceClient(), clusters.ListOpts{})
 	if err != nil {
@@ -87,10 +87,10 @@ func TestListV3ClusterOTC(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ListOutputOTC)
+		_, _ = fmt.Fprint(w, ListOutputOTC)
 	})
 
-	//count := 0
+	// count := 0
 
 	actual, err := clusters.List(fake.ServiceClient(), clusters.ListOpts{})
 	if err != nil {
@@ -141,7 +141,7 @@ func TestCreateV3Cluster(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 	options := clusters.CreateOpts{Kind: "Cluster",
 		ApiVersion: "v3",
@@ -185,7 +185,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, Output)
+		_, _ = fmt.Fprint(w, Output)
 	})
 	options := clusters.UpdateOpts{Spec: clusters.UpdateSpec{Description: "new description"}}
 	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options).Extract()

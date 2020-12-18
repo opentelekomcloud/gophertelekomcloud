@@ -59,6 +59,7 @@ func TestList(t *testing.T) {
 	}).AllPages()
 	th.AssertNoErr(t, err)
 	publicipList, err := publicips.ExtractPublicIPs(allpages)
+	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, ListResponse, publicipList)
 }
 

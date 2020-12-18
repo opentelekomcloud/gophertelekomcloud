@@ -6,31 +6,31 @@ import (
 )
 
 type Policy struct {
-	//Backup policy ID
+	// Backup policy ID
 	ID string `json:"backup_policy_id"`
-	//Backup policy name
+	// Backup policy name
 	Name string `json:"backup_policy_name"`
-	//Details about the scheduling policy
+	// Details about the scheduling policy
 	ScheduledPolicy ScheduledPolicy `json:"scheduled_policy"`
-	//Number of volumes associated with the backup policy
+	// Number of volumes associated with the backup policy
 	ResourceCount int `json:"policy_resource_count"`
 }
 
 type ResultResources struct {
-	//List of successfully associated/disassociated resources
+	// List of successfully associated/disassociated resources
 	SuccessResources []Resource `json:"success_resources"`
-	//List of the resources that fail to be associated/disassociated
+	// List of the resources that fail to be associated/disassociated
 	FailResources []Resource `json:"fail_resources"`
 }
 
 type Resource struct {
-	//Resource ID
+	// Resource ID
 	ResourceID string `json:"resource_id"`
-	//Resource type
+	// Resource type
 	ResourceType string `json:"resource_type"`
-	//Availability zone to which the resource belongs
+	// Availability zone to which the resource belongs
 	AvailabilityZone string `json:"availability_zone"`
-	//POD to which the resource belongs
+	// POD to which the resource belongs
 	Pod string `json:"os_vol_host_attr"`
 }
 

@@ -17,7 +17,7 @@ func MockListResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
   {
     "volumes": [
       {
@@ -41,7 +41,7 @@ func MockGetResponse(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 			{
 			    "volume": {
 			        "id": "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
@@ -91,7 +91,7 @@ func MockCreateResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "volume": {
         "size": 4,
@@ -115,7 +115,7 @@ func MockUpdateResponse(t *testing.T) {
 		th.TestMethod(t, r, "PUT")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
     {
       "volume": {
         "display_name": "vol-002",

@@ -1,10 +1,8 @@
 package healthcheck
 
 import (
-	"fmt"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	//"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	// "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Constants that represent approved monitoring types.
@@ -13,10 +11,6 @@ const (
 	TypeTCP   = "TCP"
 	TypeHTTP  = "HTTP"
 	TypeHTTPS = "HTTPS"
-)
-
-var (
-	errDelayMustGETimeout = fmt.Errorf("Delay must be greater than or equal to timeout")
 )
 
 // CreateOptsBuilder is the interface options structs have to satisfy in order

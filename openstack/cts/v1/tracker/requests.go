@@ -71,7 +71,7 @@ func FilterTracker(tracker []Tracker, opts ListOpts) ([]Tracker, error) {
 func getStructField(v *Tracker, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

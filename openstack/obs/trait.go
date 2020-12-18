@@ -64,7 +64,7 @@ type DefaultSerializable struct {
 	data    interface{}
 }
 
-func (input DefaultSerializable) trans(isObs bool) (map[string]string, map[string][]string, interface{}, error) {
+func (input DefaultSerializable) trans(_ bool) (map[string]string, map[string][]string, interface{}, error) {
 	return input.params, input.headers, input.data, nil
 }
 
@@ -114,29 +114,29 @@ func (input CreateBucketInput) trans(isObs bool) (params map[string]string, head
 			}
 		}
 		setHeadersNext(headers, HEADER_STORAGE_CLASS_OBS, HEADER_STORAGE_CLASS, []string{storageClass}, isObs)
-		if epid := string(input.Epid); epid != "" {
+		if epid := input.Epid; epid != "" {
 			setHeaders(headers, HEADER_EPID_HEADERS, []string{epid}, isObs)
 		}
 	}
-	if grantReadId := string(input.GrantReadId); grantReadId != "" {
+	if grantReadId := input.GrantReadId; grantReadId != "" {
 		setHeaders(headers, HEADER_GRANT_READ_OBS, []string{grantReadId}, isObs)
 	}
-	if grantWriteId := string(input.GrantWriteId); grantWriteId != "" {
+	if grantWriteId := input.GrantWriteId; grantWriteId != "" {
 		setHeaders(headers, HEADER_GRANT_WRITE_OBS, []string{grantWriteId}, isObs)
 	}
-	if grantReadAcpId := string(input.GrantReadAcpId); grantReadAcpId != "" {
+	if grantReadAcpId := input.GrantReadAcpId; grantReadAcpId != "" {
 		setHeaders(headers, HEADER_GRANT_READ_ACP_OBS, []string{grantReadAcpId}, isObs)
 	}
-	if grantWriteAcpId := string(input.GrantWriteAcpId); grantWriteAcpId != "" {
+	if grantWriteAcpId := input.GrantWriteAcpId; grantWriteAcpId != "" {
 		setHeaders(headers, HEADER_GRANT_WRITE_ACP_OBS, []string{grantWriteAcpId}, isObs)
 	}
-	if grantFullControlId := string(input.GrantFullControlId); grantFullControlId != "" {
+	if grantFullControlId := input.GrantFullControlId; grantFullControlId != "" {
 		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_OBS, []string{grantFullControlId}, isObs)
 	}
-	if grantReadDeliveredId := string(input.GrantReadDeliveredId); grantReadDeliveredId != "" {
+	if grantReadDeliveredId := input.GrantReadDeliveredId; grantReadDeliveredId != "" {
 		setHeaders(headers, HEADER_GRANT_READ_DELIVERED_OBS, []string{grantReadDeliveredId}, true)
 	}
-	if grantFullControlDeliveredId := string(input.GrantFullControlDeliveredId); grantFullControlDeliveredId != "" {
+	if grantFullControlDeliveredId := input.GrantFullControlDeliveredId; grantFullControlDeliveredId != "" {
 		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_DELIVERED_OBS, []string{grantFullControlDeliveredId}, true)
 	}
 	if location := strings.TrimSpace(input.Location); location != "" {
@@ -178,7 +178,7 @@ func (input SetBucketStoragePolicyInput) trans(isObs bool) (params map[string]st
 	return
 }
 
-func (input ListObjsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input ListObjsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = make(map[string]string)
 	if input.Prefix != "" {
 		params["prefix"] = input.Prefix
@@ -225,7 +225,7 @@ func (input ListVersionsInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input ListMultipartUploadsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input ListMultipartUploadsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceUploads): ""}
 	if input.Prefix != "" {
 		params["prefix"] = input.Prefix
@@ -245,7 +245,7 @@ func (input ListMultipartUploadsInput) trans(isObs bool) (params map[string]stri
 	return
 }
 
-func (input SetBucketQuotaInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input SetBucketQuotaInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	return trans(SubResourceQuota, input)
 }
 
@@ -261,33 +261,33 @@ func (input SetBucketAclInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input SetBucketPolicyInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input SetBucketPolicyInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourcePolicy): ""}
 	data = strings.NewReader(input.Policy)
 	return
 }
 
-func (input SetBucketCorsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input SetBucketCorsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceCors): ""}
 	data, md5, err := ConvertRequestToIoReaderV2(input)
 	if err != nil {
 		return
 	}
-	headers = map[string][]string{HEADER_MD5_CAMEL: []string{md5}}
+	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
 
-func (input SetBucketVersioningInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input SetBucketVersioningInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	return trans(SubResourceVersioning, input)
 }
 
-func (input SetBucketWebsiteConfigurationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input SetBucketWebsiteConfigurationInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceWebsite): ""}
 	data, _ = ConvertWebsiteConfigurationToXml(input.BucketWebsiteConfiguration, false)
 	return
 }
 
-func (input GetBucketMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input GetBucketMetadataInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	headers = make(map[string][]string)
 	if origin := strings.TrimSpace(input.Origin); origin != "" {
 		headers[HEADER_ORIGIN_CAMEL] = []string{origin}
@@ -307,17 +307,17 @@ func (input SetBucketLoggingConfigurationInput) trans(isObs bool) (params map[st
 func (input SetBucketLifecycleConfigurationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceLifecycle): ""}
 	data, md5 := ConvertLifecyleConfigurationToXml(input.BucketLifecyleConfiguration, true, isObs)
-	headers = map[string][]string{HEADER_MD5_CAMEL: []string{md5}}
+	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
 
-func (input SetBucketTaggingInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input SetBucketTaggingInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceTagging): ""}
 	data, md5, err := ConvertRequestToIoReaderV2(input)
 	if err != nil {
 		return
 	}
-	headers = map[string][]string{HEADER_MD5_CAMEL: []string{md5}}
+	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
 
@@ -327,7 +327,7 @@ func (input SetBucketNotificationInput) trans(isObs bool) (params map[string]str
 	return
 }
 
-func (input DeleteObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input DeleteObjectInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = make(map[string]string)
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -335,13 +335,13 @@ func (input DeleteObjectInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input DeleteObjectsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input DeleteObjectsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceDelete): ""}
 	data, md5, err := ConvertRequestToIoReaderV2(input)
 	if err != nil {
 		return
 	}
-	headers = map[string][]string{HEADER_MD5_CAMEL: []string{md5}}
+	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
 
@@ -359,7 +359,7 @@ func (input SetObjectAclInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input GetObjectAclInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input GetObjectAclInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceAcl): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -450,7 +450,6 @@ func (input GetObjectMetadataInput) trans(isObs bool) (params map[string]string,
 }
 
 func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
-	params = make(map[string]string)
 	params = map[string]string{string(SubResourceMetadata): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -554,16 +553,16 @@ func (input ObjectOperationInput) trans(isObs bool) (params map[string]string, h
 	if acl := string(input.ACL); acl != "" {
 		setHeaders(headers, HEADER_ACL, []string{acl}, isObs)
 	}
-	if GrantReadId := string(input.GrantReadId); GrantReadId != "" {
+	if GrantReadId := input.GrantReadId; GrantReadId != "" {
 		setHeaders(headers, HEADER_GRANT_READ_OBS, []string{GrantReadId}, true)
 	}
-	if GrantReadAcpId := string(input.GrantReadAcpId); GrantReadAcpId != "" {
+	if GrantReadAcpId := input.GrantReadAcpId; GrantReadAcpId != "" {
 		setHeaders(headers, HEADER_GRANT_READ_ACP_OBS, []string{GrantReadAcpId}, true)
 	}
-	if GrantWriteAcpId := string(input.GrantWriteAcpId); GrantWriteAcpId != "" {
+	if GrantWriteAcpId := input.GrantWriteAcpId; GrantWriteAcpId != "" {
 		setHeaders(headers, HEADER_GRANT_WRITE_ACP_OBS, []string{GrantWriteAcpId}, true)
 	}
-	if GrantFullControlId := string(input.GrantFullControlId); GrantFullControlId != "" {
+	if GrantFullControlId := input.GrantFullControlId; GrantFullControlId != "" {
 		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_OBS, []string{GrantFullControlId}, true)
 	}
 	if storageClass := string(input.StorageClass); storageClass != "" {
@@ -688,7 +687,7 @@ func (input CopyObjectInput) trans(isObs bool) (params map[string]string, header
 	return
 }
 
-func (input AbortMultipartUploadInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input AbortMultipartUploadInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId}
 	return
 }
@@ -718,13 +717,13 @@ func (input UploadPartInput) trans(isObs bool) (params map[string]string, header
 	return
 }
 
-func (input CompleteMultipartUploadInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input CompleteMultipartUploadInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId}
 	data, _ = ConvertCompleteMultipartUploadInputToXml(input, false)
 	return
 }
 
-func (input ListPartsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+func (input ListPartsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId}
 	if input.MaxParts > 0 {
 		params["max-parts"] = IntToString(input.MaxParts)
@@ -777,7 +776,7 @@ func (parts partSlice) Swap(i, j int) {
 
 type readerWrapper struct {
 	reader      io.Reader
-	mark        int64
+	mark        int64 // nolint: structcheck
 	totalCount  int64
 	readedCount int64
 }

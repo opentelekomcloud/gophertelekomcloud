@@ -78,6 +78,6 @@ func mockEvacuateAdminpassResponse(t *testing.T, id string) {
     }
           `)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, EvacuateResponse)
+		_, _ = fmt.Fprint(w, EvacuateResponse)
 	})
 }

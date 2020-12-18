@@ -23,7 +23,7 @@ func TestCreate(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json")
 		th.TestJSONRequest(t, r, `
 {
-    
+
     "ipsec_site_connection": {
         "psk": "secret",
         "initiator": "bi-directional",
@@ -37,14 +37,14 @@ func TestCreate(t *testing.T) {
         "peer_address": "172.24.4.233",
         "peer_id": "172.24.4.233",
         "name": "vpnconnection1"
-    
+
 }
 }      `)
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "ipsec_site_connection": {
         "status": "PENDING_CREATE",
@@ -149,7 +149,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "ipsec_site_connection": {
         "status": "PENDING_CREATE",
@@ -226,7 +226,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "ipsec_site_connections":[
 	{
@@ -262,7 +262,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	siteconnections.List(fake.ServiceClient(), siteconnections.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = siteconnections.List(fake.ServiceClient(), siteconnections.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := siteconnections.ExtractConnections(page)
 		if err != nil {
@@ -334,7 +334,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 
 	{
     "ipsec_site_connection": {

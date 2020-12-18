@@ -1,9 +1,9 @@
 package backendmember
 
 import (
-	//"fmt"
+	// "fmt"
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	//"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	// "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsBuilder is the interface options structs have to satisfy in order
@@ -91,7 +91,7 @@ func Remove(c *golangsdk.ServiceClient, listener_id string, id string) (r Remove
 	lbids[0] = lbid
 	b := make(map[string]interface{})
 	b["removeMember"] = lbids
-	//fmt.Printf("b=%+v.\n", b)
+	// fmt.Printf("b=%+v.\n", b)
 	/* if err != nil {
 		r.Err = err
 		return

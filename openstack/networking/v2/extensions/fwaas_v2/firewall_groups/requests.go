@@ -3,7 +3,7 @@ package firewall_groups
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	//"fmt"
+	// "fmt"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the
@@ -35,6 +35,9 @@ type ListOpts struct {
 // ToFirewallListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToFirewallGroupListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -91,9 +94,9 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 		r.Err = err
 		return
 	}
-	//fmt.Printf("Creating %+v.\n", r)
+	// fmt.Printf("Creating %+v.\n", r)
 	_, r.Err = c.Post(rootURL(c), b, &r.Body, nil)
-	//fmt.Printf("Created %+v.\n", r)
+	// fmt.Printf("Created %+v.\n", r)
 	return
 }
 

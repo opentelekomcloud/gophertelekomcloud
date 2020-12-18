@@ -40,7 +40,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "ipsecpolicy": {
         "name": "ipsecpolicy1",
@@ -110,7 +110,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "ipsecpolicy": {
         "name": "ipsecpolicy1",
@@ -179,7 +179,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 		{
 	"ipsecpolicies": [
 		{
@@ -205,7 +205,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	ipsecpolicies.List(fake.ServiceClient(), ipsecpolicies.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = ipsecpolicies.List(fake.ServiceClient(), ipsecpolicies.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := ipsecpolicies.ExtractPolicies(page)
 		if err != nil {
@@ -266,7 +266,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 
 	{
 		"ipsecpolicy": {

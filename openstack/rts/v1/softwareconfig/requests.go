@@ -33,6 +33,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]SoftwareConfig, error) {
 		return SoftwareConfigPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allConfigs, err := ExtractSoftwareConfigs(pages)
 	if err != nil {
 		return nil, err
@@ -77,7 +81,7 @@ func FilterSoftwareConfig(config []SoftwareConfig, opts ListOpts) ([]SoftwareCon
 func getStructField(v *SoftwareConfig, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -91,15 +95,15 @@ type CreateOptsBuilder interface {
 type CreateOpts struct {
 	// Specifies the script used for defining the configuration.
 	Config string `json:"config,omitempty"`
-	//Specifies the name of the software configuration group.
+	// Specifies the name of the software configuration group.
 	Group string `json:"group,omitempty"`
-	//Specifies the name of the software configuration.
+	// Specifies the name of the software configuration.
 	Name string `json:"name" required:"true"`
-	//Specifies the software configuration input.
+	// Specifies the software configuration input.
 	Inputs []map[string]interface{} `json:"inputs,omitempty"`
-	//Specifies the software configuration output.
+	// Specifies the software configuration output.
 	Outputs []map[string]interface{} `json:"outputs,omitempty"`
-	//Specifies options used by a software configuration management tool.
+	// Specifies options used by a software configuration management tool.
 	Options map[string]interface{} `json:"options,omitempty"`
 }
 

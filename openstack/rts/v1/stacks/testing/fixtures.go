@@ -45,7 +45,7 @@ func HandleCreateSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, output)
+		_, _ = fmt.Fprint(w, output)
 	})
 }
 
@@ -131,13 +131,13 @@ func HandleListSuccessfully(t *testing.T, output string) {
 		th.TestHeader(t, r, "Accept", "application/json")
 
 		w.Header().Set("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, output)
+			_, _ = fmt.Fprint(w, output)
 		case "db6977b2-27aa-4775-9ae7-6213212d4ada":
-			fmt.Fprintf(w, `[]`)
+			_, _ = fmt.Fprint(w, `[]`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -214,7 +214,7 @@ func HandleGetSuccessfully(t *testing.T, output string) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, output)
+		_, _ = fmt.Fprint(w, output)
 	})
 }
 

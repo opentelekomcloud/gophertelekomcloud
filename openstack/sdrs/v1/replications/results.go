@@ -5,45 +5,45 @@ import (
 )
 
 type Replication struct {
-	//Replication ID
+	// Replication ID
 	Id string `json:"id"`
-	//Replication Name
+	// Replication Name
 	Name string `json:"name"`
-	//Replication Description
+	// Replication Description
 	Description string `json:"description"`
-	//Replication Model
+	// Replication Model
 	ReplicaModel string `json:"replication_model"`
-	//Replication Status
+	// Replication Status
 	Status string `json:"status"`
-	//Replication Attachment
+	// Replication Attachment
 	Attachment []Attachment `json:"attachment"`
-	//Replication Group ID
+	// Replication Group ID
 	GroupID string `json:"server_group_id"`
-	//Replication Volume IDs
+	// Replication Volume IDs
 	VolumeIDs string `json:"volume_ids"`
-	//Replication Priority Station
+	// Replication Priority Station
 	PriorityStation string `json:"priority_station"`
-	//Replication Fault Level
+	// Replication Fault Level
 	FaultLevel string `json:"fault_level"`
-	//Replication Record Metadata
+	// Replication Record Metadata
 	RecordMetadata RecordMetadata `json:"record_metadata"`
 }
 
 type Attachment struct {
-	//Device Name
+	// Device Name
 	Device string `json:"device"`
-	//Protected Instance ID
+	// Protected Instance ID
 	ProtectedInstance string `json:"protected_instance"`
 }
 
 type RecordMetadata struct {
-	//Whether Multiattach
+	// Whether Multiattach
 	Multiattach bool `json:"multiattach"`
-	//Whether Bootable
+	// Whether Bootable
 	Bootable bool `json:"bootable"`
-	//Volume Size
+	// Volume Size
 	VolumeSize int `json:"volume_size"`
-	//Volume Type
+	// Volume Type
 	VolumeType string `json:"volume_type"`
 }
 

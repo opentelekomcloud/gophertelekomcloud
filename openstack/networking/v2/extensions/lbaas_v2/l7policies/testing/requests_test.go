@@ -35,7 +35,7 @@ func TestRequiredL7PolicyCreateOpts(t *testing.T) {
 	// Action is invalid.
 	res = l7policies.Create(fake.ServiceClient(), l7policies.CreateOpts{
 		ListenerID: "023f2e34-7806-443b-bfae-16c324569a3d",
-		Action:     l7policies.Action("invalid"),
+		Action:     "invalid",
 	})
 	if res.Err == nil {
 		t.Fatalf("Expected error, but got none")
@@ -113,7 +113,7 @@ func TestUpdateL7PolicyWithInvalidOpts(t *testing.T) {
 	defer th.TeardownHTTP()
 
 	res := l7policies.Update(fake.ServiceClient(), "8a1412f0-4c32-4257-8b07-af4770b604fd", l7policies.UpdateOpts{
-		Action: l7policies.Action("invalid"),
+		Action: "invalid",
 	})
 	if res.Err == nil {
 		t.Fatalf("Expected error, got none")
@@ -150,7 +150,7 @@ func TestRequiredRuleCreateOpts(t *testing.T) {
 		t.Fatalf("Expected error, but got none")
 	}
 	res = l7policies.CreateRule(fake.ServiceClient(), "8a1412f0-4c32-4257-8b07-af4770b604fd", l7policies.CreateRuleOpts{
-		RuleType:    l7policies.RuleType("invalid"),
+		RuleType:    "invalid",
 		CompareType: l7policies.CompareTypeRegex,
 		Value:       "/images*",
 	})
@@ -159,7 +159,7 @@ func TestRequiredRuleCreateOpts(t *testing.T) {
 	}
 	res = l7policies.CreateRule(fake.ServiceClient(), "8a1412f0-4c32-4257-8b07-af4770b604fd", l7policies.CreateRuleOpts{
 		RuleType:    l7policies.TypePath,
-		CompareType: l7policies.CompareType("invalid"),
+		CompareType: "invalid",
 		Value:       "/images*",
 	})
 	if res.Err == nil {
@@ -261,14 +261,14 @@ func TestUpdateRuleWithInvalidOpts(t *testing.T) {
 	defer th.TeardownHTTP()
 
 	res := l7policies.UpdateRule(fake.ServiceClient(), "", "", l7policies.UpdateRuleOpts{
-		RuleType: l7policies.RuleType("invalid"),
+		RuleType: "invalid",
 	})
 	if res.Err == nil {
 		t.Fatalf("Expected error, got none")
 	}
 
 	res = l7policies.UpdateRule(fake.ServiceClient(), "", "", l7policies.UpdateRuleOpts{
-		CompareType: l7policies.CompareType("invalid"),
+		CompareType: "invalid",
 	})
 	if res.Err == nil {
 		t.Fatalf("Expected error, got none")

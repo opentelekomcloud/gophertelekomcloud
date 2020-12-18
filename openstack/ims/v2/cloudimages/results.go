@@ -99,22 +99,6 @@ func (r *Image) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract will get the Image object out of the commonResult object.
-func (r commonResult) Extract() (*Image, error) {
-	var s Image
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-
-// ExtractInto converts our response data into a volume struct
-func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "images")
-}
-
 // ImagePage represents the results of a List request.
 type ImagePage struct {
 	serviceURL string

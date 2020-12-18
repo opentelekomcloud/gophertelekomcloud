@@ -27,6 +27,9 @@ func TestWaitForTimeout(t *testing.T) {
 	err := golangsdk.WaitFor(1, func() (bool, error) {
 		return false, nil
 	})
+	if err == nil {
+		t.Fatalf("Expected to receive error")
+	}
 	th.AssertEquals(t, "A timeout occurred", err.Error())
 }
 
@@ -38,6 +41,9 @@ func TestWaitForError(t *testing.T) {
 	err := golangsdk.WaitFor(2, func() (bool, error) {
 		return false, errors.New("Error has occurred")
 	})
+	if err == nil {
+		t.Fatalf("Expected to receive error")
+	}
 	th.AssertEquals(t, "Error has occurred", err.Error())
 }
 
@@ -50,6 +56,9 @@ func TestWaitForPredicateExceed(t *testing.T) {
 		time.Sleep(4 * time.Second)
 		return false, errors.New("Just wasting time")
 	})
+	if err == nil {
+		t.Fatalf("Expected to receive error")
+	}
 	th.AssertEquals(t, "A timeout occurred", err.Error())
 }
 

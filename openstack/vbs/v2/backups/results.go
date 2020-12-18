@@ -9,52 +9,52 @@ import (
 )
 
 type Backup struct {
-	//Backup ID
+	// Backup ID
 	Id string `json:"id"`
-	//Backup name
+	// Backup name
 	Name string `json:"name"`
-	//Backup URL
+	// Backup URL
 	Links []golangsdk.Link `json:"links"`
-	//Backup status
+	// Backup status
 	Status string `json:"status"`
-	//Backup description
+	// Backup description
 	Description string `json:"description"`
-	//AvailabilityZone where the backup resides
+	// AvailabilityZone where the backup resides
 	AvailabilityZone string `json:"availability_zone"`
-	//Source volume ID of the backup
+	// Source volume ID of the backup
 	VolumeId string `json:"volume_id"`
-	//Cause of the backup failure
+	// Cause of the backup failure
 	FailReason string `json:"fail_reason"`
-	//Backup size
+	// Backup size
 	Size int `json:"size"`
-	//Number of objects on OBS for the disk data
+	// Number of objects on OBS for the disk data
 	ObjectCount int `json:"object_count"`
-	//Container of the backup
+	// Container of the backup
 	Container string `json:"container"`
-	//Backup creation time
+	// Backup creation time
 	CreatedAt time.Time `json:"-"`
-	//ID of the tenant to which the backup belongs
+	// ID of the tenant to which the backup belongs
 	TenantId string `json:"os-bak-tenant-attr:tenant_id"`
-	//Backup metadata
+	// Backup metadata
 	ServiceMetadata string `json:"service_metadata"`
-	//Time when the backup was updated
+	// Time when the backup was updated
 	UpdatedAt time.Time `json:"-"`
-	//Current time
+	// Current time
 	DataTimeStamp time.Time `json:"-"`
-	//Whether a dependent backup exists
+	// Whether a dependent backup exists
 	DependentBackups bool `json:"has_dependent_backups"`
-	//ID of the snapshot associated with the backup
+	// ID of the snapshot associated with the backup
 	SnapshotId string `json:"snapshot_id"`
-	//Whether the backup is an incremental backup
+	// Whether the backup is an incremental backup
 	Incremental bool `json:"is_incremental"`
 }
 
 type BackupRestoreInfo struct {
-	//Backup ID
+	// Backup ID
 	BackupId string `json:"backup_id"`
-	//Volume ID
+	// Volume ID
 	VolumeId string `json:"volume_id"`
-	//Volume name
+	// Volume name
 	VolumeName string `json:"volume_name"`
 }
 

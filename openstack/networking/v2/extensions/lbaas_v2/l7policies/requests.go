@@ -112,6 +112,9 @@ type ListOpts struct {
 // ToL7PolicyListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToL7PolicyListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -284,6 +287,9 @@ type ListRulesOpts struct {
 // ToRulesListQuery formats a ListOpts into a query string.
 func (opts ListRulesOpts) ToRulesListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

@@ -42,7 +42,10 @@ type ListOpts struct {
 // representing whether to list complete information for each object.
 func (opts ListOpts) ToObjectListParams() (bool, string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
-	return opts.Full, q.String(), err
+	if err != nil {
+		return false, "", err
+	}
+	return opts.Full, q.String(), nil
 }
 
 // List is a function that retrieves all objects in a container. It also returns
@@ -208,7 +211,7 @@ func (opts CreateOpts) ToObjectCreateParams() (io.Reader, map[string]string, str
 	if _, err := io.Copy(hash, readSeeker); err != nil {
 		return nil, nil, "", err
 	}
-	readSeeker.Seek(0, io.SeekStart)
+	_, _ = readSeeker.Seek(0, io.SeekStart)
 
 	h["ETag"] = fmt.Sprintf("%x", hash.Sum(nil))
 
@@ -314,6 +317,9 @@ type DeleteOpts struct {
 // ToObjectDeleteQuery formats a DeleteOpts into a query string.
 func (opts DeleteOpts) ToObjectDeleteQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 
@@ -493,7 +499,7 @@ func CreateTempURL(c *golangsdk.ServiceClient, containerName, objectName string,
 	objectPath = opts.Split + objectPath
 	body := fmt.Sprintf("%s\n%d\n%s", opts.Method, expiry, objectPath)
 	hash := hmac.New(sha1.New, secretKey)
-	hash.Write([]byte(body))
+	_, _ = hash.Write([]byte(body))
 	hexsum := fmt.Sprintf("%x", hash.Sum(nil))
 	return fmt.Sprintf("%s%s?temp_url_sig=%s&temp_url_expires=%d", baseURL, objectPath, hexsum, expiry), nil
 }

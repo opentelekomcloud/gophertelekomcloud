@@ -17,7 +17,7 @@ type CreateOpts struct {
 	GroupID string `json:"server_group_id" required:"true"`
 	// Drill vpc id
 	DrillVpcID string `json:"drill_vpc_id" required:"true"`
-	//DR-Drill Name
+	// DR-Drill Name
 	Name string `json:"name" required:"true"`
 }
 

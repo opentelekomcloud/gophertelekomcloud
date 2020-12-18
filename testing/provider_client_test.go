@@ -85,7 +85,7 @@ func TestConcurrentReauth(t *testing.T) {
 		}
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{}`)
+		_, _ = fmt.Fprint(w, `{}`)
 	})
 
 	wg := new(sync.WaitGroup)

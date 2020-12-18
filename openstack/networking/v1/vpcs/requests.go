@@ -21,7 +21,7 @@ type ListOpts struct {
 	// unique.
 	Name string `json:"name"`
 
-	//Specifies the range of available subnets in the VPC.
+	// Specifies the range of available subnets in the VPC.
 	CIDR string `json:"cidr"`
 
 	// Status indicates whether or not a vpc is currently operational.
@@ -39,6 +39,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Vpc, error) {
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return VpcPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+
+	if err != nil {
+		return nil, err
+	}
 
 	allVpcs, err := ExtractVpcs(pages)
 	if err != nil {
@@ -92,7 +96,7 @@ func FilterVPCs(vpcs []Vpc, opts ListOpts) ([]Vpc, error) {
 func getStructField(v *Vpc, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

@@ -22,7 +22,7 @@ func TestListVersions(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "versions": [
         {
@@ -41,7 +41,7 @@ func TestListVersions(t *testing.T) {
 
 	count := 0
 
-	apiversions.ListVersions(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	_ = apiversions.ListVersions(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := apiversions.ExtractAPIVersions(page)
 		if err != nil {
@@ -74,7 +74,7 @@ func TestNonJSONCannotBeExtractedIntoAPIVersions(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	apiversions.ListVersions(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	_ = apiversions.ListVersions(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
 		if _, err := apiversions.ExtractAPIVersions(page); err == nil {
 			t.Fatalf("Expected error, got nil")
 		}
@@ -93,7 +93,7 @@ func TestAPIInfo(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "resources": [
         {
@@ -133,7 +133,7 @@ func TestAPIInfo(t *testing.T) {
 
 	count := 0
 
-	apiversions.ListVersionResources(fake.ServiceClient(), "v2.0").EachPage(func(page pagination.Page) (bool, error) {
+	_ = apiversions.ListVersionResources(fake.ServiceClient(), "v2.0").EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := apiversions.ExtractVersionResources(page)
 		if err != nil {
@@ -174,7 +174,7 @@ func TestNonJSONCannotBeExtractedIntoAPIVersionResources(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	apiversions.ListVersionResources(fake.ServiceClient(), "v2.0").EachPage(func(page pagination.Page) (bool, error) {
+	_ = apiversions.ListVersionResources(fake.ServiceClient(), "v2.0").EachPage(func(page pagination.Page) (bool, error) {
 		if _, err := apiversions.ExtractVersionResources(page); err == nil {
 			t.Fatalf("Expected error, got nil")
 		}

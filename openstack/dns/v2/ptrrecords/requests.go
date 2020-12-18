@@ -33,9 +33,9 @@ type CreateOpts struct {
 
 // Tag is a structure of key value pair.
 type Tag struct {
-	//tag key
+	// tag key
 	Key string `json:"key" required:"true"`
-	//tag value
+	// tag value
 	Value string `json:"value" required:"true"`
 }
 

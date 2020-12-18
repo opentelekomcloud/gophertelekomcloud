@@ -4,12 +4,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-//CreateOptsBuilder is an interface by which can serialize the create parameters
+// CreateOptsBuilder is an interface by which can serialize the create parameters
 type CreateOptsBuilder interface {
 	ToPolicyCreateMap() (map[string]interface{}, error)
 }
 
-//CreateOpts is a struct which will be used to create a policy
+// CreateOpts is a struct which will be used to create a policy
 type CreateOpts struct {
 	Name           string             `json:"scaling_policy_name" required:"true"`
 	ID             string             `json:"scaling_group_id" required:"true"`
@@ -37,8 +37,8 @@ func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//Create is a method which can be able to access to create the policy of autoscaling
-//service.
+// Create is a method which can be able to access to create the policy of autoscaling
+// service.
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToPolicyCreateMap()
 	if err != nil {
@@ -52,12 +52,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-//UpdateOptsBuilder is an interface which can build the map paramter of update function
+// UpdateOptsBuilder is an interface which can build the map paramter of update function
 type UpdateOptsBuilder interface {
 	ToPolicyUpdateMap() (map[string]interface{}, error)
 }
 
-//UpdateOpts is a struct which represents the parameters of update function
+// UpdateOpts is a struct which represents the parameters of update function
 type UpdateOpts struct {
 	Name           string             `json:"scaling_policy_name,omitempty"`
 	Type           string             `json:"scaling_policy_type,omitempty"`
@@ -71,8 +71,8 @@ func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//Update is a method which can be able to update the policy via accessing to the
-//autoscaling service with Put method and parameters
+// Update is a method which can be able to update the policy via accessing to the
+// autoscaling service with Put method and parameters
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	body, err := opts.ToPolicyUpdateMap()
 	if err != nil {
@@ -86,13 +86,13 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 	return
 }
 
-//Delete is a method which can be able to access to delete a policy of autoscaling
+// Delete is a method which can be able to access to delete a policy of autoscaling
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = client.Delete(deleteURL(client, id), nil)
 	return
 }
 
-//Get is a method which can be able to access to get a policy detailed information
+// Get is a method which can be able to access to get a policy detailed information
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
 	return

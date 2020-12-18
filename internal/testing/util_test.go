@@ -1,10 +1,10 @@
 package testing
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/internal"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestRemainingKeys(t *testing.T) {
@@ -35,8 +35,5 @@ func TestRemainingKeys(t *testing.T) {
 
 	actual := internal.RemainingKeys(User{}, userResponse)
 
-	isEqual := reflect.DeepEqual(expected, actual)
-	if !isEqual {
-		t.Fatalf("expected %s but got %s", expected, actual)
-	}
+	th.AssertDeepEquals(t, expected, actual)
 }

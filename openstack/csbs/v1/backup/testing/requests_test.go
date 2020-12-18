@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -24,7 +23,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprint(w, getResponse)
 	})
 
 	s, err := backup.Get(fake.ServiceClient(), checkpoint_item_id).ExtractBackup()
@@ -52,7 +51,7 @@ func TestCreate(t *testing.T) {
 			th.TestJSONRequest(t, r, createRequest)
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, createResponse)
+			_, _ = fmt.Fprint(w, createResponse)
 		})
 
 	options := &backup.CreateOpts{
@@ -82,7 +81,7 @@ func TestQueryResourceCapability(t *testing.T) {
 			th.TestJSONRequest(t, r, queryRequest)
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, queryResponse)
+			_, _ = fmt.Fprint(w, queryResponse)
 		})
 
 	options := &backup.ResourceBackupCapOpts{CheckProtectable: []backup.ResourceCapQueryParams{
@@ -122,7 +121,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, listResponse)
+		_, _ = fmt.Fprint(w, listResponse)
 	})
 
 	actual, err := backup.List(fake.ServiceClient(), backup.ListOpts{})

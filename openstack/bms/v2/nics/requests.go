@@ -24,6 +24,9 @@ func List(c *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, er
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return NicPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
 
 	allNICs, err := ExtractNics(pages)
 	if err != nil {
@@ -33,7 +36,7 @@ func List(c *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, er
 	return FilterNICs(allNICs, opts)
 }
 
-//FilterNICs used to filter nics using id and status.
+// FilterNICs used to filter nics using id and status.
 func FilterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
 
 	var refinedNICs []Nic
@@ -71,7 +74,7 @@ func FilterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
 func getStructField(v *Nic, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
+	return f.String()
 }
 
 // Get retrieves a particular nic based on its unique ID.

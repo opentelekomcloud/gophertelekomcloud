@@ -79,7 +79,7 @@ type CreateOpts struct {
 	// Default is ESP.
 	TransformProtocol TransformProtocol `json:"transform_protocol,omitempty"`
 
-	//Lifetime is the lifetime of the security association
+	// Lifetime is the lifetime of the security association
 	Lifetime *LifetimeCreateOpts `json:"lifetime,omitempty"`
 }
 
@@ -150,6 +150,9 @@ type ListOpts struct {
 // ToPolicyListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToPolicyListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

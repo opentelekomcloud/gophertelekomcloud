@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "health_monitors":[
       {
@@ -54,7 +54,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	monitors.List(fake.ServiceClient(), monitors.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = monitors.List(fake.ServiceClient(), monitors.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := monitors.ExtractMonitors(page)
 		if err != nil {
@@ -146,7 +146,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "health_monitor":{
       "id":"f3eeab00-8367-4524-b662-55e64d4cacb5",
@@ -200,7 +200,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
    "health_monitor":{
       "id":"f3eeab00-8367-4524-b662-55e64d4cacb5",
@@ -260,7 +260,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "health_monitor": {
         "admin_state_up": true,

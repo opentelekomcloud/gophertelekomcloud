@@ -5,7 +5,7 @@ import (
 )
 
 type RespTags struct {
-	//contains list of tags, i.e.key value pair
+	// contains list of tags, i.e.key value pair
 	Tags []Tag `json:"tags"`
 }
 

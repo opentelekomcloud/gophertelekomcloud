@@ -10,7 +10,7 @@ import (
 )
 
 // HandleCreateTokenWithTrustID verifies that providing certain AuthOptions and Scope results in an expected JSON structure.
-func HandleCreateTokenWithTrustID(t *testing.T, options tokens.AuthOptionsBuilder, requestJSON string) {
+func HandleCreateTokenWithTrustID(t *testing.T, _ tokens.AuthOptionsBuilder, requestJSON string) {
 	testhelper.Mux.HandleFunc("/auth/tokens", func(w http.ResponseWriter, r *http.Request) {
 		testhelper.TestMethod(t, r, "POST")
 		testhelper.TestHeader(t, r, "Content-Type", "application/json")
@@ -18,7 +18,7 @@ func HandleCreateTokenWithTrustID(t *testing.T, options tokens.AuthOptionsBuilde
 		testhelper.TestJSONRequest(t, r, requestJSON)
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
     "token": {
         "expires_at": "2013-02-27T18:30:59.999999Z",
         "issued_at": "2013-02-27T16:30:59.999999Z",

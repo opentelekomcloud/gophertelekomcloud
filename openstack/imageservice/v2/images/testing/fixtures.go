@@ -130,7 +130,7 @@ func HandleImageListSuccessfully(t *testing.T) {
 		addNext := false
 		var imageJSON []string
 
-		fmt.Fprintf(w, `{"images": [`)
+		_, _ = fmt.Fprint(w, `{"images": [`)
 
 		for _, i := range images {
 			if marker == "" || addNext {
@@ -149,9 +149,9 @@ func HandleImageListSuccessfully(t *testing.T) {
 			}
 		}
 		t.Logf("Writing out %v image(s)", len(imageJSON))
-		fmt.Fprintf(w, strings.Join(imageJSON, ","))
+		_, _ = fmt.Fprint(w, strings.Join(imageJSON, ","))
 
-		fmt.Fprintf(w, `],
+		_, _ = fmt.Fprintf(w, `],
 			    "next": "/images?marker=%s&limit=%v",
 			    "schema": "/schemas/images",
 			    "first": "/images?limit=%v"}`, newMarker, limit, limit)
@@ -176,7 +176,7 @@ func HandleImageCreationSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"status": "queued",
 			"name": "Ubuntu 12.10",
 			"protected": false,
@@ -222,7 +222,7 @@ func HandleImageCreationSuccessfullyNulls(t *testing.T) {
 
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"architecture": "x86_64",
 			"status": "queued",
 			"name": "Ubuntu 12.10",
@@ -256,7 +256,7 @@ func HandleImageGetSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"status": "active",
 			"name": "cirros-0.3.2-x86_64-disk",
 			"tags": [],
@@ -319,7 +319,7 @@ func HandleImageUpdateSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"id": "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 			"name": "Fedora 17",
 			"status": "active",
@@ -358,7 +358,7 @@ func HandleImageListByTagsSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
     "images": [
         {
           "status": "active",
@@ -417,7 +417,7 @@ func HandleImageUpdatePropertiesSuccessfully(t *testing.T) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, `{
+		_, _ = fmt.Fprint(w, `{
 			"id": "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 			"name": "Fedora 17",
 			"status": "active",

@@ -10,11 +10,11 @@ type GetResponse struct {
 }
 
 type Domain struct {
-	//Domain ID
+	// Domain ID
 	Id string `json:"id"`
-	//Domain Name
+	// Domain Name
 	Name string `json:"name"`
-	//Domain Description
+	// Domain Description
 	Description string `json:"description"`
 }
 

@@ -42,6 +42,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 		return BackupPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allBackups, err := ExtractBackups(pages)
 	if err != nil {
 		return nil, err

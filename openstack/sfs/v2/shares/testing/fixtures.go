@@ -75,7 +75,7 @@ func MockCreateResponse(t *testing.T) {
 		th.TestJSONRequest(t, r, createRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, createResponse)
+		_, _ = fmt.Fprint(w, createResponse)
 	})
 }
 
@@ -139,7 +139,7 @@ func MockUpdateResponse(t *testing.T) {
 		th.TestJSONRequest(t, r, updateRequest)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, updateResponse)
+		_, _ = fmt.Fprint(w, updateResponse)
 	})
 }
 
@@ -192,7 +192,7 @@ func MockGetResponse(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, getResponse)
+		_, _ = fmt.Fprint(w, getResponse)
 	})
 }
 
@@ -241,7 +241,7 @@ var getExportLocationsResponse = `{
     "export_locations": [
         {
 		"path": "sfs-nas1.eu-de.otc.t-systems.com:/share-d41ee18b",
-		"id": "fab962ba-4b9a-475e-a380-8e856ed3f92d"		
+		"id": "fab962ba-4b9a-475e-a380-8e856ed3f92d"
 	}
     ]
 }`

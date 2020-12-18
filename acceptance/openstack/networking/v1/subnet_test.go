@@ -9,6 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestSubnetList(t *testing.T) {
@@ -17,6 +18,7 @@ func TestSubnetList(t *testing.T) {
 		t.Fatalf("Unable to create NetworkV1 client : %v", err)
 	}
 	allPages, err := subnets.List(client, subnets.ListOpts{})
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, allPages)
 }
 
@@ -130,6 +132,7 @@ func waitForSubnetToDelete(client *golangsdk.ServiceClient, subnetID string, sec
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
 			}
+			return false, err
 		}
 
 		return false, nil
@@ -147,7 +150,7 @@ func waitForSubnetToActive(client *golangsdk.ServiceClient, subnetID string, sec
 			return true, nil
 		}
 
-		//If subnet status is other than Active, send error
+		// If subnet status is other than Active, send error
 		if n.Status == "DOWN" || n.Status == "ERROR" {
 			return false, fmt.Errorf("subnet status: '%s'", n.Status)
 		}

@@ -105,7 +105,7 @@ func (r AllocateResult) ExtractHost() (*AllocatedHosts, error) {
 	return &response, err
 }
 
-//AllocatedHosts is the response structure of the allocated DeH
+// AllocatedHosts is the response structure of the allocated DeH
 type AllocatedHosts struct {
 	AllocatedHostIds []string `json:"dedicated_host_ids"`
 }

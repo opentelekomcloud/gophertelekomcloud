@@ -34,5 +34,8 @@ func TestNoAuth(t *testing.T) {
 
 	errTest, err := noauth.NewBlockStorageNoAuth(provider2, noauth.EndpointOpts{})
 	_ = errTest
+	if err == nil {
+		t.Fatalf("Expected to receive error")
+	}
 	th.AssertEquals(t, errorResult, err.Error())
 }

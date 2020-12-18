@@ -39,7 +39,7 @@ type SubJob struct {
 	// Task type.
 	Type string `json:"job_type"`
 
-	//Specifies the task status.
+	// Specifies the task status.
 	//  SUCCESS: indicates the task is successfully executed.
 	//  RUNNING: indicates that the task is in progress.
 	//  FAIL: indicates that the task failed.

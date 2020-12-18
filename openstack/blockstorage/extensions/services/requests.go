@@ -23,6 +23,9 @@ type ListOpts struct {
 // ToServiceListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToServiceListQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
 	return q.String(), err
 }
 

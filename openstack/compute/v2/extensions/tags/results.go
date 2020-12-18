@@ -32,7 +32,7 @@ type GetResult struct {
 	commonResult
 }
 
-//DeleteResult model
+// DeleteResult model
 type DeleteResult struct {
 	golangsdk.ErrResult
 }

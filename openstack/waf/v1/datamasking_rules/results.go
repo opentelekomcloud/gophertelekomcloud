@@ -5,15 +5,15 @@ import (
 )
 
 type DataMasking struct {
-	//DataMasking Rule ID
+	// DataMasking Rule ID
 	Id string `json:"id"`
-	//DataMaksing Rule URL
+	// DataMaksing Rule URL
 	Url string `json:"url"`
-	//Masked Field
+	// Masked Field
 	Category string `json:"category"`
-	//Masked Subfield
+	// Masked Subfield
 	Index string `json:"index"`
-	//Policy ID
+	// Policy ID
 	PolicyID string `json:"policyid"`
 }
 

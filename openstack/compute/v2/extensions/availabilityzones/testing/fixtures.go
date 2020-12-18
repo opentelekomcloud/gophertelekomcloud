@@ -180,7 +180,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -192,6 +192,6 @@ func HandleGetDetailSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetDetailOutput)
+		_, _ = fmt.Fprint(w, GetDetailOutput)
 	})
 }

@@ -22,12 +22,12 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, SubnetListResult)
+		_, _ = fmt.Fprint(w, SubnetListResult)
 	})
 
 	count := 0
 
-	subnets.List(fake.ServiceClient(), subnets.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = subnets.List(fake.ServiceClient(), subnets.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := subnets.ExtractSubnets(page)
 		if err != nil {
@@ -63,7 +63,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, SubnetGetResult)
+		_, _ = fmt.Fprint(w, SubnetGetResult)
 	})
 
 	s, err := subnets.Get(fake.ServiceClient(), "54d6f61d-db07-451c-9ab3-b9609b6b6f0b").Extract()
@@ -102,7 +102,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetCreateResult)
+		_, _ = fmt.Fprint(w, SubnetCreateResult)
 	})
 
 	var gatewayIP = "192.168.199.1"
@@ -159,7 +159,7 @@ func TestCreateNoGateway(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetCreateWithNoGatewayResponse)
+		_, _ = fmt.Fprint(w, SubnetCreateWithNoGatewayResponse)
 	})
 
 	var noGateway = ""
@@ -210,7 +210,7 @@ func TestCreateDefaultGateway(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetCreateWithDefaultGatewayResponse)
+		_, _ = fmt.Fprint(w, SubnetCreateWithDefaultGatewayResponse)
 	})
 
 	opts := subnets.CreateOpts{
@@ -259,7 +259,7 @@ func TestCreateIPv6RaAddressMode(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetCreateWithIPv6RaAddressModeResponse)
+		_, _ = fmt.Fprint(w, SubnetCreateWithIPv6RaAddressModeResponse)
 	})
 
 	var gatewayIP = "2001:db8:0:a::1"
@@ -300,7 +300,7 @@ func TestCreateWithNoCIDR(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetCreateResult)
+		_, _ = fmt.Fprint(w, SubnetCreateResult)
 	})
 
 	opts := subnets.CreateOpts{
@@ -365,7 +365,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetUpdateResponse)
+		_, _ = fmt.Fprint(w, SubnetUpdateResponse)
 	})
 
 	opts := subnets.UpdateOpts{
@@ -396,7 +396,7 @@ func TestUpdateGateway(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetUpdateGatewayResponse)
+		_, _ = fmt.Fprint(w, SubnetUpdateGatewayResponse)
 	})
 
 	var gatewayIP = "10.0.0.1"
@@ -426,7 +426,7 @@ func TestUpdateRemoveGateway(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetUpdateRemoveGatewayResponse)
+		_, _ = fmt.Fprint(w, SubnetUpdateRemoveGatewayResponse)
 	})
 
 	var noGateway = ""
@@ -456,7 +456,7 @@ func TestUpdateHostRoutes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetUpdateHostRoutesResponse)
+		_, _ = fmt.Fprint(w, SubnetUpdateHostRoutesResponse)
 	})
 
 	HostRoutes := []subnets.HostRoute{
@@ -492,7 +492,7 @@ func TestUpdateRemoveHostRoutes(t *testing.T) {
 	//		w.Header().Add("Content-Type", "application/json")
 	//		w.WriteHeader(http.StatusCreated)
 
-	//		fmt.Fprintf(w, SubnetUpdateRemoveHostRoutesResponse)
+	//		_,_ = fmt.Fprint(w, SubnetUpdateRemoveHostRoutesResponse)
 	//	})
 
 	//	noHostRoutes := []subnets.HostRoute{}
@@ -521,7 +521,7 @@ func TestUpdateAllocationPool(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, SubnetUpdateAllocationPoolResponse)
+		_, _ = fmt.Fprint(w, SubnetUpdateAllocationPoolResponse)
 	})
 
 	opts := subnets.UpdateOpts{

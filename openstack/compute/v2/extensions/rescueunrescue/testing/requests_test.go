@@ -20,7 +20,7 @@ func TestRescue(t *testing.T) {
 		th.TestJSONRequest(t, r, RescueRequest)
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, RescueResult)
+		_, _ = fmt.Fprint(w, RescueResult)
 	})
 
 	s, err := rescueunrescue.Rescue(fake.ServiceClient(), "3f54d05f-3430-4d80-aa07-63e6af9e2488", rescueunrescue.RescueOpts{

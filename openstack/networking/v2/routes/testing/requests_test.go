@@ -21,7 +21,7 @@ func TestListRoutes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "routes": [
         {
@@ -104,7 +104,7 @@ func TestGetRoutes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "route": {
         "destination": "192.168.0.0/16",
@@ -138,11 +138,11 @@ func TestCreateRoute(t *testing.T) {
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 		th.TestJSONRequest(t, r, `
-{ 
-    "route": { 
-        "type": "peering",  
-        "nexthop": "d2dea4ba-e988-4e9c-8162-652e74b2560c",  
-        "destination": "192.168.0.0/16",  
+{
+    "route": {
+        "type": "peering",
+        "nexthop": "d2dea4ba-e988-4e9c-8162-652e74b2560c",
+        "destination": "192.168.0.0/16",
         "vpc_id": "3127e30b-5f8e-42d1-a3cc-fdadf412c5bf"
     }
 }
@@ -151,7 +151,7 @@ func TestCreateRoute(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "route": {
         "destination": "192.168.0.0/16",

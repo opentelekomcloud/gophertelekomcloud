@@ -141,5 +141,5 @@ func TestDelete(t *testing.T) {
 
 	err := recordsets.Delete(client.ServiceClient(), DeletedRecordSet.ZoneID, DeletedRecordSet.ID).ExtractErr()
 	th.AssertNoErr(t, err)
-	//th.CheckDeepEquals(t, &DeletedZone, actual)
+	// th.CheckDeepEquals(t, &DeletedZone, actual)
 }

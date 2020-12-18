@@ -70,8 +70,8 @@ type UpdateOpts struct {
 	Description string `json:"description,omitempty"`
 }
 
-func (u UpdateOpts) IsNeedUpdate() (bool, error) {
-	d, e := u.ToCertificateUpdateMap()
+func (opts UpdateOpts) IsNeedUpdate() (bool, error) {
+	d, e := opts.ToCertificateUpdateMap()
 	if e == nil {
 		return len(d) != 0, nil
 	}

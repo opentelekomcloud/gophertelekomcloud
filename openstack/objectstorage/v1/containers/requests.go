@@ -26,7 +26,10 @@ type ListOpts struct {
 // representing whether to list complete information for each container.
 func (opts ListOpts) ToContainerListParams() (bool, string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
-	return opts.Full, q.String(), err
+	if err != nil {
+		return false, "", err
+	}
+	return opts.Full, q.String(), nil
 }
 
 // List is a function that retrieves containers associated with the account as
@@ -107,7 +110,7 @@ func Create(c *golangsdk.ServiceClient, containerName string, opts CreateOptsBui
 	})
 	if resp != nil {
 		r.Header = resp.Header
-		resp.Body.Close()
+		_ = resp.Body.Close()
 	}
 	r.Err = err
 	return

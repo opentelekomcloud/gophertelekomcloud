@@ -17,11 +17,11 @@ func MockListResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		r.ParseForm()
+		_ = r.ParseForm()
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, `
+			_, _ = fmt.Fprintf(w, `
 {
     "volume_types": [
         {
@@ -56,7 +56,7 @@ func MockListResponse(t *testing.T) {
 }
   `, th.Server.URL)
 		case "1":
-			fmt.Fprintf(w, `{"volume_types": []}`)
+			_, _ = fmt.Fprint(w, `{"volume_types": []}`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -70,7 +70,7 @@ func MockGetResponse(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "volume_type": {
         "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22",
@@ -110,7 +110,7 @@ func MockCreateResponse(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "volume_type": {
         "name": "test_type",
@@ -141,7 +141,7 @@ func MockUpdateResponse(t *testing.T) {
 		th.TestMethod(t, r, "PUT")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `
+		_, _ = fmt.Fprint(w, `
 {
     "volume_type": {
         "name": "vol-type-002",

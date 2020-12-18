@@ -34,8 +34,8 @@ func TestDeleteV2Tag(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	delete := tags.Delete(fake.ServiceClient(), "ed8b9f73-4415-494d-a54e-5f3373bc353d", "K1")
-	th.AssertNoErr(t, delete.Err)
+	deleteResult := tags.Delete(fake.ServiceClient(), "ed8b9f73-4415-494d-a54e-5f3373bc353d", "K1")
+	th.AssertNoErr(t, deleteResult.Err)
 }
 
 func TestGetV2Tag(t *testing.T) {
@@ -46,7 +46,7 @@ func TestGetV2Tag(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, getTags)
+		_, _ = fmt.Fprint(w, getTags)
 	})
 
 	s, err := tags.Get(fake.ServiceClient(), "ed8b9f73-4415-494d-a54e-5f3373bc353d").Extract()
@@ -80,7 +80,7 @@ func TestQueryV2Tags(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json")
 
 		th.TestJSONRequest(t, r, `
-{ 
+{
   "tags":
       [
         {
@@ -93,7 +93,7 @@ func TestQueryV2Tags(t *testing.T) {
 `)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, TagList)
+		_, _ = fmt.Fprint(w, TagList)
 	})
 	queryOpts := tags.ListOpts{Action: "filter", Tags: []tags.Tags{{Key: "Tag001", Values: []string{"Value001", "Value002"}}}}
 	actual, err := tags.ListResources(fake.ServiceClient(), queryOpts).ExtractResources()

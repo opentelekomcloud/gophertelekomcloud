@@ -42,7 +42,7 @@ func HandleCreateSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, CreateRequest)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, CreateOutput)
+		_, _ = fmt.Fprint(w, CreateOutput)
 	})
 }
 
@@ -66,7 +66,7 @@ func HandleDeleteSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, DeleteOutput)
+		_, _ = fmt.Fprint(w, DeleteOutput)
 	})
 }
 
@@ -94,7 +94,7 @@ func HandleGetSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetOutput)
+		_, _ = fmt.Fprint(w, GetOutput)
 	})
 }
 
@@ -129,7 +129,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 		th.TestJSONRequest(t, r, UpdateRequest)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, UpdateOutput)
+		_, _ = fmt.Fprint(w, UpdateOutput)
 	})
 }
 
@@ -160,13 +160,13 @@ func HandleListStatusSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		r.ParseForm()
+		_ = r.ParseForm()
 		ip := r.Form.Get("ip")
 		limit := r.Form.Get("limit")
 		offset := r.Form.Get("offset")
 		status := r.Form.Get("status")
 		if ip == "49." && limit == "2" && offset == "1" && status == "notConfig" {
-			fmt.Fprintf(w, ListStatusOutput)
+			_, _ = fmt.Fprint(w, ListStatusOutput)
 		}
 	})
 }
@@ -464,7 +464,7 @@ func HandleListConfigsSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, ListConfigsOutput)
+		_, _ = fmt.Fprint(w, ListConfigsOutput)
 	})
 }
 
@@ -530,7 +530,7 @@ var WeeklyReportOutput = `
 }
 `
 
-//init the loc
+// init the loc
 var responsePeriodTime = time.Date(2018, 3, 1, 0, 0, 0, 0, time.UTC)
 
 var WeeklyReportResponse = antiddos.WeeklyReportResponse{
@@ -598,7 +598,7 @@ func HandleWeeklyReportSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, WeeklyReportOutput)
+		_, _ = fmt.Fprint(w, WeeklyReportOutput)
 	})
 }
 
@@ -635,7 +635,7 @@ func HandleListLogsSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, ListLogsOutput)
+		_, _ = fmt.Fprint(w, ListLogsOutput)
 	})
 }
 
@@ -651,7 +651,7 @@ func HandleGetStatusSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetStatusOutput)
+		_, _ = fmt.Fprint(w, GetStatusOutput)
 	})
 }
 
@@ -727,7 +727,7 @@ func HandleDailyReportSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, DailyReportOutput)
+		_, _ = fmt.Fprint(w, DailyReportOutput)
 	})
 }
 
@@ -749,6 +749,6 @@ func HandleGetTaskSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Fprintf(w, GetTaskOutput)
+		_, _ = fmt.Fprint(w, GetTaskOutput)
 	})
 }

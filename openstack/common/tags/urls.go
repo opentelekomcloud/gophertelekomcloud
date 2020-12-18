@@ -35,8 +35,5 @@ func hasProjectID(c *golangsdk.ServiceClient) bool {
 	array := strings.Split(url, "/")
 
 	// the baseURL must be end with "/"
-	if array[len(array)-2] == c.ProjectID {
-		return true
-	}
-	return false
+	return array[len(array)-2] == c.ProjectID
 }

@@ -11,7 +11,7 @@ type ListOptsBuilder interface {
 	ToMetricsListMap() (string, error)
 }
 
-//ListOpts allows the filtering and sorting of paginated collections through the API.
+// ListOpts allows the filtering and sorting of paginated collections through the API.
 type ListOpts struct {
 	// Specifies the namespace.
 	Namespace string `q:"namespace"`
@@ -45,7 +45,7 @@ func (opts ListOpts) ToMetricsListMap() (string, error) {
 	return s.String(), err
 }
 
-//Get the Metric List
+// Get the Metric List
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := getMetricsURL(client)
 	if opts != nil {
