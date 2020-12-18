@@ -294,6 +294,17 @@ type Cloud struct {
 	ClientKeyFile string `yaml:"key,omitempty" json:"key,omitempty"`
 }
 
+func (c *Cloud) computeRegion() {
+	if c.RegionName != "" {
+		return
+	}
+	name := c.AuthInfo.ProjectName
+	if name == "" {
+		name = c.AuthInfo.DelegatedProject
+	}
+	c.RegionName = strings.Split(name, "_")[0]
+}
+
 func loadFile(path string) ([]byte, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -454,6 +465,7 @@ func (e *env) Cloud() (*Cloud, error) {
 		if err != nil {
 			return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
 		}
+		cloud.computeRegion()
 		e.cloud = cloud
 	}
 	return e.cloud, nil

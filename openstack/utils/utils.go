@@ -75,12 +75,11 @@ func In(item interface{}, slice interface{}) bool {
 // GetRegion returns the region that was specified in the auth options. If a
 // region was not set it returns value from env OS_REGION_NAME
 func GetRegion(authOpts golangsdk.AuthOptions) string {
-	n := authOpts.TenantName
-	region := ""
-	if n == "" {
-		n = authOpts.DelegatedProject
+	name := authOpts.TenantName
+	if name == "" {
+		name = authOpts.DelegatedProject
 	}
-	region = strings.Split(n, "_")[0]
+	region := strings.Split(name, "_")[0]
 	return getenv("OS_REGION_NAME", region)
 }
 
