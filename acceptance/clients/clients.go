@@ -19,7 +19,7 @@ var EnvOS = openstack.NewEnv(envPrefix)
 // to the OpenStack Block Storage v1 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewBlockStorageV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func NewBlockStorageV1Client() (*golangsdk.ServiceClient, error) {
 // to the OpenStack Block Storage v2 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewBlockStorageV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func NewBlockStorageV2Client() (*golangsdk.ServiceClient, error) {
 // to the OpenStack Block Storage v3 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 // to the OpenStack Identity v3 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewIdentityV3Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func NewIdentityV3UnauthenticatedClient() (*golangsdk.ServiceClient, error) {
 // OpenStack Image v2 API. An error will be returned if authentication or
 // client creation was not possible.
 func NewImageServiceV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func NewImageServiceV2Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v1 API. An error will be returned if authentication
 // or client creation was not possible.
 func NewNetworkV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func NewNetworkV1Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v1 API for VPC peer. An error will be returned if authentication
 // or client creation was not possible.
 func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func NewPeerNetworkV1Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v2 API. An error will be returned if authentication
 // or client creation was not possible.
 func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Networking v2 API for Peer. An error will be returned if authentication
 // or client creation was not possible.
 func NewPeerNetworkV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func NewPeerNetworkV2Client() (*golangsdk.ServiceClient, error) {
 // OpenStack Object Storage v1 API. An error will be returned if authentication
 // or client creation was not possible.
 func NewObjectStorageV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +213,7 @@ func NewObjectStorageV1Client() (*golangsdk.ServiceClient, error) {
 // to the OpenStack Shared File System v2 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +224,7 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 
 // NewRdsV3 returns authenticated RDS v3 client
 func NewRdsV3() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 
 // NewWafV1Client returns authenticated WAF v1 client
 func NewWafV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -244,7 +244,7 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 
 // NewCsbsV1Client returns authenticated CSBS v1 client
 func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +254,7 @@ func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 }
 
 func NewCceV3Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +262,7 @@ func NewCceV3Client() (*golangsdk.ServiceClient, error) {
 }
 
 func NewCceV3AddonClient() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +275,7 @@ func NewCceV3AddonClient() (*golangsdk.ServiceClient, error) {
 }
 
 func NewCbrV3Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -286,7 +286,7 @@ func NewCbrV3Client() (*golangsdk.ServiceClient, error) {
 
 // NewDdsV3Client returns authenticated DDS v3 client
 func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
-	cc, err := cloudAndClient()
+	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
@@ -329,8 +329,8 @@ type cc struct {
 	*golangsdk.ProviderClient
 }
 
-// cloudAndClient returns copy of cloud configuration and authenticated client
-func cloudAndClient() (*cc, error) {
+// CloudAndClient returns copy of cloud configuration and authenticated client for OS_ environment
+func CloudAndClient() (*cc, error) {
 	cloud, err := EnvOS.Cloud()
 	if err != nil {
 		return nil, fmt.Errorf("error constructing cloud configuration: %s", err)

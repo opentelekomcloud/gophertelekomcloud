@@ -88,6 +88,10 @@ func DeletePeeringConnNResources(t *testing.T, clientV2 *golangsdk.ServiceClient
 func InitiatePeeringConnCommonTasks(t *testing.T) (*golangsdk.ServiceClient, *golangsdk.ServiceClient,
 	*golangsdk.ServiceClient, *golangsdk.ServiceClient, *peerings.Peering) {
 
+	if clients.EnvOS.GetEnv("Peer_Tenant_ID", "Peer_Tenant_Name") == "" {
+		t.Skip("No OS_Peer_Tenant_ID or OS_Peer_Tenant_Name env variables provided")
+	}
+
 	clientV2, err := clients.NewNetworkV2Client()
 	if err != nil {
 		t.Fatalf("Unable to create a network v2 client: %v", err)

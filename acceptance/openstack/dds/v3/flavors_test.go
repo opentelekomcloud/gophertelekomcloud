@@ -6,24 +6,22 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/flavors"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestDdsFlavorsList(t *testing.T) {
 	client, err := clients.NewDdsV3Client()
-	if err != nil {
-		t.Fatalf("Unable to create a DDSv3 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
 
 	listFlavorOpts := flavors.ListOpts{
-		Region: clients.EnvOS.GetEnv("OS_REGION_NAME"),
+		Region: cc.RegionName,
 	}
 	allPages, err := flavors.List(client, listFlavorOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to get all pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	flavorsList, err := flavors.ExtractFlavors(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract DDS flavors: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, flavorsList)
 }

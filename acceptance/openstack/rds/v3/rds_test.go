@@ -5,9 +5,11 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestRdsList(t *testing.T) {
@@ -37,10 +39,7 @@ func TestRdsCRUD(t *testing.T) {
 	}
 
 	// Create RDSv3 instance
-	rds, err := createRDS(t, client)
-	if err != nil {
-		t.Fatalf("Unable to create create: %s", err)
-	}
+	rds := createRDS(t, client)
 	defer deleteRDS(t, client, rds.Id)
 
 	tools.PrintResource(t, rds)
@@ -65,23 +64,33 @@ func TestRdsCRUD(t *testing.T) {
 	tools.PrintResource(t, newRds)
 }
 
-func createRDS(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instance, error) {
-	rdsName := tools.RandomString("test-acc-", 8)
-	sgName := tools.RandomString("test-acc", 8)
+func createRDS(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
+	prefix := "rds-acc-"
+	rdsName := tools.RandomString(prefix, 8)
+	sgName := tools.RandomString(prefix, 8)
 	sg, err := createSecGroup(sgName)
-	if err != nil {
-		return nil, err
+	th.AssertNoErr(t, err)
+
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
 	}
+
+	cld, err := clients.EnvOS.Cloud()
+	th.AssertNoErr(t, err)
+
+	subnet := nwv1.CreateNetwork(t, prefix, az)
+	defer nwv1.DeleteNetwork(t, subnet)
 
 	createRdsOpts := instances.CreateRdsOpts{
 		Name:             rdsName,
 		Port:             "8635",
 		Password:         "acc-test-password1!",
 		FlavorRef:        "rds.pg.c2.medium",
-		Region:           clients.EnvOS.GetEnv("REGION_NAME"),
-		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
-		VpcId:            clients.EnvOS.GetEnv("VPC_ID"),
-		SubnetId:         clients.EnvOS.GetEnv("NETWORK_ID"),
+		Region:           cld.RegionName,
+		AvailabilityZone: az,
+		VpcId:            subnet.VPC_ID,
+		SubnetId:         subnet.ID,
 		SecurityGroupId:  sg.ID,
 
 		Volume: &instances.Volume{
@@ -95,19 +104,14 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instan
 	}
 	createResult := instances.Create(client, createRdsOpts)
 	rds, err := createResult.Extract()
-	if err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
 	jobResponse, err := createResult.ExtractJobResponse()
-	if err != nil {
-		return nil, err
-	}
-	if err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID); err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID)
+	th.AssertNoErr(t, err)
 	t.Logf("Created RDSv3: %s", rds.Instance.Id)
 
-	return &rds.Instance, nil
+	return &rds.Instance
 }
 
 func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsId string) {
@@ -164,8 +168,7 @@ func createSecGroup(sgName string) (*groups.SecGroup, error) {
 		return nil, err
 	}
 	sgOpts := groups.CreateOpts{
-		Name:     sgName,
-		TenantID: clients.EnvOS.GetEnv("OS_TENANT_ID"),
+		Name: sgName,
 	}
 	sg, err := groups.Create(nwClient, sgOpts).Extract()
 	if err != nil {

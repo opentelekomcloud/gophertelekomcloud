@@ -5,9 +5,11 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/policies"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestPoliciesList(t *testing.T) {
@@ -33,42 +35,32 @@ func TestPoliciesLifeCycle(t *testing.T) {
 		t.Fatalf("Unable to create CSBSv1 client: %s", err)
 	}
 
-	computeClient, err := clients.NewComputeV2Client()
-	if err != nil {
-		t.Fatalf("Unable to create ComputeV2 client: %s", err)
-	}
+	subnet := nwv1.CreateNetwork(t, prefix, az)
+	defer nwv1.DeleteNetwork(t, subnet)
+	server := createComputeInstance(t, subnet.ID)
 
-	server, err := createComputeInstance(computeClient)
-	if err != nil {
-		t.Fatalf("Error creating compute instance: %s", err)
-	}
-
-	defer func() {
-		err = deleteComputeInstance(computeClient, server.ID)
-		if err != nil {
-			t.Fatalf("Error deleting compute instance: %s", err)
-		}
-	}()
+	defer deleteComputeInstance(t, server.ID)
 
 	// Create CSBSv1 policy
 	policy, err := createCSBSPolicy(t, client, server.ID)
-	if err != nil {
-		t.Fatalf("Unable to create CSBSv1 policy: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	defer deleteCSBSPolicy(t, client, policy.ID)
 	tools.PrintResource(t, policy)
 
 	err = updateCSBSPolicy(client, policy.ID)
-	if err != nil {
-		t.Fatalf("Unable to update CSBSv1 policy: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	policyUpdate, err := policies.Get(client, policy.ID).Extract()
-	if err != nil {
-		t.Fatalf("Unable to get updated CSBSv1 policy: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, policyUpdate)
 }
+
+const (
+	image  = "Standard_Debian_10_latest"
+	flavor = "s2.large.2"
+	az     = "eu-de-01"
+	prefix = "csbs-acc-"
+)
 
 func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.CreateBackupPolicy, error) {
 	t.Logf("Attempting to create CSBSv1 policy")
@@ -179,43 +171,41 @@ func waitForCSBSPolicyDelete(client *golangsdk.ServiceClient, secs int, policyId
 	})
 }
 
-func createComputeInstance(client *golangsdk.ServiceClient) (*servers.Server, error) {
-	computeName := tools.RandomString("csbs-acc-", 5)
-	createOpts := servers.CreateOpts{
-		Name:             computeName,
+func createComputeInstance(t *testing.T, subnetID string) *servers.Server {
+	client, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
+	serverName := tools.RandomString(prefix, 5)
+	opts := servers.CreateOpts{
+		Name:             serverName,
 		SecurityGroups:   []string{"default"},
-		FlavorName:       clients.EnvOS.GetEnv("FLAVOR_NAME"),
-		ImageRef:         clients.EnvOS.GetEnv("IMAGE_ID"),
-		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
+		FlavorName:       flavor,
+		ImageName:        image,
+		AvailabilityZone: az,
 		ServiceClient:    client,
 		Networks: []servers.Network{
 			{
-				UUID: clients.EnvOS.GetEnv("NETWORK_ID"),
+				UUID: subnetID,
 			},
 		},
 	}
 
-	server, err := servers.Create(client, createOpts).Extract()
-	if err != nil {
-		return nil, err
-	}
+	server, err := servers.Create(client, opts).Extract()
+	th.AssertNoErr(t, err)
 	err = waitForComputeInstanceAvailable(client, 600, server.ID)
-	if err != nil {
-		return nil, err
-	}
-	return server, nil
+	th.AssertNoErr(t, err)
+
+	return server
 }
 
-func deleteComputeInstance(client *golangsdk.ServiceClient, instanceId string) error {
-	err := servers.Delete(client, instanceId).ExtractErr()
-	if err != nil {
-		return err
-	}
+func deleteComputeInstance(t *testing.T, instanceId string) {
+	client, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
+	err = servers.Delete(client, instanceId).ExtractErr()
+	th.AssertNoErr(t, err)
 	err = waitForComputeInstanceDelete(client, 600, instanceId)
-	if err != nil {
-		return err
-	}
-	return nil
+	th.AssertNoErr(t, err)
 }
 
 func waitForComputeInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceId string) error {

@@ -5,117 +5,75 @@ import (
 	"testing"
 	"time"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestAuthenticatedClient(t *testing.T) {
-	// Obtain credentials from the environment.
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		t.Fatalf("Unable to acquire credentials: %v", err)
-	}
-
-	client, err := openstack.AuthenticatedClient(ao)
-	if err != nil {
-		t.Fatalf("Unable to authenticate: %v", err)
-	}
-
-	if client.TokenID == "" {
-		t.Errorf("No token ID assigned to the client")
-	}
-
-	if client.ProjectID == "" {
-		t.Errorf("Project ID is not set for the client")
-	}
-	if client.UserID == "" {
-		t.Errorf("User ID is not set for the client")
-	}
-	if client.DomainID == "" {
-		t.Errorf("Domain ID is not set for the client")
-	}
-
-	t.Logf("Client successfully acquired a token: %v", client.TokenID)
-
-	// Find the storage service in the service catalog.
-	storage, err := openstack.NewObjectStorageV1(client, golangsdk.EndpointOpts{
-		Region: utils.GetRegion(ao)})
-	if err != nil {
-		t.Errorf("Unable to locate a storage service: %v", err)
-	} else {
-		t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
-	}
+	client, err := clients.NewObjectStorageV1Client()
+	th.AssertNoErr(t, err)
+	t.Logf("Located a storage service at endpoint: [%s]", client.Endpoint)
 }
 
 func TestAuthTokenNoRegion(t *testing.T) {
 	osEnv := openstack.NewEnv("OS_")
 	preClient, err := osEnv.AuthenticatedClient()
-	if err != nil {
-		t.Fatalf("Failed to auth client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	envPrefix := tools.RandomString("", 5)
-	if err := os.Setenv(envPrefix+"_TOKEN", preClient.Token()); err != nil {
-		t.Errorf("Failed to set token: %s", err)
-	}
-	if err := os.Setenv(envPrefix+"_AUTH_URL", preClient.IdentityEndpoint); err != nil {
-		t.Errorf("Failed to set auth url: %s", err)
-	}
+	th.AssertNoErr(t, os.Setenv(envPrefix+"_TOKEN", preClient.IdentityEndpoint))
+	th.AssertNoErr(t, os.Setenv(envPrefix+"_AUTH_URL", preClient.IdentityEndpoint))
 
 	env := openstack.NewEnv(envPrefix)
 	client, err := env.AuthenticatedClient()
-	if err != nil {
-		t.Errorf("Failed to auth client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	_, err = openstack.NewComputeV2(client, golangsdk.EndpointOpts{})
-	if err != nil {
-		t.Errorf("Failed to get compute client: %s", err)
+	th.AssertNoErr(t, err)
+}
+
+func setEnvToken(t *testing.T) {
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+	if cc.AuthInfo.Token == "" {
+		t.Fatalf("No token is set in client")
 	}
+	th.AssertNoErr(t, os.Setenv("OS_TOKEN", cc.AuthInfo.Token))
 }
 
 func TestReauth(t *testing.T) {
+	setEnvToken(t)
+
 	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		t.Fatalf("Unable to obtain environment auth options: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	// Allow reauth
 	ao.AllowReauth = true
 
 	provider, err := openstack.NewClient(ao.IdentityEndpoint)
-	if err != nil {
-		t.Fatalf("Unable to create provider: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	err = openstack.Authenticate(provider, ao)
-	if err != nil {
-		t.Fatalf("Unable to authenticate: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	t.Logf("Creating a compute client")
 	_, err = openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
 		Region: utils.GetRegion(ao),
 	})
-	if err != nil {
-		t.Fatalf("Unable to create compute client: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	t.Logf("Sleeping for 1 second")
 	time.Sleep(1 * time.Second)
 	t.Logf("Attempting to reauthenticate")
 
-	err = provider.ReauthFunc()
-	if err != nil {
-		t.Fatalf("Unable to reauthenticate: %v", err)
-	}
+	th.AssertNoErr(t, provider.ReauthFunc())
 
 	t.Logf("Creating a compute client")
 	_, err = openstack.NewComputeV2(provider, golangsdk.EndpointOpts{
 		Region: utils.GetRegion(ao),
 	})
-	if err != nil {
-		t.Fatalf("Unable to create compute client: %v", err)
-	}
+	th.AssertNoErr(t, err)
 }
