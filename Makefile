@@ -6,6 +6,7 @@ exec_name := gophertelekomcloud
 
 default: test
 test: test-unit
+acceptance: test-acc
 
 fmt:
 	@echo Running go fmt

@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestRdsList(t *testing.T) {
@@ -32,45 +33,47 @@ func TestRdsList(t *testing.T) {
 
 func TestRdsCRUD(t *testing.T) {
 	client, err := clients.NewRdsV3()
-	if err != nil {
-		t.Fatalf("Unable to create a RDSv3 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
 
 	// Create RDSv3 instance
-	rds, err := createRDS(t, client)
-	if err != nil {
-		t.Fatalf("Unable to create create: %s", err)
-	}
+	rds := createRDS(t, client, cc.RegionName)
 	defer deleteRDS(t, client, rds.Id)
 
 	tools.PrintResource(t, rds)
 
 	err = updateRDS(t, client, rds.Id)
-	if err != nil {
-		t.Fatalf("Unable to update RDSv3 instance: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, rds)
 
 	listOpts := instances.ListRdsInstanceOpts{
 		Id: rds.Id,
 	}
 	allPages, err := instances.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to get all RDS pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	newRds, err := instances.ExtractRdsInstances(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract RDS pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, newRds)
 }
 
-func createRDS(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instance, error) {
-	rdsName := tools.RandomString("test-acc-", 8)
-	sgName := tools.RandomString("test-acc", 8)
+func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
+	prefix := "rds-acc-"
+	rdsName := tools.RandomString(prefix, 8)
+	sgName := tools.RandomString(prefix, 8)
 	sg, err := createSecGroup(sgName)
-	if err != nil {
-		return nil, err
+	th.AssertNoErr(t, err)
+
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
 	}
 
 	createRdsOpts := instances.CreateRdsOpts{
@@ -78,10 +81,10 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instan
 		Port:             "8635",
 		Password:         "acc-test-password1!",
 		FlavorRef:        "rds.pg.c2.medium",
-		Region:           clients.EnvOS.GetEnv("REGION_NAME"),
-		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
-		VpcId:            clients.EnvOS.GetEnv("VPC_ID"),
-		SubnetId:         clients.EnvOS.GetEnv("NETWORK_ID"),
+		Region:           region,
+		AvailabilityZone: az,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
 		SecurityGroupId:  sg.ID,
 
 		Volume: &instances.Volume{
@@ -95,19 +98,14 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient) (*instances.Instan
 	}
 	createResult := instances.Create(client, createRdsOpts)
 	rds, err := createResult.Extract()
-	if err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
 	jobResponse, err := createResult.ExtractJobResponse()
-	if err != nil {
-		return nil, err
-	}
-	if err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID); err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID)
+	th.AssertNoErr(t, err)
 	t.Logf("Created RDSv3: %s", rds.Instance.Id)
 
-	return &rds.Instance, nil
+	return &rds.Instance
 }
 
 func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsId string) {
@@ -164,8 +162,7 @@ func createSecGroup(sgName string) (*groups.SecGroup, error) {
 		return nil, err
 	}
 	sgOpts := groups.CreateOpts{
-		Name:     sgName,
-		TenantID: clients.EnvOS.GetEnv("OS_TENANT_ID"),
+		Name: sgName,
 	}
 	sg, err := groups.Create(nwClient, sgOpts).Extract()
 	if err != nil {

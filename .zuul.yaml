@@ -8,8 +8,12 @@
         - golangci-lint
         - golang-make-vet
         - golang-make-test
+    check-post:
+      jobs:
+        - golang-make-functional
     gate:
       jobs:
         - golangci-lint
         - golang-make-vet
         - golang-make-test
+        - golang-make-functional

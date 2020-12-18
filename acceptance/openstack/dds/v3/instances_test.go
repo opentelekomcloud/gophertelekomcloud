@@ -13,19 +13,13 @@ import (
 
 func TestDdsList(t *testing.T) {
 	client, err := clients.NewDdsV3Client()
-	if err != nil {
-		t.Fatalf("Unable to create a DDSv3 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	listOpts := instances.ListInstanceOpts{}
 	ddsAllPages, err := instances.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to get DDSv3 instance pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	ddsInstances, err := instances.ExtractInstances(ddsAllPages)
-	if err != nil {
-		t.Fatalf("Unable to extract DDSv3 instances: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	for _, val := range ddsInstances.Instances {
 		tools.PrintResource(t, val)
 	}
@@ -33,55 +27,42 @@ func TestDdsList(t *testing.T) {
 
 func TestDdsLifeCycle(t *testing.T) {
 	client, err := clients.NewDdsV3Client()
-	if err != nil {
-		t.Fatalf("Unable to create a DDSv3 client: %s", err)
-	}
-	computeClient, err := clients.NewComputeV2Client()
-	if err != nil {
-		t.Fatalf("Unable to create a ComputeV2 client: %s", err)
-	}
-	securityGroupPages, err := secgroups.List(computeClient).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to query secgroup pages: %s", err)
-	}
-	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
 	th.AssertNoErr(t, err)
-	var sgId string
-	for _, val := range securityGroups {
-		if val.Name == "default" {
-			sgId = val.ID
-			break
-		}
-	}
-	if sgId == "" {
-		t.Fatalf("Unable to find default secgroup")
-	}
 
-	ddsInstance, err := createDdsInstance(t, client, sgId)
-	if err != nil {
-		t.Fatalf("Unable to create DDSv3 instance: %s", err)
-	}
+	ddsInstance := createDdsInstance(t, client)
 	defer deleteDdsInstance(t, client, ddsInstance.Id)
 
 	tools.PrintResource(t, ddsInstance)
 	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
 	allPages, err := instances.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to query DDSv3 instance: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	newDdsInstance, err := instances.ExtractInstances(allPages)
-	if err != nil {
-		t.Fatalf("Error extracting DDSv3 instances: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	if newDdsInstance.TotalCount == 0 {
-		t.Fatalf("DDSv3 instance wasn't found: %s", err)
+		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
 	tools.PrintResource(t, newDdsInstance.Instances[0])
 }
 
-func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient, securityGroupId string) (*instances.Instance, error) {
+func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
 	t.Logf("Attempting to create DDSv3 replica set instance")
-	ddsName := tools.RandomString("test-acc-", 8)
+	prefix := "dds-acc-"
+	ddsName := tools.RandomString(prefix, 8)
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+	cloud, err := clients.EnvOS.Cloud()
+	th.AssertNoErr(t, err)
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	}
+
+	computeClient, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
 
 	createOpts := instances.CreateOpts{
 		Name: ddsName,
@@ -90,11 +71,11 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient, securityGr
 			Version:       "3.4",
 			StorageEngine: "wiredTiger",
 		},
-		Region:           clients.EnvOS.GetEnv("REGION_NAME"),
-		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
-		VpcId:            clients.EnvOS.GetEnv("VPC_ID"),
-		SubnetId:         clients.EnvOS.GetEnv("NETWORK_ID"),
-		SecurityGroupId:  securityGroupId,
+		Region:           cloud.RegionName,
+		AvailabilityZone: az,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
+		SecurityGroupId:  defaultSecurityGroup(t, computeClient),
 		Password:         "5ecurePa55w0rd@",
 		Mode:             "ReplicaSet",
 		Flavor: []instances.Flavor{
@@ -111,16 +92,11 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient, securityGr
 		},
 	}
 	ddsInstance, err := instances.Create(client, createOpts).Extract()
-	if err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
-	if err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
 	t.Logf("DDSv3 replica set instance successfully created: %s", ddsInstance.Id)
-
-	return ddsInstance, nil
+	return ddsInstance
 }
 
 func deleteDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceId string) {
@@ -182,4 +158,22 @@ func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceId
 		}
 		return false, nil
 	})
+}
+
+func defaultSecurityGroup(t *testing.T, computeClient *golangsdk.ServiceClient) string {
+	securityGroupPages, err := secgroups.List(computeClient).AllPages()
+	th.AssertNoErr(t, err)
+	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
+	th.AssertNoErr(t, err)
+	var sgId string
+	for _, val := range securityGroups {
+		if val.Name == "default" {
+			sgId = val.ID
+			break
+		}
+	}
+	if sgId == "" {
+		t.Fatalf("Unable to find default secgroup")
+	}
+	return sgId
 }

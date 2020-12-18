@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -40,7 +39,7 @@ func TestSubnetsCRUD(t *testing.T) {
 
 	// wait to be active
 	t.Logf("waitting for subnet %s to be active", subnet.ID)
-	if err := waitForSubnetToActive(client, subnet.ID, 60); err != nil {
+	if err := WaitForSubnetToActive(client, subnet.ID, 60); err != nil {
 		t.Fatalf("Error deleting subnet: %v", err)
 	}
 
@@ -110,7 +109,7 @@ func deleteSubnetNResources(t *testing.T, client *golangsdk.ServiceClient, vpcID
 	}
 
 	t.Logf("waitting for subnet %s to delete", id)
-	if err := waitForSubnetToDelete(client, id, 60); err != nil {
+	if err := WaitForSubnetToDelete(client, id, 60); err != nil {
 		t.Fatalf("Error deleting subnet: %v", err)
 	}
 
@@ -123,38 +122,4 @@ func deleteSubnetNResources(t *testing.T, client *golangsdk.ServiceClient, vpcID
 	}
 
 	t.Logf("Deleted vpc: %s", vpcID)
-}
-
-func waitForSubnetToDelete(client *golangsdk.ServiceClient, subnetID string, secs int) error {
-	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := subnets.Get(client, subnetID).Extract()
-		if err != nil {
-			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				return true, nil
-			}
-			return false, err
-		}
-
-		return false, nil
-	})
-}
-
-func waitForSubnetToActive(client *golangsdk.ServiceClient, subnetID string, secs int) error {
-	return golangsdk.WaitFor(secs, func() (bool, error) {
-		n, err := subnets.Get(client, subnetID).Extract()
-		if err != nil {
-			return false, err
-		}
-
-		if n.Status == "ACTIVE" {
-			return true, nil
-		}
-
-		// If subnet status is other than Active, send error
-		if n.Status == "DOWN" || n.Status == "ERROR" {
-			return false, fmt.Errorf("subnet status: '%s'", n.Status)
-		}
-
-		return false, nil
-	})
 }
