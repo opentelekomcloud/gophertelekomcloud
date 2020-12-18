@@ -32,8 +32,6 @@ func TestRdsList(t *testing.T) {
 }
 
 func TestRdsCRUD(t *testing.T) {
-	t.Skip("RDS deletion is never magic process")
-
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 

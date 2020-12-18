@@ -5,7 +5,6 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
@@ -56,8 +55,11 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 	cloud, err := clients.EnvOS.Cloud()
 	th.AssertNoErr(t, err)
 
-	subnet := nwv1.CreateNetwork(t, prefix, az)
-	defer nwv1.DeleteNetwork(t, subnet)
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	}
 
 	computeClient, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
@@ -71,8 +73,8 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		},
 		Region:           cloud.RegionName,
 		AvailabilityZone: az,
-		VpcId:            subnet.VPC_ID,
-		SubnetId:         subnet.ID,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
 		SecurityGroupId:  defaultSecurityGroup(t, computeClient),
 		Password:         "5ecurePa55w0rd@",
 		Mode:             "ReplicaSet",

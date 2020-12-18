@@ -39,13 +39,12 @@ func TestAuthenticatedClient(t *testing.T) {
 }
 
 func TestAuthTokenNoRegion(t *testing.T) {
-	osEnv := openstack.NewEnv("OS_")
-	preClient, err := osEnv.AuthenticatedClient()
+	cc, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
 	envPrefix := tools.RandomString("", 5)
-	th.AssertNoErr(t, os.Setenv(envPrefix+"_TOKEN", preClient.TokenID))
-	th.AssertNoErr(t, os.Setenv(envPrefix+"_AUTH_URL", preClient.IdentityEndpoint))
+	th.AssertNoErr(t, os.Setenv(envPrefix+"_TOKEN", cc.TokenID))
+	th.AssertNoErr(t, os.Setenv(envPrefix+"_AUTH_URL", cc.IdentityEndpoint))
 
 	env := openstack.NewEnv(envPrefix)
 	client, err := env.AuthenticatedClient()
@@ -59,6 +58,8 @@ func TestReauth(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	opts, err := openstack.AuthOptionsFromInfo(&cloud.AuthInfo, cloud.AuthType)
+	th.AssertNoErr(t, err)
+
 	ao := opts.(golangsdk.AuthOptions)
 	ao.AllowReauth = true
 
