@@ -651,14 +651,7 @@ func NewNetworkV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 
 // NewNatV2 creates a ServiceClient that may be used with the v2 nat package.
 func NewNatV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "network")
-	if err != nil {
-		return nil, err
-	}
-	sc.Endpoint = strings.Replace(sc.Endpoint, "vpc", "nat", 1)
-	sc.Endpoint = strings.Replace(sc.Endpoint, "myhwclouds", "myhuaweicloud", 1)
-	sc.ResourceBase = sc.Endpoint + "v2.0/"
-	return sc, err
+	return initClientOpts(client, eo, "nat")
 }
 
 // NewMapReduceV1 creates a ServiceClient that may be used with the v1 MapReduce service.
@@ -823,13 +816,4 @@ func SDRSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golan
 func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initCommonServiceClient(client, eo, "lts", "v2.0")
 	return sc, err
-}
-
-func NewSDKClient(c *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, serviceType string) (*golangsdk.ServiceClient, error) {
-	switch serviceType {
-	case "nat":
-		return NewNatV2(c, eo)
-	}
-
-	return initClientOpts(c, eo, serviceType)
 }
