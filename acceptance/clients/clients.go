@@ -177,6 +177,20 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewNatV2Client returns a *ServiceClient for making calls to the
+// OpenStack NAT v2 API. An error will be returned if authentication
+// or client creation was not possible.
+func NewNatV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewNatV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewPeerNetworkV2Client returns a *ServiceClient for making calls to the
 // OpenStack Networking v2 API for Peer. An error will be returned if authentication
 // or client creation was not possible.

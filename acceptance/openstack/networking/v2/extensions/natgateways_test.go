@@ -10,9 +10,9 @@ import (
 )
 
 func TestNatGatewaysList(t *testing.T) {
-	client, err := clients.NewNetworkV2Client()
+	client, err := clients.NewNatV2Client()
 	if err != nil {
-		t.Fatalf("Unable to create a NetworkingV2 client: %s", err)
+		t.Fatalf("Unable to create a NatV2 client: %s", err)
 	}
 
 	listOpts := natgateways.ListOpts{}
@@ -30,9 +30,9 @@ func TestNatGatewaysList(t *testing.T) {
 }
 
 func TestNatGatewaysLifeCycle(t *testing.T) {
-	client, err := clients.NewNetworkV2Client()
+	client, err := clients.NewNatV2Client()
 	if err != nil {
-		t.Fatalf("Unable to create a NetworkingV2 client: %s", err)
+		t.Fatalf("Unable to create a NatV2 client: %s", err)
 	}
 
 	// Create Nat Gateway
@@ -60,10 +60,10 @@ func TestNatGatewaysLifeCycle(t *testing.T) {
 func createNatGateway(t *testing.T, client *golangsdk.ServiceClient) (*natgateways.NatGateway, error) {
 	natGatewayName := tools.RandomString("create-nat-", 8)
 
-	routerID := clients.EnvOS.GetEnv("ROUTER_ID")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
-	if routerID == "" || networkID == "" {
-		t.Skip("OS_ROUTER_ID or OS_NETWORK_ID env vars is missing but test requires using existing network")
+	if vpcID == "" || networkID == "" {
+		t.Skip("OS_VPC_ID or OS_NETWORK_ID is missing but test requires using existing network")
 	}
 	natSmallSpec := "1"
 
@@ -71,7 +71,7 @@ func createNatGateway(t *testing.T, client *golangsdk.ServiceClient) (*natgatewa
 		Name:              natGatewayName,
 		Description:       "some nat gateway for acceptance test",
 		Spec:              natSmallSpec,
-		RouterID:          routerID,
+		RouterID:          vpcID,
 		InternalNetworkID: networkID,
 	}
 
