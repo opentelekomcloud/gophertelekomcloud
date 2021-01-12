@@ -24,9 +24,9 @@ type GetResult struct {
 }
 
 func (r GetResult) Extract() (NatGateway, error) {
-	var NatGW NatGateway
-	err := r.Result.ExtractIntoStructPtr(&NatGW, "nat_gateway")
-	return NatGW, err
+	var natGw NatGateway
+	err := r.Result.ExtractIntoStructPtr(&natGw, "nat_gateway")
+	return natGw, err
 }
 
 // CreateResult is a return struct of create method
@@ -46,9 +46,9 @@ type UpdateResult struct {
 }
 
 func (r UpdateResult) Extract() (NatGateway, error) {
-	var NatGW NatGateway
-	err := r.Result.ExtractIntoStructPtr(&NatGW, "nat_gateway")
-	return NatGW, err
+	var natGw NatGateway
+	err := r.Result.ExtractIntoStructPtr(&natGw, "nat_gateway")
+	return natGw, err
 }
 
 // DeleteResult is a return struct of delete method
