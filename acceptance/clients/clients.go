@@ -177,9 +177,7 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
-// NewNatV2Client returns a *ServiceClient for making calls to the
-// OpenStack NAT v2 API. An error will be returned if authentication
-// or client creation was not possible.
+// NewNatV2Client returns authenticated NAT v2 client
 func NewNatV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
