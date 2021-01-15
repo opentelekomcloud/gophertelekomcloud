@@ -15,6 +15,10 @@ type ConfigurationCreate struct {
 	DatastoreName string `json:"datastore_name"`
 	// Configuration Description
 	Description string `json:"description"`
+	// Indicates the creation time in the following format: yyyy-MM-ddTHH:mm:ssZ.
+	Created string `json:"created"`
+	// Indicates the update time in the following format: yyyy-MM-ddTHH:mm:ssZ.
+	Updated string `json:"updated"`
 }
 
 type Configuration struct {
@@ -28,6 +32,10 @@ type Configuration struct {
 	DatastoreName string `json:"datastore_name"`
 	// Configuration Description
 	Description string `json:"description"`
+	// Indicates the creation time in the following format: yyyy-MM-ddTHH:mm:ssZ.
+	Created string `json:"created"`
+	// Indicates the update time in the following format: yyyy-MM-ddTHH:mm:ssZ.
+	Updated string `json:"updated"`
 	// Configuration Parameters
 	Parameters []Parameter `json:"configuration_parameters"`
 }
@@ -49,6 +57,28 @@ type Parameter struct {
 	Description string `json:"description"`
 }
 
+type ApplyConfiguration struct {
+	// Specifies the parameter template ID.
+	ConfigurationID string `json:"configuration_id"`
+	// Specifies the parameter template name.
+	ConfigurationName string `json:"configuration_name"`
+	// Specifies the result of applying the parameter template.
+	ApplyResults []ApplyConfigurationResults `json:"apply_results"`
+	// Specifies whether each parameter template is applied to DB instances successfully.
+	Success bool `json:"success"`
+}
+
+type ApplyConfigurationResults struct {
+	// Indicates the DB instance ID.
+	InstanceID string `json:"instance_id"`
+	// Indicates the DB instance name.
+	InstanceName string `json:"instance_name"`
+	// Indicates whether a reboot is required.
+	RestartRequired bool `json:"restart_required"`
+	// Indicates whether each parameter template is applied to DB instances successfully.
+	Success bool `json:"success"`
+}
+
 // Extract is a function that accepts a result and extracts a configuration.
 func (r CreateResult) Extract() (*ConfigurationCreate, error) {
 	var response ConfigurationCreate
@@ -60,10 +90,14 @@ func (r CreateResult) ExtractInto(v interface{}) error {
 	return r.Result.ExtractIntoStructPtr(v, "configuration")
 }
 
+type commonResult struct {
+	golangsdk.Result
+}
+
 // CreateResult represents the result of a create operation. Call its Extract
 // method to interpret it as a Configuration.
 type CreateResult struct {
-	golangsdk.Result
+	commonResult
 }
 
 // UpdateResult represents the result of a update operation.
@@ -78,14 +112,42 @@ func (r GetResult) Extract() (*Configuration, error) {
 	return &response, err
 }
 
+// Extract is a function that accepts a result and extracts a list of configurations.
+func (lr ListResult) Extract() ([]Configuration, error) {
+	var a struct {
+		Configurations []Configuration `json:"configurations"`
+	}
+	err := lr.Result.ExtractInto(&a)
+	return a.Configurations, err
+}
+
+// Extract is a function that accepts a result and extracts an apply configuration result.
+func (ar ApplyResult) Extract() (*ApplyConfiguration, error) {
+	var response ApplyConfiguration
+	err := ar.ExtractInto(&response)
+	return &response, err
+}
+
 // GetResult represents the result of a get operation. Call its Extract
 // method to interpret it as a Configuration.
 type GetResult struct {
-	golangsdk.Result
+	commonResult
 }
 
 // DeleteResult represents the result of a delete operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
 	golangsdk.ErrResult
+}
+
+// ListResult represents the result of a list operation. Call its Extract
+// method to interpret it as a list of Configurations.
+type ListResult struct {
+	commonResult
+}
+
+// ApplyResult represents the result of a apply operation. Call its Extract
+// method to interpret it.
+type ApplyResult struct {
+	commonResult
 }
