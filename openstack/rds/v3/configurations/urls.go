@@ -9,3 +9,7 @@ func rootURL(c *golangsdk.ServiceClient) string {
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("configurations", id)
 }
+
+func applyURL(c *golangsdk.ServiceClient, id string) string {
+	return c.ServiceURL("configurations", id, "apply")
+}

@@ -6,7 +6,7 @@ import (
 
 type ConfigurationCreate struct {
 	// Configuration ID
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Configuration Name
 	Name string `json:"name"`
 	// Database version Name
@@ -23,7 +23,7 @@ type ConfigurationCreate struct {
 
 type Configuration struct {
 	// Configuration ID
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Configuration Name
 	Name string `json:"name"`
 	// Database version Name
@@ -63,12 +63,12 @@ type ApplyConfiguration struct {
 	// Specifies the parameter template name.
 	ConfigurationName string `json:"configuration_name"`
 	// Specifies the result of applying the parameter template.
-	ApplyResults []ApplyConfigurationResults `json:"apply_results"`
+	ApplyResults []ApplyConfigurationResult `json:"apply_results"`
 	// Specifies whether each parameter template is applied to DB instances successfully.
 	Success bool `json:"success"`
 }
 
-type ApplyConfigurationResults struct {
+type ApplyConfigurationResult struct {
 	// Indicates the DB instance ID.
 	InstanceID string `json:"instance_id"`
 	// Indicates the DB instance name.
@@ -79,6 +79,10 @@ type ApplyConfigurationResults struct {
 	Success bool `json:"success"`
 }
 
+func (r CreateResult) ExtractInto(v interface{}) error {
+	return r.Result.ExtractIntoStructPtr(v, "configuration")
+}
+
 // Extract is a function that accepts a result and extracts a configuration.
 func (r CreateResult) Extract() (*ConfigurationCreate, error) {
 	var response ConfigurationCreate
@@ -86,18 +90,10 @@ func (r CreateResult) Extract() (*ConfigurationCreate, error) {
 	return &response, err
 }
 
-func (r CreateResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "configuration")
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
 // CreateResult represents the result of a create operation. Call its Extract
 // method to interpret it as a Configuration.
 type CreateResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 // UpdateResult represents the result of a update operation.
@@ -112,26 +108,10 @@ func (r GetResult) Extract() (*Configuration, error) {
 	return &response, err
 }
 
-// Extract is a function that accepts a result and extracts a list of configurations.
-func (lr ListResult) Extract() ([]Configuration, error) {
-	var a struct {
-		Configurations []Configuration `json:"configurations"`
-	}
-	err := lr.Result.ExtractInto(&a)
-	return a.Configurations, err
-}
-
-// Extract is a function that accepts a result and extracts an apply configuration result.
-func (ar ApplyResult) Extract() (*ApplyConfiguration, error) {
-	var response ApplyConfiguration
-	err := ar.ExtractInto(&response)
-	return &response, err
-}
-
 // GetResult represents the result of a get operation. Call its Extract
 // method to interpret it as a Configuration.
 type GetResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 // DeleteResult represents the result of a delete operation. Call its ExtractErr
@@ -140,14 +120,30 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
+// Extract is a function that accepts a result and extracts a list of configurations.
+func (r ListResult) Extract() ([]Configuration, error) {
+	var a struct {
+		Configurations []Configuration `json:"configurations"`
+	}
+	err := r.Result.ExtractInto(&a)
+	return a.Configurations, err
+}
+
 // ListResult represents the result of a list operation. Call its Extract
 // method to interpret it as a list of Configurations.
 type ListResult struct {
-	commonResult
+	golangsdk.Result
+}
+
+// Extract is a function that accepts a result and extracts an apply configuration result.
+func (r ApplyResult) Extract() (*ApplyConfiguration, error) {
+	var response ApplyConfiguration
+	err := r.ExtractInto(&response)
+	return &response, err
 }
 
 // ApplyResult represents the result of a apply operation. Call its Extract
 // method to interpret it.
 type ApplyResult struct {
-	commonResult
+	golangsdk.Result
 }

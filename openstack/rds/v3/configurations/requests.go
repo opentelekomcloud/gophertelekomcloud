@@ -35,20 +35,6 @@ func (opts CreateOpts) ToConfigCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// Create will create a new Config based on the values in CreateOpts.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToConfigCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: openstack.StdRequestOpts().MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
@@ -70,21 +56,35 @@ func (opts UpdateOpts) ToConfigUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// ApplyOpts contains all the instances needed to apply another template.
-type ApplyOpts struct {
-	// Specifies the DB instance ID list object.
-	InstanceIDs []string `json:"instance_ids" required:"true"`
-}
-
 // ApplyOptsBuilder allows extensions to update instance templates to the
 // Apply request.
 type ApplyOptsBuilder interface {
 	ToInstanceTemplateApplyMap() (map[string]interface{}, error)
 }
 
+// ApplyOpts contains all the instances needed to apply another template.
+type ApplyOpts struct {
+	// Specifies the DB instance ID list object.
+	InstanceIDs []string `json:"instance_ids" required:"true"`
+}
+
 // ToInstanceTemplateApplyMap builds an apply request body from ApplyOpts.
-func (opts UpdateOpts) ToInstanceTemplateApplyMap() (map[string]interface{}, error) {
+func (opts ApplyOpts) ToInstanceTemplateApplyMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
+}
+
+// Create will create a new Config based on the values in CreateOpts.
+func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToConfigCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = c.Post(rootURL(c), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders, JSONBody: nil,
+	})
+	return
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a Configuration.The response code from api is 200
@@ -127,7 +127,7 @@ func Apply(client *golangsdk.ServiceClient, id string, opts ApplyOptsBuilder) (r
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(applyURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
