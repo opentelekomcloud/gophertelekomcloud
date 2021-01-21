@@ -31,7 +31,7 @@ var (
 
 func configSearchPath() []string {
 	home, _ := os.UserHomeDir()
-	cwd, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	cwd, _ := os.Getwd()
 	userConfigDir, _ := filepath.Abs(filepath.Join(home, ".config/openstack"))
 	unixConfigDir, _ := filepath.Abs("/etc/openstack")
 	return []string{

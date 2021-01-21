@@ -2,6 +2,8 @@ package openstack
 
 import (
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -10,6 +12,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+)
+
+const (
+	fileName = "./clouds.yaml"
+	tmpl     = `
+clouds:
+  useless_cloud:
+    auth:
+      auth_url: "http://localhost/"
+      password: "some-useless-passw0rd"
+      username: "some-name"
+`
 )
 
 func TestAuthenticatedClient(t *testing.T) {
@@ -38,6 +52,63 @@ func TestAuthenticatedClient(t *testing.T) {
 	t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
 }
 
+func TestCloudYamlPaths(t *testing.T) {
+	_ = os.Setenv("OS_CLOUD", "useless_cloud")
+	home, _ := os.UserHomeDir()
+	cwd, _ := os.Getwd()
+
+	currentConfigDir, _ := filepath.Abs(filepath.Join(cwd, "clouds.yaml"))
+	userConfigDir, _ := filepath.Abs(filepath.Join(home, ".config/openstack/clouds.yaml"))
+	unixConfigDir, _ := filepath.Abs("/etc/openstack/clouds.yaml")
+
+	if _, err := os.Stat(currentConfigDir); os.IsNotExist(err) {
+		err := writeYamlFile(tmpl, currentConfigDir)
+		if err != nil {
+			th.AssertNoErr(t, err)
+		}
+		defer func() { _ = os.Remove(currentConfigDir) }()
+		cloud, err := clients.EnvOS.Cloud()
+		if err != nil {
+			th.AssertNoErr(t, err)
+		}
+		th.AssertEquals(t, "http://localhost/", cloud.AuthInfo.AuthURL)
+		th.AssertEquals(t, "some-useless-passw0rd", cloud.AuthInfo.Password)
+		th.AssertEquals(t, "some-name", cloud.AuthInfo.Username)
+	}
+
+	if _, err := os.Stat(userConfigDir); os.IsNotExist(err) {
+		err := writeYamlFile(tmpl, userConfigDir)
+		if err != nil {
+			th.AssertNoErr(t, err)
+		}
+		defer func() { _ = os.Remove(userConfigDir) }()
+		cloud, err := clients.EnvOS.Cloud()
+		if err != nil {
+			th.AssertNoErr(t, err)
+		}
+		th.AssertEquals(t, "http://localhost/", cloud.AuthInfo.AuthURL)
+		th.AssertEquals(t, "some-useless-passw0rd", cloud.AuthInfo.Password)
+		th.AssertEquals(t, "some-name", cloud.AuthInfo.Username)
+	}
+
+	if runtime.GOOS != "windows" {
+		if _, err := os.Stat(unixConfigDir); os.IsNotExist(err) {
+			err := writeYamlFile(tmpl, unixConfigDir)
+			if err != nil {
+				th.AssertNoErr(t, err)
+			}
+			defer func() { _ = os.Remove(unixConfigDir) }()
+			cloud, err := clients.EnvOS.Cloud()
+			if err != nil {
+				th.AssertNoErr(t, err)
+			}
+			th.AssertEquals(t, "http://localhost/", cloud.AuthInfo.AuthURL)
+			th.AssertEquals(t, "some-useless-passw0rd", cloud.AuthInfo.Password)
+			th.AssertEquals(t, "some-name", cloud.AuthInfo.Username)
+		}
+	}
+}
+
 func TestAuthTokenNoRegion(t *testing.T) {
 	cc, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
@@ -53,7 +124,7 @@ func TestAuthTokenNoRegion(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func TestReauth(t *testing.T) {
+func TestReAuth(t *testing.T) {
 	cloud, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
