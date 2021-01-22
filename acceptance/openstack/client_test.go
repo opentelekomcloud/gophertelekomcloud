@@ -1,6 +1,8 @@
 package openstack
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -15,8 +17,8 @@ import (
 )
 
 const (
-	fileName = "./clouds.yaml"
-	tmpl     = `
+	backupSuffix = ".backup"
+	tmpl         = `
 clouds:
   useless_cloud:
     auth:
@@ -52,60 +54,78 @@ func TestAuthenticatedClient(t *testing.T) {
 	t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
 }
 
+// copyFile copies file if it exists
+func copyFile(t *testing.T, src, dest string) string {
+	fileStat, err := os.Stat(src)
+	if err != nil && os.IsNotExist(err) {
+		t.Logf("File %s doesn't exist, skipping", src)
+		return ""
+	}
+
+	data, err := ioutil.ReadFile(src)
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, ioutil.WriteFile(dest, data, fileStat.Mode()))
+	return dest
+}
+
+// backupFile creates copy of the file and return path to the copy
+func backupFiles(t *testing.T, originals ...string) {
+	for _, file := range originals {
+		backupFile := fmt.Sprintf("%s%s", file, backupSuffix)
+		backupFile = copyFile(t, file, backupFile)
+	}
+	return
+}
+
+// restoreBackup replaces files with the backups
+func restoreBackup(t *testing.T, files ...string) {
+	for _, originalName := range files {
+		backupFile := fmt.Sprintf("%s%s", originalName, backupSuffix)
+		_, err := os.Stat(originalName)
+		if err != nil && os.IsNotExist(err) {
+			t.Logf("File %s doesn't exist, skipping", originalName)
+			continue
+		}
+		th.AssertNoErr(t, os.Remove(originalName))
+		copyFile(t, backupFile, originalName)
+		th.AssertNoErr(t, os.Remove(backupFile))
+	}
+}
+
 func TestCloudYamlPaths(t *testing.T) {
 	_ = os.Setenv("OS_CLOUD", "useless_cloud")
 	home, _ := os.UserHomeDir()
 	cwd, _ := os.Getwd()
 
-	currentConfigDir, _ := filepath.Abs(filepath.Join(cwd, "clouds.yaml"))
-	userConfigDir, _ := filepath.Abs(filepath.Join(home, ".config/openstack/clouds.yaml"))
-	unixConfigDir, _ := filepath.Abs("/etc/openstack/clouds.yaml")
+	fileName := "clouds.yaml"
+	currentConfigDir := filepath.Join(cwd, fileName)
+	userConfigDir := filepath.Join(home, ".config/openstack", fileName)
+	unixConfigDir := filepath.Join("/etc/openstack", fileName)
+	files := []string{currentConfigDir, userConfigDir, unixConfigDir}
+	backupFiles(t, currentConfigDir, userConfigDir, unixConfigDir)
+	defer restoreBackup(t, files...)
 
-	if _, err := os.Stat(currentConfigDir); os.IsNotExist(err) {
-		err := writeYamlFile(tmpl, currentConfigDir)
-		if err != nil {
-			th.AssertNoErr(t, err)
-		}
-		defer func() { _ = os.Remove(currentConfigDir) }()
-		cloud, err := clients.EnvOS.Cloud()
-		if err != nil {
-			th.AssertNoErr(t, err)
-		}
-		th.AssertEquals(t, "http://localhost/", cloud.AuthInfo.AuthURL)
-		th.AssertEquals(t, "some-useless-passw0rd", cloud.AuthInfo.Password)
-		th.AssertEquals(t, "some-name", cloud.AuthInfo.Username)
-	}
+	for _, fileName := range files {
+		t.Run(fmt.Sprintf("Config at %s", fileName), func(subT *testing.T) {
+			if runtime.GOOS == "windows" && fileName == unixConfigDir {
+				subT.Skip("Skipping on windows")
+			}
 
-	if _, err := os.Stat(userConfigDir); os.IsNotExist(err) {
-		err := writeYamlFile(tmpl, userConfigDir)
-		if err != nil {
-			th.AssertNoErr(t, err)
-		}
-		defer func() { _ = os.Remove(userConfigDir) }()
-		cloud, err := clients.EnvOS.Cloud()
-		if err != nil {
-			th.AssertNoErr(t, err)
-		}
-		th.AssertEquals(t, "http://localhost/", cloud.AuthInfo.AuthURL)
-		th.AssertEquals(t, "some-useless-passw0rd", cloud.AuthInfo.Password)
-		th.AssertEquals(t, "some-name", cloud.AuthInfo.Username)
-	}
-
-	if runtime.GOOS != "windows" {
-		if _, err := os.Stat(unixConfigDir); os.IsNotExist(err) {
-			err := writeYamlFile(tmpl, unixConfigDir)
-			if err != nil {
+			dir := filepath.Dir(fileName)
+			if err := os.MkdirAll(dir, 755); err != nil { // make sure that dir exists
+				if os.IsPermission(err) {
+					subT.Skip(err.Error())
+				}
 				th.AssertNoErr(t, err)
 			}
-			defer func() { _ = os.Remove(unixConfigDir) }()
+
+			th.AssertNoErr(subT, writeYamlFile(tmpl, fileName))
 			cloud, err := clients.EnvOS.Cloud()
-			if err != nil {
-				th.AssertNoErr(t, err)
-			}
-			th.AssertEquals(t, "http://localhost/", cloud.AuthInfo.AuthURL)
-			th.AssertEquals(t, "some-useless-passw0rd", cloud.AuthInfo.Password)
-			th.AssertEquals(t, "some-name", cloud.AuthInfo.Username)
-		}
+			th.AssertNoErr(subT, err)
+			th.AssertEquals(subT, "http://localhost/", cloud.AuthInfo.AuthURL)
+			th.AssertEquals(subT, "some-useless-passw0rd", cloud.AuthInfo.Password)
+			th.AssertEquals(subT, "some-name", cloud.AuthInfo.Username)
+		})
 	}
 }
 
