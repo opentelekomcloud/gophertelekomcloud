@@ -53,7 +53,7 @@ func TestAuthTokenNoRegion(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func TestReauth(t *testing.T) {
+func TestReAuth(t *testing.T) {
 	cloud, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
