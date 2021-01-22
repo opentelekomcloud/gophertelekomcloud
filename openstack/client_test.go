@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -94,7 +93,7 @@ func TestCloudYamlPaths(t *testing.T) {
 			}
 
 			th.AssertNoErr(subT, ioutil.WriteFile(fileName, tmpl, 0644))
-			cloud, err := clients.EnvOS.Cloud()
+			cloud, err := NewEnv("OS_").Cloud()
 			th.AssertNoErr(subT, err)
 			th.AssertEquals(subT, "http://localhost/", cloud.AuthInfo.AuthURL)
 			th.AssertEquals(subT, "some-useless-passw0rd", cloud.AuthInfo.Password)
