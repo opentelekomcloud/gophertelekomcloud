@@ -21,7 +21,7 @@ vet:
 	@go vet ./...
 
 test-unit:
-	@go test ./openstack/... -parallel 4
+	@go test ./openstack/... -parallel 4 -v
 
 test-acc:
 	@echo "Starting acceptance tests..."
