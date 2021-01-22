@@ -64,6 +64,38 @@ func restoreBackup(t *testing.T, files ...string) {
 	}
 }
 
+func checkLazyness(t *testing.T, env Env, expected bool) {
+	authUrl0 := "http://url:0"
+	_ = os.Setenv("OS_AUTH_URL", authUrl0)
+	cloud0, err := env.Cloud()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, authUrl0, cloud0.AuthInfo.AuthURL)
+
+	authUrl1 := "http://url:1"
+	_ = os.Setenv("OS_AUTH_URL", authUrl1)
+	cloud1, err := env.Cloud()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, expected, authUrl0 == cloud1.AuthInfo.AuthURL)
+	th.AssertEquals(t, !expected, authUrl1 == cloud1.AuthInfo.AuthURL)
+}
+
+func TestLazyEnv(t *testing.T) {
+	t.Run("lazy", func(sub *testing.T) {
+		env := NewEnv("OS_", true)
+		checkLazyness(sub, env, true)
+	})
+	t.Run("not lazy", func(sub *testing.T) {
+		env := NewEnv("OS_", false)
+		checkLazyness(sub, env, false)
+	})
+	t.Run("default", func(sub *testing.T) {
+		env := NewEnv("OS_")
+		checkLazyness(sub, env, true)
+		sub.Log("Lazy by default")
+	})
+}
+
 func TestCloudYamlPaths(t *testing.T) {
 	_ = os.Setenv("OS_CLOUD", "useless_cloud")
 	home, _ := os.UserHomeDir()

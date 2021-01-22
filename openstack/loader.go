@@ -78,17 +78,21 @@ type env struct {
 	prefix string
 	cloud  *Cloud
 
-	// Unstable make env ignore lazy cloud loading and
+	// unstable make env ignore lazy cloud loading and
 	// refresh it every time it's requested
-	Unstable bool
+	unstable bool
 }
 
-// NewEnv create new <prefixed> env loader
-func NewEnv(prefix string) Env {
+// NewEnv create new <prefixed> env loader, lazy by default
+func NewEnv(prefix string, lazy ...bool) Env {
 	if prefix != "" && !strings.HasSuffix(prefix, "_") {
 		prefix += "_"
 	}
-	return &env{prefix: prefix}
+	unstable := false
+	if len(lazy) > 0 {
+		unstable = !lazy[0]
+	}
+	return &env{prefix: prefix, unstable: unstable}
 }
 
 func (e *env) Prefix() string {
@@ -453,7 +457,7 @@ func mergeWithVendors(cloudConfig *Config, vendorPath string) *Config {
 
 // Cloud get cloud merged from configuration and env variables
 func (e *env) Cloud() (*Cloud, error) {
-	if e.cloud == nil || e.Unstable {
+	if e.cloud == nil || e.unstable {
 		config, err := e.loadOpenstackConfig()
 		if err != nil {
 			return nil, fmt.Errorf("failed to authenticate client: %s", err)
