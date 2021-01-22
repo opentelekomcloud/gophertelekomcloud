@@ -84,9 +84,15 @@ func restoreBackup(t *testing.T, files ...string) {
 			t.Logf("File %s doesn't exist, skipping", originalName)
 			continue
 		}
+		th.AssertNoErr(t, err)
 		th.AssertNoErr(t, os.Remove(originalName))
 		copyFile(t, backupFile, originalName)
-		th.AssertNoErr(t, os.Remove(backupFile))
+		if err != nil && os.IsNotExist(err) {
+			t.Logf("File %s doesn't exist, skipping", backupFile)
+			continue
+		}
+		th.AssertNoErr(t, err)
+		th.AssertNoErr(t, os.Remove(originalName))
 	}
 }
 
