@@ -55,26 +55,24 @@ func TestAuthenticatedClient(t *testing.T) {
 }
 
 // copyFile copies file if it exists
-func copyFile(t *testing.T, src, dest string) string {
+func copyFile(t *testing.T, src, dest string) {
 	fileStat, err := os.Stat(src)
 	if err != nil && os.IsNotExist(err) {
 		t.Logf("File %s doesn't exist, skipping", src)
-		return ""
+		return
 	}
 
 	data, err := ioutil.ReadFile(src)
 	th.AssertNoErr(t, err)
 	th.AssertNoErr(t, ioutil.WriteFile(dest, data, fileStat.Mode()))
-	return dest
 }
 
 // backupFile creates copy of the file and return path to the copy
 func backupFiles(t *testing.T, originals ...string) {
 	for _, file := range originals {
 		backupFile := fmt.Sprintf("%s%s", file, backupSuffix)
-		backupFile = copyFile(t, file, backupFile)
+		copyFile(t, file, backupFile)
 	}
-	return
 }
 
 // restoreBackup replaces files with the backups
@@ -112,7 +110,7 @@ func TestCloudYamlPaths(t *testing.T) {
 			}
 
 			dir := filepath.Dir(fileName)
-			if err := os.MkdirAll(dir, 755); err != nil { // make sure that dir exists
+			if err := os.MkdirAll(dir, 0755); err != nil { // make sure that dir exists
 				if os.IsPermission(err) {
 					subT.Skip(err.Error())
 				}
