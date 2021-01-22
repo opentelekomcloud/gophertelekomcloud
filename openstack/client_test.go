@@ -44,24 +44,23 @@ func backupFiles(t *testing.T, originals ...string) {
 	}
 }
 
+func removeIfExist(t *testing.T, path string) {
+	_, err := os.Stat(path)
+	if err != nil && os.IsNotExist(err) {
+		t.Logf("File %s doesn't exist, skipping", path)
+		return
+	}
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, os.Remove(path))
+}
+
 // restoreBackup replaces files with the backups
 func restoreBackup(t *testing.T, files ...string) {
-	for _, originalName := range files {
-		backupFile := fmt.Sprintf("%s%s", originalName, backupSuffix)
-		_, err := os.Stat(originalName)
-		if err != nil && os.IsNotExist(err) {
-			t.Logf("File %s doesn't exist, skipping", originalName)
-			continue
-		}
-		th.AssertNoErr(t, err)
-		th.AssertNoErr(t, os.Remove(originalName))
-		copyFile(t, backupFile, originalName)
-		if err != nil && os.IsNotExist(err) {
-			t.Logf("File %s doesn't exist, skipping", backupFile)
-			continue
-		}
-		th.AssertNoErr(t, err)
-		th.AssertNoErr(t, os.Remove(originalName))
+	for _, original := range files {
+		backup := fmt.Sprintf("%s%s", original, backupSuffix)
+		removeIfExist(t, original)
+		copyFile(t, backup, original)
+		removeIfExist(t, backup)
 	}
 }
 
