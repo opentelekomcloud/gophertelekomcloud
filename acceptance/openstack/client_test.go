@@ -16,16 +16,16 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-const (
+var (
 	backupSuffix = ".backup"
-	tmpl         = `
+	tmpl         = []byte(`
 clouds:
   useless_cloud:
     auth:
       auth_url: "http://localhost/"
       password: "some-useless-passw0rd"
       username: "some-name"
-`
+`)
 )
 
 func TestAuthenticatedClient(t *testing.T) {
@@ -117,7 +117,7 @@ func TestCloudYamlPaths(t *testing.T) {
 				th.AssertNoErr(t, err)
 			}
 
-			th.AssertNoErr(subT, writeYamlFile(tmpl, fileName))
+			th.AssertNoErr(subT, ioutil.WriteFile(fileName, tmpl, 0644))
 			cloud, err := clients.EnvOS.Cloud()
 			th.AssertNoErr(subT, err)
 			th.AssertEquals(subT, "http://localhost/", cloud.AuthInfo.AuthURL)
