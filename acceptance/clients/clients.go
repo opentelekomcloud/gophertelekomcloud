@@ -9,6 +9,8 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/credentials"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 )
 
 const envPrefix = "OS_"
@@ -221,6 +223,26 @@ func NewObjectStorageV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewOBSClient() (*obs.ObsClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := setupTemporaryAKSK(cc); err != nil {
+		return nil, fmt.Errorf("failed to construct OBS client without AK/SK: %s", err)
+	}
+
+	client, err := openstack.NewOBSService(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	opts := cc.AKSKAuthOptions
+	return obs.New(opts.AccessKey, opts.SecretKey, client.Endpoint, obs.WithSecurityToken(opts.SecurityToken))
+}
+
 // NewSharedFileSystemV2Client returns a *ServiceClient for making calls
 // to the OpenStack Shared File System v2 API. An error will be returned
 // if authentication or client creation was not possible.
@@ -356,4 +378,27 @@ func CloudAndClient() (*cc, error) {
 		return nil, fmt.Errorf("error authenticating client")
 	}
 	return &cc{cloud, client}, nil
+}
+
+func setupTemporaryAKSK(config *cc) error {
+	if config.AKSKAuthOptions.AccessKey != "" {
+		return nil
+	}
+
+	client, err := NewIdentityV3Client()
+	if err != nil {
+		return fmt.Errorf("error creating identity v3 domain client: %s", err)
+	}
+	credential, err := credentials.CreateTemporary(client, credentials.CreateTemporaryOpts{
+		Methods: []string{"token"},
+		Token:   client.Token(),
+	}).Extract()
+	if err != nil {
+		return fmt.Errorf("error creating temporary AK/SK: %s", err)
+	}
+
+	config.AKSKAuthOptions.AccessKey = credential.AccessKey
+	config.AKSKAuthOptions.SecretKey = credential.SecretKey
+	config.AKSKAuthOptions.SecurityToken = credential.SecurityToken
+	return nil
 }

@@ -27,8 +27,9 @@ type AKSKAuthOptions struct {
 	BssDomain   string
 	BssDomainID string
 
-	AccessKey string // Access Key
-	SecretKey string // Secret key
+	AccessKey     string // Access Key
+	SecretKey     string // Secret key
+	SecurityToken string // Security token (part of temporary AK/SK)
 
 	// AgencyName is the name of agency
 	AgencyName string
