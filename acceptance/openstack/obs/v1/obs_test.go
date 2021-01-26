@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -9,13 +10,11 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-const (
-	bucketName = "obs-test-gophertelekomcloud"
-)
-
 func TestObsBucketLifecycle(t *testing.T) {
 	client, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
+
+	bucketName := strings.ToLower(tools.RandomString("obs-sdk-test", 5))
 
 	createOpts := &obs.CreateBucketInput{
 		Bucket: bucketName,
@@ -31,6 +30,8 @@ func TestObsBucketLifecycle(t *testing.T) {
 func TestObsObjectLifecycle(t *testing.T) {
 	client, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
+
+	bucketName := strings.ToLower(tools.RandomString("obs-sdk-test", 5))
 
 	createOpts := &obs.CreateBucketInput{
 		Bucket: bucketName,
