@@ -1,6 +1,8 @@
 package eipstags
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+)
 
 // CreateOptsBuilder
 type CreateOptsBuilder interface {
@@ -9,7 +11,12 @@ type CreateOptsBuilder interface {
 
 // CreateOpts
 type CreateOpts struct {
-	Tag map[string]string `json:"tag" required:"true"`
+	Tag Tag `json:"tag" required:"true"`
+}
+
+type Tag struct {
+	Key   string `json:"key" required:"true"`
+	Value string `json:"value"`
 }
 
 func (opts CreateOpts) ToPublicIpTagCreateMap() (map[string]interface{}, error) {
@@ -32,5 +39,38 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, id string) 
 // Get
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(rootURL(client, id), &r.Body, nil)
+	return
+}
+
+// Delete
+func Delete(client *golangsdk.ServiceClient, id string, key string) (r DeleteResult) {
+	_, r.Err = client.Delete(deleteURL(client, id, key), nil)
+	return
+}
+
+// BatchActionOptsBuilder
+type BatchActionOptsBuilder interface {
+	ToPublicIpBatchTagsActionMap() (map[string]interface{}, error)
+}
+
+type BatchActionOpts struct {
+	Tags   []Tag  `json:"tags" required:"true"`
+	Action string `json:"action" required:"true"`
+}
+
+func (opts BatchActionOpts) ToPublicIpBatchTagsActionMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+// Action
+func Action(client *golangsdk.ServiceClient, id string, opts BatchActionOpts) (r ActionResult) {
+	b, err := opts.ToPublicIpBatchTagsActionMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }

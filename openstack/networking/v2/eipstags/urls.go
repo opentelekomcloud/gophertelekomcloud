@@ -14,6 +14,6 @@ func deleteURL(client *golangsdk.ServiceClient, id string, key string) string {
 	return client.ServiceURL(client.ProjectID, resourcePath, id, tags, key)
 }
 
-func batchActionURL(client *golangsdk.ServiceClient, id string) string {
+func actionURL(client *golangsdk.ServiceClient, id string) string {
 	return client.ServiceURL(client.ProjectID, resourcePath, id, tags, action)
 }
