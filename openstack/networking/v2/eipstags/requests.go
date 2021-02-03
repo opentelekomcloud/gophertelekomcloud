@@ -69,7 +69,7 @@ func Action(client *golangsdk.ServiceClient, opts BatchActionOpts, id string) (r
 		r.Err = err
 		return
 	}
-	_, err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
