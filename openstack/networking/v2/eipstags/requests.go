@@ -30,8 +30,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, id string) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(rootURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+	_, r.Err = client.Post(rootURL(client, id), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
 	})
 	return
 }
@@ -63,7 +63,7 @@ func (opts BatchActionOpts) ToPublicIpBatchTagsActionMap() (map[string]interface
 }
 
 // Action
-func Action(client *golangsdk.ServiceClient, id string, opts BatchActionOpts) (r ActionResult) {
+func Action(client *golangsdk.ServiceClient, opts BatchActionOpts, id string) (r ActionResult) {
 	b, err := opts.ToPublicIpBatchTagsActionMap()
 	if err != nil {
 		r.Err = err

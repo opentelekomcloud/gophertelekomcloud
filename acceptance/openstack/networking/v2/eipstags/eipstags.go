@@ -15,7 +15,7 @@ func CreateEip(t *testing.T, clientV1 *golangsdk.ServiceClient) eips.PublicIp {
 			Type: "5_bgp",
 		},
 		Bandwidth: eips.BandwidthOpts{
-			Name:       "test",
+			Name:       "test-bandwidth",
 			Size:       100,
 			ShareType:  "PER",
 			ChargeMode: "traffic",
@@ -61,10 +61,43 @@ func DeleteTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, ta
 	t.Logf("Deleted tag for VPC EIPv1")
 }
 
-func CreateTags(t *testing.T, clientV2 *golangsdk.ServiceClient) {
-
+func CreateTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKeys []string) {
+	t.Logf("Attempting to create tags for VPC EIPv1")
+	createOps := eipstags.BatchActionOpts{
+		Tags: []eipstags.Tag{
+			{
+				Key:   tagKeys[0],
+				Value: "value1",
+			},
+			{
+				Key:   tagKeys[1],
+				Value: "value2",
+			},
+		},
+		Action: "create",
+	}
+	err := eipstags.Action(clientV2, createOps, eipID).ExtractErr()
+	if err != nil {
+		t.Fatal("Unable to create tags for VPC EIPv1")
+	}
+	t.Logf("Created tags for VPC EIPv1: %s", eipID)
 }
 
-func DeleteTags(t *testing.T, clientV2 *golangsdk.ServiceClient) {
-
+func DeleteTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKeys []string) {
+	t.Logf("Attempting to delete tags for VPC EIPv1: %s", eipID)
+	deleteOps := eipstags.BatchActionOpts{
+		Tags: []eipstags.Tag{
+			{
+				Key: tagKeys[0],
+			},
+			{
+				Key: tagKeys[1],
+			},
+		},
+		Action: "delete",
+	}
+	if err := eipstags.Action(clientV2, deleteOps, eipID).ExtractErr(); err != nil {
+		t.Fatal("Unable to delete tags for VPC EIPv1")
+	}
+	t.Logf("Deleted tags for VPC EIPv1")
 }
