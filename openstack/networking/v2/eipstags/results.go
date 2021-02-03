@@ -7,8 +7,8 @@ type CreateResult struct {
 	golangsdk.ErrResult
 }
 
-// GetResult
-type GetResult struct {
+// ListResult
+type ListResult struct {
 	golangsdk.Result
 }
 
@@ -19,7 +19,7 @@ type Tags struct {
 	Tags []string `json:"tags"`
 }
 
-func (r GetResult) Extract() ([]Tag, error) {
+func (r ListResult) Extract() ([]Tag, error) {
 	var responseTags struct {
 		Tags []Tag `json:"tags"`
 	}

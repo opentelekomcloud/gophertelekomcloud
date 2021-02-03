@@ -36,8 +36,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, id string) 
 	return
 }
 
-// Get
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
+// List
+func List(client *golangsdk.ServiceClient, id string) (r ListResult) {
 	_, r.Err = client.Get(rootURL(client, id), &r.Body, nil)
 	return
 }
