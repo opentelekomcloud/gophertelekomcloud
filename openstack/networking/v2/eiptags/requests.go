@@ -1,4 +1,4 @@
-package eipstags
+package eiptags
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"

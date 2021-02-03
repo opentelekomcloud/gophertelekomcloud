@@ -1,11 +1,11 @@
-package eipstags
+package eiptags
 
 import (
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/eips"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/eipstags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/eiptags"
 )
 
 func CreateEip(t *testing.T, clientV1 *golangsdk.ServiceClient) eips.PublicIp {
@@ -40,13 +40,13 @@ func DeleteEip(t *testing.T, clientV1 *golangsdk.ServiceClient, eipID string) {
 
 func CreateTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKey string) {
 	t.Logf("Attempting to create tag for VPC EIPv1")
-	createOpts := eipstags.CreateOpts{
-		Tag: eipstags.Tag{
+	createOpts := eiptags.CreateOpts{
+		Tag: eiptags.Tag{
 			Key:   tagKey,
 			Value: "kuh",
 		},
 	}
-	err := eipstags.Create(clientV2, createOpts, eipID).ExtractErr()
+	err := eiptags.Create(clientV2, createOpts, eipID).ExtractErr()
 	if err != nil {
 		t.Fatal("Unable to create tag for VPC EIPv1")
 	}
@@ -55,7 +55,7 @@ func CreateTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, ta
 
 func DeleteTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKey string) {
 	t.Logf("Attempting to delete tag %s for VPC EIPv1: %s", tagKey, eipID)
-	if err := eipstags.Delete(clientV2, eipID, tagKey).ExtractErr(); err != nil {
+	if err := eiptags.Delete(clientV2, eipID, tagKey).ExtractErr(); err != nil {
 		t.Fatal("Unable to delete tag for VPC EIPv1")
 	}
 	t.Logf("Deleted tag for VPC EIPv1")
@@ -63,8 +63,8 @@ func DeleteTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, ta
 
 func CreateTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKeys []string) {
 	t.Logf("Attempting to create tags for VPC EIPv1")
-	createOpts := eipstags.BatchActionOpts{
-		Tags: []eipstags.Tag{
+	createOpts := eiptags.BatchActionOpts{
+		Tags: []eiptags.Tag{
 			{
 				Key:   tagKeys[0],
 				Value: "value1",
@@ -76,7 +76,7 @@ func CreateTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, t
 		},
 		Action: "create",
 	}
-	err := eipstags.Action(clientV2, createOpts, eipID).ExtractErr()
+	err := eiptags.Action(clientV2, createOpts, eipID).ExtractErr()
 	if err != nil {
 		t.Fatal("Unable to create tags for VPC EIPv1")
 	}
@@ -85,8 +85,8 @@ func CreateTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, t
 
 func DeleteTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKeys []string) {
 	t.Logf("Attempting to delete tags for VPC EIPv1: %s", eipID)
-	deleteOpts := eipstags.BatchActionOpts{
-		Tags: []eipstags.Tag{
+	deleteOpts := eiptags.BatchActionOpts{
+		Tags: []eiptags.Tag{
 			{
 				Key: tagKeys[0],
 			},
@@ -96,7 +96,7 @@ func DeleteTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, t
 		},
 		Action: "delete",
 	}
-	if err := eipstags.Action(clientV2, deleteOpts, eipID).ExtractErr(); err != nil {
+	if err := eiptags.Action(clientV2, deleteOpts, eipID).ExtractErr(); err != nil {
 		t.Fatal("Unable to delete tags for VPC EIPv1")
 	}
 	t.Logf("Deleted tags for VPC EIPv1")

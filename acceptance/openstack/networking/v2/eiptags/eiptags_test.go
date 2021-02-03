@@ -1,11 +1,11 @@
-package eipstags
+package eiptags
 
 import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/eipstags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/eiptags"
 )
 
 func TestEipsTagsList(t *testing.T) {
@@ -21,7 +21,7 @@ func TestEipsTagsList(t *testing.T) {
 		t.Fatalf("Unable to create NetworkingV2 client: %v", err)
 	}
 
-	tags, err := eipstags.List(clientV2, eip.ID).Extract()
+	tags, err := eiptags.List(clientV2, eip.ID).Extract()
 	if err != nil {
 		t.Fatalf("Unable to get EIP tags: %v", err)
 	}
@@ -53,7 +53,7 @@ func TestEipsTagsLifecycle(t *testing.T) {
 	CreateTags(t, clientV2, eip.ID, tagKeys)
 	defer DeleteTags(t, clientV2, eip.ID, tagKeys)
 
-	tagList, err := eipstags.List(clientV2, eip.ID).Extract()
+	tagList, err := eiptags.List(clientV2, eip.ID).Extract()
 	if err != nil {
 		t.Fatalf("Unable to get EIP tags: %v", err)
 	}
