@@ -2,23 +2,17 @@ package eipstags
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
-// CreateResult
+// CreateResult is a struct which contains the result of creation
 type CreateResult struct {
 	golangsdk.ErrResult
 }
 
-// ListResult
+// ListResult contains the body of getting detailed EIP tags request
 type ListResult struct {
 	golangsdk.Result
 }
 
-// Tags model
-type Tags struct {
-	// Tags is a list of any tags. Tags are arbitrarily defined strings
-	// attached to a resource.
-	Tags []string `json:"tags"`
-}
-
+// Extract method will parse the result body into Tag struct
 func (r ListResult) Extract() ([]Tag, error) {
 	var responseTags struct {
 		Tags []Tag `json:"tags"`
@@ -27,12 +21,12 @@ func (r ListResult) Extract() ([]Tag, error) {
 	return responseTags.Tags, err
 }
 
-// DeleteResult
+// DeleteResult is a struct which contains the result of deletion
 type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-// ActionResult
+// ActionResult is a struct which contains the result of action
 type ActionResult struct {
 	golangsdk.ErrResult
 }
