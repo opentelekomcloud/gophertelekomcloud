@@ -53,7 +53,9 @@ func List(client *golangsdk.ServiceClient) (r ListResult) {
 
 // Delete is a method of deleting tags by key
 func Delete(client *golangsdk.ServiceClient, id string, key string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id, key), nil)
+	_, r.Err = client.Delete(deleteURL(client, id, key), &golangsdk.RequestOpts{
+		OkCodes: []int{202, 204, 404},
+	})
 	return
 }
 
