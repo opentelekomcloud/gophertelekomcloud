@@ -16,6 +16,7 @@ import (
 )
 
 func TestAddonsLifecycle(t *testing.T) {
+	t.Skip("CCE addon acceptance test is skipped due to its issues and it leaves orphans")
 	vpcClient, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 	cceClient, err := clients.NewCceV3Client()

@@ -5,8 +5,8 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/configurations"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -17,9 +17,6 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 
 	prefix := "rds-"
 	rdsName := tools.RandomString(prefix, 8)
-	sgName := tools.RandomString(prefix, 8)
-	sg, err := createSecGroup(sgName)
-	th.AssertNoErr(t, err)
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if az == "" {
@@ -41,7 +38,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		AvailabilityZone: az,
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
-		SecurityGroupId:  sg.ID,
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
 
 		Volume: &instances.Volume{
 			Type: "COMMON",
@@ -67,21 +64,11 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 
 func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) {
 	t.Logf("Attempting to delete RDSv3: %s", rdsID)
-	listOpts := instances.ListRdsInstanceOpts{
-		Id: rdsID,
-	}
-	allPages, err := instances.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
 
-	rds, err := instances.ExtractRdsInstances(allPages)
-	th.AssertNoErr(t, err)
-
-	_, err = instances.Delete(client, rdsID).ExtractJobResponse()
+	_, err := instances.Delete(client, rdsID).ExtractJobResponse()
 	th.AssertNoErr(t, err)
 
 	t.Logf("RDSv3 instance deleted: %s", rdsID)
-
-	deleteSecGroup(t, rds.Instances[0].SecurityGroupId)
 }
 
 func updateRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) error {
@@ -158,30 +145,4 @@ func updateRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient, rdsCo
 	th.AssertNoErr(t, err)
 
 	t.Logf("RDSv3 configuration updated")
-}
-
-func createSecGroup(sgName string) (*groups.SecGroup, error) {
-	nwClient, err := clients.NewNetworkV2Client()
-	if err != nil {
-		return nil, err
-	}
-	sgOpts := groups.CreateOpts{
-		Name: sgName,
-	}
-	sg, err := groups.Create(nwClient, sgOpts).Extract()
-	if err != nil {
-		return nil, err
-	}
-	return sg, nil
-}
-
-func deleteSecGroup(t *testing.T, sgID string) {
-	t.Logf("Attempting to delete networking_secgroup: %s", sgID)
-	nwClient, err := clients.NewNetworkV2Client()
-	th.AssertNoErr(t, err)
-
-	err = groups.DeleteWithRetry(nwClient, sgID, 600)
-	th.AssertNoErr(t, err)
-
-	t.Logf("Deleted networking_secgroup: %s", sgID)
 }

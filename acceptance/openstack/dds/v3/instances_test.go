@@ -5,8 +5,8 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -61,9 +61,6 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
 	}
 
-	computeClient, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
 	createOpts := instances.CreateOpts{
 		Name: ddsName,
 		DataStore: instances.DataStore{
@@ -75,7 +72,7 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		AvailabilityZone: az,
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
-		SecurityGroupId:  defaultSecurityGroup(t, computeClient),
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
 		Password:         "5ecurePa55w0rd@",
 		Mode:             "ReplicaSet",
 		Flavor: []instances.Flavor{
@@ -158,22 +155,4 @@ func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceId
 		}
 		return false, nil
 	})
-}
-
-func defaultSecurityGroup(t *testing.T, computeClient *golangsdk.ServiceClient) string {
-	securityGroupPages, err := secgroups.List(computeClient).AllPages()
-	th.AssertNoErr(t, err)
-	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
-	th.AssertNoErr(t, err)
-	var sgId string
-	for _, val := range securityGroups {
-		if val.Name == "default" {
-			sgId = val.ID
-			break
-		}
-	}
-	if sgId == "" {
-		t.Fatalf("Unable to find default secgroup")
-	}
-	return sgId
 }
