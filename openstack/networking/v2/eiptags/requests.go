@@ -39,9 +39,15 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, id string) 
 	return
 }
 
-// List is a method of getting the tags of the EIP
-func List(client *golangsdk.ServiceClient, id string) (r ListResult) {
+// Get is a method of getting the tags of the EIP
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(rootURL(client, id), &r.Body, nil)
+	return
+}
+
+// List is a method of getting the tags of the EIP
+func List(client *golangsdk.ServiceClient) (r ListResult) {
+	_, r.Err = client.Get(listURL(client), &r.Body, nil)
 	return
 }
 

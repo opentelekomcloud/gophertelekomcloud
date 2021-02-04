@@ -19,7 +19,7 @@ func TestEipTagsList(t *testing.T) {
 	clientV2, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
 
-	tags, err := eiptags.List(clientV2, eip.ID).Extract()
+	tags, err := eiptags.List(clientV2).Extract()
 	th.AssertNoErr(t, err)
 
 	for _, tag := range tags {
@@ -46,7 +46,7 @@ func TestEipTagsLifecycle(t *testing.T) {
 	}
 	CreateTags(t, clientV2, eip.ID, tagKeys)
 	defer DeleteTags(t, clientV2, eip.ID, tagKeys)
-	tagList, err := eiptags.List(clientV2, eip.ID).Extract()
+	tagList, err := eiptags.Get(clientV2, eip.ID).Extract()
 	th.AssertNoErr(t, err)
 
 	for _, tag := range tagList {

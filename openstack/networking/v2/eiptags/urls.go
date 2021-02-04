@@ -17,3 +17,7 @@ func deleteURL(client *golangsdk.ServiceClient, id string, key string) string {
 func actionURL(client *golangsdk.ServiceClient, id string) string {
 	return client.ServiceURL(client.ProjectID, resourcePath, id, tags, action)
 }
+
+func listURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(client.ProjectID, resourcePath, tags)
+}
