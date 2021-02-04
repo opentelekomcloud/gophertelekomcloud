@@ -56,7 +56,7 @@ func CreateTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, ta
 func DeleteTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, tagKey string) {
 	t.Logf("Attempting to delete tag %s for VPC EIPv1: %s", tagKey, eipID)
 	if err := eiptags.Delete(clientV2, eipID, tagKey).ExtractErr(); err != nil {
-		t.Fatal("Unable to delete tag for VPC EIPv1")
+		t.Fatalf("Unable to delete tag for VPC EIPv1: %s", err)
 	}
 	t.Logf("Deleted tag for VPC EIPv1")
 }
