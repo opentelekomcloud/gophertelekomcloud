@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -131,4 +132,12 @@ func TestCloudYamlPaths(t *testing.T) {
 			th.AssertEquals(subT, "some-name", cloud.AuthInfo.Username)
 		})
 	}
+}
+
+func TestCloudName(t *testing.T) {
+	_ = os.Setenv("OS_CLOUD", tools.RandomString("CLD_", 5))
+	expectedName := tools.RandomString("CLD_SET_", 5)
+	cloud, err := NewEnv("OS").Cloud(expectedName)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, expectedName, cloud.Cloud)
 }
