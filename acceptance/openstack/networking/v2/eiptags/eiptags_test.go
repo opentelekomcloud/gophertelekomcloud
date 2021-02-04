@@ -39,13 +39,27 @@ func TestEipsTagsLifecycle(t *testing.T) {
 
 	tagKey := "muh"
 	CreateTag(t, clientV2, eip.ID, tagKey)
-	defer DeleteTag(t, clientV2, eip.ID, tagKey)
+	defer func() {
+		tagList, err := eiptags.List(clientV2, eip.ID).Extract()
+		th.AssertNoErr(t, err)
+		for _, tag := range tagList {
+			tools.PrintResource(t, tag)
+		}
+		DeleteTag(t, clientV2, eip.ID, tagKey)
+	}()
 
 	tagKeys := []string{
 		"luh", "kuh",
 	}
 	CreateTags(t, clientV2, eip.ID, tagKeys)
-	defer DeleteTags(t, clientV2, eip.ID, tagKeys)
+	defer func() {
+		DeleteTags(t, clientV2, eip.ID, tagKeys)
+		tagList, err := eiptags.List(clientV2, eip.ID).Extract()
+		th.AssertNoErr(t, err)
+		for _, tag := range tagList {
+			tools.PrintResource(t, tag)
+		}
+	}()
 
 	tagList, err := eiptags.List(clientV2, eip.ID).Extract()
 	th.AssertNoErr(t, err)
