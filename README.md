@@ -1,32 +1,13 @@
-# Golangsdk: a OpenTelekomCloud SDK for Golang
+# GopherTelekomCloud: a OpenTelekomCloud SDK for Golang
+
 [![Go Report Card](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud?branch=master)](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud)
-[![Build Status](https://travis-ci.org/opentelekomcloud/gophertelekomcloud.svg?branch=master)](https://travis-ci.org/opentelekomcloud/gophertelekomcloud)
-[![Coverage Status](https://coveralls.io/repos/github/opentelekomcloud/gophertelekomcloud/badge.svg?branch=master)](https://coveralls.io/github/opentelekomcloud/gophertelekomcloud?branch=master)
+[![Zuul Gated](https://zuul-ci.org/gated.svg)](https://zuul.eco.tsi-dev.otc-service.com/t/eco/buildsets?project=opentelekomcloud%2Fgophertelekomcloud&pipeline=gate)
 [![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/LICENSE)
 
-Golangsdk is a OpenTelekomCloud clouds Go SDK.
-Golangsdk is based on [Gophercloud](https://github.com/gophercloud/gophercloud)
-which is an OpenStack Go SDK and has a great design.
-Golangsdk has added and removed some features to support OpenTelekomCloud.
-
-## Added features
-
-- **autoscaling**: auto scaling service
-- **kms**: key management service
-- **rds**: relational database service
-- **smn**: simple message notification service
-- **drs**: disaster recovery service
-
-## Removed features
-
-- **blockstorage**: block storage service
-- **cdn**: content delivery network service
-- **compute**: compute service
-- **db**: database service
-- **imageservice**: image service
-- **objectstorage**: object storage service
-- **orchestration**: orchestration service
-- **sharedfilesystems**: share file system service
+GopherTelekomCloud is a OpenTelekomCloud clouds Go SDK. GopherTelekomCloud is based
+on [Gophercloud](https://github.com/gophercloud/gophercloud)
+which is an OpenStack Go SDK and has a great design. GopherTelekomCloud has added and removed some features to support
+OpenTelekomCloud.
 
 ## Useful links
 
@@ -35,111 +16,81 @@ Golangsdk has added and removed some features to support OpenTelekomCloud.
 
 ## How to install
 
-Before installing, you need to ensure that your [GOPATH environment variable](https://golang.org/doc/code.html#GOPATH)
-is pointing to an appropriate directory where you want to install Golangsdk:
+Installation with modern Go and `go mod` is really simple:
 
-```bash
-mkdir $HOME/go
-export GOPATH=$HOME/go
-```
-
-To protect yourself against changes in your dependencies, we highly recommend choosing a
-[dependency management solution](https://github.com/golang/go/wiki/PackageManagementTools) for
-your projects, such as [godep](https://github.com/tools/godep). Once this is set up, you can install
-golangsdk as a dependency like so:
-
-```bash
-go get github.com/opentelekomcloud/gophertelekomcloud
-
-# Edit your code to import relevant packages from "github.com/opentelekomcloud/gophertelekomcloud"
-
-godep save ./...
-```
-
-This will install all the source files you need into a `Godeps/_workspace` directory, which is
-referenceable from your own source files when you use the `godep go` command.
+Just run `go mod download` to install all dependencies.
 
 ## Getting started
 
 ### Credentials
 
-Because you'll be hitting an API, you will need to retrieve your OpenTelekomCloud
-credentials and either store them as environment variables or in your local Go
-files. The first method is recommended because it decouples credential
-information from source code, allowing you to push the latter to your version
-control system without any security risk.
+Because you'll be hitting an API, you will need to retrieve your OpenTelekomCloud credentials and store them using
+standard Openstack approaches:
+either [`clouds.yaml`](https://docs.openstack.org/python-openstackclient/latest/configuration/index.html)
+file (recommended) or environment variables.
 
 You will need to retrieve the following:
 
+* domain name
 * username
 * password
+* project name/id (for most of the services)
 * a valid IAM identity URL
 
 ### Authentication
 
-Once you have access to your credentials, you can begin plugging them into
-Golangsdk. The next step is authentication, and this is handled by a base
-"Provider" struct. To get one, you can either pass in your credentials
-explicitly, or tell Golangsdk to use environment variables:
+Once you have access to your credentials, you can begin plugging them into Golangsdk. The next step is authentication,
+and this is handled by a base
+"Provider" struct. To get one, you can either pass in your credentials explicitly, or tell Golangsdk to use environment
+variables:
+
+#### Option 1: Pass in the values yourself
 
 ```go
-import (
-  "github.com/opentelekomcloud/gophertelekomcloud"
-  "github.com/opentelekomcloud/gophertelekomcloud/openstack"
-  "github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
-)
-
-// Option 1: Pass in the values yourself
 opts := golangsdk.AuthOptions{
-  IdentityEndpoint: "https://openstack.example.com:5000/v2.0",
-  Username: "{username}",
-  Password: "{password}",
+IdentityEndpoint: "https://openstack.example.com:5000/v2.0",
+Username:         "{username}",
+Password:         "{password}",
 }
-
-// Option 2: Use a utility function to retrieve all your environment variables
-opts, err := openstack.AuthOptionsFromEnv()
+client, err := openstack.AuthenticatedClient(opts)
 ```
 
-Once you have the `opts` variable, you can pass it in and get back a
-`ProviderClient` struct:
+#### Option 2: Use a utility function to retrieve cloud configuration from env variables and configuration files
 
 ```go
-provider, err := openstack.AuthenticatedClient(opts)
+env := openstack.NewEnv("OS_") // use OS_ prefixed env variables
+client, err := env.AuthenticatedClient()
 ```
 
-The `ProviderClient` is the top-level client that all of your OpenTelekomCloud services
-derive from. The provider contains all of the authentication details that allow
-your Go code to access the API - such as the base URL and token ID.
+The `ProviderClient` is the top-level client that all of your OpenTelekomCloud services derive from. The provider
+contains all of the authentication details that allow your Go code to access the API - such as the base URL and token
+ID.
 
 ### Provision a rds instance
 
-Once we have a base Provider, we inject it as a dependency into each OpenTelekomCloud
-service. In order to work with the rds API, we need a rds service
-client; which can be created like so:
+Once we have a base Provider, we inject it as a dependency into each OpenTelekomCloud service. In order to work with the
+rds API, we need a rds service client; which can be created like so:
 
 ```go
 client, err := openstack.NewRdsServiceV1(provider, golangsdk.EndpointOpts{
-  Region: utils.GetRegion(ao),
+	Region: utils.GetRegion(ao),
 })
 ```
 
-We then use this `client` for any rds API operation we want. In our case,
-we want to provision a rds instance - so we invoke the `Create` method and pass
-in the name and the flavor ID (database specification) we're
-interested in:
+We then use this `client` for any rds API operation we want. In our case, we want to provision a rds instance - so we
+invoke the `Create` method and pass in the name and the flavor ID (database specification) we're interested in:
 
 ```go
 import "github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v1/instances"
 
 instance, err := instances.Create(client, instances.CreateOpts{
-  Name:      "My new rds instance!",
-  FlavorRef: "flavor_id",
+	Name:      "My new rds instance!",
+	FlavorRef: "flavor_id",
 }).Extract()
 ```
 
-The above code sample creates a new rds instance with the parameters, and embodies the
-new resource in the `instance` variable (a
-[`instances.Instance`](http://godoc.org/github.com/opentelekomcloud/gophertelekomcloud) struct).
+The above code sample creates a new rds instance with the parameters, and embodies the new resource in the `instance`
+variable (a[`instances.Instance`](http://godoc.org/github.com/opentelekomcloud/gophertelekomcloud) struct).
 
 ## Advanced Usage
 
@@ -155,26 +106,5 @@ See the [contributing guide](./.github/CONTRIBUTING.md).
 
 ## Help and feedback
 
-If you're struggling with something or have spotted a potential bug, feel free
-to submit an issue to our [bug tracker](https://github.com/opentelekomcloud/gophertelekomcloud/issues).
-
-## Thank You
-
-We'd like to extend special thanks and appreciation to the following:
-
-### OpenLab
-
-<a href="http://openlabtesting.org/"><img src="assets/openlab.png" width="600px"></a>
-
-OpenLab is providing a full CI environment to test each PR and merge for a variety of OpenStack releases.
-
-### VEXXHOST
-
-<a href="https://vexxhost.com/"><img src="assets/vexxhost.png" width="600px"></a>
-
-VEXXHOST is providing their services to assist with the development and testing of Golangsdk.
-
-## License
-
-Golangsdk is under the Apache 2.0 license. See the [LICENSE](LICENSE) file for details.
-
+If you're struggling with something or have spotted a potential bug, feel free to submit an issue to
+our [bug tracker](https://github.com/opentelekomcloud/gophertelekomcloud/issues).
