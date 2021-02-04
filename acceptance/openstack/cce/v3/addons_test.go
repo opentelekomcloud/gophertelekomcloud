@@ -16,6 +16,7 @@ import (
 )
 
 func TestAddonsLifecycle(t *testing.T) {
+	t.SkipNow()
 	vpcClient, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 	cceClient, err := clients.NewCceV3Client()
