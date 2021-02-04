@@ -46,9 +46,9 @@ func CreateTag(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, ta
 			Value: "kuh",
 		},
 	}
-	err := eiptags.Create(clientV2, createOpts, eipID).ExtractErr()
-	if err != nil {
-		t.Fatal("Unable to create tag for VPC EIPv1")
+
+	if err := eiptags.Create(clientV2, createOpts, eipID).ExtractErr(); err != nil {
+		t.Fatalf("Unable to create tag for VPC EIPv1: %s", err)
 	}
 	t.Logf("Created tag for VPC EIPv1: %s", eipID)
 }
@@ -76,9 +76,9 @@ func CreateTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, t
 		},
 		Action: "create",
 	}
-	err := eiptags.Action(clientV2, createOpts, eipID).ExtractErr()
-	if err != nil {
-		t.Fatal("Unable to create tags for VPC EIPv1")
+
+	if err := eiptags.Action(clientV2, createOpts, eipID).ExtractErr(); err != nil {
+		t.Fatalf("Unable to create tags for VPC EIPv1: %s", err)
 	}
 	t.Logf("Created tags for VPC EIPv1: %s", eipID)
 }
@@ -97,7 +97,7 @@ func DeleteTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, t
 		Action: "delete",
 	}
 	if err := eiptags.Action(clientV2, deleteOpts, eipID).ExtractErr(); err != nil {
-		t.Fatal("Unable to delete tags for VPC EIPv1")
+		t.Fatalf("Unable to delete tags for VPC EIPv1: %s", err)
 	}
 	t.Logf("Deleted tags for VPC EIPv1")
 }
