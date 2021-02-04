@@ -18,7 +18,7 @@ type CreateOpts struct {
 
 type Tag struct {
 	Key   string `json:"key" required:"true"`
-	Value string `json:"value"`
+	Value string `json:"value" required:"true"`
 }
 
 // ToPublicIpTagCreateMap casts a CreateOpts struct to a map.

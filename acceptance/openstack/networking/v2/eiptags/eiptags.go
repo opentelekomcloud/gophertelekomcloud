@@ -81,10 +81,12 @@ func DeleteTags(t *testing.T, clientV2 *golangsdk.ServiceClient, eipID string, t
 	deleteOpts := eiptags.BatchActionOpts{
 		Tags: []eiptags.Tag{
 			{
-				Key: tagKeys[0],
+				Key:   tagKeys[0],
+				Value: "value2",
 			},
 			{
-				Key: tagKeys[1],
+				Key:   tagKeys[1],
+				Value: "value3",
 			},
 		},
 		Action: "delete",

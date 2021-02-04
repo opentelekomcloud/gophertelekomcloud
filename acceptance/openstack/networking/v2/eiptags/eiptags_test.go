@@ -9,7 +9,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestEipsTagsList(t *testing.T) {
+func TestEipTagsList(t *testing.T) {
 	clientV1, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
@@ -27,7 +27,7 @@ func TestEipsTagsList(t *testing.T) {
 	}
 }
 
-func TestEipsTagsLifecycle(t *testing.T) {
+func TestEipTagsLifecycle(t *testing.T) {
 	clientV1, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
@@ -39,28 +39,13 @@ func TestEipsTagsLifecycle(t *testing.T) {
 
 	tagKey := "muh"
 	CreateTag(t, clientV2, eip.ID, tagKey)
-	defer func() {
-		tagList, err := eiptags.List(clientV2, eip.ID).Extract()
-		th.AssertNoErr(t, err)
-		for _, tag := range tagList {
-			tools.PrintResource(t, tag)
-		}
-		DeleteTag(t, clientV2, eip.ID, tagKey)
-	}()
+	defer DeleteTag(t, clientV2, eip.ID, tagKey)
 
 	tagKeys := []string{
 		"luh", "kuh",
 	}
 	CreateTags(t, clientV2, eip.ID, tagKeys)
-	defer func() {
-		DeleteTags(t, clientV2, eip.ID, tagKeys)
-		tagList, err := eiptags.List(clientV2, eip.ID).Extract()
-		th.AssertNoErr(t, err)
-		for _, tag := range tagList {
-			tools.PrintResource(t, tag)
-		}
-	}()
-
+	defer DeleteTags(t, clientV2, eip.ID, tagKeys)
 	tagList, err := eiptags.List(clientV2, eip.ID).Extract()
 	th.AssertNoErr(t, err)
 
