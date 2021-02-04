@@ -29,9 +29,6 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
 	}
 
-	computeClient, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
 	createRdsOpts := instances.CreateRdsOpts{
 		Name:             rdsName,
 		Port:             "8635",
@@ -41,7 +38,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		AvailabilityZone: az,
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
-		SecurityGroupId:  openstack.DefaultSecurityGroup(t, computeClient),
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
 
 		Volume: &instances.Volume{
 			Type: "COMMON",

@@ -61,9 +61,6 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
 	}
 
-	computeClient, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
 	createOpts := instances.CreateOpts{
 		Name: ddsName,
 		DataStore: instances.DataStore{
@@ -75,7 +72,7 @@ func createDdsInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		AvailabilityZone: az,
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
-		SecurityGroupId:  openstack.DefaultSecurityGroup(t, computeClient),
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
 		Password:         "5ecurePa55w0rd@",
 		Mode:             "ReplicaSet",
 		Flavor: []instances.Flavor{

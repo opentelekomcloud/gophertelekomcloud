@@ -5,7 +5,7 @@ package openstack
 import (
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -21,7 +21,10 @@ func PrintExtension(t *testing.T, extension *extensions.Extension) {
 	t.Logf("Links: %v", extension.Links)
 }
 
-func DefaultSecurityGroup(t *testing.T, computeClient *golangsdk.ServiceClient) string {
+func DefaultSecurityGroup(t *testing.T) string {
+	computeClient, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
 	securityGroupPages, err := secgroups.List(computeClient).AllPages()
 	th.AssertNoErr(t, err)
 	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
