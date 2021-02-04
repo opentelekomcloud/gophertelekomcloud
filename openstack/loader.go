@@ -65,10 +65,10 @@ type Env interface {
 	// GetPrefix returns used prefix
 	Prefix() string
 	// Cloud returns full cloud configuration
-	Cloud() (*Cloud, error)
+	Cloud(name ...string) (*Cloud, error)
 	// AuthenticatedClient is the main meaning on `Env`, providing prefix-based
 	// way to get authenticated client
-	AuthenticatedClient() (*golangsdk.ProviderClient, error)
+	AuthenticatedClient(cloudName ...string) (*golangsdk.ProviderClient, error)
 
 	// cloudFromEnv constructs cloud configuration with values from <prefixed> env vars
 	cloudFromEnv() *Cloud
@@ -456,23 +456,35 @@ func mergeWithVendors(cloudConfig *Config, vendorPath string) *Config {
 }
 
 // Cloud get cloud merged from configuration and env variables
-func (e *env) Cloud() (*Cloud, error) {
+// if `cloudName` is not empty, explicit cloud name will be used instead
+// defined in `OS_CLOUD` environment variable
+func (e *env) Cloud(name ...string) (*Cloud, error) {
+	cloudName := ""
+	if len(name) > 0 {
+		cloudName = name[0]
+		e.unstable = true // previously loaded cloud can be different
+	}
 	if e.cloud == nil || e.unstable {
 		config, err := e.loadOpenstackConfig()
 		if err != nil {
-			return nil, fmt.Errorf("failed to authenticate client: %s", err)
+			return nil, fmt.Errorf("failed to load clouds configuration: %s", err)
+		}
+		if cloudName == "" {
+			cloudName = config.DefaultCloud
 		}
 		cloud, err := mergeClouds(
-			config.Clouds[config.DefaultCloud],
+			config.Clouds[cloudName],
 			e.cloudFromEnv(),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
 		}
+		cloud.Cloud = cloudName // override value read from environment
 		cloud.computeRegion()
 		e.cloud = cloud
 	}
 	return e.cloud, nil
+
 }
 
 // LoadCloudConfig utilize all existing cloud configurations to create cloud configuration:
@@ -630,8 +642,8 @@ func AuthOptionsFromInfo(authInfo *AuthInfo, authType AuthType) (golangsdk.AuthO
 
 // AuthenticatedClient create new client based on used env prefix
 // this uses LoadOpenstackConfig inside
-func (e *env) AuthenticatedClient() (*golangsdk.ProviderClient, error) {
-	cloud, err := e.Cloud()
+func (e *env) AuthenticatedClient(cloudName ...string) (*golangsdk.ProviderClient, error) {
+	cloud, err := e.Cloud(cloudName...)
 	if err != nil {
 		return nil, err
 	}
