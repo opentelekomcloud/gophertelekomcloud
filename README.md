@@ -1,7 +1,6 @@
-# Golangsdk: a OpenTelekomCloud SDK for Golang
+# GopherTelekomCloud: a OpenTelekomCloud SDK for Golang
 [![Go Report Card](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud?branch=master)](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud)
-[![Build Status](https://travis-ci.org/opentelekomcloud/gophertelekomcloud.svg?branch=master)](https://travis-ci.org/opentelekomcloud/gophertelekomcloud)
-[![Coverage Status](https://coveralls.io/repos/github/opentelekomcloud/gophertelekomcloud/badge.svg?branch=master)](https://coveralls.io/github/opentelekomcloud/gophertelekomcloud?branch=master)
+[![Zuul Gated](https://zuul-ci.org/gated.svg)](https://zuul.eco.tsi-dev.otc-service.com/t/eco/buildsets?project=opentelekomcloud%2Fgophertelekomcloud&pipeline=gate)
 [![LICENSE](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/LICENSE)
 
 Golangsdk is a OpenTelekomCloud clouds Go SDK.
@@ -157,24 +156,3 @@ See the [contributing guide](./.github/CONTRIBUTING.md).
 
 If you're struggling with something or have spotted a potential bug, feel free
 to submit an issue to our [bug tracker](https://github.com/opentelekomcloud/gophertelekomcloud/issues).
-
-## Thank You
-
-We'd like to extend special thanks and appreciation to the following:
-
-### OpenLab
-
-<a href="http://openlabtesting.org/"><img src="assets/openlab.png" width="600px"></a>
-
-OpenLab is providing a full CI environment to test each PR and merge for a variety of OpenStack releases.
-
-### VEXXHOST
-
-<a href="https://vexxhost.com/"><img src="assets/vexxhost.png" width="600px"></a>
-
-VEXXHOST is providing their services to assist with the development and testing of Golangsdk.
-
-## License
-
-Golangsdk is under the Apache 2.0 license. See the [LICENSE](LICENSE) file for details.
-
