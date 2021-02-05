@@ -112,3 +112,32 @@ func (r DissociateResourcesResult) Extract() ([]string, error) {
 	}
 	return s.AddResourceIDs, nil
 }
+
+type BindPolicyResult struct {
+	golangsdk.Result
+}
+
+type PolicyBinding struct {
+	VaultID  string `json:"vault_id"`
+	PolicyID string `json:"policy_id"`
+}
+
+func (r BindPolicyResult) Extract() (*PolicyBinding, error) {
+	var s struct {
+		PolicyBinding *PolicyBinding `json:"associate_policy"`
+	}
+	err := r.ExtractInto(&s)
+	return s.PolicyBinding, err
+}
+
+type UnbindPolicyResult struct {
+	golangsdk.Result
+}
+
+func (r UnbindPolicyResult) Extract() (*PolicyBinding, error) {
+	var s struct {
+		PolicyBinding *PolicyBinding `json:"dissociate_policy"`
+	}
+	err := r.ExtractInto(&s)
+	return s.PolicyBinding, err
+}
