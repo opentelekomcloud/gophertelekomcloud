@@ -4,15 +4,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-// ResourceTags represents the tags response
-type ResourceTags struct {
-	Tags []ResourceTag `json:"tags"`
-}
-
-// ResourceTag is in key-value format
-type ResourceTag struct {
-	Key   string `json:"key" required:"ture"`
-	Value string `json:"value,omitempty"`
+type ListedTag struct {
+	Key    string   `json:"key"`
+	Values []string `json:"values"`
 }
 
 // ActionResult is the action result which is the result of create or delete operations
@@ -25,11 +19,13 @@ type GetResult struct {
 	golangsdk.Result
 }
 
-// Extract method will parse the result body into ResourceTags struct
-func (r GetResult) Extract() (ResourceTags, error) {
-	var tags ResourceTags
-	err := r.Result.ExtractInto(&tags)
-	return tags, err
+// Extract method will parse the result body into ResourceTag struct
+func (r GetResult) Extract() ([]ResourceTag, error) {
+	var responseTags struct {
+		Tags []ResourceTag `json:"tags"`
+	}
+	err := r.Result.ExtractInto(&responseTags)
+	return responseTags.Tags, err
 }
 
 // ListResult contains the body of getting all tags request
@@ -37,9 +33,11 @@ type ListResult struct {
 	golangsdk.Result
 }
 
-// Extract method will parse the result body into ResourceTags struct
-func (r ListResult) Extract() (ResourceTags, error) {
-	var tags ResourceTags
-	err := r.Result.ExtractInto(&tags)
-	return tags, err
+// Extract method will parse the result body into ListedTag struct
+func (r ListResult) Extract() ([]ListedTag, error) {
+	var responseTags struct {
+		ListedTags []ListedTag `json:"tags"`
+	}
+	err := r.Result.ExtractInto(&responseTags)
+	return responseTags.ListedTags, err
 }

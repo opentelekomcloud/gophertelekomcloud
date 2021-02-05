@@ -2,7 +2,49 @@ package eips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
+
+// ListOptsBuilder allows extensions to add additional parameters to the
+// List request.
+type ListOptsBuilder interface {
+	ToEipListQuery() (string, error)
+}
+
+// ListOpts filters the results returned by the List() function.
+type ListOpts struct {
+	// Marker specifies the start resource ID of pagination query
+	Marker string `q:"marker"`
+
+	// Limit specifies the number of records returned on each page.
+	Limit int `q:"limit"`
+}
+
+// ToEipListQuery formats a ListOpts into a query string.
+func (opts ListOpts) ToEipListQuery() (string, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
+	return q.String(), err
+}
+
+// List instructs OpenStack to provide a list of flavors.
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := rootURL(client)
+	if opts != nil {
+		query, err := opts.ToEipListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
+		}
+		url += query
+	}
+	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+		p := EipPage{pagination.MarkerPageBase{PageResult: r}}
+		p.MarkerPageBase.Owner = p
+		return p
+	})
+}
 
 // ApplyOptsBuilder is an interface by which can build the request body of public ip
 // application
