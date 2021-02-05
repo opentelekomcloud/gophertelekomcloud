@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	volumesV3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v3/volumes"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/policies"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -135,4 +136,62 @@ func TestVaultResources(t *testing.T) {
 	dissociated, err := vaults.DissociateResources(client, vault.ID, dOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, associated, dissociated)
+}
+
+func TestVaultPolicy(t *testing.T) {
+	client, err := clients.NewCbrV3Client()
+	th.AssertNoErr(t, err)
+
+	opts := vaults.CreateOpts{
+		Billing: &vaults.BillingCreate{
+			ConsistentLevel: "crash_consistent",
+			ObjectType:      "disk",
+			ProtectType:     "backup",
+			Size:            100,
+		},
+		Description: "gophertelemocloud testing vault",
+		Name:        tools.RandomString("cbr-test-", 5),
+		Resources:   []vaults.ResourceCreate{},
+	}
+	vault, err := vaults.Create(client, opts).Extract()
+	th.AssertNoErr(t, err)
+
+	defer func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
+	}()
+
+	iTrue := true
+	policy, err := policies.Create(client, policies.CreateOpts{
+		Name: "test-vault-policy",
+		OperationDefinition: &policies.PolicyODCreate{
+			DailyBackups: 1,
+			WeekBackups:  2,
+			YearBackups:  3,
+			MonthBackups: 4,
+			MaxBackups:   10,
+			Timezone:     "UTC+03:00",
+		},
+		Trigger: &policies.Trigger{
+			Properties: policies.TriggerProperties{
+				Pattern: []string{"FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;BYHOUR=14;BYMINUTE=00"},
+			},
+		},
+		Enabled:       &iTrue,
+		OperationType: "backup",
+	}).Extract()
+	th.AssertNoErr(t, err)
+
+	defer func() {
+		th.AssertNoErr(t, policies.Delete(client, policy.ID).ExtractErr())
+	}()
+
+	bind, err := vaults.BindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policy.ID}).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, vault.ID, bind.VaultID)
+	th.AssertEquals(t, policy.ID, bind.PolicyID)
+
+	unbind, err := vaults.UnbindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policy.ID}).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, vault.ID, unbind.VaultID)
+	th.AssertEquals(t, policy.ID, unbind.PolicyID)
 }

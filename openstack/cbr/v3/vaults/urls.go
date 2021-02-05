@@ -19,3 +19,11 @@ func addResourcesURL(client *golangsdk.ServiceClient, id string) string {
 func removeResourcesURL(client *golangsdk.ServiceClient, id string) string {
 	return client.ServiceURL(baseURL, id, "removeresources")
 }
+
+func bindPolicyURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(baseURL, id, "associatepolicy")
+}
+
+func unbindPolicyURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(baseURL, id, "dissociatepolicy")
+}

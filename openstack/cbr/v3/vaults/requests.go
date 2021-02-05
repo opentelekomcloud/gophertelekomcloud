@@ -180,6 +180,42 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 	return
 }
 
+type BindPolicyOptsBuilder interface {
+	ToBindPolicyMap() (map[string]interface{}, error)
+}
+
+type BindPolicyOpts struct {
+	PolicyID string `json:"policy_id"`
+}
+
+func (opts BindPolicyOpts) ToBindPolicyMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+func BindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPolicyOptsBuilder) (r BindPolicyResult) {
+	reqBody, err := opts.ToBindPolicyMap()
+	if err != nil {
+		r.Err = fmt.Errorf("failed to create bind policy map: %s", err)
+		return
+	}
+	_, r.Err = client.Post(bindPolicyURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
+func UnbindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPolicyOptsBuilder) (r UnbindPolicyResult) {
+	reqBody, err := opts.ToBindPolicyMap()
+	if err != nil {
+		r.Err = fmt.Errorf("failed to create bind policy map: %s", err)
+		return
+	}
+	_, r.Err = client.Post(unbindPolicyURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
 type AssociateResourcesOptsBuilder interface {
 	ToAssociateResourcesMap() (map[string]interface{}, error)
 }
