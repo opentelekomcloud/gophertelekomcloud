@@ -65,7 +65,25 @@ func (r UpdateResult) Extract() (PublicIp, error) {
 
 // EipPage is a single page of Flavor results.
 type EipPage struct {
-	pagination.SinglePageBase
+	pagination.MarkerPageBase
+}
+
+// IsEmpty returns true if a page contains no results.
+func (r EipPage) IsEmpty() (bool, error) {
+	eips, err := ExtractEips(r)
+	return len(eips) == 0, err
+}
+
+// LastMarker returns the last Eip ID in a ListResult.
+func (r EipPage) LastMarker() (string, error) {
+	eips, err := ExtractEips(r)
+	if err != nil {
+		return "", err
+	}
+	if len(eips) == 0 {
+		return "", nil
+	}
+	return eips[len(eips)-1].ID, nil
 }
 
 // ExtractEips extracts and returns Public IPs. It is used while iterating over a public ips.
