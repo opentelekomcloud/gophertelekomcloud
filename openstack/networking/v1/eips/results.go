@@ -2,6 +2,7 @@ package eips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ApplyResult is a struct which represents the result of apply public ip
@@ -30,6 +31,7 @@ type PublicIp struct {
 	BandwidthID        string `json:"bandwidth_id"`
 	BandwidthSize      int    `json:"bandwidth_size"`
 	BandwidthShareType string `json:"bandwidth_share_type"`
+	IpVersion          int    `json:"ip_version"`
 }
 
 // GetResult is a return struct of get method
@@ -59,4 +61,18 @@ func (r UpdateResult) Extract() (PublicIp, error) {
 	var ip PublicIp
 	err := r.Result.ExtractIntoStructPtr(&ip, "publicip")
 	return ip, err
+}
+
+// EipPage is a single page of Flavor results.
+type EipPage struct {
+	pagination.SinglePageBase
+}
+
+// ExtractEips extracts and returns Public IPs. It is used while iterating over a public ips.
+func ExtractEips(r pagination.Page) ([]PublicIp, error) {
+	var s struct {
+		PublicIPs []PublicIp `json:"publicips"`
+	}
+	err := (r.(EipPage)).ExtractInto(&s)
+	return s.PublicIPs, err
 }
