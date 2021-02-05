@@ -3,7 +3,7 @@ package vaults
 import (
 	"fmt"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type CreateOptsBuilder interface {
@@ -175,6 +175,52 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		return
 	}
 	_, r.Err = client.Put(vaultURL(client, id), reqBody, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
+type AssociateResourcesOptsBuilder interface {
+	ToAssociateResourcesMap() (map[string]interface{}, error)
+}
+type AssociateResourcesOpts struct {
+	Resources []ResourceCreate `json:"resources"`
+}
+
+func (opts AssociateResourcesOpts) ToAssociateResourcesMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+func AssociateResources(client *golangsdk.ServiceClient, vaultID string, opts AssociateResourcesOptsBuilder) (r AssociateResourcesResult) {
+	reqBody, err := opts.ToAssociateResourcesMap()
+	if err != nil {
+		r.Err = fmt.Errorf("failed to create associate resource map: %s", err)
+		return
+	}
+	_, r.Err = client.Post(addResourcesURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
+type DissociateResourcesOptsBuilder interface {
+	ToDissociateResourcesMap() (map[string]interface{}, error)
+}
+type DissociateResourcesOpts struct {
+	ResourceIDs []string `json:"resource_ids"`
+}
+
+func (opts DissociateResourcesOpts) ToDissociateResourcesMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+func DissociateResources(client *golangsdk.ServiceClient, vaultID string, opts DissociateResourcesOptsBuilder) (r DissociateResourcesResult) {
+	reqBody, err := opts.ToDissociateResourcesMap()
+	if err != nil {
+		r.Err = fmt.Errorf("failed to create dissociate resource map: %s", err)
+		return
+	}
+	_, r.Err = client.Post(removeResourcesURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

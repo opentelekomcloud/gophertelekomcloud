@@ -11,3 +11,11 @@ func rootURL(client *golangsdk.ServiceClient) string {
 func vaultURL(client *golangsdk.ServiceClient, id string) string {
 	return client.ServiceURL(baseURL, id)
 }
+
+func addResourcesURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(baseURL, id, "addresources")
+}
+
+func removeResourcesURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(baseURL, id, "removeresources")
+}
