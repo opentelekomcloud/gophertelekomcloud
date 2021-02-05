@@ -1,6 +1,10 @@
 package vaults
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"fmt"
+
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
 
 type vaultResult struct {
 	golangsdk.Result
@@ -71,4 +75,40 @@ func (r vaultResult) Extract() (*Vault, error) {
 
 type DeleteResult struct {
 	golangsdk.ErrResult
+}
+
+type AssociateResourcesResult struct {
+	golangsdk.Result
+}
+
+func (r AssociateResourcesResult) Extract() ([]string, error) {
+	var s struct {
+		AddResourceIDs []string `json:"add_resource_ids"`
+	}
+	if r.Err != nil {
+		return nil, r.Err
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract Associated Resource IDs")
+	}
+	return s.AddResourceIDs, nil
+}
+
+type DissociateResourcesResult struct {
+	golangsdk.Result
+}
+
+func (r DissociateResourcesResult) Extract() ([]string, error) {
+	var s struct {
+		AddResourceIDs []string `json:"remove_resource_ids"`
+	}
+	if r.Err != nil {
+		return nil, r.Err
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract Dissociated Resource IDs")
+	}
+	return s.AddResourceIDs, nil
 }
