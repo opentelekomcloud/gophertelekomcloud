@@ -36,10 +36,10 @@ type BillingCreate struct {
 	Size int `json:"size"`
 	// Billing mode. Possible values are `post_paid` (pay-per-use) or `pre_paid` (yearly/monthly packages).
 	// The value defaults to post_paid.
-	ChargindMode string `json:"chargind_mode,omitempty"`
+	ChargingMode string `json:"charging_mode,omitempty"`
 	// Package type. This parameter is mandatory if charging_mode is set to pre_paid.
 	// Possible values are `year` (yearly) or `month`(monthly).
-	PerionType string `json:"perion_type,omitempty"`
+	PeriodType string `json:"period_type,omitempty"`
 	// Required duration for the package. This parameter is mandatory if charging_mode is set to `pre_paid`.
 	PeriodNum int `json:"period_num,omitempty"`
 	// Whether to automatically renew the subscription after expiration. By default, it is not renewed.
