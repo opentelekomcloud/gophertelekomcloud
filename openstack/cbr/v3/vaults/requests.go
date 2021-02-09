@@ -157,11 +157,11 @@ type BillingUpdate struct {
 }
 
 type UpdateOpts struct {
-	Billing    *BillingUpdate   `json:"billing,omitempty"`
-	Name       string           `json:"name,omitempty"`
-	AutoBind   *bool            `json:"auto_bind,omitempty"`
-	BindRules  []VaultBindRules `json:"bind_rules,omitempty"`
-	AutoExpand *bool            `json:"auto_expand,omitempty"`
+	Billing    *BillingUpdate  `json:"billing,omitempty"`
+	Name       string          `json:"name,omitempty"`
+	AutoBind   *bool           `json:"auto_bind,omitempty"`
+	BindRules  *VaultBindRules `json:"bind_rules,omitempty"`
+	AutoExpand *bool           `json:"auto_expand,omitempty"`
 }
 
 func (opts UpdateOpts) ToVaultUpdateMap() (map[string]interface{}, error) {
