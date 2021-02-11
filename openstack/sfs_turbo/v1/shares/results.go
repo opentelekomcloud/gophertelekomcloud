@@ -1,9 +1,6 @@
 package shares
 
 import (
-	"encoding/json"
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -49,7 +46,7 @@ type Turbo struct {
 	SubnetID string `json:"subnet_id"`
 	// The security group ID
 	SecurityGroupID string `json:"security_group_id"`
-	// The avaliable capacity if the SFS Turbo file system
+	// The available capacity if the SFS Turbo file system
 	AvailCapacity string `json:"avail_capacity"`
 	// bandwidth is returned for an enhanced file system
 	ExpandType string `json:"expand_type"`
@@ -58,24 +55,7 @@ type Turbo struct {
 	// The billing mode, 0 indicates pay-per-use, 1 indicates yearly/monthly subscription
 	PayModel string `json:"pay_model"`
 	// Timestamp when the share was created
-	CreatedAt time.Time `json:"-"`
-}
-
-func (r *Turbo) UnmarshalJSON(b []byte) error {
-	type tmp Turbo
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Turbo(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-
-	return nil
+	CreatedAt string `json:"created_at"`
 }
 
 type commonResult struct {
@@ -92,28 +72,35 @@ type GetResult struct {
 	commonResult
 }
 
-// DeleteResult contains the response body and error from a Delete request.
+// DeleteResult contains the error from a Delete request.
 type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-// ExpandResult contains the response body and error from a Expand request.
+// ExpandResult contains the error from an Expand request.
 type ExpandResult struct {
+	golangsdk.ErrResult
+}
+
+// ChangeSGResult contains the error from a ChangeSG request.
+type ChangeSGResult struct {
 	golangsdk.ErrResult
 }
 
 // Extract will get the Turbo response object from the CreateResult
 func (r CreateResult) Extract() (*TurboResponse, error) {
-	var resp TurboResponse
-	err := r.ExtractInto(&resp)
-	return &resp, err
+	var responseCreate struct {
+		Share TurboResponse `json:"share"`
+	}
+	err := r.ExtractInto(&responseCreate)
+	return &responseCreate.Share, err
 }
 
 // Extract will get the Turbo object from the GetResult
 func (r GetResult) Extract() (*Turbo, error) {
-	var object Turbo
-	err := r.ExtractInto(&object)
-	return &object, err
+	var responseGet Turbo
+	err := r.ExtractInto(&responseGet)
+	return &responseGet, err
 }
 
 // TurboPage is the page returned by a pager when traversing over a
