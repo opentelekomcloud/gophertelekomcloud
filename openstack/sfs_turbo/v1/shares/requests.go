@@ -95,7 +95,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		url += query
 	}
 
-	return pagination.NewPager(client, listURL(client), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return TurboPage{pagination.LinkedPageBase{PageResult: r}}
 	})
 }
@@ -163,12 +163,12 @@ type ChangeSGOpts struct {
 
 type SecurityGroupOpts struct {
 	// Specifies the ID of the security group to be modified.
-	SecurityGroupID int `json:"security_group_id" required:"true"`
+	SecurityGroupID string `json:"security_group_id" required:"true"`
 }
 
 // ToShareExpandMap assembles a request body based on the contents of a
-// ExpandOpts.
-func (opts ExpandOpts) ToShareSGMap() (map[string]interface{}, error) {
+// ChangeSGOpts.
+func (opts ChangeSGOpts) ToShareSGMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

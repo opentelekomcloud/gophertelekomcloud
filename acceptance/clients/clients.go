@@ -256,6 +256,19 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewSharedFileSystemTurboV1Client returns a *ServiceClient for making calls
+// to the OpenStack Shared File System Turbo v1 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewSharedFileSystemTurboV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewSharedFileSystemTurboV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewRdsV3 returns authenticated RDS v3 client
 func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()

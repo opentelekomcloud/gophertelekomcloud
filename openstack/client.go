@@ -541,6 +541,11 @@ func NewSharedFileSystemV2(client *golangsdk.ProviderClient, eo golangsdk.Endpoi
 	return initClientOpts(client, eo, "sharev2")
 }
 
+// NewSharedFileSystemTurboV1 creates a ServiceClient that may be used to access the v2 shared file system turbo service.
+func NewSharedFileSystemTurboV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "sfsturbo")
+}
+
 // NewOrchestrationV1 creates a ServiceClient that may be used to access the v1
 // orchestration service.
 func NewOrchestrationV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
