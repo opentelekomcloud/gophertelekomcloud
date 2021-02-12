@@ -84,12 +84,12 @@ func expandShare(t *testing.T, client *golangsdk.ServiceClient, shareID string) 
 	return newShare
 }
 
-func changeShareSG(t *testing.T, client *golangsdk.ServiceClient, shareID string) *shares.Turbo {
+func changeShareSG(t *testing.T, client *golangsdk.ServiceClient, shareID string, secGroupID string) *shares.Turbo {
 	t.Logf("Attempting to change SG SFS Turbo: %s", shareID)
 
 	changeSGOpts := shares.ChangeSGOpts{
 		ChangeSecurityGroup: shares.SecurityGroupOpts{
-			SecurityGroupID: "asd",
+			SecurityGroupID: secGroupID,
 		},
 	}
 

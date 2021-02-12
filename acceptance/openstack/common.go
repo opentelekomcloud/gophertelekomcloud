@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -22,10 +23,10 @@ func PrintExtension(t *testing.T, extension *extensions.Extension) {
 }
 
 func DefaultSecurityGroup(t *testing.T) string {
-	computeClient, err := clients.NewComputeV2Client()
+	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	securityGroupPages, err := secgroups.List(computeClient).AllPages()
+	securityGroupPages, err := secgroups.List(client).AllPages()
 	th.AssertNoErr(t, err)
 	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
 	th.AssertNoErr(t, err)
@@ -40,4 +41,26 @@ func DefaultSecurityGroup(t *testing.T) string {
 		t.Fatalf("Unable to find default secgroup")
 	}
 	return sgId
+}
+
+func CreateSecurityGroup(t *testing.T) string {
+	client, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
+	createSGOpts := secgroups.CreateOpts{
+		Name:        tools.RandomString("acc-sg-", 3),
+		Description: "security group for acceptance testing",
+	}
+	secGroup, err := secgroups.Create(client, createSGOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	return secGroup.ID
+}
+
+func DeleteSecurityGroup(t *testing.T, secGroupID string) {
+	client, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
+	err = secgroups.Delete(client, secGroupID).ExtractErr()
+	th.AssertNoErr(t, err)
 }
