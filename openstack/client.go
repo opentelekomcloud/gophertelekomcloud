@@ -547,7 +547,8 @@ func NewSharedFileSystemTurboV1(client *golangsdk.ProviderClient, eo golangsdk.E
 	if err != nil {
 		return nil, err
 	}
-	sc.ResourceBase = sc.Endpoint + "v1/"
+	sc.Endpoint = sc.Endpoint + "v1/"
+	sc.ResourceBase = sc.Endpoint + client.ProjectID + "/"
 	return sc, err
 }
 

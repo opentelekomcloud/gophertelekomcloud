@@ -61,6 +61,6 @@ func DeleteSecurityGroup(t *testing.T, secGroupID string) {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	err = secgroups.Delete(client, secGroupID).ExtractErr()
+	err = secgroups.DeleteWithRetry(client, secGroupID, 600)
 	th.AssertNoErr(t, err)
 }

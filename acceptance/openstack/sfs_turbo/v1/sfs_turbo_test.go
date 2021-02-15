@@ -39,7 +39,7 @@ func TestSFSTurboLifecycle(t *testing.T) {
 	tools.PrintResource(t, share)
 
 	share = expandShare(t, client, share.ID)
-	th.AssertEquals(t, "1000", share.Size)
+	th.AssertEquals(t, "1000.00", share.Size)
 	share = changeShareSG(t, client, share.ID, secGroupID)
 
 	newShare, err := shares.Get(client, share.ID).Extract()
