@@ -46,7 +46,6 @@ env vars is missing but SFS Turbo test requires`)
 	t.Logf("Created SFS turbo: %s", newShare.ID)
 
 	return newShare
-
 }
 
 func deleteShare(t *testing.T, client *golangsdk.ServiceClient, shareID string) {
