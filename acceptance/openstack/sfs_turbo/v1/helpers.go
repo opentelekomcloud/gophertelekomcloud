@@ -145,6 +145,5 @@ func waitForShareSubStatusSuccess(client *golangsdk.ServiceClient, shareID strin
 		}
 
 		return false, nil
-
 	})
 }
