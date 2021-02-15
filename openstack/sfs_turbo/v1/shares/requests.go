@@ -16,9 +16,9 @@ type CreateOptsBuilder interface {
 type CreateOpts struct {
 	// Defines the SFS Turbo file system name
 	Name string `json:"name" required:"true"`
-	// Defines the SFS Turbo file system protocol to use, the vaild value is NFS.
+	// Defines the SFS Turbo file system protocol to use, the valid value is NFS.
 	ShareProto string `json:"share_proto,omitempty"`
-	// ShareType defines the file system type. the vaild values are STANDARD and PERFORMANCE.
+	// ShareType defines the file system type. the valid values are STANDARD and PERFORMANCE.
 	ShareType string `json:"share_type" required:"true"`
 	// Size in GB, range from 500 to 32768.
 	Size int `json:"size" required:"true"`
@@ -42,12 +42,7 @@ type CreateOpts struct {
 
 // Metadata specifies the metadata information
 type Metadata struct {
-	ExpandType            string `json:"expand_type,omitempty"`
-	CryptKeyID            string `json:"crypt_key_id,omitempty"`
-	DedicatedFlavor       string `json:"dedicated_flavor,omitempty"`
-	MasterDedicatedHostID string `json:"master_dedicated_host_id,omitempty"`
-	SlaveDedicatedHostID  string `json:"slave_dedicated_host_id,omitempty"`
-	DedicatedStorageID    string `json:"dedicated_storage_id,omitempty"`
+	CryptKeyID string `json:"crypt_key_id,omitempty"`
 }
 
 // ToShareCreateMap assembles a request body based on the contents of a
@@ -71,27 +66,47 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-// List returns a Pager which allows you to iterate over a collection of
-// SFS Turbo resources.
-func List(c *golangsdk.ServiceClient) ([]Turbo, error) {
-	pages, err := pagination.NewPager(c, listURL(c), func(r pagination.PageResult) pagination.Page {
-		return TurboPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
-	if err != nil {
-		return nil, err
-	}
-
-	return ExtractTurbos(pages)
+type ListOptsBuilder interface {
+	ToShareListQuery() (string, error)
 }
 
-// Get will get a single SFS Trubo file system with given UUID
+type ListOpts struct {
+	Limit  string `q:"limit"`
+	Offset string `q:"offset"`
+}
+
+func (opts ListOpts) ToShareListQuery() (string, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
+	return q.String(), err
+}
+
+// List returns a Pager which allows you to iterate over a collection of
+// SFS Turbo resources.
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := listURL(client)
+	if opts != nil {
+		query, err := opts.ToShareListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
+		}
+		url += query
+	}
+
+	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+		return TurboPage{pagination.LinkedPageBase{PageResult: r}}
+	})
+}
+
+// Get will get a single SFS Turbo file system with given UUID
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
-
 	return
 }
 
-// Delete will delete an existing SFS Trubo file system with the given UUID.
+// Delete will delete an existing SFS Turbo file system with the given UUID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = client.Delete(resourceURL(client, id), nil)
 	return
@@ -122,13 +137,49 @@ func (opts ExpandOpts) ToShareExpandMap() (map[string]interface{}, error) {
 }
 
 // Expand will expand a SFS Turbo based on the values in ExpandOpts.
-func Expand(client *golangsdk.ServiceClient, share_id string, opts ExpandOptsBuilder) (r ExpandResult) {
+func Expand(client *golangsdk.ServiceClient, shareID string, opts ExpandOptsBuilder) (r ExpandResult) {
 	b, err := opts.ToShareExpandMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, share_id), b, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(actionURL(client, shareID), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{202},
+	})
+	return
+}
+
+// ChangeSGOptsBuilder allows extensions to change the security group
+// bound to a SFS Turbo file system
+type ChangeSGOptsBuilder interface {
+	ToShareSGMap() (map[string]interface{}, error)
+}
+
+// ChangeSGOpts contains the options for changing security group to a SFS Turbo
+type ChangeSGOpts struct {
+	// Specifies the change_security_group object.
+	ChangeSecurityGroup SecurityGroupOpts `json:"change_security_group" required:"true"`
+}
+
+type SecurityGroupOpts struct {
+	// Specifies the ID of the security group to be modified.
+	SecurityGroupID string `json:"security_group_id" required:"true"`
+}
+
+// ToShareExpandMap assembles a request body based on the contents of a
+// ChangeSGOpts.
+func (opts ChangeSGOpts) ToShareSGMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+// ChangeSG will change security group to a SFS Turbo based on the values in ChangeSGOpts.
+func ChangeSG(client *golangsdk.ServiceClient, shareID string, opts ChangeSGOptsBuilder) (r ExpandResult) {
+	b, err := opts.ToShareSGMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(actionURL(client, shareID), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
