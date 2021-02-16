@@ -3,11 +3,9 @@ package v2
 import (
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v3/snapshots"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vbs/v2/backups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -18,7 +16,6 @@ func TestVBSV2BackupLifecycle(t *testing.T) {
 
 	volume := openstack.CreateVolume(t)
 	defer func() {
-		deleteVolumeSnapshots(t, volume.ID)
 		openstack.DeleteVolume(t, volume.ID)
 	}()
 
@@ -49,34 +46,4 @@ func TestVBSV2BackupLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, opts.Description, backupDetails.Description)
 	th.AssertEquals(t, opts.Name, backupDetails.Name)
-}
-
-func deleteSnapshot(client *golangsdk.ServiceClient, id string) error {
-	err := snapshots.WaitForStatus(client, id, "available", 600)
-	if err != nil {
-		return err
-	}
-
-	err = snapshots.Delete(client, id).ExtractErr()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func deleteVolumeSnapshots(t *testing.T, volumeID string) {
-	client, err := clients.NewBlockStorageV3Client()
-	th.AssertNoErr(t, err)
-
-	allPages, err := snapshots.List(client, snapshots.ListOpts{
-		VolumeID: volumeID,
-	}).AllPages()
-	th.AssertNoErr(t, err)
-
-	snapshotSlice, err := snapshots.ExtractSnapshots(allPages)
-	th.AssertNoErr(t, err)
-
-	for _, s := range snapshotSlice {
-		th.AssertNoErr(t, deleteSnapshot(client, s.ID))
-	}
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v3/volumes"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -99,5 +99,5 @@ func CreateVolume(t *testing.T) *volumes.Volume {
 func DeleteVolume(t *testing.T, id string) {
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, volumes.Delete(client, id).ExtractErr())
+	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}).ExtractErr())
 }
