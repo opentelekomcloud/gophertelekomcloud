@@ -89,16 +89,16 @@ type ChangeSGResult struct {
 
 // Extract will get the Turbo response object from the CreateResult
 func (r CreateResult) Extract() (*TurboResponse, error) {
-	var s *TurboResponse
-	err := r.ExtractInto(s)
-	return s, err
+	var s TurboResponse
+	err := r.ExtractInto(&s)
+	return &s, err
 }
 
 // Extract will get the Turbo object from the GetResult
 func (r GetResult) Extract() (*Turbo, error) {
-	var s *Turbo
-	err := r.ExtractInto(s)
-	return s, err
+	var s Turbo
+	err := r.ExtractInto(&s)
+	return &s, err
 }
 
 // TurboPage is the page returned by a pager when traversing over a
