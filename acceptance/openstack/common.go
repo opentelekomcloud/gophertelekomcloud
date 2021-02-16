@@ -3,10 +3,13 @@
 package openstack
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -63,4 +66,38 @@ func DeleteSecurityGroup(t *testing.T, secGroupID string) {
 
 	err = secgroups.DeleteWithRetry(client, secGroupID, 600)
 	th.AssertNoErr(t, err)
+}
+
+func CreateVolume(t *testing.T) *volumes.Volume {
+	client, err := clients.NewBlockStorageV3Client()
+	th.AssertNoErr(t, err)
+	vol, err := volumes.Create(client, volumes.CreateOpts{
+		Name:       tools.RandomString("test-vol-", 6),
+		Size:       10,
+		VolumeType: "SSD",
+	}).Extract()
+	th.AssertNoErr(t, err)
+
+	err = golangsdk.WaitFor(300, func() (bool, error) {
+		volume, err := volumes.Get(client, vol.ID).Extract()
+		if err != nil {
+			return false, err
+		}
+		if volume.Status == "available" {
+			return true, nil
+		}
+		if volume.Status == "error" {
+			return false, fmt.Errorf("error creating a volume")
+		}
+		return false, nil
+	})
+	th.AssertNoErr(t, err)
+
+	return vol
+}
+
+func DeleteVolume(t *testing.T, id string) {
+	client, err := clients.NewBlockStorageV3Client()
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}).ExtractErr())
 }
