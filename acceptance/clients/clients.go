@@ -331,6 +331,16 @@ func NewCbrV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewVbsV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewVBSServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDdsV3Client returns authenticated DDS v3 client
 func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()

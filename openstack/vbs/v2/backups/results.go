@@ -104,8 +104,21 @@ func (r commonResult) Extract() (*Backup, error) {
 	var s struct {
 		Backup *Backup `json:"backup"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Backup, err
+
+	if err := r.ExtractInto(&s); err != nil {
+		return nil, err
+	}
+
+	// Description test is some strange JSON
+	var desc struct {
+		Description string `json:"DESC"`
+	}
+	err := json.Unmarshal([]byte(s.Backup.Description), &desc)
+	if err == nil {
+		s.Backup.Description = desc.Description
+	}
+
+	return s.Backup, nil
 }
 
 // ExtractBackupRestore is a function that accepts a result and extracts a backup
