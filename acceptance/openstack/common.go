@@ -57,6 +57,7 @@ func CreateSecurityGroup(t *testing.T) string {
 	secGroup, err := secgroups.Create(client, createSGOpts).Extract()
 	th.AssertNoErr(t, err)
 
+	t.Logf("Security group %s was created", secGroup.ID)
 	return secGroup.ID
 }
 
@@ -66,6 +67,8 @@ func DeleteSecurityGroup(t *testing.T, secGroupID string) {
 
 	err = secgroups.DeleteWithRetry(client, secGroupID, 600)
 	th.AssertNoErr(t, err)
+
+	t.Logf("Security group %s was deleted", secGroupID)
 }
 
 func CreateVolume(t *testing.T) *volumes.Volume {
