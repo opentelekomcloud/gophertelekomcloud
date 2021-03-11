@@ -51,6 +51,7 @@ OS_FLAVOR_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires`)
 
 func dryRunCloudServerConfig(t *testing.T, client *golangsdk.ServiceClient, createOpts cloudservers.CreateOpts) error {
 	t.Logf("Attempting to check ECSv1 createOpts")
+	createOpts.DryRun = true
 	return cloudservers.DryRun(client, createOpts).ExtractErr()
 }
 
