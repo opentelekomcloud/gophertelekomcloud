@@ -7,18 +7,18 @@ const (
 	jobsPath = "jobs"
 )
 
-func createURL(sc *golangsdk.ServiceClient) string {
-	return sc.ServiceURL(rootPath)
+func createURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(rootPath)
 }
 
-func deleteURL(sc *golangsdk.ServiceClient) string {
-	return sc.ServiceURL(rootPath, "delete")
+func deleteURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(rootPath, "delete")
 }
 
-func getURL(sc *golangsdk.ServiceClient, serverID string) string {
-	return sc.ServiceURL(rootPath, serverID)
+func getURL(c *golangsdk.ServiceClient, serverID string) string {
+	return c.ServiceURL(rootPath, serverID)
 }
 
-func jobURL(sc *golangsdk.ServiceClient, jobID string) string {
-	return sc.ServiceURL(jobsPath, jobID)
+func jobURL(c *golangsdk.ServiceClient, jobID string) string {
+	return c.ServiceURL(jobsPath, jobID)
 }

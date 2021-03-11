@@ -63,6 +63,8 @@ type CreateOpts struct {
 	// ECS Tags.
 	Tags []string `json:"tags,omitempty"`
 
+	ServerTags []ServerTags `json:"server_tags,omitempty"`
+
 	// Specifies whether to check the request and create the ECS.
 	DryRun bool `json:"-"`
 }
@@ -156,6 +158,8 @@ type RootVolume struct {
 	// System disk Size, in GB.
 	Size int `json:"size,omitempty"`
 
+	ExtendParam *VolumeExtendParam `json:"extendparam,omitempty"`
+
 	// Pay attention to this parameter if your ECS is SDI-compliant.
 	// If the value of this parameter is true, the created disk is of SCSI type.
 	PassThrough *bool `json:"hw:passthrough,omitempty"`
@@ -174,12 +178,18 @@ type DataVolume struct {
 	// PassThrough indicates whether the data volume uses a SCSI lock.
 	PassThrough *bool `json:"hw:passthrough,omitempty"`
 
+	Extendparam *VolumeExtendParam `json:"extendparam,omitempty"`
+
 	// DataImageID If data disks are created using a data disk
 	// image, this parameter is mandatory and it does not support metadata.
 	DataImageID string `json:"data_image_id,omitempty"`
 
 	// EVS disk Metadata.
 	Metadata map[string]string `json:"metadata,omitempty"`
+}
+
+type VolumeExtendParam struct {
+	SnapshotId string `json:"snapshotId,omitempty"`
 }
 
 type ServerExtendParam struct {
