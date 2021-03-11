@@ -300,6 +300,17 @@ func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewCssV1Client returns authenticated CSS v1 client
+func NewCssV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCSSService(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func NewCceV3Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
