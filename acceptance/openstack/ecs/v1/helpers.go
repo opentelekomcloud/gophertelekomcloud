@@ -3,8 +3,6 @@ package v1
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
@@ -12,14 +10,11 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func createCloudServer(t *testing.T, client *golangsdk.ServiceClient) *cloudservers.CloudServer {
-	t.Logf("Attempting to create ECSv1")
-
+func getCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 	prefix := "ecs-"
 	ecsName := tools.RandomString(prefix, 3)
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
-	wrongAZ := "bla-bla-bla"
 	if az == "" {
 		az = "eu-de-01"
 	}
@@ -48,22 +43,19 @@ OS_FLAVOR_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires`)
 		RootVolume: cloudservers.RootVolume{
 			VolumeType: "SATA",
 		},
-		AvailabilityZone: wrongAZ,
-		DryRun:           true,
+		AvailabilityZone: az,
 	}
 
-	t.Logf("Attempting to check ECSv1 createOpts with wrong AZ: %s", wrongAZ)
-	err := cloudservers.DryRun(client, createOpts).ExtractErr()
-	assert.Error(t, err)
-	t.Logf("Error is received: %s", err)
+	return createOpts
+}
 
-	t.Logf("Attempting to check ECSv1 createOpts with true AZ: %s", az)
-	createOpts.AvailabilityZone = az
-	err = cloudservers.DryRun(client, createOpts).ExtractErr()
-	th.AssertNoErr(t, err)
-	t.Logf("Error is nil")
+func dryRunCloudServerConfig(t *testing.T, client *golangsdk.ServiceClient, createOpts cloudservers.CreateOpts) error {
+	t.Logf("Attempting to check ECSv1 createOpts")
+	return cloudservers.DryRun(client, createOpts).ExtractErr()
+}
 
-	createOpts.DryRun = false
+func createCloudServer(t *testing.T, client *golangsdk.ServiceClient, createOpts cloudservers.CreateOpts) *cloudservers.CloudServer {
+	t.Logf("Attempting to create ECSv1")
 
 	jobResponse, err := cloudservers.Create(client, createOpts).ExtractJobResponse()
 	th.AssertNoErr(t, err)
