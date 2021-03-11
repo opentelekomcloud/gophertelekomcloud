@@ -235,7 +235,21 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResul
 	}
 
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202}},
+		OkCodes: []int{200}},
+	)
+	return
+}
+
+// DryRun requests a server to be provisioned to the user in the current tenant.
+func DryRun(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r DryRunResult) {
+	b, err := opts.ToServerCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{202}},
 	)
 	return
 }

@@ -74,7 +74,7 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 }
 
 // NewComputeV1Client returns a *ServiceClient for making calls
-// to the OpenStack Compute v2 API. An error will be returned
+// to the OpenStack Compute v1 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewComputeV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()

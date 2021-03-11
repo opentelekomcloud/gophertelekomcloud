@@ -138,3 +138,7 @@ func (r GetResult) Extract() (*CloudServer, error) {
 	err := r.ExtractInto(&s)
 	return s.Server, err
 }
+
+type DryRunResult struct {
+	golangsdk.ErrResult
+}

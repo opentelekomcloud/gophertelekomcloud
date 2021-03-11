@@ -3,6 +3,8 @@ package v1
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
@@ -17,6 +19,7 @@ func createCloudServer(t *testing.T, client *golangsdk.ServiceClient) *cloudserv
 	ecsName := tools.RandomString(prefix, 3)
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	wrongAZ := "bla-bla-bla"
 	if az == "" {
 		az = "eu-de-01"
 	}
@@ -31,7 +34,7 @@ func createCloudServer(t *testing.T, client *golangsdk.ServiceClient) *cloudserv
 OS_FLAVOR_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires`)
 	}
 
-	createEcsOpts := cloudservers.CreateOpts{
+	createOpts := cloudservers.CreateOpts{
 		ImageRef:  imageID,
 		FlavorRef: flavorID,
 		Name:      ecsName,
@@ -45,10 +48,24 @@ OS_FLAVOR_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires`)
 		RootVolume: cloudservers.RootVolume{
 			VolumeType: "SATA",
 		},
-		AvailabilityZone: az,
+		AvailabilityZone: wrongAZ,
+		DryRun:           true,
 	}
 
-	jobResponse, err := cloudservers.Create(client, createEcsOpts).ExtractJobResponse()
+	t.Logf("Attempting to check ECSv1 createOpts with wrong AZ: %s", wrongAZ)
+	err := cloudservers.DryRun(client, createOpts).ExtractErr()
+	assert.Error(t, err)
+	t.Logf("Error is received: %s", err)
+
+	t.Logf("Attempting to check ECSv1 createOpts with true AZ: %s", az)
+	createOpts.AvailabilityZone = az
+	err = cloudservers.DryRun(client, createOpts).ExtractErr()
+	th.AssertNoErr(t, err)
+	t.Logf("Error is nil")
+
+	createOpts.DryRun = false
+
+	jobResponse, err := cloudservers.Create(client, createOpts).ExtractJobResponse()
 	th.AssertNoErr(t, err)
 
 	err = cloudservers.WaitForJobSuccess(client, 1200, jobResponse.JobID)
@@ -76,7 +93,10 @@ func deleteCloudServer(t *testing.T, client *golangsdk.ServiceClient, ecsID stri
 		DeletePublicIP: true,
 		DeleteVolume:   true,
 	}
-	_, err := cloudservers.Delete(client, deleteOpts).ExtractJobResponse()
+	jobResponse, err := cloudservers.Delete(client, deleteOpts).ExtractJobResponse()
+	th.AssertNoErr(t, err)
+
+	err = cloudservers.WaitForJobSuccess(client, 1200, jobResponse.JobID)
 	th.AssertNoErr(t, err)
 
 	t.Logf("ECSv1 instance deleted: %s", ecsID)
