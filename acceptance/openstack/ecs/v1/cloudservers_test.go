@@ -16,9 +16,8 @@ func TestCloudServerLifecycle(t *testing.T) {
 	createOpts := getCloudServerCreateOpts(t)
 
 	// Check ECSv1 createOpts
-	err = dryRunCloudServerConfig(t, client, createOpts)
-	th.AssertNoErr(t, err)
-	t.Logf("CreateOpts are true for creating a cloudServer")
+	dryRunCloudServerConfig(t, client, createOpts)
+	t.Logf("CreateOpts are ok for creating a cloudServer")
 
 	// Create ECSv1 instance
 	ecs := createCloudServer(t, client, createOpts)
