@@ -64,9 +64,6 @@ type CreateOpts struct {
 	Tags []string `json:"tags,omitempty"`
 
 	ServerTags []ServerTags `json:"server_tags,omitempty"`
-
-	// Specifies whether to check the request and create the ECS.
-	DryRun bool `json:"-"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
