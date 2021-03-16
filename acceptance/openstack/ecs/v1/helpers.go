@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -21,12 +22,17 @@ func getCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
-	imageID := clients.EnvOS.GetEnv("IMAGE_ID")
-	flavorID := clients.EnvOS.GetEnv("FLAVOR_ID")
+	imageName := "Standard_Debian_10_latest"
+
+	computeV2Client, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+	imageID, err := images.IDFromName(computeV2Client, imageName)
+	th.AssertNoErr(t, err)
+
+	flavorID := "s2.large.2"
 	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
-	if vpcID == "" || subnetID == "" || imageID == "" || flavorID == "" || keyPairName == "" {
-		t.Skip(`One of OS_VPC_ID or OS_NETWORK_ID or OS_IMAGE_ID or
-OS_FLAVOR_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires`)
+	if vpcID == "" || subnetID == "" || keyPairName == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires")
 	}
 
 	createOpts := cloudservers.CreateOpts{
