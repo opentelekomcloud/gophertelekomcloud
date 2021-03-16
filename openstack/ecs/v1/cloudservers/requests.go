@@ -93,7 +93,7 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 		b["user_data"] = &userData
 	}
 
-	return map[string]interface{}{"server": b, "dry_run": opts.DryRun}, nil
+	return map[string]interface{}{"server": b}, nil
 }
 
 type Nic struct {
@@ -257,6 +257,7 @@ func DryRun(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r DryRunRe
 		r.Err = err
 		return
 	}
+	b["dry_run"] = true
 
 	_, r.Err = client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202}},
