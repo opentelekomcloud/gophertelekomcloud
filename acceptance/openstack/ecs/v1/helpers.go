@@ -11,6 +11,11 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
+const (
+	imageName = "Standard_Debian_10_latest"
+	flavorID  = "s2.large.2"
+)
+
 func getCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 	prefix := "ecs-"
 	ecsName := tools.RandomString(prefix, 3)
@@ -22,24 +27,20 @@ func getCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
-	imageName := "Standard_Debian_10_latest"
 
 	computeV2Client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 	imageID, err := images.IDFromName(computeV2Client, imageName)
 	th.AssertNoErr(t, err)
 
-	flavorID := "s2.large.2"
-	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
-	if vpcID == "" || subnetID == "" || keyPairName == "" {
-		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID or OS_KEYPAIR_NAME env vars is missing but ECSv1 test requires")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but ECSv1 test requires")
 	}
 
 	createOpts := cloudservers.CreateOpts{
 		ImageRef:  imageID,
 		FlavorRef: flavorID,
 		Name:      ecsName,
-		KeyName:   keyPairName,
 		VpcId:     vpcID,
 		Nics: []cloudservers.Nic{
 			{
