@@ -2,7 +2,6 @@ package cloudservers
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -20,6 +19,8 @@ type JobStatus struct {
 	EndTime    string    `json:"end_time"`
 	ErrorCode  string    `json:"error_code"`
 	FailReason string    `json:"fail_reason"`
+	Message    string    `json:"message"`
+	Code       string    `json:"code"`
 }
 
 type JobEntity struct {
@@ -82,7 +83,6 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		job := new(JobStatus)
 		_, err := client.Get(jobURL(client, jobID), &job, nil)
-		time.Sleep(5 * time.Second)
 		if err != nil {
 			return false, err
 		}
@@ -90,6 +90,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 		if job.Status == "SUCCESS" {
 			return true, nil
 		}
+
 		if job.Status == "FAIL" {
 			err = fmt.Errorf("Job failed with code %s: %s.\n", job.ErrorCode, job.FailReason)
 			return false, err
@@ -112,5 +113,5 @@ func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (
 		}
 	}
 
-	return nil, fmt.Errorf("Unexpected conversion error in GetJobEntity.")
+	return nil, fmt.Errorf("unexpected conversion error in GetJobEntity")
 }

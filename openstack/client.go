@@ -614,15 +614,10 @@ func NewCESClient(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+// NewComputeV1 creates a ServiceClient that may be used with the v1 compute
+// package.
 func NewComputeV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "network")
-	if err != nil {
-		return nil, err
-	}
-	sc.Endpoint = strings.Replace(sc.Endpoint, "vpc", "ecs", 1)
-	sc.Endpoint = sc.Endpoint + "v1/"
-	sc.ResourceBase = sc.Endpoint + client.ProjectID + "/"
-	return sc, err
+	return initClientOpts(client, eo, "ecs")
 }
 
 func NewRdsTagV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {

@@ -2,26 +2,23 @@ package cloudservers
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func createURL(sc *golangsdk.ServiceClient) string {
-	return sc.ServiceURL("cloudservers")
+const (
+	rootPath = "cloudservers"
+	jobsPath = "jobs"
+)
+
+func createURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(rootPath)
 }
 
-func deleteURL(sc *golangsdk.ServiceClient) string {
-	return sc.ServiceURL("cloudservers", "delete")
+func deleteURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(rootPath, "delete")
 }
 
-func getURL(sc *golangsdk.ServiceClient, serverID string) string {
-	return sc.ServiceURL("cloudservers", serverID)
+func getURL(c *golangsdk.ServiceClient, serverID string) string {
+	return c.ServiceURL(rootPath, serverID)
 }
 
-func jobURL(sc *golangsdk.ServiceClient, jobId string) string {
-	return sc.ServiceURL("jobs", jobId)
-}
-
-func orderURL(sc *golangsdk.ServiceClient, orderId string) string {
-	return sc.ServiceURL(sc.DomainID, "common/order-mgr/orders-resource", orderId)
-}
-
-func deleteOrderURL(sc *golangsdk.ServiceClient) string {
-	return sc.ServiceURL(sc.DomainID, "common/order-mgr/resources/delete")
+func jobURL(c *golangsdk.ServiceClient, jobID string) string {
+	return c.ServiceURL(jobsPath, jobID)
 }
