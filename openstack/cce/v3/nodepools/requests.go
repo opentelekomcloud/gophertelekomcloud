@@ -116,9 +116,6 @@ type CreateSpec struct {
 	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
 	// Node management parameters
 	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
-	// Node pool type. Currently, only ECSs are supported.
-	// Value: vm
-	Type string `json:"type" required:"true"`
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
