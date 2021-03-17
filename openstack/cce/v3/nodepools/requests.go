@@ -95,7 +95,7 @@ type CreateOpts struct {
 	// API version, fixed value v3
 	ApiVersion string `json:"apiversion" required:"true"`
 	// Metadata required to create a Node Pool
-	Metadata CreateMetaData `json:"metadata"`
+	Metadata CreateMetaData `json:"metadata" required:"true"`
 	// specifications to create a Node Pool
 	Spec CreateSpec `json:"spec" required:"true"`
 }
@@ -113,9 +113,9 @@ type CreateSpec struct {
 	// Initial number of expected nodes
 	InitialNodeCount int `json:"initialNodeCount" required:"true"`
 	// Auto scaling parameters
-	Autoscaling AutoscalingSpec `json:"autoscaling"`
+	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
 	// Node management parameters
-	NodeManagement NodeManagementSpec `json:"nodeManagement"`
+	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -179,13 +179,20 @@ type UpdateMetaData struct {
 // UpdateSpec describes Node pools update specification
 type UpdateSpec struct {
 	// Node type. Currently, only VM nodes are supported.
-	Type string `json:"type"`
+	Type string `json:"type,omitempty"`
 	// Node template
-	NodeTemplate nodes.Spec `json:"nodeTemplate"`
+	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate,omitempty"`
 	// Initial number of expected nodes
 	InitialNodeCount int `json:"initialNodeCount" required:"true"`
 	// Auto scaling parameters
-	Autoscaling AutoscalingSpec `json:"autoscaling"`
+	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
+}
+
+type UpdateNodeTemplate struct {
+	// Tag of a Kubernetes node, key value pair format
+	K8sTags map[string]string `json:"k8sTags,omitempty"`
+	// taints to created nodes to configure anti-affinity
+	Taints []nodes.TaintSpec `json:"taints,omitempty"`
 }
 
 type UpdateMetadata struct {
