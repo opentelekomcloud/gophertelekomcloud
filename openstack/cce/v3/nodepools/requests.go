@@ -195,15 +195,7 @@ type UpdateNodeTemplate struct {
 	// Tag of a Kubernetes node, key value pair format
 	K8sTags map[string]string `json:"k8sTags,omitempty"`
 	// taints to created nodes to configure anti-affinity
-	Taints []TaintSpec `json:"taints,omitempty"`
-}
-
-// TaintSpec to created nodes to configure anti-affinity
-type TaintSpec struct {
-	Key   string `json:"key" required:"true"`
-	Value string `json:"value" required:"true"`
-	// Available options are NoSchedule, PreferNoSchedule, and NoExecute
-	Effect string `json:"effect" required:"true"`
+	Taints []nodes.TaintSpec `json:"taints,omitempty"`
 }
 
 type UpdateMetadata struct {
