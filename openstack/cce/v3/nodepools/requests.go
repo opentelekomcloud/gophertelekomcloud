@@ -184,27 +184,27 @@ type UpdateSpec struct {
 	// Node type. Currently, only VM nodes are supported.
 	Type string `json:"type,omitempty"`
 	// Node template
-	NodeTemplate nodes.Spec `json:"nodeTemplate,omitempty"`
+	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate,omitempty"`
 	// Initial number of expected nodes
 	InitialNodeCount int `json:"initialNodeCount" required:"true"`
 	// Auto scaling parameters
 	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
 }
 
-// type UpdateNodeTemplate struct {
-// 	// Tag of a Kubernetes node, key value pair format
-// 	K8sTags map[string]string `json:"k8sTags,omitempty"`
-// 	// taints to created nodes to configure anti-affinity
-// 	Taints []TaintSpec `json:"taints,omitempty"`
-// }
-//
-// // TaintSpec to created nodes to configure anti-affinity
-// type TaintSpec struct {
-// 	Key   string `json:"key" required:"true"`
-// 	Value string `json:"value" required:"true"`
-// 	// Available options are NoSchedule, PreferNoSchedule, and NoExecute
-// 	Effect string `json:"effect" required:"true"`
-// }
+type UpdateNodeTemplate struct {
+	// Tag of a Kubernetes node, key value pair format
+	K8sTags map[string]string `json:"k8sTags,omitempty"`
+	// taints to created nodes to configure anti-affinity
+	Taints []TaintSpec `json:"taints,omitempty"`
+}
+
+// TaintSpec to created nodes to configure anti-affinity
+type TaintSpec struct {
+	Key   string `json:"key" required:"true"`
+	Value string `json:"value" required:"true"`
+	// Available options are NoSchedule, PreferNoSchedule, and NoExecute
+	Effect string `json:"effect" required:"true"`
+}
 
 type UpdateMetadata struct {
 	Name string `json:"name,omitempty"`
