@@ -1,7 +1,10 @@
 package openstack
 
 import (
+	"fmt"
+	"net/http"
 	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -10,6 +13,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestAuthenticatedClient(t *testing.T) {
@@ -83,4 +87,48 @@ func TestReAuth(t *testing.T) {
 		Region: cloud.RegionName,
 	})
 	th.AssertNoErr(t, err)
+}
+
+type failHandler struct {
+	ExpectedFailures int
+	ErrorCode        int
+	FailCount        int
+	mut              *sync.RWMutex
+}
+
+func (f *failHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if f.mut == nil {
+		f.mut = new(sync.RWMutex)
+	}
+
+	defer func() { _ = r.Body.Close() }()
+	if f.FailCount < f.ExpectedFailures {
+		f.mut.Lock()
+		f.FailCount += 1
+		f.mut.Unlock()
+		w.WriteHeader(f.ErrorCode)
+	} else {
+		w.WriteHeader(200)
+	}
+}
+
+func TestGatewayRetry(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	for _, code := range []int{http.StatusBadGateway, http.StatusGatewayTimeout} {
+
+		failHandler := &failHandler{ExpectedFailures: 1, ErrorCode: code}
+		th.Mux.Handle(fmt.Sprintf("/%d", code), failHandler)
+
+		codeURL := fmt.Sprintf("%d", code)
+		t.Run(codeURL, func(sub *testing.T) {
+			client := fake.ServiceClient()
+			_, err := client.Delete(client.ServiceURL(codeURL), &golangsdk.RequestOpts{
+				OkCodes: []int{200},
+			})
+			th.AssertNoErr(sub, err)
+			th.AssertEquals(sub, failHandler.ExpectedFailures, failHandler.FailCount)
+		})
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 )
 
 // DefaultUserAgent is the default User-Agent string set in the request header.
@@ -161,6 +162,11 @@ type RequestOpts struct {
 	// ErrorContext specifies the resource error type to return if an error is encountered.
 	// This lets resources override default error messages based on the response status code.
 	ErrorContext error
+
+	// RetryCount specifies number of times retriable errors (502, 504) will be retried
+	RetryCount *int
+	// RetryTimeout specifies time before next retry
+	RetryTimeout *time.Duration
 }
 
 var applicationJSON = "application/json"
@@ -257,6 +263,16 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	// Allow default OkCodes if none explicitly set
 	if options.OkCodes == nil {
 		options.OkCodes = defaultOkCodes(method)
+	}
+
+	if options.RetryCount == nil {
+		defaultRetryLimit := 1
+		options.RetryCount = &defaultRetryLimit
+	}
+
+	if options.RetryTimeout == nil {
+		defaultRetryTimeout := 500 * time.Millisecond
+		options.RetryTimeout = &defaultRetryTimeout
 	}
 
 	// Validate the HTTP response status.
@@ -362,6 +378,12 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			err = ErrDefault500{respErr}
 			if error500er, ok := errType.(Err500er); ok {
 				err = error500er.Error500(respErr)
+			}
+		case http.StatusBadGateway, http.StatusGatewayTimeout: // gateway errors
+			if *options.RetryCount > 0 {
+				*options.RetryCount -= 1
+				time.Sleep(*options.RetryTimeout)
+				return client.Request(method, url, options)
 			}
 		case http.StatusServiceUnavailable:
 			err = ErrDefault503{respErr}
