@@ -133,58 +133,6 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+9Aa==
 	return nil
 }
 
-func createLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasPoolID string) (*monitors.Monitor, error) {
-	monitorName := tools.RandomString("create-monitor-", 3)
-	t.Logf("Attempting to create LbaasV2 monitor")
-
-	adminState := false
-	createOpts := monitors.CreateOpts{
-		PoolID:        lbaasPoolID,
-		Type:          "HTTP",
-		Delay:         15,
-		Timeout:       10,
-		MaxRetries:    10,
-		Name:          monitorName,
-		URLPath:       "/status.php",
-		ExpectedCodes: "200",
-		AdminStateUp:  &adminState,
-	}
-	lbaasMonitor, err := monitors.Create(client, createOpts).Extract()
-	th.AssertNoErr(t, err)
-
-	t.Logf("Created LbaasV2 monitor: %s", lbaasMonitor.ID)
-
-	return lbaasMonitor, nil
-}
-
-func deleteLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMonitorID string) {
-	t.Logf("Attempting to delete LbaasV2 monitor: %s", lbaasMonitorID)
-
-	err := monitors.Delete(client, lbaasMonitorID).ExtractErr()
-	th.AssertNoErr(t, err)
-
-	t.Logf("LbaasV2 monitor is deleted: %s", lbaasMonitorID)
-}
-
-func updateLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMonitorID string) error {
-	t.Logf("Attempting to update LbaasV2 monitor")
-
-	monitorNewName := tools.RandomString("update-monitor-", 3)
-	adminStateUp := true
-
-	updateOpts := monitors.UpdateOpts{
-		Name:         monitorNewName,
-		AdminStateUp: &adminStateUp,
-		DomainName:   "www.test.com",
-	}
-
-	_, err := monitors.Update(client, lbaasMonitorID, updateOpts).Extract()
-	th.AssertNoErr(t, err)
-
-	t.Logf("LbaasV2 monitor successfully updated: %s", lbaasMonitorID)
-	return nil
-}
-
 func createLbaasPool(t *testing.T, client *golangsdk.ServiceClient, loadBalancerID string) (*pools.Pool, error) {
 	poolName := tools.RandomString("create-pool-", 3)
 	t.Logf("Attempting to create LbaasV2 pool")
