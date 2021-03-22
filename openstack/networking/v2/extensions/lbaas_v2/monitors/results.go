@@ -41,6 +41,9 @@ type Monitor struct {
 	// The time, in seconds, between sending probes to members.
 	Delay int `json:"delay"`
 
+	// Specifies the domain name of the HTTP request during the health check.
+	DomainName string `json:"domain_name"`
+
 	// The maximum number of seconds for a monitor to wait for a connection to be
 	// established before it times out. This value must be less than the delay
 	// value.

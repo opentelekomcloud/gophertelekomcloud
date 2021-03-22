@@ -44,6 +44,7 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer deleteLbaasMonitor(t, client, lbaasMonitor.ID)
 	th.AssertEquals(t, false, lbaasMonitor.AdminStateUp)
+	th.AssertEquals(t, "", lbaasMonitor.DomainName)
 
 	tools.PrintResource(t, lbaasMonitor)
 
@@ -53,5 +54,6 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	newLbaasMonitor, err := monitors.Get(client, lbaasMonitor.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, newLbaasMonitor.AdminStateUp)
+	th.AssertEquals(t, "www.test.com", newLbaasMonitor.DomainName)
 	tools.PrintResource(t, newLbaasMonitor)
 }

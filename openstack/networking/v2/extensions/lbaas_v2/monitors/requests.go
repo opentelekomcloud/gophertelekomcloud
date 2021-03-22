@@ -26,6 +26,7 @@ type ListOpts struct {
 	PoolID        string `q:"pool_id"`
 	Type          string `q:"type"`
 	Delay         int    `q:"delay"`
+	DomainName    string `q:"domain_name"`
 	Timeout       int    `q:"timeout"`
 	MaxRetries    int    `q:"max_retries"`
 	HTTPMethod    string `q:"http_method"`
@@ -204,6 +205,11 @@ type UpdateOptsBuilder interface {
 type UpdateOpts struct {
 	// The time, in seconds, between sending probes to members.
 	Delay int `json:"delay,omitempty"`
+
+	// Specifies the domain name of the HTTP request during the health check.
+	//
+	// This parameter is valid when the value of type is set to HTTP.
+	DomainName string `json:"domain_name,omitempty"`
 
 	// Maximum number of seconds for a Monitor to wait for a ping reply
 	// before it times out. The value must be less than the delay value.

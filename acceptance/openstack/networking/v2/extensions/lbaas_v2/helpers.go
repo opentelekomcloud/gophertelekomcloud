@@ -175,6 +175,7 @@ func updateLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMoni
 	updateOpts := monitors.UpdateOpts{
 		Name:         monitorNewName,
 		AdminStateUp: &adminStateUp,
+		DomainName:   "www.test.com",
 	}
 
 	_, err := monitors.Update(client, lbaasMonitorID, updateOpts).Extract()
