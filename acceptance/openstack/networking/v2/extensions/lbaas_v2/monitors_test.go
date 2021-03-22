@@ -41,30 +41,12 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	defer deleteLbaasPool(t, client, loadBalancerPool.ID)
 
 	// Create lbaasV2 monitor
-	lbaasMonitor := createLbaasMonitor(t, client, loadBalancerPool.ID)
-	th.AssertNoErr(t, err)
-	defer deleteLbaasMonitor(t, client, lbaasMonitor.ID)
-	th.AssertEquals(t, false, lbaasMonitor.AdminStateUp)
-	th.AssertEquals(t, "", lbaasMonitor.DomainName)
-
-	tools.PrintResource(t, lbaasMonitor)
-
-	updateLbaasMonitor(t, client, lbaasMonitor.ID)
-
-	newLbaasMonitor, err := monitors.Get(client, lbaasMonitor.ID).Extract()
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, true, newLbaasMonitor.AdminStateUp)
-	th.AssertEquals(t, "www.test.com", newLbaasMonitor.DomainName)
-	tools.PrintResource(t, newLbaasMonitor)
-}
-
-func createLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasPoolID string) *monitors.Monitor {
 	monitorName := tools.RandomString("create-monitor-", 3)
 	t.Logf("Attempting to create LbaasV2 monitor")
 
 	adminState := false
 	createOpts := monitors.CreateOpts{
-		PoolID:        lbaasPoolID,
+		PoolID:        loadBalancerPool.ID,
 		Type:          "HTTP",
 		Delay:         15,
 		Timeout:       10,
@@ -79,19 +61,12 @@ func createLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasPool
 
 	t.Logf("Created LbaasV2 monitor: %s", lbaasMonitor.ID)
 
-	return lbaasMonitor
-}
+	defer deleteLbaasMonitor(t, client, lbaasMonitor.ID)
+	th.AssertEquals(t, false, lbaasMonitor.AdminStateUp)
+	th.AssertEquals(t, "", lbaasMonitor.DomainName)
 
-func deleteLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMonitorID string) {
-	t.Logf("Attempting to delete LbaasV2 monitor: %s", lbaasMonitorID)
+	tools.PrintResource(t, lbaasMonitor)
 
-	err := monitors.Delete(client, lbaasMonitorID).ExtractErr()
-	th.AssertNoErr(t, err)
-
-	t.Logf("LbaasV2 monitor is deleted: %s", lbaasMonitorID)
-}
-
-func updateLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMonitorID string) {
 	t.Logf("Attempting to update LbaasV2 monitor")
 
 	monitorNewName := tools.RandomString("update-monitor-", 3)
@@ -103,8 +78,23 @@ func updateLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMoni
 		DomainName:   "www.test.com",
 	}
 
-	_, err := monitors.Update(client, lbaasMonitorID, updateOpts).Extract()
+	_, err = monitors.Update(client, lbaasMonitor.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	t.Logf("LbaasV2 monitor successfully updated: %s", lbaasMonitorID)
+	t.Logf("LbaasV2 monitor successfully updated: %s", lbaasMonitor.ID)
+
+	newLbaasMonitor, err := monitors.Get(client, lbaasMonitor.ID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, newLbaasMonitor.AdminStateUp)
+	th.AssertEquals(t, "www.test.com", newLbaasMonitor.DomainName)
+	tools.PrintResource(t, newLbaasMonitor)
+}
+
+func deleteLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMonitorID string) {
+	t.Logf("Attempting to delete LbaasV2 monitor: %s", lbaasMonitorID)
+
+	err := monitors.Delete(client, lbaasMonitorID).ExtractErr()
+	th.AssertNoErr(t, err)
+
+	t.Logf("LbaasV2 monitor is deleted: %s", lbaasMonitorID)
 }
