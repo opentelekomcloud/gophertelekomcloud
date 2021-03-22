@@ -44,7 +44,7 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	monitorName := tools.RandomString("create-monitor-", 3)
 	t.Logf("Attempting to create LbaasV2 monitor")
 
-	adminState := false
+	adminStateUp := false
 	createOpts := monitors.CreateOpts{
 		PoolID:        loadBalancerPool.ID,
 		Type:          "HTTP",
@@ -54,7 +54,7 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 		Name:          monitorName,
 		URLPath:       "/status.php",
 		ExpectedCodes: "200",
-		AdminStateUp:  &adminState,
+		AdminStateUp:  &adminStateUp,
 	}
 	lbaasMonitor, err := monitors.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -70,7 +70,7 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	t.Logf("Attempting to update LbaasV2 monitor")
 
 	monitorNewName := tools.RandomString("update-monitor-", 3)
-	adminStateUp := true
+	adminStateUp = true
 
 	updateOpts := monitors.UpdateOpts{
 		Name:         monitorNewName,
