@@ -137,6 +137,7 @@ func createLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasPool
 	monitorName := tools.RandomString("create-monitor-", 3)
 	t.Logf("Attempting to create LbaasV2 monitor")
 
+	adminState := false
 	createOpts := monitors.CreateOpts{
 		PoolID:        lbaasPoolID,
 		Type:          "HTTP",
@@ -146,6 +147,7 @@ func createLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasPool
 		Name:          monitorName,
 		URLPath:       "/status.php",
 		ExpectedCodes: "200",
+		AdminStateUp:  &adminState,
 	}
 	lbaasMonitor, err := monitors.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)

@@ -43,6 +43,7 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	lbaasMonitor, err := createLbaasMonitor(t, client, loadBalancerPool.ID)
 	th.AssertNoErr(t, err)
 	defer deleteLbaasMonitor(t, client, lbaasMonitor.ID)
+	th.AssertEquals(t, false, lbaasMonitor.AdminStateUp)
 
 	tools.PrintResource(t, lbaasMonitor)
 
@@ -51,5 +52,6 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 
 	newLbaasMonitor, err := monitors.Get(client, lbaasMonitor.ID).Extract()
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, newLbaasMonitor.AdminStateUp)
 	tools.PrintResource(t, newLbaasMonitor)
 }
