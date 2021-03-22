@@ -64,4 +64,7 @@ func TestFlavorList(t *testing.T) {
 
 	foundFlavor := flavors.FindFlavor(versions, filterOpts)
 	th.AssertDeepEquals(t, expectedFlavor, *foundFlavor)
+
+	foundByName := flavors.FindFlavor(versions, flavors.FilterOpts{FlavorName: expectedFlavor.Name})
+	th.AssertDeepEquals(t, expectedFlavor, *foundByName)
 }

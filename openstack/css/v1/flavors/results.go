@@ -110,6 +110,9 @@ type FilterOpts struct {
 	// One of ess, ess-master, ess-client, ess-cloud
 	Type string
 
+	// Name of the searched flavor
+	FlavorName string
+
 	DiskMin *Limit
 
 	DiskMax *Limit
@@ -133,6 +136,13 @@ func matches(value int, limits *Limit) bool {
 func filterFlavors(flavors []Flavor, opts FilterOpts) []Flavor {
 	var resFlavors []Flavor
 	for _, flv := range flavors {
+		if opts.FlavorName != "" && flv.Name != opts.FlavorName {
+			continue
+		}
+		if opts.Region != "" && flv.Region != opts.Region {
+			continue
+		}
+
 		if !matches(flv.CPU, opts.CPU) {
 			continue
 		}
@@ -153,7 +163,9 @@ func filterFlavors(flavors []Flavor, opts FilterOpts) []Flavor {
 
 func findSingleFlavor(flavors []Flavor, opts FilterOpts) *Flavor {
 	for _, flv := range flavors {
-		if matches(flv.CPU, opts.CPU) &&
+		if (opts.FlavorName == "" || flv.Name == opts.FlavorName) &&
+			(opts.Region == "" || flv.Region == opts.Region) &&
+			matches(flv.CPU, opts.CPU) &&
 			matches(flv.RAM, opts.RAM) &&
 			matches(flv.DiskMin, opts.DiskMin) &&
 			matches(flv.DiskMax, opts.DiskMax) {
@@ -189,7 +201,6 @@ func FindFlavor(versions []Version, opts FilterOpts) *Flavor {
 		if opts.Type != "" && version.Type != opts.Type {
 			continue
 		}
-		version.Flavors = filterFlavors(version.Flavors, opts)
 		flavor := findSingleFlavor(version.Flavors, opts)
 		if flavor != nil {
 			return flavor
