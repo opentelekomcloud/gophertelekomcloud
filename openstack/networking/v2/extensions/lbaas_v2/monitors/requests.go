@@ -95,6 +95,11 @@ type CreateOpts struct {
 	// The time, in seconds, between sending probes to members.
 	Delay int `json:"delay" required:"true"`
 
+	// Specifies the domain name of the HTTP request during the health check.
+	//
+	// This parameter is valid when the value of type is set to HTTP.
+	DomainName string `json:"domain_name,omitempty"`
+
 	// Maximum number of seconds for a Monitor to wait for a ping reply
 	// before it times out. The value must be less than the delay value.
 	Timeout int `json:"timeout" required:"true"`
