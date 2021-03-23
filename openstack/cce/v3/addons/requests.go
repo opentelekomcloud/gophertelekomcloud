@@ -157,7 +157,7 @@ func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBu
 		}
 		url += q
 	}
-	_, r.Err = c.Get(url, r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Get(url, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
