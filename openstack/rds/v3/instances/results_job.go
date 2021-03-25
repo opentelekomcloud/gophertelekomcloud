@@ -2,6 +2,7 @@ package instances
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -52,7 +53,7 @@ func WaitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string
 			err = fmt.Errorf("Job failed %s.\n", job.Job.Status)
 			return false, err
 		}
-
+		time.Sleep(10 * time.Second)
 		return false, nil
 	})
 }

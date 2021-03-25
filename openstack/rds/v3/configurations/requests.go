@@ -106,6 +106,13 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
+// GetForInstance retrieves Configuration applied to particular RDS instance
+// configuration ID and Name will be empty
+func GetForInstance(c *golangsdk.ServiceClient, instanceID string) (r GetResult) {
+	_, r.Err = c.Get(instanceConfigURL(c, instanceID), &r.Body, openstack.StdRequestOpts())
+	return
+}
+
 // Delete will permanently delete a particular Configuration based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
