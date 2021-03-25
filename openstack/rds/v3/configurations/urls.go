@@ -13,3 +13,7 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 func applyURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("configurations", id, "apply")
 }
+
+func instanceConfigURL(c *golangsdk.ServiceClient, instanceID string) string {
+	return c.ServiceURL("instances", instanceID, "configurations")
+}

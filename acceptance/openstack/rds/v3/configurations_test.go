@@ -61,4 +61,12 @@ func TestConfigurationsApply(t *testing.T) {
 	t.Logf("Template config applied")
 
 	tools.PrintResource(t, applyResult)
+
+	instanceConfig, err := configurations.GetForInstance(client, rds.Id).Extract()
+	th.AssertNoErr(t, err)
+	th.CheckEquals(t, config.DatastoreName, instanceConfig.DatastoreName)
+	th.CheckEquals(t, config.DatastoreVersionName, instanceConfig.DatastoreVersionName)
+	if len(instanceConfig.Parameters) == 0 {
+		t.Errorf("instance config has empty parameter list")
+	}
 }
