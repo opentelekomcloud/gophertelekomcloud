@@ -87,6 +87,9 @@ type NodeNicSpec struct {
 type PrimaryNic struct {
 	// The Subnet ID of the primary Nic
 	SubnetId string `json:"subnetId,omitempty"`
+
+	// FixedIPs define list of private IPs
+	FixedIPs []string `json:"fixedIps,omitempty"`
 }
 
 // TaintSpec to created nodes to configure anti-affinity
