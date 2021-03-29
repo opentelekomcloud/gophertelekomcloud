@@ -25,7 +25,7 @@ type GetResult struct {
 
 func (r GetResult) Extract() (Configuration, error) {
 	var s Configuration
-	err := r.Result.ExtractIntoStructPtr(&s, "scaling_configuration")
+	err := r.ExtractIntoStructPtr(&s, "scaling_configuration")
 	return s, err
 }
 
