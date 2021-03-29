@@ -631,17 +631,10 @@ func NewRdsTagV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*
 	return sc, err
 }
 
-// NewAutoScalingService creates a ServiceClient that may be used to access the
-// auto-scaling service of huawei public cloud
-func NewAutoScalingService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "volumev2")
-	if err != nil {
-		return nil, err
-	}
-	e := strings.Replace(sc.Endpoint, "v2", "autoscaling-api/v1", 1)
-	sc.Endpoint = strings.Replace(e, "evs", "as", 1)
-	sc.ResourceBase = sc.Endpoint
-	return sc, err
+// NewAutoScalingV1 creates a ServiceClient that may be used to access the
+// auto-scaling service of OpenTelekomCloud public cloud
+func NewAutoScalingV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "asv1")
 }
 
 // NewNetworkV1 creates a ServiceClient that may be used with the v1 network

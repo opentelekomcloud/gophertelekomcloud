@@ -24,36 +24,7 @@ func (opts CreateOpts) ToConfigurationCreateMap() (map[string]interface{}, error
 	}
 	log.Printf("[DEBUG] ToConfigurationCreateMap b is: %#v", b)
 	log.Printf("[DEBUG] ToConfigurationCreateMap opts is: %#v", opts)
-	publicIp := opts.InstanceConfig.PubicIp
-	log.Printf("[DEBUG] ToConfigurationCreateMap publicIp is: %#v", publicIp)
 
-	if publicIp != (PublicIpOpts{}) {
-		public_ip := map[string]interface{}{}
-		eip := map[string]interface{}{}
-		bandwidth := map[string]interface{}{}
-		eip_raw := publicIp.Eip
-		log.Printf("[DEBUG] ToConfigurationCreateMap eip_raw is: %#v", eip_raw)
-		if eip_raw != (EipOpts{}) {
-			if eip_raw.IpType != "" {
-				eip["ip_type"] = eip_raw.IpType
-			}
-			bandWidth := eip_raw.Bandwidth
-			if bandWidth != (BandwidthOpts{}) {
-				if bandWidth.Size > 0 {
-					bandwidth["size"] = bandWidth.Size
-				}
-				if bandWidth.ChargingMode != "" {
-					bandwidth["charging_mode"] = bandWidth.ChargingMode
-				}
-				if bandWidth.ShareType != "" {
-					bandwidth["share_type"] = bandWidth.ShareType
-				}
-				eip["bandwidth"] = bandwidth
-			}
-			public_ip["eip"] = eip
-		}
-		b["instance_config"].(map[string]interface{})["public_ip"] = public_ip
-	}
 	if opts.InstanceConfig.UserData != nil {
 		var userData string
 		if _, err := base64.StdEncoding.DecodeString(string(opts.InstanceConfig.UserData)); err != nil {
@@ -73,21 +44,26 @@ type InstanceConfigOpts struct {
 	FlavorRef   string            `json:"flavorRef,omitempty"`
 	ImageRef    string            `json:"imageRef,omitempty"`
 	Disk        []DiskOpts        `json:"disk,omitempty"`
-	SSHKey      string            `json:"key_name,omitempty"`
+	SSHKey      string            `json:"key_name" required:"true"`
 	Personality []PersonalityOpts `json:"personality,omitempty"`
-	PubicIp     PublicIpOpts      `json:"-"`
+	PubicIp     *PublicIpOpts     `json:"public_ip,omitempty"`
 	// UserData contains configuration information or scripts to use upon launch.
 	// Create will base64-encode it for you, if it isn't already.
-	UserData []byte                 `json:"-"`
-	Metadata map[string]interface{} `json:"metadata,omitempty"` // TODO not sure the type
+	UserData       []byte                 `json:"-"`
+	Metadata       map[string]interface{} `json:"metadata,omitempty"`
+	SecurityGroups []SecurityGroupOpts    `json:"security_groups,omitempty"`
+	MarketType     string                 `json:"market_type,omitempty"`
 }
 
 // DiskOpts is an inner struct of InstanceConfigOpts
 type DiskOpts struct {
-	Size       int               `json:"size" required:"true"`
-	VolumeType string            `json:"volume_type" required:"true"`
-	DiskType   string            `json:"disk_type" required:"true"`
-	Metadata   map[string]string `json:"metadata,omitempty"`
+	Size               int               `json:"size" required:"true"`
+	VolumeType         string            `json:"volume_type" required:"true"`
+	DiskType           string            `json:"disk_type" required:"true"`
+	DedicatedStorageID string            `json:"dedicated_storage_id,omitempty"`
+	DataDiskImageID    string            `json:"data_disk_image_id,omitempty"`
+	SnapshotID         string            `json:"snapshot_id,omitempty"`
+	Metadata           map[string]string `json:"metadata,omitempty"`
 }
 
 type PersonalityOpts struct {
@@ -96,18 +72,22 @@ type PersonalityOpts struct {
 }
 
 type PublicIpOpts struct {
-	Eip EipOpts `json:"-"`
+	Eip EipOpts `json:"eip" required:"true"`
 }
 
 type EipOpts struct {
-	IpType    string
-	Bandwidth BandwidthOpts `json:"-"`
+	IpType    string        `json:"ip_type" required:"true"`
+	Bandwidth BandwidthOpts `json:"bandwidth" required:"true"`
 }
 
 type BandwidthOpts struct {
-	Size         int
-	ShareType    string
-	ChargingMode string
+	Size         int    `json:"size" required:"true"`
+	ShareType    string `json:"share_type" required:"true"`
+	ChargingMode string `json:"charging_mode" required:"true"`
+}
+
+type SecurityGroupOpts struct {
+	ID string `json:"id" required:"true"`
 }
 
 // Create is a method by which can be able to access to create a configuration
@@ -142,8 +122,10 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
-	Name    string `q:"scaling_configuration_name"`
-	ImageID string `q:"image_id"`
+	Name        string `q:"scaling_configuration_name"`
+	ImageID     string `q:"image_id"`
+	StartNumber int    `q:"start_number"`
+	Limit       int    `q:"limit"`
 }
 
 func (opts ListOpts) ToConfigurationListQuery() (string, error) {
