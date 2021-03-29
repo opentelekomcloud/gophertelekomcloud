@@ -20,7 +20,7 @@ func TestProviderCreateRequest(t *testing.T) {
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 		w.WriteHeader(201)
-		_, _ = fmt.Fprintf(w, providerResponse)
+		_, _ = fmt.Fprint(w, providerResponse)
 	})
 
 	opts := providers.CreateOpts{
@@ -43,7 +43,7 @@ func TestProviderGetRequest(t *testing.T) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")
-		_, _ = fmt.Fprintf(w, providerResponse)
+		_, _ = fmt.Fprint(w, providerResponse)
 	})
 
 	p, err := providers.Get(fake.ServiceClient(), providerID).Extract()
@@ -61,7 +61,7 @@ func TestProviderListRequest(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, providerListResponse)
+		_, _ = fmt.Fprint(w, providerListResponse)
 	})
 
 	pages, err := providers.List(fake.ServiceClient()).AllPages()
@@ -81,7 +81,7 @@ func TestProviderUpdateRequest(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, updatedProviderResposnse)
+		_, _ = fmt.Fprint(w, updatedProviderResposnse)
 	})
 
 	iFalse := false
