@@ -33,8 +33,8 @@ type CreateOpts struct {
 }
 
 type RuleOpts struct {
-	Local  []LocalRuleOpts  `json:"local,omitempty"`
-	Remote []RemoteRuleOpts `json:"remote,omitempty"`
+	Local  []LocalRuleOpts  `json:"local" required:"true"`
+	Remote []RemoteRuleOpts `json:"remote" required:"true"`
 }
 
 type LocalRuleOpts struct {
