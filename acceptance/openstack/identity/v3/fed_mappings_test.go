@@ -24,7 +24,7 @@ func TestFederatedMappingLifecycle(t *testing.T) {
 				Local: []mappings.LocalRuleOpts{
 					{
 						User: &mappings.UserOpts{
-							Name: "samltestid",
+							Name: "{0}",
 						},
 					},
 					{
@@ -78,7 +78,7 @@ func TestFederatedMappingLifecycle(t *testing.T) {
 				Local: []mappings.LocalRuleOpts{
 					{
 						User: &mappings.UserOpts{
-							Name: "{0}",
+							Name: "samltestid-{0}",
 						},
 					},
 				},
