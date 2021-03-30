@@ -79,7 +79,7 @@ func (r MappingPage) IsEmpty() (bool, error) {
 	return len(groups) == 0, err
 }
 
-// NextPageURL extracts the "next" link from the links section of the result.
+// NextPageURL extracts the next/previous/self links from the links section of the result.
 func (r MappingPage) NextPageURL() (string, error) {
 	var s struct {
 		Links struct {
