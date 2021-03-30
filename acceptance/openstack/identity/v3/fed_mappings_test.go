@@ -78,7 +78,7 @@ func TestFederatedMappingLifecycle(t *testing.T) {
 				Local: []mappings.LocalRuleOpts{
 					{
 						User: &mappings.UserOpts{
-							Name: "samltestid-{0}",
+							Name: "{0}",
 						},
 					},
 				},
@@ -92,7 +92,6 @@ func TestFederatedMappingLifecycle(t *testing.T) {
 	}
 	updated, err := mappings.Update(client, mapping.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
-	// th.AssertEquals(t, false, updated.Enabled)
 
 	got2, err := mappings.Get(client, mapping.ID).Extract()
 	th.AssertNoErr(t, err)
