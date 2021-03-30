@@ -21,16 +21,16 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 	createOpts := mappings.CreateOpts{
 		Rules: []mappings.RuleOpts{
 			{
-				// Local: []mappings.LocalRuleOpts{
-				// 	{
-				// 		User: &mappings.UserOpts{
-				// 			Name: "samltestid",
-				// 		},
-				// 	},
-				// 	{
-				// 		Groups: "[\"admin\",\"manager\"]",
-				// 	},
-				// },
+				Local: []mappings.LocalRuleOpts{
+					{
+						User: &mappings.UserOpts{
+							Name: "samltestid",
+						},
+					},
+					{
+						Groups: "[\"admin\",\"manager\"]",
+					},
+				},
 				Remote: []mappings.RemoteRuleOpts{
 					{
 						Type: "uid",

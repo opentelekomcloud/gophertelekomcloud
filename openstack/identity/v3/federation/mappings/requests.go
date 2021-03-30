@@ -48,7 +48,13 @@ type UserOpts struct {
 }
 
 type GroupOpts struct {
-	Name string `json:"name" required:"true"`
+	Name   string `json:"name" required:"true"`
+	Domain Domain `json:"domain,omitempty"`
+}
+
+type Domain struct {
+	Name string `json:"name"`
+	ID   string `json:"id"`
 }
 
 type RemoteRuleOpts struct {
