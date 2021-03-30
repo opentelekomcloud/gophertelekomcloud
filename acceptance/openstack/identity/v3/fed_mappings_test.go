@@ -39,7 +39,7 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 		},
 	}
 
-	mapping, err := mappings.Create(client, "ACME", createOpts).Extract()
+	mapping, err := mappings.Create(client, "api-robot_mapcreation", createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	defer func() {

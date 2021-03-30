@@ -38,8 +38,9 @@ type RuleOpts struct {
 }
 
 type LocalRuleOpts struct {
-	User  UserOpts  `json:"user,omitempty"`
-	Group GroupOpts `json:"group,omitempty"`
+	User   UserOpts  `json:"user,omitempty"`
+	Group  GroupOpts `json:"group,omitempty"`
+	Groups string    `json:"groups,omitempty"`
 }
 
 type UserOpts struct {
@@ -53,6 +54,8 @@ type GroupOpts struct {
 type RemoteRuleOpts struct {
 	Type     string   `json:"type" required:"true"`
 	NotAnyOf []string `json:"not_any_of,omitempty"`
+	AnyOneOf []string `json:"any_one_of,omitempty"`
+	Regex    *bool    `json:"regex,omitempty"`
 }
 
 // ToMappingCreateMap formats a CreateOpts into a create request.
