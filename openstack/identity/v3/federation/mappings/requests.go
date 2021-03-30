@@ -14,7 +14,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 	})
 }
 
-// Get retrieves details on a single mapping, by ID.
+// Get retrieves details on a single Mapping, by ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(mappingURL(client, id), &r.Body, nil)
 	return
@@ -65,7 +65,7 @@ func (opts CreateOpts) ToMappingCreateMap() (map[string]interface{}, error) {
 	return b, nil
 }
 
-// Create creates a new Mapping.
+// Create creates a new Mapping, by ID.
 func Create(client *golangsdk.ServiceClient, mappingID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToMappingCreateMap()
 	if err != nil {
@@ -100,7 +100,7 @@ func (opts UpdateOpts) ToMappingUpdateMap() (map[string]interface{}, error) {
 	return b, nil
 }
 
-// Update updates an existing Mapping.
+// Update updates an existing Mapping, by ID.
 func Update(client *golangsdk.ServiceClient, mappingID string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToMappingUpdateMap()
 	if err != nil {
@@ -113,7 +113,7 @@ func Update(client *golangsdk.ServiceClient, mappingID string, opts UpdateOptsBu
 	return
 }
 
-// Delete deletes a mapping.
+// Delete deletes a mapping, by ID.
 func Delete(client *golangsdk.ServiceClient, mappingID string) (r DeleteResult) {
 	_, r.Err = client.Delete(mappingURL(client, mappingID), nil)
 	return
