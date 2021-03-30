@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/federation/mappings"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -22,10 +23,12 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 			{
 				Local: []mappings.LocalRuleOpts{
 					{
-						User: mappings.UserOpts{
+						User: &mappings.UserOpts{
 							Name: "samltestid",
 						},
-						Group: mappings.GroupOpts{
+					},
+					{
+						Group: &mappings.GroupOpts{
 							Name: "power_user",
 						},
 					},
@@ -39,7 +42,9 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 		},
 	}
 
-	mapping, err := mappings.Create(client, "api-robot_mapcreation", createOpts).Extract()
+	mappingName := tools.RandomString("muh", 3)
+
+	mapping, err := mappings.Create(client, mappingName, createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	defer func() {
@@ -47,7 +52,7 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}()
 
-	th.AssertEquals(t, createOpts.Rules[0].Local[0].User.Name, mapping.Rules[0].Local[0].User.Name)
+	th.AssertEquals(t, mappingName, mapping.ID)
 
 	got, err := mappings.Get(client, mapping.ID).Extract()
 	th.AssertNoErr(t, err)
@@ -74,10 +79,12 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 			{
 				Local: []mappings.LocalRuleOpts{
 					{
-						User: mappings.UserOpts{
+						User: &mappings.UserOpts{
 							Name: "samltestid-{0}",
 						},
-						Group: mappings.GroupOpts{
+					},
+					{
+						Group: &mappings.GroupOpts{
 							Name: "power_user",
 						},
 					},

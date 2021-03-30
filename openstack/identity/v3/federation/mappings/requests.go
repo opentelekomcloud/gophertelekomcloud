@@ -38,9 +38,9 @@ type RuleOpts struct {
 }
 
 type LocalRuleOpts struct {
-	User   UserOpts  `json:"user,omitempty"`
-	Group  GroupOpts `json:"group,omitempty"`
-	Groups string    `json:"groups,omitempty"`
+	User   *UserOpts  `json:"user,omitempty"`
+	Group  *GroupOpts `json:"group,omitempty"`
+	Groups string     `json:"groups,omitempty"`
 }
 
 type UserOpts struct {
