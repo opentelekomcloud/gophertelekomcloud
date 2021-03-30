@@ -28,9 +28,7 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 						},
 					},
 					{
-						Group: &mappings.GroupOpts{
-							Name: "power_user",
-						},
+						Groups: "[\"admin\",\"manager\"]",
 					},
 				},
 				Remote: []mappings.RemoteRuleOpts{
@@ -81,11 +79,6 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 					{
 						User: &mappings.UserOpts{
 							Name: "samltestid-{0}",
-						},
-					},
-					{
-						Group: &mappings.GroupOpts{
-							Name: "power_user",
 						},
 					},
 				},
