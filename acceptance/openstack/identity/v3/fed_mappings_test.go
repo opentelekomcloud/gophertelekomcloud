@@ -10,7 +10,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestFederatedProviderLifecycle(t *testing.T) {
+func TestFederatedMappingLifecycle(t *testing.T) {
 	if os.Getenv("OS_TENANT_ADMIN") == "" {
 		t.Skip("Policy doesn't allow iam:identityProviders:createMapping to be performed.")
 	}
