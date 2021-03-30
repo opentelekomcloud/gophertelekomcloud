@@ -11,7 +11,7 @@ import (
 
 func TestFederatedProviderLifecycle(t *testing.T) {
 	if os.Getenv("OS_TENANT_ADMIN") == "" {
-		t.Skip("Requires iam:identityProviders:createIdentityMapping permission")
+		t.Skip("Policy doesn't allow iam:identityProviders:createMapping to be performed.")
 	}
 
 	client, err := clients.NewIdentityV3Client()
@@ -23,22 +23,16 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 				Local: []mappings.LocalRuleOpts{
 					{
 						User: mappings.UserOpts{
-							Name: "{0}",
+							Name: "samltestid",
 						},
 						Group: mappings.GroupOpts{
-							Name: "0cd5e9",
+							Name: "power_user",
 						},
 					},
 				},
 				Remote: []mappings.RemoteRuleOpts{
 					{
-						Type: "UserName",
-					},
-					{
-						Type: "orgPersonType",
-						NotAnyOf: []string{
-							"Contractor", "Guest",
-						},
+						Type: "uid",
 					},
 				},
 			},
@@ -76,7 +70,25 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 	}
 
 	updateOpts := mappings.UpdateOpts{
-		Rules: []mappings.RuleOpts{},
+		Rules: []mappings.RuleOpts{
+			{
+				Local: []mappings.LocalRuleOpts{
+					{
+						User: mappings.UserOpts{
+							Name: "samltestid-{0}",
+						},
+						Group: mappings.GroupOpts{
+							Name: "power_user",
+						},
+					},
+				},
+				Remote: []mappings.RemoteRuleOpts{
+					{
+						Type: "uid",
+					},
+				},
+			},
+		},
 	}
 	updated, err := mappings.Update(client, mapping.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)

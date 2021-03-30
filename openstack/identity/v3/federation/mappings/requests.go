@@ -33,26 +33,26 @@ type CreateOpts struct {
 }
 
 type RuleOpts struct {
-	Local  []LocalRuleOpts  `json:"local"`
-	Remote []RemoteRuleOpts `json:"remote"`
+	Local  []LocalRuleOpts  `json:"local,omitempty"`
+	Remote []RemoteRuleOpts `json:"remote,omitempty"`
 }
 
 type LocalRuleOpts struct {
-	User  UserOpts  `json:"user"`
-	Group GroupOpts `json:"group"`
+	User  UserOpts  `json:"user,omitempty"`
+	Group GroupOpts `json:"group,omitempty"`
 }
 
 type UserOpts struct {
-	Name string `json:"name"`
+	Name string `json:"name" required:"true"`
 }
 
 type GroupOpts struct {
-	Name string `json:"name"`
+	Name string `json:"name" required:"true"`
 }
 
 type RemoteRuleOpts struct {
-	Type     string   `json:"type"`
-	NotAnyOf []string `json:"not_any_of"`
+	Type     string   `json:"type" required:"true"`
+	NotAnyOf []string `json:"not_any_of,omitempty"`
 }
 
 // ToMappingCreateMap formats a CreateOpts into a create request.
