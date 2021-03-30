@@ -48,8 +48,8 @@ type UserOpts struct {
 }
 
 type GroupOpts struct {
-	Name   string `json:"name" required:"true"`
-	Domain Domain `json:"domain,omitempty"`
+	Name   string  `json:"name" required:"true"`
+	Domain *Domain `json:"domain,omitempty"`
 }
 
 type Domain struct {
