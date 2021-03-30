@@ -75,8 +75,8 @@ type MappingPage struct {
 
 // IsEmpty determines whether or not a page of Mappings contains any results.
 func (r MappingPage) IsEmpty() (bool, error) {
-	groups, err := ExtractMappings(r)
-	return len(groups) == 0, err
+	mappings, err := ExtractMappings(r)
+	return len(mappings) == 0, err
 }
 
 // NextPageURL extracts the next/previous/self links from the links section of the result.
