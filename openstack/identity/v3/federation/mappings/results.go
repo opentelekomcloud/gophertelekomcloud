@@ -23,23 +23,9 @@ type Rule struct {
 }
 
 type LocalRule struct {
-	User   User   `json:"user"`
-	Group  Group  `json:"group"`
-	Groups string `json:"groups"`
-}
-
-type User struct {
-	Name string `json:"name"`
-}
-
-type Group struct {
-	Name   string `json:"name"`
-	Domain Domain `json:"domain"`
-}
-
-type Domain struct {
-	Name string `json:"name"`
-	ID   string `json:"id"`
+	User   *UserOpts  `json:"user"`
+	Group  *GroupOpts `json:"group"`
+	Groups string     `json:"groups"`
 }
 
 type RemoteRule struct {
@@ -88,36 +74,16 @@ func (r MappingPage) IsEmpty() (bool, error) {
 	return len(mappings) == 0, err
 }
 
-// NextPageURL extracts the next/previous/self links from the links section of the result.
-func (r MappingPage) NextPageURL() (string, error) {
-	var s struct {
-		Links struct {
-			Next     string `json:"next"`
-			Previous string `json:"previous"`
-			Self     string `json:"self"`
-		} `json:"links"`
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-	return s.Links.Next, err
-}
-
 // ExtractMappings returns a slice of Mappings contained in a linked page of results.
 func ExtractMappings(r pagination.Page) ([]Mapping, error) {
-	var s struct {
-		Mappings []Mapping `json:"mappings"`
-	}
-	err := (r.(MappingPage)).ExtractInto(&s)
-	return s.Mappings, err
+	var s []Mapping
+	err := (r.(MappingPage)).ExtractIntoSlicePtr(&s, "mappings")
+	return s, err
 }
 
 // Extract interprets any group results as a Mapping.
-func (r mappingResult) Extract() (*Mapping, error) {
-	var s struct {
-		Mapping *Mapping `json:"mapping"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Mapping, err
+func (r mappingResult) Extract() (Mapping, error) {
+	var s Mapping
+	err := r.ExtractIntoStructPtr(&s, "mapping")
+	return s, err
 }
