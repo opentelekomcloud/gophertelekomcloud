@@ -18,21 +18,15 @@ type Mapping struct {
 }
 
 type Rule struct {
-	Local  []LocalRule  `json:"local"`
-	Remote []RemoteRule `json:"remote"`
-}
-
-type LocalRule struct {
-	User   *UserOpts  `json:"user"`
-	Group  *GroupOpts `json:"group"`
-	Groups string     `json:"groups"`
+	Local  []LocalRuleOpts `json:"local"`
+	Remote []RemoteRule    `json:"remote"`
 }
 
 type RemoteRule struct {
 	Type     string   `json:"type"`
-	NotAnyOf []string `json:"not_any_of"`
-	AnyOneOf []string `json:"any_one_of"`
-	Regex    bool     `json:"regex"`
+	NotAnyOf []string `json:"not_any_of,omitempty"`
+	AnyOneOf []string `json:"any_one_of,omitempty"`
+	Regex    bool     `json:"regex,omitempty"`
 }
 
 type mappingResult struct {
