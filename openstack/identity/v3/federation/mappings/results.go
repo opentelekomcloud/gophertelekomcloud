@@ -23,8 +23,9 @@ type Rule struct {
 }
 
 type LocalRule struct {
-	User  User  `json:"user"`
-	Group Group `json:"group"`
+	User   User   `json:"user"`
+	Group  Group  `json:"group"`
+	Groups string `json:"groups"`
 }
 
 type User struct {
@@ -32,12 +33,20 @@ type User struct {
 }
 
 type Group struct {
+	Name   string `json:"name"`
+	Domain Domain `json:"domain"`
+}
+
+type Domain struct {
 	Name string `json:"name"`
+	ID   string `json:"id"`
 }
 
 type RemoteRule struct {
 	Type     string   `json:"type"`
 	NotAnyOf []string `json:"not_any_of"`
+	AnyOneOf []string `json:"any_one_of"`
+	Regex    bool     `json:"regex"`
 }
 
 type mappingResult struct {
