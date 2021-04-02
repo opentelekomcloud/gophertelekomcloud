@@ -82,8 +82,8 @@ func ExtractMappings(r pagination.Page) ([]Mapping, error) {
 }
 
 // Extract interprets any group results as a Mapping.
-func (r mappingResult) Extract() (Mapping, error) {
-	var s Mapping
-	err := r.ExtractIntoStructPtr(&s, "mapping")
+func (r mappingResult) Extract() (*Mapping, error) {
+	s := new(Mapping)
+	err := r.ExtractIntoStructPtr(s, "mapping")
 	return s, err
 }
