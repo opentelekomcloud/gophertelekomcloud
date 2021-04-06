@@ -132,14 +132,14 @@ func Delete(c *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
 }
 
 type ListOptsBuilder interface {
-	ToAddonListQuery() (string, error)
+	ToInstanceListQuery() (string, error)
 }
 
 type ListOpts struct {
 	Name string `q:"addon_template_name"`
 }
 
-func (opts ListOpts) ToAddonListQuery() (string, error) {
+func (opts ListOpts) ToInstanceListQuery() (string, error) {
 	u, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return "", err
@@ -150,7 +150,7 @@ func (opts ListOpts) ToAddonListQuery() (string, error) {
 func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBuilder) (r ListTemplateResult) {
 	url := templatesURL(c, clusterID)
 	if opts != nil {
-		q, err := opts.ToAddonListQuery()
+		q, err := opts.ToInstanceListQuery()
 		if err != nil {
 			r.Err = err
 			return

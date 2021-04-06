@@ -20,10 +20,32 @@ type JobStatus struct {
 	EndTime    string    `json:"end_time"`
 	ErrorCode  string    `json:"error_code"`
 	FailReason string    `json:"fail_reason"`
+	Message    string    `json:"message"`
+	Code       string    `json:"code"`
 }
 
 type JobEntity struct {
-	InstanceID string `json:"protected_instance_id"`
+	InstanceID string   `json:"protected_instance_id"`
+	SubJobs    []SubJob `json:"sub_jobs"`
+}
+
+type SubJob struct {
+	// Specifies the task ID.
+	ID string `json:"job_id"`
+	// Task type.
+	Type string `json:"job_type"`
+	// Specifies the task status.
+	Status string `json:"status"`
+	// Specifies the time when the task started.
+	BeginTime string `json:"begin_time"`
+	// Specifies the time when the task finished.
+	EndTime string `json:"end_time"`
+	// Specifies the returned error code when the task execution fails.
+	ErrorCode string `json:"error_code"`
+	// Specifies the cause of the task execution failure.
+	FailReason string `json:"fail_reason"`
+	// Specifies the object of the task.
+	Entities map[string]string `json:"entities"`
 }
 
 type JobResult struct {
@@ -43,12 +65,9 @@ func (r JobResult) ExtractJobStatus() (*JobStatus, error) {
 }
 
 func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) error {
-
-	jobClient := *client
-	jobClient.ResourceBase = jobClient.Endpoint
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		job := new(JobStatus)
-		_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobID), &job, nil)
+		_, err := client.Get(client.ServiceURL("jobs", jobID), &job, nil)
 		if err != nil {
 			return false, err
 		}
@@ -58,7 +77,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 			return true, nil
 		}
 		if job.Status == "FAIL" {
-			err = fmt.Errorf("Job failed with code %s: %s.\n", job.ErrorCode, job.FailReason)
+			err = fmt.Errorf("job failed with code %s: %s", job.ErrorCode, job.FailReason)
 			return false, err
 		}
 
@@ -66,25 +85,22 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	})
 }
 
-func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
-
+func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (interface{}, error) {
 	if label != "protected_instance_id" {
-		return nil, fmt.Errorf("Unsupported label %s in GetJobEntity.", label)
+		return nil, fmt.Errorf("unsupported label %s in GetJobEntity", label)
 	}
 
-	jobClient := *client
-	jobClient.ResourceBase = jobClient.Endpoint
 	job := new(JobStatus)
-	_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobId), &job, nil)
+	_, err := client.Get(client.ServiceURL("jobs", jobID), &job, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	if job.Status == "SUCCESS" {
-		if e := job.Entities.InstanceID; e != "" {
-			return e, nil
+		if instanceID := job.Entities.InstanceID; instanceID != "" {
+			return instanceID, nil
 		}
 	}
 
-	return nil, fmt.Errorf("Unexpected conversion error in GetJobEntity.")
+	return nil, fmt.Errorf("unexpected conversion error in GetJobEntity")
 }
