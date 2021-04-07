@@ -80,9 +80,7 @@ func (r InstancePage) IsEmpty() (bool, error) {
 // ExtractInstances interprets the results of a single page from
 // a List() API call, producing a slice of []Instance structures.
 func ExtractInstances(r pagination.Page) ([]Instance, error) {
-	var s struct {
-		Instances []Instance `json:"protected_instances"`
-	}
-	err := (r.(InstancePage)).ExtractInto(&s)
-	return s.Instances, err
+	var s []Instance
+	err := (r.(InstancePage)).ExtractIntoSlicePtr(&s, "protected_instances")
+	return s, err
 }
