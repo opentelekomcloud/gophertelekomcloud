@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -13,15 +14,15 @@ func TestCloudServerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// Get ECSv1 createOpts
-	createOpts := getCloudServerCreateOpts(t)
+	createOpts := openstack.GetCloudServerCreateOpts(t)
 
 	// Check ECSv1 createOpts
-	dryRunCloudServerConfig(t, client, createOpts)
+	openstack.DryRunCloudServerConfig(t, client, createOpts)
 	t.Logf("CreateOpts are ok for creating a cloudServer")
 
 	// Create ECSv1 instance
-	ecs := createCloudServer(t, client, createOpts)
-	defer deleteCloudServer(t, client, ecs.ID)
+	ecs := openstack.CreateCloudServer(t, client, createOpts)
+	defer openstack.DeleteCloudServer(t, client, ecs.ID)
 
 	tools.PrintResource(t, ecs)
 }
