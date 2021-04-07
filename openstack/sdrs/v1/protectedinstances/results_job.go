@@ -2,6 +2,7 @@ package protectedinstances
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -70,6 +71,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 		if err != nil {
 			return false, err
 		}
+		time.Sleep(5 * time.Second)
 
 		if job.Status == "SUCCESS" {
 			return true, nil
