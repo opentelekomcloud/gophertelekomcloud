@@ -10,13 +10,12 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient) *protectiongroups.Group {
+func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID string) *protectiongroups.Group {
 	t.Logf("Attempting to create SDRS protection group")
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
-	domainID := clients.EnvOS.GetEnv("DOMAIN_ID")
-	if vpcID == "" || domainID == "" {
-		t.Skip("One of OS_VPC_ID or OS_DOMAIN_ID env vars is missing but SDRS group test requires")
+	if vpcID == "" {
+		t.Skip("OS_VPC_ID env var is missing but SDRS group test requires")
 	}
 
 	createOpts := protectiongroups.CreateOpts{

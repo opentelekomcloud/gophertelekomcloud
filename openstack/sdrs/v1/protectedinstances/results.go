@@ -17,7 +17,7 @@ type Instance struct {
 	// Instance Status
 	Status string `json:"status"`
 	// Instance Progress
-	Progress string `json:"progress"`
+	Progress int `json:"progress"`
 	// Source Server
 	SourceServer string `json:"source_server"`
 	// Target Server
@@ -28,6 +28,8 @@ type Instance struct {
 	UpdatedAt string `json:"updated_at"`
 	// Production site AZ of the protection group containing the protected instance.
 	PriorityStation string `json:"priority_station"`
+	// Production site AZ of the protection group containing the protected instance.
+	Flavor string `json:"flavorRef"`
 	// Attachment
 	Attachment []Attachment `json:"attachment"`
 	// Tags list

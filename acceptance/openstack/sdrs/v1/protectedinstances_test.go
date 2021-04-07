@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/domains"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/protectedinstances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -30,11 +31,22 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	client, err := clients.NewSDRSV1()
 	th.AssertNoErr(t, err)
 
-	group := createSDRSGroup(t, client)
+	computeClient, err := clients.NewComputeV1Client()
+	th.AssertNoErr(t, err)
+
+	domainList, err := domains.Get(client).Extract()
+	th.AssertNoErr(t, err)
+	if len(domainList.Domains) == 0 {
+		t.Skipf("you don't have any active-active domain, but SDRS test requires")
+	}
+
+	group := createSDRSGroup(t, client, domainList.Domains[0].Id)
 	defer deleteSDRSGroup(t, client, group.Id)
 
-	ecs := openstack.CreateCloudServer(t, client, openstack.GetCloudServerCreateOpts(t))
-	defer openstack.DeleteCloudServer(t, client, ecs.ID)
+	ecs := openstack.CreateCloudServer(t, computeClient, openstack.GetCloudServerCreateOpts(t))
+	defer func() {
+		openstack.DeleteCloudServer(t, computeClient, ecs.ID)
+	}()
 
 	t.Logf("Attempting to create SDRS protected instance")
 	createName := tools.RandomString("sdrs-instance-", 3)
@@ -58,8 +70,12 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to delete SDRS protected instance: %s", instance.ID)
+		deleteServer := false
+		deleteOpts := protectedinstances.DeleteOpts{
+			DeleteTargetServer: &deleteServer,
+		}
 
-		jobDelete, err := protectedinstances.Delete(client, instance.ID, nil).ExtractJobResponse()
+		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts).ExtractJobResponse()
 		th.AssertNoErr(t, err)
 
 		err = protectedinstances.WaitForJobSuccess(client, 600, jobDelete.JobID)
