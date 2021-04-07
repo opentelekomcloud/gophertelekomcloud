@@ -306,6 +306,17 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewSDRSV1 returns authenticated SDRS v3 client
+func NewSDRSV1() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewSDRSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewWafV1Client returns authenticated WAF v1 client
 func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
