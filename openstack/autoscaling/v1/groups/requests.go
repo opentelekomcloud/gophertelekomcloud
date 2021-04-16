@@ -29,8 +29,8 @@ type CreateOpts struct {
 	HealthPeriodicAuditGrace  int                 `json:"health_periodic_audit_grace_period,omitempty"`
 	InstanceTerminatePolicy   string              `json:"instance_terminate_policy,omitempty"`
 	Notifications             []string            `json:"notifications,omitempty"`
-	DeletePublicIP            *bool               `json:"delete_publicip,omitempty"`
-	DeleteVolume              *bool               `json:"delete_volume,omitempty"`
+	IsDeletePublicip          *bool               `json:"delete_publicip,omitempty"`
+	IsDeleteVolume            *bool               `json:"delete_volume,omitempty"`
 	EnterpriseProjectID       string              `json:"enterprise_project_id,omitempty"`
 	MultiAZPriorityPolicy     string              `json:"multi_az_priority_policy,omitempty"`
 }
@@ -137,8 +137,8 @@ type UpdateOpts struct {
 	HealthPeriodicAuditGrace  int                 `json:"health_periodic_audit_grace_period,omitempty"`
 	InstanceTerminatePolicy   string              `json:"instance_terminate_policy,omitempty"`
 	Notifications             []string            `json:"notifications,omitempty"`
-	DeletePublicIP            *bool               `json:"delete_publicip,omitempty"`
-	DeleteVolume              *bool               `json:"delete_volume,omitempty"`
+	IsDeletePublicip          *bool               `json:"delete_publicip,omitempty"`
+	IsDeleteVolume            *bool               `json:"delete_volume,omitempty"`
 	ConfigurationID           string              `json:"scaling_configuration_id,omitempty"`
 	EnterpriseProjectID       string              `json:"enterprise_project_id,omitempty"`
 	MultiAZPriorityPolicy     string              `json:"multi_az_priority_policy,omitempty"`
