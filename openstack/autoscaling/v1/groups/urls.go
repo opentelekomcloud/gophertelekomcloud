@@ -1,17 +1,13 @@
 package groups
 
 import (
-	"log"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 const resourcePath = "scaling_group"
 
 func createURL(c *golangsdk.ServiceClient) string {
-	ur := c.ServiceURL(resourcePath)
-	log.Printf("[DEBUG] Create URL is: %#v", ur)
-	return ur
+	return c.ServiceURL(resourcePath)
 }
 
 func deleteURL(c *golangsdk.ServiceClient, id string) string {

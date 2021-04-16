@@ -5,35 +5,44 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateGroupResult is a struct retured by CreateGroup request
-type CreateResult struct {
+type commonResult struct {
 	golangsdk.Result
 }
 
-// Extract the create group result as a string type.
-func (r CreateResult) Extract() (string, error) {
-	var a struct {
-		GroupID string `json:"scaling_group_id"`
-	}
-	err := r.Result.ExtractInto(&a)
-	return a.GroupID, err
+// CreateResult is a struct returned by Create request
+type CreateResult struct {
+	commonResult
 }
 
-// DeleteGroupResult contains the body of the deleting group request
+// UpdateResult is a struct from which can get the result of Update request
+type UpdateResult struct {
+	commonResult
+}
+
+// Extract the ID of AS Group result as a string type.
+func (r commonResult) Extract() (string, error) {
+	var s struct {
+		ID string `json:"scaling_group_id"`
+	}
+	err := r.ExtractInto(&s)
+	return s.ID, err
+}
+
+// DeleteResult contains the body of the deleting group request
 type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-// GetGroupResult contains the body of getting detailed group request
+// GetResult contains the body of getting detailed group request
 type GetResult struct {
 	golangsdk.Result
 }
 
 // Extract method will parse the result body into Group struct
-func (r GetResult) Extract() (Group, error) {
-	var g Group
-	err := r.Result.ExtractIntoStructPtr(&g, "scaling_group")
-	return g, err
+func (r GetResult) Extract() (*Group, error) {
+	s := new(Group)
+	err := r.ExtractIntoStructPtr(s, "scaling_group")
+	return s, err
 }
 
 // Group represents the struct of one autoscaling group
@@ -62,11 +71,21 @@ type Group struct {
 	HealthPeriodicAuditGrace  int             `json:"health_periodic_audit_grace_period"`
 	InstanceTerminatePolicy   string          `json:"instance_terminate_policy"`
 	Notifications             []string        `json:"notifications"`
-	DeletePublicip            bool            `json:"delete_publicip"`
+	DeletePublicIP            bool            `json:"delete_publicip"`
+	DeleteVolume              bool            `json:"delete_volume"`
 	CloudLocationID           string          `json:"cloud_location_id"`
+	EnterpriseProjectID       string          `json:"enterprise_project_id"`
+	ActivityType              string          `json:"activity_type"`
+	MultiAZPriorityPolicy     string          `json:"multi_az_priority_policy"`
 }
 
 type Network struct {
+	ID            string        `json:"id"`
+	IPv6Enable    bool          `json:"ipv6_enable"`
+	IPv6Bandwidth IPv6Bandwidth `json:"ipv6_bandwidth"`
+}
+
+type IPv6Bandwidth struct {
 	ID string `json:"id"`
 }
 
@@ -87,31 +106,19 @@ type GroupPage struct {
 
 // IsEmpty returns true if a ListResult contains no Volumes.
 func (r GroupPage) IsEmpty() (bool, error) {
-	groups, err := r.Extract()
+	groups, err := ExtractGroups(r)
 	return len(groups) == 0, err
 }
 
-func (r GroupPage) Extract() ([]Group, error) {
-	var gs []Group
-	err := r.Result.ExtractIntoSlicePtr(&gs, "scaling_groups")
-	return gs, err
+// ExtractGroups returns a slice of AS Groups contained in a
+// single page of results.
+func ExtractGroups(r pagination.Page) ([]Group, error) {
+	var s []Group
+	err := (r.(GroupPage)).ExtractIntoSlicePtr(&s, "scaling_groups")
+	return s, err
 }
 
-// UpdateResult is a struct from which can get the result of udpate method
-type UpdateResult struct {
-	golangsdk.Result
-}
-
-// Extract will deserialize the result to group id with string
-func (r UpdateResult) Extract() (string, error) {
-	var a struct {
-		ID string `json:"scaling_group_id"`
-	}
-	err := r.Result.ExtractInto(&a)
-	return a.ID, err
-}
-
-// this is the action result which is the result of enable or disable operations
+// ActionResult this is the action result which is the result of enable or disable operations
 type ActionResult struct {
 	golangsdk.ErrResult
 }
