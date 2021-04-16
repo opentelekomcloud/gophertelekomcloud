@@ -5,16 +5,27 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateResult is a struct returned by CreateGroup request
-type CreateResult struct {
+type commonResult struct {
 	golangsdk.Result
 }
 
-// Extract the create group result as a string type.
-func (r CreateResult) Extract() (string, error) {
-	var s string
-	err := r.ExtractIntoStructPtr(s, "scaling_group_id")
-	return s, err
+// CreateResult is a struct returned by Create request
+type CreateResult struct {
+	commonResult
+}
+
+// UpdateResult is a struct from which can get the result of Update request
+type UpdateResult struct {
+	commonResult
+}
+
+// Extract the ID of AS Group result as a string type.
+func (r commonResult) Extract() (string, error) {
+	var s struct {
+		ID string `json:"scaling_group_id"`
+	}
+	err := r.ExtractInto(&s)
+	return s.ID, err
 }
 
 // DeleteResult contains the body of the deleting group request
@@ -104,18 +115,6 @@ func (r GroupPage) IsEmpty() (bool, error) {
 func ExtractGroups(r pagination.Page) ([]Group, error) {
 	var s []Group
 	err := (r.(GroupPage)).ExtractIntoSlicePtr(&s, "scaling_groups")
-	return s, err
-}
-
-// UpdateResult is a struct from which can get the result of update method
-type UpdateResult struct {
-	golangsdk.Result
-}
-
-// Extract will deserialize the result to group id with string
-func (r UpdateResult) Extract() (string, error) {
-	var s string
-	err := r.ExtractIntoStructPtr(s, "scaling_group_id")
 	return s, err
 }
 

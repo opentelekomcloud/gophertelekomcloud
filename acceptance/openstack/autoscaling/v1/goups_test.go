@@ -85,9 +85,6 @@ func TestGroupLifecycle(t *testing.T) {
 		Name: asGroupUpdateName,
 		SecurityGroup: []groups.SecurityGroupOpts{
 			{
-				ID: defaultSGID,
-			},
-			{
 				ID: secGroupID,
 			},
 		},
@@ -102,6 +99,6 @@ func TestGroupLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, group)
 	th.AssertEquals(t, asGroupUpdateName, group.Name)
-	th.AssertEquals(t, 2, len(group.SecurityGroups))
+	th.AssertEquals(t, secGroupID, group.SecurityGroups[0].ID)
 	th.AssertEquals(t, false, group.DeletePublicIP)
 }
