@@ -56,8 +56,8 @@ func TestGroupLifecycle(t *testing.T) {
 				ID: defaultSGID,
 			},
 		},
-		VpcID:          vpcID,
-		DeletePublicIP: &deletePublicIP,
+		VpcID:            vpcID,
+		IsDeletePublicip: &deletePublicIP,
 	}
 	t.Logf("Attempting to create AutoScaling Group")
 	groupID, err := groups.Create(client, createOpts).Extract()
@@ -88,7 +88,7 @@ func TestGroupLifecycle(t *testing.T) {
 				ID: secGroupID,
 			},
 		},
-		DeletePublicIP: &deletePublicIP,
+		IsDeletePublicip: &deletePublicIP,
 	}
 
 	groupID, err = groups.Update(client, group.ID, updateOpts).Extract()
