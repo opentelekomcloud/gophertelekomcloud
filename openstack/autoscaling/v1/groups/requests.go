@@ -123,15 +123,15 @@ type UpdateOptsBuilder interface {
 // UpdateOpts is a struct which represents the parameters of update function
 type UpdateOpts struct {
 	Name                      string              `json:"scaling_group_name,omitempty"`
-	DesireInstanceNumber      int                 `json:"desire_instance_number,omitempty"`
-	MinInstanceNumber         int                 `json:"min_instance_number,omitempty"`
-	MaxInstanceNumber         int                 `json:"max_instance_number,omitempty"`
+	DesireInstanceNumber      int                 `json:"desire_instance_number"`
+	MinInstanceNumber         int                 `json:"min_instance_number"`
+	MaxInstanceNumber         int                 `json:"max_instance_number"`
 	CoolDownTime              int                 `json:"cool_down_time,omitempty"`
 	LBListenerID              string              `json:"lb_listener_id,omitempty"`
 	LBaaSListeners            []LBaaSListenerOpts `json:"lbaas_listeners,omitempty"`
 	AvailableZones            []string            `json:"available_zones,omitempty"`
 	Networks                  []NetworkOpts       `json:"networks,omitempty"`
-	SecurityGroup             []SecurityGroupOpts `json:"security_groups,omitempty"`
+	SecurityGroup             []SecurityGroupOpts `json:"security_groups"`
 	HealthPeriodicAuditMethod string              `json:"health_periodic_audit_method,omitempty"`
 	HealthPeriodicAuditTime   int                 `json:"health_periodic_audit_time,omitempty"`
 	HealthPeriodicAuditGrace  int                 `json:"health_periodic_audit_grace_period,omitempty"`
