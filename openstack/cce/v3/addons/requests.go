@@ -1,6 +1,8 @@
 package addons
 
 import (
+	"fmt"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
@@ -77,8 +79,8 @@ func Get(c *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
 	return
 }
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
+// UpdateOptsBuilder allows extensions to add additional parameters to the
+// Update request.
 type UpdateOptsBuilder interface {
 	ToAddonUpdateMap() (map[string]interface{}, error)
 }
@@ -92,7 +94,7 @@ type UpdateMetadata struct {
 }
 
 type UpdateAnnotations struct {
-	AddonUpdateType string `json:"addon.update/type" required:"true"`
+	AddonUpdateType string `json:"addon.upgrade/type" required:"true"`
 }
 
 type UpdateOpts struct {
@@ -161,4 +163,32 @@ func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBu
 		OkCodes: []int{200},
 	})
 	return
+}
+
+// WaitForAddonRunning - wait until addon status is `running`
+func WaitForAddonRunning(client *golangsdk.ServiceClient, id, clusterID string, timeoutSeconds int) error {
+	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
+		addon, err := Get(client, id, clusterID).Extract()
+		if err != nil {
+			return false, fmt.Errorf("error retriving addon status: %w", err)
+		}
+		if addon.Status.Status == "running" {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+// WaitForAddonDeleted - wait until addon is deleted
+func WaitForAddonDeleted(client *golangsdk.ServiceClient, id, clusterID string, timeoutSeconds int) error {
+	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
+		_, err := Get(client, id, clusterID).Extract()
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, fmt.Errorf("error retriving addon status: %w", err)
+		}
+		return false, nil
+	})
 }

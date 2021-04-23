@@ -31,17 +31,9 @@ func (a *testAddons) SetupSuite() {
 	t := a.T()
 	a.vpcID = clients.EnvOS.GetEnv("VPC_ID")
 	a.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
+	a.clusterID = clients.EnvOS.GetEnv("CLUSTER_ID")
 	if a.vpcID == "" || a.subnetID == "" {
-		t.Skip("OS_VPC_ID and OS_NETWORK_ID are required for this test")
-	}
-	a.clusterID = createCluster(t, a.vpcID, a.subnetID)
-}
-
-func (a *testAddons) TearDownSuite() {
-	t := a.T()
-	if a.clusterID != "" {
-		deleteCluster(t, a.clusterID)
-		a.clusterID = ""
+		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
 	}
 }
 
@@ -51,7 +43,24 @@ func (a *testAddons) TestAddonsLifecycle() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	addon, err := addons.Create(client, addons.CreateOpts{
+	custom := map[string]interface{}{
+		"coresTotal":                     32000,
+		"maxEmptyBulkDeleteFlag":         10,
+		"maxNodesTotal":                  1000,
+		"memoryTotal":                    128000,
+		"scaleDownDelayAfterAdd":         10,
+		"scaleDownDelayAfterDelete":      10,
+		"scaleDownDelayAfterFailure":     3,
+		"scaleDownEnabled":               true,
+		"scaleDownUnneededTime":          10,
+		"scaleDownUtilizationThreshold":  0.25,
+		"scaleUpCpuUtilizationThreshold": 0.8,
+		"scaleUpMemUtilizationThreshold": 0.8,
+		"scaleUpUnscheduledPodEnabled":   true,
+		"scaleUpUtilizationEnabled":      true,
+		"unremovableNodeRecheckTimeout":  5,
+	}
+	cOpts := addons.CreateOpts{
 		Kind:       "Addon",
 		ApiVersion: "v3",
 		Metadata: addons.CreateMetadata{
@@ -60,19 +69,24 @@ func (a *testAddons) TestAddonsLifecycle() {
 			},
 		},
 		Spec: addons.RequestSpec{
-			Version:           "1.0.3",
+			Version:           "1.17.2",
 			ClusterID:         a.clusterID,
-			AddonTemplateName: "metrics-server",
+			AddonTemplateName: "autoscaler",
 			Values: addons.Values{
 				Basic: map[string]interface{}{
+					"cceEndpoint":     "https://cce.eu-de.otc.t-systems.com",
+					"ecsEndpoint":     "https://ecs.eu-de.otc.t-systems.com",
 					"euleros_version": "2.5",
-					"rbac_enabled":    true,
+					"region":          "eu-de",
 					"swr_addr":        "100.125.7.25:20202",
 					"swr_user":        "hwofficial",
 				},
+				Advanced: custom,
 			},
 		},
-	}, a.clusterID).Extract()
+	}
+
+	addon, err := addons.Create(client, cOpts, a.clusterID).Extract()
 	th.AssertNoErr(t, err)
 
 	addonID := addon.Metadata.Id
@@ -80,12 +94,47 @@ func (a *testAddons) TestAddonsLifecycle() {
 	defer func() {
 		err := addons.Delete(client, addonID, a.clusterID).ExtractErr()
 		th.AssertNoErr(t, err)
+
+		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, a.clusterID, 600))
 	}()
 
-	getAddon, err := addons.Get(client, addon.Metadata.Id, a.clusterID).Extract()
+	getAddon, err := addons.Get(client, addonID, a.clusterID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, getAddon.Spec.AddonTemplateName, "metrics-server")
-	th.AssertEquals(t, getAddon.Spec.Version, "1.0.3")
+	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
+	th.AssertEquals(t, "1.17.2", getAddon.Spec.Version)
+	th.AssertEquals(t, true, getAddon.Spec.Values.Advanced["scaleDownEnabled"])
+
+	waitErr := addons.WaitForAddonRunning(client, addonID, a.clusterID, 600)
+	th.AssertNoErr(t, waitErr)
+
+	uOpts := addons.UpdateOpts{
+		Kind:       "Addon",
+		ApiVersion: "v3",
+		Metadata: addons.UpdateMetadata{
+			Annotations: addons.UpdateAnnotations{
+				AddonUpdateType: "upgrade",
+			},
+		},
+		Spec: addons.RequestSpec{
+			Version:           cOpts.Spec.Version,
+			ClusterID:         cOpts.Spec.ClusterID,
+			AddonTemplateName: cOpts.Spec.AddonTemplateName,
+			Values: addons.Values{
+				Basic:    cOpts.Spec.Values.Basic,
+				Advanced: cOpts.Spec.Values.Advanced,
+			},
+		},
+	}
+	uOpts.Spec.Values.Advanced["scaleDownEnabled"] = false
+	uOpts.Spec.Values.Advanced["scaleDownDelayAfterAdd"] = 11
+
+	_, err = addons.Update(client, addonID, a.clusterID, uOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	getAddon2, err := addons.Get(client, addonID, a.clusterID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, false, getAddon2.Spec.Values.Advanced["scaleDownEnabled"])
+	th.AssertEquals(t, 11.0, getAddon2.Spec.Values.Advanced["scaleDownDelayAfterAdd"])
 }
 
 func (a *testAddons) TestListAddonTemplates() {
