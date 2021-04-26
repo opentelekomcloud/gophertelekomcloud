@@ -1,7 +1,7 @@
 /*
 Package Subnets enables management and retrieval of Subnets
 
-Example to List Vpcs
+Example to List VPCs
 
 	listOpts := subnets.ListOpts{}
 	allSubnets, err := subnets.List(subnetClient, listOpts)
@@ -19,10 +19,10 @@ Example to Create a Vpc
 		Name:          "test_subnets",
 		CIDR:          "192.168.0.0/16"
 		GatewayIP:	   "192.168.0.1"
-		PRIMARY_DNS:   "8.8.8.8"
-		SECONDARY_DNS: "8.8.4.4"
-		AvailabilityZone:"eu-de-02"
-		VPC_ID:"3b9740a0-b44d-48f0-84ee-42eb166e54f7"
+		PrimaryDns:   "8.8.8.8"
+		SecondaryDns: "8.8.4.4"
+		AvailabilityZone: "eu-de-02"
+		VpcID: "3b9740a0-b44d-48f0-84ee-42eb166e54f7"
 
 	}
 	vpc, err := subnets.Create(subnetClient, createOpts).Extract()
@@ -36,7 +36,7 @@ Example to Update a Vpc
 	subnetID := "4e8e5957-649f-477b-9e5b-f1f75b21c03c"
 
 	updateOpts := subnets.UpdateOpts{
-		Name:          "testsubnet",
+		Name: "testsubnet",
 	}
 
 	subnet, err := subnets.Update(subnetClient, subnetID, updateOpts).Extract()
@@ -54,4 +54,5 @@ Example to Delete a Vpc
 		panic(err)
 	}
 */
+
 package subnets

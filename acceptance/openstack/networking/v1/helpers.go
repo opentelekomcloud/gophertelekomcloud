@@ -23,14 +23,15 @@ func CreateNetwork(t *testing.T, prefix, az string) *subnets.Subnet {
 		CIDR: "192.168.0.0/16",
 	}).Extract()
 	th.AssertNoErr(t, err)
+	enableDHCP := true
 	subnet, err := subnets.Create(client, subnets.CreateOpts{
 		Name:             tools.RandomString(prefix, 4),
 		CIDR:             "192.168.0.0/24",
 		DnsList:          []string{"1.1.1.1", "8.8.8.8"},
 		GatewayIP:        "192.168.0.1",
-		EnableDHCP:       true,
+		EnableDHCP:       &enableDHCP,
 		AvailabilityZone: az,
-		VPC_ID:           vpc.ID,
+		VpcID:            vpc.ID,
 	}).Extract()
 	th.AssertNoErr(t, err)
 
@@ -45,12 +46,12 @@ func DeleteNetwork(t *testing.T, subnet *subnets.Subnet) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	err = subnets.Delete(client, subnet.VPC_ID, subnet.ID).ExtractErr()
+	err = subnets.Delete(client, subnet.VpcID, subnet.ID).ExtractErr()
 	th.AssertNoErr(t, err)
 	err = waitForSubnetToBeDeleted(client, subnet.ID, 300)
 	th.AssertNoErr(t, err)
 
-	err = vpcs.Delete(client, subnet.VPC_ID).ExtractErr()
+	err = vpcs.Delete(client, subnet.VpcID).ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -127,12 +128,13 @@ func waitForEipToDelete(client *golangsdk.ServiceClient, eipID string, secs int)
 }
 
 func createSubnet(t *testing.T, client *golangsdk.ServiceClient, vpcID string) *subnets.Subnet {
+	enableDHCP := true
 	createSubnetOpts := subnets.CreateOpts{
 		Name:       tools.RandomString("acc-subnet-", 3),
 		CIDR:       "192.168.20.0/24",
 		GatewayIP:  "192.168.20.1",
-		EnableDHCP: true,
-		VPC_ID:     vpcID,
+		EnableDHCP: &enableDHCP,
+		VpcID:      vpcID,
 	}
 	t.Logf("Attempting to create subnet: %s", createSubnetOpts.Name)
 

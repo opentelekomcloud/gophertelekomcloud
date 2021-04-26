@@ -27,7 +27,7 @@ func TestSubnetsLifecycle(t *testing.T) {
 	defer deleteVpc(t, client, vpc.ID)
 
 	subnet := createSubnet(t, client, vpc.ID)
-	defer deleteSubnet(t, client, subnet.VPC_ID, subnet.ID)
+	defer deleteSubnet(t, client, subnet.VpcID, subnet.ID)
 
 	tools.PrintResource(t, subnet)
 
@@ -36,12 +36,11 @@ func TestSubnetsLifecycle(t *testing.T) {
 		Name: tools.RandomString("acc-subnet-", 3),
 	}
 	t.Logf("Attempting to update name of subnet to %s", updateOpts.Name)
-	_, err = subnets.Update(client, subnet.VPC_ID, subnet.ID, updateOpts).Extract()
+	_, err = subnets.Update(client, subnet.VpcID, subnet.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	// Query a subnet
 	newSubnet, err := subnets.Get(client, subnet.ID).Extract()
 	th.AssertNoErr(t, err)
-
-	tools.PrintResource(t, newSubnet)
+	th.AssertEquals(t, updateOpts.Name, newSubnet.Name)
 }

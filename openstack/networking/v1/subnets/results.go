@@ -13,6 +13,9 @@ type Subnet struct {
 	// unique.
 	Name string `json:"name"`
 
+	// Provides supplementary information about the subnet.
+	Description string `json:"description"`
+
 	// Specifies the network segment on which the subnet resides.
 	CIDR string `json:"cidr"`
 
@@ -29,19 +32,22 @@ type Subnet struct {
 	EnableDHCP bool `json:"dhcp_enable"`
 
 	// Specifies the IP address of DNS server 1 on the subnet.
-	PRIMARY_DNS string `json:"primary_dns"`
+	PrimaryDns string `json:"primary_dns"`
 
 	// Specifies the IP address of DNS server 2 on the subnet.
-	SECONDARY_DNS string `json:"secondary_dns"`
+	SecondaryDns string `json:"secondary_dns"`
 
 	// Identifies the availability zone (AZ) to which the subnet belongs.
 	AvailabilityZone string `json:"availability_zone"`
 
 	// Specifies the ID of the VPC to which the subnet belongs.
-	VPC_ID string `json:"vpc_id"`
+	VpcID string `json:"vpc_id"`
 
 	// Specifies the subnet ID.
-	SubnetId string `json:"neutron_subnet_id"`
+	SubnetID string `json:"neutron_subnet_id"`
+
+	// Specifies the network ID.
+	NetworkID string `json:"neutron_network_id"`
 
 	// Specifies the extra dhcp opts.
 	ExtraDhcpOpts []ExtraDhcp `json:"extra_dhcp_opts"`
@@ -82,11 +88,9 @@ func (r SubnetPage) IsEmpty() (bool, error) {
 // and extracts the elements into a slice of Subnet structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractSubnets(r pagination.Page) ([]Subnet, error) {
-	var s struct {
-		Subnets []Subnet `json:"subnets"`
-	}
-	err := (r.(SubnetPage)).ExtractInto(&s)
-	return s.Subnets, err
+	var s []Subnet
+	err := (r.(SubnetPage)).ExtractIntoSlicePtr(&s, "subnets")
+	return s, err
 }
 
 type commonResult struct {
@@ -95,11 +99,9 @@ type commonResult struct {
 
 // Extract is a function that accepts a result and extracts a Subnet.
 func (r commonResult) Extract() (*Subnet, error) {
-	var s struct {
-		Subnet *Subnet `json:"subnet"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Subnet, err
+	s := new(Subnet)
+	err := r.ExtractIntoStructPtr(s, "subnet")
+	return s, err
 }
 
 // CreateResult represents the result of a create operation. Call its Extract

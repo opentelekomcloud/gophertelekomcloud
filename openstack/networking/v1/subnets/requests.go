@@ -12,7 +12,6 @@ import (
 // the floating IP attributes you want to see returned. SortKey allows you to
 // sort by a particular network attribute. SortDir sets the direction, and is
 // either `asc' or `desc'. Marker and Limit are used for pagination.
-
 type ListOpts struct {
 	// ID is the unique identifier for the subnet.
 	ID string `json:"id"`
@@ -31,16 +30,16 @@ type ListOpts struct {
 	GatewayIP string `json:"gateway_ip"`
 
 	// Specifies the IP address of DNS server 1 on the subnet.
-	PRIMARY_DNS string `json:"primary_dns"`
+	PrimaryDns string `json:"primary_dns"`
 
 	// Specifies the IP address of DNS server 2 on the subnet.
-	SECONDARY_DNS string `json:"secondary_dns"`
+	SecondaryDns string `json:"secondary_dns"`
 
 	// Identifies the availability zone (AZ) to which the subnet belongs.
 	AvailabilityZone string `json:"availability_zone"`
 
 	// Specifies the ID of the VPC to which the subnet belongs.
-	VPC_ID string `json:"vpc_id"`
+	VpcID string `json:"vpc_id"`
 }
 
 // List returns collection of
@@ -49,10 +48,9 @@ type ListOpts struct {
 //
 // Default policy settings return only those subnets that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
-
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Subnet, error) {
-	u := rootURL(c)
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
+	url := rootURL(c)
+	pages, err := pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
 		return SubnetPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 	if err != nil {
@@ -68,44 +66,43 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Subnet, error) {
 }
 
 func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
-
 	var refinedSubnets []Subnet
 	var matched bool
-	m := map[string]interface{}{}
+	matchOpts := map[string]interface{}{}
 
 	if opts.ID != "" {
-		m["ID"] = opts.ID
+		matchOpts["ID"] = opts.ID
 	}
 	if opts.Name != "" {
-		m["Name"] = opts.Name
+		matchOpts["Name"] = opts.Name
 	}
 	if opts.CIDR != "" {
-		m["CIDR"] = opts.CIDR
+		matchOpts["CIDR"] = opts.CIDR
 	}
 	if opts.Status != "" {
-		m["Status"] = opts.Status
+		matchOpts["Status"] = opts.Status
 	}
 	if opts.GatewayIP != "" {
-		m["GatewayIP"] = opts.GatewayIP
+		matchOpts["GatewayIP"] = opts.GatewayIP
 	}
-	if opts.PRIMARY_DNS != "" {
-		m["PRIMARY_DNS"] = opts.PRIMARY_DNS
+	if opts.PrimaryDns != "" {
+		matchOpts["PrimaryDns"] = opts.PrimaryDns
 	}
-	if opts.SECONDARY_DNS != "" {
-		m["SECONDARY_DNS"] = opts.SECONDARY_DNS
+	if opts.SecondaryDns != "" {
+		matchOpts["SecondaryDns"] = opts.SecondaryDns
 	}
 	if opts.AvailabilityZone != "" {
-		m["AvailabilityZone"] = opts.AvailabilityZone
+		matchOpts["AvailabilityZone"] = opts.AvailabilityZone
 	}
-	if opts.VPC_ID != "" {
-		m["VPC_ID"] = opts.VPC_ID
+	if opts.VpcID != "" {
+		matchOpts["VpcID"] = opts.VpcID
 	}
 
-	if len(m) > 0 && len(subnets) > 0 {
+	if len(matchOpts) > 0 && len(subnets) > 0 {
 		for _, subnet := range subnets {
 			matched = true
 
-			for key, value := range m {
+			for key, value := range matchOpts {
 				if sVal := getStructField(&subnet, key); !(sVal == value) {
 					matched = false
 				}
@@ -115,7 +112,6 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 				refinedSubnets = append(refinedSubnets, subnet)
 			}
 		}
-
 	} else {
 		refinedSubnets = subnets
 	}
@@ -139,14 +135,15 @@ type CreateOptsBuilder interface {
 // no required values.
 type CreateOpts struct {
 	Name             string         `json:"name" required:"true"`
+	Description      string         `json:"description,omitempty"`
 	CIDR             string         `json:"cidr" required:"true"`
 	DnsList          []string       `json:"dnsList,omitempty"`
 	GatewayIP        string         `json:"gateway_ip" required:"true"`
-	EnableDHCP       bool           `json:"dhcp_enable" no_default:"y"`
-	PRIMARY_DNS      string         `json:"primary_dns,omitempty"`
-	SECONDARY_DNS    string         `json:"secondary_dns,omitempty"`
+	EnableDHCP       *bool          `json:"dhcp_enable,omitempty"`
+	PrimaryDns       string         `json:"primary_dns,omitempty"`
+	SecondaryDns     string         `json:"secondary_dns,omitempty"`
 	AvailabilityZone string         `json:"availability_zone,omitempty"`
-	VPC_ID           string         `json:"vpc_id" required:"true"`
+	VpcID            string         `json:"vpc_id" required:"true"`
 	ExtraDhcpOpts    []ExtraDhcpOpt `json:"extra_dhcp_opts,omitempty"`
 }
 
@@ -163,37 +160,37 @@ func (opts CreateOpts) ToSubnetCreateMap() (map[string]interface{}, error) {
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical subnets. When it is created, the subnets does not have an internal
 // interface - it is not associated to any subnet.
-//
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToSubnetCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, reqOpt)
+	_, r.Err = client.Post(rootURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
 
 // Get retrieves a particular subnets based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, nil)
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
+	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
 	return
 }
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	// ToSubnetUpdateMap() (map[string]interface{}, error)
 	ToSubnetUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a subnets.
 type UpdateOpts struct {
 	Name          string         `json:"name,omitempty"`
-	EnableDHCP    bool           `json:"dhcp_enable"`
-	PRIMARY_DNS   string         `json:"primary_dns,omitempty"`
-	SECONDARY_DNS string         `json:"secondary_dns,omitempty"`
+	Description   string         `json:"description,omitempty"`
+	EnableDHCP    *bool          `json:"dhcp_enable,omitempty"`
+	PrimaryDns    string         `json:"primary_dns,omitempty"`
+	SecondaryDns  string         `json:"secondary_dns,omitempty"`
 	DnsList       []string       `json:"dnsList,omitempty"`
 	ExtraDhcpOpts []ExtraDhcpOpt `json:"extra_dhcp_opts,omitempty"`
 }
@@ -205,20 +202,20 @@ func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]interface{}, error) {
 
 // Update allows subnets to be updated. You can update the name, administrative
 // state, and the external gateway.
-func Update(c *golangsdk.ServiceClient, vpcid string, id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, vpcID string, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToSubnetUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(updateURL(c, vpcid, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(updateURL(client, vpcID, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // Delete will permanently delete a particular subnets based on its unique ID.
-func Delete(c *golangsdk.ServiceClient, vpcid string, id string) (r DeleteResult) {
-	_, r.Err = c.Delete(updateURL(c, vpcid, id), nil)
+func Delete(client *golangsdk.ServiceClient, vpcID string, id string) (r DeleteResult) {
+	_, r.Err = client.Delete(updateURL(client, vpcID, id), nil)
 	return
 }
