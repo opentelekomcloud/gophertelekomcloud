@@ -145,7 +145,7 @@ func createSubnet(t *testing.T, client *golangsdk.ServiceClient, vpcID string) *
 	t.Logf("Waitting for subnet %s to be active", subnet.ID)
 	err = waitForSubnetToBeActive(client, subnet.ID, 600)
 	th.AssertNoErr(t, err)
-	t.Logf("Created subnet: %v", subnet)
+	t.Logf("Created subnet: %v", subnet.ID)
 
 	return subnet
 }
