@@ -18,6 +18,9 @@ import (
 const (
 	defaultEnvVarKey = "envvars"
 	defaultPrefix    = "OS_"
+
+	DefaultProfileName = "otc"
+	regionPlaceHolder  = "{region_name}"
 )
 
 var (
@@ -27,6 +30,19 @@ var (
 	configFiles = fileList("clouds")
 	secureFiles = fileList("secure")
 	vendorFiles = fileList("clouds-public")
+
+	OTCVendorConfig = &VendorConfig{
+		Clouds: map[string]Cloud{
+			DefaultProfileName: {
+				AuthInfo: AuthInfo{
+					AuthURL: fmt.Sprintf("https://iam.%s.otc.t-systems.com/v3", regionPlaceHolder),
+				},
+				Regions:            []string{"eu-de", "eu-nl"},
+				EndpointType:       "public",
+				IdentityAPIVersion: "3",
+			},
+		},
+	}
 )
 
 func configSearchPath() []string {
@@ -58,11 +74,11 @@ func fileList(name string) []string {
 	return files
 }
 
-// This is helper for env-prefixed loading
+// Env is a helper for env-prefixed loading
 type Env interface {
 	// GetEnv finds first non-empty <prefixed> env variable to be used
 	GetEnv(keys ...string) string
-	// GetPrefix returns used prefix
+	// Prefix returns used prefix
 	Prefix() string
 	// Cloud returns full cloud configuration
 	Cloud(name ...string) (*Cloud, error)
@@ -110,7 +126,7 @@ func (e *env) cloudFromEnv() *Cloud {
 	if access == "" {
 		access = e.GetEnv("ACCESS_KEY", "ACCESS_KEY_ID", "AK")
 	}
-	secret := aws.GetEnv("ACCESS_KEY_SECRET")
+	secret := aws.GetEnv("ACCESS_SECRET_KEY")
 	if secret == "" {
 		secret = e.GetEnv("SECRET_KEY", "ACCESS_KEY_SECRET", "SK")
 	}
@@ -265,12 +281,12 @@ type AuthInfo struct {
 
 // Cloud represents an entry in a clouds.yaml/public-clouds.yaml/secure.yaml file.
 type Cloud struct {
-	Cloud      string        `yaml:"cloud,omitempty" json:"cloud,omitempty"`
-	Profile    string        `yaml:"profile,omitempty" json:"profile,omitempty"`
-	AuthType   AuthType      `yaml:"auth_type,omitempty" json:"auth_type,omitempty"`
-	AuthInfo   AuthInfo      `yaml:"auth,omitempty" json:"auth,omitempty"`
-	RegionName string        `yaml:"region_name,omitempty" json:"region_name,omitempty"`
-	Regions    []interface{} `yaml:"regions,omitempty" json:"regions,omitempty"`
+	Cloud      string   `yaml:"cloud,omitempty" json:"cloud,omitempty"`
+	Profile    string   `yaml:"profile,omitempty" json:"profile,omitempty"`
+	AuthType   AuthType `yaml:"auth_type,omitempty" json:"auth_type,omitempty"`
+	AuthInfo   AuthInfo `yaml:"auth,omitempty" json:"auth,omitempty"`
+	RegionName string   `yaml:"region_name,omitempty" json:"region_name,omitempty"`
+	Regions    []string `yaml:"regions,omitempty" json:"regions,omitempty"`
 
 	// EndpointType and Interface both specify whether to use the public, internal,
 	// or admin interface of a service. They should be considered synonymous, but
@@ -307,6 +323,11 @@ func (c *Cloud) computeRegion() {
 		name = c.AuthInfo.DelegatedProject
 	}
 	c.RegionName = strings.Split(name, "_")[0]
+
+	// Auth URL depends on provided region
+	if c.RegionName != "" && strings.Contains(c.AuthInfo.AuthURL, regionPlaceHolder) {
+		c.AuthInfo.AuthURL = strings.ReplaceAll(c.AuthInfo.AuthURL, regionPlaceHolder, c.RegionName)
+	}
 }
 
 func loadFile(path string) ([]byte, error) {
@@ -554,10 +575,13 @@ func (e *env) loadOpenstackConfig() (*Config, error) {
 	cloudConfig.DefaultCloud = cloudName
 
 	// merge with clouds-public.yaml
+	var err error
 	if vendorPath != "" {
 		cloudConfig = mergeWithVendors(cloudConfig, vendorPath)
+	} else {
+		cloudConfig, err = mergeWithVendor(cloudConfig, OTCVendorConfig)
 	}
-	return cloudConfig, nil
+	return cloudConfig, err
 }
 
 func getAuthType(val AuthType) AuthType {
