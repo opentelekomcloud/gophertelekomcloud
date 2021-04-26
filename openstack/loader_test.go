@@ -141,3 +141,31 @@ func TestCloudName(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, expectedName, cloud.Cloud)
 }
+
+func TestDefaultVendor(t *testing.T) {
+	cloudName := tools.RandomString("cloud-", 3)
+	_ = os.Setenv("OS_CLOUD", cloudName)
+
+	configPath := "/tmp/gophertest/config"
+	_ = os.MkdirAll(configPath, os.ModePerm)
+	defer os.RemoveAll(configPath)
+
+	clientConfigPath := filepath.Join(configPath, "/clouds.yaml")
+	_ = os.Setenv("OS_CLIENT_CONFIG_FILE", clientConfigPath)
+
+	configTemplate := fmt.Sprintf(`
+clouds:
+  %s:
+    profile: otc
+    auth:
+      project_name: eu-nl_test
+`, cloudName)
+
+	th.AssertNoErr(t, ioutil.WriteFile(clientConfigPath, []byte(configTemplate), 0644))
+
+	cld, err := NewEnv("OS_").Cloud()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, "https://iam.eu-nl.otc.t-systems.com/v3", cld.AuthInfo.AuthURL)
+	th.AssertEquals(t, "3", cld.IdentityAPIVersion)
+}
