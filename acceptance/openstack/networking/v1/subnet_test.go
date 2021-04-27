@@ -26,6 +26,7 @@ func TestSubnetList(t *testing.T) {
 	filteredSubnets, err := subnets.List(client, listOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(filteredSubnets))
+	th.AssertEquals(t, vpc.ID, filteredSubnets[0].VpcID)
 }
 
 func TestSubnetsLifecycle(t *testing.T) {
