@@ -39,7 +39,7 @@ func TestListSubnet(t *testing.T) {
 			  "114.114.115.115"
 		    ],
             "neutron_subnet_id": "3d543273-31c3-41f8-b887-ed8c2c837578",
-			"neutron_network_id": "0345a6ef-9404-487b-87c8-212557a1160d"
+            "neutron_network_id": "0345a6ef-9404-487b-87c8-212557a1160d"
         },
         {
             "id": "134ca339-24dc-44f5-ae6a-cf0404216ed2",
