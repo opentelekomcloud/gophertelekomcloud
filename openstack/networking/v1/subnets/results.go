@@ -20,7 +20,7 @@ type Subnet struct {
 	CIDR string `json:"cidr"`
 
 	// Specifies the IP address list of DNS servers on the subnet.
-	DnsList []string `json:"dnsList"`
+	DNSList []string `json:"dnsList"`
 
 	// Status indicates whether or not a subnet is currently operational.
 	Status string `json:"status"`
@@ -32,10 +32,10 @@ type Subnet struct {
 	EnableDHCP bool `json:"dhcp_enable"`
 
 	// Specifies the IP address of DNS server 1 on the subnet.
-	PrimaryDns string `json:"primary_dns"`
+	PrimaryDNS string `json:"primary_dns"`
 
 	// Specifies the IP address of DNS server 2 on the subnet.
-	SecondaryDns string `json:"secondary_dns"`
+	SecondaryDNS string `json:"secondary_dns"`
 
 	// Identifies the availability zone (AZ) to which the subnet belongs.
 	AvailabilityZone string `json:"availability_zone"`
@@ -50,10 +50,10 @@ type Subnet struct {
 	NetworkID string `json:"neutron_network_id"`
 
 	// Specifies the extra dhcp opts.
-	ExtraDhcpOpts []ExtraDhcp `json:"extra_dhcp_opts"`
+	ExtraDHCPOpts []ExtraDHCP `json:"extra_dhcp_opts"`
 }
 
-type ExtraDhcp struct {
+type ExtraDHCP struct {
 	OptName  string `json:"opt_name"`
 	OptValue string `json:"opt_value"`
 }

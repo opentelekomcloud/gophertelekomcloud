@@ -16,14 +16,13 @@ Example to List VPCs
 Example to Create a Vpc
 
 	createOpts := subnets.CreateOpts{
-		Name:          "test_subnets",
-		CIDR:          "192.168.0.0/16"
-		GatewayIP:	   "192.168.0.1"
-		PrimaryDns:   "8.8.8.8"
-		SecondaryDns: "8.8.4.4"
+		Name:             "test_subnets",
+		CIDR:             "192.168.0.0/16"
+		GatewayIP:	      "192.168.0.1"
+		PrimaryDNS:       "8.8.8.8"
+		SecondaryDNS:     "8.8.4.4"
 		AvailabilityZone: "eu-de-02"
-		VpcID: "3b9740a0-b44d-48f0-84ee-42eb166e54f7"
-
+		VpcID:            "3b9740a0-b44d-48f0-84ee-42eb166e54f7"
 	}
 	vpc, err := subnets.Create(subnetClient, createOpts).Extract()
 

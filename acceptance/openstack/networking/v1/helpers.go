@@ -27,7 +27,7 @@ func CreateNetwork(t *testing.T, prefix, az string) *subnets.Subnet {
 	subnet, err := subnets.Create(client, subnets.CreateOpts{
 		Name:             tools.RandomString(prefix, 4),
 		CIDR:             "192.168.0.0/24",
-		DnsList:          []string{"1.1.1.1", "8.8.8.8"},
+		DNSList:          []string{"1.1.1.1", "8.8.8.8"},
 		GatewayIP:        "192.168.0.1",
 		EnableDHCP:       &enableDHCP,
 		AvailabilityZone: az,
