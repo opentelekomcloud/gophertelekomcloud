@@ -4,17 +4,17 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	resourcePath = "subnets"
-	rootpath     = "vpcs"
+	rootPath     = "vpcs"
 )
 
-func rootURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(c.ProjectID, resourcePath)
+func rootURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(client.ProjectID, resourcePath)
 }
 
-func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(c.ProjectID, resourcePath, id)
+func resourceURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(client.ProjectID, resourcePath, id)
 }
 
-func updateURL(c *golangsdk.ServiceClient, vpcid, id string) string {
-	return c.ServiceURL(c.ProjectID, rootpath, vpcid, resourcePath, id)
+func updateURL(client *golangsdk.ServiceClient, vpcID, id string) string {
+	return client.ServiceURL(client.ProjectID, rootPath, vpcID, resourcePath, id)
 }
