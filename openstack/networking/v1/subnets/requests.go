@@ -1,6 +1,7 @@
 package subnets
 
 import (
+	"encoding/json"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -14,32 +15,32 @@ import (
 // either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
 	// ID is the unique identifier for the subnet.
-	ID string `json:"id"`
+	ID string `json:"id,omitempty"`
 
 	// Name is the human readable name for the subnet. It does not have to be
 	// unique.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// Specifies the network segment on which the subnet resides.
-	CIDR string `json:"cidr"`
+	CIDR string `json:"cidr,omitempty"`
 
 	// Status indicates whether or not a subnet is currently operational.
-	Status string `json:"status"`
+	Status string `json:"status,omitempty"`
 
 	// Specifies the gateway of the subnet.
-	GatewayIP string `json:"gateway_ip"`
+	GatewayIP string `json:"gateway_ip,omitempty"`
 
 	// Specifies the IP address of DNS server 1 on the subnet.
-	PrimaryDNS string `json:"primary_dns"`
+	PrimaryDNS string `json:"primary_dns,omitempty"`
 
 	// Specifies the IP address of DNS server 2 on the subnet.
-	SecondaryDNS string `json:"secondary_dns"`
+	SecondaryDNS string `json:"secondary_dns,omitempty"`
 
 	// Identifies the availability zone (AZ) to which the subnet belongs.
-	AvailabilityZone string `json:"availability_zone"`
+	AvailabilityZone string `json:"availability_zone,omitempty"`
 
 	// Specifies the ID of the VPC to which the subnet belongs.
-	VpcID string `json:"vpc_id"`
+	VpcID string `json:"vpc_id,omitempty"`
 }
 
 // List returns collection of
@@ -66,57 +67,36 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Subnet, error) {
 }
 
 func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
+	matchOptsByte, err := json.Marshal(opts)
+	if err != nil {
+		return nil, err
+	}
+	var matchOpts map[string]interface{}
+	err = json.Unmarshal(matchOptsByte, &matchOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(matchOpts) == 0 {
+		return subnets, nil
+	}
+
 	var refinedSubnets []Subnet
-	var matched bool
-	matchOpts := map[string]interface{}{}
-
-	if opts.ID != "" {
-		matchOpts["ID"] = opts.ID
-	}
-	if opts.Name != "" {
-		matchOpts["Name"] = opts.Name
-	}
-	if opts.CIDR != "" {
-		matchOpts["CIDR"] = opts.CIDR
-	}
-	if opts.Status != "" {
-		matchOpts["Status"] = opts.Status
-	}
-	if opts.GatewayIP != "" {
-		matchOpts["GatewayIP"] = opts.GatewayIP
-	}
-	if opts.PrimaryDNS != "" {
-		matchOpts["PrimaryDNS"] = opts.PrimaryDNS
-	}
-	if opts.SecondaryDNS != "" {
-		matchOpts["SecondaryDNS"] = opts.SecondaryDNS
-	}
-	if opts.AvailabilityZone != "" {
-		matchOpts["AvailabilityZone"] = opts.AvailabilityZone
-	}
-	if opts.VpcID != "" {
-		matchOpts["VpcID"] = opts.VpcID
-	}
-
-	if len(matchOpts) > 0 && len(subnets) > 0 {
-		for _, subnet := range subnets {
-			matched = true
-
-			for key, value := range matchOpts {
-				if sVal := getStructField(&subnet, key); !(sVal == value) {
-					matched = false
-				}
-			}
-
-			if matched {
-				refinedSubnets = append(refinedSubnets, subnet)
-			}
+	for _, subnet := range subnets {
+		if subnetMatchesFilter(&subnet, matchOpts) {
+			refinedSubnets = append(refinedSubnets, subnet)
 		}
-	} else {
-		refinedSubnets = subnets
 	}
-
 	return refinedSubnets, nil
+}
+
+func subnetMatchesFilter(subnet *Subnet, filter map[string]interface{}) bool {
+	for key, value := range filter {
+		if getStructField(subnet, key) != value {
+			return false
+		}
+	}
+	return true
 }
 
 func getStructField(v *Subnet, field string) string {
