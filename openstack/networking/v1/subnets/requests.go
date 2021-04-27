@@ -49,9 +49,9 @@ type ListOpts struct {
 //
 // Default policy settings return only those subnets that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Subnet, error) {
-	url := rootURL(c)
-	pages, err := pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Subnet, error) {
+	url := rootURL(client)
+	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return SubnetPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 	if err != nil {
