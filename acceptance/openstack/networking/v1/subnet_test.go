@@ -13,10 +13,19 @@ func TestSubnetList(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	allPages, err := subnets.List(client, subnets.ListOpts{})
-	th.AssertNoErr(t, err)
+	vpc := createVpc(t, client)
+	defer deleteVpc(t, client, vpc.ID)
 
-	tools.PrintResource(t, allPages)
+	subnet := createSubnet(t, client, vpc.ID)
+	defer deleteSubnet(t, client, subnet.VpcID, subnet.ID)
+
+	listOpts := subnets.ListOpts{
+		VpcID: vpc.ID,
+	}
+
+	filteredSubnets, err := subnets.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(filteredSubnets))
 }
 
 func TestSubnetsLifecycle(t *testing.T) {

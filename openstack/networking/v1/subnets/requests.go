@@ -15,32 +15,32 @@ import (
 // either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
 	// ID is the unique identifier for the subnet.
-	ID string `json:"id,omitempty"`
+	ID string `json:",omitempty"`
 
 	// Name is the human readable name for the subnet. It does not have to be
 	// unique.
-	Name string `json:"name,omitempty"`
+	Name string `json:",omitempty"`
 
 	// Specifies the network segment on which the subnet resides.
-	CIDR string `json:"cidr,omitempty"`
+	CIDR string `json:",omitempty"`
 
 	// Status indicates whether or not a subnet is currently operational.
-	Status string `json:"status,omitempty"`
+	Status string `json:",omitempty"`
 
 	// Specifies the gateway of the subnet.
-	GatewayIP string `json:"gateway_ip,omitempty"`
+	GatewayIP string `json:",omitempty"`
 
 	// Specifies the IP address of DNS server 1 on the subnet.
-	PrimaryDNS string `json:"primary_dns,omitempty"`
+	PrimaryDNS string `json:",omitempty"`
 
 	// Specifies the IP address of DNS server 2 on the subnet.
-	SecondaryDNS string `json:"secondary_dns,omitempty"`
+	SecondaryDNS string `json:",omitempty"`
 
 	// Identifies the availability zone (AZ) to which the subnet belongs.
-	AvailabilityZone string `json:"availability_zone,omitempty"`
+	AvailabilityZone string `json:",omitempty"`
 
 	// Specifies the ID of the VPC to which the subnet belongs.
-	VpcID string `json:"vpc_id,omitempty"`
+	VpcID string `json:",omitempty"`
 }
 
 // List returns collection of
@@ -92,7 +92,7 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 
 func subnetMatchesFilter(subnet *Subnet, filter map[string]interface{}) bool {
 	for key, expectedValue := range filter {
-		if getStructField(subnet, key) != expectedValue {
+		if sVal := getStructField(subnet, key); sVal != expectedValue {
 			return false
 		}
 	}
