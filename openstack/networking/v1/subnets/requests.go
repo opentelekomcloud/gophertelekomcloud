@@ -91,8 +91,8 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 }
 
 func subnetMatchesFilter(subnet *Subnet, filter map[string]interface{}) bool {
-	for key, value := range filter {
-		if getStructField(subnet, key) != value {
+	for key, expectedValue := range filter {
+		if getStructField(subnet, key) != expectedValue {
 			return false
 		}
 	}
