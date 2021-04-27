@@ -92,7 +92,7 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 
 func subnetMatchesFilter(subnet *Subnet, filter map[string]interface{}) bool {
 	for key, expectedValue := range filter {
-		if sVal := getStructField(subnet, key); sVal != expectedValue {
+		if getStructField(subnet, key) != expectedValue {
 			return false
 		}
 	}
