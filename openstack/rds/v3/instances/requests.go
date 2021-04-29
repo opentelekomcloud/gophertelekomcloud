@@ -57,7 +57,7 @@ type BackupStrategy struct {
 
 type Volume struct {
 	Type string `json:"type" required:"true"`
-	Size int    `json:"size" required:"true"`
+	Size int    `json:"size,omitempty"`
 }
 
 type ChargeInfo struct {
