@@ -30,6 +30,7 @@ func TestEipList(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(elasticIPs))
 	th.AssertEquals(t, elasticIP.ID, elasticIPs[0].ID)
+	th.AssertEquals(t, elasticIP.PublicAddress, elasticIPs[0].PublicAddress)
 }
 
 func TestEipLifecycle(t *testing.T) {
