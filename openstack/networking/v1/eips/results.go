@@ -10,12 +10,10 @@ type ApplyResult struct {
 	golangsdk.Result
 }
 
-func (r ApplyResult) Extract() (PublicIp, error) {
-	var ip struct {
-		Ip PublicIp `json:"publicip"`
-	}
-	err := r.Result.ExtractInto(&ip)
-	return ip.Ip, err
+func (r ApplyResult) Extract() (*PublicIp, error) {
+	s := new(PublicIp)
+	err := r.ExtractIntoStructPtr(s, "publicip")
+	return s, err
 }
 
 // PublicIp is a struct that represents a public ip
@@ -39,12 +37,10 @@ type GetResult struct {
 	golangsdk.Result
 }
 
-func (r GetResult) Extract() (PublicIp, error) {
-	var Ip struct {
-		Ip PublicIp `json:"publicip"`
-	}
-	err := r.Result.ExtractInto(&Ip)
-	return Ip.Ip, err
+func (r GetResult) Extract() (*PublicIp, error) {
+	s := new(PublicIp)
+	err := r.ExtractIntoStructPtr(s, "publicip")
+	return s, err
 }
 
 // DeleteResult is a struct of delete result
@@ -57,10 +53,10 @@ type UpdateResult struct {
 	golangsdk.Result
 }
 
-func (r UpdateResult) Extract() (PublicIp, error) {
-	var ip PublicIp
-	err := r.Result.ExtractIntoStructPtr(&ip, "publicip")
-	return ip, err
+func (r UpdateResult) Extract() (*PublicIp, error) {
+	s := new(PublicIp)
+	err := r.ExtractIntoStructPtr(s, "publicip")
+	return s, err
 }
 
 // EipPage is a single page of Flavor results.
@@ -88,9 +84,7 @@ func (r EipPage) LastMarker() (string, error) {
 
 // ExtractEips extracts and returns Public IPs. It is used while iterating over a public ips.
 func ExtractEips(r pagination.Page) ([]PublicIp, error) {
-	var s struct {
-		PublicIPs []PublicIp `json:"publicips"`
-	}
-	err := (r.(EipPage)).ExtractInto(&s)
-	return s.PublicIPs, err
+	var s []PublicIp
+	err := (r.(EipPage)).ExtractIntoSlicePtr(&s, "publicips")
+	return s, err
 }
