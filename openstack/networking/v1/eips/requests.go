@@ -25,6 +25,9 @@ type ListOpts struct {
 	// PrivateIPAddress of the resource with assigned ElasticIP.
 	PrivateIPAddress string `json:",omitempty"`
 
+	// PublicIPAddress of the ElasticIP.
+	PublicIPAddress string `json:",omitempty"`
+
 	// PortID of the resource with assigned ElasticIP.
 	PortID string `json:",omitempty"`
 
