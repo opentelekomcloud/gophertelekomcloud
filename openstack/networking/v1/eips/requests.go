@@ -1,6 +1,9 @@
 package eips
 
 import (
+	"encoding/json"
+	"reflect"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -13,11 +16,20 @@ type ListOptsBuilder interface {
 
 // ListOpts filters the results returned by the List() function.
 type ListOpts struct {
-	// Marker specifies the start resource ID of pagination query
-	Marker string `q:"marker"`
+	// ID is the unique identifier for the ElasticIP.
+	ID string `json:",omitempty"`
 
-	// Limit specifies the number of records returned on each page.
-	Limit int `q:"limit"`
+	// Status indicates whether or not a ElasticIP is currently operational.
+	Status string `json:",omitempty"`
+
+	// PrivateIPAddress of the resource with assigned ElasticIP.
+	PrivateIPAddress string `json:",omitempty"`
+
+	// PortID of the resource with assigned ElasticIP.
+	PortID string `json:",omitempty"`
+
+	// BandwidthID of the ElasticIP.
+	BandwidthID string `json:",omitempty"`
 }
 
 // ToEipListQuery formats a ListOpts into a query string.
@@ -30,20 +42,62 @@ func (opts ListOpts) ToEipListQuery() (string, error) {
 }
 
 // List instructs OpenStack to provide a list of flavors.
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]PublicIp, error) {
 	url := rootURL(client)
-	if opts != nil {
-		query, err := opts.ToEipListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		p := EipPage{pagination.MarkerPageBase{PageResult: r}}
 		p.MarkerPageBase.Owner = p
 		return p
-	})
+	}).AllPages()
+	if err != nil {
+		return nil, err
+	}
+
+	allPublicIPs, err := ExtractEips(pages)
+	if err != nil {
+		return nil, err
+	}
+
+	return FilterPublicIPs(allPublicIPs, opts)
+}
+
+func FilterPublicIPs(publicIPs []PublicIp, opts ListOpts) ([]PublicIp, error) {
+	matchOptsByte, err := json.Marshal(opts)
+	if err != nil {
+		return nil, err
+	}
+	var matchOpts map[string]interface{}
+	err = json.Unmarshal(matchOptsByte, &matchOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(matchOpts) == 0 {
+		return publicIPs, nil
+	}
+
+	var refinedPublicIPs []PublicIp
+	for _, publicIP := range publicIPs {
+		if publicIPMatchesFilter(&publicIP, matchOpts) {
+			refinedPublicIPs = append(refinedPublicIPs, publicIP)
+		}
+	}
+	return refinedPublicIPs, nil
+}
+
+func publicIPMatchesFilter(publicIP *PublicIp, filter map[string]interface{}) bool {
+	for key, expectedValue := range filter {
+		if getStructField(publicIP, key) != expectedValue {
+			return false
+		}
+	}
+	return true
+}
+
+func getStructField(v *PublicIp, field string) string {
+	r := reflect.ValueOf(v)
+	f := reflect.Indirect(r).FieldByName(field)
+	return f.String()
 }
 
 // ApplyOptsBuilder is an interface by which can build the request body of public ip

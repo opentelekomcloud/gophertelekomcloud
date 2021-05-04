@@ -81,7 +81,7 @@ func createEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int)
 
 	t.Logf("Created eip/bandwidth: %s", newEip.ID)
 
-	return &newEip
+	return newEip
 }
 
 func deleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {

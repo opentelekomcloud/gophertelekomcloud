@@ -14,16 +14,22 @@ func TestEipList(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	listOpts := eips.ListOpts{}
-	eipPages, err := eips.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	eipList, err := eips.ExtractEips(eipPages)
-	th.AssertNoErr(t, err)
-
-	for _, eip := range eipList {
-		tools.PrintResource(t, eip)
+	elasticIP := createEip(t, client, 100)
+	listOpts := eips.ListOpts{
+		BandwidthID: elasticIP.BandwidthID,
 	}
+	defer func() {
+		deleteEip(t, client, elasticIP.ID)
+
+		elasticIPs, err := eips.List(client, listOpts)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, 0, len(elasticIPs))
+	}()
+
+	elasticIPs, err := eips.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(elasticIPs))
+	th.AssertEquals(t, elasticIP.ID, elasticIPs[0].ID)
 }
 
 func TestEipLifecycle(t *testing.T) {
