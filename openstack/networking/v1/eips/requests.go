@@ -22,13 +22,13 @@ type ListOpts struct {
 	// Status indicates whether or not a ElasticIP is currently operational.
 	Status string `json:",omitempty"`
 
-	// Specifies the gateway of the subnet.
+	// PrivateIPAddress of the resource with assigned ElasticIP.
 	PrivateIPAddress string `json:",omitempty"`
 
-	// Specifies the IP address of DNS server 1 on the subnet.
+	// PortID of the resource with assigned ElasticIP.
 	PortID string `json:",omitempty"`
 
-	// Specifies the IP address of DNS server 2 on the subnet.
+	// BandwidthID of the ElasticIP.
 	BandwidthID string `json:",omitempty"`
 }
 
