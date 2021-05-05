@@ -88,6 +88,12 @@ type CreateOpts struct {
 	ProjectID           string        `json:"project_id,omitempty"`
 	SecurityGroups      *[]string     `json:"security_groups,omitempty"`
 	AllowedAddressPairs []AddressPair `json:"allowed_address_pairs,omitempty"`
+	PortSecurity        *bool         `json:"port_security_enabled,omitempty"`
+}
+
+type ExtraDHCPOpts struct {
+	OptName  string `json:"opt_name,omitempty"`
+	OptValue string `json:"opt_value,omitempty"`
 }
 
 // ToPortCreateMap builds a request body from CreateOpts.
@@ -122,6 +128,7 @@ type UpdateOpts struct {
 	DeviceOwner         string         `json:"device_owner,omitempty"`
 	SecurityGroups      *[]string      `json:"security_groups,omitempty"`
 	AllowedAddressPairs *[]AddressPair `json:"allowed_address_pairs,omitempty"`
+	PortSecurity        *bool          `json:"port_security_enabled,omitempty"`
 }
 
 // ToPortUpdateMap builds a request body from UpdateOpts.
