@@ -310,6 +310,13 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
+func GetNICs(client *golangsdk.ServiceClient, id string) (r GetNICResult) {
+	_, r.Err = client.Get(getNICManagementURL(client, id), &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
 // UpdateOptsBuilder allows extensions to add additional attributes to the
 // Update request.
 type UpdateOptsBuilder interface {

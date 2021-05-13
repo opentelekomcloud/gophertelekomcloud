@@ -44,6 +44,12 @@ type GetResult struct {
 	serverResult
 }
 
+// GetNICResult is the response from a Get operation. Call its Extract
+// method to interpret it as a NIC.
+type GetNICResult struct {
+	serverResult
+}
+
 // UpdateResult is the response from an Update operation. Call its Extract
 // method to interpret it as a Server.
 type UpdateResult struct {
@@ -116,11 +122,11 @@ func decryptPassword(encryptedPassword string, privateKey *rsa.PrivateKey) (stri
 
 	n, err := base64.StdEncoding.Decode(b64EncryptedPassword, []byte(encryptedPassword))
 	if err != nil {
-		return "", fmt.Errorf("Failed to base64 decode encrypted password: %s", err)
+		return "", fmt.Errorf("failed to base64 decode encrypted password: %w", err)
 	}
 	password, err := rsa.DecryptPKCS1v15(nil, privateKey, b64EncryptedPassword[0:n])
 	if err != nil {
-		return "", fmt.Errorf("Failed to decrypt password: %s", err)
+		return "", fmt.Errorf("failed to decrypt password: %w", err)
 	}
 
 	return string(password), nil
@@ -138,7 +144,7 @@ func (r CreateImageResult) ExtractImageID() (string, error) {
 	}
 	imageID := path.Base(u.Path)
 	if imageID == "." || imageID == "/" {
-		return "", fmt.Errorf("Failed to parse the ID of newly created image: %s", u)
+		return "", fmt.Errorf("failed to parse the ID of newly created image: %s", u)
 	}
 	return imageID, nil
 }
@@ -250,6 +256,26 @@ func (r *Server) UnmarshalJSON(b []byte) error {
 	}
 
 	return err
+}
+
+// Extract interprets any serverResult as a Server, if possible.
+func (r GetNICResult) Extract() ([]NIC, error) {
+	var s []NIC
+	err := r.ExtractIntoSlicePtr(&s, "interfaceAttachments")
+	return s, err
+}
+
+type NIC struct {
+	PortState  string    `json:"port_state"`
+	FixedIPs   []FixedIP `json:"fixed_ips"`
+	PortID     string    `json:"port_id"`
+	NetID      string    `json:"net_id"`
+	MACAddress string    `json:"mac_addr"`
+}
+
+type FixedIP struct {
+	SubnetID  string `json:"subnet_id"`
+	IPAddress string `json:"ip_address"`
 }
 
 // ServerPage abstracts the raw results of making a List() request against
