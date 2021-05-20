@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
 
-// Describes the Node Pool Structure of cluster
+// ListNodePool - Describes the Node Pool Structure of cluster
 type ListNodePool struct {
 	// API type, fixed value "List"
 	Kind string `json:"kind"`
@@ -15,8 +15,10 @@ type ListNodePool struct {
 	NodePools []NodePool `json:"items"`
 }
 
-// Individual node pools of the cluster
+// NodePool - Individual node pools of the cluster
 type NodePool struct {
+	// Node pool type
+	Type string `json:"type" required:"true"`
 	//  API type, fixed value " Host "
 	Kind string `json:"kind"`
 	// API version, fixed value v3
@@ -37,7 +39,7 @@ type Metadata struct {
 	Id string `json:"uid"`
 }
 
-// Gives the current status of the node pool
+// Status - Gives the current status of the node pool
 type Status struct {
 	// The state of the node pool
 	Phase string `json:"phase"`
