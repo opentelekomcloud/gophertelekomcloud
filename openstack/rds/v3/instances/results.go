@@ -126,6 +126,12 @@ type RdsInstanceResponse struct {
 	DiskEncryptionId    string            `json:"disk_encryption_id"`
 	EnterpriseProjectId string            `json:"enterprise_project_id"`
 	TimeZone            string            `json:"time_zone"`
+	Tags                []Tag             `json:"tags"`
+}
+
+type Tag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type Nodes struct {
