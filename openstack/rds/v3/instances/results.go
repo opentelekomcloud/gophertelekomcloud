@@ -2,6 +2,7 @@ package instances
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -126,12 +127,8 @@ type RdsInstanceResponse struct {
 	DiskEncryptionId    string            `json:"disk_encryption_id"`
 	EnterpriseProjectId string            `json:"enterprise_project_id"`
 	TimeZone            string            `json:"time_zone"`
-	Tags                []Tag             `json:"tags"`
-}
 
-type Tag struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
 type Nodes struct {

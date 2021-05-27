@@ -62,6 +62,7 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	newRds, err := instances.ExtractRdsInstances(allPages)
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(newRds.Instances), 1)
 	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
 	th.AssertEquals(t, len(newRds.Instances[0].Tags), 2)
 }
