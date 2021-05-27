@@ -155,6 +155,21 @@ func (a *testAddons) TestListAddonTemplates() {
 	t.Logf("existing addon templates:\n%s", string(jsonList))
 }
 
+func (a *testAddons) TestListAddonInstances() {
+	t := a.T()
+
+	client, err := clients.NewCceV3AddonClient()
+	th.AssertNoErr(t, err)
+
+	list, err := addons.ListAddonInstances(client, a.clusterID).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, len(list.Items), 2)
+	// check if listed addon exists
+	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID).Extract()
+	th.AssertNoErr(t, err)
+}
+
 func createCluster(t *testing.T, vpcID, subnetID string) string {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)

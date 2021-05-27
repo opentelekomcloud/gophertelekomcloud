@@ -28,3 +28,7 @@ func CCEServiceURL(client *golangsdk.ServiceClient, clusterID string, parts ...s
 func templatesURL(client *golangsdk.ServiceClient, clusterID string) string {
 	return CCEServiceURL(client, clusterID, templatesPath)
 }
+
+func instanceURL(client *golangsdk.ServiceClient, clusterID string) string {
+	return fmt.Sprintf("%s?cluster_id=%s", CCEServiceURL(client, clusterID, rootPath), clusterID)
+}
