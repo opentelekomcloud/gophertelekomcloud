@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -35,8 +36,20 @@ func TestRdsLifecycle(t *testing.T) {
 	// Create RDSv3 instance
 	rds := createRDS(t, client, cc.RegionName)
 	defer deleteRDS(t, client, rds.Id)
+	th.AssertEquals(t, rds.Volume.Size, 100)
 
-	tools.PrintResource(t, rds)
+	tagList := []tags.ResourceTag{
+		{
+			Key:   "muh",
+			Value: "value-create",
+		},
+		{
+			Key:   "kuh",
+			Value: "value-create",
+		},
+	}
+	err = tags.Create(client, "instances", rds.Id, tagList).ExtractErr()
+	th.AssertNoErr(t, err)
 
 	err = updateRDS(t, client, rds.Id)
 	th.AssertNoErr(t, err)
@@ -49,5 +62,6 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	newRds, err := instances.ExtractRdsInstances(allPages)
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, newRds)
+	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
+	th.AssertEquals(t, len(newRds.Instances[0].Tags), 2)
 }
