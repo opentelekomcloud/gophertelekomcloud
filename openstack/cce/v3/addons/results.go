@@ -97,6 +97,10 @@ type ListTemplateResult struct {
 	golangsdk.Result
 }
 
+type ListInstanceResult struct {
+	golangsdk.Result
+}
+
 type SupportVersion struct {
 	// Cluster type that supports the add-on template
 	ClusterType string `json:"clusterType"`
@@ -162,4 +166,73 @@ func (r ListTemplateResult) Extract() (*AddonTemplateList, error) {
 	var s AddonTemplateList
 	err := r.ExtractInto(&s)
 	return &s, err
+}
+
+type InstanceMetadata struct {
+	ID                string            `json:"uid"`
+	Name              string            `json:"name"`
+	Labels            map[string]string `json:"labels"`
+	Annotations       map[string]string `json:"annotations"`
+	UpdateTimestamp   string            `json:"updateTimestamp"`
+	CreationTimestamp string            `json:"creationTimestamp"`
+}
+
+type AddonInstanceSpec struct {
+	ClusterID      string                 `json:"clusterID"`
+	Version        string                 `json:"version"`
+	TemplateName   string                 `json:"addonTemplateName"`
+	TemplateType   string                 `json:"addonTemplateType"`
+	TemplateLabels []string               `json:"addonTemplateLabels"`
+	Descrition     string                 `json:"descrition"`
+	Values         map[string]interface{} `json:"values"`
+}
+
+type Versions struct {
+	Version           string                 `json:"version"`
+	Input             map[string]interface{} `json:"input"`
+	Stable            bool                   `json:"stable"`
+	Translate         map[string]interface{} `json:"translate"`
+	UpdateTimestamp   string                 `json:"updateTimestamp"`
+	CreationTimestamp string                 `json:"creationTimestamp"`
+}
+
+type InstanceStatus struct {
+	Status         string   `json:"status"`
+	Reason         string   `json:"Reason"`
+	Message        string   `json:"message"`
+	TargetVersions []string `json:"targetVersions"`
+	CurrentVersion Versions `json:"currentVersion"`
+}
+
+type AddonInstance struct {
+	// API type, fixed value Addon
+	Kind string `json:"kind" required:"true"`
+	// API version, fixed value v3
+	ApiVersion string `json:"apiVersion" required:"true"`
+	// Metadata of an Addon
+	Metadata InstanceMetadata `json:"metadata" required:"true"`
+	// Specifications of an Addon
+	Spec AddonInstanceSpec `json:"spec" required:"true"`
+	// Status of an Addon
+	Status InstanceStatus `json:"status"`
+}
+
+type AddonInstanceList struct {
+	// API type, fixed value Addon
+	Kind string `json:"kind" required:"true"`
+	// API version, fixed value v3
+	ApiVersion string `json:"apiVersion" required:"true"`
+	// Metadata - Basic information about the add-on. A collection of attributes.
+	Metadata string `json:"metadata"`
+	// Add-on template list
+	Items []AddonInstance `json:"items" required:"true"`
+}
+
+func (r ListInstanceResult) Extract() (*AddonInstanceList, error) {
+	s := new(AddonInstanceList)
+	err := r.ExtractInto(s)
+	if err != nil {
+		return nil, err
+	}
+	return s, err
 }

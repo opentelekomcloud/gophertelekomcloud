@@ -165,6 +165,13 @@ func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBu
 	return
 }
 
+func ListAddonInstances(c *golangsdk.ServiceClient, clusterID string) (r ListInstanceResult) {
+	_, r.Err = c.Get(instanceURL(c, clusterID), &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
 // WaitForAddonRunning - wait until addon status is `running`
 func WaitForAddonRunning(client *golangsdk.ServiceClient, id, clusterID string, timeoutSeconds int) error {
 	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
