@@ -1,18 +1,16 @@
 package certificates
 
 import (
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Certificate struct {
-	// Certificate ID
+	// Id of the certificate
 	Id string `json:"id"`
-	// Certificate Name
+	// Name of the certificate
 	Name string `json:"name"`
-	// When the certificate expires
-	ExpireTime time.Time `json:"expireTime"`
+	// ExpireTime - unix timestamp of ceritificate expiry
+	ExpireTime int `json:"expireTime"`
 }
 
 type commonResult struct {
@@ -23,6 +21,9 @@ type commonResult struct {
 func (r commonResult) Extract() (*Certificate, error) {
 	var response Certificate
 	err := r.ExtractInto(&response)
+	if err != nil {
+		return nil, err
+	}
 	return &response, err
 }
 

@@ -63,7 +63,7 @@ func Update(c *golangsdk.ServiceClient, certID string, opts UpdateOptsBuilder) (
 		return
 	}
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Put(resourceURL(c, certID), b, nil, reqOpt)
+	_, r.Err = c.Put(resourceURL(c, certID), b, &r.Body, reqOpt)
 	return
 }
 

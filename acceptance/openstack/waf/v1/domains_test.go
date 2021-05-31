@@ -9,6 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf/v1/certificates"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf/v1/domains"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf/v1/policies"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func prepareIp(t *testing.T) *floatingips.FloatingIP {
@@ -36,8 +37,8 @@ func preparePolicy(t *testing.T, client *golangsdk.ServiceClient) *policies.Poli
 func prepareCertificate(t *testing.T, client *golangsdk.ServiceClient) *certificates.Certificate {
 	cert, err := certificates.Create(client, certificates.CreateOpts{
 		Name:    "waf_cert_1",
-		Content: "-----BEGIN CERTIFICATE-----MIIDIjCCAougAwIBAgIJALV96mEtVF4EMA0GCSqGSIb3DQEBBQUAMGoxCzAJBgNVBAYTAnh4MQswCQYDVQQIEwJ4eDELMAkGA1UEBxMCeHgxCzAJBgNVBAoTAnh4MQswCQYDVQQLEwJ-----END CERTIFICATE-----",
-		Key:     "-----BEGIN RSA PRIVATE KEY-----MIICXQIBAAKBgQDFPN9ojPndxSC4E1pqWQVKGHCFlXAAGBOxbGfSzXqzsoyacotueqMqXQbxrPSQFATeVmhZPNVEMdvcAMjYsV/mymtAwVqVA6q/OFdX/b3UHO+b/VqLo3J5SrM-----END RSA PRIVATE KEY-----",
+		Content: testCert,
+		Key:     testKey,
 	}).Extract()
 	if err != nil {
 		t.Errorf("fail to create WAF certificate: %s", err)
@@ -101,9 +102,7 @@ func TestDomainLifecycle(t *testing.T) {
 		SipHeaderName: "default",
 		SipHeaderList: []string{"X-Forwarded-For"},
 	}).Extract()
-	if err != nil {
-		t.Errorf("failed to create domain: %s", err)
-	}
+	th.AssertNoErr(t, err)
 	if err := domains.Delete(client, domain.Id).ExtractErr(); err != nil {
 		t.Errorf("failed to delete domain: %s", err)
 	}
