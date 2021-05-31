@@ -270,7 +270,7 @@ func ListInGroup(client *golangsdk.ServiceClient, groupID string, opts ListOptsB
 	})
 }
 
-// Add a user into one group
+// AddToGroup add a user into one group
 func AddToGroup(client *golangsdk.ServiceClient, groupID string, userID string) (r AddMembershipResult) {
 	_, r.Err = client.Put(membershipURL(client, groupID, userID), nil, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
@@ -278,8 +278,16 @@ func AddToGroup(client *golangsdk.ServiceClient, groupID string, userID string) 
 	return
 }
 
-// Remove user from group
+// RemoveFromGroup remove user from group
 func RemoveFromGroup(client *golangsdk.ServiceClient, groupID string, userID string) (r DeleteResult) {
 	_, r.Err = client.Delete(membershipURL(client, groupID, userID), nil)
+	return
+}
+
+// SendWelcomeEmail sends a welcome email to a user.
+func SendWelcomeEmail(client *golangsdk.ServiceClient, userID string) (r WelcomeResult) {
+	_, r.Err = client.Post(welcomeExtendedURL(client, userID), nil, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }

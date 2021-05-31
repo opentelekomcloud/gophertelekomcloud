@@ -152,3 +152,7 @@ func (r userResult) Extract() (*User, error) {
 type AddMembershipResult struct {
 	golangsdk.ErrResult
 }
+
+type WelcomeResult struct {
+	golangsdk.ErrResult
+}
