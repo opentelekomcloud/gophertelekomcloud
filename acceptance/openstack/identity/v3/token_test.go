@@ -1,60 +1,49 @@
-// +build acceptance
-
 package v3
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestGetToken(t *testing.T) {
 	client, err := clients.NewIdentityV3Client()
-	if err != nil {
-		t.Fatalf("Unable to obtain an identity client: %v")
-	}
+	th.AssertNoErr(t, err)
 
-	ao, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		t.Fatalf("Unable to obtain environment auth options: %v", err)
-	}
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
 
 	authOptions := tokens.AuthOptions{
-		Username:   ao.Username,
-		Password:   ao.Password,
-		DomainName: "default",
+		UserID:     cc.AuthInfo.UserID,
+		Password:   cc.AuthInfo.Password,
+		DomainName: cc.AuthInfo.DomainName,
+		Passcode:   os.Getenv("OS_PASSCODE"),
 	}
 
-	token, err := tokens.Create(client, &authOptions).Extract()
-	if err != nil {
-		t.Fatalf("Unable to get token: %v", err)
+	if cc.AuthInfo.Password == "" {
+		t.Skip("password auth is required for this test")
 	}
-	tools.PrintResource(t, token)
 
-	catalog, err := tokens.Get(client, token.ID).ExtractServiceCatalog()
-	if err != nil {
-		t.Fatalf("Unable to get catalog from token: %v", err)
-	}
-	tools.PrintResource(t, catalog)
+	result := tokens.Create(client, &authOptions)
+	token, err := result.Extract()
+	th.AssertNoErr(t, err)
+
+	_, err = tokens.Get(client, token.ID).ExtractServiceCatalog()
+	th.AssertNoErr(t, err)
 
 	user, err := tokens.Get(client, token.ID).ExtractUser()
-	if err != nil {
-		t.Fatalf("Unable to get user from token: %v", err)
-	}
-	tools.PrintResource(t, user)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, authOptions.UserID, user.ID)
 
 	roles, err := tokens.Get(client, token.ID).ExtractRoles()
-	if err != nil {
-		t.Fatalf("Unable to get roles from token: %v", err)
+	th.AssertNoErr(t, err)
+	if len(roles) == 0 {
+		t.Fatalf("user has no roles")
 	}
-	tools.PrintResource(t, roles)
 
-	project, err := tokens.Get(client, token.ID).ExtractProject()
-	if err != nil {
-		t.Fatalf("Unable to get project from token: %v", err)
-	}
-	tools.PrintResource(t, project)
+	_, err = tokens.Get(client, token.ID).ExtractProject()
+	th.AssertNoErr(t, err)
 }

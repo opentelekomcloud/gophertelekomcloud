@@ -350,24 +350,6 @@ func TestCreateFailureBothDomain(t *testing.T) {
 	authTokenPostErr(t, options, nil, false, golangsdk.ErrDomainIDOrDomainName{})
 }
 
-func TestCreateFailureUserIDDomainID(t *testing.T) {
-	options := tokens.AuthOptions{
-		UserID:   "100",
-		Password: "stuff",
-		DomainID: "oops",
-	}
-	authTokenPostErr(t, options, nil, false, golangsdk.ErrDomainIDWithUserID{})
-}
-
-func TestCreateFailureUserIDDomainName(t *testing.T) {
-	options := tokens.AuthOptions{
-		UserID:     "100",
-		Password:   "sssh",
-		DomainName: "oops",
-	}
-	authTokenPostErr(t, options, nil, false, golangsdk.ErrDomainNameWithUserID{})
-}
-
 func TestCreateFailureScopeProjectNameAlone(t *testing.T) {
 	options := tokens.AuthOptions{UserID: "myself", Password: "swordfish"}
 	scope := &tokens.Scope{ProjectName: "notenough"}

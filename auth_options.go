@@ -90,6 +90,9 @@ type AuthOptions struct {
 
 	// DelegatedProject is the name of delegated project
 	DelegatedProject string `json:"-"`
+
+	// Passcode is a Virtual MFA device verification code, which can be obtained on the MFA app.
+	Passcode string `json:"-"`
 }
 
 // ToTokenV2CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
@@ -146,10 +149,20 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 		ID string `json:"id"`
 	}
 
+	type totpUserReq struct {
+		ID       string `json:"id"`
+		Passcode string `json:"passcode"`
+	}
+
+	type totpReq struct {
+		User totpUserReq `json:"user"`
+	}
+
 	type identityReq struct {
 		Methods  []string     `json:"methods"`
 		Password *passwordReq `json:"password,omitempty"`
 		Token    *tokenReq    `json:"token,omitempty"`
+		TOTP     *totpReq     `json:"totp,omitempty"`
 	}
 
 	type authReq struct {
@@ -232,18 +245,22 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 		}
 
 		if opts.UserID != "" {
-			// If UserID is specified, neither DomainID nor DomainName may be.
-			if opts.DomainID != "" {
-				return nil, ErrDomainIDWithUserID{}
-			}
-			if opts.DomainName != "" {
-				return nil, ErrDomainNameWithUserID{}
-			}
-
 			// Configure the request for UserID and Password authentication.
 			req.Auth.Identity.Password = &passwordReq{
 				User: userReq{ID: &opts.UserID, Password: opts.Password},
 			}
+		}
+		if opts.Passcode != "" {
+			if opts.UserID == "" {
+				return nil, ErrUserIDNotFound{}
+			}
+			req.Auth.Identity.TOTP = &totpReq{
+				User: totpUserReq{
+					ID:       opts.UserID,
+					Passcode: opts.Passcode,
+				},
+			}
+			req.Auth.Identity.Methods = append(req.Auth.Identity.Methods, "totp")
 		}
 	}
 

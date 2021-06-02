@@ -1,6 +1,8 @@
 package tokens
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
 
 // Scope allows a created token to be limited to a specific domain or project.
 type Scope struct {
@@ -54,6 +56,9 @@ type AuthOptions struct {
 	// authentication token ID.
 	TokenID string `json:"-"`
 
+	// Passcode is a Virtual MFA device verification code, which can be obtained on the MFA app.
+	Passcode string `json:"-"`
+
 	Scope Scope `json:"-"`
 }
 
@@ -67,12 +72,13 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 		DomainName:  opts.DomainName,
 		AllowReauth: opts.AllowReauth,
 		TokenID:     opts.TokenID,
+		Passcode:    opts.Passcode,
 	}
 
 	return golangsdkAuthOpts.ToTokenV3CreateMap(scope)
 }
 
-// ToTokenV3CreateMap builds a scope request body from AuthOptions.
+// ToTokenV3ScopeMap builds a scope request body from AuthOptions.
 func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
 	if opts.Scope.ProjectName != "" {
 		// ProjectName provided: either DomainID or DomainName must also be supplied.

@@ -44,6 +44,7 @@ func AuthOptionsFromEnv(envs ...*Env) (golangsdk.AuthOptions, error) {
 		AgencyName:       e.GetEnv("AGENCY_NAME", "TARGET_AGENCY_NAME"),
 		AgencyDomainName: e.GetEnv("AGENCY_DOMAIN_NAME", "TARGET_DOMAIN_NAME"),
 		DelegatedProject: e.GetEnv("DELEGATED_PROJECT", "TARGET_DOMAIN_NAME"),
+		Passcode:         e.GetEnv("PASSCODE"),
 	}
 	return ao, nil
 }
