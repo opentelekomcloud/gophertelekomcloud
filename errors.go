@@ -120,10 +120,16 @@ func (e ErrDefault400) Error() string {
 	return e.choseErrString()
 }
 func (e ErrDefault401) Error() string {
-	return "Authentication failed"
+	e.DefaultErrString = fmt.Sprintf(
+		"Authentication Failed, error message: %s", e.Body,
+	)
+	return e.choseErrString()
 }
 func (e ErrDefault403) Error() string {
-	return "Action Forbidden"
+	e.DefaultErrString = fmt.Sprintf(
+		"Action Forbidden, error message: %s", e.Body,
+	)
+	return e.choseErrString()
 }
 func (e ErrDefault404) Error() string {
 	e.DefaultErrString = fmt.Sprintf(
@@ -316,10 +322,6 @@ func redundantWithTokenErr(attribute string) string {
 	return fmt.Sprintf("%s may not be provided when authenticating with a TokenID", attribute)
 }
 
-func redundantWithUserID(attribute string) string {
-	return fmt.Sprintf("%s may not be provided when authenticating with a UserID", attribute)
-}
-
 // ErrAPIKeyProvided indicates that an APIKey was provided but can't be used.
 type ErrAPIKeyProvided struct{ BaseError }
 
@@ -376,20 +378,6 @@ func (e ErrUsernameOrUserID) Error() string {
 	return "Exactly one of Username and UserID must be provided for password authentication"
 }
 
-// ErrDomainIDWithUserID indicates that a DomainID was provided, but unnecessary because a UserID is being used.
-type ErrDomainIDWithUserID struct{ BaseError }
-
-func (e ErrDomainIDWithUserID) Error() string {
-	return redundantWithUserID("DomainID")
-}
-
-// ErrDomainNameWithUserID indicates that a DomainName was provided, but unnecessary because a UserID is being used.
-type ErrDomainNameWithUserID struct{ BaseError }
-
-func (e ErrDomainNameWithUserID) Error() string {
-	return redundantWithUserID("DomainName")
-}
-
 // ErrDomainIDOrDomainName indicates that a username was provided, but no domain to scope it.
 // It may also indicate that both a DomainID and a DomainName were provided at once.
 type ErrDomainIDOrDomainName struct{ BaseError }
@@ -431,4 +419,10 @@ type ErrScopeEmpty struct{ BaseError }
 
 func (e ErrScopeEmpty) Error() string {
 	return "You must provide either a Project or Domain in a Scope"
+}
+
+type ErrUserIDNotFound struct{ BaseError }
+
+func (e ErrUserIDNotFound) Error() string {
+	return "You must provide UserID for MFA"
 }

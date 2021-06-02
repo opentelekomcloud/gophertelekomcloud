@@ -3,6 +3,7 @@ package openstack
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -89,8 +90,7 @@ func AuthenticatedClient(options golangsdk.AuthOptionsProvider) (*golangsdk.Prov
 		return nil, err
 	}
 
-	err = Authenticate(client, options)
-	if err != nil {
+	if err := Authenticate(client, options); err != nil {
 		return nil, err
 	}
 	return client, nil
@@ -113,6 +113,8 @@ func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOption
 	if isTokenAuthOptions {
 		switch chosen.ID {
 		case v3:
+			authOptions.Passcode = os.Getenv("OS_PASSCODE")
+
 			if authOptions.AgencyDomainName != "" && authOptions.AgencyName != "" {
 				return v3authWithAgency(client, endpoint, &authOptions, golangsdk.EndpointOpts{})
 			}
@@ -171,17 +173,17 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 
 	token, err := result.ExtractToken()
 	if err != nil {
-		return fmt.Errorf("error extracting token: %s", err)
+		return fmt.Errorf("error extracting token: %w", err)
 	}
 
 	project, err := result.ExtractProject()
 	if err != nil {
-		return fmt.Errorf("error extracting project info: %s", err)
+		return fmt.Errorf("error extracting project info: %w", err)
 	}
 
 	user, err := result.ExtractUser()
 	if err != nil {
-		return fmt.Errorf("error extracting user info: %s", err)
+		return fmt.Errorf("error extracting user info: %w", err)
 	}
 
 	serviceCatalog, err := result.ExtractServiceCatalog()

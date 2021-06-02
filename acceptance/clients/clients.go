@@ -438,15 +438,15 @@ type cc struct {
 func CloudAndClient() (*cc, error) {
 	cloud, err := EnvOS.Cloud()
 	if err != nil {
-		return nil, fmt.Errorf("error constructing cloud configuration: %s", err)
+		return nil, fmt.Errorf("error constructing cloud configuration: %w", err)
 	}
 	cloud, err = copyCloud(cloud)
 	if err != nil {
-		return nil, fmt.Errorf("error copying cloud: %s", err)
+		return nil, fmt.Errorf("error copying cloud: %w", err)
 	}
 	client, err := EnvOS.AuthenticatedClient()
 	if err != nil {
-		return nil, fmt.Errorf("error authenticating client")
+		return nil, err
 	}
 	return &cc{cloud, client}, nil
 }
