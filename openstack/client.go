@@ -3,7 +3,6 @@ package openstack
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -113,8 +112,6 @@ func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOption
 	if isTokenAuthOptions {
 		switch chosen.ID {
 		case v3:
-			authOptions.Passcode = os.Getenv("OS_PASSCODE")
-
 			if authOptions.AgencyDomainName != "" && authOptions.AgencyName != "" {
 				return v3authWithAgency(client, endpoint, &authOptions, golangsdk.EndpointOpts{})
 			}

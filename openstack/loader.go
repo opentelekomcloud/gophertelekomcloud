@@ -129,6 +129,7 @@ func (e *Env) cloudFromEnv() *Cloud {
 			Username:          authOpts.Username,
 			UserID:            authOpts.UserID,
 			Password:          authOpts.Password,
+			Passcode:          authOpts.Passcode,
 			ProjectName:       authOpts.TenantName,
 			ProjectID:         authOpts.TenantID,
 			UserDomainName:    e.GetEnv("USER_DOMAIN_NAME"),
@@ -202,6 +203,9 @@ type AuthInfo struct {
 
 	// Password is the password of the user.
 	Password string `yaml:"password,omitempty" json:"password,omitempty"`
+
+	// Passcode for MFA.
+	Passcode string `yaml:"-" json:"-"`
 
 	// ProjectName is the common/human-readable name of a project.
 	// Users can be scoped to a project.
@@ -610,6 +614,7 @@ func AuthOptionsFromInfo(authInfo *AuthInfo, authType AuthType) (golangsdk.AuthO
 		DomainName:       authInfo.DomainName,
 		TenantID:         authInfo.ProjectID,
 		TenantName:       authInfo.ProjectName,
+		Passcode:         authInfo.Passcode,
 	}
 
 	explicitAuthType := getAuthType(authType)
