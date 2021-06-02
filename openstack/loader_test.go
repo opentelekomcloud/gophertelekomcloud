@@ -65,7 +65,7 @@ func restoreBackup(t *testing.T, files ...string) {
 	}
 }
 
-func checkLazyness(t *testing.T, env Env, expected bool) {
+func checkLazyness(t *testing.T, env *Env, expected bool) {
 	authUrl0 := "http://url:0"
 	_ = os.Setenv("OS_AUTH_URL", authUrl0)
 	cloud0, err := env.Cloud()
