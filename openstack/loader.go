@@ -74,33 +74,18 @@ func fileList(name string) []string {
 	return files
 }
 
-// Env is a helper for env-prefixed loading
-type Env interface {
-	// GetEnv finds first non-empty <prefixed> env variable to be used
-	GetEnv(keys ...string) string
-	// Prefix returns used prefix
-	Prefix() string
-	// Cloud returns full cloud configuration
-	Cloud(name ...string) (*Cloud, error)
-	// AuthenticatedClient is the main meaning on `Env`, providing prefix-based
-	// way to get authenticated client
-	AuthenticatedClient(cloudName ...string) (*golangsdk.ProviderClient, error)
-
-	// cloudFromEnv constructs cloud configuration with values from <prefixed> env vars
-	cloudFromEnv() *Cloud
-}
-
-type env struct {
+type Env struct {
+	// prefix of the invironment, `OS_` in most cases
 	prefix string
-	cloud  *Cloud
-
-	// unstable make env ignore lazy cloud loading and
+	// cloud containins all information about used cloud
+	cloud *Cloud
+	// unstable make Env ignore lazy cloud loading and
 	// refresh it every time it's requested
 	unstable bool
 }
 
-// NewEnv create new <prefixed> env loader, lazy by default
-func NewEnv(prefix string, lazy ...bool) Env {
+// NewEnv create new <prefixed> Env loader, lazy by default
+func NewEnv(prefix string, lazy ...bool) *Env {
 	if prefix != "" && !strings.HasSuffix(prefix, "_") {
 		prefix += "_"
 	}
@@ -108,14 +93,14 @@ func NewEnv(prefix string, lazy ...bool) Env {
 	if len(lazy) > 0 {
 		unstable = !lazy[0]
 	}
-	return &env{prefix: prefix, unstable: unstable}
+	return &Env{prefix: prefix, unstable: unstable}
 }
 
-func (e *env) Prefix() string {
+func (e *Env) Prefix() string {
 	return e.prefix
 }
 
-func (e *env) cloudFromEnv() *Cloud {
+func (e *Env) cloudFromEnv() *Cloud {
 	authOpts, _ := AuthOptionsFromEnv(e)
 	verify := true
 	if v := e.GetEnv("INSECURE"); v != "" {
@@ -174,7 +159,7 @@ func (e *env) cloudFromEnv() *Cloud {
 }
 
 // GetEnv returns first non-empty value of given environment variables
-func (e *env) GetEnv(keys ...string) string {
+func (e *Env) GetEnv(keys ...string) string {
 	for _, key := range keys {
 		if value := os.Getenv(e.prefix + key); value != "" {
 			return value
@@ -479,7 +464,7 @@ func mergeWithVendors(cloudConfig *Config, vendorPath string) *Config {
 // Cloud get cloud merged from configuration and env variables
 // if `cloudName` is not empty, explicit cloud name will be used instead
 // defined in `OS_CLOUD` environment variable
-func (e *env) Cloud(name ...string) (*Cloud, error) {
+func (e *Env) Cloud(name ...string) (*Cloud, error) {
 	cloudName := ""
 	if len(name) > 0 {
 		cloudName = name[0]
@@ -498,7 +483,7 @@ func (e *env) Cloud(name ...string) (*Cloud, error) {
 			e.cloudFromEnv(),
 		)
 		if err != nil {
-			return nil, fmt.Errorf("failed to merge cloud %s with env vars: %s", config.DefaultCloud, err)
+			return nil, fmt.Errorf("failed to merge cloud %s with Env vars: %s", config.DefaultCloud, err)
 		}
 		cloud.Cloud = cloudName // override value read from environment
 		cloud.computeRegion()
@@ -510,7 +495,7 @@ func (e *env) Cloud(name ...string) (*Cloud, error) {
 
 // LoadCloudConfig utilize all existing cloud configurations to create cloud configuration:
 // env variables, clouds.yaml, secure.yaml, clouds-public.yaml
-func (e *env) loadOpenstackConfig() (*Config, error) {
+func (e *Env) loadOpenstackConfig() (*Config, error) {
 	var (
 		configs = make([]string, len(configFiles))
 		secure  = make([]string, len(secureFiles))
@@ -664,9 +649,9 @@ func AuthOptionsFromInfo(authInfo *AuthInfo, authType AuthType) (golangsdk.AuthO
 	return ao, nil
 }
 
-// AuthenticatedClient create new client based on used env prefix
+// AuthenticatedClient create new client based on used Env prefix
 // this uses LoadOpenstackConfig inside
-func (e *env) AuthenticatedClient(cloudName ...string) (*golangsdk.ProviderClient, error) {
+func (e *Env) AuthenticatedClient(cloudName ...string) (*golangsdk.ProviderClient, error) {
 	cloud, err := e.Cloud(cloudName...)
 	if err != nil {
 		return nil, err
@@ -678,7 +663,7 @@ func (e *env) AuthenticatedClient(cloudName ...string) (*golangsdk.ProviderClien
 func AuthenticatedClientFromCloud(cloud *Cloud) (*golangsdk.ProviderClient, error) {
 	opts, err := AuthOptionsFromInfo(&cloud.AuthInfo, cloud.AuthType)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert AuthInfo to AuthOptsBuilder with env vars: %s", err)
+		return nil, fmt.Errorf("failed to convert AuthInfo to AuthOptsBuilder with Env vars: %s", err)
 	}
 	client, err := AuthenticatedClient(opts)
 	if err != nil {

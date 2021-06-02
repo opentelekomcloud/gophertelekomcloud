@@ -25,7 +25,7 @@ by sourcing an `openrc` file), then:
 	opts, err := openstack.AuthOptionsFromEnv()
 	provider, err := openstack.AuthenticatedClient(opts)
 */
-func AuthOptionsFromEnv(envs ...*env) (golangsdk.AuthOptions, error) {
+func AuthOptionsFromEnv(envs ...*Env) (golangsdk.AuthOptions, error) {
 	e := NewEnv(defaultPrefix)
 	if len(envs) > 0 {
 		e = envs[0]
