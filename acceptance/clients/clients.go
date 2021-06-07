@@ -400,6 +400,17 @@ func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewSwrV2Client returns authenticated SWR v2 client
+func NewSwrV2Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewSWRV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
