@@ -480,8 +480,8 @@ func initClientOpts(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts,
 	return sc, nil
 }
 
-// initCommonServiceClient create a ServiceClient which can not get from clientType directly.
-// firstly, we initialize a service client by "volumev2" type, the endpoint likes https://evs.{region}.{xxx.com}/v2/{project_id}
+// initCommonServiceClient is a workaround for services missing from the catalog.
+// Firstly, we initialize a service client by "volumev2" type, the endpoint likes https://evs.{region}.{xxx.com}/v2/{project_id}
 // then we replace the endpoint with the specified srv and version.
 func initCommonServiceClient(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts, srv string, version string) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "volumev2")
@@ -811,4 +811,9 @@ func NewSDRSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*go
 func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initCommonServiceClient(client, eo, "lts", "v2.0")
 	return sc, err
+}
+
+// NewSWRV2 creates a ServiceClient that may be used to access the SWR service.
+func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initCommonServiceClient(client, eo, "swr", "v2")
 }
