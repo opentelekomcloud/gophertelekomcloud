@@ -815,5 +815,11 @@ func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 
 // NewSWRV2 creates a ServiceClient that may be used to access the SWR service.
 func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initCommonServiceClient(client, eo, "swr", "v2")
+	serviceClient, err := initClientOpts(client, eo, "smn") // SMN is v2 and has no project ID
+	if err != nil {
+		return nil, err
+	}
+	serviceClient.Endpoint = strings.Replace(serviceClient.Endpoint, "smn", "swr-api", 1)
+	serviceClient.ResourceBase = serviceClient.Endpoint
+	return serviceClient, err
 }
