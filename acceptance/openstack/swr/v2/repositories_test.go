@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/swr/v2/organizations"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/swr/v2/repositories"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -18,11 +17,9 @@ func TestRepositoryWorkflow(t *testing.T) {
 
 	// setup org
 	orgName := fmt.Sprintf("repo-test-%d", tools.RandomInt(0, 0xf))
-	err = organizations.Create(client, organizations.CreateOpts{Namespace: orgName}).ExtractErr()
-	th.AssertNoErr(t, err)
-	defer func() {
-		th.AssertNoErr(t, organizations.Delete(client, orgName).ExtractErr())
-	}()
+	dep := dependencies{t: t, client: client}
+	dep.createOrganization(orgName)
+	defer dep.deleteOrganization(orgName)
 	//
 
 	repoName := "magic-test-repo"
