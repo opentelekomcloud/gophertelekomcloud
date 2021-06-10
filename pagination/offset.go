@@ -14,6 +14,9 @@ type OffsetPage interface {
 }
 
 type OffsetPageBase struct {
+	Offset int
+	Limit  int
+
 	PageResult
 }
 
@@ -21,11 +24,13 @@ func (p OffsetPageBase) LastElement() int {
 	q := p.URL.Query()
 	offset, err := strconv.Atoi(q.Get("offset"))
 	if err != nil {
-		panic(err)
+		offset = p.Offset
+		q.Set("offset", strconv.Itoa(offset))
 	}
 	limit, err := strconv.Atoi(q.Get("limit"))
 	if err != nil {
-		panic(err)
+		limit = p.Limit
+		q.Set("limit", strconv.Itoa(limit))
 	}
 	return offset + limit
 }
