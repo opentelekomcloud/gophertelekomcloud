@@ -47,4 +47,24 @@ func TestCertificateLifecycle(t *testing.T) {
 	th.AssertEquals(t, created.ExpireTime, updated.ExpireTime)
 	th.AssertEquals(t, created.Id, updated.Id)
 	th.AssertEquals(t, updateOpts.Name, updated.Name)
+
+	pages, err := certificates.List(client, nil).AllPages()
+	th.AssertNoErr(t, err)
+
+	certs, err := certificates.ExtractCertificates(pages)
+	th.AssertNoErr(t, err)
+	if len(certs) == 0 {
+		t.Errorf("no certificates in the list")
+	}
+
+	pages2, err := certificates.List(client, certificates.ListOpts{
+		Limit: -1,
+	}).AllPages()
+	th.AssertNoErr(t, err)
+
+	certs2, err := certificates.ExtractCertificates(pages2)
+	th.AssertNoErr(t, err)
+	if len(certs2) == 0 {
+		t.Errorf("no certificates in the list")
+	}
 }

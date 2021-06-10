@@ -1,7 +1,12 @@
 package certificates
 
 import (
+	"fmt"
+	"reflect"
+	"strconv"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Certificate struct {
@@ -9,8 +14,10 @@ type Certificate struct {
 	Id string `json:"id"`
 	// Name of the certificate
 	Name string `json:"name"`
-	// ExpireTime - unix timestamp of ceritificate expiry
+	// ExpireTime - unix timestamp of certificate expiry
 	ExpireTime int `json:"expireTime"`
+
+	Timestamp int `json:"timestamp"`
 }
 
 type commonResult struct {
@@ -49,4 +56,46 @@ type GetResult struct {
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
 	golangsdk.ErrResult
+}
+
+type CertificatePage struct {
+	pagination.OffsetPageBase
+}
+
+// IsEmpty returns true if this Page has no items in it.
+func (p CertificatePage) IsEmpty() (bool, error) {
+	if b, ok := p.Body.(map[string]interface{}); ok {
+		items := b["items"].([]interface{})
+		return len(items) == 0, nil
+	}
+	err := golangsdk.ErrUnexpectedType{}
+	err.Expected = "map[string]interface{}"
+	err.Actual = fmt.Sprintf("%v", reflect.TypeOf(p.Body))
+	return true, err
+}
+
+func (p CertificatePage) NextPageURL() (string, error) {
+	currentURL := p.URL
+	q := currentURL.Query()
+	// The default value is 10. If limit is -1, one page with 65535 records is displayed.
+	switch q.Get("limit") {
+	case "-1":
+		return "", nil // in this case is a SinglePageBase
+	case "":
+		q.Set("limit", "10")
+		p.Limit = 10
+	}
+	// Its value ranges from 0 to 65535. The default value is 0.
+	if q.Get("offset") == "" {
+		p.Offset = 0
+	}
+	q.Set("offset", strconv.Itoa(p.LastElement()))
+	currentURL.RawQuery = q.Encode()
+	return currentURL.String(), nil
+}
+
+func ExtractCertificates(p pagination.Page) ([]Certificate, error) {
+	var certs []Certificate
+	err := (p.(CertificatePage)).ExtractIntoSlicePtr(&certs, "items")
+	return certs, err
 }
