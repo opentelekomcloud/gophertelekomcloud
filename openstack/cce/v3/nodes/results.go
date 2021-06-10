@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-// Describes the Node Structure of cluster
+// ListNode describes the Node Structure of cluster
 type ListNode struct {
 	// API type, fixed value "List"
 	Kind string `json:"kind"`
@@ -15,7 +15,7 @@ type ListNode struct {
 	Nodes []Nodes `json:"items"`
 }
 
-// Individual nodes of the cluster
+// Nodes of the cluster
 type Nodes struct {
 	//  API type, fixed value " Host "
 	Kind string `json:"kind"`
@@ -37,7 +37,7 @@ type Metadata struct {
 	Id string `json:"uid"`
 	// Node tag, key value pair format
 	Labels map[string]string `json:"labels,omitempty"`
-	// Node annotation, keyvalue pair format
+	// Node annotation, key/value pair format
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
@@ -77,13 +77,13 @@ type Spec struct {
 	Taints []TaintSpec `json:"taints,omitempty"`
 }
 
-// Gives the Nic spec of the node
+// NodeNicSpec spec of the node
 type NodeNicSpec struct {
 	// The primary Nic of the Node
 	PrimaryNic PrimaryNic `json:"primaryNic,omitempty"`
 }
 
-// Gives the Primary Nic of the node
+// PrimaryNic of the node
 type PrimaryNic struct {
 	// The Subnet ID of the primary Nic
 	SubnetId string `json:"subnetId,omitempty"`
@@ -100,7 +100,7 @@ type TaintSpec struct {
 	Effect string `json:"effect" required:"true"`
 }
 
-// Gives the current status of the node
+// Status gives the current status of the node
 type Status struct {
 	// The state of the Node
 	Phase string `json:"phase"`
@@ -133,10 +133,12 @@ type UserPassword struct {
 }
 
 type VolumeSpec struct {
-	// Disk size in GB
+	// Disk Size in GB
 	Size int `json:"size" required:"true"`
-	// Disk type
+	// Disk VolumeType
 	VolumeType string `json:"volumetype" required:"true"`
+	// Metadata contains data disk encryption information
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// Disk extension parameter
 	ExtendParam string `json:"extendParam,omitempty"`
 }
@@ -191,7 +193,7 @@ type Conditions struct {
 	Reason string `json:"reason"`
 }
 
-// Describes the Job Structure
+// Job Structure
 type Job struct {
 	// API type, fixed value "Job"
 	Kind string `json:"kind"`

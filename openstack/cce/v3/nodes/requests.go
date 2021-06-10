@@ -86,20 +86,19 @@ type FilterStruct struct {
 	Driller []string
 }
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
+// CreateOpts is a struct contains the parameters of creating Node
 type CreateOpts struct {
 	// API type, fixed value Node
 	Kind string `json:"kind" required:"true"`
 	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
+	ApiVersion string `json:"apiVersion" required:"true"`
 	// Metadata required to create a Node
 	Metadata CreateMetaData `json:"metadata"`
 	// specifications to create a Node
 	Spec Spec `json:"spec" required:"true"`
 }
 
-// Metadata required to create a Node
+// CreateMetaData required to create a Node
 type CreateMetaData struct {
 	// Node name
 	Name string `json:"name,omitempty"`
@@ -109,9 +108,8 @@ type CreateMetaData struct {
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical Node. When it is created, the Node does not have an internal
-// interface
+// CreateOptsBuilder allows extensions to add additional parameters to the
+// Create request.
 type CreateOptsBuilder interface {
 	ToNodeCreateMap() (map[string]interface{}, error)
 }
@@ -123,20 +121,20 @@ func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical node.
-func Create(c *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
+func Create(c *golangsdk.ServiceClient, clusterID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToNodeCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, clusterid), b, &r.Body, reqOpt)
+	_, r.Err = c.Post(rootURL(c, clusterID), b, &r.Body, reqOpt)
 	return
 }
 
 // Get retrieves a particular nodes based on its unique ID and cluster ID.
-func Get(c *golangsdk.ServiceClient, clusterid, nodeid string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, clusterid, nodeid), &r.Body, &golangsdk.RequestOpts{
+func Get(c *golangsdk.ServiceClient, clusterID, nodeID string) (r GetResult) {
+	_, r.Err = c.Get(resourceURL(c, clusterID, nodeID), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -164,21 +162,21 @@ func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update allows nodes to be updated.
-func Update(c *golangsdk.ServiceClient, clusterid, nodeid string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(c *golangsdk.ServiceClient, clusterID, nodeID string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodeUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(resourceURL(c, clusterid, nodeid), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Put(resourceURL(c, clusterID, nodeID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // Delete will permanently delete a particular node based on its unique ID and cluster ID.
-func Delete(c *golangsdk.ServiceClient, clusterid, nodeid string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, clusterid, nodeid), &golangsdk.RequestOpts{
+func Delete(c *golangsdk.ServiceClient, clusterID, nodeID string) (r DeleteResult) {
+	_, r.Err = c.Delete(resourceURL(c, clusterID, nodeID), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -186,8 +184,8 @@ func Delete(c *golangsdk.ServiceClient, clusterid, nodeid string) (r DeleteResul
 }
 
 // GetJobDetails retrieves a particular job based on its unique ID
-func GetJobDetails(c *golangsdk.ServiceClient, jobid string) (r GetResult) {
-	_, r.Err = c.Get(getJobURL(c, jobid), &r.Body, &golangsdk.RequestOpts{
+func GetJobDetails(c *golangsdk.ServiceClient, jobID string) (r GetResult) {
+	_, r.Err = c.Get(getJobURL(c, jobID), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})

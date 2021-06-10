@@ -130,13 +130,13 @@ func TestCreateV3Node(t *testing.T) {
 
 		th.TestJSONRequest(t, r, `
 			{
-	  "apiversion": "v3",
+	  "apiVersion": "v3",
 	  "kind": "Node",
 	  "metadata": {
 	    "name": "test-node"
 	  },
 	  "spec": {
-	    "az": "cn-east-2a",
+	    "az": "eu-de-01",
 	    "count": 1,
         "extendParam": {
         },
@@ -177,11 +177,23 @@ func TestCreateV3Node(t *testing.T) {
 	options := nodes.CreateOpts{Kind: "Node",
 		ApiVersion: "v3",
 		Metadata:   nodes.CreateMetaData{Name: "test-node"},
-		Spec: nodes.Spec{Flavor: "s3.large.2", Az: "cn-east-2a",
-			Login:       nodes.LoginSpec{SshKey: "test-keypair"},
-			RootVolume:  nodes.VolumeSpec{Size: 40, VolumeType: "SATA"},
-			DataVolumes: []nodes.VolumeSpec{{Size: 100, VolumeType: "SATA"}},
-			Count:       1},
+		Spec: nodes.Spec{
+			Flavor: "s3.large.2", Az: "eu-de-01",
+			Login: nodes.LoginSpec{
+				SshKey: "test-keypair",
+			},
+			RootVolume: nodes.VolumeSpec{
+				Size:       40,
+				VolumeType: "SATA",
+			},
+			DataVolumes: []nodes.VolumeSpec{
+				{
+					Size:       100,
+					VolumeType: "SATA",
+				},
+			},
+			Count: 1,
+		},
 	}
 	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options).Extract()
 	th.AssertNoErr(t, err)
