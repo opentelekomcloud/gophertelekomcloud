@@ -1,8 +1,11 @@
 package certificates
 
 import (
+	"fmt"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -79,4 +82,44 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 		MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
 	_, r.Err = c.Delete(resourceURL(c, id), reqOpt)
 	return
+}
+
+type ListOptsBuilder interface {
+	ToCertificateListQuery() (string, error)
+}
+
+type ListOpts struct {
+	Offset int `q:"offset"`
+	Limit  int `q:"limit"`
+}
+
+func (opts ListOpts) ToCertificateListQuery() (string, error) {
+	if opts.Offset > 0xffff || opts.Offset < 0 {
+		return "", fmt.Errorf("offset must be 0-65535")
+	}
+	if opts.Limit > 50 || opts.Offset < -1 {
+		return "", fmt.Errorf("limit must be -1-50")
+	}
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
+	return q.String(), err
+}
+
+func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) (p pagination.Pager) {
+	url := rootURL(c)
+	if opts != nil {
+		q, err := opts.ToCertificateListQuery()
+		if err != nil {
+			p.Err = err
+			return
+		}
+		url += q
+	}
+	p = pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+		return CertificatePage{OffsetPageBase: pagination.OffsetPageBase{PageResult: r}}
+	})
+	p.Headers = map[string]string{"content-type": "application/json"}
+	return p
 }
