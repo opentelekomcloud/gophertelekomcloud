@@ -21,6 +21,10 @@ type CreateOpts struct {
 	Server []ServerOpts `json:"server" required:"true"`
 	// Whether proxy is configured
 	Proxy *bool `json:"proxy" required:"true"`
+	// TLS version
+	TLS string `json:"tls,omitempty"`
+	// Cipher suite version
+	Cipher string `json:"cipher,omitempty"`
 	// The type of the source IP header
 	SipHeaderName string `json:"sip_header_name,omitempty"`
 	// The HTTP request header for identifying the real source IP.
@@ -69,6 +73,10 @@ type UpdateOpts struct {
 	Server []ServerOpts `json:"server,omitempty"`
 	// Whether proxy is configured
 	Proxy *bool `json:"proxy,omitempty"`
+	// TLS version
+	TLS string `json:"tls,omitempty"`
+	// Cipher suite version
+	Cipher string `json:"cipher,omitempty"`
 	// The type of the source IP header
 	SipHeaderName string `json:"sip_header_name,omitempty"`
 	// The HTTP request header for identifying the real source IP.
@@ -87,8 +95,9 @@ func Update(c *golangsdk.ServiceClient, domainID string, opts UpdateOptsBuilder)
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Put(resourceURL(c, domainID), b, nil, reqOpt)
+	_, r.Err = c.Put(resourceURL(c, domainID), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
 
