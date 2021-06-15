@@ -84,6 +84,7 @@ func TestDomainLifecycle(t *testing.T) {
 				Port:           443,
 			},
 		},
+		Cipher:        "cipher_2",
 		Proxy:         &iTrue,
 		SipHeaderName: "default",
 		SipHeaderList: []string{"X-Forwarded-For"},
@@ -94,6 +95,7 @@ func TestDomainLifecycle(t *testing.T) {
 	th.AssertEquals(t, createOpts.HostName, domain.HostName)
 	th.AssertEquals(t, cert.Id, domain.CertificateId)
 	th.AssertEquals(t, len(createOpts.Server), len(domain.Server))
+	th.AssertEquals(t, createOpts.Cipher, domain.Cipher)
 
 	updateOpts := domains.UpdateOpts{
 		TLS:    "TLS v1.1",

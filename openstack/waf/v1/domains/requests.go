@@ -21,6 +21,10 @@ type CreateOpts struct {
 	Server []ServerOpts `json:"server" required:"true"`
 	// Whether proxy is configured
 	Proxy *bool `json:"proxy" required:"true"`
+	// TLS version
+	TLS string `json:"tls,omitempty"`
+	// Cipher suite version
+	Cipher string `json:"cipher,omitempty"`
 	// The type of the source IP header
 	SipHeaderName string `json:"sip_header_name,omitempty"`
 	// The HTTP request header for identifying the real source IP.
