@@ -75,12 +75,6 @@ type UpdateResult struct {
 	commonResult
 }
 
-// UpdateTLSResult represents the result of a update operation. Call its Extract
-// method to interpret it as a Domain.
-type UpdateTLSResult struct {
-	commonResult
-}
-
 // GetResult represents the result of a get operation. Call its Extract
 // method to interpret it as a Domain.
 type GetResult struct {
