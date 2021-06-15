@@ -25,6 +25,10 @@ type Domain struct {
 	AccessStatus int `json:"access_status"`
 	// Protocol type
 	Protocol string `json:"protocol"`
+	// TLS version
+	TLS string `json:"tls"`
+	// Cipher suite
+	Cipher string `json:"cipher"`
 	// Certificate ID
 	CertificateId string `json:"certificate_id"`
 	// The original server information
@@ -54,9 +58,9 @@ type commonResult struct {
 
 // Extract is a function that accepts a result and extracts a domain.
 func (r commonResult) Extract() (*Domain, error) {
-	var response Domain
-	err := r.ExtractInto(&response)
-	return &response, err
+	s := new(Domain)
+	err := r.ExtractIntoStructPtr(s, "")
+	return s, err
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
@@ -68,6 +72,12 @@ type CreateResult struct {
 // UpdateResult represents the result of a update operation. Call its Extract
 // method to interpret it as a Domain.
 type UpdateResult struct {
+	commonResult
+}
+
+// UpdateTLSResult represents the result of a update operation. Call its Extract
+// method to interpret it as a Domain.
+type UpdateTLSResult struct {
 	commonResult
 }
 
