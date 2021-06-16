@@ -2,6 +2,7 @@ package v2
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -22,18 +23,20 @@ func TestAccessDomainWorkflow(t *testing.T) {
 	repoName := fmt.Sprintf("repodomain")
 	dep.createRepository(orgName, repoName)
 	defer dep.deleteRepository(orgName, repoName)
-	//
 
-	domainName := fmt.Sprintf("otc")
+	domainToShare := clients.EnvOS.GetEnv("DOMAIN_NAME_2")
+	if domainToShare == "" {
+		t.Skipf("OS_DOMAIN_NAME_2 env var is missing but SWR domain test requires it")
+	}
 	opts := domains.CreateOpts{
-		AccessDomain: domainName,
+		AccessDomain: domainToShare,
 		Permit:       "read",
 		Deadline:     "forever",
 	}
 	th.AssertNoErr(t, domains.Create(client, orgName, repoName, opts).ExtractErr())
 
 	defer func() {
-		err = domains.Delete(client, orgName, repoName, domainName).ExtractErr()
+		err = domains.Delete(client, orgName, repoName, domainToShare).ExtractErr()
 		th.AssertNoErr(t, err)
 	}()
 
@@ -45,13 +48,13 @@ func TestAccessDomainWorkflow(t *testing.T) {
 
 	found := false
 	for _, d := range accessDomains {
-		if d.AccessDomain == domainName {
+		if d.AccessDomain == strings.ToLower(domainToShare) {
 			found = true
 			break
 		}
 	}
 	if !found {
-		t.Errorf("access domain %s is not found in the list", domainName)
+		t.Errorf("access domain %s is not found in the list", domainToShare)
 	}
 
 	updateOpts := domains.UpdateOpts{
@@ -59,11 +62,11 @@ func TestAccessDomainWorkflow(t *testing.T) {
 		Deadline:    "2022-01-01T00:00:00.000Z",
 		Description: "Updated description",
 	}
-	th.AssertNoErr(t, domains.Update(client, orgName, repoName, domainName, updateOpts).ExtractErr())
+	th.AssertNoErr(t, domains.Update(client, orgName, repoName, domainToShare, updateOpts).ExtractErr())
 
-	domain, err := domains.Get(client, orgName, repoName, domainName).Extract()
+	domain, err := domains.Get(client, orgName, repoName, domainToShare).Extract()
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, domainName, domain.AccessDomain)
+	th.CheckEquals(t, strings.ToLower(domainToShare), domain.AccessDomain)
 	th.CheckEquals(t, updateOpts.Permit, domain.Permit)
 	th.CheckEquals(t, true, domain.Status)
 	th.CheckEquals(t, updateOpts.Description, domain.Description)
