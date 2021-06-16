@@ -239,6 +239,7 @@ var (
 		"delete":                       true,
 		"cors":                         true,
 		"restore":                      true,
+		"encryption":                   true,
 		"tagging":                      true,
 		"append":                       true,
 		"position":                     true,
@@ -662,6 +663,7 @@ const (
 	SubResourceLogging       SubResourceType = "logging"
 	SubResourceLifecycle     SubResourceType = "lifecycle"
 	SubResourceNotification  SubResourceType = "notification"
+	SubResourceEncryption    SubResourceType = "encryption"
 	SubResourceTagging       SubResourceType = "tagging"
 	SubResourceDelete        SubResourceType = "delete"
 	SubResourceVersions      SubResourceType = "versions"
