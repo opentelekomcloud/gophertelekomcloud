@@ -311,6 +311,12 @@ func (input SetBucketLifecycleConfigurationInput) trans(isObs bool) (params map[
 	return
 }
 
+func (input SetBucketEncryptionInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = map[string]string{string(SubResourceEncryption): ""}
+	data, _ = ConvertEncryptionConfigurationToXml(input.BucketEncryptionConfiguration, false, isObs)
+	return
+}
+
 func (input SetBucketTaggingInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceTagging): ""}
 	data, md5, err := ConvertRequestToIoReaderV2(input)

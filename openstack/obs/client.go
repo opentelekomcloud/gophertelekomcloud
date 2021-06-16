@@ -492,6 +492,45 @@ func (obsClient ObsClient) DeleteBucketLifecycleConfiguration(bucketName string)
 	return
 }
 
+// SetBucketEncryption sets the default server-side encryption for a bucket.
+//
+// You can use this API to create or update the default server-side encryption for a bucket.
+func (obsClient ObsClient) SetBucketEncryption(input *SetBucketEncryptionInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("SetBucketEncryptionInput is nil")
+	}
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("SetBucketEncryption", HTTP_PUT, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// GetBucketEncryption gets the encryption configuration of a bucket.
+//
+// You can use this API to obtain obtain the encryption configuration of a bucket.
+func (obsClient ObsClient) GetBucketEncryption(bucketName string) (output *GetBucketEncryptionOutput, err error) {
+	output = &GetBucketEncryptionOutput{}
+	err = obsClient.doActionWithBucket("GetBucketEncryption", HTTP_GET, bucketName, newSubResourceSerial(SubResourceEncryption), output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// DeleteBucketEncryption deletes the encryption configuration of a bucket.
+//
+// You can use this API to delete the encryption configuration of a bucket.
+func (obsClient ObsClient) DeleteBucketEncryption(bucketName string) (output *BaseModel, err error) {
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("DeleteBucketEncryption", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourceEncryption), output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
 func (obsClient ObsClient) SetBucketTagging(input *SetBucketTaggingInput) (output *BaseModel, err error) {
 	if input == nil {
 		return nil, errors.New("SetBucketTaggingInput is nil")

@@ -23,6 +23,16 @@ func TestObsBucketLifecycle(t *testing.T) {
 	_, err = client.CreateBucket(createOpts)
 	th.AssertNoErr(t, err)
 
+	bucketEncryption := obs.BucketEncryptionConfiguration{
+		SSEAlgorithm: "aws:kms",
+	}
+
+	_, err = client.SetBucketEncryption(&obs.SetBucketEncryptionInput{
+		Bucket:                        bucketName,
+		BucketEncryptionConfiguration: bucketEncryption,
+	})
+	th.AssertNoErr(t, err)
+
 	_, err = client.DeleteBucket(bucketName)
 	th.AssertNoErr(t, err)
 }
