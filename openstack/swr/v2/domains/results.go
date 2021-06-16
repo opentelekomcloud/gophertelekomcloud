@@ -26,7 +26,7 @@ type AccessDomain struct {
 	Created      string `json:"created"`
 	Updated      string `json:"updated"`
 	// Status. `true`: valid `false`: expired
-	Status string `json:"status"`
+	Status bool `json:"status"`
 }
 
 func (r GetResult) Extract() (*AccessDomain, error) {
@@ -45,7 +45,7 @@ func (r GetResult) Extract() (*AccessDomain, error) {
 
 	// actual extract
 	domain := new(AccessDomain)
-	if err := r.ExtractIntoStructPtr(&domain, ""); err != nil {
+	if err := r.ExtractIntoStructPtr(domain, ""); err != nil {
 		return nil, err
 	}
 
@@ -66,6 +66,6 @@ type AccessDomainPage struct {
 
 func ExtractAccessDomains(p pagination.Page) ([]AccessDomain, error) {
 	var domains []AccessDomain
-	err := (p.(AccessDomainPage)).ExtractIntoSlicePtr(domains, "")
+	err := p.(AccessDomainPage).ExtractIntoSlicePtr(&domains, "")
 	return domains, err
 }
