@@ -24,7 +24,7 @@ func TestObsBucketLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	bucketEncryption := obs.BucketEncryptionConfiguration{
-		SSEAlgorithm: "kms",
+		SSEAlgorithm: "aws:kms",
 	}
 
 	_, err = client.SetBucketEncryption(&obs.SetBucketEncryptionInput{
