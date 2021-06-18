@@ -182,7 +182,7 @@ type DataVolume struct {
 	DataImageID string `json:"data_image_id,omitempty"`
 
 	// EVS disk Metadata.
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
 
 type VolumeExtendParam struct {
