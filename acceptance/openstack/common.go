@@ -123,6 +123,13 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	kmsID := clients.EnvOS.GetEnv("KMS_ID")
+	var encryption string
+	if kmsID != "" {
+		encryption = "1"
+	} else {
+		encryption = "0"
+	}
 
 	computeV2Client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
@@ -145,6 +152,16 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		},
 		RootVolume: cloudservers.RootVolume{
 			VolumeType: "SATA",
+		},
+		DataVolumes: []cloudservers.DataVolume{
+			{
+				VolumeType: "SATA",
+				Size:       40,
+				Metadata: map[string]interface{}{
+					"__system__encrypted": encryption,
+					"__system__cmkid":     kmsID,
+				},
+			},
 		},
 		AvailabilityZone: az,
 	}
