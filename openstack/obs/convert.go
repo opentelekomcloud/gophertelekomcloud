@@ -311,10 +311,13 @@ func convertTransitionsToXml(transitions []Transition, isObs bool) string {
 }
 
 func convertExpirationToXml(expiration Expiration) string {
-	if expiration.Days > 0 {
+	switch {
+	case expiration.Days > 0:
 		return fmt.Sprintf("<Expiration><Days>%d</Days></Expiration>", expiration.Days)
-	} else if !expiration.Date.IsZero() {
+	case !expiration.Date.IsZero():
 		return fmt.Sprintf("<Expiration><Date>%s</Date></Expiration>", expiration.Date.UTC().Format(ISO8601_MIDNIGHT_DATE_FORMAT))
+	case expiration.ExpiredObjectDeleteMarker:
+		return "<Expiration><ExpiredObjectDeleteMarker>true</ExpiredObjectDeleteMarker></Expiration>"
 	}
 	return ""
 }
