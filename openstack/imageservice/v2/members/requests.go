@@ -36,21 +36,21 @@ func (opts CreateOpts) ToImageMemberCreateMap() (map[string]interface{}, error) 
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func Create(client *golangsdk.ServiceClient, id string, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, imageID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToImageMemberCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createMemberURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(createMemberURL(client, imageID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // List members returns list of members for specified image id.
-func List(client *golangsdk.ServiceClient, id string) pagination.Pager {
-	return pagination.NewPager(client, listMembersURL(client, id), func(r pagination.PageResult) pagination.Page {
+func List(client *golangsdk.ServiceClient, imageID string) pagination.Pager {
+	return pagination.NewPager(client, listMembersURL(client, imageID), func(r pagination.PageResult) pagination.Page {
 		return MemberPage{pagination.SinglePageBase(r)}
 	})
 }
