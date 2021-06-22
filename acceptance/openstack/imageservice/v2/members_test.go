@@ -10,8 +10,6 @@ import (
 )
 
 func TestImageServiceV2MemberLifecycle(t *testing.T) {
-	err := os.Setenv("OS_CLOUD", "tf")
-	th.AssertNoErr(t, err)
 	client, err := clients.NewImageServiceV2Client()
 	th.AssertNoErr(t, err)
 
@@ -32,19 +30,20 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 	th.AssertEquals(t, createOpts.Member, share.MemberID)
 	th.AssertEquals(t, "pending", share.Status)
 
-	err = os.Setenv("OS_CLOUD", "dmd")
-	th.AssertNoErr(t, err)
-	_, err = clients.EnvOS.Cloud("dmd")
-	newClient, err := clients.NewImageServiceV2Client()
-	th.AssertNoErr(t, err)
-	updateOpts := members.UpdateOpts{
-		Status: "accepted",
+	newCloud := clients.EnvOS.GetEnv("CLOUD_2")
+	if newCloud != "" {
+		err = os.Setenv("OS_CLOUD", newCloud)
+		_, err := clients.EnvOS.Cloud(newCloud)
+		newClient, err := clients.NewImageServiceV2Client()
+		th.AssertNoErr(t, err)
+		updateOpts := members.UpdateOpts{
+			Status: "accepted",
+		}
+		_, err = members.Update(newClient, privateImageID, shareProjectID, updateOpts).Extract()
+		th.AssertNoErr(t, err)
+
+		newShare, err := members.Get(client, privateImageID, shareProjectID).Extract()
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, updateOpts.Status, newShare.Status)
 	}
-	_, err = members.Update(newClient, privateImageID, shareProjectID, updateOpts).Extract()
-	th.AssertNoErr(t, err)
-
-	newShare, err := members.Get(client, privateImageID, shareProjectID).Extract()
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, updateOpts.Status, newShare.Status)
-
 }
