@@ -33,7 +33,9 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 	newCloud := clients.EnvOS.GetEnv("CLOUD_2")
 	if newCloud != "" {
 		err = os.Setenv("OS_CLOUD", newCloud)
+		th.AssertNoErr(t, err)
 		_, err := clients.EnvOS.Cloud(newCloud)
+		th.AssertNoErr(t, err)
 		newClient, err := clients.NewImageServiceV2Client()
 		th.AssertNoErr(t, err)
 		updateOpts := members.UpdateOpts{
