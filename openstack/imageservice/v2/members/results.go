@@ -1,20 +1,18 @@
 package members
 
 import (
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Member represents a member of an Image.
 type Member struct {
-	CreatedAt time.Time `json:"created_at"`
-	ImageID   string    `json:"image_id"`
-	MemberID  string    `json:"member_id"`
-	Schema    string    `json:"schema"`
-	Status    string    `json:"status"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt string `json:"created_at"`
+	ImageID   string `json:"image_id"`
+	MemberID  string `json:"member_id"`
+	Schema    string `json:"schema"`
+	Status    string `json:"status"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 // Extract Member model from a request.

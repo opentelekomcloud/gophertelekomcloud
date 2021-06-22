@@ -84,8 +84,8 @@ func HandleImageMemberDetails(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, `{
 		    "status": "pending",
-		    "created_at": "2013-11-26T07:21:21Z",
-		    "updated_at": "2013-11-26T07:21:21Z",
+		    "created_at": "2013-09-20T19:22:19Z",
+		    "updated_at": "2013-09-20T19:25:31Z",
 		    "image_id": "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 		    "member_id": "8989447062e04a818baf9e073fd04fa7",
 		    "schema": "/v2/schemas/member"
@@ -122,8 +122,8 @@ func HandleImageMemberUpdate(t *testing.T) *CallsCounter {
 
 		_, _ = fmt.Fprint(w, `{
 		    "status": "accepted",
-		    "created_at": "2013-11-26T07:21:21Z",
-		    "updated_at": "2013-11-26T07:21:21Z",
+		    "created_at": "2013-09-20T19:22:19Z",
+		    "updated_at": "2013-09-20T19:25:31Z",
 		    "image_id": "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 		    "member_id": "8989447062e04a818baf9e073fd04fa7",
 		    "schema": "/v2/schemas/member"

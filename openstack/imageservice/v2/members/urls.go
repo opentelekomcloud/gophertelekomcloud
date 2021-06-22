@@ -2,8 +2,13 @@ package members
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
+const (
+	resourcePath = "images"
+	membersPath  = "members"
+)
+
 func imageMembersURL(c *golangsdk.ServiceClient, imageID string) string {
-	return c.ServiceURL("images", imageID, "members")
+	return c.ServiceURL(resourcePath, imageID, membersPath)
 }
 
 func listMembersURL(c *golangsdk.ServiceClient, imageID string) string {
@@ -15,7 +20,7 @@ func createMemberURL(c *golangsdk.ServiceClient, imageID string) string {
 }
 
 func imageMemberURL(c *golangsdk.ServiceClient, imageID string, memberID string) string {
-	return c.ServiceURL("images", imageID, "members", memberID)
+	return c.ServiceURL(resourcePath, imageID, membersPath, memberID)
 }
 
 func getMemberURL(c *golangsdk.ServiceClient, imageID string, memberID string) string {
