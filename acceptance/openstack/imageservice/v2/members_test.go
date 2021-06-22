@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -9,24 +10,41 @@ import (
 )
 
 func TestImageServiceV2MemberLifecycle(t *testing.T) {
+	err := os.Setenv("OS_CLOUD", "tf")
+	th.AssertNoErr(t, err)
 	client, err := clients.NewImageServiceV2Client()
 	th.AssertNoErr(t, err)
 
-	projectID := clients.EnvOS.GetEnv("PROJECT_ID_2")
+	shareProjectID := clients.EnvOS.GetEnv("PROJECT_ID_2")
 	privateImageID := clients.EnvOS.GetEnv("PRIVATE_IMAGE_ID")
-	if projectID == "" || privateImageID == "" {
+	if shareProjectID == "" || privateImageID == "" {
 		t.Skipf("OS_PROJECT_ID_2 or OS_PRIVATE_IMAGE_ID env vars are missing but IMS member test requires it")
 	}
 	createOpts := members.CreateOpts{
-		Member: projectID,
+		Member: shareProjectID,
 	}
 
 	share, err := members.Create(client, privateImageID, createOpts).Extract()
 	defer func() {
-		th.AssertNoErr(t, members.Delete(client, privateImageID, projectID).ExtractErr())
+		th.AssertNoErr(t, members.Delete(client, privateImageID, shareProjectID).ExtractErr())
 	}()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Member, share.MemberID)
 	th.AssertEquals(t, "pending", share.Status)
+
+	err = os.Setenv("OS_CLOUD", "dmd")
+	th.AssertNoErr(t, err)
+	_, err = clients.EnvOS.Cloud("dmd")
+	newClient, err := clients.NewImageServiceV2Client()
+	th.AssertNoErr(t, err)
+	updateOpts := members.UpdateOpts{
+		Status: "accepted",
+	}
+	_, err = members.Update(newClient, privateImageID, shareProjectID, updateOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	newShare, err := members.Get(client, privateImageID, shareProjectID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updateOpts.Status, newShare.Status)
 
 }
