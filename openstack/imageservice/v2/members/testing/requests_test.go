@@ -2,7 +2,6 @@ package testing
 
 import (
 	"testing"
-	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/imageservice/v2/members"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -17,24 +16,20 @@ func TestCreateMemberSuccessfully(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
+	createOpts := members.CreateOpts{
+		Member: "8989447062e04a818baf9e073fd04fa7",
+	}
 	HandleCreateImageMemberSuccessfully(t)
-	im, err := members.Create(fakeclient.ServiceClient(), "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
-		"8989447062e04a818baf9e073fd04fa7").Extract()
-	th.AssertNoErr(t, err)
-
-	createdAt, err := time.Parse(time.RFC3339, createdAtString)
-	th.AssertNoErr(t, err)
-
-	updatedAt, err := time.Parse(time.RFC3339, updatedAtString)
+	im, err := members.Create(fakeclient.ServiceClient(), "da3b75d9-3f4a-40e7-8a2c-bfab23927dea", createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, members.Member{
-		CreatedAt: createdAt,
+		CreatedAt: createdAtString,
 		ImageID:   "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 		MemberID:  "8989447062e04a818baf9e073fd04fa7",
 		Schema:    "/v2/schemas/member",
 		Status:    "pending",
-		UpdatedAt: updatedAt,
+		UpdatedAt: updatedAtString,
 	}, *im)
 
 }
@@ -113,19 +108,13 @@ func TestShowMemberDetails(t *testing.T) {
 		t.Fatalf("Expected non-nil value for md")
 	}
 
-	createdAt, err := time.Parse(time.RFC3339, "2013-11-26T07:21:21Z")
-	th.AssertNoErr(t, err)
-
-	updatedAt, err := time.Parse(time.RFC3339, "2013-11-26T07:21:21Z")
-	th.AssertNoErr(t, err)
-
 	th.AssertDeepEquals(t, members.Member{
-		CreatedAt: createdAt,
+		CreatedAt: createdAtString,
 		ImageID:   "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 		MemberID:  "8989447062e04a818baf9e073fd04fa7",
 		Schema:    "/v2/schemas/member",
 		Status:    "pending",
-		UpdatedAt: updatedAt,
+		UpdatedAt: updatedAtString,
 	}, *md)
 }
 
@@ -154,19 +143,13 @@ func TestMemberUpdateSuccessfully(t *testing.T) {
 	th.AssertEquals(t, 1, counter.Counter)
 	th.AssertNoErr(t, err)
 
-	createdAt, err := time.Parse(time.RFC3339, "2013-11-26T07:21:21Z")
-	th.AssertNoErr(t, err)
-
-	updatedAt, err := time.Parse(time.RFC3339, "2013-11-26T07:21:21Z")
-	th.AssertNoErr(t, err)
-
 	th.AssertDeepEquals(t, members.Member{
-		CreatedAt: createdAt,
+		CreatedAt: createdAtString,
 		ImageID:   "da3b75d9-3f4a-40e7-8a2c-bfab23927dea",
 		MemberID:  "8989447062e04a818baf9e073fd04fa7",
 		Schema:    "/v2/schemas/member",
 		Status:    "accepted",
-		UpdatedAt: updatedAt,
+		UpdatedAt: updatedAtString,
 	}, *im)
 
 }
