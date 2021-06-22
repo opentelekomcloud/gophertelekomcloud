@@ -496,9 +496,10 @@ type Transition struct {
 }
 
 type Expiration struct {
-	XMLName xml.Name  `xml:"Expiration"`
-	Date    time.Time `xml:"Date,omitempty"`
-	Days    int       `xml:"Days,omitempty"`
+	XMLName                   xml.Name  `xml:"Expiration"`
+	Date                      time.Time `xml:"Date,omitempty"`
+	Days                      int       `xml:"Days,omitempty"`
+	ExpiredObjectDeleteMarker bool      `xml:"ExpiredObjectDeleteMarker,omitempty"`
 }
 
 type NoncurrentVersionTransition struct {
