@@ -1,8 +1,6 @@
 package instances
 
 import (
-	"fmt"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -165,7 +163,6 @@ func Restart(client *golangsdk.ServiceClient, opts RestartRdsInstanceBuilder, in
 		r.Err = err
 		return
 	}
-	fmt.Println("restart Rds instance body = ", b)
 	_, r.Err = client.Post(restartURL(client, instanceId), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
