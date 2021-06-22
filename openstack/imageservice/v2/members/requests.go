@@ -25,19 +25,19 @@ import (
 */
 // CreateOptsBuilder allows extensions to add parameters to the Create request.
 type CreateOptsBuilder interface {
-	ToCreateMap() (map[string]interface{}, error)
+	ToImageMemberCreateMap() (map[string]interface{}, error)
 }
 
 type CreateOpts struct {
 	Member string `json:"member" required:"true"`
 }
 
-func (opts CreateOpts) ToCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToImageMemberCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 func Create(client *golangsdk.ServiceClient, id string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToCreateMap()
+	b, err := opts.ToImageMemberCreateMap()
 	if err != nil {
 		r.Err = err
 		return
@@ -74,7 +74,7 @@ func Delete(client *golangsdk.ServiceClient, imageID string, memberID string) (r
 // UpdateOptsBuilder allows extensions to add additional attributes to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToUpdateMap() (map[string]interface{}, error)
+	ToImageMemberUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents options to an Update request.
@@ -83,14 +83,14 @@ type UpdateOpts struct {
 	VaultID string `json:"vault_id,omitempty"`
 }
 
-// ToUpdateMap formats an UpdateOpts structure into a request body.
-func (opts UpdateOpts) ToUpdateMap() (map[string]interface{}, error) {
+// ToImageMemberUpdateMap formats an UpdateOpts structure into a request body.
+func (opts UpdateOpts) ToImageMemberUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Update function updates member.
 func Update(client *golangsdk.ServiceClient, imageID string, memberID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToUpdateMap()
+	b, err := opts.ToImageMemberUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
