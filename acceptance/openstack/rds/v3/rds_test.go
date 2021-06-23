@@ -38,6 +38,11 @@ func TestRdsLifecycle(t *testing.T) {
 	defer deleteRDS(t, client, rds.Id)
 	th.AssertEquals(t, rds.Volume.Size, 100)
 
+	restart, err := instances.Restart(client, instances.RestartRdsInstanceOpts{Restart: "{}"}, rds.Id).Extract()
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, restart.JobId)
+	th.AssertNoErr(t, err)
+
 	tagList := []tags.ResourceTag{
 		{
 			Key:   "muh",
