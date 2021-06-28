@@ -14,26 +14,17 @@ import (
 )
 
 func TestSnapshotWorkflow(t *testing.T) {
+
+	agencyID := clients.EnvOS.GetEnv("AGENCY_ID")
+	if agencyID == "" {
+		t.Fatalf("OS_AGENCY_ID is required for this test")
+	}
+
 	client, err := clients.NewCssV1Client()
 	th.AssertNoErr(t, err)
 
 	clusterID := createCluster(t, client)
 	defer deleteCluster(t, client, clusterID)
-
-	th.AssertNoErr(t, snapshots.Enable(client, clusterID).ExtractErr())
-	defer func() {
-		th.AssertNoErr(t, snapshots.Disable(client, clusterID).ExtractErr())
-	}()
-
-	policyOpts := snapshots.PolicyCreateOpts{
-		Prefix:     "snap-",
-		Period:     "00:00 GMT+03:00",
-		KeepDay:    1,
-		Enable:     "true",
-		DeleteAuto: "true",
-	}
-	th.AssertNoErr(t, snapshots.PolicyCreate(client, policyOpts, clusterID).ExtractErr())
-
 	bucketName := "snapshot-sdk-test-bucket"
 	createOpts := &obs.CreateBucketInput{
 		Bucket: bucketName,
@@ -51,9 +42,24 @@ func TestSnapshotWorkflow(t *testing.T) {
 
 	basicOpts := snapshots.UpdateConfigurationOpts{
 		Bucket: bucketName,
+		Agency: agencyID,
 	}
 	err = snapshots.UpdateConfiguration(client, clusterID, basicOpts).ExtractErr()
 	th.AssertNoErr(t, err)
+
+	policyOpts := snapshots.PolicyCreateOpts{
+		Prefix:     "snap-",
+		Period:     "00:00 GMT+03:00",
+		KeepDay:    1,
+		Enable:     "true",
+		DeleteAuto: "true",
+	}
+	th.AssertNoErr(t, snapshots.PolicyCreate(client, policyOpts, clusterID).ExtractErr())
+
+	th.AssertNoErr(t, snapshots.Enable(client, clusterID).ExtractErr())
+	defer func() {
+		th.AssertNoErr(t, snapshots.Disable(client, clusterID).ExtractErr())
+	}()
 
 	policy, err := snapshots.PolicyGet(client, clusterID).Extract()
 	th.AssertNoErr(t, err)
@@ -67,7 +73,7 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) string {
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
 
 	if vpcID == "" || subnetID == "" {
-		t.Skip("Both `VPC_ID` and `NETWORK_ID` need to be defined")
+		t.Skip("Both `OS_VPC_ID`, `OS_NETWORK_ID` need to be defined")
 	}
 
 	sgID := openstack.DefaultSecurityGroup(t)

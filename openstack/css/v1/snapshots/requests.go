@@ -112,10 +112,10 @@ type UpdateConfigurationOptsBuilder interface {
 type UpdateConfigurationOpts struct {
 	// OBS bucket used for index data backup.
 	// If there is snapshot data in an OBS bucket, only the OBS bucket is used and cannot be changed.
-	Bucket string `json:"bucket"`
+	Bucket string `json:"bucket" required:"true"`
 
 	// IAM agency used to access OBS.
-	Agency string `json:"agency"`
+	Agency string `json:"agency" required:"true"`
 
 	// Key ID used for snapshot encryption.
 	SnapshotCmkID string `json:"snapshotCmkId,omitempty"`
