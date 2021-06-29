@@ -17,7 +17,7 @@ func TestSnapshotWorkflow(t *testing.T) {
 
 	agencyID := clients.EnvOS.GetEnv("AGENCY_ID")
 	if agencyID == "" {
-		t.Fatalf("OS_AGENCY_ID is required for this test")
+		t.Skipf("OS_AGENCY_ID is required for this test")
 	}
 
 	client, err := clients.NewCssV1Client()
@@ -25,20 +25,8 @@ func TestSnapshotWorkflow(t *testing.T) {
 
 	clusterID := createCluster(t, client)
 	defer deleteCluster(t, client, clusterID)
-	bucketName := "snapshot-sdk-test-bucket"
-	createOpts := &obs.CreateBucketInput{
-		Bucket: bucketName,
-	}
-	obsClient, err := clients.NewOBSClient()
-	th.AssertNoErr(t, err)
-
-	_, err = obsClient.CreateBucket(createOpts)
-	th.AssertNoErr(t, err)
-
-	defer func() {
-		_, err = obsClient.DeleteBucket(bucketName)
-		th.AssertNoErr(t, err)
-	}()
+	bucketName := createBucket(t)
+	defer deleteBucket(t, bucketName)
 
 	basicOpts := snapshots.UpdateConfigurationOpts{
 		Bucket: bucketName,
@@ -48,7 +36,7 @@ func TestSnapshotWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	policyOpts := snapshots.PolicyCreateOpts{
-		Prefix:     "snap-",
+		Prefix:     "snap",
 		Period:     "00:00 GMT+03:00",
 		KeepDay:    1,
 		Enable:     "true",
@@ -56,16 +44,45 @@ func TestSnapshotWorkflow(t *testing.T) {
 	}
 	th.AssertNoErr(t, snapshots.PolicyCreate(client, policyOpts, clusterID).ExtractErr())
 
-	th.AssertNoErr(t, snapshots.Enable(client, clusterID).ExtractErr())
-	defer func() {
-		th.AssertNoErr(t, snapshots.Disable(client, clusterID).ExtractErr())
-	}()
-
 	policy, err := snapshots.PolicyGet(client, clusterID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, basicOpts.Bucket, policy.Bucket)
 	th.AssertEquals(t, policyOpts.Prefix, policy.Prefix)
 	tools.PrintResource(t, policy)
+}
+
+func createBucket(t *testing.T) string {
+	bucketName := "snapshot-sdk-test-bucket"
+	createOpts := &obs.CreateBucketInput{
+		Bucket: bucketName,
+	}
+	obsClient, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	_, err = obsClient.CreateBucket(createOpts)
+	th.AssertNoErr(t, err)
+	return bucketName
+}
+
+func deleteBucket(t *testing.T, bucket string) {
+	obsClient, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	objects, err := obsClient.ListObjects(&obs.ListObjectsInput{Bucket: bucket})
+	th.AssertNoErr(t, err)
+
+	objectsToDelete := make([]obs.ObjectToDelete, len(objects.Contents))
+	for i, obj := range objects.Contents {
+		objectsToDelete[i] = obs.ObjectToDelete{
+			Key: obj.Key,
+		}
+	}
+	_, err = obsClient.DeleteObjects(&obs.DeleteObjectsInput{
+		Bucket:  bucket,
+		Quiet:   true,
+		Objects: objectsToDelete,
+	})
+	th.AssertNoErr(t, err)
 }
 
 func createCluster(t *testing.T, client *golangsdk.ServiceClient) string {
