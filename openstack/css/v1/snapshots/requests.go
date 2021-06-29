@@ -104,3 +104,35 @@ func Delete(client *golangsdk.ServiceClient, clusterId, id string) (r ErrorResul
 	})
 	return
 }
+
+type UpdateConfigurationOptsBuilder interface {
+	ToUpdateConfigurationMap() (map[string]interface{}, error)
+}
+
+type UpdateConfigurationOpts struct {
+	// OBS bucket used for index data backup.
+	// If there is snapshot data in an OBS bucket, only the OBS bucket is used and cannot be changed.
+	Bucket string `json:"bucket" required:"true"`
+
+	// IAM agency used to access OBS.
+	Agency string `json:"agency" required:"true"`
+
+	// Key ID used for snapshot encryption.
+	SnapshotCmkID string `json:"snapshotCmkId,omitempty"`
+}
+
+func (opts UpdateConfigurationOpts) ToUpdateConfigurationMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+func UpdateConfiguration(client *golangsdk.ServiceClient, clusterID string, opts UpdateConfigurationOptsBuilder) (r ErrorResult) {
+	b, err := opts.ToUpdateConfigurationMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(configURL(client, clusterID), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}

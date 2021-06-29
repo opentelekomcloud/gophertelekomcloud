@@ -22,6 +22,10 @@ func createURL(c *golangsdk.ServiceClient, clusterId string) string {
 	return c.ServiceURL("clusters", clusterId, "index_snapshot")
 }
 
+func configURL(c *golangsdk.ServiceClient, clusterId string) string {
+	return c.ServiceURL("clusters", clusterId, "index_snapshot", "setting")
+}
+
 // listURL used to query all snapshots of a cluster
 func listURL(c *golangsdk.ServiceClient, clusterId string) string {
 	return c.ServiceURL("clusters", clusterId, "index_snapshots")
