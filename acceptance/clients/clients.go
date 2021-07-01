@@ -282,6 +282,16 @@ func NewSharedFileSystemV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewKMSV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewKMSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewSharedFileSystemTurboV1Client returns a *ServiceClient for making calls
 // to the OpenStack Shared File System Turbo v1 API. An error will be returned
 // if authentication or client creation was not possible.

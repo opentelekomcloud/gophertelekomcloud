@@ -25,9 +25,9 @@ type CreateOpts struct {
 	Sequence string `json:"sequence,omitempty"`
 }
 
-// ToKeyCreateMap assembles a request body based on the contents of a
+// ToGrantCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToKeyCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToGrantCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -47,7 +47,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 }
 
 type DeleteOptsBuilder interface {
-	ToDeleteRevokeMap() (map[string]interface{}, error)
+	ToGrantDeleteMap() (map[string]interface{}, error)
 }
 
 type DeleteOpts struct {
@@ -61,16 +61,16 @@ type DeleteOpts struct {
 	Sequence string `json:"sequence,omitempty"`
 }
 
-// ToDeleteRevokeMap assembles a request body based on the contents of a
+// ToGrantDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
-func (opts DeleteOpts) ToDeleteRevokeMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToGrantDeleteMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Delete will delete the existing Grant based on the values in DeleteOpts. To
 // extract result call the ExtractErr method on the DeleteResult.
 func Delete(client *golangsdk.ServiceClient, opts DeleteOptsBuilder) (r DeleteResult) {
-	b, err := opts.ToDeleteRevokeMap()
+	b, err := opts.ToGrantDeleteMap()
 	if err != nil {
 		r.Err = err
 		return
