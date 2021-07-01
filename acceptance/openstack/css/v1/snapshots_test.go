@@ -50,6 +50,8 @@ func TestSnapshotWorkflow(t *testing.T) {
 	th.AssertEquals(t, basicOpts.SnapshotCmkID, policy.SnapshotCmkID)
 	th.AssertEquals(t, policyOpts.Prefix, policy.Prefix)
 	tools.PrintResource(t, policy)
+
+	th.AssertNoErr(t, snapshots.Disable(client, clusterID).ExtractErr())
 }
 
 func createBucket(t *testing.T) string {
