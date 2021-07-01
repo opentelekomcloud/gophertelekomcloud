@@ -75,7 +75,7 @@ func Delete(client *golangsdk.ServiceClient, opts DeleteOptsBuilder) (r DeleteRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(deleteURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

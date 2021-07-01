@@ -14,7 +14,7 @@ func TestKmsGrantsLifecycle(t *testing.T) {
 
 	kmsID := clients.EnvOS.GetEnv("KMS_ID")
 	if kmsID == "" {
-		t.Skip("One of OS_KMS_ID or OS_NETWORK_ID env vars is missing but ECSv1 test requires")
+		t.Skip("OS_KMS_ID env var is missing but KMSv1 grant test requires")
 	}
 
 	createOpts := grants.CreateOpts{
