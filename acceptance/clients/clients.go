@@ -266,7 +266,10 @@ func NewOBSClient() (*obs.ObsClient, error) {
 		return nil, err
 	}
 	opts := cc.AKSKAuthOptions
-	return obs.New(opts.AccessKey, opts.SecretKey, client.Endpoint, obs.WithSecurityToken(opts.SecurityToken))
+	return obs.New(
+		opts.AccessKey, opts.SecretKey, client.Endpoint,
+		obs.WithSecurityToken(opts.SecurityToken), obs.WithSignature(obs.SignatureObs),
+	)
 }
 
 // NewSharedFileSystemV2Client returns a *ServiceClient for making calls
