@@ -47,6 +47,7 @@ func TestSnapshotWorkflow(t *testing.T) {
 	policy, err := snapshots.PolicyGet(client, clusterID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, basicOpts.Bucket, policy.Bucket)
+	th.AssertEquals(t, basicOpts.SnapshotCmkID, policy.SnapshotCmkID)
 	th.AssertEquals(t, policyOpts.Prefix, policy.Prefix)
 	tools.PrintResource(t, policy)
 }
