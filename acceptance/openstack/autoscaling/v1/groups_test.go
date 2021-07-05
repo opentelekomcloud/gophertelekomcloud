@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/groups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -41,33 +42,9 @@ func TestGroupLifecycle(t *testing.T) {
 	secGroupID := openstack.CreateSecurityGroup(t)
 	defer openstack.DeleteSecurityGroup(t, secGroupID)
 
-	defaultSGID := openstack.DefaultSecurityGroup(t)
-	deletePublicIP := true
-
-	createOpts := groups.CreateOpts{
-		Name: asGroupCreateName,
-		Networks: []groups.NetworkOpts{
-			{
-				ID: networkID,
-			},
-		},
-		SecurityGroup: []groups.SecurityGroupOpts{
-			{
-				ID: defaultSGID,
-			},
-		},
-		VpcID:            vpcID,
-		IsDeletePublicip: &deletePublicIP,
-	}
-	t.Logf("Attempting to create AutoScaling Group")
-	groupID, err := groups.Create(client, createOpts).Extract()
-	th.AssertNoErr(t, err)
-	t.Logf("Created AutoScaling Group: %s", groupID)
+	groupID := autoscaling.CreateAutoScalingGroup(t, client, networkID, vpcID, asGroupCreateName)
 	defer func() {
-		t.Logf("Attempting to delete AutoScaling Group")
-		err := groups.Delete(client, groupID).ExtractErr()
-		th.AssertNoErr(t, err)
-		t.Logf("Deleted AutoScaling Group: %s", groupID)
+		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
 	}()
 
 	group, err := groups.Get(client, groupID).Extract()
@@ -79,7 +56,7 @@ func TestGroupLifecycle(t *testing.T) {
 
 	t.Logf("Attempting to update AutoScaling Group")
 	asGroupUpdateName := tools.RandomString("as-group-update-", 3)
-	deletePublicIP = false
+	deletePublicIP := false
 
 	updateOpts := groups.UpdateOpts{
 		Name: asGroupUpdateName,

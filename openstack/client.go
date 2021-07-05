@@ -636,6 +636,17 @@ func NewAutoScalingV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpt
 	return initClientOpts(client, eo, "asv1")
 }
 
+// NewAutoScalingV2 creates a ServiceClient that may be used to access the
+// auto-scaling service of OpenTelekomCloud public cloud
+func NewAutoScalingV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "asv1")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "v2", 1)
+	return sc, err
+}
+
 // NewNetworkV1 creates a ServiceClient that may be used with the v1 network
 // package.
 func NewNetworkV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
