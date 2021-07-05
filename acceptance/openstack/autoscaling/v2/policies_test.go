@@ -11,6 +11,8 @@ import (
 )
 
 func TestPolicyLifecycle(t *testing.T) {
+	v1client, err := clients.NewAutoscalingV1Client()
+	th.AssertNoErr(t, err)
 	client, err := clients.NewAutoscalingV2Client()
 	th.AssertNoErr(t, err)
 
@@ -21,9 +23,9 @@ func TestPolicyLifecycle(t *testing.T) {
 	if networkID == "" || vpcID == "" {
 		t.Skip("OS_NETWORK_ID or OS_VPC_ID env vars are missing but AS Policy test requires")
 	}
-	groupID := autoscaling.CreateAutoScalingGroup(t, client, networkID, vpcID, asGroupCreateName)
+	groupID := autoscaling.CreateAutoScalingGroup(t, v1client, networkID, vpcID, asGroupCreateName)
 	defer func() {
-		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
+		autoscaling.DeleteAutoScalingGroup(t, v1client, groupID)
 	}()
 
 	createOpts := policies.CreateOpts{
@@ -49,7 +51,7 @@ func TestPolicyLifecycle(t *testing.T) {
 	t.Logf("Created AutoScaling Policy: %s", policyID)
 	defer func() {
 		t.Logf("Attempting to delete AutoScaling Policy")
-		err := policies.Delete(client, policyID).ExtractErr()
+		err := policies.Delete(v1client, policyID).ExtractErr()
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted AutoScaling Policy: %s", policyID)
 	}()
@@ -64,10 +66,12 @@ func TestPolicyLifecycle(t *testing.T) {
 	asPolicyUpdateName := tools.RandomString("as-policy-update-", 3)
 
 	updateOpts := policies.UpdateOpts{
-		PolicyName: asPolicyUpdateName,
+		PolicyName:     asPolicyUpdateName,
+		SchedulePolicy: createOpts.SchedulePolicy,
 		Action: policies.ActionOpts{
 			Percentage: 30,
 		},
+		CoolDownTime: 0,
 	}
 
 	policyID, err = policies.Update(client, policy.PolicyID, updateOpts).Extract()
