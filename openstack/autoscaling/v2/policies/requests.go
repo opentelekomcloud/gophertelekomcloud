@@ -85,7 +85,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		return
 	}
 
-	_, r.Err = client.Put(updateURL(client, id), body, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(singleURL(client, id), body, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -93,12 +93,12 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 
 // Delete is a method which can be able to access to delete a policy of autoscaling
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	_, r.Err = client.Delete(singleURL(client, id), nil)
 	return
 }
 
 // Get is a method which can be able to access to get a policy detailed information
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(singleURL(client, id), &r.Body, nil)
 	return
 }
