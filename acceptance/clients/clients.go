@@ -29,6 +29,18 @@ func NewAutoscalingV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewAutoscalingV2Client returns authenticated AutoScaling v2 client
+func NewAutoscalingV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewAutoScalingV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewBlockStorageV1Client returns a *ServiceClient for making calls
 // to the OpenStack Block Storage v1 API. An error will be returned
 // if authentication or client creation was not possible.
