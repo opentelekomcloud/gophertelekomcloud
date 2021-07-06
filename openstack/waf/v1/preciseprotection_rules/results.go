@@ -1,12 +1,12 @@
 package preciseprotection_rules
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Precise struct {
 	Id         string      `json:"id"`
-	PolicyID   string      `json:"policyid"`
+	PolicyID   string      `json:"policy_id"`
 	Name       string      `json:"name"`
 	Time       bool        `json:"time"`
 	Start      int64       `json:"start"`
@@ -30,6 +30,12 @@ func (r commonResult) Extract() (*Precise, error) {
 // CreateResult represents the result of a create operation. Call its Extract
 // method to interpret it as a precise protection rule.
 type CreateResult struct {
+	commonResult
+}
+
+// UpdateResult represents the result of a update operation. Call its Extract
+// method to interpret it as a precise protection rule.
+type UpdateResult struct {
 	commonResult
 }
 
