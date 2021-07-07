@@ -436,6 +436,17 @@ func NewSwrV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewSmnV2Client returns authenticated SMN v2 client
+func NewSmnV2Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewSMNV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
