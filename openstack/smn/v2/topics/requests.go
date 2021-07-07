@@ -72,9 +72,12 @@ func Update(client *golangsdk.ServiceClient, ops UpdateOpsBuilder, id string) (r
 	return
 }
 
-// delete a topic via id
+// Delete a topic via id
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), openstack.StdRequestOpts())
+	_, r.Err = client.Delete(deleteURL(client, id), &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
+	})
 	return
 }
 
