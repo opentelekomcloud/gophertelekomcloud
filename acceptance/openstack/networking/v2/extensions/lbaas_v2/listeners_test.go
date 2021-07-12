@@ -1,6 +1,7 @@
 package lbaas_v2
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -32,7 +33,10 @@ func TestLbaasV2ListenersLifeCycle(t *testing.T) {
 	ecs := openstack.CreateCloudServer(t, computeClient, ecsCreateOpts)
 	defer openstack.DeleteCloudServer(t, computeClient, ecs.ID)
 
-	member := createLbaasMember(t, client, loadBalancerPool.ID, ecs.AccessIPv4)
+	ecsNICs := reflect.ValueOf(ecs.Addresses).MapKeys()
+	ecsPrivateIP := ecs.Addresses[ecsNICs[0].String()][0].Addr
+
+	member := createLbaasMember(t, client, loadBalancerPool.ID, ecsPrivateIP)
 	defer deleteLbaasMember(t, client, loadBalancerPool.ID, member.ID)
 
 	// Create lbaasV2 certificate
