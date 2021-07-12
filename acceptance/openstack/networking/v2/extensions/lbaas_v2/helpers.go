@@ -12,7 +12,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func createLbaasCertificate(t *testing.T, client *golangsdk.ServiceClient) (*certificates.Certificate, error) {
+func createLbaasCertificate(t *testing.T, client *golangsdk.ServiceClient) *certificates.Certificate {
 	certificateName := tools.RandomString("create-cert-", 8)
 	privateKey := `
 -----BEGIN RSA PRIVATE KEY-----
@@ -79,7 +79,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 
 	t.Logf("Created LbaasV2 certificate: %s", lbaasCertificate.ID)
 
-	return lbaasCertificate, nil
+	return lbaasCertificate
 }
 
 func deleteLbaasCertificate(t *testing.T, client *golangsdk.ServiceClient, lbaasCertificateId string) {
@@ -132,7 +132,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+9Aa==
 	return nil
 }
 
-func createLbaasPool(t *testing.T, client *golangsdk.ServiceClient, loadBalancerID string) (*pools.Pool, error) {
+func createLbaasPool(t *testing.T, client *golangsdk.ServiceClient, loadBalancerID string) *pools.Pool {
 	poolName := tools.RandomString("create-pool-", 3)
 	t.Logf("Attempting to create LbaasV2 pool")
 
@@ -147,7 +147,7 @@ func createLbaasPool(t *testing.T, client *golangsdk.ServiceClient, loadBalancer
 
 	t.Logf("Created LbaasV2 pool: %s", lbaasMonitor.ID)
 
-	return lbaasMonitor, nil
+	return lbaasMonitor
 }
 
 func deleteLbaasPool(t *testing.T, client *golangsdk.ServiceClient, lbaasPoolID string) {
@@ -159,7 +159,7 @@ func deleteLbaasPool(t *testing.T, client *golangsdk.ServiceClient, lbaasPoolID 
 	t.Logf("LbaasV2 pool is deleted: %s", lbaasPoolID)
 }
 
-func createLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) (*loadbalancers.LoadBalancer, error) {
+func createLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) *loadbalancers.LoadBalancer {
 	loadBalancerName := tools.RandomString("create-lb-", 3)
 	t.Logf("Attempting to create LbaasV2 LoadBalancer")
 
@@ -177,7 +177,7 @@ func createLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) (*lo
 
 	t.Logf("Created LbaasV2 LoadBalancer: %s", lbaasLoadBalancer.ID)
 
-	return lbaasLoadBalancer, nil
+	return lbaasLoadBalancer
 }
 
 func deleteLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient, lbaasLBID string) {
@@ -187,4 +187,33 @@ func deleteLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient, lbaa
 	th.AssertNoErr(t, err)
 
 	t.Logf("LbaasV2 LoadBalancer is deleted: %s", lbaasLBID)
+}
+
+func createLbaasMember(t *testing.T, client *golangsdk.ServiceClient, poolID, accessIP string) *pools.Member {
+	t.Logf("Attempting to create LbaasV2 Member")
+	subnetID := clients.EnvOS.GetEnv("SUBNET_ID")
+	if subnetID == "" {
+		t.Skip("`SUBNET_ID` needs to be defined")
+	}
+	createOpts := pools.CreateMemberOpts{
+		Address:      accessIP,
+		ProtocolPort: 8080,
+		SubnetID:     subnetID,
+	}
+
+	member, err := pools.CreateMember(client, poolID, createOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	t.Logf("Created LbaasV2 Member: %s", member.ID)
+
+	return member
+}
+
+func deleteLbaasMember(t *testing.T, client *golangsdk.ServiceClient, poolID, memberID string) {
+	t.Logf("Attempting to delete LbaasV2 Member: %s", memberID)
+
+	err := pools.DeleteMember(client, poolID, memberID).ExtractErr()
+	th.AssertNoErr(t, err)
+
+	t.Logf("LbaasV2 Member is deleted: %s", memberID)
 }

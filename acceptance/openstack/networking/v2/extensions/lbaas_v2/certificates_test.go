@@ -30,8 +30,7 @@ func TestLbaasV2CertificateLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// Create lbaasV2 certificate
-	lbaasCertificate, err := createLbaasCertificate(t, client)
-	th.AssertNoErr(t, err)
+	lbaasCertificate := createLbaasCertificate(t, client)
 	defer deleteLbaasCertificate(t, client, lbaasCertificate.ID)
 
 	tools.PrintResource(t, lbaasCertificate)
