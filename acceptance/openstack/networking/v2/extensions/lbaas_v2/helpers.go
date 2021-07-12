@@ -138,7 +138,7 @@ func createLbaasPool(t *testing.T, client *golangsdk.ServiceClient, loadBalancer
 
 	createOpts := pools.CreateOpts{
 		LBMethod:       "ROUND_ROBIN",
-		Protocol:       "TCP",
+		Protocol:       "HTTP",
 		LoadbalancerID: loadBalancerID,
 		Name:           poolName,
 	}
