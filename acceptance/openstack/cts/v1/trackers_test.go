@@ -19,14 +19,12 @@ func TestTrackersLifecycle(t *testing.T) {
 	defer deleteSMNTopic(t, smn.TopicUrn)
 
 	t.Logf("Attempting to create CTSv1 Tracker")
-	supportSMN := true
-	sendAllKey := true
 	createOpts := tracker.CreateOptsWithSMN{
 		BucketName: bucketName,
 		SimpleMessageNotification: tracker.SimpleMessageNotification{
-			IsSupportSMN:          &supportSMN,
+			IsSupportSMN:          true,
 			TopicID:               smn.TopicUrn,
-			IsSendAllKeyOperation: &sendAllKey,
+			IsSendAllKeyOperation: true,
 		},
 	}
 	ctsTracker, err := tracker.Create(client, createOpts).Extract()
@@ -38,8 +36,8 @@ func TestTrackersLifecycle(t *testing.T) {
 	}()
 	th.AssertNoErr(t, err)
 	t.Logf("Created CTSv1 Tracker: %s", ctsTracker.TrackerName)
-	th.AssertEquals(t, supportSMN, *ctsTracker.SimpleMessageNotification.IsSupportSMN)
-	th.AssertEquals(t, supportSMN, *ctsTracker.SimpleMessageNotification.IsSendAllKeyOperation)
+	th.AssertEquals(t, true, ctsTracker.SimpleMessageNotification.IsSupportSMN)
+	th.AssertEquals(t, true, ctsTracker.SimpleMessageNotification.IsSendAllKeyOperation)
 	th.AssertEquals(t, "enabled", ctsTracker.Status)
 
 	t.Logf("Attempting to update CTSv1 Tracker: %s", ctsTracker.TrackerName)

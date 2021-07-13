@@ -27,15 +27,14 @@ func TestCreate(t *testing.T) {
 			w.WriteHeader(http.StatusCreated)
 			_, _ = fmt.Fprint(w, createResponse)
 		})
-	supportSMN := true
-	sendAllKey := false
+
 	options := &tracker.CreateOptsWithSMN{
 		BucketName:     "obs-e51d",
 		FilePrefixName: "yO8Q",
 		SimpleMessageNotification: tracker.SimpleMessageNotification{
-			IsSupportSMN:          &supportSMN,
+			IsSupportSMN:          true,
 			TopicID:               "urn:smn:eu-de:626ce20e52a346c090b09cffc3e038e5:c2c-topic",
-			IsSendAllKeyOperation: &sendAllKey,
+			IsSendAllKeyOperation: false,
 			Operations:            []string{"login"},
 			NeedNotifyUserList:    []string{"user1", "user2"},
 		}}
@@ -62,16 +61,15 @@ func TestUpdate(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, updateResponse)
 	})
-	supportSMN := false
-	sendAllKey := false
+
 	options := &tracker.UpdateOptsWithSMN{
 		BucketName:     "cirros-img",
 		FilePrefixName: "yO8Q",
 		Status:         "disabled",
 		SimpleMessageNotification: tracker.SimpleMessageNotification{
-			IsSupportSMN:          &supportSMN,
+			IsSupportSMN:          false,
 			TopicID:               "urn:smn:eu-de:626ce20e52a346c090b09cffc3e038e5:c2c-topic",
-			IsSendAllKeyOperation: &sendAllKey,
+			IsSendAllKeyOperation: false,
 			Operations:            []string{"delete", "create", "login"},
 			NeedNotifyUserList:    []string{"user1", "user2"},
 		},
@@ -119,8 +117,7 @@ func TestList(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to extract cts tracker: %v", err)
 	}
-	supportSMN := true
-	sendAllKey := false
+
 	expected := []tracker.Tracker{
 		{
 			Status:         "enabled",
@@ -128,9 +125,9 @@ func TestList(t *testing.T) {
 			FilePrefixName: "yO8Q",
 			TrackerName:    "system",
 			SimpleMessageNotification: tracker.SimpleMessageNotification{
-				IsSupportSMN:          &supportSMN,
+				IsSupportSMN:          true,
 				TopicID:               "urn:smn:eu-de:626ce20e52a346c090b09cffc3e038e5:tf-test-topic",
-				IsSendAllKeyOperation: &sendAllKey,
+				IsSendAllKeyOperation: false,
 				Operations:            []string{"login"},
 				NeedNotifyUserList:    []string{"user1"},
 			},

@@ -96,10 +96,10 @@ type CreateOpts struct {
 }
 
 type SimpleMessageNotification struct {
-	IsSupportSMN          *bool    `json:"is_support_smn" required:"true"`
+	IsSupportSMN          bool     `json:"is_support_smn" required:"true"`
 	TopicID               string   `json:"topic_id,omitempty"`
 	Operations            []string `json:"operations,omitempty"`
-	IsSendAllKeyOperation *bool    `json:"is_send_all_key_operation,omitempty"`
+	IsSendAllKeyOperation bool     `json:"is_send_all_key_operation" required:"true"`
 	NeedNotifyUserList    []string `json:"need_notify_user_list,omitempty"`
 }
 
