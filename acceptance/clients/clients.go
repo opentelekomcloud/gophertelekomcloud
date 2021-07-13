@@ -291,7 +291,7 @@ func NewOBSClient() (*obs.ObsClient, error) {
 	opts := cc.AKSKAuthOptions
 	return obs.New(
 		opts.AccessKey, opts.SecretKey, client.Endpoint,
-		obs.WithSecurityToken(opts.SecurityToken), obs.WithSignature(obs.SignatureObs),
+		obs.WithSecurityToken(opts.SecurityToken),
 	)
 }
 

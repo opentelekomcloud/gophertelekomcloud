@@ -142,7 +142,7 @@ type UpdateOptsWithSMN struct {
 // UpdateOpts contains all the values needed to update a  tracker
 type UpdateOpts struct {
 	Status         string `json:"status,omitempty"`
-	BucketName     string `json:"bucket_name,omitempty"`
+	BucketName     string `json:"bucket_name" required:"true"`
 	FilePrefixName string `json:"file_prefix_name,omitempty"`
 }
 
@@ -174,10 +174,9 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOptsBuilder) (r UpdateRe
 }
 
 // Delete will permanently delete a particular tracker.
-func Delete(client *golangsdk.ServiceClient) (r DeleteResult) {
-	_, r.Err = client.Delete(rootURL(client), &golangsdk.RequestOpts{
-		OkCodes:  []int{204},
-		JSONBody: nil,
+func Delete(client *golangsdk.ServiceClient, trackerName string) (r DeleteResult) {
+	_, r.Err = client.Delete(deleteURL(client, trackerName), &golangsdk.RequestOpts{
+		OkCodes: []int{204},
 	})
 	return
 }

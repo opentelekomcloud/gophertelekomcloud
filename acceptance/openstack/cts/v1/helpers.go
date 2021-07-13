@@ -12,6 +12,7 @@ import (
 )
 
 func createOBSBucket(t *testing.T) string {
+	t.Logf("Attempting to create OBS bucket")
 	client, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
 	bucketName := strings.ToLower(tools.RandomString("obs-cts-test", 5))
@@ -24,18 +25,23 @@ func createOBSBucket(t *testing.T) string {
 	_, err = client.CreateBucket(createOpts)
 	th.AssertNoErr(t, err)
 
+	t.Logf("Created OBS Bucket: %s", bucketName)
+
 	return bucketName
 }
 
 func deleteOBSBucket(t *testing.T, bucketName string) {
+	t.Logf("Attempting to delete OBS bucket: %s", bucketName)
 	client, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
 
 	_, err = client.DeleteBucket(bucketName)
 	th.AssertNoErr(t, err)
+	t.Logf("Deleted OBS Bucket: %s", bucketName)
 }
 
 func createSMNTopic(t *testing.T) *topics.Topic {
+	t.Logf("Attempting to create SMNv2 topic")
 	client, err := clients.NewSmnV2Client()
 	th.AssertNoErr(t, err)
 
@@ -48,12 +54,15 @@ func createSMNTopic(t *testing.T) *topics.Topic {
 	smnTopic, err := topics.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 
+	t.Logf("Created SMNv2 Topic: %s", smnTopic.TopicUrn)
 	return smnTopic
 }
 
 func deleteSMNTopic(t *testing.T, topicUrn string) {
+	t.Logf("Attempting to delete SMNv2 topic: %s", topicUrn)
 	client, err := clients.NewSmnV2Client()
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, topics.Delete(client, topicUrn).ExtractErr())
+	t.Logf("Deleted SMNv2 Topic: %s", topicUrn)
 }
