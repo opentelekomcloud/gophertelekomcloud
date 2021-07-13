@@ -174,8 +174,8 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOptsBuilder) (r UpdateRe
 }
 
 // Delete will permanently delete a particular tracker.
-func Delete(client *golangsdk.ServiceClient, trackerName string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, trackerName), &golangsdk.RequestOpts{
+func Delete(client *golangsdk.ServiceClient) (r DeleteResult) {
+	_, r.Err = client.Delete(rootURL(client), &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

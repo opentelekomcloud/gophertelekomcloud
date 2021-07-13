@@ -32,7 +32,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	ctsTracker, err := tracker.Create(client, createOpts).Extract()
 	defer func() {
 		t.Logf("Attempting to delete CTSv1 Tracker: %s", ctsTracker.TrackerName)
-		err := tracker.Delete(client, ctsTracker.TrackerName).ExtractErr()
+		err := tracker.Delete(client).ExtractErr()
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted CTSv1 Tracker: %s", ctsTracker.TrackerName)
 	}()
