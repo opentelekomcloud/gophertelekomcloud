@@ -111,6 +111,17 @@ func NewComputeV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewCTSV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCTSService(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
@@ -281,6 +292,29 @@ func NewOBSClient() (*obs.ObsClient, error) {
 	return obs.New(
 		opts.AccessKey, opts.SecretKey, client.Endpoint,
 		obs.WithSecurityToken(opts.SecurityToken), obs.WithSignature(obs.SignatureObs),
+	)
+}
+
+func NewOBSClientWithoutHeader() (*obs.ObsClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := setupTemporaryAKSK(cc); err != nil {
+		return nil, fmt.Errorf("failed to construct OBS client without AK/SK: %s", err)
+	}
+
+	client, err := openstack.NewOBSService(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	opts := cc.AKSKAuthOptions
+	return obs.New(
+		opts.AccessKey, opts.SecretKey, client.Endpoint,
+		obs.WithSecurityToken(opts.SecurityToken),
 	)
 }
 

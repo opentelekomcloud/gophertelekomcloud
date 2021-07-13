@@ -97,8 +97,8 @@ type CreateOpts struct {
 
 type SimpleMessageNotification struct {
 	IsSupportSMN          bool     `json:"is_support_smn"`
-	TopicID               string   `json:"topic_id"`
-	Operations            []string `json:"operations" required:"true"`
+	TopicID               string   `json:"topic_id,omitempty"`
+	Operations            []string `json:"operations,omitempty"`
 	IsSendAllKeyOperation bool     `json:"is_send_all_key_operation"`
 	NeedNotifyUserList    []string `json:"need_notify_user_list,omitempty"`
 }
@@ -176,8 +176,7 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOptsBuilder) (r UpdateRe
 // Delete will permanently delete a particular tracker.
 func Delete(client *golangsdk.ServiceClient) (r DeleteResult) {
 	_, r.Err = client.Delete(rootURL(client), &golangsdk.RequestOpts{
-		OkCodes:  []int{204},
-		JSONBody: nil,
+		OkCodes: []int{204},
 	})
 	return
 }
