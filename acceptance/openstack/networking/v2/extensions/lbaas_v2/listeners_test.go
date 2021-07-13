@@ -45,7 +45,7 @@ func TestLbaasV2ListenersLifeCycle(t *testing.T) {
 
 	// Create lbaasV2 listener
 	listenerName := tools.RandomString("create-listener-", 3)
-	t.Logf("Attempting to create LbaasV2 monitor")
+	t.Logf("Attempting to create LbaasV2 Listener")
 
 	http2Enable := true
 	createOpts := listeners.CreateOpts{
@@ -63,7 +63,12 @@ func TestLbaasV2ListenersLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, listenerName, listener.Name)
 	th.AssertEquals(t, http2Enable, listener.Http2Enable)
+	t.Logf("Created LbaasV2 listener: %s", listener.ID)
 	defer func() {
+		updateOpts := listeners.UpdateOpts{
+			DefaultPoolID: "null",
+		}
+		_, err = listeners.Update(client, listener.ID, updateOpts).Extract()
 		th.AssertNoErr(t, listeners.Delete(client, listener.ID).ExtractErr())
 	}()
 }
