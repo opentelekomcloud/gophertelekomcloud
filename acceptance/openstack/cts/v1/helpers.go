@@ -13,7 +13,7 @@ import (
 
 func createOBSBucket(t *testing.T) string {
 	t.Logf("Attempting to create OBS bucket")
-	client, err := clients.NewOBSClient()
+	client, err := clients.NewOBSClientWithoutHeader()
 	th.AssertNoErr(t, err)
 	bucketName := strings.ToLower(tools.RandomString("obs-cts-test", 5))
 
@@ -32,7 +32,7 @@ func createOBSBucket(t *testing.T) string {
 
 func deleteOBSBucket(t *testing.T, bucketName string) {
 	t.Logf("Attempting to delete OBS bucket: %s", bucketName)
-	client, err := clients.NewOBSClient()
+	client, err := clients.NewOBSClientWithoutHeader()
 	th.AssertNoErr(t, err)
 
 	_, err = client.DeleteBucket(bucketName)

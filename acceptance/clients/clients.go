@@ -291,6 +291,29 @@ func NewOBSClient() (*obs.ObsClient, error) {
 	opts := cc.AKSKAuthOptions
 	return obs.New(
 		opts.AccessKey, opts.SecretKey, client.Endpoint,
+		obs.WithSecurityToken(opts.SecurityToken), obs.WithSignature(obs.SignatureObs),
+	)
+}
+
+func NewOBSClientWithoutHeader() (*obs.ObsClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := setupTemporaryAKSK(cc); err != nil {
+		return nil, fmt.Errorf("failed to construct OBS client without AK/SK: %s", err)
+	}
+
+	client, err := openstack.NewOBSService(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	opts := cc.AKSKAuthOptions
+	return obs.New(
+		opts.AccessKey, opts.SecretKey, client.Endpoint,
 		obs.WithSecurityToken(opts.SecurityToken),
 	)
 }
