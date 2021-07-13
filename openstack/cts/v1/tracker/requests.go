@@ -96,10 +96,10 @@ type CreateOpts struct {
 }
 
 type SimpleMessageNotification struct {
-	IsSupportSMN          bool     `json:"is_support_smn"`
-	TopicID               string   `json:"topic_id"`
-	Operations            []string `json:"operations" required:"true"`
-	IsSendAllKeyOperation bool     `json:"is_send_all_key_operation"`
+	IsSupportSMN          *bool    `json:"is_support_smn" required:"true"`
+	TopicID               string   `json:"topic_id,omitempty"`
+	Operations            []string `json:"operations,omitempty"`
+	IsSendAllKeyOperation *bool    `json:"is_send_all_key_operation,omitempty"`
 	NeedNotifyUserList    []string `json:"need_notify_user_list,omitempty"`
 }
 
@@ -142,7 +142,7 @@ type UpdateOptsWithSMN struct {
 // UpdateOpts contains all the values needed to update a  tracker
 type UpdateOpts struct {
 	Status         string `json:"status,omitempty"`
-	BucketName     string `json:"bucket_name" required:"true"`
+	BucketName     string `json:"bucket_name,omitempty"`
 	FilePrefixName string `json:"file_prefix_name,omitempty"`
 }
 
