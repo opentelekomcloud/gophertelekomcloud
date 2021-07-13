@@ -55,6 +55,7 @@ func TestTrackersLifecycle(t *testing.T) {
 		Status:      updateOpts.Status,
 	}
 	trackerList, err := tracker.List(client, listOpts)
+	th.AssertNoErr(t, err)
 	if len(trackerList) == 0 {
 		t.Fatalf("CTS tracker wasn't found: %s", ctsTracker.TrackerName)
 	}
