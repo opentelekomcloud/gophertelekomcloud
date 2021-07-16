@@ -1,16 +1,15 @@
-package v3
+package v1
 
 import (
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/suite"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/stretchr/testify/suite"
 )
 
 type testNodes struct {
@@ -19,7 +18,6 @@ type testNodes struct {
 	vpcID     string
 	subnetID  string
 	clusterID string
-	kmsID     string
 }
 
 func TestNodes(t *testing.T) {
@@ -30,7 +28,6 @@ func (s *testNodes) SetupSuite() {
 	t := s.T()
 	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
 	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	s.kmsID = clients.EnvOS.GetEnv("KMS_ID")
 	if s.vpcID == "" || s.subnetID == "" {
 		t.Skip("OS_VPC_ID and OS_NETWORK_ID are required for this test")
 	}
@@ -55,13 +52,6 @@ func (s *testNodes) TestNodeLifecycle() {
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)
 
-	var encryption string
-	if s.kmsID != "" {
-		encryption = "1"
-	} else {
-		encryption = "0"
-	}
-
 	opts := nodes.CreateOpts{
 		Kind:       "Node",
 		ApiVersion: "v3",
@@ -83,10 +73,6 @@ func (s *testNodes) TestNodeLifecycle() {
 				{
 					Size:       100,
 					VolumeType: "SSD",
-					Metadata: map[string]interface{}{
-						"__system__encrypted": encryption,
-						"__system__cmkid":     s.kmsID,
-					},
 				},
 			},
 			Count: 1,

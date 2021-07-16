@@ -25,10 +25,10 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a new node
 type UpdateOpts struct {
-	Metadata MetadataOpts `json:"metadata,omitempty"`
+	Metadata Metadata `json:"metadata,omitempty"`
 }
 
-type MetadataOpts struct {
+type Metadata struct {
 	Labels map[string]interface{} `json:"labels,omitempty"`
 }
 
