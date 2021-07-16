@@ -7,6 +7,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
+	nodesv1 "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v1/nodes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/stretchr/testify/suite"
@@ -82,6 +83,16 @@ func (s *testNodes) TestNodeLifecycle() {
 					FixedIPs: []string{privateIP},
 				},
 			},
+			K8sTags: map[string]string{
+				"app": "sometag",
+			},
+			Taints: []nodes.TaintSpec{
+				{
+					Key:    "dedicated",
+					Value:  "database",
+					Effect: "NoSchedule",
+				},
+			},
 		},
 	}
 
@@ -106,17 +117,28 @@ func (s *testNodes) TestNodeLifecycle() {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
-	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
-
-	err = golangsdk.WaitFor(1800, func() (bool, error) {
-		_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
-		if err != nil {
-			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				return true, nil
+	defer func() {
+		th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
+		err = golangsdk.WaitFor(1800, func() (bool, error) {
+			_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+			if err != nil {
+				if _, ok := err.(golangsdk.ErrDefault404); ok {
+					return true, nil
+				}
+				return false, err
 			}
-			return false, err
-		}
-		return false, nil
-	})
+			return false, nil
+		})
+		th.AssertNoErr(t, err)
+	}()
+
+	clientV1, err := clients.NewCceV1Client()
 	th.AssertNoErr(t, err)
+
+	k8Name := state.Status.PrivateIP
+	k8Node, err := nodesv1.Get(clientV1, s.clusterID, k8Name).Extract()
+	th.AssertNoErr(t, err)
+	val, ok := k8Node.Metadata.Labels["app"]
+	th.AssertEquals(t, true, ok)
+	th.AssertEquals(t, val, opts.Spec.K8sTags["app"])
 }

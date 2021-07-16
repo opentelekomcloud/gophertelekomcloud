@@ -21,13 +21,13 @@ type GetNode struct {
 	ApiVersion string       `json:"apiVersion"`
 	Metadata   MetadataNode `json:"metadata"`
 	Spec       Spec         `json:"spec"`
-	Status     string       `json:"status"`
+	Status     Status       `json:"status"`
 }
 
 type Node struct {
 	Metadata MetadataNode `json:"metadata"`
 	Spec     Spec         `json:"spec"`
-	Status   string       `json:"status"`
+	Status   Status       `json:"status"`
 }
 
 type MetadataNode struct {

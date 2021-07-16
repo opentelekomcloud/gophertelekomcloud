@@ -20,7 +20,7 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 		Kind:       "Cluster",
 		ApiVersion: "v3",
 		Metadata: clusters.CreateMetaData{
-			Name: strings.ToLower(tools.RandomString("addontest-", 4)),
+			Name: strings.ToLower(tools.RandomString("cce-gopher-", 4)),
 		},
 		Spec: clusters.Spec{
 			Type:   "VirtualMachine",

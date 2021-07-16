@@ -787,6 +787,11 @@ func NewSMNV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewCCEv1 creates a ServiceClient that may be used to access the CCE k8s service.
+func NewCCEv1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cce")
+}
+
 // NewCCE creates a ServiceClient that may be used to access the CCE service.
 func NewCCE(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "ccev2.0")
