@@ -41,7 +41,14 @@ type MetadataNode struct {
 }
 
 type Spec struct {
-	ProviderID string `json:"providerID"`
+	ProviderID string  `json:"providerID"`
+	Taints     []Taint `json:"taints"`
+}
+
+type Taint struct {
+	Key    string `json:"key"`
+	Value  string `json:"value"`
+	Effect string `json:"effect"`
 }
 
 type Status struct {
