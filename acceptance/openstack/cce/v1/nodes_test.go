@@ -1,16 +1,16 @@
-package v3
+package v1
 
 import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/suite"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
+	nodesv1 "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v1/nodes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/stretchr/testify/suite"
 )
 
 type testNodes struct {
@@ -19,7 +19,6 @@ type testNodes struct {
 	vpcID     string
 	subnetID  string
 	clusterID string
-	kmsID     string
 }
 
 func TestNodes(t *testing.T) {
@@ -30,7 +29,6 @@ func (s *testNodes) SetupSuite() {
 	t := s.T()
 	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
 	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	s.kmsID = clients.EnvOS.GetEnv("KMS_ID")
 	if s.vpcID == "" || s.subnetID == "" {
 		t.Skip("OS_VPC_ID and OS_NETWORK_ID are required for this test")
 	}
@@ -55,13 +53,6 @@ func (s *testNodes) TestNodeLifecycle() {
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)
 
-	var encryption string
-	if s.kmsID != "" {
-		encryption = "1"
-	} else {
-		encryption = "0"
-	}
-
 	opts := nodes.CreateOpts{
 		Kind:       "Node",
 		ApiVersion: "v3",
@@ -83,10 +74,6 @@ func (s *testNodes) TestNodeLifecycle() {
 				{
 					Size:       100,
 					VolumeType: "SSD",
-					Metadata: map[string]interface{}{
-						"__system__encrypted": encryption,
-						"__system__cmkid":     s.kmsID,
-					},
 				},
 			},
 			Count: 1,
@@ -94,6 +81,16 @@ func (s *testNodes) TestNodeLifecycle() {
 				PrimaryNic: nodes.PrimaryNic{
 					SubnetId: s.subnetID,
 					FixedIPs: []string{privateIP},
+				},
+			},
+			K8sTags: map[string]string{
+				"app": "sometag",
+			},
+			Taints: []nodes.TaintSpec{
+				{
+					Key:    "dedicated",
+					Value:  "database",
+					Effect: "NoSchedule",
 				},
 			},
 		},
@@ -120,17 +117,28 @@ func (s *testNodes) TestNodeLifecycle() {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
-	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
-
-	err = golangsdk.WaitFor(1800, func() (bool, error) {
-		_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
-		if err != nil {
-			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				return true, nil
+	defer func() {
+		th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
+		err = golangsdk.WaitFor(1800, func() (bool, error) {
+			_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+			if err != nil {
+				if _, ok := err.(golangsdk.ErrDefault404); ok {
+					return true, nil
+				}
+				return false, err
 			}
-			return false, err
-		}
-		return false, nil
-	})
+			return false, nil
+		})
+		th.AssertNoErr(t, err)
+	}()
+
+	clientV1, err := clients.NewCceV1Client()
 	th.AssertNoErr(t, err)
+
+	k8Name := state.Status.PrivateIP
+	k8Node, err := nodesv1.Get(clientV1, s.clusterID, k8Name).Extract()
+	th.AssertNoErr(t, err)
+	val, ok := k8Node.Metadata.Labels["app"]
+	th.AssertEquals(t, true, ok)
+	th.AssertEquals(t, val, opts.Spec.K8sTags["app"])
 }

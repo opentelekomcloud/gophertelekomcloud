@@ -407,6 +407,16 @@ func NewCssV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewCceV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCCEv1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func NewCceV3Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
