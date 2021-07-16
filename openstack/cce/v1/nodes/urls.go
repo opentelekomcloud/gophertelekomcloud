@@ -1,20 +1,25 @@
 package nodes
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"fmt"
+	"strings"
 
-const (
-	rootPath     = "clusters"
-	resourcePath = "nodes"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-func rootURL(c *golangsdk.ServiceClient, clusterid string) string {
-	return c.ServiceURL(rootPath, clusterid, resourcePath)
+const (
+	rootPath = "nodes"
+)
+
+func listURL(client *golangsdk.ServiceClient, clusterID string) string {
+	return CCEServiceURL(client, clusterID, rootPath)
 }
 
-func resourceURL(c *golangsdk.ServiceClient, clusterid, nodeid string) string {
-	return c.ServiceURL(rootPath, clusterid, resourcePath, nodeid)
+func nodeURL(client *golangsdk.ServiceClient, clusterID string, k8sName string) string {
+	return CCEServiceURL(client, clusterID, rootPath, k8sName)
 }
 
-func getJobURL(c *golangsdk.ServiceClient, jobid string) string {
-	return c.ServiceURL("jobs", jobid)
+func CCEServiceURL(client *golangsdk.ServiceClient, clusterID string, parts ...string) string {
+	rbUrl := fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])
+	return rbUrl + strings.Join(parts, "/")
 }
