@@ -31,13 +31,11 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// Create lbaasV2 Load Balancer
-	loadBalancer, err := createLbaasLoadBalancer(t, client)
-	th.AssertNoErr(t, err)
+	loadBalancer := createLbaasLoadBalancer(t, client)
 	defer deleteLbaasLoadBalancer(t, client, loadBalancer.ID)
 
 	// Create lbaasV2 pool
-	loadBalancerPool, err := createLbaasPool(t, client, loadBalancer.ID)
-	th.AssertNoErr(t, err)
+	loadBalancerPool := createLbaasPool(t, client, loadBalancer.ID)
 	defer deleteLbaasPool(t, client, loadBalancerPool.ID)
 
 	// Create lbaasV2 monitor

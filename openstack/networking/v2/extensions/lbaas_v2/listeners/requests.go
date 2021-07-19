@@ -180,6 +180,9 @@ type UpdateOpts struct {
 	// A reference to a Barbican container of TLS secrets.
 	DefaultTlsContainerRef string `json:"default_tls_container_ref,omitempty"`
 
+	// The ID of the default pool with which the Listener is associated.
+	DefaultPoolID string `json:"default_pool_id,omitempty"`
+
 	// A list of references to TLS secrets.
 	SniContainerRefs []string `json:"sni_container_refs,omitempty"`
 
