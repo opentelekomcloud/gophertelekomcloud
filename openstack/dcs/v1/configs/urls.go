@@ -7,6 +7,6 @@ const (
 	configPath = "configs"
 )
 
-func getURL(client *golangsdk.ServiceClient, instanceID string) string {
+func rootURL(client *golangsdk.ServiceClient, instanceID string) string {
 	return client.ServiceURL(rootPath, instanceID, configPath)
 }
