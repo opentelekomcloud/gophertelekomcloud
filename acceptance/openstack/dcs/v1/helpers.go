@@ -17,19 +17,35 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
-	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if vpcID == "" || networkID == "" {
 		t.Skip("OS_VPC_ID or OS_NETWORK_ID is missing but test requires using existing network")
-	}
-	if az == "" {
-		az = "eu-de-01"
 	}
 
 	availabilityZone, err := availablezones.Get(client).Extract()
 	th.AssertNoErr(t, err)
+	var az string
+	for _, v := range availabilityZone.AvailableZones {
+		if v.ResourceAvailability != "true" {
+			continue
+		}
+		az = v.ID
+	}
+	if az == "" {
+		t.Skip("Availability Zone ID wasn't found")
+	}
 
-	product, err := products.Get(client).Extract()
+	productList, err := products.Get(client).Extract()
 	th.AssertNoErr(t, err)
+
+	var productID string
+	for _, v := range productList.Products {
+		if v.SpecCode == "dcs.single_node" {
+			productID = v.ProductID
+		}
+	}
+	if productID == "" {
+		t.Skip("Product ID wasn't found")
+	}
 
 	dcsName := tools.RandomString("dcs-instance-", 3)
 	createOpts := instances.CreateOps{
@@ -41,10 +57,60 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		Password:       "Qwerty123!",
 		VPCID:          vpcID,
 		SubnetID:       networkID,
-		AvailableZones: []string{availabilityZone.AvailableZones[0].ID},
-		ProductID:      product.Products[0].ProductID,
+		AvailableZones: []string{az},
+		ProductID:      productID,
 	}
 
-	instanceCreate, err := instances.Create(client, createOpts).Extract()
+	dcsInstanceCreate, err := instances.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
+
+	err = waitForInstanceAvailable(client, 600, dcsInstanceCreate.InstanceID)
+	th.AssertNoErr(t, err)
+
+	t.Logf("DCSv1 instance successfully created: %s", dcsInstanceCreate.InstanceID)
+
+	dcsInstance, err := instances.Get(client, dcsInstanceCreate.InstanceID).Extract()
+	th.AssertNoErr(t, err)
+
+	return dcsInstance
+}
+
+func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
+	t.Logf("Attempting to delete DCSv1 instance: %s", instanceID)
+
+	err := instances.Delete(client, instanceID).ExtractErr()
+	th.AssertNoErr(t, err)
+
+	err = waitForInstanceDeleted(client, 600, instanceID)
+	th.AssertNoErr(t, err)
+
+	th.AssertNoErr(t, err)
+	t.Logf("Deleted DCSv1 instance: %s", instanceID)
+}
+
+func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		ddsInstances, err := instances.Get(client, instanceID).Extract()
+		if err != nil {
+			return false, err
+		}
+		if ddsInstances.Status == "RUNNING" {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+func waitForInstanceDeleted(client *golangsdk.ServiceClient, secs int, instanceID string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		_, err := instances.Get(client, instanceID).Extract()
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
+		}
+
+		return false, nil
+	})
 }

@@ -20,16 +20,16 @@ type ResultRedisConfig struct {
 	ValueRange   string `json:"value_range"`
 }
 
-type GetResult struct {
+type ListResult struct {
 	golangsdk.Result
 }
 
-func (r GetResult) Extract() (*ConfigParam, error) {
+func (r ListResult) Extract() (*ConfigParam, error) {
 	s := new(ConfigParam)
 	err := r.ExtractIntoStructPtr(s, "")
 	return s, err
 }
 
 type UpdateResult struct {
-	golangsdk.Result
+	golangsdk.ErrResult
 }

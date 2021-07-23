@@ -2,7 +2,7 @@ package configs
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
-func Get(client *golangsdk.ServiceClient, instanceID string) (r GetResult) {
+func List(client *golangsdk.ServiceClient, instanceID string) (r ListResult) {
 	_, r.Err = client.Get(rootURL(client, instanceID), &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
