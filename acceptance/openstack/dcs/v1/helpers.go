@@ -94,11 +94,11 @@ func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID
 
 func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		ddsInstances, err := instances.Get(client, instanceID).Extract()
+		dcsInstances, err := instances.Get(client, instanceID).Extract()
 		if err != nil {
 			return false, err
 		}
-		if ddsInstances.Status == "RUNNING" {
+		if dcsInstances.Status == "RUNNING" {
 			return true, nil
 		}
 		return false, nil
