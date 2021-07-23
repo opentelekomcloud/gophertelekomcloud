@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/availablezones"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/instances"
@@ -47,18 +48,21 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		t.Skip("Product ID wasn't found")
 	}
 
+	defaultSG := openstack.DefaultSecurityGroup(t)
+
 	dcsName := tools.RandomString("dcs-instance-", 3)
 	createOpts := instances.CreateOps{
-		Name:           dcsName,
-		Description:    "some test DCSv1 instance",
-		Engine:         "Redis",
-		EngineVersion:  "3.0",
-		Capacity:       64,
-		Password:       "Qwerty123!",
-		VPCID:          vpcID,
-		SubnetID:       networkID,
-		AvailableZones: []string{az},
-		ProductID:      productID,
+		Name:            dcsName,
+		Description:     "some test DCSv1 instance",
+		Engine:          "Redis",
+		EngineVersion:   "3.0",
+		Capacity:        64,
+		Password:        "Qwerty123!",
+		VPCID:           vpcID,
+		SubnetID:        networkID,
+		AvailableZones:  []string{az},
+		ProductID:       productID,
+		SecurityGroupID: defaultSG,
 	}
 
 	dcsInstanceCreate, err := instances.Create(client, createOpts).Extract()
