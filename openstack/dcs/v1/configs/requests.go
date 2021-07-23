@@ -1,6 +1,9 @@
 package configs
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+)
 
 func List(client *golangsdk.ServiceClient, instanceID string) (r ListResult) {
 	_, r.Err = client.Get(rootURL(client, instanceID), &r.Body, &golangsdk.RequestOpts{
@@ -34,8 +37,6 @@ func Update(client *golangsdk.ServiceClient, instanceID string, opts UpdateOptsB
 		return
 	}
 
-	_, r.Err = client.Put(rootURL(client, instanceID), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
-	})
+	_, r.Err = client.Put(rootURL(client, instanceID), b, nil, openstack.StdRequestOpts())
 	return
 }

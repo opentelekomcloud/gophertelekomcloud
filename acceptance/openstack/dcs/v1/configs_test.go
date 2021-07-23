@@ -24,11 +24,15 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 			},
 		},
 	}
-
-	err = configs.Update(client, dcsInstance.InstanceID, updateOpts).ExtractErr()
+	configList, err := configs.List(client, dcsInstance.InstanceID).Extract()
 	th.AssertNoErr(t, err)
 
-	configList, err := configs.List(client, dcsInstance.InstanceID).Extract()
+	t.Logf("Attempting to update DCSv1 configuration")
+	err = configs.Update(client, dcsInstance.InstanceID, updateOpts).ExtractErr()
+	th.AssertNoErr(t, err)
+	t.Logf("Updated DCSv1 configuration")
+
+	configList, err = configs.List(client, dcsInstance.InstanceID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, updateOpts.RedisConfigs[0].ParamID, configList.RedisConfigs[0].ParamID)
 	th.AssertDeepEquals(t, updateOpts.RedisConfigs[0].ParamValue, configList.RedisConfigs[0].ParamValue)

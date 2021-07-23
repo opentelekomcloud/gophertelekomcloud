@@ -12,7 +12,7 @@ type ConfigParam struct {
 
 type ResultRedisConfig struct {
 	Description  string `json:"description"`
-	ParamID      int    `json:"param_id"`
+	ParamID      string `json:"param_id"`
 	ParamName    string `json:"param_name"`
 	ParamValue   string `json:"param_value"`
 	DefaultValue string `json:"default_value"`
