@@ -184,6 +184,12 @@ type Config struct {
 	Clouds       map[string]Cloud `yaml:"clouds" json:"clouds"`
 }
 
+func NewConfig() *Config {
+	return &Config{
+		Clouds: map[string]Cloud{},
+	}
+}
+
 // AuthType represents a valid method of authentication: `password`, `token`, `aksk` or `agency`
 type AuthType string
 
@@ -337,7 +343,7 @@ func loadCloudFile(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	clouds := new(Config)
+	clouds := NewConfig()
 	if err := yaml.Unmarshal(data, clouds); err != nil {
 		return nil, err
 	}
@@ -525,9 +531,7 @@ func (e *Env) loadOpenstackConfig() (*Config, error) {
 	}
 	vendorPath := selectExisting(vendors)
 
-	cloudConfig := &Config{
-		Clouds: map[string]Cloud{},
-	}
+	cloudConfig := NewConfig()
 
 	// load clouds.yaml
 	if configPath != "" {
