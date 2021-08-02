@@ -37,3 +37,7 @@ func listerrorlogURL(c *golangsdk.ServiceClient, instanceID string) string {
 func listslowlogURL(c *golangsdk.ServiceClient, instanceID string) string {
 	return c.ServiceURL("instances", instanceID, "slowlog")
 }
+
+func instanceConfigurationURL(c *golangsdk.ServiceClient, instanceID string) string {
+	return c.ServiceURL("instances", instanceID, "configurations")
+}

@@ -233,3 +233,20 @@ func ExtractSlowLog(r pagination.Page) (SlowLogResp, error) {
 	err := (r.(SlowLogPage)).ExtractInto(&s)
 	return s, err
 }
+
+type UpdateConfigurationResponse struct {
+	RestartRequired bool `json:"restart_required"`
+}
+
+type UpdateConfigurationResult struct {
+	golangsdk.Result
+}
+
+func (r UpdateConfigurationResult) Extract() (*UpdateConfigurationResponse, error) {
+	restartRequired := new(UpdateConfigurationResponse)
+	err := r.ExtractInto(restartRequired)
+	if err != nil {
+		return nil, err
+	}
+	return restartRequired, nil
+}
