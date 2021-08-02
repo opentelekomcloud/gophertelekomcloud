@@ -71,3 +71,23 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
 	th.AssertEquals(t, len(newRds.Instances[0].Tags), 2)
 }
+
+func TestRdsChangeSingleConfigurationValue(t *testing.T) {
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	// Create RDSv3 instance
+	rds := createRDS(t, client, cc.RegionName)
+	defer deleteRDS(t, client, rds.Id)
+
+	opts := instances.UpdateInstanceConfigurationOpts{Values: map[string]interface{}{
+		"max_connections": "37",
+		"autocommit":      "OFF",
+	}}
+	result, err := instances.UpdateInstanceConfigurationParameters(client, rds.Id, opts).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, result.RestartRequired)
+}
