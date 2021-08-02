@@ -134,6 +134,22 @@ func TestCloudYamlPaths(t *testing.T) {
 	}
 }
 
+func TestEmptyClouds(t *testing.T) {
+	_ = os.Setenv("OS_CLOUD", "useless_cloud")
+	_ = os.Setenv("OS_CLIENT_CONFIG_FILE", "./clouds.yaml")
+	cwd, _ := os.Getwd()
+
+	fileName := "clouds.yaml"
+	currentConfigDir := filepath.Join(cwd, fileName)
+	files := []string{currentConfigDir}
+	backupFiles(t, currentConfigDir)
+	defer restoreBackup(t, files...)
+
+	th.AssertNoErr(t, ioutil.WriteFile(fileName, []byte{}, 0644))
+	_, err := NewEnv("OS_").Cloud()
+	th.AssertNoErr(t, err)
+}
+
 func TestCloudName(t *testing.T) {
 	_ = os.Setenv("OS_CLOUD", tools.RandomString("CLD_", 5))
 	expectedName := tools.RandomString("CLD_SET_", 5)
