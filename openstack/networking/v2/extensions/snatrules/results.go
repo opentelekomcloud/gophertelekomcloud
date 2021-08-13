@@ -27,7 +27,10 @@ type GetResult struct {
 func (r GetResult) Extract() (*SnatRule, error) {
 	s := new(SnatRule)
 	err := r.Result.ExtractIntoStructPtr(s, "snat_rule")
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // CreateResult is a return struct of create method
@@ -38,7 +41,10 @@ type CreateResult struct {
 func (r CreateResult) Extract() (*SnatRule, error) {
 	s := new(SnatRule)
 	err := r.Result.ExtractIntoStructPtr(s, "snat_rule")
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // DeleteResult is a return struct of delete method
