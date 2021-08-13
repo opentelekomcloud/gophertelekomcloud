@@ -16,6 +16,7 @@ type SnatRule struct {
 	AdminStateUp      bool   `json:"admin_state_up"`
 	Cidr              string `json:"cidr"`
 	SourceType        string `json:"source_type"`
+	CreatedAt         string `json:"created_at"`
 }
 
 // GetResult is a return struct of get method
@@ -23,10 +24,13 @@ type GetResult struct {
 	golangsdk.Result
 }
 
-func (r GetResult) Extract() (SnatRule, error) {
-	var SR SnatRule
-	err := r.Result.ExtractIntoStructPtr(&SR, "snat_rule")
-	return SR, err
+func (r GetResult) Extract() (*SnatRule, error) {
+	s := new(SnatRule)
+	err := r.Result.ExtractIntoStructPtr(s, "snat_rule")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // CreateResult is a return struct of create method
@@ -34,10 +38,13 @@ type CreateResult struct {
 	golangsdk.Result
 }
 
-func (r CreateResult) Extract() (SnatRule, error) {
-	var SR SnatRule
-	err := r.Result.ExtractIntoStructPtr(&SR, "snat_rule")
-	return SR, err
+func (r CreateResult) Extract() (*SnatRule, error) {
+	s := new(SnatRule)
+	err := r.Result.ExtractIntoStructPtr(s, "snat_rule")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // DeleteResult is a return struct of delete method
