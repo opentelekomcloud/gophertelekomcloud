@@ -49,7 +49,7 @@ type CreateOps struct {
 	AccessUser string `json:"access_user,omitempty"`
 
 	// Indicates the ID of a VPC.
-	VPCID string `json:"vpc_id" required:"true"`
+	VpcID string `json:"vpc_id" required:"true"`
 
 	// Indicates the ID of a security group.
 	SecurityGroupID string `json:"security_group_id" required:"true"`
@@ -59,7 +59,7 @@ type CreateOps struct {
 
 	// Indicates the ID of an AZ.
 	// The parameter value can be left blank or an empty array.
-	AvailableZones []string `json:"available_zones,omitempty"`
+	AvailableZones []string `json:"available_zones" required:"true"`
 
 	// Indicates a product ID.
 	ProductID string `json:"product_id" required:"true"`
@@ -81,8 +81,14 @@ type CreateOps struct {
 
 	// This parameter is mandatory if the engine is kafka.
 	// Indicates the baseline bandwidth of a Kafka instance, that is,
-	// the maximum amount of data transferred per unit time. Unit: byte/s.
+	// the maximum amount of data transferred per unit time. Unit: Mbit/s.
 	Specification string `json:"specification,omitempty"`
+
+	// Indicates the action to be taken when the memory usage reaches the disk capacity threshold.
+	// Options:
+	// produce_reject: New messages cannot be created.
+	// time_base: The earliest messages are deleted.
+	RetentionPolicy string `json:"retention_policy,omitempty"`
 
 	// Indicates the storage I/O specification. For details on how to select a disk type
 	StorageSpecCode string `json:"storage_spec_code,omitempty"`
@@ -94,8 +100,8 @@ func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
 }
 
 // Create an instance with given parameters.
-func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder) (r CreateResult) {
-	b, err := ops.ToInstanceCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpsBuilder) (r CreateResult) {
+	b, err := opts.ToInstanceCreateMap()
 	if err != nil {
 		r.Err = err
 		return
@@ -114,7 +120,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	return
 }
 
-// UpdateOptsBuilder is an interface which can build the map paramter of update function
+// UpdateOptsBuilder is an interface which can build the map parameter of update function
 type UpdateOptsBuilder interface {
 	ToInstanceUpdateMap() (map[string]interface{}, error)
 }
@@ -163,7 +169,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 	return
 }
 
-// Get a instance with detailed information by id
+// Get an instance with detailed information by id
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
 	return

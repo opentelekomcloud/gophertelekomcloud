@@ -95,7 +95,7 @@ func (r DmsPage) IsEmpty() (bool, error) {
 	return len(data.Instances) == 0, err
 }
 
-// ExtractCloudServers is a function that takes a ListResult and returns the services' information.
+// ExtractDmsInstances is a function that takes a ListResult and returns the services' information.
 func ExtractDmsInstances(r pagination.Page) (ListDmsResponse, error) {
 	var s ListDmsResponse
 	err := (r.(DmsPage)).ExtractInto(&s)
