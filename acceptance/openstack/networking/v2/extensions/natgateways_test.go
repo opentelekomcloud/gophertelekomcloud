@@ -7,23 +7,20 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/natgateways"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestNatGatewaysList(t *testing.T) {
 	client, err := clients.NewNatV2Client()
-	if err != nil {
-		t.Fatalf("Unable to create a NatV2 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	listOpts := natgateways.ListOpts{}
 	allPages, err := natgateways.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to fetch Nat Gateways pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
 	natGateways, err := natgateways.ExtractNatGateways(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract Nat Gateways pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
 	for _, natGateway := range natGateways {
 		tools.PrintResource(t, natGateway)
 	}
@@ -31,33 +28,22 @@ func TestNatGatewaysList(t *testing.T) {
 
 func TestNatGatewaysLifeCycle(t *testing.T) {
 	client, err := clients.NewNatV2Client()
-	if err != nil {
-		t.Fatalf("Unable to create a NatV2 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	// Create Nat Gateway
-	natGateway, err := createNatGateway(t, client)
-	if err != nil {
-		t.Fatalf("Unable to create Nat Gateway: %s", err)
-	}
-	defer deleteNatGateway(t, client, natGateway.ID)
+	natGateway := createNatGateway(t, client)
+	defer func() {
+		deleteNatGateway(t, client, natGateway.ID)
+	}()
 
 	tools.PrintResource(t, natGateway)
 
-	err = updateNatGateway(t, client, natGateway.ID)
-	if err != nil {
-		t.Fatalf("Unable to update Nat Gateway: %s", err)
-	}
-	tools.PrintResource(t, natGateway)
-
-	newNatGateway, err := natgateways.Get(client, natGateway.ID).Extract()
-	if err != nil {
-		t.Fatalf("Unable to get Nat Gateway: %s", err)
-	}
-	tools.PrintResource(t, newNatGateway)
+	newNatGw := updateNatGateway(t, client, natGateway.ID)
+	tools.PrintResource(t, newNatGw)
 }
 
-func createNatGateway(t *testing.T, client *golangsdk.ServiceClient) (*natgateways.NatGateway, error) {
+func createNatGateway(t *testing.T, client *golangsdk.ServiceClient) *natgateways.NatGateway {
+	t.Logf("Attempting to create Nat Gateway")
 	natGatewayName := tools.RandomString("create-nat-", 8)
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
@@ -76,25 +62,23 @@ func createNatGateway(t *testing.T, client *golangsdk.ServiceClient) (*natgatewa
 	}
 
 	natGateway, err := natgateways.Create(client, createNatGatewayOpts).Extract()
-	if err != nil {
-		return nil, err
-	}
+	th.AssertNoErr(t, err)
+
 	t.Logf("Created Nat Gateway: %s", natGateway.ID)
 
-	return &natGateway, nil
+	return &natGateway
 }
 
 func deleteNatGateway(t *testing.T, client *golangsdk.ServiceClient, natGatewayID string) {
 	t.Logf("Attempting to delete Nat Gateway: %s", natGatewayID)
 
-	if err := natgateways.Delete(client, natGatewayID).Err; err != nil {
-		t.Fatalf("Unable to delete Nat Gateway: %s", err)
-	}
+	err := natgateways.Delete(client, natGatewayID).ExtractErr()
+	th.AssertNoErr(t, err)
 
 	t.Logf("Nat Gateway is deleted: %s", natGatewayID)
 }
 
-func updateNatGateway(t *testing.T, client *golangsdk.ServiceClient, natGatewayID string) error {
+func updateNatGateway(t *testing.T, client *golangsdk.ServiceClient, natGatewayID string) *natgateways.NatGateway {
 	t.Logf("Attempting to update Nat Gateway")
 
 	natGatewayNewName := tools.RandomString("update-nat-", 8)
@@ -103,9 +87,13 @@ func updateNatGateway(t *testing.T, client *golangsdk.ServiceClient, natGatewayI
 		Name: natGatewayNewName,
 	}
 
-	if err := natgateways.Update(client, natGatewayID, updateOpts).Err; err != nil {
-		return err
-	}
+	err := natgateways.Update(client, natGatewayID, updateOpts).Err
+	th.AssertNoErr(t, err)
+
 	t.Logf("Nat Gateway successfully updated: %s", natGatewayID)
-	return nil
+
+	gateway, err := natgateways.Get(client, natGatewayID).Extract()
+	th.AssertNoErr(t, err)
+
+	return &gateway
 }
