@@ -127,9 +127,8 @@ func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient) 
 			if value.Name != "cluster" {
 				continue
 			}
-			for _, detail := range value.Details {
-				filteredPd = append(filteredPd, detail)
-			}
+
+			filteredPd = append(filteredPd, value.Details...)
 		}
 	}
 
