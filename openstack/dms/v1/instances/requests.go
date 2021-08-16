@@ -5,14 +5,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateOpsBuilder is used for creating instance parameters.
+// CreateOptsBuilder is used for creating instance parameters.
 // any struct providing the parameters should implement this interface
-type CreateOpsBuilder interface {
+type CreateOptsBuilder interface {
 	ToInstanceCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOps is a struct that contains all the parameters.
-type CreateOps struct {
+// CreateOpts is a struct that contains all the parameters.
+type CreateOpts struct {
 	// Indicates the name of an instance.
 	// An instance name starts with a letter,
 	// consists of 4 to 64 characters, and supports
@@ -24,11 +24,11 @@ type CreateOps struct {
 	Description string `json:"description,omitempty"`
 
 	// Indicates a message engine.
-	// Currently, only RabbitMQ is supported.
+	// Currently, only kafka is supported.
 	Engine string `json:"engine" required:"true"`
 
 	// Indicates the version of a message engine.
-	EngineVersion string `json:"engine_version,omitempty"`
+	EngineVersion string `json:"engine_version" required:"true"`
 
 	// Indicates the message storage space.
 	StorageSpace int `json:"storage_space" required:"true"`
@@ -80,7 +80,7 @@ type CreateOps struct {
 	SslEnable bool `json:"ssl_enable,omitempty"`
 
 	// Indicates whether to enable public access for the instance.
-	EnablePublicIp bool `json:"enable_publicip,omitempty"`
+	EnablePublicIp *bool `json:"enable_publicip,omitempty"`
 
 	// Indicates the public network bandwidth. Unit: Mbit/s
 	PublicBandwidth string `json:"public_bandwidth,omitempty"`
@@ -101,12 +101,12 @@ type CreateOps struct {
 }
 
 // ToInstanceCreateMap is used for type convert
-func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Create an instance with given parameters.
-func Create(client *golangsdk.ServiceClient, opts CreateOpsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToInstanceCreateMap()
 	if err != nil {
 		r.Err = err
