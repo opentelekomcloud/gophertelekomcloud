@@ -68,7 +68,7 @@ func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
 		EngineVersion:   "2.3.0",
 		StorageSpace:    storage,
 		Password:        "5ecuredPa55w0rd!",
-		AccessUser:      "rgyrbu",
+		AccessUser:      "root",
 		VpcID:           vpcID,
 		SecurityGroupID: defaultSgID,
 		SubnetID:        subnetID,

@@ -217,7 +217,6 @@ func List(client *golangsdk.ServiceClient, opts ListDmsBuilder) pagination.Pager
 		return DmsPage{pagination.SinglePageBase(r)}
 	})
 
-	dmsHeader := map[string]string{"Content-Type": "application/json"}
-	pageDmsList.Headers = dmsHeader
+	pageDmsList.Headers = map[string]string{"Content-Type": "application/json"}
 	return pageDmsList
 }
