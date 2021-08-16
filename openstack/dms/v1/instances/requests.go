@@ -77,7 +77,13 @@ type CreateOps struct {
 	PartitionNum int `json:"partition_num,omitempty"`
 
 	// Indicates whether to enable SSL-encrypted access.
-	SslEnable bool `json:"ssl_enable"`
+	SslEnable bool `json:"ssl_enable,omitempty"`
+
+	// Indicates whether to enable public access for the instance.
+	EnablePublicIp bool `json:"enable_publicip,omitempty"`
+
+	// Indicates the public network bandwidth. Unit: Mbit/s
+	PublicBandwidth string `json:"public_bandwidth,omitempty"`
 
 	// This parameter is mandatory if the engine is kafka.
 	// Indicates the baseline bandwidth of a Kafka instance, that is,
@@ -110,7 +116,6 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpsBuilder) (r CreateRes
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-
 	return
 }
 
@@ -157,13 +162,13 @@ func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
 // Update is a method which can be able to update the instance
 // via accessing to the service with Put method and parameters
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	body, err := opts.ToInstanceUpdateMap()
+	b, err := opts.ToInstanceUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Put(updateURL(client, id), body, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(updateURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return
@@ -212,7 +217,7 @@ func List(client *golangsdk.ServiceClient, opts ListDmsBuilder) pagination.Pager
 		return DmsPage{pagination.SinglePageBase(r)}
 	})
 
-	dmsheader := map[string]string{"Content-Type": "application/json"}
-	pageDmsList.Headers = dmsheader
+	dmsHeader := map[string]string{"Content-Type": "application/json"}
+	pageDmsList.Headers = dmsHeader
 	return pageDmsList
 }
