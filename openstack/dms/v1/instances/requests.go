@@ -5,14 +5,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateOpsBuilder is used for creating instance parameters.
+// CreateOptsBuilder is used for creating instance parameters.
 // any struct providing the parameters should implement this interface
-type CreateOpsBuilder interface {
+type CreateOptsBuilder interface {
 	ToInstanceCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOps is a struct that contains all the parameters.
-type CreateOps struct {
+// CreateOpts is a struct that contains all the parameters.
+type CreateOpts struct {
 	// Indicates the name of an instance.
 	// An instance name starts with a letter,
 	// consists of 4 to 64 characters, and supports
@@ -24,11 +24,11 @@ type CreateOps struct {
 	Description string `json:"description,omitempty"`
 
 	// Indicates a message engine.
-	// Currently, only RabbitMQ is supported.
+	// Currently, only kafka is supported.
 	Engine string `json:"engine" required:"true"`
 
 	// Indicates the version of a message engine.
-	EngineVersion string `json:"engine_version,omitempty"`
+	EngineVersion string `json:"engine_version" required:"true"`
 
 	// Indicates the message storage space.
 	StorageSpace int `json:"storage_space" required:"true"`
@@ -49,7 +49,7 @@ type CreateOps struct {
 	AccessUser string `json:"access_user,omitempty"`
 
 	// Indicates the ID of a VPC.
-	VPCID string `json:"vpc_id" required:"true"`
+	VpcID string `json:"vpc_id" required:"true"`
 
 	// Indicates the ID of a security group.
 	SecurityGroupID string `json:"security_group_id" required:"true"`
@@ -59,7 +59,7 @@ type CreateOps struct {
 
 	// Indicates the ID of an AZ.
 	// The parameter value can be left blank or an empty array.
-	AvailableZones []string `json:"available_zones,omitempty"`
+	AvailableZones []string `json:"available_zones" required:"true"`
 
 	// Indicates a product ID.
 	ProductID string `json:"product_id" required:"true"`
@@ -77,25 +77,37 @@ type CreateOps struct {
 	PartitionNum int `json:"partition_num,omitempty"`
 
 	// Indicates whether to enable SSL-encrypted access.
-	SslEnable bool `json:"ssl_enable"`
+	SslEnable bool `json:"ssl_enable,omitempty"`
+
+	// Indicates whether to enable public access for the instance.
+	EnablePublicIp *bool `json:"enable_publicip,omitempty"`
+
+	// Indicates the public network bandwidth. Unit: Mbit/s
+	PublicBandwidth string `json:"public_bandwidth,omitempty"`
 
 	// This parameter is mandatory if the engine is kafka.
 	// Indicates the baseline bandwidth of a Kafka instance, that is,
-	// the maximum amount of data transferred per unit time. Unit: byte/s.
+	// the maximum amount of data transferred per unit time. Unit: Mbit/s.
 	Specification string `json:"specification,omitempty"`
+
+	// Indicates the action to be taken when the memory usage reaches the disk capacity threshold.
+	// Options:
+	// produce_reject: New messages cannot be created.
+	// time_base: The earliest messages are deleted.
+	RetentionPolicy string `json:"retention_policy,omitempty"`
 
 	// Indicates the storage I/O specification. For details on how to select a disk type
 	StorageSpecCode string `json:"storage_spec_code,omitempty"`
 }
 
 // ToInstanceCreateMap is used for type convert
-func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Create an instance with given parameters.
-func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder) (r CreateResult) {
-	b, err := ops.ToInstanceCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToInstanceCreateMap()
 	if err != nil {
 		r.Err = err
 		return
@@ -104,7 +116,6 @@ func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder) (r CreateResu
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-
 	return
 }
 
@@ -114,7 +125,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	return
 }
 
-// UpdateOptsBuilder is an interface which can build the map paramter of update function
+// UpdateOptsBuilder is an interface which can build the map parameter of update function
 type UpdateOptsBuilder interface {
 	ToInstanceUpdateMap() (map[string]interface{}, error)
 }
@@ -151,19 +162,19 @@ func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
 // Update is a method which can be able to update the instance
 // via accessing to the service with Put method and parameters
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	body, err := opts.ToInstanceUpdateMap()
+	b, err := opts.ToInstanceUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Put(updateURL(client, id), body, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(updateURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return
 }
 
-// Get a instance with detailed information by id
+// Get an instance with detailed information by id
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
 	return
@@ -206,7 +217,6 @@ func List(client *golangsdk.ServiceClient, opts ListDmsBuilder) pagination.Pager
 		return DmsPage{pagination.SinglePageBase(r)}
 	})
 
-	dmsheader := map[string]string{"Content-Type": "application/json"}
-	pageDmsList.Headers = dmsheader
+	pageDmsList.Headers = map[string]string{"Content-Type": "application/json"}
 	return pageDmsList
 }

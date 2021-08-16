@@ -17,9 +17,12 @@ type CreateResult struct {
 
 // Extract from CreateResult
 func (r CreateResult) Extract() (*InstanceCreate, error) {
-	var s InstanceCreate
-	err := r.Result.ExtractInto(&s)
-	return &s, err
+	s := new(InstanceCreate)
+	err := r.ExtractIntoStructPtr(s, "")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // DeleteResult is a struct which contains the result of deletion
@@ -39,6 +42,7 @@ type Instance struct {
 	EngineVersion     string   `json:"engine_version"`
 	Specification     string   `json:"specification"`
 	StorageSpace      int      `json:"storage_space"`
+	PartitionNum      string   `json:"partition_num"`
 	UsedStorageSpace  int      `json:"used_storage_space"`
 	ConnectAddress    string   `json:"connect_address"`
 	Port              int      `json:"port"`
@@ -48,8 +52,8 @@ type Instance struct {
 	ResourceSpecCode  string   `json:"resource_spec_code"`
 	Type              string   `json:"type"`
 	ChargingMode      int      `json:"charging_mode"`
-	VPCID             string   `json:"vpc_id"`
-	VPCName           string   `json:"vpc_name"`
+	VpcID             string   `json:"vpc_id"`
+	VpcName           string   `json:"vpc_name"`
 	CreatedAt         string   `json:"created_at"`
 	ErrorCode         string   `json:"error_code"`
 	ProductID         string   `json:"product_id"`
@@ -61,6 +65,16 @@ type Instance struct {
 	AvailableZones    []string `json:"available_zones"`
 	UserID            string   `json:"user_id"`
 	UserName          string   `json:"user_name"`
+	AccessUser        string   `json:"access_user"`
+	TotalStorageSpace int      `json:"total_storage_space"`
+	StorageResourceID string   `json:"storage_resource_id"`
+	StorageSpecCode   string   `json:"storage_spec_code"`
+	RetentionPolicy   string   `json:"retention_policy"`
+	KafkaPublicStatus string   `json:"kafka_public_status"`
+	PublicBandwidth   int      `json:"public_bandwidth"`
+	SslEnable         bool     `json:"ssl_enable"`
+	ServiceType       string   `json:"service_type"`
+	StorageType       string   `json:"storage_type"`
 	OrderID           string   `json:"order_id"`
 	MaintainBegin     string   `json:"maintain_begin"`
 	MaintainEnd       string   `json:"maintain_end"`
@@ -68,7 +82,7 @@ type Instance struct {
 
 // UpdateResult is a struct from which can get the result of update method
 type UpdateResult struct {
-	golangsdk.Result
+	golangsdk.ErrResult
 }
 
 // GetResult contains the body of getting detailed
@@ -78,9 +92,12 @@ type GetResult struct {
 
 // Extract from GetResult
 func (r GetResult) Extract() (*Instance, error) {
-	var s Instance
-	err := r.Result.ExtractInto(&s)
-	return &s, err
+	s := new(Instance)
+	err := r.ExtractIntoStructPtr(s, "")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 type DmsPage struct {
@@ -95,9 +112,12 @@ func (r DmsPage) IsEmpty() (bool, error) {
 	return len(data.Instances) == 0, err
 }
 
-// ExtractCloudServers is a function that takes a ListResult and returns the services' information.
-func ExtractDmsInstances(r pagination.Page) (ListDmsResponse, error) {
-	var s ListDmsResponse
-	err := (r.(DmsPage)).ExtractInto(&s)
-	return s, err
+// ExtractDmsInstances is a function that takes a ListResult and returns the services' information.
+func ExtractDmsInstances(r pagination.Page) (*ListDmsResponse, error) {
+	s := new(ListDmsResponse)
+	err := (r.(DmsPage)).ExtractIntoStructPtr(s, "")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
