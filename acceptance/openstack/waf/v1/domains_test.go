@@ -68,6 +68,8 @@ func TestDomainLifecycle(t *testing.T) {
 
 	cert := prepareCertificate(t, client)
 	defer cleanupCertificate(t, client, cert.Id)
+	cert2 := prepareCertificate(t, client)
+	defer cleanupCertificate(t, client, cert2.Id)
 
 	policy := preparePolicy(t, client)
 	defer cleanupPolicy(t, client, policy.Id)
@@ -92,19 +94,26 @@ func TestDomainLifecycle(t *testing.T) {
 
 	domain, err := domains.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
+	defer func() {
+		err = domains.Delete(client, domain.Id).ExtractErr()
+		th.AssertNoErr(t, err)
+	}()
+
 	th.AssertEquals(t, createOpts.HostName, domain.HostName)
 	th.AssertEquals(t, cert.Id, domain.CertificateId)
 	th.AssertEquals(t, len(createOpts.Server), len(domain.Server))
 	th.AssertEquals(t, createOpts.Cipher, domain.Cipher)
 
 	updateOpts := domains.UpdateOpts{
-		TLS:    "TLS v1.1",
-		Cipher: "cipher_1",
+		TLS:           "TLS v1.1",
+		Cipher:        "cipher_1",
+		CertificateId: cert2.Id,
 	}
 	domain, err = domains.Update(client, domain.Id, updateOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Cipher, domain.Cipher)
 
-	err = domains.Delete(client, domain.Id).ExtractErr()
+	domain, err = domains.Get(client, domain.Id).Extract()
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, cert2.Id, domain.CertificateId)
 }
