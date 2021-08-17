@@ -68,7 +68,7 @@ type UpdateOptsBuilder interface {
 // UpdateOpts contains all the values needed to update a Domain.
 type UpdateOpts struct {
 	// Certificate ID
-	CertificateId string `json:"certificateid,omitempty"`
+	CertificateId string `json:"certificate_id,omitempty"`
 	// The original server information
 	Server []ServerOpts `json:"server,omitempty"`
 	// Whether proxy is configured
