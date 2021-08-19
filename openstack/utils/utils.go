@@ -83,6 +83,17 @@ func GetRegion(authOpts golangsdk.AuthOptions) string {
 	return getenv("OS_REGION_NAME", region)
 }
 
+// GetRegionFromAKSK returns the region that was specified in the auth options.
+// If a region was not set it returns value from env OS_REGION_NAME
+func GetRegionFromAKSK(authOpts golangsdk.AKSKAuthOptions) string {
+	name := authOpts.ProjectName
+	if name == "" {
+		name = authOpts.DelegatedProject
+	}
+	region := strings.Split(name, "_")[0]
+	return getenv("OS_REGION_NAME", region)
+}
+
 // getenv returns value from env is present or default value
 func getenv(key, fallback string) string {
 	value := os.Getenv(key)

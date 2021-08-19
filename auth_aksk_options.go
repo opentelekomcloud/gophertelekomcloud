@@ -19,7 +19,7 @@ type AKSKAuthOptions struct {
 	// region
 	Region string
 
-	// cloud service domain, example: myhwclouds.com
+	// cloud service domain
 	Domain   string
 	DomainID string
 
@@ -41,7 +41,7 @@ type AKSKAuthOptions struct {
 	DelegatedProject string
 }
 
-// Implements the method of AuthOptionsProvider
+// GetIdentityEndpoint implements the method of AKSKAuthOptions
 func (opts AKSKAuthOptions) GetIdentityEndpoint() string {
 	return opts.IdentityEndpoint
 }

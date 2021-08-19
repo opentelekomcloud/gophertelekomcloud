@@ -161,7 +161,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 
 	var result token3Result
 
-	if opts.AuthTokenID() != "" {
+	if opts.AuthTokenID() != "" { // TODO: Check token validity with Token-By-Token
 		v3Client.SetToken(opts.AuthTokenID())
 		result = tokens3.Get(v3Client, opts.AuthTokenID())
 	} else {
@@ -212,6 +212,7 @@ func v3auth(client *golangsdk.ProviderClient, endpoint string, opts tokens3.Auth
 		}
 		clientRegion = utils.GetRegion(*aOpts)
 	}
+	client.RegionID = clientRegion
 
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
 		// use client region as default one
@@ -331,6 +332,8 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 	if err != nil {
 		return err
 	}
+	clientRegion := utils.GetRegionFromAKSK(options)
+	client.RegionID = clientRegion
 
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
 		return V3EndpointURL(&tokens3.ServiceCatalog{

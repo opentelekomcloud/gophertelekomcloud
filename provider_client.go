@@ -66,6 +66,9 @@ type ProviderClient struct {
 	// DomainID is the ID of project to which User is authorized.
 	DomainID string
 
+	// RegionID is the Name of region to which User is authorized.
+	RegionID string
+
 	// EndpointLocator describes how this provider discovers the endpoints for
 	// its constituent services.
 	EndpointLocator EndpointLocator

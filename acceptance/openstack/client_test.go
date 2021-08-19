@@ -33,6 +33,9 @@ func TestAuthenticatedClient(t *testing.T) {
 	if cc.DomainID == "" {
 		t.Errorf("Domain ID is not set for the client")
 	}
+	if cc.RegionID == "" {
+		t.Errorf("Region ID is not set for the client")
+	}
 
 	// Find the storage service in the service catalog.
 	storage, err := openstack.NewObjectStorageV1(cc.ProviderClient, golangsdk.EndpointOpts{
