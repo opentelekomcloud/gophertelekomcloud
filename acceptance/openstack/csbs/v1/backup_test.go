@@ -35,35 +35,51 @@ func TestBackupLifeCycle(t *testing.T) {
 		openstack.DeleteCloudServer(t, computeClient, ecs.ID)
 	}()
 
-	backupName := tools.RandomString("backup-", 3)
-	createOpts := backup.CreateOpts{
-		BackupName:   backupName,
-		Description:  "bla-bla",
-		ResourceType: "OS::Nova::Server",
+	t.Logf("Check if resource is protectable")
+	queryOpts := backup.ResourceBackupCapOpts{
+		CheckProtectable: []backup.ResourceCapQueryParams{
+			{
+				ResourceId:   ecs.ID,
+				ResourceType: "OS::Nova::Server",
+			},
+		},
 	}
-
-	t.Logf("Attempting to create CSBS backup")
-	checkpoint, err := backup.Create(client, ecs.ID, createOpts).Extract()
+	query, err := backup.QueryResourceBackupCapability(client, queryOpts).ExtractQueryResponse()
 	th.AssertNoErr(t, err)
-	defer func() {
-		t.Logf("Attempting to delete CSBS backup: %s", checkpoint.Id)
-		err = backup.Delete(client, checkpoint.Id).ExtractErr()
+	if query[0].Result {
+		t.Logf("Resource is protectable")
+		backupName := tools.RandomString("backup-", 3)
+		createOpts := backup.CreateOpts{
+			BackupName:   backupName,
+			Description:  "bla-bla",
+			ResourceType: "OS::Nova::Server",
+		}
+
+		t.Logf("Attempting to create CSBS backup")
+		checkpoint, err := backup.Create(client, ecs.ID, createOpts).Extract()
+		th.AssertNoErr(t, err)
+		defer func() {
+			t.Logf("Attempting to delete CSBS backup: %s", checkpoint.Id)
+			err = backup.Delete(client, checkpoint.Id).ExtractErr()
+			th.AssertNoErr(t, err)
+
+			err = waitForBackupDeleted(client, 600, checkpoint.Id)
+			th.AssertNoErr(t, err)
+			t.Logf("Deleted CSBS backup: %s", checkpoint.Id)
+		}()
+
+		listOpts := backup.ListOpts{
+			CheckpointId: checkpoint.Id,
+		}
+		csbsBackupList, err := backup.List(client, listOpts)
 		th.AssertNoErr(t, err)
 
-		err = waitForBackupDeleted(client, 600, checkpoint.Id)
+		err = waitForBackupCreated(client, 600, csbsBackupList[0].Id)
 		th.AssertNoErr(t, err)
-		t.Logf("Deleted CSBS backup: %s", checkpoint.Id)
-	}()
-
-	listOpts := backup.ListOpts{
-		CheckpointId: checkpoint.Id,
+		t.Logf("Created CSBS backup: %s", checkpoint.Id)
+	} else {
+		t.Logf("Resource isn't protectable")
 	}
-	csbsBackupList, err := backup.List(client, listOpts)
-	th.AssertNoErr(t, err)
-
-	err = waitForBackupCreated(client, 600, csbsBackupList[0].Id)
-	th.AssertNoErr(t, err)
-	t.Logf("Created CSBS backup: %s", checkpoint.Id)
 }
 
 func waitForBackupCreated(client *golangsdk.ServiceClient, secs int, backupID string) error {
