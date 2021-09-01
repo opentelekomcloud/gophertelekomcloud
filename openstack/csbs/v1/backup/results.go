@@ -13,7 +13,7 @@ type Checkpoint struct {
 	ResourceGraph  string         `json:"resource_graph"`
 	ProjectId      string         `json:"project_id"`
 	ProtectionPlan ProtectionPlan `json:"protection_plan"`
-	ExtraInfo      string         `json:"extra_info"`
+	ExtraInfo      interface{}    `json:"extra_info"`
 }
 
 type ProtectionPlan struct {
