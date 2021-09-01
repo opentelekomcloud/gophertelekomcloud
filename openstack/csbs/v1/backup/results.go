@@ -19,10 +19,10 @@ type Checkpoint struct {
 type ProtectionPlan struct {
 	Id              string               `json:"id"`
 	Name            string               `json:"name"`
-	BackupResources []csbsBackupResource `json:"resources"`
+	BackupResources []СsbsBackupResource `json:"resources"`
 }
 
-type csbsBackupResource struct {
+type СsbsBackupResource struct {
 	ID        string      `json:"id"`
 	Type      string      `json:"type"`
 	Name      string      `json:"name"`
@@ -137,16 +137,16 @@ func (r GetResult) Extract() (*Backup, error) {
 	return s, nil
 }
 
-// csbsBackupPage is the page returned by a pager when traversing over a
+// СsbsBackupPage is the page returned by a pager when traversing over a
 // collection of backups.
-type csbsBackupPage struct {
+type СsbsBackupPage struct {
 	pagination.LinkedPageBase
 }
 
 // NextPageURL is invoked when a paginated collection of backups has reached
 // the end of a page and the pager seeks to traverse over a new one. In order
 // to do this, it needs to construct the next page's URL.
-func (r csbsBackupPage) NextPageURL() (string, error) {
+func (r СsbsBackupPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"checkpoint_items_links"`
 	}
@@ -157,18 +157,18 @@ func (r csbsBackupPage) NextPageURL() (string, error) {
 	return golangsdk.ExtractNextURL(s.Links)
 }
 
-// IsEmpty checks whether a csbsBackupPage struct is empty.
-func (r csbsBackupPage) IsEmpty() (bool, error) {
+// IsEmpty checks whether a СsbsBackupPage struct is empty.
+func (r СsbsBackupPage) IsEmpty() (bool, error) {
 	is, err := ExtractBackups(r)
 	return len(is) == 0, err
 }
 
-// ExtractBackups accepts a Page struct, specifically a csbsBackupPage struct,
+// ExtractBackups accepts a Page struct, specifically a СsbsBackupPage struct,
 // and extracts the elements into a slice of Backup structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
 	var s []Backup
-	err := (r.(csbsBackupPage)).ExtractIntoSlicePtr(&s, "checkpoint_items")
+	err := (r.(СsbsBackupPage)).ExtractIntoSlicePtr(&s, "checkpoint_items")
 	if err != nil {
 		return nil, err
 	}
