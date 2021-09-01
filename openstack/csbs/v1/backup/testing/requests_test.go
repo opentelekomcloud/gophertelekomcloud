@@ -24,7 +24,7 @@ func TestGet(t *testing.T) {
 		_, _ = fmt.Fprint(w, getResponse)
 	})
 
-	s, err := backup.Get(fake.ServiceClient(), checkpointItemID).ExtractBackup()
+	s, err := backup.Get(fake.ServiceClient(), checkpointItemID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "7b99acfd-18c3-4f26-9d39-b4ebd2ea3e12", s.Id)
 	th.AssertEquals(t, "backup-c2c", s.Name)
