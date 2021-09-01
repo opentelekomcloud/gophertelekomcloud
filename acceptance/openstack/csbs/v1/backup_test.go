@@ -3,6 +3,7 @@ package v1
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
@@ -41,10 +42,52 @@ func TestBackupLifeCycle(t *testing.T) {
 		ResourceType: "OS::Nova::Server",
 	}
 
+	t.Logf("Attempting to create CSBS backup")
 	csbsBackup, err := backup.Create(client, ecs.ID, createOpts).ExtractBackup()
 	th.AssertNoErr(t, err)
 	defer func() {
+		t.Logf("Attempting to delete CSBS backup: %s", csbsBackup.Id)
 		err := backup.Delete(client, csbsBackup.CheckpointId).ExtractErr()
 		th.AssertNoErr(t, err)
+
+		err = waitForBackupDeleted(client, 600, csbsBackup.Id)
+		th.AssertNoErr(t, err)
+		t.Logf("Deleted CSBS backup: %s", csbsBackup.Id)
 	}()
+
+	err = waitForBackupCreated(client, 600, csbsBackup.Id)
+	th.AssertNoErr(t, err)
+	t.Logf("Created CSBS backup: %s", csbsBackup.Id)
+}
+
+func waitForBackupCreated(client *golangsdk.ServiceClient, secs int, backupID string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		csbsBackup, err := backup.Get(client, backupID).ExtractBackup()
+		if err != nil {
+			return false, err
+		}
+
+		if csbsBackup.Id == "error" {
+			return false, err
+		}
+
+		if csbsBackup.Status == "available" {
+			return true, nil
+		}
+
+		return false, nil
+	})
+}
+
+func waitForBackupDeleted(client *golangsdk.ServiceClient, secs int, backupID string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		_, err := backup.Get(client, backupID).ExtractBackup()
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
+		}
+		return false, nil
+	})
 }
