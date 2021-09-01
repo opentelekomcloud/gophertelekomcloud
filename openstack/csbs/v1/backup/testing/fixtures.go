@@ -1,8 +1,8 @@
 package testing
 
 const (
-	backupEndpoint     = "/checkpoint_items"
-	checkpoint_item_id = "7b99acfd-18c3-4f26-9d39-b4ebd2ea3e12"
+	backupEndpoint   = "/checkpoint_items"
+	checkpointItemID = "7b99acfd-18c3-4f26-9d39-b4ebd2ea3e12"
 )
 
 var getResponse = `

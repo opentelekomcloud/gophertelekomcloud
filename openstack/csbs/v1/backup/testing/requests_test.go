@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -16,7 +14,7 @@ func TestGet(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
-	th.Mux.HandleFunc(backupEndpoint+"/"+checkpoint_item_id, func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc(backupEndpoint+"/"+checkpointItemID, func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -26,7 +24,7 @@ func TestGet(t *testing.T) {
 		_, _ = fmt.Fprint(w, getResponse)
 	})
 
-	s, err := backup.Get(fake.ServiceClient(), checkpoint_item_id).ExtractBackup()
+	s, err := backup.Get(fake.ServiceClient(), checkpointItemID).ExtractBackup()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "7b99acfd-18c3-4f26-9d39-b4ebd2ea3e12", s.Id)
 	th.AssertEquals(t, "backup-c2c", s.Name)
@@ -129,7 +127,6 @@ func TestList(t *testing.T) {
 		t.Errorf("Failed to extract backups: %v", err)
 	}
 
-	var FinishedAt, _ = time.Parse(golangsdk.RFC3339MilliNoZ, "2018-08-14T08:31:08.720800")
 	expected := []backup.Backup{
 		{
 			Status: "available",
@@ -153,7 +150,7 @@ func TestList(t *testing.T) {
 				FailReason:           "",
 				ResourceAz:           "eu-de-02",
 				ImageType:            "backup",
-				FinishedAt:           FinishedAt,
+				FinishedAt:           "2018-08-14T08:31:08.720800",
 				AverageSpeed:         19,
 				CopyStatus:           "na",
 				Incremental:          false,

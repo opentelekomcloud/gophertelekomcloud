@@ -1,21 +1,19 @@
 package backup
 
 import (
-	"encoding/json"
-	"strconv"
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Checkpoint struct {
 	Status         string         `json:"status"`
-	CreatedAt      time.Time      `json:"-"`
+	CreatedAt      string         `json:"created_at"`
 	Id             string         `json:"id"`
 	ResourceGraph  string         `json:"resource_graph"`
 	ProjectId      string         `json:"project_id"`
 	ProtectionPlan ProtectionPlan `json:"protection_plan"`
+	ExtraInfo      string         `json:"extra_info"`
 }
 
 type ProtectionPlan struct {
@@ -25,10 +23,10 @@ type ProtectionPlan struct {
 }
 
 type BackupResource struct {
-	ID        string `json:"id"`
-	Type      string `json:"type"`
-	Name      string `json:"name"`
-	ExtraInfo string `json:"-"`
+	ID        string      `json:"id"`
+	Type      string      `json:"type"`
+	Name      string      `json:"name"`
+	ExtraInfo interface{} `json:"extra_info"`
 }
 
 type ResourceCapability struct {
@@ -37,48 +35,6 @@ type ResourceCapability struct {
 	ErrorCode    string `json:"error_code"`
 	ErrorMsg     string `json:"error_msg"`
 	ResourceId   string `json:"resource_id"`
-}
-
-// UnmarshalJSON helps to unmarshal Checkpoint fields into needed values.
-func (r *Checkpoint) UnmarshalJSON(b []byte) error {
-	type tmp Checkpoint
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Checkpoint(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-
-	return err
-}
-
-// UnmarshalJSON helps to unmarshal BackupResource fields into needed values.
-func (r *BackupResource) UnmarshalJSON(b []byte) error {
-	type tmp BackupResource
-	var s struct {
-		tmp
-		ExtraInfo interface{} `json:"extra_info"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-
-	*r = BackupResource(s.tmp)
-
-	switch t := s.ExtraInfo.(type) {
-	case float64:
-		r.ID = strconv.FormatFloat(t, 'f', -1, 64)
-	case string:
-		r.ID = t
-	}
-
-	return err
 }
 
 func (r commonResult) ExtractQueryResponse() ([]ResourceCapability, error) {
@@ -90,18 +46,18 @@ func (r commonResult) ExtractQueryResponse() ([]ResourceCapability, error) {
 }
 
 type Backup struct {
-	CheckpointId string        `json:"checkpoint_id"`
-	CreatedAt    time.Time     `json:"-"`
-	ExtendInfo   ExtendInfo    `json:"extend_info"`
-	Id           string        `json:"id"`
-	Name         string        `json:"name"`
-	ResourceId   string        `json:"resource_id"`
-	Status       string        `json:"status"`
-	UpdatedAt    time.Time     `json:"-"`
-	VMMetadata   VMMetadata    `json:"backup_data"`
-	Description  string        `json:"description"`
-	Tags         []ResourceTag `json:"tags"`
-	ResourceType string        `json:"resource_type"`
+	CheckpointId string             `json:"checkpoint_id"`
+	CreatedAt    string             `json:"created_at"`
+	ExtendInfo   ExtendInfo         `json:"extend_info"`
+	Id           string             `json:"id"`
+	Name         string             `json:"name"`
+	ResourceId   string             `json:"resource_id"`
+	Status       string             `json:"status"`
+	UpdatedAt    string             `json:"updated_at"`
+	VMMetadata   VMMetadata         `json:"backup_data"`
+	Description  string             `json:"description"`
+	Tags         []tags.ResourceTag `json:"tags"`
+	ResourceType string             `json:"resource_type"`
 }
 
 type ExtendInfo struct {
@@ -121,7 +77,7 @@ type ExtendInfo struct {
 	Size                 int            `json:"size"`
 	SpaceSavingRatio     int            `json:"space_saving_ratio"`
 	VolumeBackups        []VolumeBackup `json:"volume_backups"`
-	FinishedAt           time.Time      `json:"-"`
+	FinishedAt           string         `json:"finished_at"`
 	TaskId               string         `json:"taskid"`
 	HypervisorType       string         `json:"hypervisor_type"`
 	SupportedRestoreMode string         `json:"supported_restore_mode"`
@@ -158,44 +114,6 @@ type VolumeBackup struct {
 	SpaceSavingRatio int    `json:"space_saving_ratio"`
 	Status           string `json:"status"`
 	SourceVolumeName string `json:"source_volume_name"`
-}
-
-// UnmarshalJSON helps to unmarshal Backup fields into needed values.
-func (r *Backup) UnmarshalJSON(b []byte) error {
-	type tmp Backup
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Backup(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-	r.UpdatedAt = time.Time(s.UpdatedAt)
-
-	return err
-}
-
-// UnmarshalJSON helps to unmarshal ExtendInfo fields into needed values.
-func (r *ExtendInfo) UnmarshalJSON(b []byte) error {
-	type tmp ExtendInfo
-	var s struct {
-		tmp
-		FinishedAt golangsdk.JSONRFC3339MilliNoZ `json:"finished_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = ExtendInfo(s.tmp)
-
-	r.FinishedAt = time.Time(s.FinishedAt)
-
-	return err
 }
 
 // Extract will get the checkpoint object from the commonResult
