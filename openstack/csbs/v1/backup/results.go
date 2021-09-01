@@ -182,7 +182,7 @@ type CreateResult struct {
 }
 
 type DeleteResult struct {
-	commonResult
+	golangsdk.ErrResult
 }
 
 type GetResult struct {
