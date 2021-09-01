@@ -1,34 +1,32 @@
 package backup
 
 import (
-	"encoding/json"
-	"strconv"
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Checkpoint struct {
 	Status         string         `json:"status"`
-	CreatedAt      time.Time      `json:"-"`
+	CreatedAt      string         `json:"created_at"`
 	Id             string         `json:"id"`
 	ResourceGraph  string         `json:"resource_graph"`
 	ProjectId      string         `json:"project_id"`
 	ProtectionPlan ProtectionPlan `json:"protection_plan"`
+	ExtraInfo      interface{}    `json:"extra_info"`
 }
 
 type ProtectionPlan struct {
-	Id              string           `json:"id"`
-	Name            string           `json:"name"`
-	BackupResources []BackupResource `json:"resources"`
+	Id              string               `json:"id"`
+	Name            string               `json:"name"`
+	BackupResources []СsbsBackupResource `json:"resources"`
 }
 
-type BackupResource struct {
-	ID        string `json:"id"`
-	Type      string `json:"type"`
-	Name      string `json:"name"`
-	ExtraInfo string `json:"-"`
+type СsbsBackupResource struct {
+	ID        string      `json:"id"`
+	Type      string      `json:"type"`
+	Name      string      `json:"name"`
+	ExtraInfo interface{} `json:"extra_info"`
 }
 
 type ResourceCapability struct {
@@ -39,74 +37,24 @@ type ResourceCapability struct {
 	ResourceId   string `json:"resource_id"`
 }
 
-// UnmarshalJSON helps to unmarshal Checkpoint fields into needed values.
-func (r *Checkpoint) UnmarshalJSON(b []byte) error {
-	type tmp Checkpoint
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Checkpoint(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-
-	return err
-}
-
-// UnmarshalJSON helps to unmarshal BackupResource fields into needed values.
-func (r *BackupResource) UnmarshalJSON(b []byte) error {
-	type tmp BackupResource
-	var s struct {
-		tmp
-		ExtraInfo interface{} `json:"extra_info"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-
-	*r = BackupResource(s.tmp)
-
-	switch t := s.ExtraInfo.(type) {
-	case float64:
-		r.ID = strconv.FormatFloat(t, 'f', -1, 64)
-	case string:
-		r.ID = t
-	}
-
-	return err
-}
-
-func (r commonResult) ExtractQueryResponse() ([]ResourceCapability, error) {
-	var s struct {
-		ResourcesCaps []ResourceCapability `json:"protectable"`
-	}
-	err := r.ExtractInto(&s)
-	return s.ResourcesCaps, err
-}
-
 type Backup struct {
-	CheckpointId string        `json:"checkpoint_id"`
-	CreatedAt    time.Time     `json:"-"`
-	ExtendInfo   ExtendInfo    `json:"extend_info"`
-	Id           string        `json:"id"`
-	Name         string        `json:"name"`
-	ResourceId   string        `json:"resource_id"`
-	Status       string        `json:"status"`
-	UpdatedAt    time.Time     `json:"-"`
-	VMMetadata   VMMetadata    `json:"backup_data"`
-	Description  string        `json:"description"`
-	Tags         []ResourceTag `json:"tags"`
-	ResourceType string        `json:"resource_type"`
+	CheckpointId string             `json:"checkpoint_id"`
+	CreatedAt    string             `json:"created_at"`
+	ExtendInfo   ExtendInfo         `json:"extend_info"`
+	Id           string             `json:"id"`
+	Name         string             `json:"name"`
+	ResourceId   string             `json:"resource_id"`
+	Status       string             `json:"status"`
+	UpdatedAt    string             `json:"updated_at"`
+	VMMetadata   VMMetadata         `json:"backup_data"`
+	Description  string             `json:"description"`
+	Tags         []tags.ResourceTag `json:"tags"`
+	ResourceType string             `json:"resource_type"`
 }
 
 type ExtendInfo struct {
 	AutoTrigger          bool           `json:"auto_trigger"`
-	AverageSpeed         int            `json:"average_speed"`
+	AverageSpeed         float32        `json:"average_speed"`
 	CopyFrom             string         `json:"copy_from"`
 	CopyStatus           string         `json:"copy_status"`
 	FailCode             FailCode       `json:"fail_code"`
@@ -121,7 +69,7 @@ type ExtendInfo struct {
 	Size                 int            `json:"size"`
 	SpaceSavingRatio     int            `json:"space_saving_ratio"`
 	VolumeBackups        []VolumeBackup `json:"volume_backups"`
-	FinishedAt           time.Time      `json:"-"`
+	FinishedAt           string         `json:"finished_at"`
 	TaskId               string         `json:"taskid"`
 	HypervisorType       string         `json:"hypervisor_type"`
 	SupportedRestoreMode string         `json:"supported_restore_mode"`
@@ -160,74 +108,45 @@ type VolumeBackup struct {
 	SourceVolumeName string `json:"source_volume_name"`
 }
 
-// UnmarshalJSON helps to unmarshal Backup fields into needed values.
-func (r *Backup) UnmarshalJSON(b []byte) error {
-	type tmp Backup
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
-	}
-	err := json.Unmarshal(b, &s)
+func (r QueryResult) ExtractQueryResponse() ([]ResourceCapability, error) {
+	var s []ResourceCapability
+	err := r.ExtractIntoSlicePtr(&s, "protectable")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	*r = Backup(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-	r.UpdatedAt = time.Time(s.UpdatedAt)
-
-	return err
+	return s, nil
 }
 
-// UnmarshalJSON helps to unmarshal ExtendInfo fields into needed values.
-func (r *ExtendInfo) UnmarshalJSON(b []byte) error {
-	type tmp ExtendInfo
-	var s struct {
-		tmp
-		FinishedAt golangsdk.JSONRFC3339MilliNoZ `json:"finished_at"`
-	}
-	err := json.Unmarshal(b, &s)
+// Extract will get the checkpoint object from the golangsdk.Result
+func (r CreateResult) Extract() (*Checkpoint, error) {
+	s := new(Checkpoint)
+	err := r.ExtractIntoStructPtr(s, "checkpoint")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	*r = ExtendInfo(s.tmp)
-
-	r.FinishedAt = time.Time(s.FinishedAt)
-
-	return err
+	return s, nil
 }
 
-// Extract will get the checkpoint object from the commonResult
-func (r commonResult) Extract() (*Checkpoint, error) {
-	var s struct {
-		Checkpoint *Checkpoint `json:"checkpoint"`
+// Extract will get the backup object from the golangsdk.Result
+func (r GetResult) Extract() (*Backup, error) {
+	s := new(Backup)
+	err := r.ExtractIntoStructPtr(s, "checkpoint_item")
+	if err != nil {
+		return nil, err
 	}
-
-	err := r.ExtractInto(&s)
-	return s.Checkpoint, err
+	return s, nil
 }
 
-// ExtractBackup will get the backup object from the commonResult
-func (r commonResult) ExtractBackup() (*Backup, error) {
-	var s struct {
-		Backup *Backup `json:"checkpoint_item"`
-	}
-
-	err := r.ExtractInto(&s)
-	return s.Backup, err
-}
-
-// BackupPage is the page returned by a pager when traversing over a
+// СsbsBackupPage is the page returned by a pager when traversing over a
 // collection of backups.
-type BackupPage struct {
+type СsbsBackupPage struct {
 	pagination.LinkedPageBase
 }
 
 // NextPageURL is invoked when a paginated collection of backups has reached
 // the end of a page and the pager seeks to traverse over a new one. In order
 // to do this, it needs to construct the next page's URL.
-func (r BackupPage) NextPageURL() (string, error) {
+func (r СsbsBackupPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"checkpoint_items_links"`
 	}
@@ -238,39 +157,36 @@ func (r BackupPage) NextPageURL() (string, error) {
 	return golangsdk.ExtractNextURL(s.Links)
 }
 
-// IsEmpty checks whether a BackupPage struct is empty.
-func (r BackupPage) IsEmpty() (bool, error) {
+// IsEmpty checks whether a СsbsBackupPage struct is empty.
+func (r СsbsBackupPage) IsEmpty() (bool, error) {
 	is, err := ExtractBackups(r)
 	return len(is) == 0, err
 }
 
-// ExtractBackups accepts a Page struct, specifically a BackupPage struct,
+// ExtractBackups accepts a Page struct, specifically a СsbsBackupPage struct,
 // and extracts the elements into a slice of Backup structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var s struct {
-		Backups []Backup `json:"checkpoint_items"`
+	var s []Backup
+	err := (r.(СsbsBackupPage)).ExtractIntoSlicePtr(&s, "checkpoint_items")
+	if err != nil {
+		return nil, err
 	}
-	err := (r.(BackupPage)).ExtractInto(&s)
-	return s.Backups, err
-}
-
-type commonResult struct {
-	golangsdk.Result
+	return s, nil
 }
 
 type CreateResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 type DeleteResult struct {
-	commonResult
+	golangsdk.ErrResult
 }
 
 type GetResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 type QueryResult struct {
-	commonResult
+	golangsdk.Result
 }
