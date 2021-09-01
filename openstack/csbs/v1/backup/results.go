@@ -17,12 +17,12 @@ type Checkpoint struct {
 }
 
 type ProtectionPlan struct {
-	Id              string           `json:"id"`
-	Name            string           `json:"name"`
-	BackupResources []BackupResource `json:"resources"`
+	Id              string               `json:"id"`
+	Name            string               `json:"name"`
+	BackupResources []csbsBackupResource `json:"resources"`
 }
 
-type BackupResource struct {
+type csbsBackupResource struct {
 	ID        string      `json:"id"`
 	Type      string      `json:"type"`
 	Name      string      `json:"name"`
@@ -35,14 +35,6 @@ type ResourceCapability struct {
 	ErrorCode    string `json:"error_code"`
 	ErrorMsg     string `json:"error_msg"`
 	ResourceId   string `json:"resource_id"`
-}
-
-func (r commonResult) ExtractQueryResponse() ([]ResourceCapability, error) {
-	var s struct {
-		ResourcesCaps []ResourceCapability `json:"protectable"`
-	}
-	err := r.ExtractInto(&s)
-	return s.ResourcesCaps, err
 }
 
 type Backup struct {
@@ -62,7 +54,7 @@ type Backup struct {
 
 type ExtendInfo struct {
 	AutoTrigger          bool           `json:"auto_trigger"`
-	AverageSpeed         int            `json:"average_speed"`
+	AverageSpeed         float32        `json:"average_speed"`
 	CopyFrom             string         `json:"copy_from"`
 	CopyStatus           string         `json:"copy_status"`
 	FailCode             FailCode       `json:"fail_code"`
@@ -116,36 +108,45 @@ type VolumeBackup struct {
 	SourceVolumeName string `json:"source_volume_name"`
 }
 
-// Extract will get the checkpoint object from the commonResult
-func (r commonResult) Extract() (*Checkpoint, error) {
-	var s struct {
-		Checkpoint *Checkpoint `json:"checkpoint"`
+func (r QueryResult) ExtractQueryResponse() ([]ResourceCapability, error) {
+	var s []ResourceCapability
+	err := r.ExtractIntoSlicePtr(&s, "protectable")
+	if err != nil {
+		return nil, err
 	}
-
-	err := r.ExtractInto(&s)
-	return s.Checkpoint, err
+	return s, nil
 }
 
-// ExtractBackup will get the backup object from the commonResult
-func (r commonResult) ExtractBackup() (*Backup, error) {
-	var s struct {
-		Backup *Backup `json:"checkpoint_item"`
+// Extract will get the checkpoint object from the golangsdk.Result
+func (r CreateResult) Extract() (*Checkpoint, error) {
+	s := new(Checkpoint)
+	err := r.ExtractIntoStructPtr(s, "checkpoint")
+	if err != nil {
+		return nil, err
 	}
-
-	err := r.ExtractInto(&s)
-	return s.Backup, err
+	return s, nil
 }
 
-// BackupPage is the page returned by a pager when traversing over a
+// Extract will get the backup object from the golangsdk.Result
+func (r GetResult) Extract() (*Backup, error) {
+	s := new(Backup)
+	err := r.ExtractIntoStructPtr(s, "checkpoint_item")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+// csbsBackupPage is the page returned by a pager when traversing over a
 // collection of backups.
-type BackupPage struct {
+type csbsBackupPage struct {
 	pagination.LinkedPageBase
 }
 
 // NextPageURL is invoked when a paginated collection of backups has reached
 // the end of a page and the pager seeks to traverse over a new one. In order
 // to do this, it needs to construct the next page's URL.
-func (r BackupPage) NextPageURL() (string, error) {
+func (r csbsBackupPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"checkpoint_items_links"`
 	}
@@ -156,29 +157,26 @@ func (r BackupPage) NextPageURL() (string, error) {
 	return golangsdk.ExtractNextURL(s.Links)
 }
 
-// IsEmpty checks whether a BackupPage struct is empty.
-func (r BackupPage) IsEmpty() (bool, error) {
+// IsEmpty checks whether a csbsBackupPage struct is empty.
+func (r csbsBackupPage) IsEmpty() (bool, error) {
 	is, err := ExtractBackups(r)
 	return len(is) == 0, err
 }
 
-// ExtractBackups accepts a Page struct, specifically a BackupPage struct,
+// ExtractBackups accepts a Page struct, specifically a csbsBackupPage struct,
 // and extracts the elements into a slice of Backup structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var s struct {
-		Backups []Backup `json:"checkpoint_items"`
+	var s []Backup
+	err := (r.(csbsBackupPage)).ExtractIntoSlicePtr(&s, "checkpoint_items")
+	if err != nil {
+		return nil, err
 	}
-	err := (r.(BackupPage)).ExtractInto(&s)
-	return s.Backups, err
-}
-
-type commonResult struct {
-	golangsdk.Result
+	return s, nil
 }
 
 type CreateResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 type DeleteResult struct {
@@ -186,9 +184,9 @@ type DeleteResult struct {
 }
 
 type GetResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 type QueryResult struct {
-	commonResult
+	golangsdk.Result
 }

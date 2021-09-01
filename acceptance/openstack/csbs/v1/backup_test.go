@@ -43,26 +43,32 @@ func TestBackupLifeCycle(t *testing.T) {
 	}
 
 	t.Logf("Attempting to create CSBS backup")
-	csbsBackup, err := backup.Create(client, ecs.ID, createOpts).ExtractBackup()
+	checkpoint, err := backup.Create(client, ecs.ID, createOpts).Extract()
 	th.AssertNoErr(t, err)
 	defer func() {
-		t.Logf("Attempting to delete CSBS backup: %s", csbsBackup.Id)
-		err := backup.Delete(client, csbsBackup.CheckpointId).ExtractErr()
+		t.Logf("Attempting to delete CSBS backup: %s", checkpoint.Id)
+		err = backup.Delete(client, checkpoint.Id).ExtractErr()
 		th.AssertNoErr(t, err)
 
-		err = waitForBackupDeleted(client, 600, csbsBackup.Id)
+		err = waitForBackupDeleted(client, 600, checkpoint.Id)
 		th.AssertNoErr(t, err)
-		t.Logf("Deleted CSBS backup: %s", csbsBackup.Id)
+		t.Logf("Deleted CSBS backup: %s", checkpoint.Id)
 	}()
 
-	err = waitForBackupCreated(client, 600, csbsBackup.Id)
+	listOpts := backup.ListOpts{
+		CheckpointId: checkpoint.Id,
+	}
+	csbsBackupList, err := backup.List(client, listOpts)
 	th.AssertNoErr(t, err)
-	t.Logf("Created CSBS backup: %s", csbsBackup.Id)
+
+	err = waitForBackupCreated(client, 600, csbsBackupList[0].Id)
+	th.AssertNoErr(t, err)
+	t.Logf("Created CSBS backup: %s", checkpoint.Id)
 }
 
 func waitForBackupCreated(client *golangsdk.ServiceClient, secs int, backupID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		csbsBackup, err := backup.Get(client, backupID).ExtractBackup()
+		csbsBackup, err := backup.Get(client, backupID).Extract()
 		if err != nil {
 			return false, err
 		}
@@ -81,7 +87,7 @@ func waitForBackupCreated(client *golangsdk.ServiceClient, secs int, backupID st
 
 func waitForBackupDeleted(client *golangsdk.ServiceClient, secs int, backupID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := backup.Get(client, backupID).ExtractBackup()
+		_, err := backup.Get(client, backupID).Extract()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
