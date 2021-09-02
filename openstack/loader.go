@@ -318,11 +318,17 @@ func (c *Cloud) computeRegion() {
 		name = c.AuthInfo.DelegatedProject
 	}
 	c.RegionName = strings.Split(name, "_")[0]
+}
 
+func (c *Cloud) computeAuthURL() error {
 	// Auth URL depends on provided region
-	if c.RegionName != "" && strings.Contains(c.AuthInfo.AuthURL, regionPlaceHolder) {
-		c.AuthInfo.AuthURL = strings.ReplaceAll(c.AuthInfo.AuthURL, regionPlaceHolder, c.RegionName)
+	if url := c.AuthInfo.AuthURL; strings.Contains(url, regionPlaceHolder) {
+		if c.RegionName == "" {
+			return fmt.Errorf("region placeholder found in `AuthURL` (%s), but no region provided", url)
+		}
+		c.AuthInfo.AuthURL = strings.ReplaceAll(url, regionPlaceHolder, c.RegionName)
 	}
+	return nil
 }
 
 func loadFile(path string) ([]byte, error) {
@@ -497,6 +503,9 @@ func (e *Env) Cloud(name ...string) (*Cloud, error) {
 		}
 		cloud.Cloud = cloudName // override value read from environment
 		cloud.computeRegion()
+		if err := cloud.computeAuthURL(); err != nil {
+			return nil, err
+		}
 		e.cloud = cloud
 	}
 	return e.cloud, nil
