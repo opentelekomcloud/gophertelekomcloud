@@ -24,7 +24,6 @@ type CreateOps struct {
 	// FIFO: First-ln-First-out (FIFO) queue. FIFO delivery.
 	// KAFKA_HA: High-availability Kafka queue.
 	// KAFKA_HT: High-throughput Kafka queue.
-	// AMQP: Advanced Message Queuing Protocol (AMQP) queue.
 	QueueMode string `json:"queue_mode,omitempty"`
 
 	// Indicates the basic information about a queue.
@@ -53,8 +52,8 @@ type CreateOps struct {
 }
 
 // ToQueueCreateMap is used for type convert
-func (ops CreateOps) ToQueueCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+func (opts CreateOps) ToQueueCreateMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Create a queue with given parameters.
