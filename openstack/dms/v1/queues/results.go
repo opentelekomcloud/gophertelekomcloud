@@ -42,6 +42,7 @@ type Queue struct {
 	RedrivePolicy    string  `json:"redrive_policy"`
 	MaxConsumeCount  int     `json:"max_consume_count"`
 	GroupCount       int     `json:"group_count"`
+	KafkaTopic       string  `json:"kafka_topic"`
 }
 
 // GetResult contains the body of getting detailed

@@ -5,14 +5,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateOpsBuilder is used for creating queue parameters.
+// CreateOptsBuilder is used for creating queue parameters.
 // any struct providing the parameters should implement this interface
-type CreateOpsBuilder interface {
+type CreateOptsBuilder interface {
 	ToQueueCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOps is a struct that contains all the parameters.
-type CreateOps struct {
+// CreateOpts is a struct that contains all the parameters.
+type CreateOpts struct {
 	// Indicates the unique name of a queue.
 	// A string of 1 to 64 characters that contain
 	// a-z, A-Z, 0-9, hyphens (-), and underscores (_).
@@ -24,7 +24,6 @@ type CreateOps struct {
 	// FIFO: First-ln-First-out (FIFO) queue. FIFO delivery.
 	// KAFKA_HA: High-availability Kafka queue.
 	// KAFKA_HT: High-throughput Kafka queue.
-	// AMQP: Advanced Message Queuing Protocol (AMQP) queue.
 	QueueMode string `json:"queue_mode,omitempty"`
 
 	// Indicates the basic information about a queue.
@@ -53,13 +52,13 @@ type CreateOps struct {
 }
 
 // ToQueueCreateMap is used for type convert
-func (ops CreateOps) ToQueueCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+func (opts CreateOpts) ToQueueCreateMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Create a queue with given parameters.
-func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder) (r CreateResult) {
-	b, err := ops.ToQueueCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToQueueCreateMap()
 	if err != nil {
 		r.Err = err
 		return
