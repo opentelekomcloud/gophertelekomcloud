@@ -91,3 +91,54 @@ func TestRdsChangeSingleConfigurationValue(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, result.RestartRequired)
 }
+
+func TestRdsReadReplicaLifecycle(t *testing.T) {
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	// Create RDSv3 instance
+	rds := createRDS(t, client, cc.RegionName)
+	defer deleteRDS(t, client, rds.Id)
+	th.AssertEquals(t, rds.Volume.Size, 100)
+
+	t.Logf("Attempting to create RDSv3 Read Replica")
+
+	prefix := "rds-rr-"
+	rdsReplicaName := tools.RandomString(prefix, 8)
+	kmsID := clients.EnvOS.GetEnv("KMS_ID")
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	createOpts := instances.CreateReplicaOpts{
+		Name:             rdsReplicaName,
+		ReplicaOfId:      rds.Id,
+		DiskEncryptionId: kmsID,
+		FlavorRef:        "rds.pg.c2.medium.rr",
+		Volume: &instances.Volume{
+			Type: "COMMON",
+			Size: 100,
+		},
+		AvailabilityZone: az,
+	}
+
+	createResult := instances.CreateReplica(client, createOpts)
+	rdsReadReplica, err := createResult.Extract()
+	th.AssertNoErr(t, err)
+	jobResponse, err := createResult.ExtractJobResponse()
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID)
+	th.AssertNoErr(t, err)
+	t.Logf("Created RDSv3 Read Replica: %s", rdsReadReplica.Instance.Id)
+
+	defer func() {
+		t.Logf("Attempting to delete RDSv3 Read Replica: %s", rdsReadReplica.Instance.Id)
+		_, err := instances.Delete(client, rdsReadReplica.Instance.Id).ExtractJobResponse()
+		th.AssertNoErr(t, err)
+		t.Logf("RDSv3 Read Replica instance deleted: %s", rdsReadReplica.Instance.Id)
+	}()
+}
