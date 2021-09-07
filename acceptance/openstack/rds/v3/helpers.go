@@ -25,6 +25,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	kmsID := clients.EnvOS.GetEnv("KMS_ID")
 	if vpcID == "" || subnetID == "" {
 		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
 	}
@@ -39,6 +40,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
 		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
+		DiskEncryptionId: kmsID,
 
 		Volume: &instances.Volume{
 			Type: "COMMON",
