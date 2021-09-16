@@ -287,7 +287,7 @@ func RemoveFromGroup(client *golangsdk.ServiceClient, groupID string, userID str
 // SendWelcomeEmail sends a welcome email to a user.
 func SendWelcomeEmail(client *golangsdk.ServiceClient, userID string) (r WelcomeResult) {
 	_, r.Err = client.Post(welcomeExtendedURL(client, userID), nil, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{200, 201},
 	})
 	return
 }
