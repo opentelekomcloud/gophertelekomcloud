@@ -4,15 +4,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type DbFlavorsResp struct {
-	Flavorslist []Flavors `json:"flavors"`
-}
-type Flavors struct {
-	Vcpus        string            `json:"vcpus" `
-	Ram          int               `json:"ram" `
-	Speccode     string            `json:"spec_code"  `
-	Instancemode string            `json:"instance_mode" `
-	Azstatus     map[string]string `json:"az_status" `
+type Flavor struct {
+	VCPUs        string            `json:"vcpus"`
+	RAM          int               `json:"ram"`
+	SpecCode     string            `json:"spec_code"`
+	InstanceMode string            `json:"instance_mode"`
+	AzStatus     map[string]string `json:"az_status"`
 }
 
 type DbFlavorsPage struct {
@@ -20,15 +17,18 @@ type DbFlavorsPage struct {
 }
 
 func (r DbFlavorsPage) IsEmpty() (bool, error) {
-	data, err := ExtractDbFlavors(r)
+	flavors, err := ExtractDbFlavors(r)
 	if err != nil {
 		return false, err
 	}
-	return len(data.Flavorslist) == 0, err
+	return len(flavors) == 0, err
 }
 
-func ExtractDbFlavors(r pagination.Page) (DbFlavorsResp, error) {
-	var s DbFlavorsResp
-	err := (r.(DbFlavorsPage)).ExtractInto(&s)
-	return s, err
+func ExtractDbFlavors(r pagination.Page) ([]Flavor, error) {
+	var s []Flavor
+	err := (r.(DbFlavorsPage)).ExtractIntoSlicePtr(&s, "flavors")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }

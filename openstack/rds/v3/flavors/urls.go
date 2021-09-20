@@ -2,6 +2,8 @@ package flavors
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func listURL(sc *golangsdk.ServiceClient, databasename string) string {
-	return sc.ServiceURL("flavors", databasename)
+const rootPath = "flavors"
+
+func listURL(client *golangsdk.ServiceClient, dbName string) string {
+	return client.ServiceURL(rootPath, dbName)
 }
