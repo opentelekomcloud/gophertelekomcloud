@@ -799,7 +799,7 @@ func NewCCE(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golan
 	return sc, err
 }
 
-// NewWAF creates a ServiceClient that may be used to access the WAF service.
+// NewWAFV1 creates a ServiceClient that may be used to access the WAF service.
 func NewWAFV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "waf")
 	if err != nil {
@@ -811,8 +811,7 @@ func NewWAFV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 
 // NewRDSV3 creates a ServiceClient that may be used to access the RDS service.
 func NewRDSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "rdsv3")
-	return sc, err
+	return initClientOpts(client, eo, "rdsv3")
 }
 
 // NewSDRSV1 creates a ServiceClient that may be used with the v1 SDRS service.
