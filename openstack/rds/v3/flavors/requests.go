@@ -5,15 +5,16 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type DbFlavorsOpts struct {
-	Versionname string `q:"version_name"`
+type ListOpts struct {
+	VersionName string `q:"version_name"`
+	SpecCode    string `q:"spec_code"`
 }
 
-type DbFlavorsBuilder interface {
-	ToDbFlavorsListQuery() (string, error)
+type ListOptsBuilder interface {
+	ToListOptsQuery() (string, error)
 }
 
-func (opts DbFlavorsOpts) ToDbFlavorsListQuery() (string, error) {
+func (opts ListOpts) ToListOptsQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return "", err
@@ -21,22 +22,20 @@ func (opts DbFlavorsOpts) ToDbFlavorsListQuery() (string, error) {
 	return q.String(), err
 }
 
-func List(client *golangsdk.ServiceClient, opts DbFlavorsBuilder, databasename string) pagination.Pager {
-	url := listURL(client, databasename)
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder, dbName string) pagination.Pager {
+	url := listURL(client, dbName)
 	if opts != nil {
-		query, err := opts.ToDbFlavorsListQuery()
-
+		query, err := opts.ToListOptsQuery()
 		if err != nil {
 			return pagination.Pager{Err: err}
 		}
 		url += query
 	}
 
-	pageRdsList := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	pagerRDS := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return DbFlavorsPage{pagination.SinglePageBase(r)}
 	})
 
-	rdsheader := map[string]string{"Content-Type": "application/json"}
-	pageRdsList.Headers = rdsheader
-	return pageRdsList
+	pagerRDS.Headers = map[string]string{"Content-Type": "application/json"}
+	return pagerRDS
 }
