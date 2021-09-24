@@ -1,6 +1,9 @@
 package zones
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -31,11 +34,19 @@ type ListOpts struct {
 	Status      string `q:"status"`
 	TTL         int    `q:"ttl"`
 	Type        string `q:"type"`
-	Tags        string `q:"tags"`
+	QueryTags   string `q:"tags"`
+
+	Tags []tags.ResourceTag
 }
 
 // ToZoneListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToZoneListQuery() (string, error) {
+	tagList := make([]string, 0, len(opts.Tags))
+	for _, tag := range opts.Tags {
+		tagList = append(tagList, fmt.Sprintf("%s,%s", tag.Key, tag.Value))
+	}
+	opts.QueryTags = strings.Join(tagList, "|")
+
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return "", err
