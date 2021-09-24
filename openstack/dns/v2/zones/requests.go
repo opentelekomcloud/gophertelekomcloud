@@ -41,7 +41,7 @@ type ListOpts struct {
 
 // ToZoneListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToZoneListQuery() (string, error) {
-	tagList := make([]string, 0, len(opts.Tags))
+	var tagList []string
 	for _, tag := range opts.Tags {
 		tagList = append(tagList, fmt.Sprintf("%s,%s", tag.Key, tag.Value))
 	}
