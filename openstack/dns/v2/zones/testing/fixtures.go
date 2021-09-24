@@ -31,8 +31,6 @@ const ListOutput = `
             "status": "ACTIVE",
             "description": "This is an example zone.",
             "masters": [],
-            "transferred_at": null,
-            "version": 1,
             "created_at": "2014-07-07T18:25:31.275934",
             "updated_at": null,
             "links": {
@@ -148,7 +146,6 @@ const CreateZoneRequest = `
 {
     "name": "example.org.",
     "email": "joe@example.org",
-    "type": "PRIMARY",
     "ttl": 7200,
     "description": "This is an example zone."
 }
@@ -165,12 +162,8 @@ const CreateZoneResponse = `
     "ttl": 7200,
     "serial": 1404757531,
     "status": "ACTIVE",
-    "action": "CREATE",
     "description": "This is an example zone.",
     "masters": [],
-    "type": "PRIMARY",
-    "transferred_at": null,
-    "version": 1,
     "created_at": "2014-07-07T18:25:31.275934",
     "updated_at": null,
     "links": {
@@ -214,12 +207,8 @@ const UpdateZoneResponse = `
     "ttl": 600,
     "serial": 1404757531,
     "status": "PENDING",
-    "action": "UPDATE",
     "description": "Updated Description",
     "masters": [],
-    "type": "PRIMARY",
-    "transferred_at": null,
-    "version": 1,
     "created_at": "2014-07-07T18:25:31.275934",
     "updated_at": null,
     "links": {
@@ -253,12 +242,8 @@ const DeleteZoneResponse = `
     "ttl": 600,
     "serial": 1404757531,
     "status": "PENDING",
-    "action": "DELETE",
     "description": "Updated Description",
     "masters": [],
-    "type": "PRIMARY",
-    "transferred_at": null,
-    "version": 1,
     "created_at": "2014-07-07T18:25:31.275934",
     "updated_at": null,
     "links": {
