@@ -1,10 +1,6 @@
 package zones
 
 import (
-	"encoding/json"
-	"strconv"
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -90,38 +86,23 @@ type Zone struct {
 	TTL int `json:"ttl"`
 
 	// Serial is the current serial number for the zone.
-	Serial int `json:"-"`
+	Serial int `json:"serial"`
 
 	// Status is the status of the resource.
 	Status string `json:"status"`
 
-	// Action is the current action in progress on the resource.
-	Action string `json:"action"`
-
-	// Version of the resource.
-	Version int `json:"version"`
-
-	// Attributes for the zone.
-	Attributes map[string]string `json:"attributes"`
-
-	// Type of zone. Primary is controlled by Designate.
-	// Secondary zones are slaved from another DNS Server.
-	// Defaults to Primary.
-	Type     string `json:"type"`
 	ZoneType string `json:"zone_type"`
+
+	RecordNum int `json:"record_num"`
 
 	// Masters is the servers for slave servers to get DNS information from.
 	Masters []string `json:"masters"`
 
 	// CreatedAt is the date when the zone was created.
-	CreatedAt time.Time `json:"-"`
+	CreatedAt string `json:"created_at"`
 
 	// UpdatedAt is the date when the last change was made to the zone.
-	UpdatedAt time.Time `json:"-"`
-
-	// TransferredAt is the last time an update was retrieved from the
-	// master servers.
-	TransferredAt time.Time `json:"-"`
+	UpdatedAt string `json:"updated_at"`
 
 	// Links includes HTTP references to the itself, useful for passing along
 	// to other APIs that might want a server reference.
@@ -135,44 +116,6 @@ type RouterResult struct {
 	RouterID     string `json:"router_id"`
 	RouterRegion string `json:"router_region"`
 	Status       string `json:"status"`
-}
-
-func (r *Zone) UnmarshalJSON(b []byte) error {
-	type tmp Zone
-	var s struct {
-		tmp
-		CreatedAt     golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt     golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
-		TransferredAt golangsdk.JSONRFC3339MilliNoZ `json:"transferred_at"`
-		Serial        interface{}                   `json:"serial"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Zone(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-	r.UpdatedAt = time.Time(s.UpdatedAt)
-	r.TransferredAt = time.Time(s.TransferredAt)
-
-	switch t := s.Serial.(type) {
-	case float64:
-		r.Serial = int(t)
-	case string:
-		switch t {
-		case "":
-			r.Serial = 0
-		default:
-			serial, err := strconv.ParseFloat(t, 64)
-			if err != nil {
-				return err
-			}
-			r.Serial = int(serial)
-		}
-	}
-
-	return err
 }
 
 // AssociateResult is the response from AssociateZone
