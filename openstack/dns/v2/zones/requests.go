@@ -81,15 +81,12 @@ type CreateOpts struct {
 	// Name of the zone.
 	Name string `json:"name" required:"true"`
 
-	// Masters specifies zone masters if this is a secondary zone.
-	Masters []string `json:"masters,omitempty"`
-
 	// TTL is the time to live of the zone.
 	TTL int `json:"ttl,omitempty"`
 
 	ZoneType string `json:"zone_type,omitempty"`
 
-	Router RouterOpts `json:"router,omitempty"`
+	Router *RouterOpts `json:"router,omitempty"`
 
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
