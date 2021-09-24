@@ -57,7 +57,6 @@ func TestCreate(t *testing.T) {
 	createOpts := zones.CreateOpts{
 		Name:        "example.org.",
 		Email:       "joe@example.org",
-		Type:        "PRIMARY",
 		TTL:         7200,
 		Description: "This is an example zone.",
 	}

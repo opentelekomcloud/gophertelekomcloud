@@ -2,6 +2,7 @@ package zones
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -71,9 +72,6 @@ type CreateOptsBuilder interface {
 
 // CreateOpts specifies the attributes used to create a zone.
 type CreateOpts struct {
-	// Attributes are settings that supply hints and filters for the zone.
-	Attributes map[string]string `json:"attributes,omitempty"`
-
 	// Email contact of the zone.
 	Email string `json:"email,omitempty"`
 
@@ -87,10 +85,13 @@ type CreateOpts struct {
 	Masters []string `json:"masters,omitempty"`
 
 	// TTL is the time to live of the zone.
-	TTL int `json:"-"`
+	TTL int `json:"ttl,omitempty"`
 
-	// Type specifies if this is a primary or secondary zone.
-	Type string `json:"type,omitempty"`
+	ZoneType string `json:"zone_type,omitempty"`
+
+	Router RouterOpts `json:"router,omitempty"`
+
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
 // ToZoneCreateMap formats an CreateOpts structure into a request body.
@@ -99,11 +100,6 @@ func (opts CreateOpts) ToZoneCreateMap() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	if opts.TTL > 0 {
-		b["ttl"] = opts.TTL
-	}
-
 	return b, nil
 }
 
@@ -132,10 +128,7 @@ type UpdateOpts struct {
 	Email string `json:"email,omitempty"`
 
 	// TTL is the time to live of the zone.
-	TTL int `json:"-"`
-
-	// Masters specifies zone masters if this is a secondary zone.
-	Masters []string `json:"masters,omitempty"`
+	TTL int `json:"ttl,omitempty"`
 
 	// Description of the zone.
 	Description string `json:"description,omitempty"`
@@ -147,11 +140,6 @@ func (opts UpdateOpts) ToZoneUpdateMap() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	if opts.TTL > 0 {
-		b["ttl"] = opts.TTL
-	}
-
 	return b, nil
 }
 
@@ -177,7 +165,7 @@ func Delete(client *golangsdk.ServiceClient, zoneID string) (r DeleteResult) {
 	return
 }
 
-// RouterOptsBuilder allows to add parameters to the associate/disassociate Zone request.
+// RouterOptsBuilder allows adding parameters to the associate/disassociate Zone request.
 type RouterOptsBuilder interface {
 	ToRouterMap() (map[string]interface{}, error)
 }

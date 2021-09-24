@@ -10,11 +10,11 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
-// List Output is a sample response to a List call.
+// ListOutput is a sample response to a List call.
 const ListOutput = `
 {
     "links": {
-      "self": "http://example.com:9001/v2/zones"
+      "self": "https://example.com:9001/v2/zones"
     },
     "metadata": {
       "total_count": 2
