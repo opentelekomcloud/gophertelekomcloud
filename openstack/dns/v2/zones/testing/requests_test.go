@@ -57,7 +57,6 @@ func TestCreate(t *testing.T) {
 	createOpts := zones.CreateOpts{
 		Name:        "example.org.",
 		Email:       "joe@example.org",
-		Type:        "PRIMARY",
 		TTL:         7200,
 		Description: "This is an example zone.",
 	}
@@ -79,7 +78,6 @@ func TestUpdate(t *testing.T) {
 
 	UpdatedZone := CreatedZone
 	UpdatedZone.Status = "PENDING"
-	UpdatedZone.Action = "UPDATE"
 	UpdatedZone.TTL = 600
 	UpdatedZone.Description = "Updated Description"
 
@@ -95,7 +93,6 @@ func TestDelete(t *testing.T) {
 
 	DeletedZone := CreatedZone
 	DeletedZone.Status = "PENDING"
-	DeletedZone.Action = "DELETE"
 	DeletedZone.TTL = 600
 	DeletedZone.Description = "Updated Description"
 
