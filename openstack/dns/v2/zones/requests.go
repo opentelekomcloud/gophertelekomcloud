@@ -30,6 +30,7 @@ type ListOpts struct {
 	Status      string `q:"status"`
 	TTL         int    `q:"ttl"`
 	Type        string `q:"type"`
+	Tags        string `q:"tags"`
 }
 
 // ToZoneListQuery formats a ListOpts into a query string.
