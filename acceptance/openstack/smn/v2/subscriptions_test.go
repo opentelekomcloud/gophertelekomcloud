@@ -30,4 +30,8 @@ func TestTopicSubscriptionWorkflow(t *testing.T) {
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SMN subscription: %s", subscription.SubscriptionUrn)
 	}()
+
+	subscriptionList, err := subscriptions.List(client).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(subscriptionList))
 }
