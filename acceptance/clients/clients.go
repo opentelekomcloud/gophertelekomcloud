@@ -228,6 +228,18 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewElbV2Client returns authenticated ELB v2 client
+func NewElbV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewELBV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewNatV2Client returns authenticated NAT v2 client
 func NewNatV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()

@@ -11,7 +11,7 @@ import (
 )
 
 func TestLbaasV2MonitorsList(t *testing.T) {
-	client, err := clients.NewNetworkV2Client()
+	client, err := clients.NewElbV2Client()
 	th.AssertNoErr(t, err)
 
 	listOpts := monitors.ListOpts{}
@@ -27,7 +27,7 @@ func TestLbaasV2MonitorsList(t *testing.T) {
 }
 
 func TestLbaasV2MonitorLifeCycle(t *testing.T) {
-	client, err := clients.NewNetworkV2Client()
+	client, err := clients.NewElbV2Client()
 	th.AssertNoErr(t, err)
 
 	// Create lbaasV2 Load Balancer

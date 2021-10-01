@@ -10,7 +10,7 @@ import (
 )
 
 func TestLbaasV2CertificatesList(t *testing.T) {
-	client, err := clients.NewNetworkV2Client()
+	client, err := clients.NewElbV2Client()
 	th.AssertNoErr(t, err)
 
 	listOpts := certificates.ListOpts{}
@@ -26,7 +26,7 @@ func TestLbaasV2CertificatesList(t *testing.T) {
 }
 
 func TestLbaasV2CertificateLifeCycle(t *testing.T) {
-	client, err := clients.NewNetworkV2Client()
+	client, err := clients.NewElbV2Client()
 	th.AssertNoErr(t, err)
 
 	// Create lbaasV2 certificate
