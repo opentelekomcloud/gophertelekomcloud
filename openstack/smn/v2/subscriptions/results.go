@@ -20,41 +20,33 @@ type SubscriptionGet struct {
 }
 
 // Extract will get the subscription object out of the commonResult object.
-func (r commonResult) Extract() (*Subscription, error) {
-	var s Subscription
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-
-func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "")
-}
-
-type commonResult struct {
-	golangsdk.Result
+func (r CreateResult) Extract() (*Subscription, error) {
+	s := new(Subscription)
+	err := r.ExtractIntoStructPtr(s, "")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // CreateResult contains the response body and error from a Create request.
 type CreateResult struct {
-	commonResult
+	golangsdk.Result
 }
 
 type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-type GetResult struct {
-	commonResult
-}
-
 type ListResult struct {
 	golangsdk.Result
 }
 
-func (lr ListResult) Extract() ([]SubscriptionGet, error) {
-	var a struct {
-		Subscriptions []SubscriptionGet `json:"subscriptions"`
+func (r ListResult) Extract() ([]SubscriptionGet, error) {
+	var s []SubscriptionGet
+	err := r.ExtractIntoSlicePtr(&s, "subscriptions")
+	if err != nil {
+		return nil, err
 	}
-	err := lr.Result.ExtractInto(&a)
-	return a.Subscriptions, err
+	return s, nil
 }

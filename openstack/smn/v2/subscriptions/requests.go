@@ -5,14 +5,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
-// CreateOpsBuilder is used for creating subscription parameters.
+// CreateOptsBuilder is used for creating subscription parameters.
 // any struct providing the parameters should implement this interface
-type CreateOpsBuilder interface {
+type CreateOptsBuilder interface {
 	ToSubscriptionCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOps is a struct that contains all the parameters.
-type CreateOps struct {
+// CreateOpts is a struct that contains all the parameters.
+type CreateOpts struct {
 	// Message endpoint
 	Endpoint string `json:"endpoint" required:"true"`
 	// Protocol of the message endpoint
@@ -21,13 +21,13 @@ type CreateOps struct {
 	Remark string `json:"remark,omitempty"`
 }
 
-func (ops CreateOps) ToSubscriptionCreateMap() (map[string]interface{}, error) {
+func (ops CreateOpts) ToSubscriptionCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(ops, "")
 }
 
 // Create a subscription with given parameters.
-func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder, topicUrn string) (r CreateResult) {
-	b, err := ops.ToSubscriptionCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, topicUrn string) (r CreateResult) {
+	b, err := opts.ToSubscriptionCreateMap()
 	if err != nil {
 		r.Err = err
 		return
@@ -41,19 +41,22 @@ func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder, topicUrn stri
 	return
 }
 
-// delete a subscription via subscription urn
+// Delete a subscription via subscription urn
 func Delete(client *golangsdk.ServiceClient, subscriptionUrn string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, subscriptionUrn), openstack.StdRequestOpts())
+	_, r.Err = client.Delete(deleteURL(client, subscriptionUrn), &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 202, 204},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
+	})
 	return
 }
 
-// list all the subscriptions
+// List all the subscriptions
 func List(client *golangsdk.ServiceClient) (r ListResult) {
 	_, r.Err = client.Get(listURL(client), &r.Body, openstack.StdRequestOpts())
 	return
 }
 
-// list all the subscriptions
+// ListFromTopic all the subscriptions from topic
 func ListFromTopic(client *golangsdk.ServiceClient, subscriptionUrn string) (r ListResult) {
 	_, r.Err = client.Get(listFromTopicURL(client, subscriptionUrn), &r.Body, openstack.StdRequestOpts())
 	return
