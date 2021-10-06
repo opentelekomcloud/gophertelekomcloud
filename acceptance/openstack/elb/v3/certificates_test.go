@@ -106,8 +106,10 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 
 	t.Logf("Attempting to update ELBv3 certificate: %s", certificate.ID)
 	certName = tools.RandomString("update-cert-", 3)
+	emptyDescription := ""
 	updateOpts := certificates.UpdateOpts{
-		Name: certName,
+		Name:        certName,
+		Description: &emptyDescription,
 	}
 
 	_, err = certificates.Update(client, certificate.ID, updateOpts).Extract()
@@ -117,4 +119,5 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 	newCertificate, err := certificates.Get(client, certificate.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newCertificate.Name)
+	th.AssertEquals(t, emptyDescription, newCertificate.Description)
 }
