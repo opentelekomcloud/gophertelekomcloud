@@ -6,6 +6,7 @@ package clients
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
@@ -241,10 +242,14 @@ func NewElbV2Client() (*golangsdk.ServiceClient, error) {
 }
 
 // NewElbV3Client returns authenticated ELB v3 client
-func NewElbV3Client() (*golangsdk.ServiceClient, error) {
+func NewElbV3Client(t *testing.T) (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
+	}
+
+	if cc.RegionName == "eu-de" {
+		t.Skip("ELBv3 is not working on `eu-de` yet")
 	}
 
 	return openstack.NewELBV3(cc.ProviderClient, golangsdk.EndpointOpts{

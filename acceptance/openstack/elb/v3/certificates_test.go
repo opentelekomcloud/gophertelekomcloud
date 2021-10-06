@@ -10,8 +10,7 @@ import (
 )
 
 func TestCertificateList(t *testing.T) {
-	t.Skip()
-	client, err := clients.NewElbV3Client()
+	client, err := clients.NewElbV3Client(t)
 	th.AssertNoErr(t, err)
 
 	listOpts := certificates.ListOpts{}
@@ -27,8 +26,7 @@ func TestCertificateList(t *testing.T) {
 }
 
 func TestCertificateLifecycle(t *testing.T) {
-	t.Skip()
-	client, err := clients.NewElbV3Client()
+	client, err := clients.NewElbV3Client(t)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Attempting to create ELBv3 certificate")
