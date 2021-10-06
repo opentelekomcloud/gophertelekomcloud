@@ -54,13 +54,12 @@ type CreateOptsBuilder interface {
 // CreateOpts is the common options' struct used in this package's Create
 // operation.
 type CreateOpts struct {
-	Name                string `json:"name,omitempty"`
-	Description         string `json:"description,omitempty"`
-	Type                string `json:"type,omitempty"`
-	Domain              string `json:"domain,omitempty"`
-	PrivateKey          string `json:"private_key,omitempty"`
-	Certificate         string `json:"certificate" required:"true"`
-	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Domain      string `json:"domain,omitempty"`
+	PrivateKey  string `json:"private_key,omitempty"`
+	Certificate string `json:"certificate" required:"true"`
 }
 
 // ToCertificateCreateMap casts a CreateOpts struct to a map.

@@ -42,7 +42,7 @@ type commonResult struct {
 
 func (r commonResult) Extract() (*Certificate, error) {
 	s := new(Certificate)
-	err := r.ExtractIntoStructPtr(&s, "certificate")
+	err := r.ExtractIntoStructPtr(s, "certificate")
 	if err != nil {
 		return nil, err
 	}
