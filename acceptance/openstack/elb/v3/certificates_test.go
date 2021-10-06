@@ -10,6 +10,7 @@ import (
 )
 
 func TestCertificateList(t *testing.T) {
+	t.Skip()
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
@@ -26,6 +27,7 @@ func TestCertificateList(t *testing.T) {
 }
 
 func TestCertificateLifecycle(t *testing.T) {
+	t.Skip()
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
