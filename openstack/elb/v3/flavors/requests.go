@@ -34,8 +34,8 @@ func (opts ListOpts) ToFlavorListMap() (string, error) {
 
 // List returns a Pager which allows you to iterate over a collection of
 // flavors.
-func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(c)
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := listURL(client)
 	if opts != nil {
 		queryString, err := opts.ToFlavorListMap()
 		if err != nil {
@@ -43,7 +43,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += queryString
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
 	})
+}
+
+// Get returns additional information about a Flavor, given its ID.
+func Get(client *golangsdk.ServiceClient, flavorID string) (r GetResult) {
+	_, r.Err = client.Get(getURL(client, flavorID), &r.Body, nil)
+	return
 }

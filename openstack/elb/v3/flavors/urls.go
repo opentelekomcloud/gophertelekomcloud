@@ -10,3 +10,7 @@ const (
 func listURL(sc *golangsdk.ServiceClient) string {
 	return sc.ServiceURL(rootPath, resourcePath)
 }
+
+func getURL(sc *golangsdk.ServiceClient, flavorID string) string {
+	return sc.ServiceURL(rootPath, resourcePath, flavorID)
+}

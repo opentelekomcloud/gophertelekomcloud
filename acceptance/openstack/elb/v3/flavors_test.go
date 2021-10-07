@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/flavors"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -20,7 +19,7 @@ func TestFlavorsList(t *testing.T) {
 	flavorsList, err := flavors.ExtractFlavors(flavorsPages)
 	th.AssertNoErr(t, err)
 
-	for _, flavor := range flavorsList {
-		tools.PrintResource(t, flavor)
-	}
+	zeroFlavor, err := flavors.Get(client, flavorsList[0].ID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, zeroFlavor, &flavorsList[0])
 }

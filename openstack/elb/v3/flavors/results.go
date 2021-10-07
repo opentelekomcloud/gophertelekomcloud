@@ -1,6 +1,9 @@
 package flavors
 
-import "github.com/opentelekomcloud/gophertelekomcloud/pagination"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+)
 
 type Flavor struct {
 	// Specifies the ID of the flavor.
@@ -60,6 +63,19 @@ func (r FlavorPage) IsEmpty() (bool, error) {
 func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
 	var s []Flavor
 	err := (r.(FlavorPage)).ExtractIntoSlicePtr(&s, "flavors")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+type GetResult struct {
+	golangsdk.Result
+}
+
+func (r GetResult) Extract() (*Flavor, error) {
+	s := new(Flavor)
+	err := r.ExtractIntoStructPtr(s, "flavor")
 	if err != nil {
 		return nil, err
 	}
