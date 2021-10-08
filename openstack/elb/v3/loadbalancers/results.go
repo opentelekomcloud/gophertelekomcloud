@@ -178,6 +178,17 @@ type LoadbalancerPage struct {
 	pagination.MarkerPageBase
 }
 
+func (r LoadbalancerPage) LastMarker() (string, error) {
+	results, err := ExtractLoadbalancers(r)
+	if err != nil {
+		return "", err
+	}
+	if len(results) == 0 {
+		return "", nil
+	}
+	return results[len(results)-1].ID, nil
+}
+
 // IsEmpty checks whether a FlavorsPage struct is empty.
 func (r LoadbalancerPage) IsEmpty() (bool, error) {
 	is, err := ExtractLoadbalancers(r)
