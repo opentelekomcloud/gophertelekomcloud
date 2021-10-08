@@ -175,7 +175,7 @@ func (r GetStatusesResult) Extract() (*StatusTree, error) {
 // LoadbalancerPage is the page returned by a pager when traversing over a
 // collection of loadbalancer.
 type LoadbalancerPage struct {
-	pagination.LinkedPageBase
+	pagination.MarkerPageBase
 }
 
 // IsEmpty checks whether a FlavorsPage struct is empty.
