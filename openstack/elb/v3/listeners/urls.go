@@ -1,13 +1,12 @@
-package loadbalancers
+package listeners
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3"
+	v3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3"
 )
 
 const (
-	resourcePath = "loadbalancers"
-	statusPath   = "statuses"
+	resourcePath = "listeners"
 )
 
 func rootURL(c *golangsdk.ServiceClient) string {
@@ -16,8 +15,4 @@ func rootURL(c *golangsdk.ServiceClient) string {
 
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL(v3.RootPath, resourcePath, id)
-}
-
-func statusURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(v3.RootPath, resourcePath, id, statusPath)
 }
