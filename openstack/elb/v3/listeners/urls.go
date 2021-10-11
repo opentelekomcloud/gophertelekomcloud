@@ -1,16 +1,18 @@
 package listeners
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	v3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3"
+)
 
 const (
-	rootPath     = "elb"
 	resourcePath = "listeners"
 )
 
 func rootURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(rootPath, resourcePath)
+	return c.ServiceURL(v3.RootPath, resourcePath)
 }
 
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(rootPath, resourcePath, id)
+	return c.ServiceURL(v3.RootPath, resourcePath, id)
 }
