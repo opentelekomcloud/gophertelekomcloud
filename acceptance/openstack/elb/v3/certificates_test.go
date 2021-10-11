@@ -30,9 +30,7 @@ func TestCertificateLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	certificateID := createCertificate(t, client)
-	defer func() {
-		deleteCertificate(t, client, certificateID)
-	}()
+	defer deleteCertificate(t, client, certificateID)
 
 	t.Logf("Attempting to update ELBv3 certificate: %s", certificateID)
 	certName := tools.RandomString("update-cert-", 3)

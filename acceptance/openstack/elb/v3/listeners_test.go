@@ -15,14 +15,10 @@ func TestListenerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer func() {
-		deleteLoadbalancer(t, client, loadbalancerID)
-	}()
+	defer deleteLoadbalancer(t, client, loadbalancerID)
 
 	certificateID := createCertificate(t, client)
-	defer func() {
-		deleteCertificate(t, client, certificateID)
-	}()
+	defer deleteCertificate(t, client, certificateID)
 
 	t.Logf("Attempting to create ELBv3 Listener")
 	listenerName := tools.RandomString("create-listener-", 3)

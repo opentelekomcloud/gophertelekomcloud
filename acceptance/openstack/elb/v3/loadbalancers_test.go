@@ -30,9 +30,7 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer func() {
-		deleteLoadbalancer(t, client, loadbalancerID)
-	}()
+	defer deleteLoadbalancer(t, client, loadbalancerID)
 
 	t.Logf("Attempting to update ELBv3 LoadBalancer: %s", loadbalancerID)
 	lbName := tools.RandomString("update-lb-", 3)
