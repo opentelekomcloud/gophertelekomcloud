@@ -2,7 +2,6 @@ package flavors
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	v3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3"
 )
 
 const (
@@ -10,9 +9,9 @@ const (
 )
 
 func listURL(sc *golangsdk.ServiceClient) string {
-	return sc.ServiceURL(v3.RootPath, resourcePath)
+	return sc.ServiceURL(resourcePath)
 }
 
 func getURL(sc *golangsdk.ServiceClient, flavorID string) string {
-	return sc.ServiceURL(v3.RootPath, resourcePath, flavorID)
+	return sc.ServiceURL(resourcePath, flavorID)
 }
