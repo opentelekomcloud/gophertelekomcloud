@@ -774,7 +774,12 @@ func NewELBV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 
 // NewELBV3 creates a ServiceClient that may be used to access the ELBv3 service.
 func NewELBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initClientOpts(client, eo, "elbv3")
+	sc, err := initClientOpts(client, eo, "elbv3")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "elb/"
+	return sc, nil
 }
 
 // NewRDSV1 creates a ServiceClient that may be used to access the RDS service.
