@@ -69,9 +69,7 @@ type CreateOptsBuilder interface {
 // CreateOpts is the common options' struct used in this package's Create
 // operation.
 type CreateOpts struct {
-	// The algorithm used to distribute load between the members of the pool. The
-	// current specification supports LBMethodRoundRobin, LBMethodLeastConnections
-	// and LBMethodSourceIp as valid values for this attribute.
+	// The algorithm used to distribute load between the members of the pool.
 	LBMethod string `json:"lb_algorithm" required:"true"`
 
 	// The protocol used by the pool members, you can use either
@@ -100,9 +98,34 @@ type CreateOpts struct {
 	// Omit this field to prevent session persistence.
 	Persistence *SessionPersistence `json:"session_persistence,omitempty"`
 
+	SlowStart *SlowStart `json:"slow_start,omitempty"`
+
 	// The administrative state of the Pool. A valid value is true (UP)
 	// or false (DOWN).
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
+}
+
+// SessionPersistence represents the session persistence feature of the load
+// balancing service. It attempts to force connections or requests in the same
+// session to be processed by the same member as long as it is active. Three
+// types of persistence are supported:
+type SessionPersistence struct {
+	// The type of persistence mode.
+	Type string `json:"type" required:"true"`
+
+	// Name of cookie if persistence mode is set appropriately.
+	CookieName string `json:"cookie_name,omitempty"`
+
+	// PersistenceTimeout specifies the stickiness duration, in minutes.
+	PersistenceTimeout int `json:"persistence_timeout,omitempty"`
+}
+
+type SlowStart struct {
+	// Specifies whether to Enable slow start.
+	Enable *bool `json:"enable" required:"true"`
+
+	// Specifies the slow start Duration, in seconds.
+	Duration int `json:"duration" required:"true"`
 }
 
 // ToPoolCreateMap builds a request body from CreateOpts.
@@ -141,7 +164,7 @@ type UpdateOpts struct {
 	Name string `json:"name,omitempty"`
 
 	// Human-readable description for the pool.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 
 	// The algorithm used to distribute load between the members of the pool. The
 	// current specification supports LBMethodRoundRobin, LBMethodLeastConnections
@@ -155,6 +178,8 @@ type UpdateOpts struct {
 	// The administrative state of the Pool. A valid value is true (UP)
 	// or false (DOWN).
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
+
+	SlowStart *SlowStart `json:"slow_start,omitempty"`
 }
 
 // ToPoolUpdateMap builds a request body from UpdateOpts.

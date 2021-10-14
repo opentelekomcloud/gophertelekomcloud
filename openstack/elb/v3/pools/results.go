@@ -5,29 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// SessionPersistence represents the session persistence feature of the load
-// balancing service. It attempts to force connections or requests in the same
-// session to be processed by the same member as long as it is active. Three
-// types of persistence are supported:
-//
-// SOURCE_IP:   With this mode, all connections originating from the same source
-//              IP address, will be handled by the same Member of the Pool.
-// HTTP_COOKIE: With this persistence mode, the load balancing function will
-//              create a cookie on the first request from a client. Subsequent
-//              requests containing the same cookie value will be handled by
-//              the same Member of the Pool.
-// APP_COOKIE:  With this persistence mode, the load balancing function will
-//              rely on a cookie established by the backend application. All
-//              requests carrying the same cookie value will be handled by the
-//              same Member of the Pool.
-type SessionPersistence struct {
-	// The type of persistence mode.
-	Type string `json:"type"`
-
-	// Name of cookie if persistence mode is set appropriately.
-	CookieName string `json:"cookie_name,omitempty"`
-}
-
 // LoadBalancerID represents a load balancer.
 type LoadBalancerID struct {
 	ID string `json:"id"`
@@ -35,6 +12,11 @@ type LoadBalancerID struct {
 
 // ListenerID represents a listener.
 type ListenerID struct {
+	ID string `json:"id"`
+}
+
+// MemberID represents a member.
+type MemberID struct {
 	ID string `json:"id"`
 }
 
@@ -55,10 +37,10 @@ type Pool struct {
 	Description string `json:"description"`
 
 	// A list of listeners objects IDs.
-	Listeners []ListenerID `json:"listeners"` // []map[string]interface{}
+	Listeners []ListenerID `json:"listeners"`
 
 	// A list of member objects IDs.
-	Members []Member `json:"members"`
+	Members []MemberID `json:"members"`
 
 	// The ID of associated health monitor.
 	MonitorID string `json:"healthmonitor_id"`
@@ -73,6 +55,8 @@ type Pool struct {
 	// Pool name. Does not have to be unique.
 	Name string `json:"name"`
 
+	ProjectID string `json:"project_id"`
+
 	// The unique ID for the Pool.
 	ID string `json:"id"`
 
@@ -83,41 +67,11 @@ type Pool struct {
 	// same Pool member or not.
 	Persistence SessionPersistence `json:"session_persistence"`
 
+	IpVersion string `json:"ip_version"`
+
+	SlowStart SlowStart `json:"slow_start"`
+
 	// The provisioning status of the pool.
-	// This value is ACTIVE, PENDING_* or ERROR.
-	ProvisioningStatus string `json:"provisioning_status"`
-}
-
-// Member represents the application running on a backend server.
-type Member struct {
-	// Name of the Member.
-	Name string `json:"name"`
-
-	// Weight of Member.
-	Weight int `json:"weight"`
-
-	// The administrative state of the member, which is up (true) or down (false).
-	AdminStateUp bool `json:"admin_state_up"`
-
-	// Owner of the Member.
-	TenantID string `json:"tenant_id"`
-
-	// Parameter value for the subnet UUID.
-	SubnetID string `json:"subnet_cidr_id"`
-
-	// The Pool to which the Member belongs.
-	PoolID string `json:"pool_id"`
-
-	// The IP address of the Member.
-	Address string `json:"address"`
-
-	// The port on which the application is hosted.
-	ProtocolPort int `json:"protocol_port"`
-
-	// The unique ID for the Member.
-	ID string `json:"id"`
-
-	// The provisioning status of the member.
 	// This value is ACTIVE, PENDING_* or ERROR.
 	ProvisioningStatus string `json:"provisioning_status"`
 }
