@@ -45,10 +45,6 @@ type Pool struct {
 	// The ID of associated health monitor.
 	MonitorID string `json:"healthmonitor_id"`
 
-	// The network on which the members of the Pool will be located. Only members
-	// that are on this network can be added to the Pool.
-	SubnetID string `json:"subnet_id"`
-
 	// The administrative state of the Pool, which is up (true) or down (false).
 	AdminStateUp bool `json:"admin_state_up"`
 
@@ -70,10 +66,6 @@ type Pool struct {
 	IpVersion string `json:"ip_version"`
 
 	SlowStart SlowStart `json:"slow_start"`
-
-	// The provisioning status of the pool.
-	// This value is ACTIVE, PENDING_* or ERROR.
-	ProvisioningStatus string `json:"provisioning_status"`
 }
 
 // PoolPage is the page returned by a pager when traversing over a
