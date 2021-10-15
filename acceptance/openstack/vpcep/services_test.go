@@ -34,6 +34,20 @@ func deleteELB(t *testing.T, id string) {
 	th.AssertNoErr(t, loadbalancers.Delete(client, id).ExtractErr())
 }
 
+func TestListPublicServices(t *testing.T) {
+	client, err := clients.NewVPCEndpointV1Client()
+	th.AssertNoErr(t, err)
+
+	pages, err := services.ListPublic(client, nil).AllPages()
+	th.AssertNoErr(t, err)
+
+	public, err := services.ExtractServices(pages)
+	th.AssertNoErr(t, err)
+	if len(public) == 0 {
+		t.Fatal("Empty public service list")
+	}
+}
+
 func TestServicesWorkflow(t *testing.T) {
 	if routerID == "" || networkID == "" || subnetID == "" {
 		t.Skip("OS_ROUTER_ID/VPC_ID, OS_SUBNET_ID and OS_NETWORK_ID variables need to be set")
