@@ -71,7 +71,7 @@ type Pool struct {
 // PoolPage is the page returned by a pager when traversing over a
 // collection of pools.
 type PoolPage struct {
-	pagination.LinkedPageBase
+	pagination.MarkerPageBase
 }
 
 // NextPageURL is invoked when a paginated collection of pools has reached
