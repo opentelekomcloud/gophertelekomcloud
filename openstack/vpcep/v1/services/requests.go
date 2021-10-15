@@ -137,6 +137,20 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 	})
 }
 
+func ListPublic(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := publicURL(client)
+	if opts != nil {
+		q, err := opts.ToServiceListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
+		}
+		url += q
+	}
+	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+		return ServicePage{pagination.OffsetPageBase{PageResult: r}}
+	})
+}
+
 type UpdateOptsBuilder interface {
 	ToServiceUpdateMap() (map[string]interface{}, error)
 }
