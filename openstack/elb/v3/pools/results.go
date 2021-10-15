@@ -74,16 +74,15 @@ type PoolPage struct {
 	pagination.MarkerPageBase
 }
 
-// NextPageURL is invoked when a paginated collection of pools has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
-func (r PoolPage) NextPageURL() (string, error) {
-	var s []golangsdk.Link
-	err := r.ExtractIntoSlicePtr(&s, "pools_links")
+func (r PoolPage) LastMarker() (string, error) {
+	results, err := ExtractPools(r)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s)
+	if len(results) == 0 {
+		return "", nil
+	}
+	return results[len(results)-1].ID, nil
 }
 
 // IsEmpty checks whether a PoolPage struct is empty.
