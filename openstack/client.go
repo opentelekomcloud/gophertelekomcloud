@@ -661,6 +661,18 @@ func NewNetworkV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+// NewVpcEpV1 creates a ServiceClient that may be used with the v1 VPC Endpoint service
+func NewVpcEpV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "network")
+	if err != nil {
+		return nil, err
+	}
+	sc.Type = "vpcep"
+	sc.Endpoint = strings.Replace(sc.Endpoint, "vpc.", "vpcep.", 1)
+	sc.ResourceBase = sc.Endpoint + "v1/" + sc.ProjectID + "/"
+	return sc, err
+}
+
 // NewNatV2 creates a ServiceClient that may be used with the v2 nat package.
 func NewNatV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "nat")

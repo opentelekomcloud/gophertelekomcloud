@@ -196,6 +196,17 @@ func NewNetworkV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewVPCEndpointV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewVpcEpV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewPeerNetworkV1Client returns a *ServiceClient for making calls to the
 // OpenStack Networking v1 API for VPC peer. An error will be returned if authentication
 // or client creation was not possible.

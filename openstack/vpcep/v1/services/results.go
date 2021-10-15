@@ -1,0 +1,100 @@
+package services
+
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+)
+
+type commonResult struct {
+	golangsdk.Result
+}
+
+type CreateResult struct {
+	commonResult
+}
+
+type GetResult struct {
+	commonResult
+}
+
+type ErrorParameters struct {
+	ErrorCode    string
+	ErrorMessage string
+}
+
+type Status string
+type ServerType string
+type ServiceType string
+
+const (
+	StatusCreating  Status = "creating"
+	StatusAvailable Status = "available"
+	StatusFailed    Status = "failed"
+	StatusDeleting  Status = "deleting"
+	StatusDeleted   Status = "" // this is a special status for missing LB
+
+	ServerTypeVM  ServerType = "VM"
+	ServerTypeVIP ServerType = "VIP"
+	ServerTypeLB  ServerType = "LB"
+
+	ServiceTypeInterface ServiceType = "interface"
+	ServiceTypeGateway   ServiceType = "gateway"
+)
+
+type Service struct {
+	ID              string        `json:"id"`
+	PortID          string        `json:"port_id"`
+	VIPPortID       string        `json:"vip_port_id"`
+	ServiceName     string        `json:"service_name"`
+	ServiceType     string        `json:"service_type"`
+	ServerType      ServerType    `json:"server_type"`
+	RouterID        string        `json:"vpc_id"`
+	PoolID          string        `json:"pool_id"`
+	ApprovalEnabled bool          `json:"approval_enabled"`
+	Status          Status        `json:"status"`
+	CreatedAt       string        `json:"created_at"`
+	UpdatedAt       string        `json:"updated_at"`
+	ProjectID       string        `json:"project_id"`
+	CIDRType        string        `json:"cidr_type"`
+	Ports           []PortMapping `json:"ports"`
+	TCPProxy        string        `json:"tcp_proxy"`
+	Tags            []tags.Tag    `json:"tags"`
+	// returned in `GET` only
+	Error []ErrorParameters `json:"error"`
+}
+
+func (r commonResult) Extract() (*Service, error) {
+	srv := &Service{}
+	err := r.ExtractInto(srv)
+	if err != nil {
+		return nil, err
+	}
+	return srv, nil
+}
+
+type ServicePage struct {
+	pagination.OffsetPageBase
+}
+
+func ExtractServices(p pagination.Page) ([]Service, error) {
+	var srv []Service
+	err := (p.(ServicePage)).ExtractIntoSlicePtr(&srv, "endpoint_services")
+	return srv, err
+}
+
+func (p ServicePage) IsEmpty() (bool, error) {
+	srv, err := ExtractServices(p)
+	if err != nil {
+		return false, err
+	}
+	return len(srv) == 0, err
+}
+
+type UpdateResult struct {
+	commonResult
+}
+
+type DeleteResult struct {
+	golangsdk.ErrResult
+}
