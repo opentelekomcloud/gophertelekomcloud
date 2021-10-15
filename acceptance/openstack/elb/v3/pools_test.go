@@ -74,5 +74,4 @@ func TestPoolLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOpts.Name, newPool.Name)
 	th.AssertEquals(t, emptyDescription, newPool.Description)
 	th.AssertEquals(t, updateOpts.LBMethod, newPool.LBMethod)
-
 }
