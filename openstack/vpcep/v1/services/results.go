@@ -2,7 +2,7 @@ package services
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -43,23 +43,23 @@ const (
 )
 
 type Service struct {
-	ID              string        `json:"id"`
-	PortID          string        `json:"port_id"`
-	VIPPortID       string        `json:"vip_port_id"`
-	ServiceName     string        `json:"service_name"`
-	ServiceType     string        `json:"service_type"`
-	ServerType      ServerType    `json:"server_type"`
-	RouterID        string        `json:"vpc_id"`
-	PoolID          string        `json:"pool_id"`
-	ApprovalEnabled bool          `json:"approval_enabled"`
-	Status          Status        `json:"status"`
-	CreatedAt       string        `json:"created_at"`
-	UpdatedAt       string        `json:"updated_at"`
-	ProjectID       string        `json:"project_id"`
-	CIDRType        string        `json:"cidr_type"`
-	Ports           []PortMapping `json:"ports"`
-	TCPProxy        string        `json:"tcp_proxy"`
-	Tags            []tags.Tag    `json:"tags"`
+	ID              string             `json:"id"`
+	PortID          string             `json:"port_id"`
+	VIPPortID       string             `json:"vip_port_id"`
+	ServiceName     string             `json:"service_name"`
+	ServiceType     string             `json:"service_type"`
+	ServerType      ServerType         `json:"server_type"`
+	RouterID        string             `json:"vpc_id"`
+	PoolID          string             `json:"pool_id"`
+	ApprovalEnabled bool               `json:"approval_enabled"`
+	Status          Status             `json:"status"`
+	CreatedAt       string             `json:"created_at"`
+	UpdatedAt       string             `json:"updated_at"`
+	ProjectID       string             `json:"project_id"`
+	CIDRType        string             `json:"cidr_type"`
+	Ports           []PortMapping      `json:"ports"`
+	TCPProxy        string             `json:"tcp_proxy"`
+	Tags            []tags.ResourceTag `json:"tags"`
 	// returned in `GET` only
 	Error []ErrorParameters `json:"error"`
 }
