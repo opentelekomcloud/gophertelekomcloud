@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -66,7 +66,7 @@ type CreateOpts struct {
 	TCPProxy string `json:"tcp_proxy,omitempty"`
 
 	// Lists the resource tags.
-	Tags []tags.Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
 type CreateOptsBuilder interface {
