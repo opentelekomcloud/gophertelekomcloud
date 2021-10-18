@@ -188,7 +188,7 @@ func WaitForServiceStatus(client *golangsdk.ServiceClient, id string, status Sta
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
 		srv, err := Get(client, id).Extract()
 		if err != nil {
-			if _, ok := err.(golangsdk.Err404er); ok && status == StatusDeleted {
+			if _, ok := err.(golangsdk.ErrDefault404); ok && status == StatusDeleted {
 				return true, nil
 			}
 			return false, fmt.Errorf("error waiting for service to have status %s: %w", status, err)

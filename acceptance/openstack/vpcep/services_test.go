@@ -78,6 +78,12 @@ func TestServicesWorkflow(t *testing.T) {
 	err = services.WaitForServiceStatus(client, svc.ID, services.StatusAvailable, 30)
 	th.AssertNoErr(t, err)
 
+	defer func() {
+		err := services.Delete(client, svc.ID).ExtractErr()
+		th.AssertNoErr(t, err)
+		th.AssertNoErr(t, services.WaitForServiceStatus(client, svc.ID, services.StatusDeleted, 30))
+	}()
+
 	pages, err := services.List(client, &services.ListOpts{
 		ID: svc.ID,
 	}).AllPages()
@@ -104,9 +110,4 @@ func TestServicesWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, fmt.Sprintf("%s.%s.%s", client.RegionID, uOpts.ServiceName, svc.ID), updated.ServiceName)
-
-	defer func() {
-		err := services.Delete(client, svc.ID).ExtractErr()
-		th.AssertNoErr(t, err)
-	}()
 }
