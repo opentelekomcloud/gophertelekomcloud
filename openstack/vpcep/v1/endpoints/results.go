@@ -2,7 +2,7 @@ package endpoints
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/services"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -62,7 +62,7 @@ type Endpoint struct {
 	UpdatedAt string `json:"updated_at"`
 
 	// Lists the resource tags.
-	Tags []tags.Tag `json:"tags"`
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
 type commonResult struct {

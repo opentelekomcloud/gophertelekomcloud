@@ -6,7 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/endpoints"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/services"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -59,7 +59,7 @@ func TestEndpointLifecycle(t *testing.T) {
 		ServiceID: srvID,
 		RouterID:  routerID,
 		EnableDNS: true,
-		Tags:      []tags.Tag{{Key: "fizz", Value: "buzz"}},
+		Tags:      []tags.ResourceTag{{Key: "fizz", Value: "buzz"}},
 	}
 	created, err := endpoints.Create(client, opts).Extract()
 	th.AssertNoErr(t, err)

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/endpoints"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -30,7 +30,7 @@ func TestCreateRequest(t *testing.T) {
 		ServiceID: expected.ServiceID,
 		RouterID:  expected.RouterID,
 		EnableDNS: true,
-		Tags:      []tags.Tag{{Key: "test1", Value: "test1"}},
+		Tags:      []tags.ResourceTag{{Key: "test1", Value: "test1"}},
 	}
 
 	ep, err := endpoints.Create(client.ServiceClient(), opts).Extract()

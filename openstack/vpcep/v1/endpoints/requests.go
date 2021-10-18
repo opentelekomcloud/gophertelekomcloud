@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -23,7 +23,7 @@ type CreateOpts struct {
 	EnableDNS bool `json:"enable_dns"`
 
 	// Lists the resource tags.
-	Tags []tags.Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 
 	// Lists the IDs of route tables.
 	// This parameter is mandatory only if you create a VPC endpoint for connecting to a `gateway` VPC endpoint service.

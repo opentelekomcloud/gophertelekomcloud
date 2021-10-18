@@ -1,7 +1,7 @@
 package testing
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/endpoints"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/services"
 )
@@ -118,5 +118,5 @@ var expected = &endpoints.Endpoint{
 	ProjectID:   "6e9dfd51d1124e8d8498dce894923a0d",
 	CreatedAt:   "2018-01-30T07:42:01.174",
 	UpdatedAt:   "2018-01-30T07:42:01.174",
-	Tags:        []tags.Tag{{Key: "test1", Value: "test1"}},
+	Tags:        []tags.ResourceTag{{Key: "test1", Value: "test1"}},
 }
