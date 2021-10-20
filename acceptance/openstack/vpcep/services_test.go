@@ -41,11 +41,12 @@ func TestListPublicServices(t *testing.T) {
 	pages, err := services.ListPublic(client, nil).AllPages()
 	th.AssertNoErr(t, err)
 
-	public, err := services.ExtractServices(pages)
+	public, err := services.ExtractPublicServices(pages)
 	th.AssertNoErr(t, err)
 	if len(public) == 0 {
 		t.Fatal("Empty public service list")
 	}
+	th.AssertEquals(t, "OTC", public[0].Owner)
 }
 
 func TestServicesWorkflow(t *testing.T) {
