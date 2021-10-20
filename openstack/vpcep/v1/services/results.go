@@ -83,6 +83,21 @@ func ExtractServices(p pagination.Page) ([]Service, error) {
 	return srv, err
 }
 
+type PublicService struct {
+	ID          string      `json:"id"`
+	Owner       string      `json:"owner"`
+	ServiceName string      `json:"service_name"`
+	ServiceType ServiceType `json:"service_type"`
+	CreatedAt   string      `json:"created_at"`
+	IsCharge    bool        `json:"is_charge"`
+}
+
+func ExtractPublicServices(p pagination.Page) ([]PublicService, error) {
+	var srv []PublicService
+	err := (p.(ServicePage)).ExtractIntoSlicePtr(&srv, "endpoint_services")
+	return srv, err
+}
+
 func (p ServicePage) IsEmpty() (bool, error) {
 	srv, err := ExtractServices(p)
 	if err != nil {
