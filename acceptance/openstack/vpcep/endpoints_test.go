@@ -45,6 +45,8 @@ func TestEndpointLifecycle(t *testing.T) {
 		t.Skip("OS_ROUTER_ID/VPC_ID, OS_SUBNET_ID and OS_NETWORK_ID variables need to be set")
 	}
 
+	t.Parallel()
+
 	client, err := clients.NewVPCEndpointV1Client()
 	th.AssertNoErr(t, err)
 
