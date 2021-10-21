@@ -105,6 +105,7 @@ func TestServicesWorkflow(t *testing.T) {
 	th.AssertEquals(t, svc.VIPPortID, got.VIPPortID)
 	th.AssertEquals(t, svc.ApprovalEnabled, got.ApprovalEnabled)
 	th.AssertEquals(t, svc.CreatedAt, got.CreatedAt)
+	th.AssertEquals(t, 0, svc.ConnectionCount)
 
 	iFalse := false
 	uOpts := services.UpdateOpts{
