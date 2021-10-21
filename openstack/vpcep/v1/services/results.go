@@ -56,11 +56,14 @@ type Service struct {
 	CreatedAt       string             `json:"created_at"`
 	UpdatedAt       string             `json:"updated_at"`
 	ProjectID       string             `json:"project_id"`
-	CIDRType        string             `json:"cidr_type"`
+	CIDRType        string             `json:"cidr_type"` // CIDRType returned only in Create
 	Ports           []PortMapping      `json:"ports"`
 	TCPProxy        string             `json:"tcp_proxy"`
 	Tags            []tags.ResourceTag `json:"tags"`
-	// returned in `GET` only
+
+	// ConnectionCount is set in `Get` and `List` only
+	ConnectionCount int `json:"connection_count"`
+	// Error is set in `Get` and `List` only
 	Error []ErrorParameters `json:"error"`
 }
 
