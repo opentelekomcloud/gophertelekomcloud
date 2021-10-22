@@ -4,6 +4,7 @@ package openstack
 
 import (
 	"fmt"
+	"net"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -14,6 +15,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -213,4 +215,20 @@ func DeleteCloudServer(t *testing.T, client *golangsdk.ServiceClient, ecsID stri
 	th.AssertNoErr(t, err)
 
 	t.Logf("ECSv1 instance deleted: %s", ecsID)
+}
+
+// ValidIP returns valid value for IP in subnet by VPC subnet ID / OpenStack network ID
+func ValidIP(t *testing.T, networkID string) string {
+	client, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+
+	sn, err := subnets.Get(client, networkID).Extract()
+	th.AssertNoErr(t, err)
+
+	_, nw, err := net.ParseCIDR(sn.CIDR)
+	th.AssertNoErr(t, err)
+	singleIP := nw.IP
+	singleIP[len(singleIP)-1] += 3
+	th.AssertEquals(t, true, nw.Contains(singleIP))
+	return singleIP.String()
 }
