@@ -5,6 +5,7 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/endpoints"
@@ -61,20 +62,22 @@ func TestEndpointLifecycle(t *testing.T) {
 		ServiceID: srvID,
 		RouterID:  routerID,
 		EnableDNS: true,
+		PortIP:    openstack.ValidIP(t, networkID),
 		Tags:      []tags.ResourceTag{{Key: "fizz", Value: "buzz"}},
 	}
 	created, err := endpoints.Create(client, opts).Extract()
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, endpoints.StatusCreating, created.Status)
 
 	defer func() {
 		th.AssertNoErr(t, endpoints.Delete(client, created.ID).ExtractErr())
 	}()
 
+	th.AssertNoErr(t, endpoints.WaitForEndpointStatus(client, created.ID, endpoints.StatusAccepted, 30))
+
 	got, err := endpoints.Get(client, created.ID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, endpoints.StatusCreating, got.Status)
-
-	th.AssertNoErr(t, endpoints.WaitForEndpointStatus(client, created.ID, endpoints.StatusAccepted, 30))
+	th.AssertEquals(t, opts.PortIP, got.IP)
 
 	pages, err := endpoints.List(client, nil).AllPages()
 	th.AssertNoErr(t, err)

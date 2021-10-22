@@ -31,7 +31,7 @@ type CreateOpts struct {
 
 	// Specifies the IP address for accessing the associated VPC endpoint service.
 	// This parameter is mandatory only if you create a VPC endpoint for connecting to an `interface` VPC endpoint service.
-	PortID string `json:"port_id,omitempty"`
+	PortIP string `json:"port_ip,omitempty"`
 
 	// Specifies the whitelist for controlling access to the VPC endpoint.
 	//

@@ -34,11 +34,25 @@ type Endpoint struct {
 	//    failed: indicates the creation of the VPC endpoint failed.
 	Status Status `json:"status"`
 
+	// Specifies the domain status.
+	//    frozen: indicates that the domain is frozen.
+	//    active: indicates that the domain is normal.
+	ActiveStatus string `json:"active_status"`
+
 	// Specifies the ID of the VPC where the VPC endpoint is to be created.
 	RouterID string `json:"vpc_id"`
 
+	// Specifies the ID of the subnet (OS network) in the VPC specified by `vpc_id`. The value is in the UUID format.
+	NetworkID string `json:"subnet_id"`
+
 	// Specifies whether to create a private domain name.
 	EnableDNS bool `json:"enable_dns"`
+
+	// Specifies the domain name for accessing the associated VPC endpoint service.
+	DNSNames []string `json:"dns_names"`
+
+	// Specifies the IP address for accessing the associated VPC endpoint service.
+	IP string `json:"ip"`
 
 	// Specifies the name of the VPC endpoint service.
 	ServiceName string `json:"endpoint_service_name"`
@@ -54,6 +68,9 @@ type Endpoint struct {
 
 	// Specifies whether to enable access control.
 	EnableWhitelist bool `json:"enable_whitelist"`
+
+	// Lists the IDs of route tables.
+	RouteTables []string `json:"routetables"`
 
 	// Specifies the creation time of the VPC endpoint.
 	CreatedAt string `json:"created_at"`
