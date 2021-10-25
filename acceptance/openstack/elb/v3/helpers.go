@@ -29,6 +29,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 	if az == "" {
 		az = "eu-nl-01"
 	}
+	ipTargetEnable := true
 
 	createOpts := loadbalancers.CreateOpts{
 		Name:                 lbName,
@@ -42,17 +43,9 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 				Value: "loadbalancer",
 			},
 		},
-		AdminStateUp: &adminStateUp,
-		PublicIp: &loadbalancers.PublicIp{
-			NetworkType: "5_bgp",
-			Bandwidth: loadbalancers.Bandwidth{
-				Name:       "elb_eip_traffic",
-				Size:       10,
-				ChargeMode: "traffic",
-				ShareType:  "PER",
-			},
-		},
-		ElbSubnetIDs: []string{networkID},
+		AdminStateUp:   &adminStateUp,
+		ElbSubnetIDs:   []string{networkID},
+		IpTargetEnable: &ipTargetEnable,
 	}
 
 	loadbalancer, err := loadbalancers.Create(client, createOpts).Extract()

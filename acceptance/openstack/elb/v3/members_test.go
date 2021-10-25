@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/members"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -23,13 +24,19 @@ func TestMemberLifecycle(t *testing.T) {
 	ecs := openstack.CreateCloudServer(t, computeClient, openstack.GetCloudServerCreateOpts(t))
 	defer openstack.DeleteCloudServer(t, computeClient, ecs.ID)
 
+	computeV2Client, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+	nicsList, err := servers.GetNICs(computeV2Client, ecs.ID).Extract()
+	th.AssertNoErr(t, err)
+
 	poolID := createPool(t, client, loadbalancerID)
-	defer deletePool(t, client, loadbalancerID)
+	defer deletePool(t, client, poolID)
 
 	t.Logf("Attempting to create ELBv3 Member")
 	memberName := tools.RandomString("create-member-", 3)
+
 	createOpts := members.CreateOpts{
-		Address:      ecs.AccessIPv4,
+		Address:      nicsList[0].FixedIPs[0].IPAddress,
 		ProtocolPort: 89,
 		Name:         memberName,
 	}
