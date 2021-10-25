@@ -111,7 +111,7 @@ func DeleteVolume(t *testing.T, id string) {
 
 const (
 	imageName = "Standard_Debian_10_latest"
-	flavorID  = "s2.large.2"
+	flavorID  = "s3.large.2"
 )
 
 func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
@@ -119,10 +119,6 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 	ecsName := tools.RandomString(prefix, 3)
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
-	if az == "" {
-		az = "eu-de-01"
-	}
-
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
 	kmsID := clients.EnvOS.GetEnv("KMS_ID")
@@ -138,8 +134,8 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 	imageID, err := images.IDFromName(computeV2Client, imageName)
 	th.AssertNoErr(t, err)
 
-	if vpcID == "" || subnetID == "" {
-		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but ECSv1 test requires")
+	if vpcID == "" || subnetID == "" || az == "" {
+		t.Skip("One of OS_VPC_ID, OS_NETWORK_ID or OS_AVAILABILITY_ZONE env vars is missing but ECSv1 test requires")
 	}
 
 	createOpts := cloudservers.CreateOpts{
@@ -153,11 +149,11 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 			},
 		},
 		RootVolume: cloudservers.RootVolume{
-			VolumeType: "SATA",
+			VolumeType: "SSD",
 		},
 		DataVolumes: []cloudservers.DataVolume{
 			{
-				VolumeType: "SATA",
+				VolumeType: "SSD",
 				Size:       40,
 				Metadata: map[string]interface{}{
 					"__system__encrypted": encryption,
