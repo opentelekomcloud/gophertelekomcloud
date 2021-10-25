@@ -61,11 +61,12 @@ func (r MemberPage) LastMarker() (string, error) {
 // and extracts the elements into a slice of Members structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractMembers(r pagination.Page) ([]Member, error) {
-	var s struct {
-		Members []Member `json:"members"`
+	var s []Member
+	err := (r.(MemberPage)).ExtractIntoSlicePtr(&s, "members")
+	if err != nil {
+		return nil, err
 	}
-	err := (r.(MemberPage)).ExtractInto(&s)
-	return s.Members, err
+	return s, err
 }
 
 type commonResult struct {
