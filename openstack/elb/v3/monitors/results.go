@@ -32,7 +32,7 @@ type Monitor struct {
 
 	// The type of probe sent by the load balancer to verify the member state,
 	// which is PING, TCP, HTTP, or HTTPS.
-	Type string `json:"type"`
+	Type Type `json:"type"`
 
 	// The time, in seconds, between sending probes to members.
 	Delay int `json:"delay"`
@@ -45,6 +45,10 @@ type Monitor struct {
 	// Number of allowed connection failures before changing the status of the
 	// member to INACTIVE. A valid value is from 1 to 10.
 	MaxRetries int `json:"max_retries"`
+
+	// Specifies the number of consecutive health checks when the health
+	// check result of a backend server changes from ONLINE to OFFLINE.
+	MaxRetriesDown int `json:"max_retries_down"`
 
 	// The HTTP method that the monitor uses for requests.
 	HTTPMethod string `json:"http_method"`

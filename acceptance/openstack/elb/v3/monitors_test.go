@@ -39,7 +39,7 @@ func TestMonitorLifecycle(t *testing.T) {
 	monitorName := tools.RandomString("create-monitor-", 3)
 	createOpts := monitors.CreateOpts{
 		PoolID:     poolID,
-		Type:       "HTTP",
+		Type:       monitors.TypeHTTP,
 		Delay:      1,
 		Timeout:    30,
 		MaxRetries: 3,
@@ -48,17 +48,17 @@ func TestMonitorLifecycle(t *testing.T) {
 	}
 	monitor, err := monitors.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, createOpts.Name, monitor.Name)
-	th.AssertEquals(t, createOpts.Type, monitor.Type)
-	th.AssertEquals(t, createOpts.MaxRetries, monitor.MaxRetries)
-	t.Logf("Created ELBv3 Monitor: %s", monitor.ID)
-
 	defer func() {
-		t.Logf("Attempting to Delete ELBv3 Monitor")
+		t.Logf("Attempting to Delete ELBv3 Monitor: %s", monitor.ID)
 		err := monitors.Delete(client, monitor.ID).ExtractErr()
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Monitor: %s", monitor.ID)
 	}()
+
+	th.AssertEquals(t, createOpts.Name, monitor.Name)
+	th.AssertEquals(t, createOpts.Type, monitor.Type)
+	th.AssertEquals(t, createOpts.MaxRetries, monitor.MaxRetries)
+	t.Logf("Created ELBv3 Monitor: %s", monitor.ID)
 
 	t.Logf("Attempting to Update ELBv3 Monitor")
 	monitorName = tools.RandomString("update-monitor-", 3)

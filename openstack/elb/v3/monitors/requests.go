@@ -68,12 +68,14 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 	})
 }
 
+type Type string
+
 // Constants that represent approved monitoring types.
 const (
-	TypePING  = "PING"
-	TypeTCP   = "TCP"
-	TypeHTTP  = "HTTP"
-	TypeHTTPS = "HTTPS"
+	TypePING  Type = "PING"
+	TypeTCP   Type = "TCP"
+	TypeHTTP  Type = "HTTP"
+	TypeHTTPS Type = "HTTPS"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -90,7 +92,7 @@ type CreateOpts struct {
 
 	// The type of probe, which is PING, TCP, HTTP, or HTTPS, that is
 	// sent by the load balancer to verify the member state.
-	Type string `json:"type" required:"true"`
+	Type Type `json:"type" required:"true"`
 
 	// The time, in seconds, between sending probes to members.
 	Delay int `json:"delay" required:"true"`
@@ -103,6 +105,8 @@ type CreateOpts struct {
 	// status to INACTIVE. Must be a number between 1 and 10.
 	MaxRetries int `json:"max_retries" required:"true"`
 
+	// Specifies the number of consecutive health checks when the health
+	// check result of a backend server changes from ONLINE to OFFLINE.
 	MaxRetriesDown int `json:"max_retries_down,omitempty"`
 
 	// URI path that will be accessed if Monitor type is HTTP or HTTPS.
