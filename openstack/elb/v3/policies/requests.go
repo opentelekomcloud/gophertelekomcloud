@@ -133,9 +133,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 	}
 
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		p := PolicyPage{MarkerPageBase: pagination.MarkerPageBase{PageResult: r}}
-		p.Owner = &p
-		return p
+		return PolicyPage{PageWithInfo: pagination.NewPageWithInfo(r)}
 	})
 }
 

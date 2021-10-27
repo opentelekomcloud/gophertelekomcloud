@@ -48,7 +48,7 @@ type FlavorInfo struct {
 // FlavorPage is the page returned by a pager when traversing over a
 // collection of flavor.
 type FlavorPage struct {
-	pagination.LinkedPageBase
+	pagination.PageWithInfo
 }
 
 // IsEmpty checks whether a FlavorsPage struct is empty.

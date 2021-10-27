@@ -52,42 +52,8 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-type PageInfo struct {
-	PreviousMarker string `json:"previous_marker"`
-	NextMarker     string `json:"next_marker"`
-	CurrentCount   int    `json:"current_count"`
-}
-
 type PolicyPage struct {
-	pagination.MarkerPageBase
-}
-
-func (p PolicyPage) LastMarker() (string, error) {
-	var info PageInfo
-	err := p.ExtractIntoStructPtr(&info, "page_info")
-	if err != nil {
-		return "", err
-	}
-	return info.NextMarker, nil
-}
-
-// NextPageURL generates the URL for the page of results after this one.
-func (p PolicyPage) NextPageURL() (string, error) {
-	currentURL := p.URL
-
-	mark, err := p.Owner.LastMarker()
-	if err != nil {
-		return "", err
-	}
-	if mark == "" {
-		return "", nil
-	}
-
-	q := currentURL.Query()
-	q.Set("marker", mark)
-	currentURL.RawQuery = q.Encode()
-
-	return currentURL.String(), nil
+	pagination.PageWithInfo
 }
 
 func (p PolicyPage) IsEmpty() (bool, error) {
