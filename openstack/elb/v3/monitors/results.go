@@ -126,7 +126,7 @@ type commonResult struct {
 	golangsdk.Result
 }
 
-// Extract is a function that accepts a result and extracts a monitor.
+// Extract is a function that accepts a result and extracts a Monitor.
 func (r commonResult) Extract() (*Monitor, error) {
 	s := new(Monitor)
 	err := r.ExtractIntoStructPtr(s, "healthmonitor")
