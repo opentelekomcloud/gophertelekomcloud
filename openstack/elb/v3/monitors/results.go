@@ -71,14 +71,10 @@ type Monitor struct {
 	Status string `json:"status"`
 
 	// List of pools that are associated with the health monitor.
-	Pools []PoolID `json:"pools"`
-
-	// The provisioning status of the monitor.
-	// This value is ACTIVE, PENDING_* or ERROR.
-	ProvisioningStatus string `json:"provisioning_status"`
+	Pools []PoolRef `json:"pools"`
 }
 
-type PoolID struct {
+type PoolRef struct {
 	ID string `json:"id"`
 }
 
