@@ -43,6 +43,7 @@ func TestMonitorLifecycle(t *testing.T) {
 		Delay:      1,
 		Timeout:    30,
 		MaxRetries: 3,
+		URLPath:    "/",
 		Name:       monitorName,
 	}
 	monitor, err := monitors.Create(client, createOpts).Extract()
