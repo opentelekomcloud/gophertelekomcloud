@@ -44,10 +44,7 @@ type Monitor struct {
 
 	// Number of allowed connection failures before changing the status of the
 	// member to INACTIVE. A valid value is from 1 to 10.
-	MaxRetries int `json:"max_retries"`
-
-	// Specifies the number of consecutive health checks when the health
-	// check result of a backend server changes from ONLINE to OFFLINE.
+	MaxRetries     int `json:"max_retries"`
 	MaxRetriesDown int `json:"max_retries_down"`
 
 	// The HTTP method that the monitor uses for requests.

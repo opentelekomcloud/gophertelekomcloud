@@ -103,10 +103,7 @@ type CreateOpts struct {
 
 	// Number of permissible ping failures before changing the member's
 	// status to INACTIVE. Must be a number between 1 and 10.
-	MaxRetries int `json:"max_retries" required:"true"`
-
-	// Specifies the number of consecutive health checks when the health
-	// check result of a backend server changes from ONLINE to OFFLINE.
+	MaxRetries     int `json:"max_retries" required:"true"`
 	MaxRetriesDown int `json:"max_retries_down,omitempty"`
 
 	// URI path that will be accessed if Monitor type is HTTP or HTTPS.
