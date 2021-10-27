@@ -81,23 +81,7 @@ type PoolRef struct {
 // MonitorPage is the page returned by a pager when traversing over a
 // collection of health monitors.
 type MonitorPage struct {
-	pagination.LinkedPageBase
-}
-
-// NextPageURL is invoked when a paginated collection of monitors has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
-func (r MonitorPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"healthmonitors_links"`
-	}
-
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-
-	return golangsdk.ExtractNextURL(s.Links)
+	pagination.PageWithInfo
 }
 
 // IsEmpty checks whether a MonitorPage struct is empty.

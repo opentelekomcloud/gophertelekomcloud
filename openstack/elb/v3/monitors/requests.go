@@ -64,7 +64,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		url += query
 	}
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return MonitorPage{pagination.LinkedPageBase{PageResult: r}}
+		return MonitorPage{PageWithInfo: pagination.NewPageWithInfo(r)}
 	})
 }
 
