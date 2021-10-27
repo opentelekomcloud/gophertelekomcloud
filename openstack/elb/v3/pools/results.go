@@ -71,18 +71,7 @@ type Pool struct {
 // PoolPage is the page returned by a pager when traversing over a
 // collection of pools.
 type PoolPage struct {
-	pagination.MarkerPageBase
-}
-
-func (r PoolPage) LastMarker() (string, error) {
-	results, err := ExtractPools(r)
-	if err != nil {
-		return "", err
-	}
-	if len(results) == 0 {
-		return "", nil
-	}
-	return results[len(results)-1].ID, nil
+	pagination.PageWithInfo
 }
 
 // IsEmpty checks whether a PoolPage struct is empty.

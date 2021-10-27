@@ -43,18 +43,15 @@ type Member struct {
 // MemberPage is the page returned by a pager when traversing over a
 // collection of Members in a Pool.
 type MemberPage struct {
-	pagination.MarkerPageBase
+	pagination.PageWithInfo
 }
 
-func (r MemberPage) LastMarker() (string, error) {
-	results, err := ExtractMembers(r)
+func (p MemberPage) IsEmpty() (bool, error) {
+	l, err := ExtractMembers(p)
 	if err != nil {
-		return "", err
+		return false, err
 	}
-	if len(results) == 0 {
-		return "", nil
-	}
-	return results[len(results)-1].ID, nil
+	return len(l) == 0, nil
 }
 
 // ExtractMembers accepts a Page struct, specifically a MemberPage struct,

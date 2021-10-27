@@ -56,9 +56,7 @@ func List(client *golangsdk.ServiceClient, poolID string, opts ListOptsBuilder) 
 		url += query
 	}
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		p := MemberPage{pagination.MarkerPageBase{PageResult: r}}
-		p.MarkerPageBase.Owner = p
-		return p
+		return MemberPage{PageWithInfo: pagination.NewPageWithInfo(r)}
 	})
 }
 
