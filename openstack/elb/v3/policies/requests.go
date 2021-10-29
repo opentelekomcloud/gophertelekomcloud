@@ -2,12 +2,11 @@ package policies
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/rules"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Action string
-type RuleType string
-type CompareType string
 
 const (
 	ActionRedirectToPool     Action = "REDIRECT_TO_POOL"
@@ -20,14 +19,14 @@ type Rule struct {
 	//    HOST_NAME: A domain name will be used for matching.
 	//    PATH: A URL will be used for matching.
 	// If type is set to HOST_NAME, PATH, METHOD, or SOURCE_IP, only one forwarding rule can be created for each type.
-	Type RuleType `json:"type" required:"true"`
+	Type rules.RuleType `json:"type" required:"true"`
 
 	// Specifies how requests are matched with the domain name or URL.
 	//
 	// If type is set to HOST_NAME, this parameter can only be set to EQUAL_TO (exact match).
 	//
 	// If type is set to PATH, this parameter can be set to REGEX (regular expression match), STARTS_WITH (prefix match), or EQUAL_TO (exact match).
-	CompareType CompareType `json:"compare_type" required:"true"`
+	CompareType rules.CompareType `json:"compare_type" required:"true"`
 
 	// Specifies the value of the match item. For example, if a domain name is used for matching, value is the domain name.
 	//
