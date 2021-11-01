@@ -197,10 +197,10 @@ type UpdateOpts struct {
 	VipAddress string `json:"vip_address,omitempty"`
 
 	// The network on which to allocate the Loadbalancer's address.
-	VipSubnetCidrID *string `json:"vip_subnet_cidr_id"`
+	VipSubnetCidrID *string `json:"vip_subnet_cidr_id,omitempty"`
 
 	// The V6 network on which to allocate the Loadbalancer's address.
-	IpV6VipSubnetID *string `json:"ipv6_vip_virsubnet_id"`
+	IpV6VipSubnetID *string `json:"ipv6_vip_virsubnet_id,omitempty"`
 
 	// The UUID of a l4 flavor.
 	L4Flavor string `json:"l4_flavor_id,omitempty"`
