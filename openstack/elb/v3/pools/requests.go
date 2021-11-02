@@ -78,11 +78,11 @@ type CreateOpts struct {
 
 	// The Loadbalancer on which the members of the pool will be associated with.
 	// Note: one of LoadbalancerID or ListenerID must be provided.
-	LoadbalancerID string `json:"loadbalancer_id,omitempty" xor:"ListenerID"`
+	LoadbalancerID string `json:"loadbalancer_id,omitempty"`
 
 	// The Listener on which the members of the pool will be associated with.
 	// Note: one of LoadbalancerID or ListenerID must be provided.
-	ListenerID string `json:"listener_id,omitempty" xor:"LoadbalancerID"`
+	ListenerID string `json:"listener_id,omitempty"`
 
 	// ProjectID is the UUID of the project who owns the Pool.
 	// Only administrative users can specify a project UUID other than their own.
