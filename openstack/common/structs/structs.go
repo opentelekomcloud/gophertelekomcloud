@@ -12,7 +12,7 @@ type ResourceRef struct {
 	ID string `json:"id"`
 }
 
-func ResourceRefsToIDSlice(refs []ResourceRef) []string {
+func ExtractIDs(refs []ResourceRef) []string {
 	ids := make([]string, len(refs))
 	for i, v := range refs {
 		ids[i] = v.ID
