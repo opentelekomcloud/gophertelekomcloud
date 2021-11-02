@@ -2,6 +2,7 @@ package loadbalancers
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -28,10 +29,10 @@ type LoadBalancer struct {
 	Provider string `json:"provider"`
 
 	// Pools are the pools related to this Loadbalancer.
-	Pools []PoolRef `json:"pools"`
+	Pools []structs.ResourceRef `json:"pools"`
 
 	// Listeners are the listeners related to this Loadbalancer.
-	Listeners []ListenerRef `json:"listeners"`
+	Listeners []structs.ResourceRef `json:"listeners"`
 
 	// The operating status of the LoadBalancer. This value is ONLINE or OFFLINE.
 	OperatingStatus string `json:"operating_status"`
@@ -117,14 +118,6 @@ type EipInfo struct {
 	EipAddress string `json:"eip_address"`
 	// Eip Address
 	IpVersion int `json:"ip_version"`
-}
-
-type PoolRef struct {
-	ID string `json:"id"`
-}
-
-type ListenerRef struct {
-	ID string `json:"id"`
 }
 
 type PublicIpInfo struct {

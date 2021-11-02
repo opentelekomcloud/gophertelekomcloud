@@ -7,3 +7,15 @@ type ChargeInfo struct {
 	IsAutoRenew string `json:"is_auto_renew,omitempty"`
 	IsAutoPay   string `json:"is_auto_pay,omitempty"`
 }
+
+type ResourceRef struct {
+	ID string `json:"id"`
+}
+
+func ResourceRefsToIDSlice(refs []ResourceRef) []string {
+	ids := make([]string, len(refs))
+	for i, v := range refs {
+		ids[i] = v.ID
+	}
+	return ids
+}

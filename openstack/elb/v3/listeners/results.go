@@ -2,6 +2,7 @@ package listeners
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
@@ -41,7 +42,7 @@ type Listener struct {
 	Http2Enable bool `json:"http2_enable"`
 
 	// A list of load balancer IDs.
-	Loadbalancers []LoadBalancerID `json:"loadbalancers"`
+	Loadbalancers []structs.ResourceRef `json:"loadbalancers"`
 
 	// Human-readable name for the Listener. Does not have to be unique.
 	Name string `json:"name"`
@@ -88,10 +89,6 @@ type Listener struct {
 
 	// Enhance L7policy enable
 	EnhanceL7policy bool `json:"enhance_l7policy_enable"`
-}
-
-type LoadBalancerID struct {
-	ID string `json:"id"`
 }
 
 type commonResult struct {

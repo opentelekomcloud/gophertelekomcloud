@@ -2,6 +2,7 @@ package monitors
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -72,11 +73,7 @@ type Monitor struct {
 	Status string `json:"status"`
 
 	// List of pools that are associated with the health monitor.
-	Pools []PoolRef `json:"pools"`
-}
-
-type PoolRef struct {
-	ID string `json:"id"`
+	Pools []structs.ResourceRef `json:"pools"`
 }
 
 // MonitorPage is the page returned by a pager when traversing over a

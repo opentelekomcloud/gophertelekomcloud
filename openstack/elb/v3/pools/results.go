@@ -2,23 +2,9 @@ package pools
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// LoadBalancerID represents a load balancer.
-type LoadBalancerID struct {
-	ID string `json:"id"`
-}
-
-// ListenerID represents a listener.
-type ListenerID struct {
-	ID string `json:"id"`
-}
-
-// MemberID represents a member.
-type MemberID struct {
-	ID string `json:"id"`
-}
 
 // Pool represents a logical set of devices, such as web servers, that you
 // group together to receive and process traffic. The load balancing function
@@ -37,10 +23,10 @@ type Pool struct {
 	Description string `json:"description"`
 
 	// A list of listeners objects IDs.
-	Listeners []ListenerID `json:"listeners"`
+	Listeners []structs.ResourceRef `json:"listeners"`
 
 	// A list of member objects IDs.
-	Members []MemberID `json:"members"`
+	Members []structs.ResourceRef `json:"members"`
 
 	// The ID of associated health monitor.
 	MonitorID string `json:"healthmonitor_id"`
@@ -57,7 +43,7 @@ type Pool struct {
 	ID string `json:"id"`
 
 	// A list of load balancer objects IDs.
-	Loadbalancers []LoadBalancerID `json:"loadbalancers"`
+	Loadbalancers []structs.ResourceRef `json:"loadbalancers"`
 
 	// Indicates whether connections in the same session will be processed by the
 	// same Pool member or not.
