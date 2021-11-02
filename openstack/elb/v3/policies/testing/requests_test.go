@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -19,7 +20,7 @@ func expectedResult() *policies.Policy {
 		ProjectID:          "99a3fff0d03c428eac3678da6a7d0f24",
 		Status:             "ACTIVE",
 		RedirectListenerID: "48a97732-449e-4aab-b561-828d29e45050",
-		Rules:              []policies.RuleRef{},
+		Rules:              []structs.ResourceRef{},
 	}
 }
 

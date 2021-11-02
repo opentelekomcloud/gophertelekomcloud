@@ -2,25 +2,22 @@ package policies
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type RuleRef struct {
-	ID string `json:"id"`
-}
-
 type Policy struct {
-	ID                 string    `json:"id"`
-	Action             Action    `json:"action"`
-	Description        string    `json:"description"`
-	ListenerID         string    `json:"listener_id"`
-	Name               string    `json:"name"`
-	Position           int       `json:"position"`
-	ProjectID          string    `json:"project_id"`
-	Status             string    `json:"provisioning_status"`
-	RedirectListenerID string    `json:"redirect_listener_id"`
-	RedirectPoolID     string    `json:"redirect_pool_id"`
-	Rules              []RuleRef `json:"rules"`
+	ID                 string                `json:"id"`
+	Action             Action                `json:"action"`
+	Description        string                `json:"description"`
+	ListenerID         string                `json:"listener_id"`
+	Name               string                `json:"name"`
+	Position           int                   `json:"position"`
+	ProjectID          string                `json:"project_id"`
+	Status             string                `json:"provisioning_status"`
+	RedirectListenerID string                `json:"redirect_listener_id"`
+	RedirectPoolID     string                `json:"redirect_pool_id"`
+	Rules              []structs.ResourceRef `json:"rules"`
 }
 
 type commonResult struct {
