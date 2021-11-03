@@ -161,7 +161,7 @@ type UpdateOptsBuilder interface {
 // operation.
 type UpdateOpts struct {
 	// Name of the pool.
-	Name string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 
 	// Human-readable description for the pool.
 	Description *string `json:"description,omitempty"`
@@ -171,14 +171,15 @@ type UpdateOpts struct {
 	// and LBMethodSourceIp as valid values for this attribute.
 	LBMethod string `json:"lb_algorithm,omitempty"`
 
-	// Persistence is the session persistence of the pool.
-	// Omit this field to prevent session persistence.
+	// Specifies whether to enable sticky sessions.
 	Persistence *SessionPersistence `json:"session_persistence,omitempty"`
 
-	// The administrative state of the Pool. A valid value is true (UP)
-	// or false (DOWN).
+	// The administrative state of the Pool. The value can only be updated to true.
+	// This parameter is unsupported. Please do not use it.
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 
+	// Specifies whether to enable slow start.
+	// This parameter is unsupported. Please do not use it.
 	SlowStart *SlowStart `json:"slow_start,omitempty"`
 }
 
