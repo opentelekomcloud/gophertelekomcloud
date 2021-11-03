@@ -35,7 +35,7 @@ type Listener struct {
 	// A reference to a Barbican container of TLS secrets.
 	DefaultTlsContainerRef string `json:"default_tls_container_ref"`
 
-	// Human-readable description for the Listener.
+	// Provides supplementary information about the Listener.
 	Description string `json:"description"`
 
 	// whether to use HTTP2.
@@ -44,7 +44,7 @@ type Listener struct {
 	// A list of load balancer IDs.
 	Loadbalancers []structs.ResourceRef `json:"loadbalancers"`
 
-	// Human-readable name for the Listener. Does not have to be unique.
+	// Specifies the Listener Name.
 	Name string `json:"name"`
 
 	// Specifies the ProjectID where the listener is used.
