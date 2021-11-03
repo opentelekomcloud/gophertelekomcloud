@@ -72,13 +72,13 @@ type CreateOpts struct {
 	EnableMemberRetry *bool `json:"enable_member_retry,omitempty"`
 
 	// The keepalive timeout of the Listener.
-	KeepAliveTimeout *int `json:"keepalive_timeout,omitempty"`
+	KeepAliveTimeout int `json:"keepalive_timeout,omitempty"`
 
 	// The client timeout of the Listener.
-	ClientTimeout *int `json:"client_timeout,omitempty"`
+	ClientTimeout int `json:"client_timeout,omitempty"`
 
 	// The member timeout of the Listener.
-	MemberTimeout *int `json:"member_timeout,omitempty"`
+	MemberTimeout int `json:"member_timeout,omitempty"`
 
 	// The IpGroup of the Listener.
 	IpGroup *IpGroup `json:"ipgroup,omitempty"`
@@ -167,7 +167,7 @@ type UpdateOpts struct {
 	Http2Enable *bool `json:"http2_enable,omitempty"`
 
 	// Human-readable name for the Listener. Does not have to be unique.
-	Name string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 
 	// A list of references to TLS secrets.
 	SniContainerRefs *[]string `json:"sni_container_refs,omitempty"`
@@ -179,13 +179,13 @@ type UpdateOpts struct {
 	EnableMemberRetry *bool `json:"enable_member_retry,omitempty"`
 
 	// The keepalive timeout of the Listener.
-	KeepAliveTimeout *int `json:"keepalive_timeout,omitempty"`
+	KeepAliveTimeout int `json:"keepalive_timeout,omitempty"`
 
 	// The client timeout of the Listener.
-	ClientTimeout *int `json:"client_timeout,omitempty"`
+	ClientTimeout int `json:"client_timeout,omitempty"`
 
 	// The member timeout of the Listener.
-	MemberTimeout *int `json:"member_timeout,omitempty"`
+	MemberTimeout int `json:"member_timeout,omitempty"`
 
 	// The IpGroup of the Listener.
 	IpGroup *IpGroupUpdate `json:"ipgroup,omitempty"`
