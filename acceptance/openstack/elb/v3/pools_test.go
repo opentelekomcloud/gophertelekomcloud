@@ -39,7 +39,7 @@ func TestPoolLifecycle(t *testing.T) {
 	poolName := tools.RandomString("update-pool-", 3)
 	emptyDescription := ""
 	updateOpts := pools.UpdateOpts{
-		Name:        poolName,
+		Name:        &poolName,
 		Description: &emptyDescription,
 		LBMethod:    "ROUND_ROBIN",
 	}
@@ -49,7 +49,7 @@ func TestPoolLifecycle(t *testing.T) {
 
 	newPool, err := pools.Get(client, poolID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, updateOpts.Name, newPool.Name)
+	th.AssertEquals(t, *updateOpts.Name, newPool.Name)
 	th.AssertEquals(t, emptyDescription, newPool.Description)
 	th.AssertEquals(t, updateOpts.LBMethod, newPool.LBMethod)
 }
