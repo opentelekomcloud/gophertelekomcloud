@@ -55,7 +55,7 @@ func TestListenerLifecycle(t *testing.T) {
 	emptyDescription := ""
 	updateOpts := listeners.UpdateOpts{
 		Description: &emptyDescription,
-		Name:        listenerName,
+		Name:        &listenerName,
 	}
 	_, err = listeners.Update(client, listener.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -63,6 +63,6 @@ func TestListenerLifecycle(t *testing.T) {
 
 	newListener, err := listeners.Get(client, listener.ID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, updateOpts.Name, newListener.Name)
+	th.AssertEquals(t, listenerName, newListener.Name)
 	th.AssertEquals(t, emptyDescription, newListener.Description)
 }
