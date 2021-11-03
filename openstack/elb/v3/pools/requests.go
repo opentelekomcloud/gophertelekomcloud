@@ -122,7 +122,7 @@ type SessionPersistence struct {
 
 type SlowStart struct {
 	// Specifies whether to Enable slow start.
-	Enable *bool `json:"enable" required:"true"`
+	Enable bool `json:"enable" required:"true"`
 
 	// Specifies the slow start Duration, in seconds.
 	Duration int `json:"duration" required:"true"`

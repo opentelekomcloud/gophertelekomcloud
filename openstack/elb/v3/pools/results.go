@@ -47,11 +47,11 @@ type Pool struct {
 
 	// Indicates whether connections in the same session will be processed by the
 	// same Pool member or not.
-	Persistence SessionPersistence `json:"session_persistence"`
+	Persistence *SessionPersistence `json:"session_persistence"`
 
 	IpVersion string `json:"ip_version"`
 
-	SlowStart SlowStart `json:"slow_start"`
+	SlowStart *SlowStart `json:"slow_start"`
 }
 
 // PoolPage is the page returned by a pager when traversing over a
