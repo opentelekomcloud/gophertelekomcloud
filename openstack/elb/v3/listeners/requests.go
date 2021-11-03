@@ -37,7 +37,7 @@ type CreateOpts struct {
 	// A reference to a Barbican container of TLS secrets.
 	DefaultTlsContainerRef string `json:"default_tls_container_ref,omitempty"`
 
-	// Human-readable description for the Listener.
+	// Provides supplementary information about the Listener.
 	Description string `json:"description,omitempty"`
 
 	// whether to use HTTP2.
@@ -46,7 +46,7 @@ type CreateOpts struct {
 	// The load balancer on which to provision this listener.
 	LoadbalancerID string `json:"loadbalancer_id" required:"true"`
 
-	// Human-readable name for the Listener. Does not have to be unique.
+	// Specifies the Listener name.
 	Name string `json:"name,omitempty"`
 
 	// ProjectID is only required if the caller has an admin role and wants
@@ -160,13 +160,13 @@ type UpdateOpts struct {
 	// A reference to a container of TLS secrets.
 	DefaultTlsContainerRef *string `json:"default_tls_container_ref,omitempty"`
 
-	// Human-readable description for the Listener.
+	// Provides supplementary information about the Listener.
 	Description *string `json:"description,omitempty"`
 
 	// whether to use HTTP2.
 	Http2Enable *bool `json:"http2_enable,omitempty"`
 
-	// Human-readable name for the Listener. Does not have to be unique.
+	// Specifies the Listener name.
 	Name *string `json:"name,omitempty"`
 
 	// A list of references to TLS secrets.
