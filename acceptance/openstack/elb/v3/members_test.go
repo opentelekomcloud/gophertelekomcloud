@@ -6,10 +6,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/members"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
+
+func iInt(v int) *int {
+	return &v
+}
 
 func TestMemberLifecycle(t *testing.T) {
 	client, err := clients.NewElbV3Client(t)
@@ -18,17 +21,6 @@ func TestMemberLifecycle(t *testing.T) {
 	loadbalancerID := createLoadBalancer(t, client)
 	defer deleteLoadbalancer(t, client, loadbalancerID)
 
-	computeClient, err := clients.NewComputeV1Client()
-	th.AssertNoErr(t, err)
-
-	ecs := openstack.CreateCloudServer(t, computeClient, openstack.GetCloudServerCreateOpts(t))
-	defer openstack.DeleteCloudServer(t, computeClient, ecs.ID)
-
-	computeV2Client, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-	nicsList, err := servers.GetNICs(computeV2Client, ecs.ID).Extract()
-	th.AssertNoErr(t, err)
-
 	poolID := createPool(t, client, loadbalancerID)
 	defer deletePool(t, client, poolID)
 
@@ -36,9 +28,10 @@ func TestMemberLifecycle(t *testing.T) {
 	memberName := tools.RandomString("create-member-", 3)
 
 	createOpts := members.CreateOpts{
-		Address:      nicsList[0].FixedIPs[0].IPAddress,
+		Address:      openstack.ValidIP(t, clients.EnvOS.GetEnv("NETWORK_ID")),
 		ProtocolPort: 89,
 		Name:         memberName,
+		Weight:       iInt(1),
 	}
 
 	member, err := members.Create(client, poolID, createOpts).Extract()
@@ -52,12 +45,14 @@ func TestMemberLifecycle(t *testing.T) {
 	th.AssertEquals(t, createOpts.Name, member.Name)
 	th.AssertEquals(t, createOpts.ProtocolPort, member.ProtocolPort)
 	th.AssertEquals(t, createOpts.Address, member.Address)
+	th.AssertEquals(t, *createOpts.Weight, member.Weight)
 	t.Logf("Created ELBv3 Member: %s", member.ID)
 
 	t.Logf("Attempting to update ELBv3 Member: %s", member.ID)
-	memberName = tools.RandomString("update-member-", 3)
+	memberName = ""
 	updateOpts := members.UpdateOpts{
-		Name: memberName,
+		Name:   &memberName,
+		Weight: iInt(0),
 	}
 	_, err = members.Update(client, poolID, member.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -65,5 +60,6 @@ func TestMemberLifecycle(t *testing.T) {
 
 	newMember, err := members.Get(client, poolID, member.ID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, updateOpts.Name, newMember.Name)
+	th.AssertEquals(t, *updateOpts.Name, newMember.Name)
+	th.AssertEquals(t, *updateOpts.Weight, newMember.Weight)
 }

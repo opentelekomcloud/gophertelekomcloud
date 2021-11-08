@@ -82,11 +82,14 @@ type CreateOpts struct {
 	// Only administrative users can specify a project UUID other than their own.
 	ProjectID string `json:"project_id,omitempty"`
 
-	// A positive integer value that indicates the relative portion of traffic
-	// that  this member should receive from the pool. For example, a member with
-	// a weight  of 10 receives five times as much traffic as a member with a
-	// weight of 2.
-	Weight int `json:"weight,omitempty"`
+	// Specifies the weight of the backend server.
+	//
+	// Requests are routed to backend servers in the same backend server group based on their weights.
+	//
+	// If the weight is 0, the backend server will not accept new requests.
+	//
+	// This parameter is invalid when lb_algorithm is set to SOURCE_IP for the backend server group that contains the backend server.
+	Weight *int `json:"weight,omitempty"`
 
 	// If you omit this parameter, LBaaS uses the vip_subnet_id parameter value
 	// for the subnet UUID.
@@ -131,13 +134,13 @@ type UpdateOptsBuilder interface {
 // operation.
 type UpdateOpts struct {
 	// Name of the Member.
-	Name string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 
 	// A positive integer value that indicates the relative portion of traffic
 	// that this member should receive from the pool. For example, a member with
 	// a weight of 10 receives five times as much traffic as a member with a
 	// weight of 2.
-	Weight int `json:"weight,omitempty"`
+	Weight *int `json:"weight,omitempty"`
 
 	// The administrative state of the Pool. A valid value is true (UP)
 	// or false (DOWN).
