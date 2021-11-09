@@ -38,13 +38,14 @@ func TestMonitorLifecycle(t *testing.T) {
 	t.Logf("Attempting to Create ELBv3 Monitor")
 	monitorName := tools.RandomString("create-monitor-", 3)
 	createOpts := monitors.CreateOpts{
-		PoolID:     poolID,
-		Type:       monitors.TypeHTTP,
-		Delay:      1,
-		Timeout:    30,
-		MaxRetries: 3,
-		URLPath:    "/",
-		Name:       monitorName,
+		PoolID:        poolID,
+		Type:          monitors.TypeHTTP,
+		Delay:         1,
+		Timeout:       30,
+		MaxRetries:    3,
+		HTTPMethod:    "OPTIONS",
+		ExpectedCodes: "200-299",
+		Name:          monitorName,
 	}
 	monitor, err := monitors.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -63,10 +64,11 @@ func TestMonitorLifecycle(t *testing.T) {
 	t.Logf("Attempting to Update ELBv3 Monitor")
 	monitorName = tools.RandomString("update-monitor-", 3)
 	updateOpts := monitors.UpdateOpts{
-		Delay:      3,
-		Timeout:    35,
-		MaxRetries: 5,
-		Name:       monitorName,
+		Delay:          3,
+		Timeout:        35,
+		MaxRetries:     5,
+		MaxRetriesDown: 3,
+		Name:           monitorName,
 	}
 	_, err = monitors.Update(client, monitor.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -78,4 +80,5 @@ func TestMonitorLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOpts.Timeout, newMonitor.Timeout)
 	th.AssertEquals(t, updateOpts.Delay, newMonitor.Delay)
 	th.AssertEquals(t, updateOpts.MaxRetries, newMonitor.MaxRetries)
+	th.AssertEquals(t, createOpts.HTTPMethod, newMonitor.HTTPMethod)
 }
