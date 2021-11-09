@@ -1,8 +1,6 @@
 package monitors
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -90,27 +88,32 @@ type CreateOpts struct {
 	// The Pool to Monitor.
 	PoolID string `json:"pool_id" required:"true"`
 
-	// The type of probe, which is PING, TCP, HTTP, or HTTPS, that is
-	// sent by the load balancer to verify the member state.
+	// Specifies the health check protocol.
+	//
+	// The value can be TCP, UDP_CONNECT, HTTP, HTTPS, or PING.
 	Type Type `json:"type" required:"true"`
 
 	// The time, in seconds, between sending probes to members.
 	Delay int `json:"delay" required:"true"`
 
-	// Maximum number of seconds for a Monitor to wait for a ping reply
-	// before it times out. The value must be less than the delay value.
+	// Specifies the maximum time required for waiting for a response from the health check, in seconds.
+	// It is recommended that you set the value less than that of parameter delay.
 	Timeout int `json:"timeout" required:"true"`
 
-	// Number of permissible ping failures before changing the member's
-	// status to INACTIVE. Must be a number between 1 and 10.
-	MaxRetries     int `json:"max_retries" required:"true"`
+	// Specifies the number of consecutive health checks when the health check result of a backend server changes
+	// from OFFLINE to ONLINE. The value ranges from 1 to 10.
+	MaxRetries int `json:"max_retries" required:"true"`
+
+	// Specifies the number of consecutive health checks when the health check result of a backend server changes
+	// from ONLINE to OFFLINE.
 	MaxRetriesDown int `json:"max_retries_down,omitempty"`
 
-	// URI path that will be accessed if Monitor type is HTTP or HTTPS.
-	// Required for HTTP(S) types.
+	// Specifies the HTTP request path for the health check.
+	// The value must start with a slash (/), and the default value is /. This parameter is available only when type is set to HTTP.
 	URLPath string `json:"url_path,omitempty"`
 
-	// Domain Name.
+	// Specifies the domain name that HTTP requests are sent to during the health check.
+	// This parameter is available only when type is set to HTTP.
 	DomainName string `json:"domain_name,omitempty"`
 
 	// The HTTP method used for requests by the Monitor. If this attribute
@@ -138,12 +141,6 @@ type CreateOpts struct {
 
 // ToMonitorCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToMonitorCreateMap() (map[string]interface{}, error) {
-	if opts.Type == TypeHTTP || opts.Type == TypeHTTPS {
-		if opts.URLPath == "" {
-			return nil, fmt.Errorf("`url_path` must be provided for HTTP and HTTPS")
-		}
-	}
-
 	b, err := golangsdk.BuildRequestBody(opts, "healthmonitor")
 	if err != nil {
 		return nil, err

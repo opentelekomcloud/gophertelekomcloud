@@ -28,8 +28,8 @@ type Monitor struct {
 	// The Name of the Monitor.
 	Name string `json:"name"`
 
-	// TenantID is the owner of the Monitor.
-	TenantID string `json:"tenant_id"`
+	// Specifies the project ID.
+	ProjectID string `json:"project_id"`
 
 	// The type of probe sent by the load balancer to verify the member state,
 	// which is PING, TCP, HTTP, or HTTPS.
@@ -43,9 +43,12 @@ type Monitor struct {
 	// value.
 	Timeout int `json:"timeout"`
 
-	// Number of allowed connection failures before changing the status of the
-	// member to INACTIVE. A valid value is from 1 to 10.
-	MaxRetries     int `json:"max_retries"`
+	// Specifies the number of consecutive health checks when the health check result of a backend server changes
+	// from OFFLINE to ONLINE.
+	MaxRetries int `json:"max_retries"`
+
+	// Specifies the number of consecutive health checks when the health check result of a backend server changes
+	// from ONLINE to OFFLINE.
 	MaxRetriesDown int `json:"max_retries_down"`
 
 	// The HTTP method that the monitor uses for requests.
@@ -67,10 +70,6 @@ type Monitor struct {
 
 	// The Port of the Monitor.
 	MonitorPort int `json:"monitor_port"`
-
-	// The status of the health monitor. Indicates whether the health monitor is
-	// operational.
-	Status string `json:"status"`
 
 	// List of pools that are associated with the health monitor.
 	Pools []structs.ResourceRef `json:"pools"`
