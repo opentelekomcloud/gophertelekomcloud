@@ -102,7 +102,7 @@ func (r BandwidthPage) IsEmpty() (bool, error) {
 
 func ExtractBandwidths(r pagination.Page) ([]Bandwidth, error) {
 	var s []Bandwidth
-	err := (r.(BandwidthPage)).ExtractIntoSlicePtr(&s, "bandwidth")
+	err := (r.(BandwidthPage)).ExtractIntoSlicePtr(&s, "bandwidths")
 	if err != nil {
 		return nil, err
 	}

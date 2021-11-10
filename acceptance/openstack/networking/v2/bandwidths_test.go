@@ -9,18 +9,6 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestBandwidthList(t *testing.T) {
-	t.Skipf("disabled: working only in eu-nl")
-	client, err := clients.NewNetworkV2Client()
-	th.AssertNoErr(t, err)
-
-	bandwidthPages, err := bandwidths.List(client).AllPages()
-	th.AssertNoErr(t, err)
-
-	_, err = bandwidths.ExtractBandwidths(bandwidthPages)
-	th.AssertNoErr(t, err)
-}
-
 func TestBandwidthLifecycle(t *testing.T) {
 	t.Skipf("disabled: working only in eu-nl")
 	client, err := clients.NewNetworkV2Client()
@@ -59,4 +47,18 @@ func TestBandwidthLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOpts.Name, newBandwidth.Name)
 	th.AssertEquals(t, updateOpts.Size, newBandwidth.Size)
 	t.Logf("Updated BandwidthV2: %s", newBandwidth.ID)
+
+	bandwidthPages, err := bandwidths.List(client).AllPages()
+	th.AssertNoErr(t, err)
+
+	bandwidthList, err := bandwidths.ExtractBandwidths(bandwidthPages)
+	th.AssertNoErr(t, err)
+	flag := -1
+	for i, v := range bandwidthList {
+		if v.ID == newBandwidth.ID {
+			flag = i
+			break
+		}
+	}
+	th.AssertDeepEquals(t, newBandwidth, &bandwidthList[flag])
 }
