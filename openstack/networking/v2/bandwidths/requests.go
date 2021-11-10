@@ -4,158 +4,130 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type UpdateOpts struct {
-	Bandwidth   Bandwidth    `json:"bandwidth" required:"true"`
-	ExtendParam *ExtendParam `json:"extendParam,omitempty"`
-}
-type Bandwidth struct {
-	Name string `json:"name,omitempty"`
-	Size int    `json:"size,omitempty"`
-}
-type ExtendParam struct {
-	IsAutoPay string `json:"is_auto_pay,omitempty"`
-}
-
-func (opts UpdateOpts) ToBandWidthUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
 type CreateOptsBuilder interface {
-	ToBandWidthCreateMap() (map[string]interface{}, error)
+	ToBandwidthCreateMap() (map[string]interface{}, error)
 }
 
 type CreateOpts struct {
-	Name                string `json:"name" required:"true"`
-	Size                *int   `json:"size" required:"true"`
-	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
+	Name string `json:"name" required:"true"`
+	Size int    `json:"size" required:"true"`
 }
 
-func (opts CreateOpts) ToBandWidthCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToBandwidthCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToBandWidthCreateMap()
+	b, err := opts.ToBandwidthCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Post(PostURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(rootURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return
 }
 
-type BatchCreateOptsBuilder interface {
-	ToBandWidthBatchCreateMap() (map[string]interface{}, error)
+type UpdateOptsBuilder interface {
+	ToBandwidthUpdateMap() (map[string]interface{}, error)
 }
 
-type BatchCreateOpts struct {
-	Name  string `json:"name" required:"true"`
-	Size  *int   `json:"size" required:"true"`
-	Count *int   `json:"count" required:"true"`
+type UpdateOpts struct {
+	Name string `json:"name,omitempty"`
+	Size int    `json:"size,omitempty"`
 }
 
-func (opts BatchCreateOpts) ToBandWidthBatchCreateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToBandwidthUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 
-type BandWidthInsertOptsBuilder interface {
-	ToBandWidthInsertMap() (map[string]interface{}, error)
-}
-
-type BandWidthRemoveOptsBuilder interface {
-	ToBandWidthBatchRemoveMap() (map[string]interface{}, error)
-}
-
-type BandWidthInsertOpts struct {
-	PublicipInfo []PublicIpInfoID `json:"publicip_info" required:"true"`
-}
-
-func (opts BandWidthInsertOpts) ToBandWidthInsertMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
-}
-
-type BandWidthRemoveOpts struct {
-	ChargeMode   string           `json:"charge_mode" required:"true"`
-	Size         *int             `json:"size" required:"true"`
-	PublicipInfo []PublicIpInfoID `json:"publicip_info" required:"true"`
-}
-
-func (opts BandWidthRemoveOpts) ToBandWidthBatchRemoveMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
-}
-
-type PublicIpInfoID struct {
-	PublicIPID string `json:"publicip_id" required:"true"`
-}
-
-func Insert(client *golangsdk.ServiceClient, bandwidthID string, opts BandWidthInsertOptsBuilder) (r CreateResult) {
-	b, err := opts.ToBandWidthInsertMap()
+func Update(client *golangsdk.ServiceClient, bandwidthID string, opts UpdateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToBandwidthUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Post(InsertURL(client, bandwidthID), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 201},
+	_, r.Err = client.Put(resourceURL(client, bandwidthID), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
 	})
 	return
 }
 
-func Remove(client *golangsdk.ServiceClient, bandwidthID string, opts BandWidthRemoveOptsBuilder) (r DeleteResult) {
-	b, err := opts.ToBandWidthBatchRemoveMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Post(RemoveURL(client, bandwidthID), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 204},
-	})
+func Get(client *golangsdk.ServiceClient, bandwidthID string) (r GetResult) {
+	_, r.Err = client.Get(resourceURL(client, bandwidthID), &r.Body, nil)
 	return
 }
 
-func BatchCreate(client *golangsdk.ServiceClient, opts BatchCreateOptsBuilder) (r BatchCreateResult) {
-	b, err := opts.ToBandWidthBatchCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Post(BatchPostURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 201},
-	})
+func List(client *golangsdk.ServiceClient) (r ListResult) {
+	_, r.Err = client.Get(rootURL(client), &r.Body, nil)
 	return
 }
 
 func Delete(client *golangsdk.ServiceClient, bandwidthID string) (r DeleteResult) {
-	url := DeleteURL(client, bandwidthID)
-	_, r.Err = client.Delete(url, nil)
+	_, r.Err = client.Delete(resourceURL(client, bandwidthID), nil)
 	return
 }
 
-func Update(c *golangsdk.ServiceClient, bandwidthID string, opts UpdateOpts) (interface{}, error) {
-	var r UpdateResult
-	body, err := opts.ToBandWidthUpdateMap()
+type InsertOptsBuilder interface {
+	ToBandwidthInsertMap() (map[string]interface{}, error)
+}
+
+type InsertOpts struct {
+	PublicIpInfo []PublicIpInfoInsertOpts `json:"publicip_info" required:"true"`
+}
+
+type PublicIpInfoInsertOpts struct {
+	PublicIpID   string `json:"publicip_id" required:"true"`
+	PublicIpType string `json:"publicip_type,omitempty"`
+}
+
+func (opts InsertOpts) ToBandwidthInsertMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "bandwidth")
+}
+
+func Insert(client *golangsdk.ServiceClient, bandwidthID string, opts InsertOptsBuilder) (r CreateResult) {
+	b, err := opts.ToBandwidthInsertMap()
 	if err != nil {
-		return nil, err
+		r.Err = err
+		return
 	}
 
-	_, r.Err = c.Put(UpdateURL(c, bandwidthID), body, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	_, r.Err = client.Post(insertURL(client, bandwidthID), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 201},
+	})
+	return
+}
 
-	onDemandData, onDemandErr := r.Extract()
-	orderData, orderErr := r.ExtractOrderID()
+type RemoveOptsBuilder interface {
+	ToBandwidthRemoveMap() (map[string]interface{}, error)
+}
 
-	if orderErr != nil {
-		return nil, orderErr
+type RemoveOpts struct {
+	ChargeMode   string           `json:"charge_mode" required:"true"`
+	Size         int              `json:"size" required:"true"`
+	PublicIpInfo []PublicIpInfoID `json:"publicip_info" required:"true"`
+}
+
+type PublicIpInfoID struct {
+	PublicIpID string `json:"publicip_id" required:"true"`
+}
+
+func (opts RemoveOpts) ToBandwidthRemoveMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "bandwidth")
+}
+
+func Remove(client *golangsdk.ServiceClient, bandwidthID string, opts RemoveOptsBuilder) (r DeleteResult) {
+	b, err := opts.ToBandwidthRemoveMap()
+	if err != nil {
+		r.Err = err
+		return
 	}
 
-	if orderData.OrderID != "" {
-		return orderData, orderErr
-	}
-
-	return onDemandData, onDemandErr
-
+	_, r.Err = client.Post(removeURL(client, bandwidthID), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 204},
+	})
+	return
 }
