@@ -10,6 +10,7 @@ import (
 )
 
 func TestBandwidthList(t *testing.T) {
+	t.Skipf("disabled: working only in eu-nl")
 	client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
 
@@ -22,6 +23,7 @@ func TestBandwidthList(t *testing.T) {
 }
 
 func TestBandwidthLifecycle(t *testing.T) {
+	t.Skipf("disabled: working only in eu-nl")
 	client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
 
