@@ -4,6 +4,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Listener is the primary load balancing configuration object that specifies
@@ -127,4 +128,25 @@ type UpdateResult struct {
 // ExtractErr method to determine if the request succeeded or failed.
 type DeleteResult struct {
 	golangsdk.ErrResult
+}
+
+type ListenerPage struct {
+	pagination.PageWithInfo
+}
+
+func (p ListenerPage) IsEmpty() (bool, error) {
+	l, err := ExtractListeners(p)
+	if err != nil {
+		return false, err
+	}
+	return len(l) == 0, nil
+}
+
+func ExtractListeners(r pagination.Page) ([]Listener, error) {
+	var s []Listener
+	err := (r.(ListenerPage)).ExtractIntoSlicePtr(&s, "listeners")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
