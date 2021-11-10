@@ -2,25 +2,24 @@ package bandwidths
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func PostURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(c.ProjectID, "bandwidths")
+const (
+	resourcePath = "bandwidths"
+	insertPath   = "insert"
+	removePath   = "remove"
+)
+
+func rootURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(client.ProjectID, resourcePath)
 }
 
-func BatchPostURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(c.ProjectID, "batch-bandwidths")
-}
-func UpdateURL(c *golangsdk.ServiceClient, ID string) string {
-	return c.ServiceURL(c.ProjectID, "bandwidths", ID)
+func resourceURL(client *golangsdk.ServiceClient, ID string) string {
+	return client.ServiceURL(client.ProjectID, resourcePath, ID)
 }
 
-func DeleteURL(c *golangsdk.ServiceClient, ID string) string {
-	return c.ServiceURL(c.ProjectID, "bandwidths", ID)
+func insertURL(client *golangsdk.ServiceClient, ID string) string {
+	return client.ServiceURL(client.ProjectID, resourcePath, ID, insertPath)
 }
 
-func InsertURL(c *golangsdk.ServiceClient, ID string) string {
-	return c.ServiceURL(c.ProjectID, "bandwidths", ID, "insert")
-}
-
-func RemoveURL(c *golangsdk.ServiceClient, ID string) string {
-	return c.ServiceURL(c.ProjectID, "bandwidths", ID, "remove")
+func removeURL(client *golangsdk.ServiceClient, ID string) string {
+	return client.ServiceURL(client.ProjectID, resourcePath, ID, removePath)
 }
