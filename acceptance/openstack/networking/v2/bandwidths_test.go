@@ -14,12 +14,11 @@ func TestBandwidthList(t *testing.T) {
 	client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
 
-	bandwidthList, err := bandwidths.List(client).Extract()
+	bandwidthPages, err := bandwidths.List(client).AllPages()
 	th.AssertNoErr(t, err)
 
-	for _, bandwidth := range bandwidthList {
-		tools.PrintResource(t, bandwidth)
-	}
+	_, err = bandwidths.ExtractBandwidths(bandwidthPages)
+	th.AssertNoErr(t, err)
 }
 
 func TestBandwidthLifecycle(t *testing.T) {

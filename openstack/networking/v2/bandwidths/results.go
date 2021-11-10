@@ -2,6 +2,7 @@ package bandwidths
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Bandwidth struct {
@@ -90,17 +91,22 @@ func (r commonResult) Extract() (*Bandwidth, error) {
 	return s, nil
 }
 
-type ListResult struct {
-	golangsdk.Result
+type BandwidthPage struct {
+	pagination.SinglePageBase
 }
 
-func (r ListResult) Extract() ([]Bandwidth, error) {
+func (r BandwidthPage) IsEmpty() (bool, error) {
+	is, err := ExtractBandwidths(r)
+	return len(is) == 0, err
+}
+
+func ExtractBandwidths(r pagination.Page) ([]Bandwidth, error) {
 	var s []Bandwidth
-	err := r.ExtractIntoSlicePtr(&s, "bandwidth")
+	err := (r.(BandwidthPage)).ExtractIntoSlicePtr(&s, "bandwidth")
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+	return s, err
 }
 
 type DeleteResult struct {

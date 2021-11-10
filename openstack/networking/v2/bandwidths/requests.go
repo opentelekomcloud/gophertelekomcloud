@@ -2,6 +2,7 @@ package bandwidths
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type CreateOptsBuilder interface {
@@ -61,9 +62,10 @@ func Get(client *golangsdk.ServiceClient, bandwidthID string) (r GetResult) {
 	return
 }
 
-func List(client *golangsdk.ServiceClient) (r ListResult) {
-	_, r.Err = client.Get(rootURL(client), &r.Body, nil)
-	return
+func List(client *golangsdk.ServiceClient) pagination.Pager {
+	return pagination.NewPager(client, rootURL(client), func(r pagination.PageResult) pagination.Page {
+		return BandwidthPage{pagination.SinglePageBase(r)}
+	})
 }
 
 func Delete(client *golangsdk.ServiceClient, bandwidthID string) (r DeleteResult) {
