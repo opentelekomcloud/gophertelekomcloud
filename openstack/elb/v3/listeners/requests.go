@@ -249,7 +249,7 @@ type ListOpts struct {
 	MemberDeviceID          []string   `q:"member_device_id"`
 	MemberTimeout           []int      `q:"member_timeout"`
 	ClientTimeout           []int      `q:"client_timeout"`
-	KeepAliveTimeout        []int      `q:"keep_alive_timeout"`
+	KeepAliveTimeout        []int      `q:"keepalive_timeout"`
 }
 
 func (opts ListOpts) ToListenerListQuery() (string, error) {
