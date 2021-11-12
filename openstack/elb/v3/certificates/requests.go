@@ -12,15 +12,15 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
-	ID          string `q:"id"`
-	Name        string `q:"name"`
-	Description string `q:"description"`
-	Type        string `q:"type"`
-	Domain      string `q:"domain"`
-	PrivateKey  string `q:"private_key"`
-	Certificate string `q:"certificate"`
+	ID          []string `q:"id"`
+	Name        []string `q:"name"`
+	Description []string `q:"description"`
+	Type        []string `q:"type"`
+	Domain      []string `q:"domain"`
+
 	Limit       int    `q:"limit"`
 	Marker      string `q:"marker"`
+	PageReverse bool   `q:"page_reverse"`
 }
 
 // ToCertificateListQuery formats a ListOpts into a query string.
