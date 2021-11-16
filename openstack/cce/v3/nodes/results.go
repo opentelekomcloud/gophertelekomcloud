@@ -160,6 +160,14 @@ type ExtendParam struct {
 	PreInstall string `json:"alpha.cce/preInstall,omitempty"`
 	// Script required after the installation.
 	PostInstall string `json:"alpha.cce/postInstall,omitempty"`
+	// Whether auto-renew is enabled.
+	IsAutoRenew *bool `json:"isAutoRenew,omitempty"`
+	// Whether to deduct fees automatically.
+	IsAutoPlay *bool `json:"is_auto_play,omitempty"`
+	// Available disk space of a single Docker container on the node using the device mapper.
+	DockerBaseSize int `json:"docker_base_size,omitempty"`
+	// ConfigMap of the Docker data disk.
+	DockerLVMConfigOverride string `json:"DockerLVMConfigOverride,omitempty"`
 }
 
 type PublicIPSpec struct {

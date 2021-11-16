@@ -96,6 +96,10 @@ func (s *testNodes) TestNodeLifecycle() {
 					FixedIPs: []string{privateIP},
 				},
 			},
+			ExtendParam: nodes.ExtendParam{
+				MaxPods:        16,
+				DockerBaseSize: 20,
+			},
 		},
 	}
 
