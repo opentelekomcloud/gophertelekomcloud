@@ -163,9 +163,9 @@ type ExtendParam struct {
 	// Whether auto-renew is enabled.
 	IsAutoRenew *bool `json:"isAutoRenew,omitempty"`
 	// Whether to deduct fees automatically.
-	IsAutoPlay *bool `json:"is_auto_play,omitempty"`
+	IsAutoPay *bool `json:"isAutoPay,omitempty"`
 	// Available disk space of a single Docker container on the node using the device mapper.
-	DockerBaseSize int `json:"docker_base_size,omitempty"`
+	DockerBaseSize int `json:"dockerBaseSize,omitempty"`
 	// ConfigMap of the Docker data disk.
 	DockerLVMConfigOverride string `json:"DockerLVMConfigOverride,omitempty"`
 }
