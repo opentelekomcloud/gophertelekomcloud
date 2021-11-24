@@ -101,6 +101,15 @@ func TestBandwidthAssociate(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
+	err = tools.WaitFor(func() (bool, error) {
+		bdw, err := bandwidths.Get(client, id).Extract()
+		if err != nil {
+			return false, err
+		}
+		return bdw.Status == "NORMAL", nil
+	})
+	th.AssertNoErr(t, err)
+
 	assOpts := bandwidths.InsertOpts{PublicIpInfo: []bandwidths.PublicIpInfoInsertOpts{
 		{PublicIpID: eip.ID},
 	}}
