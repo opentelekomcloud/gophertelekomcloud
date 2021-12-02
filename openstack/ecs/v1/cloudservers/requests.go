@@ -160,6 +160,8 @@ type RootVolume struct {
 	// Pay attention to this parameter if your ECS is SDI-compliant.
 	// If the value of this parameter is true, the created disk is of SCSI type.
 	PassThrough *bool `json:"hw:passthrough,omitempty"`
+
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
 
 type DataVolume struct {
