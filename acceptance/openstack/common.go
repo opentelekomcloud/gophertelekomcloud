@@ -150,6 +150,10 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		},
 		RootVolume: cloudservers.RootVolume{
 			VolumeType: "SSD",
+			Metadata: map[string]interface{}{
+				"__system__encrypted": encryption,
+				"__system__cmkid":     kmsID,
+			},
 		},
 		DataVolumes: []cloudservers.DataVolume{
 			{
