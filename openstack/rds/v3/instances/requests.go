@@ -85,7 +85,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateRdsBuilder) (r CreateRes
 		return
 	}
 
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(CreateURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -110,7 +110,7 @@ func CreateReplica(client *golangsdk.ServiceClient, opts CreateReplicaBuilder) (
 		return
 	}
 
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(CreateURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 

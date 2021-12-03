@@ -2,7 +2,7 @@ package instances
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func createURL(c *golangsdk.ServiceClient) string {
+func CreateURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("instances")
 }
 
