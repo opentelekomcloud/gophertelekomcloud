@@ -2,6 +2,7 @@ package v2
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"testing"
 
@@ -11,11 +12,21 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
+func randomRepoName(prefix string, n int) string {
+	const alphanum = "0123456789abcdefghijklmnopqrstuvwxyz"
+	var bytes = make([]byte, n)
+	_, _ = rand.Read(bytes)
+	for i, b := range bytes {
+		bytes[i] = alphanum[b%byte(len(alphanum))]
+	}
+	return prefix + string(bytes)
+}
+
 func TestOrganizationWorkflow(t *testing.T) {
 	client, err := clients.NewSwrV2Client()
 	th.AssertNoErr(t, err)
 
-	name := "test-org"
+	name := randomRepoName("test-org", 6)
 	opts := organizations.CreateOpts{Namespace: name}
 	err = organizations.Create(client, opts).ExtractErr()
 	th.AssertNoErr(t, err)
