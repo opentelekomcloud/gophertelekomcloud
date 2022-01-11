@@ -7,13 +7,13 @@ const (
 )
 
 func createURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(c.ProjectID, resourcePath, "create-grant")
+	return c.ServiceURL(resourcePath, "create-grant")
 }
 
 func deleteURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(c.ProjectID, resourcePath, "revoke-grant")
+	return c.ServiceURL(resourcePath, "revoke-grant")
 }
 
 func listURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(c.ProjectID, resourcePath, "list-grants")
+	return c.ServiceURL(resourcePath, "list-grants")
 }

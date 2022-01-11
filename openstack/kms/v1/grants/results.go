@@ -32,7 +32,10 @@ type CreateResult struct {
 func (r CreateResult) Extract() (*CreateGrant, error) {
 	s := new(CreateGrant)
 	err := r.ExtractInto(s)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 type DeleteResult struct {
@@ -46,5 +49,8 @@ type ListResult struct {
 func (r ListResult) Extract() (*ListGrant, error) {
 	s := new(ListGrant)
 	err := r.ExtractInto(&s)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
