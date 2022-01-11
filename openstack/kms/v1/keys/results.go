@@ -108,19 +108,28 @@ type ListResult struct {
 func (r commonResult) ExtractListKey() (*ListKey, error) {
 	var s *ListKey
 	err := r.ExtractInto(&s)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 func (r commonResult) Extract() (*Key, error) {
 	var s *Key
 	err := r.ExtractInto(&s)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 func (r commonResult) ExtractKeyInfo() (*Key, error) {
 	var s Key
 	err := r.ExtractKeyInfoInto(&s)
-	return &s, err
+	if err != nil {
+		return nil, err
+	}
+	return &s, nil
 }
 
 func (r commonResult) ExtractKeyInfoInto(v interface{}) error {
@@ -130,13 +139,19 @@ func (r commonResult) ExtractKeyInfoInto(v interface{}) error {
 func (r commonResult) ExtractDataKey() (*DataKey, error) {
 	var s *DataKey
 	err := r.ExtractInto(&s)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 func (r commonResult) ExtractEncryptDEK() (*EncryptDEK, error) {
 	var s *EncryptDEK
 	err := r.ExtractInto(&s)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 type KeyPage struct {
@@ -153,5 +168,8 @@ func ExtractKeys(r pagination.Page) ([]Key, error) {
 		Keys []Key `json:"keys"`
 	}
 	err := (r.(KeyPage)).ExtractInto(&s)
-	return s.Keys, err
+	if err != nil {
+		return nil, err
+	}
+	return s.Keys, nil
 }
