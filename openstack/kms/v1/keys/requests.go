@@ -270,27 +270,3 @@ func ListAllKeys(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r ListR
 	})
 	return
 }
-
-// func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r GetResult) {
-//	//url := listURL(client)
-//	//if opts != nil {
-//	//	query, err := opts.ToKeyListQuery()
-//	//	if err != nil {
-//	//		return pagination.Pager{Err: err}
-//	//	}
-//	//	url += query
-//	//}
-//	b, err := opts.ToKeyListQuery()
-//	if err != nil {
-//		r.Err = err
-//		return
-//	}
-//	_, r.Err = client.Post(listURL(client), b, &r.Body, &golangsdk.RequestOpts{
-//		OkCodes: []int{200},
-//	})
-//	return
-//
-//	//return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-//	//	return KeyPage{pagination.LinkedPageBase{PageResult: r}}
-//	//})
-// }
