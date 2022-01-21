@@ -1,14 +1,9 @@
 package cluster
 
 import (
-	"log"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 type CreateOpts struct {
 	BillingType           int             `json:"billing_type" required:"true"`
@@ -25,7 +20,7 @@ type CreateOpts struct {
 	SubnetName            string          `json:"subnet_name" required:"true"`
 	SecurityGroupsID      string          `json:"security_groups_id,omitempty"`
 	ClusterVersion        string          `json:"cluster_version" required:"true"`
-	ClusterType           int             `json:"cluster_type"`
+	ClusterType           int             `json:"cluster_type,omitempty"`
 	MasterDataVolumeType  string          `json:"master_data_volume_type,omitempty"`
 	MasterDataVolumeSize  int             `json:"master_data_volume_size,omitempty"`
 	MasterDataVolumeCount int             `json:"master_data_volume_count,omitempty"`
@@ -34,9 +29,9 @@ type CreateOpts struct {
 	CoreDataVolumeCount   int             `json:"core_data_volume_count,omitempty"`
 	VolumeType            string          `json:"volume_type,omitempty"`
 	VolumeSize            int             `json:"volume_size,omitempty"`
-	SafeMode              int             `json:"safe_mode"`
+	SafeMode              int             `json:"safe_mode" required:"true"`
 	ClusterAdminSecret    string          `json:"cluster_admin_secret" required:"true"`
-	LoginMode             int             `json:"login_mode"`
+	LoginMode             int             `json:"login_mode" required:"true"`
 	ClusterMasterSecret   string          `json:"cluster_master_secret,omitempty"`
 	NodePublicCertName    string          `json:"node_public_cert_name,omitempty"`
 	LogCollection         int             `json:"log_collection,omitempty"`
@@ -52,14 +47,14 @@ type ComponentOpts struct {
 type JobOpts struct {
 	JobType                 int    `json:"job_type" required:"true"`
 	JobName                 string `json:"job_name" required:"true"`
-	JarPath                 string `json:"jar_path" required:"true"`
+	JarPath                 string `json:"jar_path,omitempty"`
 	Arguments               string `json:"arguments,omitempty"`
 	Input                   string `json:"input,omitempty"`
 	Output                  string `json:"output,omitempty"`
 	JobLog                  string `json:"job_log,omitempty"`
-	ShutdownCluster         bool   `json:"shutdown_cluster,omitempty"`
+	ShutdownCluster         *bool  `json:"shutdown_cluster,omitempty"`
 	FileAction              string `json:"file_action,omitempty"`
-	SubmitJobOnceClusterRun bool   `json:"submit_job_once_cluster_run" required:"true"`
+	SubmitJobOnceClusterRun *bool  `json:"submit_job_once_cluster_run" required:"true"`
 	Hql                     string `json:"hql,omitempty"`
 	HiveScriptPath          string `json:"hive_script_path" required:"true"`
 }
@@ -69,8 +64,8 @@ type ScriptOpts struct {
 	Uri                  string   `json:"uri" required:"true"`
 	Parameters           string   `json:"parameters,omitempty"`
 	Nodes                []string `json:"nodes" required:"true"`
-	ActiveMaster         bool     `json:"active_master,omitempty"`
-	BeforeComponentStart bool     `json:"before_component_start,omitempty"`
+	ActiveMaster         *bool    `json:"active_master,omitempty"`
+	BeforeComponentStart *bool    `json:"before_component_start,omitempty"`
 	FailAction           string   `json:"fail_action" required:"true"`
 }
 
@@ -82,29 +77,30 @@ func (opts CreateOpts) ToClusterCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToClusterCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	log.Printf("[DEBUG] create url:%q, body=%#v", createURL(c), b)
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Post(createURL(c), b, &r.Body, reqOpt)
-	return
-}
-
-func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, id), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
 	})
 	return
 }
 
-func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{204},
-		MoreHeaders: RequestOpts.MoreHeaders}
-	_, r.Err = c.Delete(deleteURL(c, id), reqOpt)
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
+	_, r.Err = client.Get(getURL(client, id), &r.Body, &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
+	})
+	return
+}
+
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+	_, r.Err = client.Delete(deleteURL(client, id), &golangsdk.RequestOpts{
+		OkCodes:     []int{204},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
+	})
 	return
 }
