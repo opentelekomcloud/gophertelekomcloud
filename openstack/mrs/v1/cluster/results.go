@@ -79,7 +79,7 @@ type ScriptResult struct {
 	State                string   `json:"state"`
 }
 
-type ClusterResult struct {
+type CreateClusterResult struct {
 	ClusterID string `json:"cluster_id"`
 	Result    bool   `json:"result"`
 	Msg       string `json:"msg"`
@@ -89,8 +89,8 @@ type CreateResult struct {
 	golangsdk.Result
 }
 
-func (r CreateResult) Extract() (*ClusterResult, error) {
-	var s ClusterResult
+func (r CreateResult) Extract() (*CreateClusterResult, error) {
+	var s CreateClusterResult
 	err := r.ExtractIntoStructPtr(&s, "")
 	if err != nil {
 		return nil, err
