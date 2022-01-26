@@ -15,7 +15,7 @@ import (
 )
 
 // CreateNetwork - create VPC+Subnet and returns active subnet instance
-func CreateNetwork(t *testing.T, prefix, az string) (*vpcs.Vpc, *subnets.Subnet) {
+func CreateNetwork(t *testing.T, prefix, az string) *subnets.Subnet {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 	vpc, err := vpcs.Create(client, vpcs.CreateOpts{
@@ -38,7 +38,7 @@ func CreateNetwork(t *testing.T, prefix, az string) (*vpcs.Vpc, *subnets.Subnet)
 	err = waitForSubnetToBeActive(client, subnet.ID, 300)
 	th.AssertNoErr(t, err)
 
-	return vpc, subnet
+	return subnet
 }
 
 // DeleteNetwork - remove subnet and network

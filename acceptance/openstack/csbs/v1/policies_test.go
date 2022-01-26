@@ -35,7 +35,7 @@ func TestPoliciesLifeCycle(t *testing.T) {
 		t.Fatalf("Unable to create CSBSv1 client: %s", err)
 	}
 
-	_, subnet := nwv1.CreateNetwork(t, prefix, az)
+	subnet := nwv1.CreateNetwork(t, prefix, az)
 	defer nwv1.DeleteNetwork(t, subnet)
 	server := createComputeInstance(t, subnet.ID)
 
