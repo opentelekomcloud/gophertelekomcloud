@@ -129,13 +129,18 @@ func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string,
 
 func waitForClusterToBeDeleted(client *golangsdk.ServiceClient, clusterID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := cluster.Get(client, clusterID).Extract()
+		n, err := cluster.Get(client, clusterID).Extract()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
 			}
 			return false, err
 		}
+
+		if n.ClusterState == "terminated" {
+			return true, nil
+		}
+
 		return false, nil
 	})
 }
