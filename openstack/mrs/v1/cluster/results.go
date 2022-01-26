@@ -90,12 +90,12 @@ type CreateResult struct {
 }
 
 func (r CreateResult) Extract() (*CreateClusterResult, error) {
-	var s CreateClusterResult
-	err := r.ExtractIntoStructPtr(&s, "")
+	s := new(CreateClusterResult)
+	err := r.ExtractIntoStructPtr(s, "")
 	if err != nil {
 		return nil, err
 	}
-	return &s, nil
+	return s, nil
 }
 
 type GetResult struct {

@@ -25,7 +25,7 @@ func TestMrsClusterLifecycle(t *testing.T) {
 	}
 
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
-	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID", "ROUTER_ID")
 	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
 	if networkID == "" || vpcID == "" || keyPairName == "" {
 		t.Skip("OS_NETWORK_ID, OS_VPC_ID or OS_KEYPAIR_NAME env vars are missing but MRS Cluster test requires")
@@ -63,35 +63,9 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		LoginMode:          1,
 		NodePublicCertName: keyPairName,
 		LogCollection:      1,
-		ComponentList: []cluster.ComponentOpts{
-			{
-				ComponentName: "Presto",
-			},
-			{
-				ComponentName: "Hadoop",
-			},
-			{
-				ComponentName: "Spark",
-			},
-			{
-				ComponentName: "HBase",
-			},
-			{
-				ComponentName: "Hive",
-			},
-			{
-				ComponentName: "Hue",
-			},
-			{
-				ComponentName: "Loader",
-			},
-			{
-				ComponentName: "Tez",
-			},
-			{
-				ComponentName: "Flink",
-			},
-		},
+		ComponentList: cluster.ExpandComponent(
+			[]string{"Presto", "Hadoop", "Spark", "HBase", "Hive", "Hue", "Loader", "Tez", "Flink"},
+		),
 	}
 
 	clResponse, err := cluster.Create(client, createOpts).Extract()

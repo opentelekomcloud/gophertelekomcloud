@@ -104,3 +104,13 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	})
 	return
 }
+
+func ExpandComponent(strComponents []string) []ComponentOpts {
+	var components []ComponentOpts
+	for _, v := range strComponents {
+		components = append(components, ComponentOpts{
+			ComponentName: v,
+		})
+	}
+	return components
+}
