@@ -405,6 +405,17 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewMrsV1 returns authenticated MRS v1 client
+func NewMrsV1() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewMapReduceV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewSDRSV1 returns authenticated SDRS v3 client
 func NewSDRSV1() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
