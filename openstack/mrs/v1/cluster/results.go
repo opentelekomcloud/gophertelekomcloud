@@ -48,7 +48,7 @@ type Cluster struct {
 	PrivateIpFirst        string         `json:"privateIpFirst"`
 	ErrorInfo             string         `json:"errorInfo"`
 	ChargingStartTime     string         `json:"chargingStartTime"`
-	ClusterType           string         `json:"clusterType"`
+	ClusterType           int            `json:"clusterType"`
 	LogCollection         int            `json:"logCollection"`
 	MasterDataVolumeType  string         `json:"masterDataVolumeType"`
 	MasterDataVolumeSize  int            `json:"masterDataVolumeSize"`

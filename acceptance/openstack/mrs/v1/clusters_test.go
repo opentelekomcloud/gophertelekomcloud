@@ -5,9 +5,10 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/mrs/v1/cluster"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -20,20 +21,33 @@ func TestMrsClusterLifecycle(t *testing.T) {
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if az == "" {
-		az = "eu-de-01"
+		az = "eu-de-02"
 	}
 
-	vpc, subnet := nwv1.CreateNetwork(t, "mrs", az)
-	defer nwv1.DeleteNetwork(t, subnet)
+	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
+	if networkID == "" || vpcID == "" || keyPairName == "" {
+		t.Skip("OS_NETWORK_ID, OS_VPC_ID or OS_KEYPAIR_NAME env vars are missing but MRS Cluster test requires")
+	}
 
-	name := tools.RandomString("css-create", 3)
+	nwV1Client, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+
+	vpc, err := vpcs.Get(nwV1Client, vpcID).Extract()
+	th.AssertNoErr(t, err)
+
+	subnet, err := subnets.Get(nwV1Client, networkID).Extract()
+	th.AssertNoErr(t, err)
+
+	name := tools.RandomString("mrs-create-", 3)
 	createOpts := cluster.CreateOpts{
 		BillingType:        12,
 		DataCenter:         cc.RegionName,
 		MasterNodeNum:      2,
-		MasterNodeSize:     "s2.4xlarge.2.linux.mrs",
+		MasterNodeSize:     "c3.xlarge.4.linux.mrs",
 		CoreNodeNum:        3,
-		CoreNodeSize:       "s2.4xlarge.2.linux.mrs",
+		CoreNodeSize:       "c3.xlarge.4.linux.mrs",
 		AvailableZoneID:    az,
 		ClusterName:        name,
 		Vpc:                vpc.Name,
@@ -46,8 +60,13 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		VolumeSize:         100,
 		SafeMode:           1,
 		ClusterAdminSecret: "Qwerty123!",
-		LoginMode:          0,
+		LoginMode:          1,
+		NodePublicCertName: keyPairName,
+		LogCollection:      1,
 		ComponentList: []cluster.ComponentOpts{
+			{
+				ComponentName: "Presto",
+			},
 			{
 				ComponentName: "Hadoop",
 			},
@@ -55,7 +74,22 @@ func TestMrsClusterLifecycle(t *testing.T) {
 				ComponentName: "Spark",
 			},
 			{
+				ComponentName: "HBase",
+			},
+			{
 				ComponentName: "Hive",
+			},
+			{
+				ComponentName: "Hue",
+			},
+			{
+				ComponentName: "Loader",
+			},
+			{
+				ComponentName: "Tez",
+			},
+			{
+				ComponentName: "Flink",
 			},
 		},
 	}
@@ -63,19 +97,19 @@ func TestMrsClusterLifecycle(t *testing.T) {
 	clResponse, err := cluster.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	err = waitForClusterToBeActive(client, clResponse.ClusterID, 600)
+	err = waitForClusterToBeActive(client, clResponse.ClusterID, 3000)
 	th.AssertNoErr(t, err)
 
 	defer func() {
 		err = cluster.Delete(client, clResponse.ClusterID).ExtractErr()
 		th.AssertNoErr(t, err)
-		err = waitForClusterToBeDeleted(client, clResponse.ClusterID, 600)
+		err = waitForClusterToBeDeleted(client, clResponse.ClusterID, 3000)
 		th.AssertNoErr(t, err)
 	}()
 
 	newCluster, err := cluster.Get(client, clResponse.ClusterID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(newCluster.ComponentList), 3)
+	th.AssertEquals(t, len(newCluster.ComponentList), 9)
 }
 
 func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string, secs int) error {
