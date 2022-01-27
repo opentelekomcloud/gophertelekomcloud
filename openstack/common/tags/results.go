@@ -22,7 +22,7 @@ type GetResult struct {
 // Extract method will parse the result body into ResourceTag struct
 func (r GetResult) Extract() ([]ResourceTag, error) {
 	var s []ResourceTag
-	err := r.ExtractIntoSlicePtr(s, "tags")
+	err := r.ExtractIntoSlicePtr(&s, "tags")
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ type ListResult struct {
 // Extract method will parse the result body into ListedTag struct
 func (r ListResult) Extract() ([]ListedTag, error) {
 	var s []ListedTag
-	err := r.ExtractIntoSlicePtr(s, "tags")
+	err := r.ExtractIntoSlicePtr(&s, "tags")
 	if err != nil {
 		return nil, err
 	}
