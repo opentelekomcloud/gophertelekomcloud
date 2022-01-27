@@ -21,11 +21,12 @@ type GetResult struct {
 
 // Extract method will parse the result body into ResourceTag struct
 func (r GetResult) Extract() ([]ResourceTag, error) {
-	var responseTags struct {
-		Tags []ResourceTag `json:"tags"`
+	var s []ResourceTag
+	err := r.ExtractIntoSlicePtr(&s, "tags")
+	if err != nil {
+		return nil, err
 	}
-	err := r.Result.ExtractInto(&responseTags)
-	return responseTags.Tags, err
+	return s, nil
 }
 
 // ListResult contains the body of getting all tags request
@@ -35,9 +36,10 @@ type ListResult struct {
 
 // Extract method will parse the result body into ListedTag struct
 func (r ListResult) Extract() ([]ListedTag, error) {
-	var responseTags struct {
-		ListedTags []ListedTag `json:"tags"`
+	var s []ListedTag
+	err := r.ExtractIntoSlicePtr(&s, "tags")
+	if err != nil {
+		return nil, err
 	}
-	err := r.Result.ExtractInto(&responseTags)
-	return responseTags.ListedTags, err
+	return s, nil
 }

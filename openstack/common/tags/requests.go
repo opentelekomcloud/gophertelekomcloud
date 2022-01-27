@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 // ActionOptsBuilder is an interface from which can build the request of creating/deleting tags
@@ -33,7 +34,8 @@ func doAction(client *golangsdk.ServiceClient, serviceType, id string, opts Acti
 		return
 	}
 	_, r.Err = client.Post(actionURL(client, serviceType, id), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 204},
+		OkCodes:     []int{200, 204},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
 	})
 	return
 }
@@ -59,13 +61,14 @@ func Delete(client *golangsdk.ServiceClient, serviceType, id string, tags []Reso
 // Get is a method of getting the tags by id
 func Get(client *golangsdk.ServiceClient, serviceType, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, serviceType, id), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{202, 200},
+		OkCodes:     []int{202, 200},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
 	})
 	return
 }
 
 // List is a method of getting the tags of all service
 func List(client *golangsdk.ServiceClient, serviceType string) (r ListResult) {
-	_, r.Err = client.Get(listURL(client, serviceType), &r.Body, nil)
+	_, r.Err = client.Get(listURL(client, serviceType), &r.Body, openstack.StdRequestOpts())
 	return
 }
