@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/mrs/v1/cluster"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
@@ -81,9 +82,27 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}()
 
+	tagOpts := []tags.ResourceTag{
+		{
+			Key:   "muh",
+			Value: "lala",
+		},
+		{
+			Key:   "kuh",
+			Value: "lala",
+		},
+	}
+
+	err = tags.Create(client, "clusters", clResponse.ClusterID, tagOpts).ExtractErr()
+	th.AssertNoErr(t, err)
+
 	newCluster, err := cluster.Get(client, clResponse.ClusterID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(newCluster.ComponentList), 9)
+
+	tagList, err := tags.Get(client, "clusters", clResponse.ClusterID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(tagList), len(tagOpts))
 }
 
 func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string, secs int) error {
