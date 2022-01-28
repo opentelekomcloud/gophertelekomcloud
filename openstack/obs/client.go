@@ -65,9 +65,7 @@ func (obsClient ObsClient) Refresh(ak, sk, securityToken string) {
 }
 
 func (obsClient ObsClient) Close() {
-	obsClient.httpClient = nil
 	obsClient.conf.transport.CloseIdleConnections()
-	obsClient.conf = nil
 	SyncLog()
 }
 
