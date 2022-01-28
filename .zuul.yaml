@@ -5,7 +5,7 @@
       functest_project_name: "eu-de_zuul_go"
     check:
       jobs:
-        - golangci-lint
+        - otc-golangci-lint
         - golang-make-vet
         - golang-make-test
     check-post:
@@ -13,7 +13,7 @@
         - golang-make-functional
     gate:
       jobs:
-        - golangci-lint
+        - otc-golangci-lint
         - golang-make-vet
         - golang-make-test
         - golang-make-functional

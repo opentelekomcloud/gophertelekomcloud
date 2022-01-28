@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -15,12 +14,12 @@ func TestAccessDomainWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// setup deps
-	orgName := fmt.Sprintf("domaintest")
+	orgName := "domaintest"
 	dep := dependencies{t: t, client: client}
 	dep.createOrganization(orgName)
 	defer dep.deleteOrganization(orgName)
 
-	repoName := fmt.Sprintf("repodomain")
+	repoName := "repodomain"
 	dep.createRepository(orgName, repoName)
 	defer dep.deleteRepository(orgName, repoName)
 

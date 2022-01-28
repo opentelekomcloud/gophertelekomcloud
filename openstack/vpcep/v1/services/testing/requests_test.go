@@ -114,7 +114,7 @@ func TestListRequest(t *testing.T) {
 
 	name := "test123"
 
-	th.Mux.HandleFunc(fmt.Sprintf("/vpc-endpoint-services"), func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/vpc-endpoint-services", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestFormValues(t, r, map[string]string{"endpoint_service_name": name})
