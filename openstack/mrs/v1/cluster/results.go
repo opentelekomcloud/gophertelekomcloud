@@ -75,7 +75,7 @@ type ScriptResult struct {
 	ActiveMaster         bool     `json:"active_master"`
 	BeforeComponentStart bool     `json:"before_component_start"`
 	FailAction           string   `json:"fail_action"`
-	StartTime            string   `json:"start_time"`
+	StartTime            int      `json:"start_time"`
 	State                string   `json:"state"`
 }
 
