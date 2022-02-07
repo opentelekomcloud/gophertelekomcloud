@@ -1,4 +1,4 @@
-# GopherTelekomCloud: a OpenTelekomCloud SDK for Golang
+# GopherTelekomCloud: a OpenTelekomCloud SDK for Golang!
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/opentelekomcloud/gophertelekomcloud?branch=devel)](https://goreportcard.com/report/github.com/opentelekomcloud/gophertelekomcloud)
 [![Zuul Gated](https://zuul-ci.org/gated.svg)](https://zuul.eco.tsi-dev.otc-service.com/t/eco/buildsets?project=opentelekomcloud%2Fgophertelekomcloud&pipeline=gate)
