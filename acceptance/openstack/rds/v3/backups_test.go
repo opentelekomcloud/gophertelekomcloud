@@ -37,4 +37,11 @@ func TestBackupWorkflow(t *testing.T) {
 	err = backups.WaitForBackup(client, rds.Id, b.ID, backups.StatusCompleted)
 	th.AssertNoErr(t, err)
 	t.Log("Backup creation complete")
+
+	pages, err := backups.List(client, backups.ListOpts{InstanceID: b.InstanceID, BackupID: b.ID}).AllPages()
+	th.AssertNoErr(t, err)
+	backupList, err := backups.ExtractBackups(pages)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(backupList))
+	tools.PrintResource(t, backupList[0])
 }
