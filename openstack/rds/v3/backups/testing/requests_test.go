@@ -119,7 +119,7 @@ func TestRestoreRequest(t *testing.T) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		_, _ = fmt.Fprint(w, expectedResponse)
 	})
 

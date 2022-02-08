@@ -185,7 +185,7 @@ func RestoreToNew(c *golangsdk.ServiceClient, opts RestoreToNewOptsBuilder) (r R
 		return
 	}
 	_, r.Err = c.Post(instances.CreateURL(c), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 201},
+		OkCodes: []int{200, 201, 202},
 	})
 	return
 }
