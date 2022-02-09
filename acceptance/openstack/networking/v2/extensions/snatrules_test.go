@@ -23,6 +23,7 @@ func TestSnatRuleLifeCycle(t *testing.T) {
 		NatGatewayID: natGateway.ID,
 		NetworkID:    natGateway.InternalNetworkID,
 		FloatingIPID: elasticIp.ID,
+		SourceType:   0,
 	}
 	snatRule, err := snatrules.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
