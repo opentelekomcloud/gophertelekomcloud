@@ -171,8 +171,8 @@ type RestoreToNewOpts struct {
 }
 
 type RestorePITROpts struct {
-	Source *Source `json:"source"`
-	Target *Target `json:"target"`
+	Source Source `json:"source"`
+	Target Target `json:"target"`
 }
 
 type Source struct {
@@ -190,14 +190,14 @@ type RestoreToNewOptsBuilder interface {
 }
 
 type RestorePITROptsBuilder interface {
-	ToBackupRestoreMap() (map[string]interface{}, error)
+	ToPITRRestoreMap() (map[string]interface{}, error)
 }
 
 func (opts RestoreToNewOpts) ToBackupRestoreMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func (opts RestorePITROpts) ToBackupRestoreMap() (map[string]interface{}, error) {
+func (opts RestorePITROpts) ToPITRRestoreMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -214,7 +214,7 @@ func RestoreToNew(c *golangsdk.ServiceClient, opts RestoreToNewOptsBuilder) (r R
 }
 
 func RestorePITR(c *golangsdk.ServiceClient, opts RestorePITROptsBuilder) (r RestoreResult) {
-	b, err := opts.ToBackupRestoreMap()
+	b, err := opts.ToPITRRestoreMap()
 	if err != nil {
 		r.Err = err
 		return
