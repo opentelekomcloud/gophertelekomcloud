@@ -42,6 +42,19 @@ const expectedRequest = `
   }
 }
 `
+
+const expectedPITRRequest = `
+{
+  "source": {
+    "instance_id": "d8e6ca5a624745bcb546a227aa3ae1cfin01",
+    "type": "timestamp",
+    "restore_time": 1532001446987
+  },
+  "target": {
+    "instance_id": "d8e6ca5a624745bcb546a227aa3ae1cfin01"
+  }
+`
+
 const expectedResponse = `
 {
 	"instance": {
@@ -69,6 +82,12 @@ const expectedResponse = `
 		"security_group_id": "23fd0cd4-15dc-4d65-bdb3-8844cc291be0"
 	},
 	"job_id": "bf003379-afea-4aa5-aa83-4543542070bc"
+}
+`
+
+const expectedPITRResponse = `
+{
+  "job_id": "4c56c0dc-d867-400f-bf3e-d025e4fee686"
 }
 `
 
@@ -103,9 +122,30 @@ func exampleRestoreOpts() backups.RestoreToNewOpts {
 	}
 }
 
+func exampleRestorePITROpts() backups.RestorePITROpts {
+	return backups.RestorePITROpts{
+		Source: {
+			InstanceID:  "d8e6ca5a624745bcb546a227aa3ae1cfin01",
+			RestoreTime: 1532001446987,
+			Type:        "timestamp",
+		},
+		Target: {
+			InstanceID: "d8e6ca5a624745bcb546a227aa3ae1cfin01",
+		},
+	}
+
+}
+
 func TestRestoreRequestBody(t *testing.T) {
 	opts := exampleRestoreOpts()
 	result, err := opts.ToBackupRestoreMap()
+	th.AssertNoErr(t, err)
+	th.AssertJSONEquals(t, expectedRequest, result)
+}
+
+func TestRestoreRequestBodyPITR(t *testing.T) {
+	opts := exampleRestorePITROpts()
+	result, err := opts.ToPITRRestoreMap()
 	th.AssertNoErr(t, err)
 	th.AssertJSONEquals(t, expectedRequest, result)
 }
@@ -125,6 +165,25 @@ func TestRestoreRequest(t *testing.T) {
 
 	opts := exampleRestoreOpts()
 	backup, err := backups.RestoreToNew(client.ServiceClient(), opts).Extract()
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, backup)
+}
+
+func TestRestoreRequestPITR(t *testing.T) {
+	th.SetupHTTP()
+	t.Cleanup(func() {
+		th.TeardownHTTP()
+	})
+	th.Mux.HandleFunc("/instances/recovery", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
+
+		w.WriteHeader(http.StatusAccepted)
+		_, _ = fmt.Fprint(w, expectedPITRResponse)
+	})
+
+	opts := exampleRestorePITROpts()
+	backup, err := backups.RestorePITR(client.ServiceClient(), opts).Extract()
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, backup)
 }
