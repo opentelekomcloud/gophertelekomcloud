@@ -176,13 +176,13 @@ type RestorePITROpts struct {
 }
 
 type Source struct {
-	InstanceId   string `json:"instance_id" required:"true"`
+	InstanceID   string `json:"instance_id" required:"true"`
 	RestoreTime  int64  `json:"restore_time" required:"true"`
 	Type         string `json:"type" required:"true"`
 }
 
 type Target struct {
-	InstanceId string `json:"instance_id" required:"true"`
+	InstanceID string `json:"instance_id" required:"true"`
 }
 
 type RestoreToNewOptsBuilder interface {
@@ -219,7 +219,7 @@ func RestorePITR(c *golangsdk.ServiceClient, opts RestorePITROptsBuilder) (r Res
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(instances.CreateURL(c) + "/recovery", b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Post(restoreURL(c), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
