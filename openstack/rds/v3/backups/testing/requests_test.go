@@ -46,13 +46,15 @@ const expectedRequest = `
 const expectedPITRRequest = `
 {
   "source": {
+    "backup_id": "",
     "instance_id": "d8e6ca5a624745bcb546a227aa3ae1cfin01",
-    "type": "timestamp",
-    "restore_time": 1532001446987
+    "restore_time": 1532001446987,
+    "type": "timestamp"
   },
   "target": {
     "instance_id": "d8e6ca5a624745bcb546a227aa3ae1cfin01"
   }
+}
 `
 
 const expectedResponse = `
@@ -124,12 +126,12 @@ func exampleRestoreOpts() backups.RestoreToNewOpts {
 
 func exampleRestorePITROpts() backups.RestorePITROpts {
 	return backups.RestorePITROpts{
-		Source: {
+		Source: backups.Source{
 			InstanceID:  "d8e6ca5a624745bcb546a227aa3ae1cfin01",
 			RestoreTime: 1532001446987,
 			Type:        "timestamp",
 		},
-		Target: {
+		Target: backups.Target{
 			InstanceID: "d8e6ca5a624745bcb546a227aa3ae1cfin01",
 		},
 	}
@@ -147,7 +149,7 @@ func TestRestoreRequestBodyPITR(t *testing.T) {
 	opts := exampleRestorePITROpts()
 	result, err := opts.ToPITRRestoreMap()
 	th.AssertNoErr(t, err)
-	th.AssertJSONEquals(t, expectedRequest, result)
+	th.AssertJSONEquals(t, expectedPITRRequest, result)
 }
 
 func TestRestoreRequest(t *testing.T) {
