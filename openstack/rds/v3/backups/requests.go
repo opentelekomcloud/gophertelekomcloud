@@ -170,11 +170,35 @@ type RestoreToNewOpts struct {
 	RestorePoint     RestorePoint              `json:"restore_point" required:"true"`
 }
 
+type RestorePITROpts struct {
+	Source Source `json:"source"`
+	Target Target `json:"target"`
+}
+
+type Source struct {
+	BackupID    string `json:"backup_id" required:"false"`
+	InstanceID  string `json:"instance_id" required:"true"`
+	RestoreTime int64  `json:"restore_time" required:"false"`
+	Type        string `json:"type" required:"true"`
+}
+
+type Target struct {
+	InstanceID string `json:"instance_id" required:"true"`
+}
+
 type RestoreToNewOptsBuilder interface {
 	ToBackupRestoreMap() (map[string]interface{}, error)
 }
 
+type RestorePITROptsBuilder interface {
+	ToPITRRestoreMap() (map[string]interface{}, error)
+}
+
 func (opts RestoreToNewOpts) ToBackupRestoreMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+func (opts RestorePITROpts) ToPITRRestoreMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -185,6 +209,18 @@ func RestoreToNew(c *golangsdk.ServiceClient, opts RestoreToNewOptsBuilder) (r R
 		return
 	}
 	_, r.Err = c.Post(instances.CreateURL(c), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 201, 202},
+	})
+	return
+}
+
+func RestorePITR(c *golangsdk.ServiceClient, opts RestorePITROptsBuilder) (r RestoreResult) {
+	b, err := opts.ToPITRRestoreMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = c.Post(restoreURL(c), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
