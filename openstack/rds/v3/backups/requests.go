@@ -176,10 +176,10 @@ type RestorePITROpts struct {
 }
 
 type Source struct {
-	InstanceID   string `json:"instance_id" required:"true"`
-	BackupID     string `json:"backup_id" required:"false"`
-	RestoreTime  int64  `json:"restore_time" required:"false"`
-	Type         string `json:"type" required:"true"`
+	InstanceID  string `json:"instance_id" required:"true"`
+	BackupID    string `json:"backup_id" required:"false"`
+	RestoreTime int64  `json:"restore_time" required:"false"`
+	Type        string `json:"type" required:"true"`
 }
 
 type Target struct {
