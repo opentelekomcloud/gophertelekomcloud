@@ -2,6 +2,7 @@ package agency
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type CreateOpts struct {
@@ -97,4 +98,38 @@ func ListRolesAttachedOnProject(c *golangsdk.ServiceClient, agencyID, projectID 
 func ListRolesAttachedOnDomain(c *golangsdk.ServiceClient, agencyID, domainID string) (r ListRolesResult) {
 	_, r.Err = c.Get(listRolesURL(c, "domains", domainID, agencyID), &r.Body, nil)
 	return
+}
+
+type ListOptsBuilder interface {
+	ToAgencyListQuery() (string, error)
+}
+
+type ListOpts struct {
+	DomainID      string `q:"domain_id"`
+	Name          string `q:"name"`
+	TrustDomainID string `q:"trust_domain_id"`
+}
+
+func (opts ListOpts) ToAgencyListQuery() (string, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return "", err
+	}
+	return q.String(), nil
+}
+
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := rootURL(client)
+	if opts != nil {
+		q, err := opts.ToAgencyListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
+		}
+		url += q
+	}
+	pager := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+		return AgenciesPage{SinglePageBase: pagination.SinglePageBase(r)}
+	})
+	pager.Headers = map[string]string{"Content-Type": "application/json"}
+	return pager
 }
