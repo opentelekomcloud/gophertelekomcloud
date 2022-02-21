@@ -3,6 +3,7 @@ package agency
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/roles"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Agency struct {
@@ -55,4 +56,22 @@ func (r ListRolesResult) ExtractRoles() ([]roles.Role, error) {
 	}
 	err := r.ExtractInto(&s)
 	return s.Roles, err
+}
+
+type AgenciesPage struct {
+	pagination.SinglePageBase
+}
+
+func ExtractAgencies(p pagination.Page) ([]Agency, error) {
+	var agencies []Agency
+	err := p.(AgenciesPage).ExtractIntoSlicePtr(&agencies, "agencies")
+	if err != nil {
+		return nil, err
+	}
+	return agencies, nil
+}
+
+func (p AgenciesPage) IsEmpty() (bool, error) {
+	agencies, err := ExtractAgencies(p)
+	return len(agencies) > 0, err
 }
