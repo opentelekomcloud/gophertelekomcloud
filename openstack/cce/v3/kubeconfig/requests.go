@@ -20,6 +20,6 @@ func Get(c *golangsdk.ServiceClient, clusterID string, opts GetOpts) (r GetResul
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(certURL(c, clusterID), b, &r.Body, openstack.StdRequestOpts())
+	_, r.Err = c.Post(rootURL(c, clusterID), b, &r.Body, openstack.StdRequestOpts())
 	return
 }

@@ -1,11 +1,11 @@
-package v1
+package v3
 
 import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v1/kubeconfig"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/kubeconfig"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
