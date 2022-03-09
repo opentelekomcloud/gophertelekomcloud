@@ -50,4 +50,12 @@ func (s *testKubeConfig) TestKubeConfigReading() {
 	kubeConfig, err := clusters.GetCert(client, s.clusterID).ExtractMap()
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfig)
+
+	kubeConfigExp, err := clusters.GetCertWithExpiration(client, s.clusterID, clusters.ExpirationOpts{
+		Duration: -1,
+	}).ExtractMap()
+	th.AssertNoErr(t, err)
+	require.NotEmpty(t, kubeConfigExp)
+
+	require.Equal(t, kubeConfig, kubeConfigExp)
 }
