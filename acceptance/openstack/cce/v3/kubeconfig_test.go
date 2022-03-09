@@ -5,7 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/kubeconfig"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -44,14 +44,10 @@ func (s *testKubeConfig) TearDownSuite() {
 func (s *testKubeConfig) TestKubeConfigLifecycle() {
 	t := s.T()
 
-	client, err := clients.NewCceV1Client()
+	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
-	getOpts := kubeconfig.GetOpts{
-		Duration: -1,
-	}
-
-	kubeConfig, err := kubeconfig.Get(client, s.clusterID, getOpts).Extract()
+	kubeConfig, err := clusters.GetCert(client, s.clusterID).ExtractMap()
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfig)
 }

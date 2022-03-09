@@ -293,6 +293,13 @@ func (r GetCertResult) Extract() (*Certificate, error) {
 	return &s, err
 }
 
+// ExtractMap is a function that accepts a result and extracts a kubeconfig.
+func (r GetCertResult) ExtractMap() (map[string]interface{}, error) {
+	var s map[string]interface{}
+	err := r.ExtractInto(&s)
+	return s, err
+}
+
 // UpdateIpResult represents the result of an update operation. Call its Extract
 // method to interpret it as a Cluster.
 type UpdateIpResult struct {
