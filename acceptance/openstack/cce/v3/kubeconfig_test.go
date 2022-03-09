@@ -41,7 +41,7 @@ func (s *testKubeConfig) TearDownSuite() {
 	}
 }
 
-func (s *testKubeConfig) TestKubeConfigLifecycle() {
+func (s *testKubeConfig) TestKubeConfigReading() {
 	t := s.T()
 
 	client, err := clients.NewCceV3Client()
