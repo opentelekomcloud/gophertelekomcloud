@@ -14,7 +14,7 @@ import (
 type testKubeConfig struct {
 	suite.Suite
 
-	vpcID     string
+	routerID  string
 	subnetID  string
 	clusterID string
 }
@@ -25,12 +25,12 @@ func TestKubeConfig(t *testing.T) {
 
 func (s *testKubeConfig) SetupSuite() {
 	t := s.T()
-	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
+	s.routerID = clients.EnvOS.GetEnv("VPC_ID", "ROUTER_ID")
 	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	if s.vpcID == "" || s.subnetID == "" {
-		t.Skip("OS_VPC_ID and OS_NETWORK_ID are required for this test")
+	if s.routerID == "" || s.subnetID == "" {
+		t.Skip("OS_ROUTER_ID and OS_NETWORK_ID are required for this test")
 	}
-	s.clusterID = cce.CreateCluster(t, s.vpcID, s.subnetID)
+	s.clusterID = cce.CreateCluster(t, s.routerID, s.subnetID)
 }
 
 func (s *testKubeConfig) TearDownSuite() {
@@ -52,10 +52,8 @@ func (s *testKubeConfig) TestKubeConfigReading() {
 	require.NotEmpty(t, kubeConfig)
 
 	kubeConfigExp, err := clusters.GetCertWithExpiration(client, s.clusterID, clusters.ExpirationOpts{
-		Duration: -1,
+		Duration: 5,
 	}).ExtractMap()
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfigExp)
-
-	require.Equal(t, kubeConfig, kubeConfigExp)
 }
