@@ -12,7 +12,7 @@ type WhiteBlackIP struct {
 	// IP address type
 	White int `json:"white"`
 	// Policy ID
-	PolicyID string `json:"policyid"`
+	PolicyID string `json:"policy_id"`
 }
 
 type commonResult struct {
