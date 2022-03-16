@@ -13,7 +13,7 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new cc attack protection rule.
 type CreateOpts struct {
-	Url          string       `json:"url" required:"true"`
+	Path         string       `json:"path" required:"true"`
 	LimitNum     *int         `json:"limit_num" required:"true"`
 	LimitPeriod  *int         `json:"limit_period" required:"true"`
 	LockTime     *int         `json:"lock_time,omitempty"`
