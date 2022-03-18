@@ -16,11 +16,13 @@ type AlarmMasking struct {
 	// False Alarm Masking Rule ID
 	Id string `json:"id"`
 	// False Alarm Maksing Rule URL
-	Url string `json:"url"`
+	Path string `json:"path"`
 	// Rule ID
-	Rule string `json:"rule"`
+	Rule      string `json:"rule"`
+	EventID   string `json:"event_id"`
+	EventType string `json:"event_type"`
 	// Policy ID
-	PolicyID string `json:"policyid"`
+	PolicyID string `json:"policy_id"`
 }
 
 type commonResult struct {

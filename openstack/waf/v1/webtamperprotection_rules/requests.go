@@ -14,7 +14,7 @@ type CreateOptsBuilder interface {
 // CreateOpts contains all the values needed to create a new web tamper protection rule.
 type CreateOpts struct {
 	Hostname string `json:"hostname" required:"true"`
-	Url      string `json:"url" required:"true"`
+	Path     string `json:"path" required:"true"`
 }
 
 // ToWebTamperCreateMap builds a create request body from CreateOpts.

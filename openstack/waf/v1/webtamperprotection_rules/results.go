@@ -6,9 +6,9 @@ import (
 
 type WebTamper struct {
 	Id       string `json:"id"`
-	PolicyID string `json:"policyid"`
+	PolicyID string `json:"policy_id"`
 	Hostname string `json:"hostname"`
-	Url      string `json:"url"`
+	Path     string `json:"path"`
 }
 
 type commonResult struct {
