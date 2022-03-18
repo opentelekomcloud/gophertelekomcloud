@@ -13,7 +13,7 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new datamasking rule.
 type CreateOpts struct {
-	Url      string `json:"url" required:"true"`
+	Path     string `json:"path" required:"true"`
 	Category string `json:"category" required:"true"`
 	Index    string `json:"index" required:"true"`
 }
@@ -43,7 +43,7 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains all the values needed to update a datamasking rule.
 type UpdateOpts struct {
-	Url      string `json:"url" required:"true"`
+	Path     string `json:"path" required:"true"`
 	Category string `json:"category" required:"true"`
 	Index    string `json:"index" required:"true"`
 }

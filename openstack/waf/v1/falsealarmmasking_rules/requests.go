@@ -13,8 +13,8 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new falsealarmmasking rule.
 type CreateOpts struct {
-	Url  string `json:"url" required:"true"`
-	Rule string `json:"rule" required:"true"`
+	Path    string `json:"path" required:"true"`
+	EventID string `json:"rule" required:"true"`
 }
 
 // ToAlarmMaskingCreateMap builds a create request body from CreateOpts.

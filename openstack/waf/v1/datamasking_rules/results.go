@@ -8,13 +8,13 @@ type DataMasking struct {
 	// DataMasking Rule ID
 	Id string `json:"id"`
 	// DataMaksing Rule URL
-	Url string `json:"url"`
+	Path string `json:"path"`
 	// Masked Field
 	Category string `json:"category"`
 	// Masked Subfield
 	Index string `json:"index"`
 	// Policy ID
-	PolicyID string `json:"policyid"`
+	PolicyID string `json:"policy_id"`
 }
 
 type commonResult struct {
