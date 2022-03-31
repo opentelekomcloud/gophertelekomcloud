@@ -22,11 +22,11 @@ type ListOpts struct {
 	// Status indicates whether or not a ElasticIP is currently operational.
 	Status string `json:",omitempty"`
 
-	// PrivateIPAddress of the resource with assigned ElasticIP.
-	PrivateIPAddress string `json:",omitempty"`
+	// PrivateAddress of the resource with assigned ElasticIP.
+	PrivateAddress string `json:",omitempty"`
 
-	// PublicIPAddress of the ElasticIP.
-	PublicIPAddress string `json:",omitempty"`
+	// PublicAddress of the ElasticIP.
+	PublicAddress string `json:",omitempty"`
 
 	// PortID of the resource with assigned ElasticIP.
 	PortID string `json:",omitempty"`
