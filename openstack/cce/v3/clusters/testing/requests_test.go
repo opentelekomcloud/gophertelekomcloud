@@ -120,7 +120,6 @@ func TestCreateV3Cluster(t *testing.T) {
         "name": "test-cluster"
            },
     "spec": {
-		"category": "cce",
         "type": "VirtualMachine",
         "flavor": "cce.s1.small",
         "version": "v1.7.3-r10",
@@ -148,9 +147,8 @@ func TestCreateV3Cluster(t *testing.T) {
 		ApiVersion: "v3",
 		Metadata:   clusters.CreateMetaData{Name: "test-cluster"},
 		Spec: clusters.Spec{Type: "VirtualMachine",
-			Category: "cce",
-			Flavor:   "cce.s1.small",
-			Version:  "v1.7.3-r10",
+			Flavor:  "cce.s1.small",
+			Version: "v1.7.3-r10",
 			HostNetwork: clusters.HostNetworkSpec{
 				VpcId:    "3305eb40-2707-4940-921c-9f335f84a2ca",
 				SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664"},
@@ -185,7 +183,7 @@ func TestCreateV3TurboCluster(t *testing.T) {
         "name": "test-turbo-cluster"
            },
     "spec": {
-		"category": "turbo",
+		"category": "Turbo",
         "type": "VirtualMachine",
         "flavor": "cce.s2.small",
         "version": "v1.19.10-r0",
@@ -217,7 +215,7 @@ func TestCreateV3TurboCluster(t *testing.T) {
 		ApiVersion: "v3",
 		Metadata:   clusters.CreateMetaData{Name: "test-turbo-cluster"},
 		Spec: clusters.Spec{Type: "VirtualMachine",
-			Category: "turbo",
+			Category: "Turbo",
 			Flavor:   "cce.s2.small",
 			Version:  "v1.19.10-r0",
 			HostNetwork: clusters.HostNetworkSpec{
