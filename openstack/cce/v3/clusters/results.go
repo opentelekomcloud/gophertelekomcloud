@@ -42,6 +42,8 @@ type MetaData struct {
 
 // Specifications to create a cluster
 type Spec struct {
+	// Cluster category: CCE, Turbo
+	Category string `json:"category"`
 	// Cluster Type: VirtualMachine, BareMetal, or Windows
 	Type string `json:"type" required:"true"`
 	// Cluster specifications
