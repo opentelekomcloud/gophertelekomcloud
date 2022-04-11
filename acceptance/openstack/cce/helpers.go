@@ -45,6 +45,44 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 	return cluster.Metadata.Id
 }
 
+func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string, eniCidr string) string {
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
+
+	cluster, err := clusters.Create(client, clusters.CreateOpts{
+		Kind:       "Cluster",
+		ApiVersion: "v3",
+		Metadata: clusters.CreateMetaData{
+			Name: strings.ToLower(tools.RandomString("cce-gopher-turbo-", 4)),
+		},
+		Spec: clusters.Spec{
+			Category: "Turbo",
+			Type:     "VirtualMachine",
+			Flavor:   "cce.s1.small",
+			HostNetwork: clusters.HostNetworkSpec{
+				VpcId:    vpcID,
+				SubnetId: subnetID,
+			},
+			ContainerNetwork: clusters.ContainerNetworkSpec{
+				Mode: "eni",
+			},
+			EniNetwork: &clusters.EniNetworkSpec{
+				SubnetId: eniSubnetID,
+				Cidr:     eniCidr,
+			},
+			Authentication: clusters.AuthenticationSpec{
+				Mode:                "rbac",
+				AuthenticatingProxy: make(map[string]string),
+			},
+			KubernetesSvcIpRange: "10.247.0.0/16",
+		},
+	}).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
+	return cluster.Metadata.Id
+}
+
 func DeleteCluster(t *testing.T, clusterID string) {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)

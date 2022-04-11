@@ -50,6 +50,7 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 			v := optsValue.Field(i)
 			f := optsType.Field(i)
 
+			// nolint
 			if f.Name != strings.Title(f.Name) {
 				// fmt.Printf("Skipping field: %s...\n", f.Name)
 				continue
