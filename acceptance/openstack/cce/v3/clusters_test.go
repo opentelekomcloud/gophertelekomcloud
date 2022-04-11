@@ -14,7 +14,6 @@ type testCluster struct {
 	vpcID       string
 	subnetID    string
 	clusterID   string
-	kmsID       string
 	eniSubnetID string
 	eniCidr     string
 }
@@ -27,11 +26,10 @@ func (s *testCluster) SetupSuite() {
 	t := s.T()
 	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
 	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	s.kmsID = clients.EnvOS.GetEnv("KMS_ID")
-	s.eniCidr = "192.168.0.0/24"
 	s.eniSubnetID = clients.EnvOS.GetEnv("ENI_SUBNET_ID")
+	s.eniCidr = "10.0.0.0/14"
 	if s.vpcID == "" || s.subnetID == "" || s.eniSubnetID == "" {
-		t.Skip("OS_VPC_ID, OS_NETWORK_ID and ENI_SUBNET_ID are required for this test")
+		t.Skip("OS_VPC_ID, OS_NETWORK_ID and OS_ENI_SUBNET_ID are required for this test")
 	}
 	s.clusterID = cce.CreateTurboCluster(t, s.vpcID, s.subnetID, s.eniSubnetID, s.eniCidr)
 }
