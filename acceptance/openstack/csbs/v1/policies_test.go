@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"os"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -13,6 +14,9 @@ import (
 )
 
 func TestPoliciesList(t *testing.T) {
+	if os.Getenv("RUN_CSBS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCsbsV1Client()
 	if err != nil {
 		t.Fatalf("Unable to create a CSBSv1 client: %s", err)
@@ -30,6 +34,9 @@ func TestPoliciesList(t *testing.T) {
 }
 
 func TestPoliciesLifeCycle(t *testing.T) {
+	if os.Getenv("RUN_CSBS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCsbsV1Client()
 	if err != nil {
 		t.Fatalf("Unable to create CSBSv1 client: %s", err)
@@ -63,6 +70,9 @@ const (
 )
 
 func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.CreateBackupPolicy, error) {
+	if os.Getenv("RUN_CSBS") == "" {
+		t.Skip("unstable test")
+	}
 	t.Logf("Attempting to create CSBSv1 policy")
 
 	// These values were got from HelpCenter request example
@@ -115,6 +125,9 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 }
 
 func deleteCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, policyId string) {
+	if os.Getenv("RUN_CSBS") == "" {
+		t.Skip("unstable test")
+	}
 	t.Logf("Attempting to delete CSBSv1: %s", policyId)
 
 	err := policies.Delete(client, policyId).Err
@@ -172,6 +185,9 @@ func waitForCSBSPolicyDelete(client *golangsdk.ServiceClient, secs int, policyId
 }
 
 func createComputeInstance(t *testing.T, subnetID string) *servers.Server {
+	if os.Getenv("RUN_CSBS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
@@ -199,6 +215,9 @@ func createComputeInstance(t *testing.T, subnetID string) *servers.Server {
 }
 
 func deleteComputeInstance(t *testing.T, instanceId string) {
+	if os.Getenv("RUN_CSBS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dns/v2/nameservers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dns/v2/zones"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -39,6 +40,14 @@ func TestZonesCRUD(t *testing.T) {
 	zone, err := zones.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 	t.Logf("Created DNS public zone: %s", zone.ID)
+
+	n, err := nameservers.List(client, zone.ID).Extract()
+	th.AssertNoErr(t, err)
+
+	for _, nameserver := range n {
+		tools.PrintResource(t, nameserver)
+	}
+
 	defer func() {
 		t.Logf("Attempting to delete DNS public zone: %s", zone.ID)
 		_, err := zones.Delete(client, zone.ID).Extract()
