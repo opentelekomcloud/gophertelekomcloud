@@ -384,7 +384,7 @@ func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogBuilder, instanc
 	}
 
 	pageRdsList := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ErrorLogPage{pagination.SinglePageBase(r)}
+		return SlowLogPage{pagination.SinglePageBase(r)}
 	})
 
 	rdsheader := map[string]string{"Content-Type": "application/json"}
