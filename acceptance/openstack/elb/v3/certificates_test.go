@@ -10,7 +10,7 @@ import (
 )
 
 func TestCertificateList(t *testing.T) {
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	listOpts := certificates.ListOpts{}
@@ -26,7 +26,7 @@ func TestCertificateList(t *testing.T) {
 }
 
 func TestCertificateLifecycle(t *testing.T) {
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	certificateID := createCertificate(t, client)

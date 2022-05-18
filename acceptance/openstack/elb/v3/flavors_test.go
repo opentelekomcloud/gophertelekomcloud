@@ -9,7 +9,7 @@ import (
 )
 
 func TestFlavorsList(t *testing.T) {
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	listOpts := flavors.ListOpts{}

@@ -14,7 +14,7 @@ import (
 func TestRuleWorkflow(t *testing.T) {
 	t.Parallel()
 
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)

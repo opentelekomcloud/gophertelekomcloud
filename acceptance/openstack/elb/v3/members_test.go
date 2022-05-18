@@ -15,7 +15,7 @@ func iInt(v int) *int {
 }
 
 func TestMemberLifecycle(t *testing.T) {
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
