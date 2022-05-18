@@ -181,7 +181,7 @@ func List(client *golangsdk.ServiceClient, opts ListRdsBuilder) pagination.Pager
 }
 
 type RestartRdsInstanceOpts struct {
-	Restart string `json:"restart" required:"true"`
+	Restart struct{} `json:"restart"`
 }
 
 type RestartRdsInstanceBuilder interface {
