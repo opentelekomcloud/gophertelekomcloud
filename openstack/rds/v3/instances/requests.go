@@ -142,7 +142,7 @@ func Delete(client *golangsdk.ServiceClient, instanceId string) (r DeleteInstanc
 }
 
 type RestartRdsInstanceOpts struct {
-	Restart string `json:"restart" required:"true"`
+	Restart struct{} `json:"restart"`
 }
 
 type RestartRdsInstanceBuilder interface {
