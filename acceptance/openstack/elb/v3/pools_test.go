@@ -10,7 +10,7 @@ import (
 )
 
 func TestPoolList(t *testing.T) {
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	listOpts := pools.ListOpts{}
@@ -26,7 +26,7 @@ func TestPoolList(t *testing.T) {
 }
 
 func TestPoolLifecycle(t *testing.T) {
-	client, err := clients.NewElbV3Client(t)
+	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
