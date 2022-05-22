@@ -46,6 +46,7 @@ type ActionInfo struct {
 
 type AlarmRule struct {
 	AlarmName               string        `json:"alarm_name"`
+	AlarmID                 string        `json:"alarm_id"`
 	AlarmDescription        string        `json:"alarm_description"`
 	AlarmType               string        `json:"alarm_type"`
 	AlarmLevel              int           `json:"alarm_level"`
