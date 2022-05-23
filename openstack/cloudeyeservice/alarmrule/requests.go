@@ -23,6 +23,7 @@ type MetricOpts struct {
 
 type ConditionOpts struct {
 	Period             int    `json:"period" required:"true"`
+	SuppressDuration   int    `json:"suppress_duration"`
 	Filter             string `json:"filter" required:"true"`
 	ComparisonOperator string `json:"comparison_operator" required:"true"`
 	// The Value ranges from 0 to MAX_VALUE
