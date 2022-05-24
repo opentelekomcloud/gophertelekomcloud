@@ -32,6 +32,7 @@ type MetricInfo struct {
 
 type ConditionInfo struct {
 	Period             int    `json:"period"`
+	SuppressDuration   int    `json:"suppress_duration,omitempty"`
 	Filter             string `json:"filter"`
 	ComparisonOperator string `json:"comparison_operator"`
 	Value              int    `json:"value"`
