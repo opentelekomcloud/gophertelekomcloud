@@ -23,20 +23,23 @@ type Vpc struct {
 	// ID is the unique identifier for the vpc.
 	ID string `json:"id"`
 
-	// Name is the human readable name for the vpc. It does not have to be
+	// Name is the human-readable name for the vpc. It does not have to be
 	// unique.
 	Name string `json:"name"`
 
 	// Specifies the range of available subnets in the VPC.
 	CIDR string `json:"cidr"`
 
-	// Status indicates whether or not a vpc is currently operational.
+	// Provides supplementary information about the VPC.
+	Description string `json:"description"`
+
+	// Status indicates whether a vpc is currently operational.
 	Status string `json:"status"`
 
 	// Routes are a collection of static routes that the vpc will host.
 	Routes []Route `json:"routes"`
 
-	// Provides informaion about shared snat
+	// Provides information about shared snat
 	EnableSharedSnat bool `json:"enable_shared_snat"`
 }
 
@@ -70,11 +73,12 @@ func (r VpcPage) IsEmpty() (bool, error) {
 // and extracts the elements into a slice of Vpc structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractVpcs(r pagination.Page) ([]Vpc, error) {
-	var s struct {
-		Vpcs []Vpc `json:"vpcs"`
+	var s []Vpc
+	err := (r.(VpcPage)).ExtractIntoSlicePtr(&s, "vpcs")
+	if err != nil {
+		return nil, err
 	}
-	err := (r.(VpcPage)).ExtractInto(&s)
-	return s.Vpcs, err
+	return s, nil
 }
 
 type commonResult struct {
@@ -83,11 +87,12 @@ type commonResult struct {
 
 // Extract is a function that accepts a result and extracts a vpc.
 func (r commonResult) Extract() (*Vpc, error) {
-	var s struct {
-		Vpc *Vpc `json:"vpc"`
+	s := new(Vpc)
+	err := r.ExtractIntoStructPtr(s, "vpc")
+	if err != nil {
+		return nil, err
 	}
-	err := r.ExtractInto(&s)
-	return s.Vpc, err
+	return s, nil
 }
 
 // CreateResult represents the result of a create operation. Call its Extract

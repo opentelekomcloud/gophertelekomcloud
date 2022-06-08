@@ -17,14 +17,14 @@ type ListOpts struct {
 	// ID is the unique identifier for the vpc.
 	ID string `json:"id"`
 
-	// Name is the human readable name for the vpc. It does not have to be
+	// Name is the human-readable name for the vpc. It does not have to be
 	// unique.
 	Name string `json:"name"`
 
 	// Specifies the range of available subnets in the VPC.
 	CIDR string `json:"cidr"`
 
-	// Status indicates whether or not a vpc is currently operational.
+	// Status indicates whether a vpc is currently operational.
 	Status string `json:"status"`
 }
 
@@ -108,8 +108,9 @@ type CreateOptsBuilder interface {
 // CreateOpts contains all the values needed to create a new vpc. There are
 // no required values.
 type CreateOpts struct {
-	Name string `json:"name,omitempty"`
-	CIDR string `json:"cidr,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	CIDR        string `json:"cidr,omitempty"`
 }
 
 // ToVpcCreateMap builds a create request body from CreateOpts.
@@ -131,8 +132,9 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, reqOpt)
+	_, r.Err = c.Post(rootURL(c), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
 
@@ -150,9 +152,10 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains the values used when updating a vpc.
 type UpdateOpts struct {
-	CIDR             string `json:"cidr,omitempty"`
-	Name             string `json:"name,omitempty"`
-	EnableSharedSnat *bool  `json:"enable_shared_snat,omitempty"`
+	Name             string  `json:"name,omitempty"`
+	Description      *string `json:"description,omitempty"`
+	CIDR             string  `json:"cidr,omitempty"`
+	EnableSharedSnat *bool   `json:"enable_shared_snat,omitempty"`
 }
 
 // ToVpcUpdateMap builds an update body based on UpdateOpts.
