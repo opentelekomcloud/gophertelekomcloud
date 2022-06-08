@@ -9,7 +9,7 @@ type Subnet struct {
 	// ID is the unique identifier for the subnet.
 	ID string `json:"id"`
 
-	// Name is the human readable name for the subnet. It does not have to be
+	// Name is the human-readable name for the subnet. It does not have to be
 	// unique.
 	Name string `json:"name"`
 
@@ -22,7 +22,7 @@ type Subnet struct {
 	// Specifies the IP address list of DNS servers on the subnet.
 	DNSList []string `json:"dnsList"`
 
-	// Status indicates whether or not a subnet is currently operational.
+	// Status indicates whether a subnet is currently operational.
 	Status string `json:"status"`
 
 	// Specifies the gateway of the subnet.
@@ -90,7 +90,10 @@ func (r SubnetPage) IsEmpty() (bool, error) {
 func ExtractSubnets(r pagination.Page) ([]Subnet, error) {
 	var s []Subnet
 	err := (r.(SubnetPage)).ExtractIntoSlicePtr(&s, "subnets")
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 type commonResult struct {
@@ -101,7 +104,10 @@ type commonResult struct {
 func (r commonResult) Extract() (*Subnet, error) {
 	s := new(Subnet)
 	err := r.ExtractIntoStructPtr(s, "subnet")
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
