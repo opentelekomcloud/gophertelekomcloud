@@ -130,16 +130,18 @@ func waitForEipToDelete(client *golangsdk.ServiceClient, eipID string, secs int)
 func createSubnet(t *testing.T, client *golangsdk.ServiceClient, vpcID string) *subnets.Subnet {
 	enableDHCP := true
 	createSubnetOpts := subnets.CreateOpts{
-		Name:       tools.RandomString("acc-subnet-", 3),
-		CIDR:       "192.168.20.0/24",
-		GatewayIP:  "192.168.20.1",
-		EnableDHCP: &enableDHCP,
-		VpcID:      vpcID,
+		Name:        tools.RandomString("acc-subnet-", 3),
+		Description: "some description",
+		CIDR:        "192.168.20.0/24",
+		GatewayIP:   "192.168.20.1",
+		EnableDHCP:  &enableDHCP,
+		VpcID:       vpcID,
 	}
 	t.Logf("Attempting to create subnet: %s", createSubnetOpts.Name)
 
 	subnet, err := subnets.Create(client, createSubnetOpts).Extract()
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, subnet.Description, createSubnetOpts.Description)
 
 	// wait to be active
 	t.Logf("Waitting for subnet %s to be active", subnet.ID)
