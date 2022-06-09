@@ -167,7 +167,7 @@ type UpdateOptsBuilder interface {
 // UpdateOpts contains the values used when updating a subnets.
 type UpdateOpts struct {
 	Name          string         `json:"name,omitempty"`
-	Description   string         `json:"description,omitempty"`
+	Description   *string        `json:"description,omitempty"`
 	EnableDHCP    *bool          `json:"dhcp_enable,omitempty"`
 	PrimaryDNS    string         `json:"primary_dns,omitempty"`
 	SecondaryDNS  string         `json:"secondary_dns,omitempty"`

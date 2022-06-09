@@ -42,8 +42,10 @@ func TestSubnetsLifecycle(t *testing.T) {
 	tools.PrintResource(t, subnet)
 
 	// Update a subnet
+	emptyDescription := ""
 	updateOpts := &subnets.UpdateOpts{
-		Name: tools.RandomString("acc-subnet-", 3),
+		Name:        tools.RandomString("acc-subnet-", 3),
+		Description: &emptyDescription,
 	}
 	t.Logf("Attempting to update name of subnet to %s", updateOpts.Name)
 	_, err = subnets.Update(client, subnet.VpcID, subnet.ID, updateOpts).Extract()
@@ -53,4 +55,5 @@ func TestSubnetsLifecycle(t *testing.T) {
 	newSubnet, err := subnets.Get(client, subnet.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newSubnet.Name)
+	th.AssertEquals(t, emptyDescription, newSubnet.Description)
 }
