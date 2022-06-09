@@ -191,7 +191,7 @@ type ExtendedUpdateOpts struct {
 	Enabled *bool `json:"enabled,omitempty"`
 
 	// Description is a description of the user.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 
 	// Email is the email of the user
 	Email string `json:"email,omitempty"`
