@@ -19,7 +19,7 @@ type User struct {
 	// DomainID is the domain ID the user belongs to.
 	DomainID string `json:"domain_id"`
 
-	// Enabled is whether or not the user is enabled.
+	// Enabled is whether the user is enabled.
 	Enabled bool `json:"enabled"`
 
 	// ID is the unique ID of the user.
@@ -110,7 +110,7 @@ type UserPage struct {
 	pagination.LinkedPageBase
 }
 
-// IsEmpty determines whether or not a UserPage contains any results.
+// IsEmpty determines whether a UserPage contains any results.
 func (r UserPage) IsEmpty() (bool, error) {
 	users, err := ExtractUsers(r)
 	return len(users) == 0, err
@@ -133,20 +133,22 @@ func (r UserPage) NextPageURL() (string, error) {
 
 // ExtractUsers returns a slice of Users contained in a single page of results.
 func ExtractUsers(r pagination.Page) ([]User, error) {
-	var s struct {
-		Users []User `json:"users"`
+	var s []User
+	err := (r.(UserPage)).ExtractIntoSlicePtr(&s, "users")
+	if err != nil {
+		return nil, err
 	}
-	err := (r.(UserPage)).ExtractInto(&s)
-	return s.Users, err
+	return s, nil
 }
 
 // Extract interprets any user results as a User.
 func (r userResult) Extract() (*User, error) {
-	var s struct {
-		User *User `json:"user"`
+	s := new(User)
+	err := r.ExtractIntoStructPtr(s, "user")
+	if err != nil {
+		return nil, err
 	}
-	err := r.ExtractInto(&s)
-	return s.User, err
+	return s, nil
 }
 
 type AddMembershipResult struct {
