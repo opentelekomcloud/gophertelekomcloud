@@ -141,7 +141,7 @@ type UpdateOpts struct {
 	Password string `json:"password,omitempty"`
 
 	// Description is a description of the user.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 }
 
 // ToUserUpdateMap formats a UpdateOpts into an update request.
