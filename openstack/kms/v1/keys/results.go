@@ -9,6 +9,11 @@ type commonResult struct {
 	golangsdk.Result
 }
 
+// GetRotationResult contains the response body and error from a Get request.
+type GetRotationResult struct {
+	golangsdk.Result
+}
+
 // Key contains all the information associated with a CMK.
 type Key struct {
 	// Current ID of a CMK
@@ -105,6 +110,17 @@ type ListResult struct {
 	commonResult
 }
 
+type KeyRotationResult struct {
+	// Key rotation status. The default value is false, indicating that key rotation is disabled.
+	Enabled bool `json:"key_rotation_enabled"`
+	// Rotation interval. The value is an integer in the range 30 to 365.
+	Interval int `json:"rotation_interval"`
+	// Last key rotation time. The timestamp indicates the total microseconds past the start of the epoch date (January 1, 1970).
+	LastRotationTime string `json:"last_rotation_time"`
+	// Number of key rotations.
+	NumberOfRotations int `json:"number_of_rotations"`
+}
+
 func (r commonResult) ExtractListKey() (*ListKey, error) {
 	var s *ListKey
 	err := r.ExtractInto(&s)
@@ -172,4 +188,10 @@ func ExtractKeys(r pagination.Page) ([]Key, error) {
 		return nil, err
 	}
 	return s.Keys, nil
+}
+
+func (r GetRotationResult) ExtractResult() (KeyRotationResult, error) {
+	var s KeyRotationResult
+	err := r.ExtractInto(&s)
+	return s, err
 }

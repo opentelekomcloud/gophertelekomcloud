@@ -38,6 +38,22 @@ func enableKeyURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL(resourcePath, "enable-key")
 }
 
+func enableKeyRotationURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(resourcePath, "enable-key-rotation")
+}
+
+func disableKeyRotationURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(resourcePath, "disable-key-rotation")
+}
+
+func getKeyRotationStatusURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(resourcePath, "get-key-rotation-status")
+}
+
+func updateKeyRotationIntervalURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(resourcePath, "update-key-rotation-interval")
+}
+
 func disableKeyURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL(resourcePath, "disable-key")
 }
