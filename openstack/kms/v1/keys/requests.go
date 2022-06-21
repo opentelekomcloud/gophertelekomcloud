@@ -72,7 +72,7 @@ type RotationOpts struct {
 	// ID of a CMK
 	KeyID string `json:"key_id" required:"true"`
 	// Rotation interval of a CMK
-	Interval int `json:"rotation_interval" required:"true"`
+	Interval int `json:"rotation_interval"`
 	// 36-byte serial number of a request message
 	Sequence string `json:"sequence,omitempty"`
 }
@@ -297,7 +297,9 @@ func EnableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder
 		return
 	}
 
-	_, r.Err = client.Post(enableKeyRotationURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(enableKeyRotationURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
 
@@ -307,7 +309,9 @@ func DisableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilde
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(disableKeyRotationURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(disableKeyRotationURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
 
@@ -317,7 +321,9 @@ func GetKeyRotationStatus(client *golangsdk.ServiceClient, opts RotationOptsBuil
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(getKeyRotationStatusURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(getKeyRotationStatusURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 
 	return
 }
@@ -328,6 +334,8 @@ func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts RotationOpt
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(updateKeyRotationIntervalURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(updateKeyRotationIntervalURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
