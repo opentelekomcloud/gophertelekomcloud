@@ -68,6 +68,15 @@ type ListOpts struct {
 	Marker   string `json:"marker,omitempty"`
 }
 
+type RotationOpts struct {
+	// ID of a CMK
+	KeyID string `json:"key_id" required:"true"`
+	// Rotation interval of a CMK
+	Interval int `json:"rotation_interval" required:"true"`
+	// 36-byte serial number of a request message
+	Sequence string `json:"sequence,omitempty"`
+}
+
 // ToKeyCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToKeyCreateMap() (map[string]interface{}, error) {
@@ -104,6 +113,12 @@ func (opts ListOpts) ToKeyListMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
+// ToKeyRotationMap assembles a request body based on the contents of a
+// RotationOpts.
+func (opts RotationOpts) ToKeyRotationMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
 type CreateOptsBuilder interface {
 	ToKeyCreateMap() (map[string]interface{}, error)
 }
@@ -130,6 +145,10 @@ type EncryptDEKOptsBuilder interface {
 
 type ListOptsBuilder interface {
 	ToKeyListMap() (map[string]interface{}, error)
+}
+
+type RotationOptsBuilder interface {
+	ToKeyRotationMap() (map[string]interface{}, error)
 }
 
 // Create will create a new key based on the values in CreateOpts. To ExtractKeyInfo
@@ -268,5 +287,47 @@ func ListAllKeys(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r ListR
 	_, r.Err = client.Post(listURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	return
+}
+
+func EnableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.ErrResult) {
+	b, err := opts.ToKeyRotationMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Post(enableKeyRotationURL(client), b, &r.Body, nil)
+	return
+}
+
+func DisableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r ExtractUpdateKeyStateResult) {
+	b, err := opts.ToKeyRotationMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(disableKeyRotationURL(client), b, &r.Body, nil)
+	return
+}
+
+func GetKeyRotationStatus(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r GetRotationResult) {
+	b, err := opts.ToKeyRotationMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(getKeyRotationStatusURL(client), b, &r.Body, nil)
+
+	return
+}
+
+func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.ErrResult) {
+	b, err := opts.ToKeyRotationMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(updateKeyRotationIntervalURL(client), b, &r.Body, nil)
 	return
 }
