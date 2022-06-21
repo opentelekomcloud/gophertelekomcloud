@@ -301,7 +301,7 @@ func EnableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder
 	return
 }
 
-func DisableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r ExtractUpdateKeyStateResult) {
+func DisableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.ErrResult) {
 	b, err := opts.ToKeyRotationMap()
 	if err != nil {
 		r.Err = err
