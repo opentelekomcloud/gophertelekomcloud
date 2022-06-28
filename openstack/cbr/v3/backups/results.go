@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type backupResult struct {
@@ -14,11 +15,6 @@ type GetResult struct {
 	backupResult
 }
 
-type RestoreMode string
-type ImageType string
-type ResourceType string
-type Status string
-
 type Backup struct {
 	CheckpointId string            `json:"checkpoint_id"`
 	CreatedAt    string            `json:"created_at"`
@@ -26,7 +22,7 @@ type Backup struct {
 	ExpiredAt    string            `json:"expired_at"`
 	ExtendInfo   *BackupExtendInfo `json:"extend_info"`
 	ID           string            `json:"id"`
-	ImageType    ImageType         `json:"image_type"`
+	ImageType    string            `json:"image_type"`
 	Name         string            `json:"name"`
 	ParentId     string            `json:"parent_id"`
 	ProjectId    string            `json:"project_id"`
@@ -35,8 +31,8 @@ type Backup struct {
 	ResourceID   string            `json:"resource_id"`
 	ResourceName string            `json:"resource_name"`
 	ResourceSize int               `json:"resource_size"`
-	ResourceType ResourceType      `json:"resource_type"`
-	Status       Status            `json:"status"`
+	ResourceType string            `json:"resource_type"`
+	Status       string            `json:"status"`
 	UpdatedAt    string            `json:"updated_at"`
 	VaultId      string            `json:"vault_id"`
 	ProviderId   string            `json:"provider_id"`
@@ -48,7 +44,7 @@ type BackupExtendInfo struct {
 	Incremental          bool        `json:"incremental"`
 	SnapshotId           string      `json:"snapshot_id"`
 	SupportLld           bool        `json:"support_lld"`
-	SupportedRestoreMode RestoreMode `json:"supported_restore_mode"`
+	SupportedRestoreMode string      `json:"supported_restore_mode"`
 	OsImagesData         []ImageData `json:"os_images_data"`
 	ContainSystemDisk    bool        `json:"contain_system_disk"`
 	Encrypted            bool        `json:"encrypted"`
@@ -62,7 +58,7 @@ type BackupResp struct {
 	ExpiredAt    string            `json:"expired_at"`
 	ExtendInfo   *BackupExtendInfo `json:"extend_info"`
 	ID           string            `json:"id"`
-	ImageType    ImageType         `json:"image_type"`
+	ImageType    string            `json:"image_type"`
 	Name         string            `json:"name"`
 	ParentId     string            `json:"parent_id"`
 	ProjectId    string            `json:"project_id"`
@@ -71,8 +67,8 @@ type BackupResp struct {
 	ResourceID   string            `json:"resource_id"`
 	ResourceName string            `json:"resource_name"`
 	ResourceSize int               `json:"resource_size"`
-	ResourceType ResourceType      `json:"resource_type"`
-	Status       Status            `json:"status"`
+	ResourceType string            `json:"resource_type"`
+	Status       string            `json:"status"`
 	UpdatedAt    string            `json:"updated_at"`
 	VaultId      string            `json:"vault_id"`
 	ProviderId   string            `json:"provider_id"`
@@ -94,4 +90,17 @@ func (r backupResult) Extract() (*Backup, error) {
 		return nil, fmt.Errorf("error extracting backup from get response: %s", err)
 	}
 	return s.Backup, err
+}
+
+type BackupPage struct {
+	pagination.SinglePageBase
+}
+
+func ExtractBackups(r pagination.Page) ([]Backup, error) {
+	var s []Backup
+	err := r.(BackupPage).Result.ExtractIntoSlicePtr(&s, "backups")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
