@@ -11,3 +11,7 @@ func singleURL(client *golangsdk.ServiceClient, id string) string {
 func listURL(client *golangsdk.ServiceClient) string {
 	return client.ServiceURL(rootURL)
 }
+
+func restoreUrl(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(rootURL, id, "restore")
+}

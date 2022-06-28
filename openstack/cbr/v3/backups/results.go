@@ -1,8 +1,6 @@
 package backups
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -36,7 +34,7 @@ type Backup struct {
 	UpdatedAt    string            `json:"updated_at"`
 	VaultId      string            `json:"vault_id"`
 	ProviderId   string            `json:"provider_id"`
-	Children     *[]BackupResp     `json:"children"`
+	Children     []BackupResp      `json:"children"`
 }
 type BackupExtendInfo struct {
 	AutoTrigger          bool        `json:"auto_trigger"`
@@ -79,17 +77,12 @@ type ImageData struct {
 }
 
 func (r backupResult) Extract() (*Backup, error) {
-	var s struct {
-		Backup *Backup `json:"backup"`
-	}
-	if r.Err != nil {
-		return nil, r.Err
-	}
-	err := r.ExtractInto(&s)
+	s := new(Backup)
+	err := r.ExtractIntoStructPtr(s, "backup")
 	if err != nil {
-		return nil, fmt.Errorf("error extracting backup from get response: %s", err)
+		return nil, err
 	}
-	return s.Backup, err
+	return s, nil
 }
 
 type BackupPage struct {
@@ -103,4 +96,12 @@ func ExtractBackups(r pagination.Page) ([]Backup, error) {
 		return nil, err
 	}
 	return s, nil
+}
+
+type DeleteResult struct {
+	golangsdk.ErrResult
+}
+
+type RestoreBackupResult struct {
+	golangsdk.ErrResult
 }
