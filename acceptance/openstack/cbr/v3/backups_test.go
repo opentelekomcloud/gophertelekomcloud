@@ -13,7 +13,7 @@ import (
 )
 
 func TestBackupLifecycle(t *testing.T) {
-	clientCbr, err := clients.NewCbrV3Client()
+	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
 	// Create Vault for further backup
@@ -28,10 +28,10 @@ func TestBackupLifecycle(t *testing.T) {
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
 	}
-	vault, err := vaults.Create(clientCbr, opts).Extract()
+	vault, err := vaults.Create(client, opts).Extract()
 	th.AssertNoErr(t, err)
 	defer func() {
-		th.AssertNoErr(t, vaults.Delete(clientCbr, vault.ID).ExtractErr())
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
 	}()
 
 	// Create Volume
@@ -47,26 +47,26 @@ func TestBackupLifecycle(t *testing.T) {
 			},
 		},
 	}
-	associated, err := vaults.AssociateResources(clientCbr, vault.ID, aOpts).Extract()
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(associated))
 
 	// Create vault checkpoint
 	optsVault := checkpoint.CreateOpts{
-		VaultId: vault.ID,
+		VaultID: vault.ID,
 		Parameters: checkpoint.CheckpointParam{
 			Description: "go created backup",
 			Incremental: true,
 			Name:        tools.RandomString("go-checkpoint", 5),
 		},
 	}
-	checkp := CreateChekpoint(t, clientCbr, optsVault)
+	checkp := CreateChekpoint(t, client, optsVault)
 	th.AssertEquals(t, vault.ID, checkp.Vault.ID)
 	th.AssertEquals(t, optsVault.Parameters.Description, checkp.ExtraInfo.Description)
 	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)
 	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
 
-	checkpointGet, err := checkpoint.Get(clientCbr, checkp.ID).Extract()
+	checkpointGet, err := checkpoint.Get(client, checkp.ID).Extract()
 	th.AssertNoErr(t, err)
 	// Checks are disabled due to STO-10008 bug
 	// th.AssertEquals(t, description, checkpointGet.ExtraInfo.Description)
@@ -75,7 +75,7 @@ func TestBackupLifecycle(t *testing.T) {
 	th.AssertEquals(t, vault.ID, checkpointGet.Vault.ID)
 	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
 
-	allPages, err := backups.List(clientCbr, backups.ListOpts{CheckpointID: checkp.ID}).AllPages()
+	allPages, err := backups.List(client, backups.ListOpts{CheckpointID: checkp.ID}).AllPages()
 	th.AssertNoErr(t, err)
 	allBackups, err := backups.ExtractBackups(allPages)
 	th.AssertNoErr(t, err)
@@ -84,9 +84,9 @@ func TestBackupLifecycle(t *testing.T) {
 			VolumeID: allBackups[0].ResourceID,
 		},
 	}
-	restoreErr := RestoreBackup(t, clientCbr, allBackups[0].ID, bOpts)
+	restoreErr := RestoreBackup(t, client, allBackups[0].ID, bOpts)
 	th.AssertNoErr(t, restoreErr)
-	errBack := backups.Delete(clientCbr, allBackups[0].ID).ExtractErr()
+	errBack := backups.Delete(client, allBackups[0].ID).ExtractErr()
 	th.AssertNoErr(t, errBack)
-	th.AssertNoErr(t, waitForBackupDelete(clientCbr, 600, allBackups[0].ID))
+	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
 }

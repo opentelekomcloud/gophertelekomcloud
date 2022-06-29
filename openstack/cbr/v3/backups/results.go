@@ -64,12 +64,12 @@ type BackupResp struct {
 	ResourceType string            `json:"resource_type"`
 	Status       string            `json:"status"`
 	UpdatedAt    string            `json:"updated_at"`
-	VaultId      string            `json:"vault_id"`
+	VaultID      string            `json:"vault_id"`
 	ProviderID   string            `json:"provider_id"`
 }
 
 type ImageData struct {
-	ImageId string `json:"image_id"`
+	ImageID string `json:"image_id"`
 }
 
 func (r GetResult) Extract() (*Backup, error) {

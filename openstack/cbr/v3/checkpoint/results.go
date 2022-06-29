@@ -17,7 +17,7 @@ type GetResult struct {
 type Checkpoint struct {
 	CreatedAt string    `json:"created_at"`
 	ID        string    `json:"id"`
-	ProjectId string    `json:"project_id"`
+	ProjectID string    `json:"project_id"`
 	Status    string    `json:"status"`
 	Vault     Vault     `json:"vault"`
 	ExtraInfo ExtraInfo `json:"extra_info"`

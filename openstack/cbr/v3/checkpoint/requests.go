@@ -10,7 +10,7 @@ type CreateOptsBuilder interface {
 
 type CreateOpts struct {
 	// ID of the vault
-	VaultId string `json:"vault_id" required:"true"`
+	VaultID string `json:"vault_id" required:"true"`
 	// Checkpoint parameters
 	Parameters CheckpointParam `json:"parameters,omitempty"`
 }

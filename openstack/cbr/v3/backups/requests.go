@@ -1,8 +1,6 @@
 package backups
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -96,7 +94,7 @@ func (opts RestoreBackupOpts) ToRestoreBackup() (map[string]interface{}, error) 
 func RestoreBackup(client *golangsdk.ServiceClient, backupID string, opts RestoreResourcesOptsBuilder) (r RestoreBackupResult) {
 	b, err := opts.ToRestoreBackup()
 	if err != nil {
-		r.Err = fmt.Errorf("failed to restore backup: %s", err)
+		r.Err = err
 		return
 	}
 	_, r.Err = client.Post(restoreURL(client, backupID), b, &r.Body, &golangsdk.RequestOpts{

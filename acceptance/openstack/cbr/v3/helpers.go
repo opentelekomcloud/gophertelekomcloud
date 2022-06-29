@@ -57,9 +57,13 @@ func RestoreBackup(t *testing.T, client *golangsdk.ServiceClient, id string, opt
 func waitForBackupDelete(client *golangsdk.ServiceClient, secs int, id string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		_, err := backups.Get(client, id).Extract()
-		if _, ok := err.(golangsdk.ErrDefault404); ok {
-			return true, nil
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
 		}
+
 		return false, nil
 	})
 }
