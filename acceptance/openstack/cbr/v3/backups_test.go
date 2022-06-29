@@ -79,6 +79,7 @@ func TestBackupLifecycle(t *testing.T) {
 	allPages, err := backups.List(clientCbr, backups.ListOpts{CheckpointId: checkp.Id}).AllPages()
 	th.AssertNoErr(t, err)
 	allBackups, err := backups.ExtractBackups(allPages)
+	th.AssertNoErr(t, err)
 	bOpts := backups.RestoreBackupOpts{
 		Restore: backups.RestoreBackupStruct{
 			VolumeId: allBackups[0].ResourceID,
@@ -88,5 +89,5 @@ func TestBackupLifecycle(t *testing.T) {
 	th.AssertNoErr(t, backupErr)
 	deletePage := backups.Delete(clientCbr, allBackups[0].ID).ExtractErr()
 	th.AssertNoErr(t, deletePage)
-	waitForBackupDelete(clientCbr, 600, allBackups[0].ID)
+	th.AssertNoErr(t, waitForBackupDelete(clientCbr, 600, allBackups[0].ID))
 }
