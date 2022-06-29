@@ -16,6 +16,9 @@ type ListOptsBuilder interface {
 	ToBackupListQuery() (string, error)
 }
 
+// ListOpts allows the filtering and sorting of paginated collections through
+// the API. Filtering is achieved by passing in struct field values that map to
+// the flavor attributes you want to see returned.
 type ListOpts struct {
 	CheckpointId   string `q:"checkpoint_id"`
 	DedicatedCloud bool   `q:"dec"`

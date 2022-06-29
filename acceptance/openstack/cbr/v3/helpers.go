@@ -1,0 +1,67 @@
+package v3
+
+import (
+	"fmt"
+	"testing"
+
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/backups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/checkpoint"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+)
+
+func CreateChekpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts checkpoint.CreateOpts) *checkpoint.Checkpoint {
+	backup, err := checkpoint.Create(client, createOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	err = golangsdk.WaitFor(600, func() (bool, error) {
+		checkp, err := checkpoint.Get(client, backup.Id).Extract()
+		if err != nil {
+			return false, err
+		}
+		if checkp.Status == "available" {
+			return true, nil
+		}
+		if checkp.Status == "error" {
+			return false, fmt.Errorf("error creating a checkpoint")
+		}
+		return false, nil
+	})
+	th.AssertNoErr(t, err)
+
+	return backup
+}
+
+func RestoreBackup(t *testing.T, client *golangsdk.ServiceClient, id string, opts backups.RestoreBackupOpts) error {
+	restore := backups.RestoreBackup(client, id, opts).ExtractErr()
+	if restore != nil {
+		return fmt.Errorf("error during request extraction")
+	}
+
+	err := golangsdk.WaitFor(600, func() (bool, error) {
+		back, err := backups.Get(client, id).Extract()
+		if err != nil {
+			return false, err
+		}
+		if back.Status == "available" {
+			return true, nil
+		}
+		if back.Status == "error" {
+			return false, fmt.Errorf("error restoring a backup")
+		}
+		return false, nil
+	})
+	th.AssertNoErr(t, err)
+
+	return err
+}
+
+func waitForBackupDelete(client *golangsdk.ServiceClient, secs int, id string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		_, err := backups.Get(client, id).Extract()
+		if _, ok := err.(golangsdk.ErrDefault404); ok {
+			return true, nil
+		}
+		return false, nil
+	})
+}
