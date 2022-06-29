@@ -2,12 +2,12 @@ package checkpoint
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
-const baseURL = "checkpoints"
+const basePath = "checkpoints"
 
-func rootUrl(client *golangsdk.ServiceClient) string {
-	return client.ServiceURL(baseURL)
+func rootURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(basePath)
 }
 
-func checkpointUrl(client *golangsdk.ServiceClient, id string) string {
-	return client.ServiceURL(baseURL, id)
+func checkpointURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(basePath, id)
 }

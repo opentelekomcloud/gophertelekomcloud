@@ -5,16 +5,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type backupResult struct {
+type GetResult struct {
 	golangsdk.Result
 }
 
-type GetResult struct {
-	backupResult
-}
-
 type Backup struct {
-	CheckpointId string            `json:"checkpoint_id"`
+	CheckpointID string            `json:"checkpoint_id"`
 	CreatedAt    string            `json:"created_at"`
 	Description  string            `json:"description"`
 	ExpiredAt    string            `json:"expired_at"`
@@ -22,8 +18,8 @@ type Backup struct {
 	ID           string            `json:"id"`
 	ImageType    string            `json:"image_type"`
 	Name         string            `json:"name"`
-	ParentId     string            `json:"parent_id"`
-	ProjectId    string            `json:"project_id"`
+	ParentID     string            `json:"parent_id"`
+	ProjectID    string            `json:"project_id"`
 	ProtectedAt  string            `json:"protected_at"`
 	ResourceAZ   string            `json:"resource_az"`
 	ResourceID   string            `json:"resource_id"`
@@ -33,14 +29,14 @@ type Backup struct {
 	Status       string            `json:"status"`
 	UpdatedAt    string            `json:"updated_at"`
 	VaultId      string            `json:"vault_id"`
-	ProviderId   string            `json:"provider_id"`
+	ProviderID   string            `json:"provider_id"`
 	Children     []BackupResp      `json:"children"`
 }
 type BackupExtendInfo struct {
 	AutoTrigger          bool        `json:"auto_trigger"`
 	Bootable             bool        `json:"bootable"`
 	Incremental          bool        `json:"incremental"`
-	SnapshotId           string      `json:"snapshot_id"`
+	SnapshotID           string      `json:"snapshot_id"`
 	SupportLld           bool        `json:"support_lld"`
 	SupportedRestoreMode string      `json:"supported_restore_mode"`
 	OsImagesData         []ImageData `json:"os_images_data"`
@@ -50,7 +46,7 @@ type BackupExtendInfo struct {
 }
 
 type BackupResp struct {
-	CheckpointId string            `json:"checkpoint_id"`
+	CheckpointID string            `json:"checkpoint_id"`
 	CreatedAt    string            `json:"created_at"`
 	Description  string            `json:"description"`
 	ExpiredAt    string            `json:"expired_at"`
@@ -58,8 +54,8 @@ type BackupResp struct {
 	ID           string            `json:"id"`
 	ImageType    string            `json:"image_type"`
 	Name         string            `json:"name"`
-	ParentId     string            `json:"parent_id"`
-	ProjectId    string            `json:"project_id"`
+	ParentID     string            `json:"parent_id"`
+	ProjectID    string            `json:"project_id"`
 	ProtectedAt  string            `json:"protected_at"`
 	ResourceAZ   string            `json:"resource_az"`
 	ResourceID   string            `json:"resource_id"`
@@ -69,14 +65,14 @@ type BackupResp struct {
 	Status       string            `json:"status"`
 	UpdatedAt    string            `json:"updated_at"`
 	VaultId      string            `json:"vault_id"`
-	ProviderId   string            `json:"provider_id"`
+	ProviderID   string            `json:"provider_id"`
 }
 
 type ImageData struct {
 	ImageId string `json:"image_id"`
 }
 
-func (r backupResult) Extract() (*Backup, error) {
+func (r GetResult) Extract() (*Backup, error) {
 	s := new(Backup)
 	err := r.ExtractIntoStructPtr(s, "backup")
 	if err != nil {

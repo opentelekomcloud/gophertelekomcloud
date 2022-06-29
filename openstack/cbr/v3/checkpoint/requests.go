@@ -1,8 +1,6 @@
 package checkpoint
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
@@ -12,14 +10,14 @@ type CreateOptsBuilder interface {
 
 type CreateOpts struct {
 	// ID of the vault
-	VaultId string `json:"vault_id"`
+	VaultId string `json:"vault_id" required:"true"`
 	// Checkpoint parameters
 	Parameters CheckpointParam `json:"parameters,omitempty"`
 }
 
 type Resource struct {
-	// Id of the resource to be backed up
-	Id string `json:"id"`
+	// ID of the resource to be backed up
+	ID string `json:"id"`
 	// Name of the resource to be backed up
 	Name string `json:"name,omitempty"`
 	// Type of the resource to be backed up
@@ -51,17 +49,16 @@ func (opts CreateOpts) ToCheckpointCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	reqBody, err := opts.ToCheckpointCreateMap()
 	if err != nil {
-		r.Err = fmt.Errorf("failed to create checkpoint create map: %s", err)
+		r.Err = err
 		return
 	}
-	_, err = client.Post(rootUrl(client), reqBody, &r.Body, &golangsdk.RequestOpts{
+	_, err = client.Post(rootURL(client), reqBody, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	r.Err = err
 	return
 }
 
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(checkpointUrl(client, id), &r.Body, nil)
+	_, r.Err = client.Get(checkpointURL(client, id), &r.Body, nil)
 	return
 }

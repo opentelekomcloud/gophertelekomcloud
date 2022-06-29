@@ -16,7 +16,7 @@ type GetResult struct {
 
 type Checkpoint struct {
 	CreatedAt string    `json:"created_at"`
-	Id        string    `json:"id"`
+	ID        string    `json:"id"`
 	ProjectId string    `json:"project_id"`
 	Status    string    `json:"status"`
 	Vault     Vault     `json:"vault"`
@@ -24,7 +24,7 @@ type Checkpoint struct {
 }
 
 type Vault struct {
-	Id               string                `json:"id"`
+	ID               string                `json:"id"`
 	Name             string                `json:"name"`
 	Resources        []CheckpointResources `json:"resources"`
 	SkippedResources []SkippedResources    `json:"skipped_resources"`
@@ -38,7 +38,7 @@ type ExtraInfo struct {
 
 type CheckpointResources struct {
 	ExtraInfo     string `json:"extra_info"`
-	Id            string `json:"id"`
+	ID            string `json:"id"`
 	Name          string `json:"name"`
 	ProtectStatus string `json:"protect_status"`
 	ResourceSize  string `json:"resource_size"`
@@ -48,7 +48,7 @@ type CheckpointResources struct {
 }
 
 type SkippedResources struct {
-	Id     string `json:"id"`
+	ID     string `json:"id"`
 	Type   string `json:"type"`
 	Name   string `json:"name"`
 	Code   string `json:"code"`
@@ -56,9 +56,10 @@ type SkippedResources struct {
 }
 
 func (r checkpointResult) Extract() (*Checkpoint, error) {
-	var s struct {
-		Checkpoint *Checkpoint `json:"checkpoint"`
+	s := new(Checkpoint)
+	err := r.ExtractIntoStructPtr(s, "checkpoint")
+	if err != nil {
+		return nil, err
 	}
-	err := r.ExtractInto(&s)
-	return s.Checkpoint, err
+	return s, nil
 }

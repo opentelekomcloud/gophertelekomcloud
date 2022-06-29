@@ -15,7 +15,7 @@ func CreateChekpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts c
 	th.AssertNoErr(t, err)
 
 	err = golangsdk.WaitFor(600, func() (bool, error) {
-		checkp, err := checkpoint.Get(client, backup.Id).Extract()
+		checkp, err := checkpoint.Get(client, backup.ID).Extract()
 		if err != nil {
 			return false, err
 		}
@@ -33,10 +33,8 @@ func CreateChekpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts c
 }
 
 func RestoreBackup(t *testing.T, client *golangsdk.ServiceClient, id string, opts backups.RestoreBackupOpts) error {
-	restore := backups.RestoreBackup(client, id, opts).ExtractErr()
-	if restore != nil {
-		return fmt.Errorf("error during request extraction")
-	}
+	errRest := backups.RestoreBackup(client, id, opts).ExtractErr()
+	th.AssertNoErr(t, errRest)
 
 	err := golangsdk.WaitFor(600, func() (bool, error) {
 		back, err := backups.Get(client, id).Extract()
@@ -53,7 +51,7 @@ func RestoreBackup(t *testing.T, client *golangsdk.ServiceClient, id string, opt
 	})
 	th.AssertNoErr(t, err)
 
-	return err
+	return nil
 }
 
 func waitForBackupDelete(client *golangsdk.ServiceClient, secs int, id string) error {
