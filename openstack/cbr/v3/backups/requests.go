@@ -36,7 +36,7 @@ type ListOpts struct {
 	Sort           string `q:"sort"`
 	StartTime      string `q:"start_time"`
 	Status         string `q:"status"`
-	UserPercent    string `q:"user_percent"`
+	UsedPercent    string `q:"used_percent"`
 	VaultID        string `q:"vault_id"`
 }
 
