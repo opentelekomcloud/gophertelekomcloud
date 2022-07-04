@@ -79,6 +79,7 @@ func TestBackupLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	allBackups, err := backups.List(client, listOpts)
+	th.AssertNoErr(t, err)
 	bOpts := backups.RestoreBackupOpts{
 		Restore: backups.RestoreBackupStruct{
 			VolumeID: allBackups[0].ResourceID,
