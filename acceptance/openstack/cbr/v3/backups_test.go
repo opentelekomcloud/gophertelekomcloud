@@ -75,10 +75,10 @@ func TestBackupLifecycle(t *testing.T) {
 	th.AssertEquals(t, vault.ID, checkpointGet.Vault.ID)
 	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
 
-	allPages, err := backups.List(client, backups.ListOpts{CheckpointID: checkp.ID}).AllPages()
+	listOpts := backups.ListOpts{VaultID: vault.ID}
 	th.AssertNoErr(t, err)
-	allBackups, err := backups.ExtractBackups(allPages)
-	th.AssertNoErr(t, err)
+
+	allBackups, err := backups.List(client, listOpts)
 	bOpts := backups.RestoreBackupOpts{
 		Restore: backups.RestoreBackupStruct{
 			VolumeID: allBackups[0].ResourceID,
