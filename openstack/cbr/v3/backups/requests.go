@@ -69,7 +69,6 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return BackupPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
-
 	if err != nil {
 		return nil, err
 	}
@@ -83,16 +82,11 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 }
 
 func FilterBackups(backups []Backup, opts ListOpts) ([]Backup, error) {
-
 	var refinedBackups []Backup
 	var matched bool
 	m := map[string]interface{}{}
 	if opts.ID != "" {
 		m["ID"] = opts.ID
-	}
-
-	if opts.CheckpointID != "" {
-		m["CheckpointID"] = opts.CheckpointID
 	}
 
 	if len(m) > 0 && len(backups) > 0 {

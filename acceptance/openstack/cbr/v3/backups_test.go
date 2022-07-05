@@ -60,7 +60,7 @@ func TestBackupLifecycle(t *testing.T) {
 			Name:        tools.RandomString("go-checkpoint", 5),
 		},
 	}
-	checkp := CreateChekpoint(t, client, optsVault)
+	checkp := CreateCheckpoint(t, client, optsVault)
 	th.AssertEquals(t, vault.ID, checkp.Vault.ID)
 	th.AssertEquals(t, optsVault.Parameters.Description, checkp.ExtraInfo.Description)
 	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)
@@ -87,6 +87,87 @@ func TestBackupLifecycle(t *testing.T) {
 	}
 	restoreErr := RestoreBackup(t, client, allBackups[0].ID, bOpts)
 	th.AssertNoErr(t, restoreErr)
+	errBack := backups.Delete(client, allBackups[0].ID).ExtractErr()
+	th.AssertNoErr(t, errBack)
+	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
+}
+
+func TestBackupListing(t *testing.T) {
+	client, err := clients.NewCbrV3Client()
+	th.AssertNoErr(t, err)
+
+	// Create Vault for further backup
+	opts := vaults.CreateOpts{
+		Billing: &vaults.BillingCreate{
+			ConsistentLevel: "crash_consistent",
+			ObjectType:      "disk",
+			ProtectType:     "backup",
+			Size:            100,
+		},
+		Description: "gophertelemocloud testing vault",
+		Name:        tools.RandomString("cbr-test-", 5),
+		Resources:   []vaults.ResourceCreate{},
+	}
+	vault, err := vaults.Create(client, opts).Extract()
+	th.AssertNoErr(t, err)
+	defer func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
+	}()
+
+	// Create Volume
+	volume := openstack.CreateVolume(t)
+	defer openstack.DeleteVolume(t, volume.ID)
+
+	// Associate server to the vault
+	aOpts := vaults.AssociateResourcesOpts{
+		Resources: []vaults.ResourceCreate{
+			{
+				ID:   volume.ID,
+				Type: "OS::Cinder::Volume",
+			},
+		},
+	}
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(associated))
+
+	// Create vault checkpoint
+	optsVault := checkpoint.CreateOpts{
+		VaultID: vault.ID,
+		Parameters: checkpoint.CheckpointParam{
+			Description: "go created backup",
+			Incremental: true,
+			Name:        tools.RandomString("go-checkpoint", 5),
+		},
+	}
+	checkp := CreateCheckpoint(t, client, optsVault)
+	th.AssertEquals(t, vault.ID, checkp.Vault.ID)
+	th.AssertEquals(t, optsVault.Parameters.Description, checkp.ExtraInfo.Description)
+	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)
+	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
+
+	listOpts := backups.ListOpts{VaultID: vault.ID}
+	th.AssertNoErr(t, err)
+
+	allBackups, err := backups.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(associated))
+
+	cases := map[string]backups.ListOpts{
+		"ID": {
+			ID: allBackups[0].ID,
+		},
+		"Name": {
+			Name: allBackups[0].Name,
+		},
+	}
+	for _, cOpts := range cases {
+		list, err := backups.List(client, cOpts)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, 1, len(list))
+		th.AssertEquals(t, allBackups[0].ID, list[0].ID)
+
+	}
 	errBack := backups.Delete(client, allBackups[0].ID).ExtractErr()
 	th.AssertNoErr(t, errBack)
 	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))

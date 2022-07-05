@@ -103,7 +103,7 @@ func (r BackupPage) IsEmpty() (bool, error) {
 
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
 	var s []Backup
-	err := (r.(BackupPage)).Result.ExtractIntoSlicePtr(&s, "backups")
+	err := r.(BackupPage).Result.ExtractIntoSlicePtr(&s, "backups")
 	if err != nil {
 		return nil, err
 	}
