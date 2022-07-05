@@ -13,6 +13,7 @@ import (
 )
 
 func TestBackupLifecycle(t *testing.T) {
+	t.Skipf("disabled: taking too long to complete")
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
@@ -93,6 +94,7 @@ func TestBackupLifecycle(t *testing.T) {
 }
 
 func TestBackupListing(t *testing.T) {
+	t.Skipf("disabled: taking too long to complete")
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
