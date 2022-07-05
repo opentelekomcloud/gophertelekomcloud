@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -13,7 +14,9 @@ import (
 )
 
 func TestBackupLifecycle(t *testing.T) {
-	t.Skipf("disabled: taking too long to complete")
+	if os.Getenv("RUN_CBR") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
@@ -94,7 +97,9 @@ func TestBackupLifecycle(t *testing.T) {
 }
 
 func TestBackupListing(t *testing.T) {
-	t.Skipf("disabled: taking too long to complete")
+	if os.Getenv("RUN_CBR") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
