@@ -51,7 +51,7 @@ const (
         {
             "datastore": {
                 "type": "elasticsearch",
-                "version": "6.2.3"
+                "version": "7.6.2"
             },
             "instances": [
                 {
