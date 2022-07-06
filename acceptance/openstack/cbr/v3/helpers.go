@@ -10,7 +10,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func CreateChekpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts checkpoint.CreateOpts) *checkpoint.Checkpoint {
+func CreateCheckpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts checkpoint.CreateOpts) *checkpoint.Checkpoint {
 	backup, err := checkpoint.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 

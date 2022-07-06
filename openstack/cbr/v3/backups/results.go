@@ -82,7 +82,23 @@ func (r GetResult) Extract() (*Backup, error) {
 }
 
 type BackupPage struct {
-	pagination.SinglePageBase
+	pagination.LinkedPageBase
+}
+
+func (r BackupPage) NextPageURL() (string, error) {
+	var s struct {
+		Links []golangsdk.Link `json:"backups_links"`
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return "", err
+	}
+	return golangsdk.ExtractNextURL(s.Links)
+}
+
+func (r BackupPage) IsEmpty() (bool, error) {
+	is, err := ExtractBackups(r)
+	return len(is) == 0, err
 }
 
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
