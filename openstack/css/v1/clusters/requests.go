@@ -55,7 +55,7 @@ type InstanceSpec struct {
 
 type Datastore struct {
 	// Version - engine version.
-	// The default value is 6.2.3.
+	// The default value is 7.6.2.
 	Version string `json:"version" required:"true"`
 
 	// Type - Engine type.
