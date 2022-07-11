@@ -84,6 +84,11 @@ type DeleteResult struct {
 	commonResult
 }
 
+// CancelDeleteResult contains the response body and error from a CancelDelete request.
+type CancelDeleteResult struct {
+	commonResult
+}
+
 // UpdateAliasResult contains the response body and error from a UpdateAlias request.
 type UpdateAliasResult struct {
 	commonResult
