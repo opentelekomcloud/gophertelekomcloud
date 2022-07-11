@@ -11,6 +11,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/availablezones"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v1/instances"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v1/products"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v1/topics"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -38,6 +39,15 @@ func TestDmsLifeCycle(t *testing.T) {
 	dmsInstance, err := instances.Get(client, instanceID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "some interesting description", dmsInstance.Description)
+
+	dmsTopic := createTopic(t, client, instanceID)
+
+	getTopic, err := topics.Get(client, instanceID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, dmsTopic, getTopic.Topics[0].Name)
+
+	delTopic := deleteTopic(t, client, instanceID, dmsTopic)
+	th.AssertEquals(t, delTopic[0].Name, dmsTopic)
 
 	updateDmsInstance(t, client, instanceID)
 	dmsInstance, err = instances.Get(client, instanceID).Extract()
@@ -166,4 +176,44 @@ func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceID
 		}
 		return false, nil
 	})
+}
+
+func createTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string) string {
+	t.Logf("Attempting to create DMSv1 Topic")
+	topicName := tools.RandomString("dms-topic-", 8)
+
+	createOpts := topics.CreateOpts{
+		Name:             topicName,
+		Partition:        10,
+		Replication:      2,
+		SyncReplication:  true,
+		RetentionTime:    100,
+		SyncMessageFlush: true,
+	}
+	dmsTopic, err := topics.Create(client, createOpts, instanceId).Extract()
+	th.AssertNoErr(t, err)
+	t.Logf("DMSv1 Topic successfully created: %s", dmsTopic.Name)
+
+	return dmsTopic.Name
+}
+
+func deleteTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string, name string) []topics.TopicDelete {
+	t.Logf("Attempting to delete DMSv1 Topic")
+
+	deleteOpts := topics.DeleteOpts{
+		Topics: []string{
+			name,
+		},
+	}
+	dmsTopic, err := topics.Delete(client, deleteOpts, instanceId).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, dmsTopic[0].Success, true)
+
+	getTopic, err := topics.Get(client, instanceId).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, getTopic.Size, 0)
+
+	t.Logf("DMSv1 Topic successfully deleted")
+
+	return dmsTopic
 }
