@@ -36,7 +36,7 @@ type Parameters struct {
 
 func (r CreateResult) Extract() (*TopicName, error) {
 	s := new(TopicName)
-	err := r.ExtractInto(s)
+	err := r.ExtractIntoStructPtr(s, "")
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (r CreateResult) Extract() (*TopicName, error) {
 
 func (r GetResult) Extract() (*Topic, error) {
 	s := new(Topic)
-	err := r.ExtractInto(s)
+	err := r.ExtractIntoStructPtr(s, "")
 	if err != nil {
 		return nil, err
 	}
