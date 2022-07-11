@@ -24,6 +24,11 @@ type DeleteOpts struct {
 	PendingDays string `json:"pending_days" required:"true"`
 }
 
+type CancelDeleteOpts struct {
+	// ID of a CMK
+	KeyID string `json:"key_id" required:"true"`
+}
+
 type UpdateAliasOpts struct {
 	// ID of a CMK
 	KeyID string `json:"key_id" required:"true"`
@@ -89,6 +94,12 @@ func (opts DeleteOpts) ToKeyDeleteMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
+// ToKeyCancelDeleteMap assembles a request body based on the contents of a
+// CancelDeleteOpts.
+func (opts CancelDeleteOpts) ToKeyCancelDeleteMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
 // ToKeyUpdateAliasMap assembles a request body based on the contents of a
 // UpdateAliasOpts.
 func (opts UpdateAliasOpts) ToKeyUpdateAliasMap() (map[string]interface{}, error) {
@@ -125,6 +136,10 @@ type CreateOptsBuilder interface {
 
 type DeleteOptsBuilder interface {
 	ToKeyDeleteMap() (map[string]interface{}, error)
+}
+
+type CancelDeleteOptsBuilder interface {
+	ToKeyCancelDeleteMap() (map[string]interface{}, error)
 }
 
 type UpdateAliasOptsBuilder interface {
@@ -336,6 +351,20 @@ func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts RotationOpt
 	}
 	_, r.Err = client.Post(updateKeyRotationIntervalURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
+	})
+	return
+}
+
+// CancelDelete will cancel the scheduled deletion for a CMK only when the CMK's status is Scheduled deletion with the provided ID.
+func CancelDelete(client *golangsdk.ServiceClient, opts CancelDeleteOptsBuilder) (r DeleteResult) {
+	b, err := opts.ToKeyCancelDeleteMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(cancelDeleteURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes:      []int{200},
+		JSONResponse: &r.Body,
 	})
 	return
 }

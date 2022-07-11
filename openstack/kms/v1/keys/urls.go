@@ -61,3 +61,7 @@ func disableKeyURL(c *golangsdk.ServiceClient) string {
 func listURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL(resourcePath, "list-keys")
 }
+
+func cancelDeleteURL(c *golangsdk.ServiceClient) string {
+	return c.ServiceURL(resourcePath, "cancel-key-deletion")
+}
