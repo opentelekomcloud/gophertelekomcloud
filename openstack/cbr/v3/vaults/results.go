@@ -101,7 +101,7 @@ type DissociateResourcesResult struct {
 
 func (r DissociateResourcesResult) Extract() ([]string, error) {
 	var s struct {
-		AddResourceIDs []string `json:"remove_resource_ids"`
+		RemoveResourceIDs []string `json:"remove_resource_ids"`
 	}
 	if r.Err != nil {
 		return nil, r.Err
@@ -110,7 +110,7 @@ func (r DissociateResourcesResult) Extract() ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract Dissociated Resource IDs")
 	}
-	return s.AddResourceIDs, nil
+	return s.RemoveResourceIDs, nil
 }
 
 type BindPolicyResult struct {
