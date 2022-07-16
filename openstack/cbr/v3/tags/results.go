@@ -32,35 +32,65 @@ func (r TagResult) Extract() ([]Tag, error) {
 
 // ----------------------------------------------------------------------------
 
-type InstancesBody struct {
+type SysTag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+type InstancesResponse struct {
 	Resources  []TagResource `json:"resources"`
 	TotalCount int           `json:"total_count"`
 }
 
 type TagResource struct {
-	ResourceID     string  `json:"resource_id"`
-	ResourceDetail []Vault `json:"resource_detail"`
-	Tags           []Tag   `json:"tags"`
-	ResourceName   string  `json:"resource_name"`
-	SysTags        []Tag   `json:"sys_tags"`
+	ResourceID     string   `json:"resource_id"`
+	ResourceDetail []Vault  `json:"resource_detail"`
+	Tags           []SysTag `json:"tags"`
+	ResourceName   string   `json:"resource_name"`
+	SysTags        []SysTag `json:"sys_tags"`
 }
 
 type Vault struct {
 	vaults.Vault
+	SmnNotify bool `json:"smn_notify"`
+	Threshold int  `json:"threshold"`
 }
 
 type InstancesResult struct {
 	golangsdk.Result
 }
 
-func (r InstancesResult) Extract() (*InstancesBody, error) {
-	var s = InstancesBody{}
+func (r InstancesResult) Extract() (*InstancesResponse, error) {
+	var s = InstancesResponse{}
 	if r.Err != nil {
 		return nil, r.Err
 	}
 	err := r.ExtractInto(&s)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract Vault Resource Instances")
+	}
+	return &s, nil
+}
+
+// ----------------------------------------------------------------------------
+
+type ShowVaultTagResult struct {
+	golangsdk.Result
+}
+
+type ShowVaultTagResponse struct {
+	Tags    []SysTag `json:"tags"`
+	SysTags []SysTag `json:"sys_tags"`
+}
+
+func (r ShowVaultTagResult) Extract() (*ShowVaultTagResponse, error) {
+	var s = ShowVaultTagResponse{}
+	if r.Err != nil {
+		return nil, r.Err
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract Vault Tag")
 	}
 	return &s, nil
 }
