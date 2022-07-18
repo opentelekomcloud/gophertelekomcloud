@@ -43,15 +43,15 @@ const (
 )
 
 type ResourceInstancesRequest struct {
-	// Does not contain any of the tags?
+	// If this parameter is set to true, all resources without tags are queried.
 	WithoutAnyTag bool `json:"without_any_tag,omitempty"`
 	// Returns the full amount of data when there are no filter conditions
 	Tags []Tag `json:"tags,omitempty"`
-	// Include any tag
+	// Backups with any tags in this list will be filtered.
 	TagsAny []Tag `json:"tags_any,omitempty"`
-	// Label not included
+	// Backups without these tags will be filtered.
 	NotTags []Tag `json:"not_tags,omitempty"`
-	// Does not contain any tags
+	// Backups without any tags in this list will be filtered.
 	NotTagsAny []Tag `json:"not_tags_any,omitempty"`
 	// Only the op_service permission can use this field as a resource instance filter condition
 	SysTags []Tag `json:"sys_tags,omitempty"`
