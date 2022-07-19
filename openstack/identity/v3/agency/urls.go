@@ -1,6 +1,10 @@
 package agency
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"strings"
+
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
 
 const (
 	rootPath     = "OS-AGENCY"
@@ -8,17 +12,21 @@ const (
 )
 
 func rootURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(rootPath, resourcePath)
+	url := c.ServiceURL(rootPath, resourcePath)
+	return strings.Replace(url, "/v3/", "/v3.0/", 1)
 }
 
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(rootPath, resourcePath, id)
+	url := c.ServiceURL(rootPath, resourcePath, id)
+	return strings.Replace(url, "/v3/", "/v3.0/", 1)
 }
 
 func roleURL(c *golangsdk.ServiceClient, resource, resourceID, agencyID, roleID string) string {
-	return c.ServiceURL(rootPath, resource, resourceID, resourcePath, agencyID, "roles", roleID)
+	url := c.ServiceURL(rootPath, resource, resourceID, resourcePath, agencyID, "roles", roleID)
+	return strings.Replace(url, "/v3/", "/v3.0/", 1)
 }
 
 func listRolesURL(c *golangsdk.ServiceClient, resource, resourceID, agencyID string) string {
-	return c.ServiceURL(rootPath, resource, resourceID, resourcePath, agencyID, "roles")
+	url := c.ServiceURL(rootPath, resource, resourceID, resourcePath, agencyID, "roles")
+	return strings.Replace(url, "/v3/", "/v3.0/", 1)
 }

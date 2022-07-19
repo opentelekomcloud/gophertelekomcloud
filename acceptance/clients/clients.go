@@ -137,7 +137,7 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 }
 
 // NewIdentityV3Client returns a *ServiceClient for making calls
-// to the OpenStack Identity v3 API. An error will be returned
+// to the OpenStack Identity v3 API on a `project` level. An error will be returned
 // if authentication or client creation was not possible.
 func NewIdentityV3Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -148,6 +148,31 @@ func NewIdentityV3Client() (*golangsdk.ServiceClient, error) {
 	return openstack.NewIdentityV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
+}
+
+// NewIdentityV3AdminClient returns a *ServiceClient for making calls
+// to the OpenStack Identity v3 API on a `domain` level. An error will be returned
+// if authentication or client creation was not possible.
+func NewIdentityV3AdminClient() (*golangsdk.ServiceClient, error) {
+	cloud, err := EnvOS.Cloud()
+	if err != nil {
+		return nil, fmt.Errorf("error constructing cloud configuration: %w", err)
+	}
+
+	opts := golangsdk.AuthOptions{
+		IdentityEndpoint: cloud.AuthInfo.AuthURL,
+		Username:         cloud.AuthInfo.Username,
+		Password:         cloud.AuthInfo.Password,
+		DomainName:       cloud.AuthInfo.UserDomainName,
+		TenantID:         cloud.AuthInfo.ProjectID,
+	}
+
+	pClient, err := openstack.AuthenticatedClient(opts)
+	if err != nil {
+		return nil, fmt.Errorf("error creating provider client: %w", err)
+	}
+
+	return openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{})
 }
 
 // NewIdentityV3UnauthenticatedClient returns an unauthenticated *ServiceClient
