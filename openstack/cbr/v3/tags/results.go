@@ -32,7 +32,7 @@ func (r TagResult) Extract() ([]Tag, error) {
 
 // ----------------------------------------------------------------------------
 
-type SysTag struct {
+type MonoTag struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
@@ -43,17 +43,10 @@ type InstancesResponse struct {
 }
 
 type TagResource struct {
-	ResourceID     string   `json:"resource_id"`
-	ResourceDetail []Vault  `json:"resource_detail"`
-	Tags           []SysTag `json:"tags"`
-	ResourceName   string   `json:"resource_name"`
-	SysTags        []SysTag `json:"sys_tags"`
-}
-
-type Vault struct {
-	vaults.Vault
-	SmnNotify bool `json:"smn_notify"`
-	Threshold int  `json:"threshold"`
+	ResourceID     string         `json:"resource_id"`
+	ResourceDetail []vaults.Vault `json:"resource_detail"`
+	Tags           []MonoTag      `json:"tags"`
+	ResourceName   string         `json:"resource_name"`
 }
 
 type InstancesResult struct {
@@ -79,8 +72,7 @@ type ShowVaultTagResult struct {
 }
 
 type ShowVaultTagResponse struct {
-	Tags    []SysTag `json:"tags"`
-	SysTags []SysTag `json:"sys_tags"`
+	Tags []MonoTag `json:"tags"`
 }
 
 func (r ShowVaultTagResult) Extract() (*ShowVaultTagResponse, error) {

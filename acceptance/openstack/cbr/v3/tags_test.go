@@ -12,49 +12,40 @@ func TestTags(t *testing.T) {
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
-	tagsResp := tags.ShowVaultProjectTag(client)
-	tagsRes, err := tagsResp.Extract()
+	projectTags, err := tags.ShowVaultProjectTag(client).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(tagsRes) > 0, true)
+	th.AssertEquals(t, len(projectTags) > 0, true)
 
-	tag := tagsRes[0]
-	sysTag := tags.SysTag{
-		Key:   tag.Key,
-		Value: tag.Values[0],
+	testTag := projectTags[0]
+	monoTag := tags.MonoTag{
+		Key:   testTag.Key,
+		Value: testTag.Values[0],
 	}
 
-	req := tags.ResourceInstancesRequest{
-		Tags:   []tags.Tag{tag},
+	instances, err := tags.ShowVaultResourceInstances(client, tags.ResourceInstancesRequest{
+		Tags:   []tags.Tag{testTag},
 		Action: tags.Filter,
-	}
-
-	insResp := tags.ShowVaultResourceInstances(client, req)
-	insRes, err := insResp.Extract()
+	}).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, insRes.TotalCount > 0, true)
+	th.AssertEquals(t, instances.TotalCount > 0, true)
 
-	resId := insRes.Resources[0].ResourceID
+	resourceID := instances.Resources[0].ResourceID
 
-	vaultResp := tags.ShowVaultTag(client, resId)
-	vaultRes, err := vaultResp.Extract()
+	vaultTags, err := tags.ShowVaultTag(client, resourceID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(vaultRes.Tags) > 0, true)
+	th.AssertEquals(t, len(vaultTags.Tags) > 0, true)
 
-	delResp := tags.DeleteVaultTag(client, resId, tag.Key)
-	th.AssertNoErr(t, delResp.ExtractErr())
+	th.AssertNoErr(t, tags.DeleteVaultTag(client, resourceID, testTag.Key).ExtractErr())
 
-	createResp := tags.CreateVaultTags(client, resId, sysTag)
-	th.AssertNoErr(t, createResp.ExtractErr())
+	th.AssertNoErr(t, tags.CreateVaultTags(client, resourceID, monoTag).ExtractErr())
 
-	batchDel := tags.BatchCreateAndDeleteVaultTags(client, resId, tags.BulkCreateAndDeleteVaultTagsRequest{
-		Tags:   []tags.SysTag{sysTag},
+	th.AssertNoErr(t, tags.BatchCreateAndDeleteVaultTags(client, resourceID, tags.BulkCreateAndDeleteVaultTagsRequest{
+		Tags:   []tags.MonoTag{monoTag},
 		Action: tags.Delete,
-	})
-	th.AssertNoErr(t, batchDel.ExtractErr())
+	}).ExtractErr())
 
-	batchCreate := tags.BatchCreateAndDeleteVaultTags(client, resId, tags.BulkCreateAndDeleteVaultTagsRequest{
-		Tags:   []tags.SysTag{sysTag},
+	th.AssertNoErr(t, tags.BatchCreateAndDeleteVaultTags(client, resourceID, tags.BulkCreateAndDeleteVaultTagsRequest{
+		Tags:   []tags.MonoTag{monoTag},
 		Action: tags.Create,
-	})
-	th.AssertNoErr(t, batchCreate.ExtractErr())
+	}).ExtractErr())
 }

@@ -6,14 +6,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-/*
-ShowVaultProjectTag
-Query the set of all tags of the tenant in the specified Region and instance type
-
-@author Aloento
-@since 0.5.17
-@version 0.1.0
-*/
 func ShowVaultProjectTag(client *golangsdk.ServiceClient) (r TagResult) {
 	_, r.Err = client.Get(showVaultProjectTagURL(client), &r.Body, nil)
 	return
@@ -53,8 +45,6 @@ type ResourceInstancesRequest struct {
 	NotTags []Tag `json:"not_tags,omitempty"`
 	// Backups without any tags in this list will be filtered.
 	NotTagsAny []Tag `json:"not_tags_any,omitempty"`
-	// Only the op_service permission can use this field as a resource instance filter condition
-	SysTags []Tag `json:"sys_tags,omitempty"`
 	// Number of search records, default is 1000, the minimum value of limit is 1, the maximum value of limit is 1000
 	Limit string `json:"limit,omitempty"`
 	// Index position (no this parameter when action is count)
@@ -62,19 +52,11 @@ type ResourceInstancesRequest struct {
 	// filter is a paginated query. count simply returns the total number of items according to the criteria
 	Action ActionType `json:"action"`
 	// Query conditions supported by the resource itself
-	Matches    []SysTag   `json:"matches,omitempty"`
+	Matches    []MonoTag  `json:"matches,omitempty"`
 	CloudType  CloudType  `json:"cloud_type,omitempty"`
 	ObjectType ObjectType `json:"object_type,omitempty"`
 }
 
-/*
-ShowVaultResourceInstances
-Use tags to filter instances.
-
-@author Aloento
-@since 0.5.17
-@version 0.1.0
-*/
 func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceInstancesRequest) (r InstancesResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
 	if err != nil {
@@ -90,14 +72,6 @@ func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceIns
 
 // ----------------------------------------------------------------------------
 
-/*
-ShowVaultTag
-Query the label information of the specified instance
-
-@author Aloento
-@since 0.5.17
-@version 0.1.0
-*/
 func ShowVaultTag(client *golangsdk.ServiceClient, id string) (r ShowVaultTagResult) {
 	_, r.Err = client.Get(vaultTagsURL(client, id), &r.Body, nil)
 	return
@@ -105,15 +79,7 @@ func ShowVaultTag(client *golangsdk.ServiceClient, id string) (r ShowVaultTagRes
 
 // ----------------------------------------------------------------------------
 
-/*
-CreateVaultTags
-Add repository resource tags
-
-@author Aloento
-@since 0.5.17
-@version 0.1.0
-*/
-func CreateVaultTags(client *golangsdk.ServiceClient, id string, req SysTag) (r golangsdk.ErrResult) {
+func CreateVaultTags(client *golangsdk.ServiceClient, id string, req MonoTag) (r golangsdk.ErrResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "tag")
 	if err != nil {
 		r.Err = fmt.Errorf("failed to create vault map: %s", err)
@@ -128,14 +94,6 @@ func CreateVaultTags(client *golangsdk.ServiceClient, id string, req SysTag) (r 
 
 // ----------------------------------------------------------------------------
 
-/*
-DeleteVaultTag
-Delete repository resource tags
-
-@author Aloento
-@since 0.5.17
-@version 0.1.0
-*/
 func DeleteVaultTag(client *golangsdk.ServiceClient, id string, key string) (r golangsdk.ErrResult) {
 	_, err := client.Delete(deleteVaultTagURL(client, id, key), &golangsdk.RequestOpts{
 		OkCodes: []int{204},
@@ -147,9 +105,8 @@ func DeleteVaultTag(client *golangsdk.ServiceClient, id string, key string) (r g
 // ----------------------------------------------------------------------------
 
 type BulkCreateAndDeleteVaultTagsRequest struct {
-	Tags    []SysTag       `json:"tags,omitempty"`
-	SysTags []SysTag       `json:"sys_tags,omitempty"`
-	Action  BulkActionType `json:"action"`
+	Tags   []MonoTag      `json:"tags,omitempty"`
+	Action BulkActionType `json:"action"`
 }
 
 type BulkActionType string
@@ -159,14 +116,6 @@ const (
 	Delete = "delete"
 )
 
-/*
-BatchCreateAndDeleteVaultTags
-Add or remove tags in bulk for specified instances
-
-@author Aloento
-@since 0.5.17
-@version 0.1.0
-*/
 func BatchCreateAndDeleteVaultTags(client *golangsdk.ServiceClient, id string, req BulkCreateAndDeleteVaultTagsRequest) (r golangsdk.ErrResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
 	if err != nil {
