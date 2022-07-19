@@ -17,10 +17,6 @@ func TestTags(t *testing.T) {
 	th.AssertEquals(t, len(projectTags) > 0, true)
 
 	testTag := projectTags[0]
-	monoTag := tags.MonoTag{
-		Key:   testTag.Key,
-		Value: testTag.Values[0],
-	}
 
 	instances, err := tags.ShowVaultResourceInstances(client, tags.ResourceInstancesRequest{
 		Tags:   []tags.Tag{testTag},
@@ -35,9 +31,29 @@ func TestTags(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(vaultTags.Tags) > 0, true)
 
-	th.AssertNoErr(t, tags.DeleteVaultTag(client, resourceID, testTag.Key).ExtractErr())
+	monoTag := tags.MonoTag{
+		Key:   "TestKey",
+		Value: "TestValue",
+	}
 
 	th.AssertNoErr(t, tags.CreateVaultTags(client, resourceID, monoTag).ExtractErr())
+	vaultTags, _ = tags.ShowVaultTag(client, resourceID).Extract()
+	isExist := false
+	for i := range vaultTags.Tags {
+		if vaultTags.Tags[i].Key == monoTag.Key {
+			th.AssertEquals(t, vaultTags.Tags[i].Value, monoTag.Value)
+			isExist = true
+		}
+	}
+	th.AssertEquals(t, isExist, true)
+
+	th.AssertNoErr(t, tags.DeleteVaultTag(client, resourceID, testTag.Key).ExtractErr())
+	vaultTags, _ = tags.ShowVaultTag(client, resourceID).Extract()
+	for i := range vaultTags.Tags {
+		if vaultTags.Tags[i].Key == monoTag.Key {
+			panic("Tag should be deleted")
+		}
+	}
 
 	th.AssertNoErr(t, tags.BatchCreateAndDeleteVaultTags(client, resourceID, tags.BulkCreateAndDeleteVaultTagsRequest{
 		Tags:   []tags.MonoTag{monoTag},

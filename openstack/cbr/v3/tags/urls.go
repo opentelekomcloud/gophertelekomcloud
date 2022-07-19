@@ -1,9 +1,3 @@
-/*
-@author Aloento
-@since 0.4.17
-@version 0.1.0
-*/
-
 package tags
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
