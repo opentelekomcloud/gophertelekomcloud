@@ -132,16 +132,18 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 		t.Skip("Policy doesn't allow NewIdentityV3AdminClient() to be initialized.")
 	}
 
+	if os.Getenv("DELEGATED_DOMAIN") == "" {
+		t.Skip("Unable to continue test without provided delegated domain name.")
+	}
+
 	client, err := clients.NewIdentityV3AdminClient()
 
 	th.AssertNoErr(t, err)
 
-	delegatedDomain := "OTC-EU-DE-00000000001000020825"
-
 	agencyOpts := agency.CreateOpts{
 		Name:            tools.RandomString("test-agency-", 5),
 		DomainID:        client.DomainID,
-		DelegatedDomain: delegatedDomain,
+		DelegatedDomain: os.Getenv("DELEGATED_DOMAIN"),
 	}
 
 	createAgency, err := agency.Create(client, agencyOpts).Extract()
