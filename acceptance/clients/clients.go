@@ -6,6 +6,7 @@ package clients
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
@@ -171,8 +172,14 @@ func NewIdentityV3AdminClient() (*golangsdk.ServiceClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error creating provider client: %w", err)
 	}
+	client, err := openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{})
 
-	return openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{})
+	if err != nil {
+		return nil, err
+	}
+
+	client.Endpoint = strings.Replace(client.Endpoint, "v3", "v3.0", 1)
+	return client, err
 }
 
 // NewIdentityV3UnauthenticatedClient returns an unauthenticated *ServiceClient

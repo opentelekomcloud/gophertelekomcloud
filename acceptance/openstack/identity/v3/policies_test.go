@@ -20,7 +20,7 @@ func TestPolicyLifecycle(t *testing.T) {
 	client, err := clients.NewIdentityV3AdminClient()
 	th.AssertNoErr(t, err)
 
-	aOpts := policies.CreateOpts{
+	createOpts := policies.CreateOpts{
 		DisplayName: tools.RandomString("policy-test-", 5),
 		Type:        "AX",
 		Description: tools.RandomString("Description-", 5),
@@ -56,7 +56,7 @@ func TestPolicyLifecycle(t *testing.T) {
 		},
 	}
 
-	newPolicy, err := policies.Create(client, aOpts).Extract()
+	newPolicy, err := policies.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	defer func() {
@@ -82,7 +82,7 @@ func TestPolicyLifecycle(t *testing.T) {
 	newName := tools.RandomString("policy-test-new-", 5)
 	newDescription := tools.RandomString("description-new-", 5)
 
-	bOpts := policies.CreateOpts{
+	updateOpts := policies.CreateOpts{
 		DisplayName: newName,
 		Type:        "AX",
 		Description: newDescription,
@@ -107,7 +107,7 @@ func TestPolicyLifecycle(t *testing.T) {
 		},
 	}
 
-	updatePolicy, err := policies.Update(client, newPolicy.ID, bOpts).Extract()
+	updatePolicy, err := policies.Update(client, newPolicy.ID, updateOpts).Extract()
 
 	th.AssertNoErr(t, err)
 
@@ -136,10 +136,12 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 
 	th.AssertNoErr(t, err)
 
+	delegatedDomain := "OTC-EU-DE-00000000001000020825"
+
 	agencyOpts := agency.CreateOpts{
 		Name:            tools.RandomString("test-agency-", 5),
 		DomainID:        client.DomainID,
-		DelegatedDomain: "OTC-EU-DE-00000000001000020825",
+		DelegatedDomain: delegatedDomain,
 	}
 
 	createAgency, err := agency.Create(client, agencyOpts).Extract()
@@ -153,7 +155,7 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 
 	// this parameter is hardcoded for every custom policy made through agency
 	actionParameter := "iam:agencies:assume"
-	aOpts := policies.CreateOpts{
+	createOpts := policies.CreateOpts{
 		DisplayName: tools.RandomString("policy-test-", 5),
 		Type:        "AX",
 		Description: tools.RandomString("Description", 5),
@@ -172,7 +174,7 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 		},
 	}
 
-	newPolicy, err := policies.Create(client, aOpts).Extract()
+	newPolicy, err := policies.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	defer func() {
@@ -200,7 +202,7 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 	newName := tools.RandomString("policy-test-new-", 5)
 	newDescription := tools.RandomString("description-new-", 5)
 
-	bOpts := policies.CreateOpts{
+	updateOpts := policies.CreateOpts{
 		DisplayName: newName,
 		Type:        "AX",
 		Description: newDescription,
@@ -219,7 +221,7 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 		},
 	}
 
-	updatePolicy, err := policies.Update(client, newPolicy.ID, bOpts).Extract()
+	updatePolicy, err := policies.Update(client, newPolicy.ID, updateOpts).Extract()
 
 	th.AssertNoErr(t, err)
 
