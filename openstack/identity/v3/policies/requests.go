@@ -28,7 +28,7 @@ func (opts ListOpts) ToPolicyListQuery() (string, error) {
 	return q.String(), err
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Policy, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) (ListPolicy, error) {
 	var r ListResult
 	_, r.Err = client.Get(listURL(client), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
@@ -37,14 +37,16 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Policy, error) {
 
 	allPolicies, err := r.ExtractPolicies()
 	if err != nil {
-		return nil, err
+		return allPolicies, err
 	}
 
 	return FilterRoles(allPolicies, opts)
 }
 
-func FilterRoles(roles []Policy, opts ListOpts) ([]Policy, error) {
-	var refinedRoles []Policy
+func FilterRoles(roles ListPolicy, opts ListOpts) (ListPolicy, error) {
+	refinedListPolicy := ListPolicy{
+		Links: roles.Links,
+	}
 	var matched bool
 	m := map[string]interface{}{}
 
@@ -60,8 +62,9 @@ func FilterRoles(roles []Policy, opts ListOpts) ([]Policy, error) {
 		m["ID"] = opts.ID
 	}
 
-	if len(m) > 0 && len(roles) > 0 {
-		for _, role := range roles {
+	if len(m) > 0 && len(roles.Roles) > 0 {
+
+		for _, role := range roles.Roles {
 			matched = true
 
 			for key, value := range m {
@@ -71,15 +74,16 @@ func FilterRoles(roles []Policy, opts ListOpts) ([]Policy, error) {
 			}
 
 			if matched {
-				refinedRoles = append(refinedRoles, role)
+				refinedListPolicy.Roles = append(refinedListPolicy.Roles, role)
 			}
 		}
-
 	} else {
-		refinedRoles = roles
+		refinedListPolicy.Roles = roles.Roles
 	}
 
-	return refinedRoles, nil
+	refinedListPolicy.TotalNumber = len(refinedListPolicy.Roles)
+
+	return refinedListPolicy, nil
 
 }
 

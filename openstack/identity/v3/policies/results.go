@@ -76,14 +76,14 @@ type Statement struct {
 	Resource  interface{} `json:"Resource,omitempty"`
 }
 
-func (r commonResult) ExtractPolicies() ([]Policy, error) {
+func (r commonResult) ExtractPolicies() (ListPolicy, error) {
 	var s ListPolicy
 	err := r.ExtractIntoStructPtr(&s, "")
 	if err != nil {
-		return nil, err
+		return s, err
 	}
 
-	return s.Roles, nil
+	return s, nil
 }
 
 func (r commonResult) Extract() (*Policy, error) {

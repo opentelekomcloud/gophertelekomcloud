@@ -71,11 +71,11 @@ func TestPolicyLifecycle(t *testing.T) {
 	allPages, err := policies.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
-	th.AssertEquals(t, newPolicy.Description, allPages[0].Description)
-	th.AssertEquals(t, newPolicy.Type, allPages[0].Type)
-	th.AssertEquals(t, newPolicy.DisplayName, allPages[0].DisplayName)
-	th.AssertEquals(t, newPolicy.Policy.Version, allPages[0].Policy.Version)
-	if !reflect.DeepEqual(newPolicy.Policy.Statement, allPages[0].Policy.Statement) {
+	th.AssertEquals(t, newPolicy.Description, allPages.Roles[0].Description)
+	th.AssertEquals(t, newPolicy.Type, allPages.Roles[0].Type)
+	th.AssertEquals(t, newPolicy.DisplayName, allPages.Roles[0].DisplayName)
+	th.AssertEquals(t, newPolicy.Policy.Version, allPages.Roles[0].Policy.Version)
+	if !reflect.DeepEqual(newPolicy.Policy.Statement, allPages.Roles[0].Policy.Statement) {
 		t.Error("Statement parameters are different")
 	}
 
@@ -188,12 +188,12 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 	allPages, err := policies.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
-	th.AssertEquals(t, newPolicy.ID, allPages[0].ID)
-	th.AssertEquals(t, newPolicy.Description, allPages[0].Description)
-	th.AssertEquals(t, newPolicy.Type, allPages[0].Type)
-	th.AssertEquals(t, newPolicy.DisplayName, allPages[0].DisplayName)
-	th.AssertEquals(t, newPolicy.Policy.Version, allPages[0].Policy.Version)
-	if !reflect.DeepEqual(newPolicy.Policy.Statement, allPages[0].Policy.Statement) {
+	th.AssertEquals(t, newPolicy.ID, allPages.Roles[0].ID)
+	th.AssertEquals(t, newPolicy.Description, allPages.Roles[0].Description)
+	th.AssertEquals(t, newPolicy.Type, allPages.Roles[0].Type)
+	th.AssertEquals(t, newPolicy.DisplayName, allPages.Roles[0].DisplayName)
+	th.AssertEquals(t, newPolicy.Policy.Version, allPages.Roles[0].Policy.Version)
+	if !reflect.DeepEqual(newPolicy.Policy.Statement, allPages.Roles[0].Policy.Statement) {
 		t.Error("Statement parameters are different")
 	}
 
@@ -236,5 +236,22 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 	th.AssertEquals(t, updatePolicy.Policy.Version, getPolicy.Policy.Version)
 	if !reflect.DeepEqual(updatePolicy.Policy.Statement, getPolicy.Policy.Statement) {
 		t.Error("Statement parameters are different")
+	}
+}
+
+func TestList(t *testing.T) {
+	if os.Getenv("OS_TENANT_ADMIN") == "" {
+		t.Skip("Policy doesn't allow NewIdentityV3AdminClient() to be initialized.")
+	}
+
+	client, err := clients.NewIdentityV3AdminClient()
+	th.AssertNoErr(t, err)
+
+	listOpts := policies.ListOpts{}
+
+	allPages, err := policies.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	if allPages.Links.Self == "" {
+		t.Error("Link parameter unmarshalled improperly")
 	}
 }
