@@ -32,11 +32,6 @@ func (r TagResult) Extract() ([]Tag, error) {
 
 // ----------------------------------------------------------------------------
 
-type MonoTag struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
 type InstancesResponse struct {
 	Resources  []TagResource `json:"resources"`
 	TotalCount int           `json:"total_count"`
@@ -45,7 +40,7 @@ type InstancesResponse struct {
 type TagResource struct {
 	ResourceID     string         `json:"resource_id"`
 	ResourceDetail []vaults.Vault `json:"resource_detail"`
-	Tags           []MonoTag      `json:"tags"`
+	Tags           []vaults.Tag   `json:"tags"`
 	ResourceName   string         `json:"resource_name"`
 }
 
@@ -72,7 +67,7 @@ type ShowVaultTagResult struct {
 }
 
 type ShowVaultTagResponse struct {
-	Tags []MonoTag `json:"tags"`
+	Tags []vaults.Tag `json:"tags"`
 }
 
 func (r ShowVaultTagResult) Extract() (*ShowVaultTagResponse, error) {

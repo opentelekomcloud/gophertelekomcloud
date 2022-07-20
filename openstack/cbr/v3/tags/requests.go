@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
 )
 
 func ShowVaultProjectTag(client *golangsdk.ServiceClient) (r TagResult) {
@@ -52,9 +53,9 @@ type ResourceInstancesRequest struct {
 	// filter is a paginated query. count simply returns the total number of items according to the criteria
 	Action ActionType `json:"action"`
 	// Query conditions supported by the resource itself
-	Matches    []MonoTag  `json:"matches,omitempty"`
-	CloudType  CloudType  `json:"cloud_type,omitempty"`
-	ObjectType ObjectType `json:"object_type,omitempty"`
+	Matches    []vaults.Tag `json:"matches,omitempty"`
+	CloudType  CloudType    `json:"cloud_type,omitempty"`
+	ObjectType ObjectType   `json:"object_type,omitempty"`
 }
 
 func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceInstancesRequest) (r InstancesResult) {
@@ -79,7 +80,7 @@ func ShowVaultTag(client *golangsdk.ServiceClient, id string) (r ShowVaultTagRes
 
 // ----------------------------------------------------------------------------
 
-func CreateVaultTags(client *golangsdk.ServiceClient, id string, req MonoTag) (r golangsdk.ErrResult) {
+func CreateVaultTags(client *golangsdk.ServiceClient, id string, req vaults.Tag) (r golangsdk.ErrResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "tag")
 	if err != nil {
 		r.Err = fmt.Errorf("failed to create vault map: %s", err)
@@ -105,7 +106,7 @@ func DeleteVaultTag(client *golangsdk.ServiceClient, id string, key string) (r g
 // ----------------------------------------------------------------------------
 
 type BulkCreateAndDeleteVaultTagsRequest struct {
-	Tags   []MonoTag      `json:"tags,omitempty"`
+	Tags   []vaults.Tag   `json:"tags,omitempty"`
 	Action BulkActionType `json:"action"`
 }
 
