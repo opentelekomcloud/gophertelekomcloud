@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type vaultResult struct {
@@ -47,14 +48,14 @@ type ResourceResp struct {
 }
 
 type Vault struct {
-	ID          string         `json:"id"`
-	Name        string         `json:"name"`
-	Billing     Billing        `json:"billing"`
-	Description string         `json:"description"`
-	ProjectID   string         `json:"project_id"`
-	ProviderID  string         `json:"provider_id"`
-	Resources   []ResourceResp `json:"resources"`
-	Tags        []Tag          `json:"tags"`
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	Billing     Billing            `json:"billing"`
+	Description string             `json:"description"`
+	ProjectID   string             `json:"project_id"`
+	ProviderID  string             `json:"provider_id"`
+	Resources   []ResourceResp     `json:"resources"`
+	Tags        []tags.ResourceTag `json:"tags"`
 
 	EnterpriseProjectID string `json:"enterprise_project_id"`
 

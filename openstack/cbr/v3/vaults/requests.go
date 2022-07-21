@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type CreateOptsBuilder interface {
@@ -80,13 +81,9 @@ type ResourceCreate struct {
 	ExtraInfo *ResourceExtraInfo `json:"extra_info,omitempty"`
 }
 
-type Tag struct {
-	Key   string `json:"key"`
-	Value string `json:"value,omitempty"`
-}
 type VaultBindRules struct {
 	// Filters automatically associated resources by tag.
-	Tags []Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
 type CreateOpts struct {
@@ -105,7 +102,7 @@ type CreateOpts struct {
 	// This list cannot be an empty list.
 	// The list can contain up to 10 keys.
 	// Keys in this list must be unique.
-	Tags []Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Enterprise project ID. The default value is 0.
 	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 	// Whether automatic association is supported
