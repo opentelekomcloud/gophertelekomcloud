@@ -68,8 +68,7 @@ func TestTags(t *testing.T) {
 		}
 	}
 
-	_, err = tags.CreateVaultTags(client, resourceID, monoTag).Extract()
-	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, tags.CreateVaultTags(client, resourceID, monoTag).ExtractErr())
 	vaultTags, _ = tags.ShowVaultTag(client, resourceID).Extract()
 	isExist := false
 	for i := range vaultTags.Tags {

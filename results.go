@@ -252,7 +252,7 @@ type ErrRespond struct {
 }
 
 type ErrWithResult struct {
-	Result
+	ErrResult
 }
 
 func (r Result) Extract() (*ErrRespond, error) {
@@ -262,7 +262,7 @@ func (r Result) Extract() (*ErrRespond, error) {
 	}
 	err := r.ExtractInto(&s)
 	if err != nil {
-		return nil, fmt.Errorf("failed to ErrWithResult")
+		return nil, fmt.Errorf("failed to extract Error with Result")
 	}
 	return &s, nil
 }

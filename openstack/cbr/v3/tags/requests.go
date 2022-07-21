@@ -117,7 +117,7 @@ const (
 	Delete = "delete"
 )
 
-func BatchCreateAndDeleteVaultTags(client *golangsdk.ServiceClient, id string, req BulkCreateAndDeleteVaultTagsRequest) (r golangsdk.ErrResult) {
+func BatchCreateAndDeleteVaultTags(client *golangsdk.ServiceClient, id string, req BulkCreateAndDeleteVaultTagsRequest) (r golangsdk.ErrWithResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
 	if err != nil {
 		r.Err = fmt.Errorf("failed to create vault map: %s", err)
