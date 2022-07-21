@@ -244,6 +244,31 @@ func (r ErrResult) ExtractErr() error {
 	return r.Err
 }
 
+// ----------------------------------------------------------------------------
+
+type ErrRespond struct {
+	ErrorCode string `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+}
+
+type ErrWithResult struct {
+	Result
+}
+
+func (r Result) Extract() (*ErrRespond, error) {
+	var s = ErrRespond{}
+	if r.Err != nil {
+		return nil, r.Err
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to ErrWithResult")
+	}
+	return &s, nil
+}
+
+// ----------------------------------------------------------------------------
+
 /*
 HeaderResult is an internal type to be used by individual resource packages, but
 its methods will be available on a wide variety of user-facing embedding types.

@@ -80,7 +80,7 @@ func ShowVaultTag(client *golangsdk.ServiceClient, id string) (r ShowVaultTagRes
 
 // ----------------------------------------------------------------------------
 
-func CreateVaultTags(client *golangsdk.ServiceClient, id string, req vaults.Tag) (r golangsdk.ErrResult) {
+func CreateVaultTags(client *golangsdk.ServiceClient, id string, req vaults.Tag) (r golangsdk.ErrWithResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "tag")
 	if err != nil {
 		r.Err = fmt.Errorf("failed to create vault map: %s", err)

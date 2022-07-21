@@ -38,10 +38,14 @@ type InstancesResponse struct {
 }
 
 type TagResource struct {
-	ResourceID     string         `json:"resource_id"`
-	ResourceDetail []vaults.Vault `json:"resource_detail"`
-	Tags           []vaults.Tag   `json:"tags"`
-	ResourceName   string         `json:"resource_name"`
+	ResourceID     string       `json:"resource_id"`
+	ResourceDetail BoxedVault   `json:"resource_detail"`
+	Tags           []vaults.Tag `json:"tags"`
+	ResourceName   string       `json:"resource_name"`
+}
+
+type BoxedVault struct {
+	Vault vaults.Vault `json:"vault"`
 }
 
 type InstancesResult struct {
