@@ -5,8 +5,9 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/tags"
+	cbrtags "github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -14,9 +15,19 @@ func TestTags(t *testing.T) {
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
-	monoTag := vaults.Tag{
+	firstTag := tags.ResourceTag{
 		Key:   "TestKey",
 		Value: "TestValue",
+	}
+
+	secondTag := tags.ResourceTag{
+		Key:   "TestKey2",
+		Value: "TestValue2",
+	}
+
+	combineTag := []tags.ResourceTag{
+		firstTag,
+		secondTag,
 	}
 
 	opts := vaults.CreateOpts{
@@ -29,9 +40,7 @@ func TestTags(t *testing.T) {
 		Description: "gophertelemocloud testing vault",
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
-		Tags: []vaults.Tag{
-			monoTag,
-		},
+		Tags:        combineTag,
 	}
 	vault, err := vaults.Create(client, opts).Extract()
 	th.AssertNoErr(t, err)
@@ -40,52 +49,31 @@ func TestTags(t *testing.T) {
 		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
 	}()
 
-	projectTags, err := tags.ShowVaultProjectTag(client).Extract()
+	projectTags, err := cbrtags.ShowVaultProjectTag(client).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(projectTags) > 0, true)
+	th.AssertEquals(t, len(projectTags), 2)
 
-	instances, err := tags.ShowVaultResourceInstances(client, tags.ResourceInstancesRequest{
-		Tags: []tags.Tag{{
-			Key:    monoTag.Key,
-			Values: []string{monoTag.Value},
+	instances, err := cbrtags.ShowVaultResourceInstances(client, cbrtags.ResourceInstancesRequest{
+		Tags: []tags.ListedTag{{
+			Key:    firstTag.Key,
+			Values: []string{firstTag.Value},
 		}},
-		Action: tags.Filter,
+		Action: cbrtags.Filter,
 	}).Extract()
 	th.AssertNoErr(t, err)
 
 	resourceID := instances.Resources[0].ResourceID
 	th.AssertEquals(t, resourceID, vault.ID)
 
-	vaultTags, err := tags.ShowVaultTag(client, resourceID).Extract()
+	vaultTags, err := cbrtags.ShowVaultTag(client, resourceID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, vaultTags.Tags[0].Key, monoTag.Key)
+	th.AssertEquals(t, vaultTags[0].Key == firstTag.Key || vaultTags[0].Key == secondTag.Key, true)
 
-	th.AssertNoErr(t, tags.DeleteVaultTag(client, resourceID, monoTag.Key).ExtractErr())
-	vaultTags, _ = tags.ShowVaultTag(client, resourceID).Extract()
-	for i := range vaultTags.Tags {
-		if vaultTags.Tags[i].Key == monoTag.Key {
-			panic("Tag should be deleted")
-		}
-	}
+	th.AssertNoErr(t, cbrtags.DeleteVaultTag(client, resourceID, combineTag).ExtractErr())
+	vaultTags, _ = cbrtags.ShowVaultTag(client, resourceID).Extract()
+	th.AssertEquals(t, len(vaultTags), 0)
 
-	th.AssertNoErr(t, tags.CreateVaultTags(client, resourceID, monoTag).ExtractErr())
-	vaultTags, _ = tags.ShowVaultTag(client, resourceID).Extract()
-	isExist := false
-	for i := range vaultTags.Tags {
-		if vaultTags.Tags[i].Key == monoTag.Key {
-			th.AssertEquals(t, vaultTags.Tags[i].Value, monoTag.Value)
-			isExist = true
-		}
-	}
-	th.AssertEquals(t, isExist, true)
-
-	th.AssertNoErr(t, tags.BatchCreateAndDeleteVaultTags(client, resourceID, tags.BulkCreateAndDeleteVaultTagsRequest{
-		Tags:   []vaults.Tag{monoTag},
-		Action: tags.Delete,
-	}).ExtractErr())
-
-	th.AssertNoErr(t, tags.BatchCreateAndDeleteVaultTags(client, resourceID, tags.BulkCreateAndDeleteVaultTagsRequest{
-		Tags:   []vaults.Tag{monoTag},
-		Action: tags.Create,
-	}).ExtractErr())
+	th.AssertNoErr(t, cbrtags.CreateVaultTags(client, resourceID, []tags.ResourceTag{firstTag}).ExtractErr())
+	vaultTags, _ = cbrtags.ShowVaultTag(client, resourceID).Extract()
+	th.AssertEquals(t, len(vaultTags), 1)
 }
