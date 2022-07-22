@@ -12,7 +12,7 @@ type ActionOptsBuilder interface {
 
 // ResourceTag is in key-value format
 type ResourceTag struct {
-	Key   string `json:"key"`
+	Key   string `json:"key" required:"true"`
 	Value string `json:"value,omitempty"`
 }
 

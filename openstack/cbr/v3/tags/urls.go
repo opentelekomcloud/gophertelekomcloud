@@ -1,4 +1,4 @@
-package cbrtags
+package tags
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/cbrtags"
+	cbrtags "github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
