@@ -67,7 +67,7 @@ type ExtendInfo struct {
 	ResourceName         string         `json:"resource_name"`
 	ResourceType         string         `json:"resource_type"`
 	Size                 int            `json:"size"`
-	SpaceSavingRatio     int            `json:"space_saving_ratio"`
+	SpaceSavingRatio     float32        `json:"space_saving_ratio"`
 	VolumeBackups        []VolumeBackup `json:"volume_backups"`
 	FinishedAt           string         `json:"finished_at"`
 	TaskId               string         `json:"taskid"`
