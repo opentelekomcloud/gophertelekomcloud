@@ -17,7 +17,7 @@ func TestPolicyLifecycle(t *testing.T) {
 		t.Skip("Policy doesn't allow NewIdentityV3AdminClient() to be initialized.")
 	}
 
-	client, err := clients.NewIdentityV3AdminClient()
+	client, err := clients.NewIdentityV30AdminClient()
 	th.AssertNoErr(t, err)
 
 	createOpts := policies.CreateOpts{
@@ -129,14 +129,14 @@ func TestPolicyLifecycle(t *testing.T) {
 
 func TestAgencyPolicyLifecycle(t *testing.T) {
 	if os.Getenv("OS_TENANT_ADMIN") == "" {
-		t.Skip("Policy doesn't allow NewIdentityV3AdminClient() to be initialized.")
+		t.Skip("Policy doesn't allow NewIdentityV30AdminClient() to be initialized.")
 	}
 
 	if os.Getenv("DELEGATED_DOMAIN") == "" {
 		t.Skip("Unable to continue test without provided delegated domain name.")
 	}
 
-	client, err := clients.NewIdentityV3AdminClient()
+	client, err := clients.NewIdentityV30AdminClient()
 
 	th.AssertNoErr(t, err)
 
@@ -245,10 +245,10 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 
 func TestList(t *testing.T) {
 	if os.Getenv("OS_TENANT_ADMIN") == "" {
-		t.Skip("Policy doesn't allow NewIdentityV3AdminClient() to be initialized.")
+		t.Skip("Policy doesn't allow NewIdentityV30AdminClient() to be initialized.")
 	}
 
-	client, err := clients.NewIdentityV3AdminClient()
+	client, err := clients.NewIdentityV30AdminClient()
 	th.AssertNoErr(t, err)
 
 	listOpts := policies.ListOpts{}

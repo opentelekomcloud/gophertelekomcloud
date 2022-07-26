@@ -92,6 +92,9 @@ type CreateOpts struct {
 
 	// Description is a description of the user.
 	Description string `json:"description,omitempty"`
+
+	// Email is the email of the user.
+	Email string `json:"email,omitempty"`
 }
 
 // ToUserCreateMap formats a CreateOpts into a create request.
@@ -142,6 +145,9 @@ type UpdateOpts struct {
 
 	// Description is a description of the user.
 	Description *string `json:"description,omitempty"`
+
+	// Email is the email of the user.
+	Email string `json:"email,omitempty"`
 }
 
 // ToUserUpdateMap formats a UpdateOpts into an update request.
