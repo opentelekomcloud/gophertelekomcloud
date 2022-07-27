@@ -1,6 +1,8 @@
 package alarms
 
 import (
+	"fmt"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
@@ -46,6 +48,10 @@ type ModifyAlarmActionReq struct {
 
 func UpdateAlarmAction(client *golangsdk.ServiceClient, id string, req ModifyAlarmActionReq) (err error) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
+	if err != nil {
+		return
+	}
+
 	_, err = client.Put(alarmActionURL(client, id), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
@@ -103,6 +109,11 @@ type MetricForAlarm struct {
 
 func CreateAlarm(client *golangsdk.ServiceClient, req CreateAlarmRequest) (r CreateAlarmResult) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
+	if err != nil {
+		r.Err = fmt.Errorf("failed to create Alarm Request map: %s", err)
+		return
+	}
+
 	_, err = client.Post(alarmsURL(client), reqBody, &r.Body, nil)
 	r.Err = err
 	return
