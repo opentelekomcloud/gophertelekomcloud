@@ -5,39 +5,37 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the
-// List request.
-type ListOptsBuilder interface {
+type ListMetricsRequest struct {
+	// Specifies the dimension. For example, the ECS dimension is instance_id.
+	// For details about each service dimension, see Services Interconnected with Cloud Eye.
+	// A maximum of three dimensions are supported,
+	// and the dimensions are numbered from 0 in dim.{i}=key,value format.
+	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
+	// Single dimension: dim.0=instance_id,6f3c6f91-4b24-4e1b-b7d1-a94ac1cb011d
+	// Multiple dimensions: dim.0=key,value&dim.1=key,value。
+	Dim string `json:"dim,omitempty"`
+	// The value ranges from 1 to 1000, and is 1000 by default.
+	// This parameter is used to limit the number of query results.
+	Limit int32 `json:"limit,omitempty"`
+	// Specifies the metric ID. For example, if the monitoring metric of an ECS is CPU usage, metric_name is cpu_util.
+	MetricName string `json:"metric_name,omitempty"`
+	// Query the namespace of a service.
+	Namespace string `json:"namespace,omitempty"`
+	// Specifies the result sorting method, which is sorted by timestamp.
+	// The default value is desc.
+	// asc: The query results are displayed in the ascending order.
+	// desc: The query results are displayed in the descending order.
+	Order string `json:"order,omitempty"`
+	// Specifies the paging start value.
+	// The format is namespace.metric_name.key:value.
+	Start string `json:"start,omitempty"`
+}
+
+type ListMetricsBuilder interface {
 	ToMetricsListMap() (string, error)
 }
 
-// ListOpts allows the filtering and sorting of paginated collections through the API.
-type ListOpts struct {
-	// Specifies the namespace.
-	Namespace string `q:"namespace"`
-
-	// The value ranges from 1 to 1000, and is 1000 by default.
-	// This parameter is used to limit the number of query results.
-	Limit *int `q:"limit"`
-
-	// Specifies the metric name.
-	MetricName string `q:"metric_name"`
-
-	// Specifies the metric dimension.
-	// A maximum of three dimensions are supported, and the dimensions are numbered from 0 in dim.
-	Dim0 string `q:"dim.0"`
-	Dim1 string `q:"dim.1"`
-	Dim2 string `q:"dim.2"`
-
-	// Specifies the paging start value.
-	Start string `q:"start"`
-
-	// Specifies the sorting order of query results.
-	Order string `q:"order"`
-}
-
-// ToMetricsListMap formats a ListOpts into a query string.
-func (opts ListOpts) ToMetricsListMap() (string, error) {
+func (opts ListMetricsRequest) ToMetricsListMap() (string, error) {
 	s, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return "", err
@@ -45,9 +43,8 @@ func (opts ListOpts) ToMetricsListMap() (string, error) {
 	return s.String(), err
 }
 
-// Get the Metric List
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := getMetricsURL(client)
+func ListMetrics(client *golangsdk.ServiceClient, opts ListMetricsBuilder) pagination.Pager {
+	url := metricsURL(client)
 	if opts != nil {
 		query, err := opts.ToMetricsListMap()
 		if err != nil {
@@ -55,6 +52,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += query
 	}
+
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return MetricsPage{pagination.LinkedPageBase{PageResult: r}}
 	})
