@@ -40,7 +40,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 
 	var productID string
 	for _, v := range productList.Products {
-		if v.SpecCode == "dcs.single_node" {
+		if v.SpecCode == "redis.ha.xu1.tiny.r2.128" {
 			productID = v.ProductID
 		}
 	}
@@ -49,14 +49,13 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 	}
 
 	defaultSG := openstack.DefaultSecurityGroup(t)
-
 	dcsName := tools.RandomString("dcs-instance-", 3)
-	createOpts := instances.CreateOps{
+	var createOpts = instances.CreateOps{
 		Name:            dcsName,
 		Description:     "some test DCSv1 instance",
 		Engine:          "Redis",
-		EngineVersion:   "3.0",
-		Capacity:        64,
+		EngineVersion:   "5.0",
+		Capacity:        0.125,
 		Password:        "Qwerty123!",
 		VPCID:           vpcID,
 		SubnetID:        networkID,
@@ -64,7 +63,6 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		ProductID:       productID,
 		SecurityGroupID: defaultSG,
 	}
-
 	dcsInstanceCreate, err := instances.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 

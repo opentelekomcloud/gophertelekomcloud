@@ -36,7 +36,7 @@ type ListDcsResponse struct {
 type Instance struct {
 	Name                 string               `json:"name"`
 	Engine               string               `json:"engine"`
-	Capacity             int                  `json:"capacity"`
+	Capacity             float32              `json:"capacity"`
 	IP                   string               `json:"ip"`
 	Port                 int                  `json:"port"`
 	Status               string               `json:"status"`
