@@ -4,141 +4,125 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-// BatchQueryOptsBuilder allows extensions to add additional parameters to the
-// BatchQuery request.
-type BatchQueryOptsBuilder interface {
-	ToBatchQueryOptsMap() (map[string]interface{}, error)
-}
-
-type Metric struct {
-	// Specifies the namespace in service.
-	Namespace string `json:"namespace" required:"true"`
-
-	// The value can be a string of 1 to 64 characters
-	// and must start with a letter and contain only uppercase
-	// letters, lowercase letters, digits, and underscores.
-	MetricName string `json:"metric_name" required:"true"`
-
-	// Specifies the list of the metric dimensions.
-	Dimensions []Dimension `json:"dimensions" required:"true"`
-}
-
-// BatchQueryOpts represents options for batch query metric data.
-type BatchQueryOpts struct {
-	// Specifies the metric data.
+type BatchListMetricDataRequest struct {
+	// Specifies the metric data. The maximum length of the array is 10.
 	Metrics []Metric `json:"metrics" required:"true"`
-
 	// Specifies the start time of the query.
+	// The value is a UNIX timestamp and the unit is ms.
+	// Set the value of from to at least one period earlier than the current time.
+	// Rollup aggregates the raw data generated within a period to the start time of the period.
+	// Therefore, if values of from and to are within a period,
+	// the query result will be empty due to the rollup failure.
+	// You are advised to set from to be at least one period earlier than the current time.
+	// Take the 5-minute period as an example. If it is 10:35 now,
+	// the raw data generated between 10:30 and 10:35 will be aggregated to 10:30.
+	// Therefore, in this example, if the value of period is 5 minutes,
+	// the value of from should be 10:30 or earlier.
 	From int64 `json:"from" required:"true"`
-
 	// Specifies the end time of the query.
+	// The value is a UNIX timestamp and the unit is ms.
+	// The value of parameter from must be earlier than that of parameter to.
 	To int64 `json:"to" required:"true"`
-
-	// Specifies the data monitoring granularity.
+	// Specifies how often Cloud Eye aggregates data.
+	//
+	// Possible values are:
+	// 1: Cloud Eye performs no aggregation and displays raw data.
+	// 300: Cloud Eye aggregates data every 5 minutes.
+	// 1200: Cloud Eye aggregates data every 20 minutes.
+	// 3600: Cloud Eye aggregates data every 1 hour.
+	// 14400: Cloud Eye aggregates data every 4 hours.
+	// 86400: Cloud Eye aggregates data every 24 hours.
 	Period string `json:"period" required:"true"`
-
-	// Specifies the data rollup method.
+	// Specifies the data rollup method. The following methods are supported:
+	//
+	// average: Cloud Eye calculates the average value of metric data within a rollup period.
+	// max: Cloud Eye calculates the maximum value of metric data within a rollup period.
+	// min: Cloud Eye calculates the minimum value of metric data within a rollup period.
+	// sum: Cloud Eye calculates the sum of metric data within a rollup period.
+	// variance: Cloud Eye calculates the variance value of metric data within a rollup period.
+	// The value of filter does not affect the query result of raw data. (The period is 1.)
 	Filter string `json:"filter" required:"true"`
 }
 
-// ToBatchQueryOptsMap builds a request body from BatchQueryOpts.
-func (opts BatchQueryOpts) ToBatchQueryOptsMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+type Metric struct {
+	// Specifies the metric namespace. Its value must be in the service.item format and can contain 3 to 32 characters.
+	// service and item each must be a string that starts with a letter and contains only letters, digits, and underscores (_).
+	Namespace string `json:"namespace" required:"true"`
+
+	// Specifies the metric name. Start with a letter.
+	// Enter 1 to 64 characters. Only letters, digits, and underscores (_) are allowed.
+	MetricName string `json:"metric_name" required:"true"`
+
+	// Specifies the list of the metric dimensions.
+	Dimensions []MetricsDimension `json:"dimensions" required:"true"`
 }
 
-// Querying Monitoring Data in Batches.
-func BatchQuery(client *golangsdk.ServiceClient, opts BatchQueryOptsBuilder) (r MetricDatasResult) {
-	b, err := opts.ToBatchQueryOptsMap()
+func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDataRequest) (r BatchListMetricDataResult) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(batchQueryMetricDataURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200}})
+
+	_, r.Err = client.Post(batchQueryMetricDataURL(client), b, &r.Body, nil)
 	return
 }
 
-type AddMetricDataOpts []AddMetricDataItem
+// ----------------------------------------------------------------------------
 
-type GetEventDataOpts struct {
-	// 指标的维度，目前最大支持3个维度，维度编号从0开始；维度格式为dim.{i}=key,value参考弹性云服务器维度。例如dim.0=instance_id,i-12345
-	Dim0 string `q:"dim.0,required"`
-	Dim1 string `q:"dim.1"`
-	Dim2 string `q:"dim.2"`
-	// 查询数据起始时间，UNIX时间戳，单位毫秒。
-	From string `q:"from,required"`
-	// 指标命名空间，例如弹性云服务器命名空间。
-	Namespace string `q:"namespace,required"`
-	// 查询数据截止时间UNIX时间戳，单位毫秒。from必须小于to。
-	To string `q:"to,required"`
-	// 事件类型，只允许字母、下划线、中划线，字母开头，长度不超过64，如instance_host_info。
-	Type string `q:"type,required"`
-}
+type CreateMetricDataRequest []MetricDataItem
 
-type GetOpts struct {
-	// 指标的维度，目前最大支持3个维度，维度编号从0开始；维度格式为dim.{i}=key,value，最大值为256。  例如dim.0=instance_id,i-12345
-	Dim0 string `q:"dim.0,required"`
-	Dim1 string `q:"dim.1"`
-	Dim2 string `q:"dim.2"`
-	// 数据聚合方式。  支持的值为max, min, average, sum, variance。
-	Filter string `q:"filter,required"`
-	// 查询数据起始时间，UNIX时间戳，单位毫秒。建议from的值相对于当前时间向前偏移至少1个周期。由于聚合运算的过程是将一个聚合周期范围内的数据点聚合到周期起始边界上，如果将from和to的范围设置在聚合周期内，会因为聚合未完成而造成查询数据为空，所以建议from参数相对于当前时间向前偏移至少1个周期。以5分钟聚合周期为例：假设当前时间点为10:35，10:30~10:35之间的原始数据会被聚合到10:30这个点上，所以查询5分钟数据点时from参数应为10:30或之前。云监控会根据所选择的聚合粒度向前取整from参数。
-	From string `q:"from,required"`
-	// 指标名称，例如弹性云服务器监控指标中的cpu_util。
-	MetricName string `q:"metric_name,required"`
-	// 指标命名空间。
-	Namespace string `q:"namespace,required"`
-	// 监控数据粒度。  取值范围：  1，实时数据 300，5分钟粒度 1200，20分钟粒度 3600，1小时粒度 14400，4小时粒度 86400，1天粒度
-	Period string `q:"period,required"`
-	// 查询数据截止时间UNIX时间戳，单位毫秒。from必须小于to。
-	To string `q:"to,required"`
-}
-
-type AddMetricDataItem struct {
-	// 指标数据。
+type MetricDataItem struct {
+	// Specifies the metric data.
 	Metric MetricInfo `json:"metric" required:"true"`
-	// 数据的有效期，超出该有效期则自动删除该数据，单位秒，最大值604800。
+	// Specifies the data validity period.
+	// The unit is second. The value range is 0–604,800 seconds.
+	// If the validity period expires, the data will be automatically deleted.
 	Ttl int `json:"ttl" required:"true"`
-	// 数据收集时间  UNIX时间戳，单位毫秒。  说明： 因为客户端到服务器端有延时，因此插入数据的时间戳应该在[当前时间-3天+20秒，当前时间+10分钟-20秒]区间内，保证到达服务器时不会因为传输时延造成数据不能插入数据库。
-	CollectTime int `json:"collect_time" required:"true"`
-	// 指标数据的值。
+	// Specifies when the data was collected.
+	// The time is UNIX timestamp (ms) format.
+	CollectTime int64 `json:"collect_time" required:"true"`
+	// Specifies the monitoring metric data to be added.
+	// The value can be an integer or a floating point number.
 	Value float64 `json:"value" required:"true"`
-	// 数据的单位。
+	// Specifies the data unit.
+	// Enter a maximum of 32 characters.
 	Unit string `json:"unit,omitempty"`
-	// 数据的类型，只能是\"int\"或\"float\"
+	// Specifies the enumerated type.
+	// Possible values:
+	// int
+	// float
 	Type string `json:"type,omitempty"`
 }
 
-// 指标信息
 type MetricInfo struct {
-	// 指标维度
+	// Specifies the metric dimension. A maximum of three dimensions are supported.
 	Dimensions []MetricsDimension `json:"dimensions" required:"true"`
-	// 指标名称，必须以字母开头，只能包含0-9/a-z/A-Z/_，长度最短为1，最大为64。  具体指标名请参见查询指标列表中查询出的指标名。
+	// Specifies the metric ID. For example, if the monitoring metric of an ECS is CPU usage, metric_name is cpu_util.
 	MetricName string `json:"metric_name" required:"true"`
-	// 指标命名空间，，例如弹性云服务器命名空间。格式为service.item；service和item必须是字符串，必须以字母开头，只能包含0-9/a-z/A-Z/_，总长度最短为3，最大为32。说明： 当alarm_type为（EVENT.SYS| EVENT.CUSTOM）时允许为空。
+	// Query the namespace of a service.
 	Namespace string `json:"namespace" required:"true"`
 }
 
-// 指标维度
 type MetricsDimension struct {
-	// 维度名
+	// Specifies the dimension. For example, the ECS dimension is instance_id.
+	// For details about the dimension of each service, see the key column in Services Interconnected with Cloud Eye.
+	// Start with a letter. Enter 1 to 32 characters.
+	// Only letters, digits, underscores (_), and hyphens (-) are allowed.
 	Name string `json:"name,omitempty"`
-	// 维度值
+	// Specifies the dimension value, for example, an ECS ID.
+	// Start with a letter or a digit. Enter 1 to 256 characters. Only letters, digits, underscores (_), and hyphens (-) are allowed.
 	Value string `json:"value,omitempty"`
 }
 
-func (opts AddMetricDataItem) ToMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-type AddMetricDataOptsBuilder interface {
+type CreateMetricDataBuilder interface {
 	ToAddMetricDataMap() ([]map[string]interface{}, error)
 }
 
-func (opts AddMetricDataOpts) ToAddMetricDataMap() ([]map[string]interface{}, error) {
+func (opts CreateMetricDataRequest) ToAddMetricDataMap() ([]map[string]interface{}, error) {
 	newOpts := make([]map[string]interface{}, len(opts))
 	for i, opt := range opts {
-		opt, err := opt.ToMap()
+		opt, err := golangsdk.BuildRequestBody(opt, "")
 		if err != nil {
 			return nil, err
 		}
@@ -147,43 +131,107 @@ func (opts AddMetricDataOpts) ToAddMetricDataMap() ([]map[string]interface{}, er
 	return newOpts, nil
 }
 
-func AddMetricData(client *golangsdk.ServiceClient, opts AddMetricDataOptsBuilder) (r AddMetricDataResult) {
+func CreateMetricData(client *golangsdk.ServiceClient, opts CreateMetricDataBuilder) (r CreateMetricDataResult) {
 	b, err := opts.ToAddMetricDataMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Post(addMetricDataURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{201},
-	})
+	_, r.Err = client.Post(metricDataURL(client), b, nil, nil)
 	return
 }
 
-func GetEventData(client *golangsdk.ServiceClient, opts GetEventDataOpts) (r GetEventDataResult) {
+// ----------------------------------------------------------------------------
+
+type ShowEventDataRequest struct {
+	// Query the namespace of a service.
+	Namespace string `json:"namespace"`
+	// Specifies the dimension. For example, the ECS dimension is instance_id.
+	// For details about the dimensions corresponding to the monitoring metrics of each service,
+	// see the monitoring metrics description of the corresponding service in Services Interconnected with Cloud Eye.
+	//
+	// Specifies the dimension. A maximum of three dimensions are supported,
+	// and the dimensions are numbered from 0 in dim.{i}=key,value format.
+	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
+	Dim string `json:"dim"`
+	// Specifies the event type.
+	Type string `json:"type"`
+	// Specifies the start time of the query.
+	From int64 `json:"from"`
+	// Specifies the end time of the query.
+	To int64 `json:"to"`
+}
+
+func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) (r ShowEventDataResult) {
 	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		r.Err = err
 		return
 	}
-	url := getEventDataURL(client) + q.String()
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
 
+	url := eventDataURL(client) + q.String()
+	_, r.Err = client.Get(url, &r.Body, nil)
 	return
 }
 
-func Get(client *golangsdk.ServiceClient, opts GetOpts) (r GetResult) {
+// ----------------------------------------------------------------------------
+
+type ShowMetricDataRequest struct {
+	// Specifies the namespace of a service.
+	Namespace string `json:"namespace"`
+	// Specifies the metric name.
+	MetricName string `json:"metric_name"`
+	// Currently, a maximum of three metric dimensions are supported,
+	// and the dimensions are numbered from 0 in the dim.{i}=key,value format.
+	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
+	// The following dimensions are only examples.
+	// For details about whether multiple dimensions are supported,
+	// see the dimension description in the monitoring indicator description of each service.
+	// Single dimension: dim.0=instance_id,i-12345
+	// Multiple dimensions: dim.0=instance_id,i-12345&dim.1=instance_name,i-1234
+	Dim string `json:"dim"`
+	// Specifies the data rollup method. The following methods are supported:
+	//
+	// average: Cloud Eye calculates the average value of metric data within a rollup period.
+	// max: Cloud Eye calculates the maximum value of metric data within a rollup period.
+	// min: Cloud Eye calculates the minimum value of metric data within a rollup period.
+	// sum: Cloud Eye calculates the sum of metric data within a rollup period.
+	// variance: Cloud Eye calculates the variance value of metric data within a rollup period.
+	Filter string `json:"filter"`
+	// Specifies how often Cloud Eye aggregates data.
+	//
+	// Possible values are:
+	// 1: Cloud Eye performs no aggregation and displays raw data.
+	// 300: Cloud Eye aggregates data every 5 minutes.
+	// 1200: Cloud Eye aggregates data every 20 minutes.
+	// 3600: Cloud Eye aggregates data every 1 hour.
+	// 14400: Cloud Eye aggregates data every 4 hours.
+	// 86400: Cloud Eye aggregates data every 24 hours.
+	Period int `json:"period"`
+	// Specifies the start time of the query.
+	// The value is a UNIX timestamp and the unit is ms.
+	// Set the value of from to at least one period earlier than the current time.
+	// Rollup aggregates the raw data generated within a period to the start time of the period.
+	// Therefore, if values of from and to are within a period,
+	// the query result will be empty due to the rollup failure.
+	// Take the 5-minute period as an example. If it is 10:35 now,
+	// the raw data generated between 10:30 and 10:35 will be aggregated to 10:30.
+	// Therefore, in this example, if the value of period is 5 minutes,
+	// the value of from should be 10:30 or earlier.
+	From string `json:"from"`
+	// Specifies the end time of the query.
+	To string `json:"to"`
+}
+
+func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataRequest) (r ShowMetricDataResult) {
 	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		r.Err = err
 		return
 	}
-	url := getURL(client) + q.String()
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
 
+	url := metricDataURL(client) + q.String()
+	_, r.Err = client.Get(url, &r.Body, nil)
 	return
 }

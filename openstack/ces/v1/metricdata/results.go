@@ -4,97 +4,112 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type MetricData struct {
-	// Specifies the namespace in service.
+type BatchMetricData struct {
+	// Specifies the metric namespace.
+	// The value must be in the service.item format and can contain 3 to 32 characters.
 	Namespace string `json:"namespace"`
-
-	// The value can be a string of 1 to 64 characters
-	// and must start with a letter and contain only uppercase
-	// letters, lowercase letters, digits, and underscores.
+	// Specifies the metric name. Start with a letter. Enter 1 to 64 characters.
 	MetricName string `json:"metric_name"`
-
-	// Specifies the list of the metric dimensions.
-	Dimensions []Dimension `json:"dimensions"`
-	Datapoints []Data      `json:"datapoints"`
-
+	// Specifies the list of metric dimensions.
+	Dimensions []MetricsDimension `json:"dimensions"`
+	// Specifies the metric data list.
+	// Since Cloud Eye rounds up the value of from based on the level of granularity for data query,
+	// datapoints may contain more data points than expected.
+	Datapoints []DatapointForBatchMetric `json:"datapoints"`
 	// Specifies the metric unit.
 	Unit string `json:"unit"`
 }
 
-type Dimension struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+type DatapointForBatchMetric struct {
+	// Specifies the maximum value of metric data within a rollup period.
+	Max float64 `json:"max,omitempty"`
+	// Specifies the minimum value of metric data within a rollup period.
+	Min float64 `json:"min,omitempty"`
+	// Specifies the average value of metric data within a rollup period.
+	Average float64 `json:"average,omitempty"`
+	// Specifies the sum of metric data within a rollup period.
+	Sum float64 `json:"sum,omitempty"`
+	// Specifies the variance of metric data within a rollup period.
+	Variance float64 `json:"variance,omitempty"`
+	// Specifies when the metric is collected. It is a UNIX timestamp in milliseconds.
+	Timestamp int64 `json:"timestamp"`
 }
 
-type Data struct {
-	Average   float64 `json:"average"`
-	Timestamp int     `json:"timestamp"`
-}
-
-type MetricDatasResult struct {
+type BatchListMetricDataResult struct {
 	golangsdk.Result
 }
 
-// ExtractMetricDatas is a function that accepts a result and extracts metric datas.
-func (r MetricDatasResult) ExtractMetricDatas() ([]MetricData, error) {
+func (r BatchListMetricDataResult) Extract() ([]BatchMetricData, error) {
 	var s struct {
-		// Specifies the metric data.
-		MetricDatas []MetricData `json:"metrics"`
+		MetricDatas []BatchMetricData `json:"metrics"`
 	}
 	err := r.ExtractInto(&s)
 	return s.MetricDatas, err
 }
 
-type Datapoint struct {
-	// 指标值，该字段名称与请求参数中filter使用的查询值相同。
-	Average float64 `json:"average"`
-	// 指标采集时间。
-	Timestamp int `json:"timestamp"`
-	// 指标单位
-	Unit string `json:"unit,omitempty"`
-}
-
-type EventDataInfo struct {
-	// 事件类型，例如instance_host_info。
-	Type string `json:"type"`
-	// 事件上报时间。
-	Timestamp int `json:"timestamp"`
-	// 主机配置信息。
-	Value string `json:"value"`
-}
-
-// This is a auto create Response Object
-type EventData struct {
-	Datapoints []EventDataInfo `json:"datapoints"`
-}
-
-type Metricdata struct {
-	//  指标数据列表。由于查询数据时，云监控会根据所选择的聚合粒度向前取整from参数，所以datapoints中包含的数据点有可能会多于预期。
-	Datapoints []Datapoint `json:"datapoints"`
-	// 指标名称，例如弹性云服务器监控指标中的cpu_util。
-	MetricName string `json:"metric_name"`
-}
-
-type AddMetricDataResult struct {
+type CreateMetricDataResult struct {
 	golangsdk.ErrResult
 }
 
-type GetEventDataResult struct {
+// --------------------------------------------------------------------------------------
+
+type EventDataInfo struct {
+	// Specifies the event type, for example, instance_host_info.
+	Type string `json:"type"`
+	// Specifies when the event is reported. It is a UNIX timestamp and the unit is ms.
+	Timestamp int64 `json:"timestamp"`
+	// Specifies the host configuration information.
+	Value string `json:"value"`
+}
+
+type ShowEventDataResponse struct {
+	Datapoints []EventDataInfo `json:"datapoints"`
+}
+
+type ShowEventDataResult struct {
 	golangsdk.Result
 }
 
-type GetResult struct {
-	golangsdk.Result
-}
-
-func (r GetEventDataResult) Extract() (*EventData, error) {
-	var s *EventData
+func (r ShowEventDataResult) Extract() (*ShowEventDataResponse, error) {
+	var s *ShowEventDataResponse
 	err := r.ExtractInto(&s)
 	return s, err
 }
 
-func (r GetResult) Extract() (*Metricdata, error) {
-	var s *Metricdata
+// ------------------------------------------------------------------------------------------
+
+type ShowMetricDataResponse struct {
+	// Specifies the metric data list. For details, see Table 4.
+	// Since Cloud Eye rounds up the value of from based on the level of granularity for data query,
+	// datapoints may contain more data points than expected.
+	Datapoints []Datapoint `json:"datapoints"`
+	// Specifies the metric ID. For example, if the monitoring metric of an ECS is CPU usage, metric_name is cpu_util.
+	MetricName string `json:"metric_name"`
+}
+
+type Datapoint struct {
+	// Specifies the maximum value of metric data within a rollup period.
+	Max float64 `json:"max,omitempty"`
+	// Specifies the minimum value of metric data within a rollup period.
+	Min float64 `json:"min,omitempty"`
+	// Specifies the average value of metric data within a rollup period.
+	Average float64 `json:"average,omitempty"`
+	// Specifies the sum of metric data within a rollup period.
+	Sum float64 `json:"sum,omitempty"`
+	// Specifies the variance of metric data within a rollup period.
+	Variance float64 `json:"variance,omitempty"`
+	// Specifies when the metric is collected. It is a UNIX timestamp in milliseconds.
+	Timestamp int64 `json:"timestamp"`
+	// Specifies the metric unit.
+	Unit string `json:"unit,omitempty"`
+}
+
+type ShowMetricDataResult struct {
+	golangsdk.Result
+}
+
+func (r ShowMetricDataResult) Extract() (*ShowMetricDataResponse, error) {
+	var s *ShowMetricDataResponse
 	err := r.ExtractInto(&s)
 	return s, err
 }
