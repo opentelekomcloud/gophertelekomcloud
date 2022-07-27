@@ -81,7 +81,7 @@ type Condition struct {
 	// Specifies the interval (seconds) for checking whether the configured alarm rules are met.
 	Period int32 `json:"period"`
 	// Specifies the data unit. Enter up to 32 characters.
-	Unit *string `json:"unit,omitempty"`
+	Unit string `json:"unit,omitempty"`
 	// Specifies the alarm threshold. The value ranges from 0 to Number. MAX_VALUE (1.7976931348623157e+108).
 	//
 	// For detailed thresholds, see the value range of each metric in the appendix.
