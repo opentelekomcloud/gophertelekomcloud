@@ -121,7 +121,7 @@ func (r ListAlarmsResult) Extract() (*ListAlarmsResponse, error) {
 // ------------------------------------------------------------------------------------------------
 
 type ShowAlarmResponse struct {
-	MetricAlarms *[]MetricAlarms `json:"metric_alarms,omitempty"`
+	MetricAlarms []MetricAlarms `json:"metric_alarms,omitempty"`
 }
 
 type ShowAlarmResult struct {
