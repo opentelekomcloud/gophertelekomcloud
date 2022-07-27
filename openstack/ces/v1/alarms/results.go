@@ -95,6 +95,10 @@ type AlarmActions struct {
 	// autoscaling: indicates that a scaling action will be triggered.
 	Type string `json:"type"`
 	// Specifies the list of objects to be notified if the alarm status changes.
+	// You can configure up to 5 object IDs. You can obtain the topicUrn value from SMN in the following format:
+	// urn:smn:([a-z]|[A-Z]|[0-9]|\-){1,32}:([a-z]|[A-Z]|[0-9]){32}:([a-z]|[A-Z]|[0-9]|\-|\_){1,256}.
+	// If you set type to notification, you must specify notificationList.
+	// If you set type to autoscaling, you must set notificationList to [].
 	NotificationList []string `json:"notificationList"`
 }
 
@@ -115,3 +119,45 @@ func (r ListAlarmsResult) Extract() (*ListAlarmsResponse, error) {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+type ShowAlarmResponse struct {
+	MetricAlarms *[]MetricAlarms `json:"metric_alarms,omitempty"`
+}
+
+type ShowAlarmResult struct {
+	golangsdk.Result
+}
+
+func (r ShowAlarmResult) Extract() (*ShowAlarmResponse, error) {
+	var s = ShowAlarmResponse{}
+	if r.Err != nil {
+		return nil, r.Err
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract Show Alarms Response")
+	}
+	return &s, nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+type CreateAlarmResponse struct {
+	AlarmId string `json:"alarm_id,omitempty"`
+}
+
+type CreateAlarmResult struct {
+	golangsdk.Result
+}
+
+func (r CreateAlarmResult) Extract() (*CreateAlarmResponse, error) {
+	var s = CreateAlarmResponse{}
+	if r.Err != nil {
+		return nil, r.Err
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract Create Alarms Response")
+	}
+	return &s, nil
+}
