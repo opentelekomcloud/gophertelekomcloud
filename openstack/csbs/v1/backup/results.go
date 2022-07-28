@@ -54,7 +54,7 @@ type Backup struct {
 
 type ExtendInfo struct {
 	AutoTrigger          bool           `json:"auto_trigger"`
-	AverageSpeed         float64        `json:"average_speed"`
+	AverageSpeed         float32        `json:"average_speed"`
 	CopyFrom             string         `json:"copy_from"`
 	CopyStatus           string         `json:"copy_status"`
 	FailCode             FailCode       `json:"fail_code"`
@@ -67,7 +67,7 @@ type ExtendInfo struct {
 	ResourceName         string         `json:"resource_name"`
 	ResourceType         string         `json:"resource_type"`
 	Size                 int            `json:"size"`
-	SpaceSavingRatio     float64        `json:"space_saving_ratio"`
+	SpaceSavingRatio     float32        `json:"space_saving_ratio"`
 	VolumeBackups        []VolumeBackup `json:"volume_backups"`
 	FinishedAt           string         `json:"finished_at"`
 	TaskId               string         `json:"taskid"`
@@ -93,19 +93,19 @@ type FailCode struct {
 }
 
 type VolumeBackup struct {
-	AverageSpeed     int     `json:"average_speed"`
-	Bootable         bool    `json:"bootable"`
-	Id               string  `json:"id"`
-	ImageType        string  `json:"image_type"`
-	Incremental      bool    `json:"incremental"`
-	SnapshotID       string  `json:"snapshot_id"`
-	Name             string  `json:"name"`
-	Size             int     `json:"size"`
-	SourceVolumeId   string  `json:"source_volume_id"`
-	SourceVolumeSize int     `json:"source_volume_size"`
-	SpaceSavingRatio float64 `json:"space_saving_ratio"`
-	Status           string  `json:"status"`
-	SourceVolumeName string  `json:"source_volume_name"`
+	AverageSpeed     int    `json:"average_speed"`
+	Bootable         bool   `json:"bootable"`
+	Id               string `json:"id"`
+	ImageType        string `json:"image_type"`
+	Incremental      bool   `json:"incremental"`
+	SnapshotID       string `json:"snapshot_id"`
+	Name             string `json:"name"`
+	Size             int    `json:"size"`
+	SourceVolumeId   string `json:"source_volume_id"`
+	SourceVolumeSize int    `json:"source_volume_size"`
+	SpaceSavingRatio int    `json:"space_saving_ratio"`
+	Status           string `json:"status"`
+	SourceVolumeName string `json:"source_volume_name"`
 }
 
 func (r QueryResult) ExtractQueryResponse() ([]ResourceCapability, error) {
