@@ -13,22 +13,22 @@ type ListMetricsRequest struct {
 	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
 	// Single dimension: dim.0=instance_id,6f3c6f91-4b24-4e1b-b7d1-a94ac1cb011d
 	// Multiple dimensions: dim.0=key,value&dim.1=key,value。
-	Dim string `json:"dim,omitempty"`
+	Dim string `q:"dim,omitempty"`
 	// The value ranges from 1 to 1000, and is 1000 by default.
 	// This parameter is used to limit the number of query results.
-	Limit int32 `json:"limit,omitempty"`
+	Limit *int `q:"limit,omitempty"`
 	// Specifies the metric ID. For example, if the monitoring metric of an ECS is CPU usage, metric_name is cpu_util.
-	MetricName string `json:"metric_name,omitempty"`
+	MetricName string `q:"metric_name,omitempty"`
 	// Query the namespace of a service.
-	Namespace string `json:"namespace,omitempty"`
+	Namespace string `q:"namespace,omitempty"`
 	// Specifies the result sorting method, which is sorted by timestamp.
 	// The default value is desc.
 	// asc: The query results are displayed in the ascending order.
 	// desc: The query results are displayed in the descending order.
-	Order string `json:"order,omitempty"`
+	Order string `q:"order,omitempty"`
 	// Specifies the paging start value.
 	// The format is namespace.metric_name.key:value.
-	Start string `json:"start,omitempty"`
+	Start string `q:"start,omitempty"`
 }
 
 type ListMetricsBuilder interface {
@@ -36,7 +36,7 @@ type ListMetricsBuilder interface {
 }
 
 func (opts ListMetricsRequest) ToMetricsListMap() (string, error) {
-	s, err := golangsdk.BuildQueryString(opts)
+	s, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return "", err
 	}

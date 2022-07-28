@@ -621,6 +621,17 @@ func NewSmnV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewCesV1Client returns authenticated CES v1 client
+func NewCesV1Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCESClient(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
