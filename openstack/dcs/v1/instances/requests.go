@@ -40,7 +40,7 @@ type CreateOps struct {
 	// the value can be 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 24, 48, or 64.
 	// For a Redis Cluster DCS Redis 4.0 or 5.0 instance,
 	// the value can be 4, 8, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, or 1024.
-	Capacity float32 `json:"capacity" required:"true"`
+	Capacity float64 `json:"capacity" required:"true"`
 
 	// Indicate if no password visit cache instance is allowed.
 	NoPasswordAccess string `json:"no_password_access,omitempty"`
