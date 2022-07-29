@@ -15,6 +15,9 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 	dcsInstance := createDCSInstance(t, client)
 	defer deleteDCSInstance(t, client, dcsInstance.InstanceID)
 
+	th.AssertEquals(t, dcsInstance.Capacity, 0)
+	th.AssertEquals(t, dcsInstance.CapacityMinor, ".125")
+
 	updateOpts := configs.UpdateOpts{
 		RedisConfigs: []configs.RedisConfig{
 			{

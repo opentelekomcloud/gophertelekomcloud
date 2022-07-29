@@ -50,7 +50,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 
 	defaultSG := openstack.DefaultSecurityGroup(t)
 	dcsName := tools.RandomString("dcs-instance-", 3)
-	var createOpts = instances.CreateOps{
+	createOpts := instances.CreateOps{
 		Name:            dcsName,
 		Description:     "some test DCSv1 instance",
 		Engine:          "Redis",
