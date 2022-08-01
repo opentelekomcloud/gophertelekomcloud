@@ -2,6 +2,7 @@ package metrics
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func getMetricsURL(c *golangsdk.ServiceClient) string {
+// GET /V1.0/{project_id}/metrics
+func metricsURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("metrics")
 }
