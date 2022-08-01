@@ -8,33 +8,37 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type Metrics struct {
-	Metrics  []Metric `json:"metrics"`
+type ListMetricsResponse struct {
+	// Specifies the list of metric objects.
+	Metrics []MetricInfoList `json:"metrics"`
+	// Specifies the metadata of query results, including the pagination information.
 	MetaData MetaData `json:"meta_data"`
 }
 
-type MetaData struct {
-	Count  int    `json:"count"`
-	Marker string `json:"marker"`
-	Total  int    `json:"total"`
-}
-
-type Metric struct {
+type MetricInfoList struct {
 	// Specifies the metric namespace.
 	Namespace string `json:"namespace"`
-
 	// Specifies the metric name, such as cpu_util.
 	MetricName string `json:"metric_name"`
-
 	// Specifies the metric unit.
 	Unit string `json:"unit"`
-
-	// Specifies the list of dimensions.
-	Dimensions []Dimension `json:"dimensions"`
+	// Specifies the list of metric dimensions.
+	Dimensions []MetricsDimension `json:"dimensions"`
 }
 
-type Dimension struct {
-	Name  string `json:"name"`
+type MetaData struct {
+	// Specifies the number of returned results.
+	Count int `json:"count"`
+	// Specifies the pagination marker.
+	Marker string `json:"marker"`
+	// Specifies the total number of metrics.
+	Total int `json:"total"`
+}
+
+type MetricsDimension struct {
+	// Specifies the dimension.
+	Name string `json:"name"`
+	// Specifies the dimension value, for example, an ECS ID.
 	Value string `json:"value"`
 }
 
@@ -42,17 +46,15 @@ type ListResult struct {
 	golangsdk.Result
 }
 
-// Extract is a function that accepts a result and extracts metrics.
-func ExtractMetrics(r pagination.Page) (Metrics, error) {
-	var s Metrics
+func ExtractMetrics(r pagination.Page) (ListMetricsResponse, error) {
+	var s ListMetricsResponse
 	err := r.(MetricsPage).ExtractInto(&s)
 	return s, err
 }
 
-// Extract is a function that all accepts a result and extracts metrics.
-func ExtractAllPagesMetrics(r pagination.Page) (Metrics, error) {
-	var s Metrics
-	s.Metrics = make([]Metric, 0)
+func ExtractAllPagesMetrics(r pagination.Page) (ListMetricsResponse, error) {
+	var s ListMetricsResponse
+	s.Metrics = make([]MetricInfoList, 0)
 	err := r.(MetricsPage).ExtractInto(&s)
 	if len(s.Metrics) == 0 {
 		return s, nil
@@ -73,15 +75,10 @@ func ExtractAllPagesMetrics(r pagination.Page) (Metrics, error) {
 	return s, err
 }
 
-// MetricsPage is the page returned by a pager when traversing over a
-// collection of metrics.
 type MetricsPage struct {
 	pagination.LinkedPageBase
 }
 
-// NextPageURL is invoked when a paginated collection of metrics has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
 func (r MetricsPage) NextPageURL() (string, error) {
 	metrics, err := ExtractMetrics(r)
 	if err != nil {
@@ -113,7 +110,6 @@ func (r MetricsPage) NextPageURL() (string, error) {
 	return r.WrapNextPageURL(buf.String())
 }
 
-// IsEmpty checks whether a NetworkPage struct is empty.
 func (r MetricsPage) IsEmpty() (bool, error) {
 	s, err := ExtractMetrics(r)
 	if err != nil {
@@ -122,13 +118,6 @@ func (r MetricsPage) IsEmpty() (bool, error) {
 	return len(s.Metrics) == 0, err
 }
 
-/*
-ExtractNextURL is an internal function useful for packages of collection
-resources that are paginated in a certain way.
-
-It attempts to extract the "start" URL from slice of Link structs, or
-"" if no such URL is present.
-*/
 func (r MetricsPage) WrapNextPageURL(start string) (string, error) {
 	limit := r.URL.Query().Get("limit")
 	if limit == "" {
