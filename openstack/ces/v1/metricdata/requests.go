@@ -146,7 +146,7 @@ func CreateMetricData(client *golangsdk.ServiceClient, opts CreateMetricDataBuil
 
 type ShowEventDataRequest struct {
 	// Query the namespace of a service.
-	Namespace string `json:"namespace"`
+	Namespace string `q:"namespace"`
 	// Specifies the dimension. For example, the ECS dimension is instance_id.
 	// For details about the dimensions corresponding to the monitoring metrics of each service,
 	// see the monitoring metrics description of the corresponding service in Services Interconnected with Cloud Eye.
@@ -154,13 +154,13 @@ type ShowEventDataRequest struct {
 	// Specifies the dimension. A maximum of three dimensions are supported,
 	// and the dimensions are numbered from 0 in dim.{i}=key,value format.
 	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
-	Dim string `json:"dim"`
+	Dim string `q:"dim"`
 	// Specifies the event type.
-	Type string `json:"type"`
+	Type string `q:"type"`
 	// Specifies the start time of the query.
-	From int64 `json:"from"`
+	From int64 `q:"from"`
 	// Specifies the end time of the query.
-	To int64 `json:"to"`
+	To int64 `q:"to"`
 }
 
 func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) (r ShowEventDataResult) {
@@ -179,9 +179,9 @@ func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) (
 
 type ShowMetricDataRequest struct {
 	// Specifies the namespace of a service.
-	Namespace string `json:"namespace"`
+	Namespace string `q:"namespace"`
 	// Specifies the metric name.
-	MetricName string `json:"metric_name"`
+	MetricName string `q:"metric_name"`
 	// Currently, a maximum of three metric dimensions are supported,
 	// and the dimensions are numbered from 0 in the dim.{i}=key,value format.
 	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
@@ -190,7 +190,7 @@ type ShowMetricDataRequest struct {
 	// see the dimension description in the monitoring indicator description of each service.
 	// Single dimension: dim.0=instance_id,i-12345
 	// Multiple dimensions: dim.0=instance_id,i-12345&dim.1=instance_name,i-1234
-	Dim string `json:"dim"`
+	Dim string `q:"dim"`
 	// Specifies the data rollup method. The following methods are supported:
 	//
 	// average: Cloud Eye calculates the average value of metric data within a rollup period.
@@ -198,7 +198,7 @@ type ShowMetricDataRequest struct {
 	// min: Cloud Eye calculates the minimum value of metric data within a rollup period.
 	// sum: Cloud Eye calculates the sum of metric data within a rollup period.
 	// variance: Cloud Eye calculates the variance value of metric data within a rollup period.
-	Filter string `json:"filter"`
+	Filter string `q:"filter"`
 	// Specifies how often Cloud Eye aggregates data.
 	//
 	// Possible values are:
@@ -208,7 +208,7 @@ type ShowMetricDataRequest struct {
 	// 3600: Cloud Eye aggregates data every 1 hour.
 	// 14400: Cloud Eye aggregates data every 4 hours.
 	// 86400: Cloud Eye aggregates data every 24 hours.
-	Period int `json:"period"`
+	Period int `q:"period"`
 	// Specifies the start time of the query.
 	// The value is a UNIX timestamp and the unit is ms.
 	// Set the value of from to at least one period earlier than the current time.
@@ -219,9 +219,9 @@ type ShowMetricDataRequest struct {
 	// the raw data generated between 10:30 and 10:35 will be aggregated to 10:30.
 	// Therefore, in this example, if the value of period is 5 minutes,
 	// the value of from should be 10:30 or earlier.
-	From string `json:"from"`
+	From string `q:"from"`
 	// Specifies the end time of the query.
-	To string `json:"to"`
+	To string `q:"to"`
 }
 
 func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataRequest) (r ShowMetricDataResult) {
