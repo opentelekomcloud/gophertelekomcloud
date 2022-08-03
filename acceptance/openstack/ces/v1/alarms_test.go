@@ -23,9 +23,11 @@ func TestAlarms(t *testing.T) {
 
 	expAlarm := alarmsRes.MetricAlarms[0]
 	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmRequest{
-		AlarmName: expAlarm.AlarmName + "-copy",
-		Metric:    expAlarm.Metric,
-		Condition: expAlarm.Condition,
+		AlarmName:          expAlarm.AlarmName + "-copy",
+		Metric:             expAlarm.Metric,
+		Condition:          expAlarm.Condition,
+		AlarmEnabled:       false,
+		AlarmActionEnabled: false,
 	}).Extract()
 	th.AssertNoErr(t, err)
 
