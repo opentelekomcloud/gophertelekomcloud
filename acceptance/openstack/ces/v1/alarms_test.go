@@ -21,27 +21,27 @@ func TestAlarms(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, alarmsRes.MetaData.Count <= lim, true)
 
+	f := false
 	expAlarm := alarmsRes.MetricAlarms[0]
 	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmRequest{
 		AlarmName:          expAlarm.AlarmName + "-copy",
 		Metric:             expAlarm.Metric,
 		Condition:          expAlarm.Condition,
-		AlarmEnabled:       false,
-		AlarmActionEnabled: false,
+		AlarmEnabled:       &f,
+		AlarmActionEnabled: &f,
 	}).Extract()
+	defer func() {
+		err = alarms.DeleteAlarm(client, newAlarm.AlarmId)
+		th.AssertNoErr(t, err)
+	}()
 	th.AssertNoErr(t, err)
 
 	err = alarms.UpdateAlarmAction(client, newAlarm.AlarmId, alarms.ModifyAlarmActionReq{
-		AlarmEnabled: !expAlarm.AlarmEnabled,
+		AlarmEnabled: true,
 	})
 	th.AssertNoErr(t, err)
 
 	showAlarm, err := alarms.ShowAlarm(client, newAlarm.AlarmId).Extract()
 	th.AssertNoErr(t, err)
-
-	th.AssertEquals(t, showAlarm.MetricAlarms[0].AlarmName, expAlarm.AlarmName)
-	th.AssertEquals(t, showAlarm.MetricAlarms[0].AlarmEnabled, !expAlarm.AlarmEnabled)
-
-	err = alarms.DeleteAlarm(client, newAlarm.AlarmId)
-	th.AssertNoErr(t, err)
+	th.AssertEquals(t, showAlarm.MetricAlarms[0].AlarmEnabled, true)
 }

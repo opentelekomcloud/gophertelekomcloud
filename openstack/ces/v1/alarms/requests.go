@@ -81,9 +81,9 @@ type CreateAlarmRequest struct {
 	// Specifies the alarm triggering condition.
 	Condition Condition `json:"condition"`
 	// Specifies whether to enable the alarm.
-	AlarmEnabled bool `json:"alarm_enabled,omitempty"`
+	AlarmEnabled *bool `json:"alarm_enabled,omitempty"`
 	// Specifies whether to enable the action to be triggered by an alarm. The default value is true.
-	AlarmActionEnabled bool `json:"alarm_action_enabled,omitempty"`
+	AlarmActionEnabled *bool `json:"alarm_action_enabled,omitempty"`
 	// Specifies the alarm severity. Possible values are 1, 2 (default), 3 and 4,
 	// indicating critical, major, minor, and informational, respectively.
 	AlarmLevel int `json:"alarm_level,omitempty"`
