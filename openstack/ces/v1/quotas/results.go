@@ -19,11 +19,11 @@ type Resource struct {
 	// Specifies the quota type.
 	Type string `json:"type"`
 	// Specifies the used amount of the quota.
-	Used int32 `json:"used"`
+	Used int `json:"used"`
 	// Specifies the quota unit.
 	Unit string `json:"unit"`
 	// Specifies the total amount of the quota.
-	Quota int32 `json:"quota"`
+	Quota int `json:"quota"`
 }
 
 type ShowQuotasResult struct {
