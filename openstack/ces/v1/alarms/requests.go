@@ -9,14 +9,14 @@ import (
 type ListAlarmsRequest struct {
 	// The value ranges from 1 to 100, and is 100 by default.
 	// This parameter is used to limit the number of query results.
-	Limit int32 `json:"limit,omitempty"`
+	Limit *int `q:"limit,omitempty"`
 	// Specifies the result sorting method, which is sorted by timestamp.
 	// The default value is desc.
 	// asc: The query results are displayed in the ascending order.
 	// desc: The query results are displayed in the descending order.
-	Order string `json:"order,omitempty"`
+	Order string `q:"order,omitempty"`
 	// Specifies the first queried alarm to be displayed on a page.
-	Start string `json:"start,omitempty"`
+	Start string `q:"start,omitempty"`
 }
 
 func ListAlarms(client *golangsdk.ServiceClient, req ListAlarmsRequest) (r ListAlarmsResult) {
@@ -86,7 +86,7 @@ type CreateAlarmRequest struct {
 	AlarmActionEnabled bool `json:"alarm_action_enabled,omitempty"`
 	// Specifies the alarm severity. Possible values are 1, 2 (default), 3 and 4,
 	// indicating critical, major, minor, and informational, respectively.
-	AlarmLevel int32 `json:"alarm_level,omitempty"`
+	AlarmLevel int `json:"alarm_level,omitempty"`
 	// Specifies the action to be triggered by an alarm.
 	AlarmActions []AlarmActions `json:"alarm_actions,omitempty"`
 	// Specifies the action to be triggered after the alarm is cleared.

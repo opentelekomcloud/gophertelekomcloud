@@ -12,8 +12,8 @@ type ListAlarmsResponse struct {
 }
 
 type MetaData struct {
-	Count  int32  `json:"count"`
-	Total  int32  `json:"total"`
+	Count  int    `json:"count"`
+	Total  int    `json:"total"`
 	Marker string `json:"marker"`
 }
 
@@ -23,13 +23,13 @@ type MetricAlarms struct {
 	// Provides supplementary information about the alarm rule.
 	AlarmDescription string `json:"alarm_description,omitempty"`
 	// Specifies the alarm metric.
-	Metric MetricInfoForAlarm `json:"metric"`
+	Metric MetricForAlarm `json:"metric"`
 	// Specifies the alarm triggering condition.
 	Condition Condition `json:"condition"`
 	// Specifies whether to enable the alarm rule.
 	AlarmEnabled bool `json:"alarm_enabled,omitempty"`
 	// Specifies the alarm severity. Possible values are 1, 2, 3 and 4, indicating critical, major, minor, and informational, respectively.
-	AlarmLevel int32 `json:"alarm_level,omitempty"`
+	AlarmLevel int `json:"alarm_level,omitempty"`
 	// Specifies whether to enable the action to be triggered by an alarm.
 	AlarmActionEnabled bool `json:"alarm_action_enabled,omitempty"`
 	// Specifies the action to be triggered by an alarm.
@@ -46,15 +46,6 @@ type MetricAlarms struct {
 	// alarm: An alarm is generated.
 	// insufficient_data: The required data is insufficient.
 	AlarmState string `json:"alarm_state"`
-}
-
-type MetricInfoForAlarm struct {
-	// Query the namespace of a service. For details
-	Namespace string `json:"namespace"`
-	// Specifies the metric ID. For example, if the monitoring metric of an ECS is CPU usage, metric_name is cpu_util.
-	MetricName string `json:"metric_name"`
-	// Specifies the list of metric dimensions.
-	Dimensions []MetricsDimension `json:"dimensions"`
 }
 
 type MetricsDimension struct {
@@ -79,7 +70,7 @@ type Condition struct {
 	// variance: Cloud Eye calculates the variance value of metric data within a rollup period.
 	Filter string `json:"filter"`
 	// Specifies the interval (seconds) for checking whether the configured alarm rules are met.
-	Period int32 `json:"period"`
+	Period int `json:"period"`
 	// Specifies the data unit. Enter up to 32 characters.
 	Unit string `json:"unit,omitempty"`
 	// Specifies the alarm threshold. The value ranges from 0 to Number. MAX_VALUE (1.7976931348623157e+108).
