@@ -64,7 +64,9 @@ func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDa
 		return
 	}
 
-	_, r.Err = client.Post(batchQueryMetricDataURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(batchQueryMetricDataURL(client), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }
 
@@ -154,13 +156,13 @@ type ShowEventDataRequest struct {
 	// Specifies the dimension. A maximum of three dimensions are supported,
 	// and the dimensions are numbered from 0 in dim.{i}=key,value format.
 	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
-	Dim string `q:"dim"`
+	Dim string `q:"dim.0"`
 	// Specifies the event type.
 	Type string `q:"type"`
 	// Specifies the start time of the query.
-	From int64 `q:"from"`
+	From string `q:"from"`
 	// Specifies the end time of the query.
-	To int64 `q:"to"`
+	To string `q:"to"`
 }
 
 func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) (r ShowEventDataResult) {
@@ -190,7 +192,7 @@ type ShowMetricDataRequest struct {
 	// see the dimension description in the monitoring indicator description of each service.
 	// Single dimension: dim.0=instance_id,i-12345
 	// Multiple dimensions: dim.0=instance_id,i-12345&dim.1=instance_name,i-1234
-	Dim string `q:"dim"`
+	Dim string `q:"dim.0"`
 	// Specifies the data rollup method. The following methods are supported:
 	//
 	// average: Cloud Eye calculates the average value of metric data within a rollup period.
