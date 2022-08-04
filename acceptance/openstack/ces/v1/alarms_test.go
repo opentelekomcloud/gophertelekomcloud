@@ -22,18 +22,28 @@ func TestAlarms(t *testing.T) {
 	th.AssertEquals(t, alarmsRes.MetaData.Count <= lim, true)
 
 	f := false
-	expAlarm := alarmsRes.MetricAlarms[0]
 	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmRequest{
-		AlarmName:          expAlarm.AlarmName + "-copy",
-		Metric:             expAlarm.Metric,
-		Condition:          expAlarm.Condition,
+		AlarmName: "alarm-acc-test",
+		Metric: alarms.MetricForAlarm{
+			Namespace:  "SYS.VPC",
+			MetricName: "upstream_bandwidth",
+			Dimensions: []alarms.MetricsDimension{
+				{
+					Name:  "bandwidth_id",
+					Value: "026c495c-fake-test-8b11-a113ba530d11",
+				},
+			},
+		},
+		Condition: alarms.Condition{
+			ComparisonOperator: ">=",
+			Count:              3,
+			Filter:             "average",
+			Period:             300,
+			Value:              4000000,
+		},
 		AlarmEnabled:       &f,
 		AlarmActionEnabled: &f,
 	}).Extract()
-	defer func() {
-		err = alarms.DeleteAlarm(client, newAlarm.AlarmId)
-		th.AssertNoErr(t, err)
-	}()
 	th.AssertNoErr(t, err)
 
 	err = alarms.UpdateAlarmAction(client, newAlarm.AlarmId, alarms.ModifyAlarmActionReq{
@@ -44,4 +54,7 @@ func TestAlarms(t *testing.T) {
 	showAlarm, err := alarms.ShowAlarm(client, newAlarm.AlarmId).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, showAlarm.MetricAlarms[0].AlarmEnabled, true)
+
+	err = alarms.DeleteAlarm(client, newAlarm.AlarmId)
+	th.AssertNoErr(t, err)
 }
