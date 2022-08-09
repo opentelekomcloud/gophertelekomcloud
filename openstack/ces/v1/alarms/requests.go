@@ -17,9 +17,9 @@ type ListAlarmsRequest struct {
 	Start string `q:"start"`
 }
 
-func ListAlarms(client *golangsdk.ServiceClient, req ListAlarmsRequest) (*ListAlarmsResponse, error) {
+func ListAlarms(client *golangsdk.ServiceClient, opts ListAlarmsRequest) (*ListAlarmsResponse, error) {
 	url := alarmsURL(client)
-	query, err := golangsdk.BuildQueryString(req)
+	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +118,8 @@ type MetricForAlarm struct {
 	ResourceGroupId string `json:"resource_group_id,omitempty"`
 }
 
-func CreateAlarm(client *golangsdk.ServiceClient, req CreateAlarmRequest) (string, error) {
-	reqBody, err := golangsdk.BuildRequestBody(req, "")
+func CreateAlarm(client *golangsdk.ServiceClient, opts CreateAlarmRequest) (string, error) {
+	reqBody, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}
