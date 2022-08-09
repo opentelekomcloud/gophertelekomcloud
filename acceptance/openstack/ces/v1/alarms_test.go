@@ -12,14 +12,13 @@ func TestAlarms(t *testing.T) {
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
 
-	lim := 10
 	alarmsRes, err := alarms.ListAlarms(client, alarms.ListAlarmsRequest{
-		Limit: &lim,
+		Limit: 10,
 		Order: "desc",
-	}).Extract()
+	})
 
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, alarmsRes.MetaData.Count <= lim, true)
+	th.AssertEquals(t, alarmsRes.MetaData.Count <= 10, true)
 
 	f := false
 	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmRequest{
@@ -43,18 +42,20 @@ func TestAlarms(t *testing.T) {
 		},
 		AlarmEnabled:       &f,
 		AlarmActionEnabled: &f,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
-	err = alarms.UpdateAlarmAction(client, newAlarm.AlarmId, alarms.ModifyAlarmActionReq{
+	t.Cleanup(func() {
+		err = alarms.DeleteAlarm(client, newAlarm)
+		th.AssertNoErr(t, err)
+	})
+
+	err = alarms.UpdateAlarmAction(client, newAlarm, alarms.ModifyAlarmActionRequest{
 		AlarmEnabled: true,
 	})
 	th.AssertNoErr(t, err)
 
-	showAlarm, err := alarms.ShowAlarm(client, newAlarm.AlarmId).Extract()
+	showAlarm, err := alarms.ShowAlarm(client, newAlarm)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, showAlarm.MetricAlarms[0].AlarmEnabled, true)
-
-	err = alarms.DeleteAlarm(client, newAlarm.AlarmId)
-	th.AssertNoErr(t, err)
+	th.AssertEquals(t, showAlarm[0].AlarmEnabled, true)
 }

@@ -1,52 +1,64 @@
 package alarms
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type ListAlarmsRequest struct {
 	// The value ranges from 1 to 100, and is 100 by default.
 	// This parameter is used to limit the number of query results.
-	Limit *int `q:"limit,omitempty"`
+	Limit int `q:"limit"`
 	// Specifies the result sorting method, which is sorted by timestamp.
 	// The default value is desc.
 	// asc: The query results are displayed in the ascending order.
 	// desc: The query results are displayed in the descending order.
-	Order string `q:"order,omitempty"`
+	Order string `q:"order"`
 	// Specifies the first queried alarm to be displayed on a page.
-	Start string `q:"start,omitempty"`
+	Start string `q:"start"`
 }
 
-func ListAlarms(client *golangsdk.ServiceClient, req ListAlarmsRequest) (r ListAlarmsResult) {
+func ListAlarms(client *golangsdk.ServiceClient, req ListAlarmsRequest) (*ListAlarmsResponse, error) {
 	url := alarmsURL(client)
 	query, err := golangsdk.BuildQueryString(req)
 	if err != nil {
-		return
+		return nil, err
 	}
 
+	raw := golangsdk.Result{}
 	url += query.String()
-	_, r.Err = client.Get(url, &r.Body, nil)
-	r.Err = err
-	return
+
+	_, err = client.Get(url, &raw.Body, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var s ListAlarmsResponse
+	err = raw.ExtractInto(&s)
+	return &s, err
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func ShowAlarm(client *golangsdk.ServiceClient, id string) (r ShowAlarmResult) {
-	_, r.Err = client.Get(alarmIdURL(client, id), &r.Body, nil)
-	return
+func ShowAlarm(client *golangsdk.ServiceClient, id string) ([]MetricAlarms, error) {
+	raw := golangsdk.Result{}
+	_, err := client.Get(alarmIdURL(client, id), &raw.Body, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []MetricAlarms
+	err = raw.ExtractIntoSlicePtr(&res, "metric_alarms")
+	return res, err
 }
 
 // ------------------------------------------------------------------------------------------------
 
-type ModifyAlarmActionReq struct {
+type ModifyAlarmActionRequest struct {
 	// Specifies whether the alarm rule is enabled.
 	AlarmEnabled bool `json:"alarm_enabled"`
 }
 
-func UpdateAlarmAction(client *golangsdk.ServiceClient, id string, req ModifyAlarmActionReq) (err error) {
+func UpdateAlarmAction(client *golangsdk.ServiceClient, id string, req ModifyAlarmActionRequest) (err error) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
 	if err != nil {
 		return
@@ -71,7 +83,6 @@ func DeleteAlarm(client *golangsdk.ServiceClient, id string) (err error) {
 
 type CreateAlarmRequest struct {
 	// Specifies the alarm rule name.
-	//
 	// Enter 1 to 128 characters. Only letters, digits, underscores (_), and hyphens (-) are allowed.
 	AlarmName string `json:"alarm_name"`
 	// Provides supplementary information about the alarm rule. Enter 0 to 256 characters.
@@ -107,14 +118,21 @@ type MetricForAlarm struct {
 	ResourceGroupId string `json:"resource_group_id,omitempty"`
 }
 
-func CreateAlarm(client *golangsdk.ServiceClient, req CreateAlarmRequest) (r CreateAlarmResult) {
+func CreateAlarm(client *golangsdk.ServiceClient, req CreateAlarmRequest) (string, error) {
 	reqBody, err := golangsdk.BuildRequestBody(req, "")
 	if err != nil {
-		r.Err = fmt.Errorf("failed to create Alarm Request map: %s", err)
-		return
+		return "", err
 	}
 
-	_, err = client.Post(alarmsURL(client), reqBody, &r.Body, nil)
-	r.Err = err
-	return
+	raw := golangsdk.Result{}
+	_, err = client.Post(alarmsURL(client), reqBody, &raw.Body, nil)
+	if err != nil {
+		return "", err
+	}
+
+	var s struct {
+		AlarmId string `json:"alarm_id"`
+	}
+	err = raw.ExtractInto(&s)
+	return s.AlarmId, err
 }

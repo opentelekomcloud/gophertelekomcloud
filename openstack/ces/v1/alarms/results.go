@@ -1,11 +1,5 @@
 package alarms
 
-import (
-	"fmt"
-
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-)
-
 type ListAlarmsResponse struct {
 	MetricAlarms []MetricAlarms `json:"metric_alarms,omitempty"`
 	MetaData     MetaData       `json:"meta_data,omitempty"`
@@ -60,7 +54,7 @@ type Condition struct {
 	ComparisonOperator string `json:"comparison_operator"`
 	// Specifies the number of consecutive occurrence times that the alarm policy was met.
 	// The value ranges from 1 to 5.
-	Count int32 `json:"count"`
+	Count int `json:"count"`
 	// Specifies the data rollup method. The following methods are supported:
 	//
 	// average: Cloud Eye calculates the average value of metric data within a rollup period.
@@ -91,64 +85,4 @@ type AlarmActions struct {
 	// If you set type to notification, you must specify notificationList.
 	// If you set type to autoscaling, you must set notificationList to [].
 	NotificationList []string `json:"notificationList"`
-}
-
-type ListAlarmsResult struct {
-	golangsdk.Result
-}
-
-func (r ListAlarmsResult) Extract() (*ListAlarmsResponse, error) {
-	var s = ListAlarmsResponse{}
-	if r.Err != nil {
-		return nil, r.Err
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, fmt.Errorf("failed to extract List Alarms Response")
-	}
-	return &s, nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-type ShowAlarmResponse struct {
-	MetricAlarms []MetricAlarms `json:"metric_alarms,omitempty"`
-}
-
-type ShowAlarmResult struct {
-	golangsdk.Result
-}
-
-func (r ShowAlarmResult) Extract() (*ShowAlarmResponse, error) {
-	var s = ShowAlarmResponse{}
-	if r.Err != nil {
-		return nil, r.Err
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, fmt.Errorf("failed to extract Show Alarms Response")
-	}
-	return &s, nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-type CreateAlarmResponse struct {
-	AlarmId string `json:"alarm_id,omitempty"`
-}
-
-type CreateAlarmResult struct {
-	golangsdk.Result
-}
-
-func (r CreateAlarmResult) Extract() (*CreateAlarmResponse, error) {
-	var s = CreateAlarmResponse{}
-	if r.Err != nil {
-		return nil, r.Err
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, fmt.Errorf("failed to extract Create Alarms Response")
-	}
-	return &s, nil
 }
