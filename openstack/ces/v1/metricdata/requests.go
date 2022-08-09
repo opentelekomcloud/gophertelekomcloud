@@ -122,18 +122,18 @@ type MetricsDimension struct {
 	Value string `json:"value,omitempty"`
 }
 
-func CreateMetricData(client *golangsdk.ServiceClient, req []MetricDataItem) error {
-	opts := make([]map[string]interface{}, len(req))
+func CreateMetricData(client *golangsdk.ServiceClient, opts []MetricDataItem) error {
+	b := make([]map[string]interface{}, len(opts))
 
-	for i, opt := range req {
+	for i, opt := range opts {
 		opt, err := golangsdk.BuildRequestBody(opt, "")
 		if err != nil {
 			return err
 		}
-		opts[i] = opt
+		b[i] = opt
 	}
 
-	_, err := client.Post(metricDataURL(client), &opts, nil, nil)
+	_, err := client.Post(metricDataURL(client), &b, nil, nil)
 	return err
 }
 
@@ -158,8 +158,8 @@ type ShowEventDataRequest struct {
 	To string `q:"to"`
 }
 
-func ShowEventData(client *golangsdk.ServiceClient, req ShowEventDataRequest) ([]EventDataInfo, error) {
-	q, err := golangsdk.BuildQueryString(&req)
+func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) ([]EventDataInfo, error) {
+	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return nil, err
 	}
