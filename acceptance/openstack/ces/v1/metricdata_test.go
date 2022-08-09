@@ -19,7 +19,9 @@ func TestMetricData(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	ecs := openstack.CreateCloudServer(t, ecsClient, openstack.GetCloudServerCreateOpts(t))
-	defer openstack.DeleteCloudServer(t, ecsClient, ecs.ID)
+	t.Cleanup(func() {
+		openstack.DeleteCloudServer(t, ecsClient, ecs.ID)
+	})
 
 	old := time.Now().UnixMilli()
 	newOps := metricdata.MetricDataItem{
@@ -40,7 +42,7 @@ func TestMetricData(t *testing.T) {
 		Type:        "float",
 	}
 
-	err = metricdata.CreateMetricData(client, metricdata.CreateMetricDataRequest{newOps}).ExtractErr()
+	err = metricdata.CreateMetricData(client, []metricdata.MetricDataItem{newOps})
 	th.AssertNoErr(t, err)
 
 	batchOps := metricdata.BatchListMetricDataRequest{
@@ -62,7 +64,7 @@ func TestMetricData(t *testing.T) {
 		Filter: "average",
 	}
 
-	batchData, err := metricdata.BatchListMetricData(client, batchOps).Extract()
+	batchData, err := metricdata.BatchListMetricData(client, batchOps)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(batchData), 1)
 
@@ -76,7 +78,7 @@ func TestMetricData(t *testing.T) {
 		To:         strconv.FormatInt(time.Now().UnixMilli(), 10),
 	}
 
-	metricData, err := metricdata.ShowMetricData(client, metricOps).Extract()
+	metricData, err := metricdata.ShowMetricData(client, metricOps)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(metricData.Datapoints), 0)
 
@@ -88,7 +90,7 @@ func TestMetricData(t *testing.T) {
 		To:        strconv.FormatInt(time.Now().UnixMilli(), 10),
 	}
 
-	event, err := metricdata.ShowEventData(client, eventOps).Extract()
+	event, err := metricdata.ShowEventData(client, eventOps)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(event.Datapoints), 0)
+	th.AssertEquals(t, len(event), 0)
 }

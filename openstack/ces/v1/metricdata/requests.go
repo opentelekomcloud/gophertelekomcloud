@@ -57,22 +57,27 @@ type Metric struct {
 	Dimensions []MetricsDimension `json:"dimensions" required:"true"`
 }
 
-func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDataRequest) (r BatchListMetricDataResult) {
+func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDataRequest) ([]BatchMetricData, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
-	_, r.Err = client.Post(batchQueryMetricDataURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw := golangsdk.Result{}
+	_, err = client.Post(batchQueryMetricDataURL(client), b, &raw.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var res []BatchMetricData
+	err = raw.ExtractIntoSlicePtr(&res, "metrics")
+
+	return res, err
 }
 
 // ----------------------------------------------------------------------------
-
-type CreateMetricDataRequest []MetricDataItem
 
 type MetricDataItem struct {
 	// Specifies the metric data.
@@ -117,31 +122,19 @@ type MetricsDimension struct {
 	Value string `json:"value,omitempty"`
 }
 
-type CreateMetricDataBuilder interface {
-	ToAddMetricDataMap() ([]map[string]interface{}, error)
-}
+func CreateMetricData(client *golangsdk.ServiceClient, req []MetricDataItem) error {
+	opts := make([]map[string]interface{}, len(req))
 
-func (opts CreateMetricDataRequest) ToAddMetricDataMap() ([]map[string]interface{}, error) {
-	newOpts := make([]map[string]interface{}, len(opts))
-	for i, opt := range opts {
+	for i, opt := range req {
 		opt, err := golangsdk.BuildRequestBody(opt, "")
 		if err != nil {
-			return nil, err
+			return err
 		}
-		newOpts[i] = opt
-	}
-	return newOpts, nil
-}
-
-func CreateMetricData(client *golangsdk.ServiceClient, opts CreateMetricDataBuilder) (r CreateMetricDataResult) {
-	b, err := opts.ToAddMetricDataMap()
-	if err != nil {
-		r.Err = err
-		return
+		opts[i] = opt
 	}
 
-	_, r.Err = client.Post(metricDataURL(client), b, nil, nil)
-	return
+	_, err := client.Post(metricDataURL(client), &opts, nil, nil)
+	return err
 }
 
 // ----------------------------------------------------------------------------
@@ -165,16 +158,23 @@ type ShowEventDataRequest struct {
 	To string `q:"to"`
 }
 
-func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) (r ShowEventDataResult) {
-	q, err := golangsdk.BuildQueryString(&opts)
+func ShowEventData(client *golangsdk.ServiceClient, req ShowEventDataRequest) ([]EventDataInfo, error) {
+	q, err := golangsdk.BuildQueryString(&req)
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
+	raw := golangsdk.Result{}
 	url := eventDataURL(client) + q.String()
-	_, r.Err = client.Get(url, &r.Body, nil)
-	return
+	_, err = client.Get(url, &raw.Body, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []EventDataInfo
+	err = raw.ExtractIntoSlicePtr(&res, "datapoints")
+
+	return res, err
 }
 
 // ----------------------------------------------------------------------------
@@ -226,14 +226,21 @@ type ShowMetricDataRequest struct {
 	To string `q:"to"`
 }
 
-func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataRequest) (r ShowMetricDataResult) {
+func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataRequest) (*ShowMetricDataResponse, error) {
 	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
+	raw := golangsdk.Result{}
 	url := metricDataURL(client) + q.String()
-	_, r.Err = client.Get(url, &r.Body, nil)
-	return
+	_, err = client.Get(url, &raw.Body, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ShowMetricDataResponse
+	err = raw.ExtractInto(&res)
+
+	return &res, err
 }

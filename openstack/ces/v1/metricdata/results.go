@@ -1,9 +1,5 @@
 package metricdata
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-)
-
 type BatchMetricData struct {
 	// Specifies the metric namespace.
 	// The value must be in the service.item format and can contain 3 to 32 characters.
@@ -35,22 +31,6 @@ type DatapointForBatchMetric struct {
 	Timestamp int64 `json:"timestamp"`
 }
 
-type BatchListMetricDataResult struct {
-	golangsdk.Result
-}
-
-func (r BatchListMetricDataResult) Extract() ([]BatchMetricData, error) {
-	var s struct {
-		MetricDatas []BatchMetricData `json:"metrics"`
-	}
-	err := r.ExtractInto(&s)
-	return s.MetricDatas, err
-}
-
-type CreateMetricDataResult struct {
-	golangsdk.ErrResult
-}
-
 // --------------------------------------------------------------------------------------
 
 type EventDataInfo struct {
@@ -60,20 +40,6 @@ type EventDataInfo struct {
 	Timestamp int64 `json:"timestamp"`
 	// Specifies the host configuration information.
 	Value string `json:"value"`
-}
-
-type ShowEventDataResponse struct {
-	Datapoints []EventDataInfo `json:"datapoints"`
-}
-
-type ShowEventDataResult struct {
-	golangsdk.Result
-}
-
-func (r ShowEventDataResult) Extract() (*ShowEventDataResponse, error) {
-	var s *ShowEventDataResponse
-	err := r.ExtractInto(&s)
-	return s, err
 }
 
 // ------------------------------------------------------------------------------------------
@@ -102,14 +68,4 @@ type Datapoint struct {
 	Timestamp int64 `json:"timestamp"`
 	// Specifies the metric unit.
 	Unit string `json:"unit,omitempty"`
-}
-
-type ShowMetricDataResult struct {
-	golangsdk.Result
-}
-
-func (r ShowMetricDataResult) Extract() (*ShowMetricDataResponse, error) {
-	var s *ShowMetricDataResponse
-	err := r.ExtractInto(&s)
-	return s, err
 }
