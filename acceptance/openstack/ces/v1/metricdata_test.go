@@ -45,7 +45,7 @@ func TestMetricData(t *testing.T) {
 	err = metricdata.CreateMetricData(client, []metricdata.MetricDataItem{newOps})
 	th.AssertNoErr(t, err)
 
-	batchOps := metricdata.BatchListMetricDataRequest{
+	batchOps := metricdata.BatchListMetricDataOpts{
 		Metrics: []metricdata.Metric{
 			{
 				Namespace:  "MINE.APP",
@@ -68,7 +68,7 @@ func TestMetricData(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(batchData), 1)
 
-	metricOps := metricdata.ShowMetricDataRequest{
+	metricOps := metricdata.ShowMetricDataOpts{
 		Namespace:  "SYS.ECS",
 		MetricName: "cpu_util",
 		Dim:        "instance_id," + ecs.ID,
@@ -82,7 +82,7 @@ func TestMetricData(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(metricData.Datapoints), 0)
 
-	eventOps := metricdata.ShowEventDataRequest{
+	eventOps := metricdata.ShowEventDataOpts{
 		Namespace: "SYS.ECS",
 		Dim:       "instance_id," + ecs.ID,
 		Type:      "instance_host_info",
@@ -90,7 +90,7 @@ func TestMetricData(t *testing.T) {
 		To:        strconv.FormatInt(time.Now().UnixMilli(), 10),
 	}
 
-	event, err := metricdata.ShowEventData(client, eventOps)
+	event, err := metricdata.ListEventData(client, eventOps)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(event), 0)
 }
