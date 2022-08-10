@@ -25,7 +25,7 @@ further interpret the result's payload in a specific context. Extensions or
 providers can then provide additional extraction functions to pull out
 provider- or extension-specific information as well.
 
-: use plain functions of this package instead
+Deprecated: use plain functions of this package instead
 */
 type Result struct {
 	// Body is the payload of the HTTP response from the server. In most cases,
@@ -72,7 +72,7 @@ func ExtractInto(body interface{}, to interface{}) error {
 // the `Result.Body`. This would be useful for OpenStack providers that have
 // different fields in the response object than OpenStack proper.
 //
-// : use ExtractInto function instead
+// Deprecated: use ExtractInto function instead
 func (r Result) ExtractInto(to interface{}) error {
 	if r.Err != nil {
 		return r.Err
@@ -195,7 +195,7 @@ func ExtractIntoStructPtr(body, to interface{}, label string) error {
 // If provided, `label` will be filtered out of the response
 // body prior to `r` being unmarshalled into `to`.
 //
-// : use ExtractIntoStructPtr function instead
+// Deprecated: use ExtractIntoStructPtr function instead
 func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 	if r.Err != nil {
 		return r.Err
@@ -229,7 +229,7 @@ func ExtractIntoSlicePtr(body, to interface{}, label string) error {
 // If provided, `label` will be filtered out of the response
 // body prior to `r` being unmarshalled into `to`.
 //
-// : use ExtractIntoSlicePtr function instead
+// Deprecated: use ExtractIntoSlicePtr function instead
 func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 	if r.Err != nil {
 		return r.Err
@@ -264,7 +264,7 @@ func (r Result) PrettyPrintJSON() string {
 // ExtractErr method
 // to cleanly pull it out.
 //
-// : use plain err return instead
+// Deprecated: use plain err return instead
 type ErrResult struct {
 	Result
 }
