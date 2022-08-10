@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 /*
@@ -24,6 +24,8 @@ Generally, each Result type will have an Extract method that can be used to
 further interpret the result's payload in a specific context. Extensions or
 providers can then provide additional extraction functions to pull out
 provider- or extension-specific information as well.
+
+Deprecated: use functions from internal/extract package instead
 */
 type Result struct {
 	// Body is the payload of the HTTP response from the server. In most cases,
@@ -52,114 +54,14 @@ type JsonRDSInstanceField struct {
 // ExtractInto allows users to provide an object into which `Extract` will extract
 // the `Result.Body`. This would be useful for OpenStack providers that have
 // different fields in the response object than OpenStack proper.
+//
+// Deprecated: use extract.Into function instead
 func (r Result) ExtractInto(to interface{}) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	if reader, ok := r.Body.(io.Reader); ok {
-		if readCloser, ok := reader.(io.Closer); ok {
-			defer readCloser.Close()
-		}
-		return json.NewDecoder(reader).Decode(to)
-	}
-
-	b, err := jsonMarshal(r.Body)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(b, to)
-
-	return err
-}
-
-func (r Result) extractIntoPtr(to interface{}, label string) error {
-	if label == "" {
-		return r.ExtractInto(&to)
-	}
-
-	var m map[string]interface{}
-	err := r.ExtractInto(&m)
-	if err != nil {
-		return err
-	}
-
-	b, err := jsonMarshal(m[label])
-	if err != nil {
-		return err
-	}
-
-	toValue := reflect.ValueOf(to)
-	if toValue.Kind() == reflect.Ptr {
-		toValue = toValue.Elem()
-	}
-
-	switch toValue.Kind() {
-	case reflect.Slice:
-		typeOfV := toValue.Type().Elem()
-		if typeOfV.Kind() == reflect.Struct {
-			if typeOfV.NumField() > 0 && typeOfV.Field(0).Anonymous {
-				newSlice := reflect.MakeSlice(reflect.SliceOf(typeOfV), 0, 0)
-
-				for _, v := range m[label].([]interface{}) {
-					// For each iteration of the slice, we create a new struct.
-					// This is to work around a bug where elements of a slice
-					// are reused and not overwritten when the same copy of the
-					// struct is used:
-					//
-					// https://github.com/golang/go/issues/21092
-					// https://github.com/golang/go/issues/24155
-					// https://play.golang.org/p/NHo3ywlPZli
-					newType := reflect.New(typeOfV).Elem()
-
-					b, err := jsonMarshal(v)
-					if err != nil {
-						return err
-					}
-
-					// This is needed for structs with an UnmarshalJSON method.
-					// Technically this is just unmarshalling the response into
-					// a struct that is never used, but it's good enough to
-					// trigger the UnmarshalJSON method.
-					for i := 0; i < newType.NumField(); i++ {
-						s := newType.Field(i).Addr().Interface()
-
-						// Unmarshal is used rather than NewDecoder to also work
-						// around the above-mentioned bug.
-						err = json.Unmarshal(b, s)
-						if err != nil {
-							return err
-						}
-					}
-
-					newSlice = reflect.Append(newSlice, newType)
-				}
-
-				// "to" should now be properly modeled to receive the
-				// JSON response body and unmarshal into all the correct
-				// fields of the struct or composed extension struct
-				// at the end of this method.
-				toValue.Set(newSlice)
-			}
-		}
-	case reflect.Struct:
-		typeOfV := toValue.Type()
-		if typeOfV.NumField() > 0 && typeOfV.Field(0).Anonymous {
-			for i := 0; i < toValue.NumField(); i++ {
-				toField := toValue.Field(i)
-				if toField.Kind() == reflect.Struct {
-					s := toField.Addr().Interface()
-					err = json.NewDecoder(bytes.NewReader(b)).Decode(s)
-					if err != nil {
-						return err
-					}
-				}
-			}
-		}
-	}
-
-	err = json.Unmarshal(b, &to)
-	return err
+	return extract.Into(r.Body, to)
 }
 
 // ExtractIntoStructPtr will unmarshal the Result (r) into the provided
@@ -171,21 +73,14 @@ func (r Result) extractIntoPtr(to interface{}, label string) error {
 //
 // If provided, `label` will be filtered out of the response
 // body prior to `r` being unmarshalled into `to`.
+//
+// Deprecated: use extract.IntoStructPtr function instead
 func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	t := reflect.TypeOf(to)
-	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("Expected pointer, got %v", k)
-	}
-	switch t.Elem().Kind() {
-	case reflect.Struct:
-		return r.extractIntoPtr(to, label)
-	default:
-		return fmt.Errorf("Expected pointer to struct, got: %v", t)
-	}
+	return extract.IntoStructPtr(r.Body, to, label)
 }
 
 // ExtractIntoSlicePtr will unmarshal the Result (r) into the provided
@@ -197,21 +92,22 @@ func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 //
 // If provided, `label` will be filtered out of the response
 // body prior to `r` being unmarshalled into `to`.
+//
+// Deprecated: use extract.IntoSlicePtr function instead
 func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	t := reflect.TypeOf(to)
-	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("Expected pointer, got %v", k)
+	return extract.IntoSlicePtr(r.Body, to, label)
+}
+
+func PrettyPrintJSON(body interface{}) string {
+	pretty, err := json.MarshalIndent(body, "", "  ")
+	if err != nil {
+		panic(err.Error())
 	}
-	switch t.Elem().Kind() {
-	case reflect.Slice:
-		return r.extractIntoPtr(to, label)
-	default:
-		return fmt.Errorf("Expected pointer to slice, got: %v", t)
-	}
+	return string(pretty)
 }
 
 // PrettyPrintJSON creates a string containing the full response body as
@@ -219,11 +115,7 @@ func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 // debugging extraction bugs. If you include its output in an issue related to
 // a buggy extraction function, we will all love you forever.
 func (r Result) PrettyPrintJSON() string {
-	pretty, err := json.MarshalIndent(r.Body, "", "  ")
-	if err != nil {
-		panic(err.Error())
-	}
-	return string(pretty)
+	return PrettyPrintJSON(r.Body)
 }
 
 // ErrResult is an internal type to be used by individual resource packages, but
@@ -235,6 +127,8 @@ func (r Result) PrettyPrintJSON() string {
 // will be nil; otherwise it will be stocked with a relevant error. Use the
 // ExtractErr method
 // to cleanly pull it out.
+//
+// Deprecated: use plain err return instead
 type ErrResult struct {
 	Result
 }
@@ -296,7 +190,7 @@ func (r HeaderResult) ExtractInto(to interface{}) error {
 		}
 	}
 
-	b, err := jsonMarshal(tmpHeaderMap)
+	b, err := extract.JsonMarshal(tmpHeaderMap)
 	if err != nil {
 		return err
 	}
