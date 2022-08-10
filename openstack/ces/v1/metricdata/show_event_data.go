@@ -15,7 +15,9 @@ type ShowEventDataOpts struct {
 	// Specifies the dimension. A maximum of three dimensions are supported,
 	// and the dimensions are numbered from 0 in dim.{i}=key,value format.
 	// The key cannot exceed 32 characters and the value cannot exceed 256 characters.
-	Dim string `q:"dim.0"`
+	Dim0 string `q:"dim.0"`
+	Dim1 string `q:"dim.1"`
+	Dim2 string `q:"dim.2"`
 	// Specifies the event type.
 	Type string `q:"type"`
 	// Specifies the start time of the query.

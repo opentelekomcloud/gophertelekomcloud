@@ -71,7 +71,7 @@ func TestMetricData(t *testing.T) {
 	metricOps := metricdata.ShowMetricDataOpts{
 		Namespace:  "SYS.ECS",
 		MetricName: "cpu_util",
-		Dim:        "instance_id," + ecs.ID,
+		Dim0:       "instance_id," + ecs.ID,
 		Filter:     "average",
 		Period:     1,
 		From:       strconv.FormatInt(old, 10),
@@ -84,7 +84,7 @@ func TestMetricData(t *testing.T) {
 
 	eventOps := metricdata.ShowEventDataOpts{
 		Namespace: "SYS.ECS",
-		Dim:       "instance_id," + ecs.ID,
+		Dim0:      "instance_id," + ecs.ID,
 		Type:      "instance_host_info",
 		From:      strconv.FormatInt(old, 10),
 		To:        strconv.FormatInt(time.Now().UnixMilli(), 10),

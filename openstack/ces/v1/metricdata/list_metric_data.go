@@ -18,7 +18,9 @@ type ShowMetricDataOpts struct {
 	// see the dimension description in the monitoring indicator description of each service.
 	// Single dimension: dim.0=instance_id,i-12345
 	// Multiple dimensions: dim.0=instance_id,i-12345&dim.1=instance_name,i-1234
-	Dim string `q:"dim.0"`
+	Dim0 string `q:"dim.0"`
+	Dim1 string `q:"dim.1"`
+	Dim2 string `q:"dim.2"`
 	// Specifies the data rollup method. The following methods are supported:
 	//
 	// average: Cloud Eye calculates the average value of metric data within a rollup period.
