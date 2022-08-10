@@ -24,6 +24,8 @@ Generally, each Result type will have an Extract method that can be used to
 further interpret the result's payload in a specific context. Extensions or
 providers can then provide additional extraction functions to pull out
 provider- or extension-specific information as well.
+
+Deprecated: use plain functions of this package instead
 */
 type Result struct {
 	// Body is the payload of the HTTP response from the server. In most cases,
@@ -49,22 +51,15 @@ type JsonRDSInstanceField struct {
 	Status string `json:"status"`
 }
 
-// ExtractInto allows users to provide an object into which `Extract` will extract
-// the `Result.Body`. This would be useful for OpenStack providers that have
-// different fields in the response object than OpenStack proper.
-func (r Result) ExtractInto(to interface{}) error {
-	if r.Err != nil {
-		return r.Err
-	}
-
-	if reader, ok := r.Body.(io.Reader); ok {
+func ExtractInto(body any, to any) error {
+	if reader, ok := body.(io.Reader); ok {
 		if readCloser, ok := reader.(io.Closer); ok {
 			defer readCloser.Close()
 		}
 		return json.NewDecoder(reader).Decode(to)
 	}
 
-	b, err := jsonMarshal(r.Body)
+	b, err := jsonMarshal(body)
 	if err != nil {
 		return err
 	}
@@ -73,13 +68,26 @@ func (r Result) ExtractInto(to interface{}) error {
 	return err
 }
 
-func (r Result) extractIntoPtr(to interface{}, label string) error {
+// ExtractInto allows users to provide an object into which `Extract` will extract
+// the `Result.Body`. This would be useful for OpenStack providers that have
+// different fields in the response object than OpenStack proper.
+//
+// Deprecated: use ExtractInto function instead
+func (r Result) ExtractInto(to interface{}) error {
+	if r.Err != nil {
+		return r.Err
+	}
+
+	return ExtractInto(r.Body, to)
+}
+
+func extractIntoPtr(body, to any, label string) error {
 	if label == "" {
-		return r.ExtractInto(&to)
+		return ExtractInto(body, &to)
 	}
 
 	var m map[string]interface{}
-	err := r.ExtractInto(&m)
+	err := ExtractInto(body, &m)
 	if err != nil {
 		return err
 	}
@@ -162,6 +170,25 @@ func (r Result) extractIntoPtr(to interface{}, label string) error {
 	return err
 }
 
+func (r Result) extractIntoPtr(to interface{}, label string) error {
+	return extractIntoPtr(r.Body, to, label)
+}
+
+// ExtractIntoStructPtr will unmarshal the given body into the provided
+// interface{} (to).
+func ExtractIntoStructPtr(body, to any, label string) error {
+	t := reflect.TypeOf(to)
+	if k := t.Kind(); k != reflect.Ptr {
+		return fmt.Errorf("Expected pointer, got %v", k)
+	}
+	switch t.Elem().Kind() {
+	case reflect.Struct:
+		return extractIntoPtr(body, to, label)
+	default:
+		return fmt.Errorf("Expected pointer to struct, got: %v", t)
+	}
+}
+
 // ExtractIntoStructPtr will unmarshal the Result (r) into the provided
 // interface{} (to).
 //
@@ -171,20 +198,28 @@ func (r Result) extractIntoPtr(to interface{}, label string) error {
 //
 // If provided, `label` will be filtered out of the response
 // body prior to `r` being unmarshalled into `to`.
+//
+// Deprecated: use ExtractIntoStructPtr function instead
 func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
+	return ExtractIntoStructPtr(r.Body, to, label)
+}
+
+// ExtractIntoSlicePtr will unmarshal the provided body into the provided
+// interface{} (to).
+func ExtractIntoSlicePtr(body, to any, label string) error {
 	t := reflect.TypeOf(to)
 	if k := t.Kind(); k != reflect.Ptr {
 		return fmt.Errorf("Expected pointer, got %v", k)
 	}
 	switch t.Elem().Kind() {
-	case reflect.Struct:
-		return r.extractIntoPtr(to, label)
+	case reflect.Slice:
+		return extractIntoPtr(body, to, label)
 	default:
-		return fmt.Errorf("Expected pointer to struct, got: %v", t)
+		return fmt.Errorf("Expected pointer to slice, got: %v", t)
 	}
 }
 
@@ -197,21 +232,22 @@ func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 //
 // If provided, `label` will be filtered out of the response
 // body prior to `r` being unmarshalled into `to`.
+//
+// Deprecated: use ExtractIntoSlicePtr function instead
 func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	t := reflect.TypeOf(to)
-	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("Expected pointer, got %v", k)
+	return ExtractIntoSlicePtr(r.Body, to, label)
+}
+
+func PrettyPrintJSON(body any) string {
+	pretty, err := json.MarshalIndent(body, "", "  ")
+	if err != nil {
+		panic(err.Error())
 	}
-	switch t.Elem().Kind() {
-	case reflect.Slice:
-		return r.extractIntoPtr(to, label)
-	default:
-		return fmt.Errorf("Expected pointer to slice, got: %v", t)
-	}
+	return string(pretty)
 }
 
 // PrettyPrintJSON creates a string containing the full response body as
@@ -219,11 +255,7 @@ func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 // debugging extraction bugs. If you include its output in an issue related to
 // a buggy extraction function, we will all love you forever.
 func (r Result) PrettyPrintJSON() string {
-	pretty, err := json.MarshalIndent(r.Body, "", "  ")
-	if err != nil {
-		panic(err.Error())
-	}
-	return string(pretty)
+	return PrettyPrintJSON(r.Body)
 }
 
 // ErrResult is an internal type to be used by individual resource packages, but
@@ -235,6 +267,8 @@ func (r Result) PrettyPrintJSON() string {
 // will be nil; otherwise it will be stocked with a relevant error. Use the
 // ExtractErr method
 // to cleanly pull it out.
+//
+// Deprecated: use plain err return instead
 type ErrResult struct {
 	Result
 }
