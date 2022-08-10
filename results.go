@@ -51,7 +51,7 @@ type JsonRDSInstanceField struct {
 	Status string `json:"status"`
 }
 
-func ExtractInto(body any, to any) error {
+func ExtractInto(body interface{}, to interface{}) error {
 	if reader, ok := body.(io.Reader); ok {
 		if readCloser, ok := reader.(io.Closer); ok {
 			defer readCloser.Close()
@@ -81,7 +81,7 @@ func (r Result) ExtractInto(to interface{}) error {
 	return ExtractInto(r.Body, to)
 }
 
-func extractIntoPtr(body, to any, label string) error {
+func extractIntoPtr(body, to interface{}, label string) error {
 	if label == "" {
 		return ExtractInto(body, &to)
 	}
@@ -170,22 +170,18 @@ func extractIntoPtr(body, to any, label string) error {
 	return err
 }
 
-func (r Result) extractIntoPtr(to interface{}, label string) error {
-	return extractIntoPtr(r.Body, to, label)
-}
-
 // ExtractIntoStructPtr will unmarshal the given body into the provided
 // interface{} (to).
-func ExtractIntoStructPtr(body, to any, label string) error {
+func ExtractIntoStructPtr(body, to interface{}, label string) error {
 	t := reflect.TypeOf(to)
 	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("Expected pointer, got %v", k)
+		return fmt.Errorf("expected pointer, got %v", k)
 	}
 	switch t.Elem().Kind() {
 	case reflect.Struct:
 		return extractIntoPtr(body, to, label)
 	default:
-		return fmt.Errorf("Expected pointer to struct, got: %v", t)
+		return fmt.Errorf("expected pointer to struct, got: %v", t)
 	}
 }
 
@@ -210,16 +206,16 @@ func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 
 // ExtractIntoSlicePtr will unmarshal the provided body into the provided
 // interface{} (to).
-func ExtractIntoSlicePtr(body, to any, label string) error {
+func ExtractIntoSlicePtr(body, to interface{}, label string) error {
 	t := reflect.TypeOf(to)
 	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("Expected pointer, got %v", k)
+		return fmt.Errorf("expected pointer, got %v", k)
 	}
 	switch t.Elem().Kind() {
 	case reflect.Slice:
 		return extractIntoPtr(body, to, label)
 	default:
-		return fmt.Errorf("Expected pointer to slice, got: %v", t)
+		return fmt.Errorf("expected pointer to slice, got: %v", t)
 	}
 }
 
@@ -242,7 +238,7 @@ func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 	return ExtractIntoSlicePtr(r.Body, to, label)
 }
 
-func PrettyPrintJSON(body any) string {
+func PrettyPrintJSON(body interface{}) string {
 	pretty, err := json.MarshalIndent(body, "", "  ")
 	if err != nil {
 		panic(err.Error())
