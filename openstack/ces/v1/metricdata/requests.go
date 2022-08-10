@@ -2,6 +2,7 @@ package metricdata
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type BatchListMetricDataRequest struct {
@@ -63,8 +64,7 @@ func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDa
 		return nil, err
 	}
 
-	raw := golangsdk.Result{}
-	_, err = client.Post(batchQueryMetricDataURL(client), b, &raw.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(batchQueryMetricDataURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
@@ -72,7 +72,7 @@ func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDa
 	}
 
 	var res []BatchMetricData
-	err = raw.ExtractIntoSlicePtr(&res, "metrics")
+	err = extract.IntoSlicePtr(raw.Body, &res, "metrics")
 
 	return res, err
 }
@@ -164,15 +164,13 @@ func ShowEventData(client *golangsdk.ServiceClient, opts ShowEventDataRequest) (
 		return nil, err
 	}
 
-	raw := golangsdk.Result{}
-	url := eventDataURL(client) + q.String()
-	_, err = client.Get(url, &raw.Body, nil)
+	raw, err := client.Get(eventDataURL(client)+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var res []EventDataInfo
-	err = raw.ExtractIntoSlicePtr(&res, "datapoints")
+	err = extract.IntoSlicePtr(raw.Body, &res, "datapoints")
 
 	return res, err
 }
@@ -232,15 +230,13 @@ func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataRequest)
 		return nil, err
 	}
 
-	raw := golangsdk.Result{}
-	url := metricDataURL(client) + q.String()
-	_, err = client.Get(url, &raw.Body, nil)
+	raw, err := client.Get(metricDataURL(client)+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var res ShowMetricDataResponse
-	err = raw.ExtractInto(&res)
+	err = extract.Into(raw.Body, &res)
 
 	return &res, err
 }
