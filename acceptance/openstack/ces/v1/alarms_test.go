@@ -12,7 +12,7 @@ func TestAlarms(t *testing.T) {
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
 
-	alarmsRes, err := alarms.ListAlarms(client, alarms.ListAlarmsRequest{
+	alarmsRes, err := alarms.ListAlarms(client, alarms.ListAlarmsOpts{
 		Limit: 10,
 		Order: "desc",
 	})
@@ -21,7 +21,7 @@ func TestAlarms(t *testing.T) {
 	th.AssertEquals(t, alarmsRes.MetaData.Count <= 10, true)
 
 	f := false
-	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmRequest{
+	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmOpts{
 		AlarmName: "alarm-acc-test",
 		Metric: alarms.MetricForAlarm{
 			Namespace:  "SYS.VPC",
