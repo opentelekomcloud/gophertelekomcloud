@@ -111,13 +111,13 @@ func TestListLogs(t *testing.T) {
 	HandleListLogsSuccessfully(t)
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.ListLogs(client.ServiceClient(), floatingIpId, antiddos.ListLogsOpts{
+	actual, err := antiddos.ListDailyLogs(client.ServiceClient(), floatingIpId, antiddos.ListDailyLogsOps{
 		Limit:   2,
 		Offset:  1,
 		SortDir: "asc",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	th.CheckDeepEquals(t, ListLogsResponse, actual)
+	th.CheckDeepEquals(t, ListLogsResponse, actual.Logs)
 }
 
 func TestGetStatus(t *testing.T) {

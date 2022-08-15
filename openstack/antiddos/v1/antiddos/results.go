@@ -198,46 +198,6 @@ type ListConfigsResponse struct {
 	} `json:"connection_limited_list,"`
 }
 
-type ListLogsResult struct {
-	commonResult
-}
-
-func (r ListLogsResult) Extract() ([]Logs, error) {
-	var s ListLogsResponse
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-	return s.Logs, nil
-}
-
-type ListLogsResponse struct {
-	// Total number of EIPs
-	Total int `json:"total,"`
-
-	// List of events
-	Logs []Logs `json:"logs,"`
-}
-
-type Logs struct {
-	// Start time
-	StartTime int `json:"start_time,"`
-
-	// End time
-	EndTime int `json:"end_time,"`
-
-	// Defense status, the possible value of which is one of the following: 1: indicates that traffic cleaning is underway. 2: indicates that traffic is discarded.
-	Status int `json:"status,"`
-
-	// Traffic at the triggering point.
-	TriggerBps int `json:"trigger_bps,"`
-
-	// Packet rate at the triggering point
-	TriggerPps int `json:"trigger_pps,"`
-
-	// HTTP request rate at the triggering point
-	TriggerHttpPps int `json:"trigger_http_pps,"`
-}
 type ListStatusResult struct {
 	commonResult
 }

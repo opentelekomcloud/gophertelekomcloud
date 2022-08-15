@@ -125,46 +125,6 @@ func ListConfigs(client *golangsdk.ServiceClient) (r ListConfigsResult) {
 	return
 }
 
-type ListLogsOpts struct {
-	// Limit of number of returned results or the maximum number of returned results of a query. The value ranges from 1 to 100, and this parameter is used together with the offset parameter. If neither limit nor offset is used, query results of all ECSs are returned.
-	Limit int `q:"limit"`
-
-	// Offset. This parameter is valid only when used together with the limit parameter.
-	Offset int `q:"offset"`
-
-	// Possible values: desc: indicates that query results are given and sorted by time in descending order. asc: indicates that query results are given and sorted by time in ascending order.The default value is desc.
-	SortDir string `q:"sort_dir"`
-}
-
-type ListLogsOptsBuilder interface {
-	ToListLogsQuery() (string, error)
-}
-
-func (opts ListLogsOpts) ToListLogsQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return "", err
-	}
-	return q.String(), err
-}
-
-func ListLogs(client *golangsdk.ServiceClient, floatingIpId string, opts ListLogsOptsBuilder) (r ListLogsResult) {
-	url := ListLogsURL(client, floatingIpId)
-	if opts != nil {
-		query, err := opts.ToListLogsQuery()
-		if err != nil {
-			r.Err = err
-			return
-		}
-		url += query
-	}
-
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 type ListStatusOpts struct {
 	// ID of an EIP
 	FloatingIpId string

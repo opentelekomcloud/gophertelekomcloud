@@ -80,7 +80,7 @@ Example to query optional Anti-DDoS defense policies.
 Example to query events of a specified EIP in the last 24 hours.
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.ListLogs(client.ServiceClient(), floatingIpId, antiddos.ListLogsOpts{
+	actual, err := antiddos.ListDailyLogs(client.ServiceClient(), floatingIpId, antiddos.ListDailyLogsOps{
 	    Limit:   2,
 	    Offset:  1,
 	    SortDir: "asc",

@@ -228,7 +228,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 		}
 	}
 
-	// get latest token from client
+	// get the latest token from client
 	for k, v := range client.AuthenticatedHeaders() {
 		req.Header.Set(k, v)
 	}
