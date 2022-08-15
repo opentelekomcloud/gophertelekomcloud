@@ -90,7 +90,7 @@ func TestListConfigs(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleListConfigsSuccessfully(t)
 
-	actual, err := antiddos.ListConfigs(client.ServiceClient()).Extract()
+	actual, err := antiddos.ListNewConfigs(client.ServiceClient())
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &ListConfigsResponse, actual)
 }

@@ -109,14 +109,6 @@ func GetTask(client *golangsdk.ServiceClient, opts GetTaskOptsBuilder) (r GetTas
 	return
 }
 
-func ListConfigs(client *golangsdk.ServiceClient) (r ListConfigsResult) {
-	url := ListConfigsURL(client)
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 func getStructField(v *DDosStatus, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)

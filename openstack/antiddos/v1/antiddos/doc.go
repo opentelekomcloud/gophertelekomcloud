@@ -72,7 +72,7 @@ Example to query the execution status of a specified Anti-DDoS configuration tas
 
 Example to query optional Anti-DDoS defense policies.
 
-	actual, err := antiddos.ListConfigs(client.ServiceClient()).Extract()
+	actual, err := antiddos.ListNewConfigs(client.ServiceClient()).Extract()
 	if err != nil {
 	  panic(err)
 	}

@@ -22,10 +22,6 @@ func GetTaskURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("query_task_status")
 }
 
-func ListConfigsURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("antiddos", "query_config_list")
-}
-
 func UpdateURL(c *golangsdk.ServiceClient, floatingIpId string) string {
 	return c.ServiceURL("antiddos", floatingIpId)
 }

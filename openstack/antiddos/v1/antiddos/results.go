@@ -113,51 +113,6 @@ type GetTaskResponse struct {
 	TaskMsg string `json:"task_msg,"`
 }
 
-type ListConfigsResult struct {
-	commonResult
-}
-
-func (r ListConfigsResult) Extract() (*ListConfigsResponse, error) {
-	var response ListConfigsResponse
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-type ListConfigsResponse struct {
-	// List of traffic limits
-	TrafficLimitedList []struct {
-		// Position ID of traffic
-		TrafficPosId int `json:"traffic_pos_id,"`
-
-		// Threshold of traffic per second (Mbit/s)
-		TrafficPerSecond int `json:"traffic_per_second,"`
-
-		// Threshold of number of packets per second
-		PacketPerSecond int `json:"packet_per_second,"`
-	} `json:"traffic_limited_list,"`
-
-	// List of HTTP limits
-	HttpLimitedList []struct {
-		// Position ID of number of HTTP requests
-		HttpRequestPosId int `json:"http_request_pos_id,"`
-
-		// Threshold of number of HTTP requests per second
-		HttpPacketPerSecond int `json:"http_packet_per_second,"`
-	} `json:"http_limited_list,"`
-
-	// List of limits of numbers of connections
-	ConnectionLimitedList []struct {
-		// Position ID of access limit during cleaning
-		CleaningAccessPosId int `json:"cleaning_access_pos_id,"`
-
-		// Position ID of access limit during cleaning
-		NewConnectionLimited int `json:"new_connection_limited,"`
-
-		// Position ID of access limit during cleaning
-		TotalConnectionLimited int `json:"total_connection_limited,"`
-	} `json:"connection_limited_list,"`
-}
-
 type UpdateResult struct {
 	commonResult
 }
