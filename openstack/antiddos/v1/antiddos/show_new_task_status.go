@@ -33,7 +33,7 @@ func ShowNewTaskStatus(client *golangsdk.ServiceClient, opts ShowNewTaskStatusOp
 
 type ShowNewTaskStatusResponse struct {
 	// Status of a task, which can be one of the following: success, failed, waiting, running, preprocess, ready
-	TaskStatus string `json:"task_status,"`
+	TaskStatus string `json:"task_status"`
 	// Additional information about a task
-	TaskMsg string `json:"task_msg,"`
+	TaskMsg string `json:"task_msg"`
 }

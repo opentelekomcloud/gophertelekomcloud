@@ -70,7 +70,7 @@ func HandleDeleteSuccessfully(t *testing.T) {
 	})
 }
 
-var GetResponse = antiddos.ShowDDosResponse{
+var GetResponse = antiddos.ConfigOpts{
 	EnableL7:            true,
 	TrafficPosId:        1,
 	HttpRequestPosId:    2,
@@ -116,7 +116,7 @@ const UpdateRequest string = `
 }
 `
 
-var UpdateResponse = antiddos.UpdateResponse{
+var UpdateResponse = antiddos.TaskResponse{
 	ErrorCode:        "10000000",
 	ErrorDescription: "The task has been received and is being handled",
 	TaskId:           "82463800-70fe-4cba-9a96-06175e246ab3",
@@ -640,10 +640,6 @@ func HandleListLogsSuccessfully(t *testing.T) {
 }
 
 var GetStatusOutput = `{"status":"normal"}`
-
-var GetStatusResponse = antiddos.GetStatusResponse{
-	Status: "normal",
-}
 
 func HandleGetStatusSuccessfully(t *testing.T) {
 	th.Mux.HandleFunc("/antiddos/82abaa86-8518-47db-8d63-ddf152824635/status", func(w http.ResponseWriter, r *http.Request) {

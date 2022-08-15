@@ -21,8 +21,7 @@ func TestCreate(t *testing.T) {
 		AppTypeId:           1,
 	}
 
-	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.CreateDefaultConfig(client.ServiceClient(), floatingIpId, createOpt)
+	actual, err := antiddos.CreateDefaultConfig(client.ServiceClient(), createOpt)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &CreateResponse, actual)
 }
@@ -32,8 +31,7 @@ func TestDelete(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.DeleteDefaultConfig(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.DeleteDefaultConfig(client.ServiceClient())
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &DeleteResponse, actual)
 }
@@ -128,7 +126,7 @@ func TestGetStatus(t *testing.T) {
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
 	actual, err := antiddos.ShowDDosStatus(client.ServiceClient(), floatingIpId)
 	th.AssertNoErr(t, err)
-	th.CheckDeepEquals(t, &GetStatusResponse, actual)
+	th.CheckDeepEquals(t, "normal", actual)
 }
 
 func TestDailyReport(t *testing.T) {
@@ -149,7 +147,7 @@ func TestGetTask(t *testing.T) {
 
 	actual, err := antiddos.ShowNewTaskStatus(client.ServiceClient(), antiddos.ShowNewTaskStatusOpts{
 		TaskId: "4a4fefe7-34a1-40e2-a87c-16932af3ac4a",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &GetTaskResponse, actual)
 }
