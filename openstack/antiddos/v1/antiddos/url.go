@@ -6,10 +6,6 @@ func CreateURL(c *golangsdk.ServiceClient, floatingIpId string) string {
 	return c.ServiceURL("antiddos", floatingIpId)
 }
 
-func DailyReportURL(c *golangsdk.ServiceClient, floatingIpId string) string {
-	return c.ServiceURL("antiddos", floatingIpId, "daily")
-}
-
 func DeleteURL(c *golangsdk.ServiceClient, floatingIpId string) string {
 	return c.ServiceURL("antiddos", floatingIpId)
 }

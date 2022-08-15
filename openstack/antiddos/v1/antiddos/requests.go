@@ -50,14 +50,6 @@ func Create(client *golangsdk.ServiceClient, floatingIpId string, opts CreateOpt
 	return
 }
 
-func DailyReport(client *golangsdk.ServiceClient, floatingIpId string) (r DailyReportResult) {
-	url := DailyReportURL(client, floatingIpId)
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 func Delete(client *golangsdk.ServiceClient, floatingIpId string) (r DeleteResult) {
 	url := DeleteURL(client, floatingIpId)
 	_, r.Err = client.Delete(url, &golangsdk.RequestOpts{

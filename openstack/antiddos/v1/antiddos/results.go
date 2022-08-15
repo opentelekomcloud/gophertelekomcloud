@@ -32,46 +32,6 @@ type CreateResponse struct {
 	TaskId string `json:"task_id,"`
 }
 
-type DailyReportResult struct {
-	commonResult
-}
-
-func (r DailyReportResult) Extract() ([]Data, error) {
-	var s DailyReportResponse
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-	return s.Data, nil
-}
-
-type DailyReportResponse struct {
-	// Traffic in the last 24 hours
-	Data []Data `json:"data"`
-}
-type Data struct {
-	// Start time
-	PeriodStart int `json:"period_start,"`
-
-	// Inbound traffic (bit/s)
-	BpsIn int `json:"bps_in,"`
-
-	// Attack traffic (bit/s)
-	BpsAttack int `json:"bps_attack,"`
-
-	// Total traffic
-	TotalBps int `json:"total_bps,"`
-
-	// Inbound packet rate (number of packets per second)
-	PpsIn int `json:"pps_in,"`
-
-	// Attack packet rate (number of packets per second)
-	PpsAttack int `json:"pps_attack,"`
-
-	// Total packet rate
-	TotalPps int `json:"total_pps,"`
-}
-
 type DeleteResult struct {
 	commonResult
 }

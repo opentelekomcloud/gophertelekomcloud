@@ -137,7 +137,7 @@ func TestDailyReport(t *testing.T) {
 	HandleDailyReportSuccessfully(t)
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.DailyReport(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.ListDailyReport(client.ServiceClient(), floatingIpId)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, DailyReportResponse, actual)
 }

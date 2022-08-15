@@ -32,7 +32,7 @@ Example to enable the Anti-DDoS traffic cleaning defense.
 Example to query the traffic of a specified EIP in the last 24 hours. Traffic is detected in five-minute intervals.
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.DailyReport(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.ListDailyReport(client.ServiceClient(), floatingIpId).Extract()
 	if err != nil {
 	  panic(err)
 	}
