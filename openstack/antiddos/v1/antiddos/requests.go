@@ -57,14 +57,6 @@ func Delete(client *golangsdk.ServiceClient, floatingIpId string) (r DeleteResul
 	return
 }
 
-func GetStatus(client *golangsdk.ServiceClient, floatingIpId string) (r GetStatusResult) {
-	url := GetStatusURL(client, floatingIpId)
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 type GetTaskOpts struct {
 	// Task ID (nonnegative integer) character string
 	TaskId string `q:"task_id"`

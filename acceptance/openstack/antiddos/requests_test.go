@@ -126,7 +126,7 @@ func TestGetStatus(t *testing.T) {
 	HandleGetStatusSuccessfully(t)
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.GetStatus(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.ShowDDosStatus(client.ServiceClient(), floatingIpId)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &GetStatusResponse, actual)
 }

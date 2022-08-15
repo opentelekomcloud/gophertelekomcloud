@@ -56,7 +56,7 @@ Example to query configured Anti-DDoS defense policies.
 Example to query the defense status of a specified EIP.
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.GetStatus(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.ShowDDosStatus(client.ServiceClient(), floatingIpId).Extract()
 	if err != nil {
 	  panic(err)
 	}

@@ -53,21 +53,6 @@ type DeleteResponse struct {
 	TaskId string `json:"task_id,"`
 }
 
-type GetStatusResult struct {
-	commonResult
-}
-
-func (r GetStatusResult) Extract() (*GetStatusResponse, error) {
-	var response GetStatusResponse
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-type GetStatusResponse struct {
-	// Defense status
-	Status string `json:"status,"`
-}
-
 type GetTaskResult struct {
 	commonResult
 }
