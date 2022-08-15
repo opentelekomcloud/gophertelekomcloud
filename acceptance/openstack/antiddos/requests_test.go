@@ -1,4 +1,4 @@
-package testing
+package antiddos
 
 import (
 	"testing"
