@@ -57,14 +57,6 @@ func Delete(client *golangsdk.ServiceClient, floatingIpId string) (r DeleteResul
 	return
 }
 
-func Get(client *golangsdk.ServiceClient, floatingIpId string) (r GetResult) {
-	url := GetURL(client, floatingIpId)
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 func GetStatus(client *golangsdk.ServiceClient, floatingIpId string) (r GetStatusResult) {
 	url := GetStatusURL(client, floatingIpId)
 	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{

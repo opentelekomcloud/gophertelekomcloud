@@ -53,33 +53,6 @@ type DeleteResponse struct {
 	TaskId string `json:"task_id,"`
 }
 
-type GetResult struct {
-	commonResult
-}
-
-func (r GetResult) Extract() (*GetResponse, error) {
-	var response GetResponse
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-type GetResponse struct {
-	// Whether L7 defense has been enabled
-	EnableL7 bool `json:"enable_L7,"`
-
-	// Position ID of traffic. The value ranges from 1 to 9.
-	TrafficPosId int `json:"traffic_pos_id,"`
-
-	// Position ID of number of HTTP requests. The value ranges from 1 to 15.
-	HttpRequestPosId int `json:"http_request_pos_id,"`
-
-	// Position ID of access limit during cleaning. The value ranges from 1 to 8.
-	CleaningAccessPosId int `json:"cleaning_access_pos_id,"`
-
-	// Application type ID. Possible values: 0 1
-	AppTypeId int `json:"app_type_id,"`
-}
-
 type GetStatusResult struct {
 	commonResult
 }

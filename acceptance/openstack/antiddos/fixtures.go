@@ -70,7 +70,7 @@ func HandleDeleteSuccessfully(t *testing.T) {
 	})
 }
 
-var GetResponse = antiddos.GetResponse{
+var GetResponse = antiddos.ShowDDosResponse{
 	EnableL7:            true,
 	TrafficPosId:        1,
 	HttpRequestPosId:    2,

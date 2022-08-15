@@ -44,7 +44,7 @@ func TestGet(t *testing.T) {
 	HandleGetSuccessfully(t)
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.Get(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.ShowDDos(client.ServiceClient(), floatingIpId)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &GetResponse, actual)
 }
