@@ -13,7 +13,7 @@ func TestCreate(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleCreateSuccessfully(t)
 
-	createOpt := antiddos.CreateOpts{
+	createOpt := antiddos.ConfigOpts{
 		EnableL7:            true,
 		TrafficPosId:        1,
 		HttpRequestPosId:    2,
@@ -22,7 +22,7 @@ func TestCreate(t *testing.T) {
 	}
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.Create(client.ServiceClient(), floatingIpId, createOpt).Extract()
+	actual, err := antiddos.CreateDefaultConfig(client.ServiceClient(), floatingIpId, createOpt)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &CreateResponse, actual)
 }
@@ -54,7 +54,7 @@ func TestUpdate(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleUpdateSuccessfully(t)
 
-	updateOpt := antiddos.UpdateDDosOpts{
+	updateOpt := antiddos.ConfigOpts{
 		EnableL7:            true,
 		TrafficPosId:        1,
 		HttpRequestPosId:    2,
