@@ -91,14 +91,14 @@ Example to query events of a specified EIP in the last 24 hours.
 
 Example to query the defense statuses of all EIPs.
 
-	listOpt := antiddos.ListStatusOpts{
+	listOpt := antiddos.ListDDosStatusOpts{
 	    Limit:  2,
 	    Offset: 1,
 	    Status: "notConfig",
 	    Ip:     "49.",
 	}
 
-	actual, err := antiddos.ListStatus(client.ServiceClient(), listOpt).Extract()
+	actual, err := antiddos.ListDDosStatus(client.ServiceClient(), listOpt).Extract()
 	if err != nil {
 	  panic(err)
 	}

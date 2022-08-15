@@ -26,10 +26,6 @@ func ListConfigsURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("antiddos", "query_config_list")
 }
 
-func ListStatusURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("antiddos")
-}
-
 func UpdateURL(c *golangsdk.ServiceClient, floatingIpId string) string {
 	return c.ServiceURL("antiddos", floatingIpId)
 }

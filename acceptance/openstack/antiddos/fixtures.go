@@ -133,7 +133,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 	})
 }
 
-var ListStatusResponse = []antiddos.DdosStatus{
+var ListStatusResponse = []antiddos.DDosStatus{
 	{
 		FloatingIpId:      "4d60bba4-0791-4e82-8262-9bdffaeb1d14",
 		FloatingIpAddress: "49.4.4.36",

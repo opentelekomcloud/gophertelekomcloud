@@ -73,14 +73,14 @@ func TestListStatus(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleListStatusSuccessfully(t)
 
-	listOpt := antiddos.ListStatusOpts{
+	listOpt := antiddos.ListDDosStatusOpts{
 		Limit:  2,
 		Offset: 1,
 		Status: "notConfig",
 		Ip:     "49.",
 	}
 
-	actual, err := antiddos.ListStatus(client.ServiceClient(), listOpt)
+	actual, err := antiddos.ListDDosStatus(client.ServiceClient(), listOpt)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, ListStatusResponse, actual)
 }
