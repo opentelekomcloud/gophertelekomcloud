@@ -1,6 +1,8 @@
 package antiddos
 
 import (
+	"reflect"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -85,4 +87,10 @@ func FilterDdosStatus(ddosStatus []DDosStatus, opts ListDDosStatusOpts) ([]DDosS
 	}
 
 	return refinedDdosStatus, nil
+}
+
+func getStructField(v *DDosStatus, field string) string {
+	r := reflect.ValueOf(v)
+	f := reflect.Indirect(r).FieldByName(field)
+	return f.String()
 }

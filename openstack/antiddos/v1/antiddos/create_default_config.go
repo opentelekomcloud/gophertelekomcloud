@@ -18,18 +18,18 @@ type ConfigOpts struct {
 	AppTypeId int `json:"app_type_id,"`
 }
 
-func CreateDefaultConfig(client *golangsdk.ServiceClient, floatingIpId string, opts ConfigOpts) (*CreateResponse, error) {
+func CreateDefaultConfig(client *golangsdk.ServiceClient, floatingIpId string, opts ConfigOpts) (*TaskResponse, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	// POST /v1/{project_id}/antiddos/default-config
+	// POST /v1/{project_id}/antiddos/default/config
 	raw, err := client.Post(client.ServiceURL("antiddos", floatingIpId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 
-	var res CreateResponse
+	var res TaskResponse
 	err = extract.Into(raw, &res)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func CreateDefaultConfig(client *golangsdk.ServiceClient, floatingIpId string, o
 	return &res, nil
 }
 
-type CreateResponse struct {
+type TaskResponse struct {
 	// Internal error code
 	ErrorCode string `json:"error_code,"`
 	// Internal error description

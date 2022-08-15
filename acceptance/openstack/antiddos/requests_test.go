@@ -33,7 +33,7 @@ func TestDelete(t *testing.T) {
 	HandleDeleteSuccessfully(t)
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.Delete(client.ServiceClient(), floatingIpId).Extract()
+	actual, err := antiddos.DeleteDefaultConfig(client.ServiceClient(), floatingIpId).Extract()
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &DeleteResponse, actual)
 }
@@ -147,7 +147,7 @@ func TestGetTask(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleGetTaskSuccessfully(t)
 
-	actual, err := antiddos.GetTask(client.ServiceClient(), antiddos.GetTaskOpts{
+	actual, err := antiddos.ShowNewTaskStatus(client.ServiceClient(), antiddos.ShowNewTaskStatusOpts{
 		TaskId: "4a4fefe7-34a1-40e2-a87c-16932af3ac4a",
 	}).Extract()
 	th.AssertNoErr(t, err)

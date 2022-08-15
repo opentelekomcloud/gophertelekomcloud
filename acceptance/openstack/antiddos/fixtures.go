@@ -29,7 +29,7 @@ const CreateRequest string = `
 }
 `
 
-var CreateResponse = antiddos.CreateResponse{
+var CreateResponse = antiddos.TaskResponse{
 	ErrorCode:        "10000000",
 	ErrorDescription: "The task has been received and is being handled",
 	TaskId:           "82463800-70fe-4cba-9a96-06175e246ab3",
@@ -46,7 +46,7 @@ func HandleCreateSuccessfully(t *testing.T) {
 	})
 }
 
-var DeleteResponse = antiddos.DeleteResponse{
+var DeleteResponse = antiddos.TaskResponse{
 	ErrorCode:        "10000000",
 	ErrorDescription: "The task has been received and is being handled",
 	TaskId:           "f732e7f1-26b2-40f1-85e9-a8a4d3a43038",
@@ -738,7 +738,7 @@ var GetTaskOutput = `
 }
 `
 
-var GetTaskResponse = antiddos.GetTaskResponse{
+var GetTaskResponse = antiddos.ShowNewTaskStatusResponse{
 	TaskStatus: "running",
 	TaskMsg:    "ABC",
 }

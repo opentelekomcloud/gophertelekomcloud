@@ -64,6 +64,7 @@ func (client *ServiceClient) initReqOpts(_ string, JSONBody interface{}, JSONRes
 }
 
 // Get calls `Request` with the "GET" HTTP verb. def 200
+// JSONResponse Deprecated
 func (client *ServiceClient) Get(url string, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
@@ -73,6 +74,7 @@ func (client *ServiceClient) Get(url string, JSONResponse interface{}, opts *Req
 }
 
 // Post calls `Request` with the "POST" HTTP verb. def 201, 202
+// JSONResponse Deprecated
 func (client *ServiceClient) Post(url string, JSONBody interface{}, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
@@ -82,6 +84,7 @@ func (client *ServiceClient) Post(url string, JSONBody interface{}, JSONResponse
 }
 
 // Put calls `Request` with the "PUT" HTTP verb. def 201, 202
+// JSONResponse Deprecated
 func (client *ServiceClient) Put(url string, JSONBody interface{}, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
@@ -91,6 +94,7 @@ func (client *ServiceClient) Put(url string, JSONBody interface{}, JSONResponse 
 }
 
 // Patch calls `Request` with the "PATCH" HTTP verb. def 200, 204
+// JSONResponse Deprecated
 func (client *ServiceClient) Patch(url string, JSONBody interface{}, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
@@ -109,6 +113,7 @@ func (client *ServiceClient) Delete(url string, opts *RequestOpts) (*http.Respon
 }
 
 // DeleteWithBody calls `Request` with the "DELETE" HTTP verb. def 202, 204
+// Deprecated
 func (client *ServiceClient) DeleteWithBody(url string, JSONBody interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
@@ -118,6 +123,7 @@ func (client *ServiceClient) DeleteWithBody(url string, JSONBody interface{}, op
 }
 
 // DeleteWithResponse calls `Request` with the "DELETE" HTTP verb. def 202, 204
+// Deprecated
 func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
@@ -127,6 +133,7 @@ func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse interfa
 }
 
 // DeleteWithBodyResp calls `Request` with the "DELETE" HTTP verb. def 202, 204
+// Deprecated
 func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody interface{}, JSONResponse interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
