@@ -100,7 +100,7 @@ func TestWeeklyReport(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleWeeklyReportSuccessfully(t)
 
-	actual, err := antiddos.WeeklyReport(client.ServiceClient(), antiddos.WeeklyReportOpts{PeriodStartDate: responsePeriodTime}).Extract()
+	actual, err := antiddos.ListWeeklyReports(client.ServiceClient(), responsePeriodTime)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &WeeklyReportResponse, actual)
 }

@@ -134,52 +134,8 @@ type UpdateResponse struct {
 	TaskId string `json:"task_id,"`
 }
 
-type WeeklyReportResult struct {
-	commonResult
-}
-
-func (r WeeklyReportResult) Extract() (*WeeklyReportResponse, error) {
-	var response WeeklyReportResponse
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-type WeekData struct {
-	// Number of DDoS attacks intercepted
-	DdosInterceptTimes int `json:"ddos_intercept_times,"`
-
-	// Number of DDoS blackholes
-	DdosBlackholeTimes int `json:"ddos_blackhole_times,"`
-
-	// Maximum attack traffic
-	MaxAttackBps int `json:"max_attack_bps,"`
-
-	// Maximum number of attack connections
-	MaxAttackConns int `json:"max_attack_conns,"`
-
-	// Start date
-	PeriodStartDate time.Time `json:"period_start_date,"`
-}
-
-type WeeklyReportResponse struct {
-	// Number of DDoS attacks intercepted in a week
-	DdosInterceptTimes int `json:"ddos_intercept_times,"`
-
-	// Number of DDoS attacks intercepted in a week
-	Weekdata []WeekData `json:"-"`
-
-	// Top 10 attacked IP addresses
-	Top10 []struct {
-		// EIP
-		FloatingIpAddress string `json:"floating_ip_address,"`
-
-		// Number of DDoS attacks intercepted, including cleaning operations and blackholes
-		Times int `json:"times,"`
-	} `json:"top10,"`
-}
-
-func (r *WeeklyReportResponse) UnmarshalJSON(b []byte) error {
-	type tmp WeeklyReportResponse
+func (r *ListWeeklyReportsResponse) UnmarshalJSON(b []byte) error {
+	type tmp ListWeeklyReportsResponse
 	var s struct {
 		tmp
 		Weekdata []struct {
@@ -204,13 +160,13 @@ func (r *WeeklyReportResponse) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	*r = WeeklyReportResponse(s.tmp)
+	*r = ListWeeklyReportsResponse(s.tmp)
 	r.Weekdata = make([]WeekData, len(s.Weekdata))
 
 	for idx, val := range s.Weekdata {
 		r.Weekdata[idx] = WeekData{
-			DdosInterceptTimes: val.DdosBlackholeTimes,
-			DdosBlackholeTimes: val.DdosBlackholeTimes,
+			DDosInterceptTimes: val.DdosBlackholeTimes,
+			DDosBlackholeTimes: val.DdosBlackholeTimes,
 			MaxAttackBps:       val.MaxAttackBps,
 			MaxAttackConns:     val.MaxAttackConns,
 			PeriodStartDate:    time.Unix(val.PeriodStartDate/1000, 0).UTC(),

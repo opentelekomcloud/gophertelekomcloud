@@ -533,54 +533,54 @@ var WeeklyReportOutput = `
 // init the loc
 var responsePeriodTime = time.Date(2018, 3, 1, 0, 0, 0, 0, time.UTC)
 
-var WeeklyReportResponse = antiddos.WeeklyReportResponse{
-	DdosInterceptTimes: 0,
+var WeeklyReportResponse = antiddos.ListWeeklyReportsResponse{
+	DDosInterceptTimes: 0,
 	Weekdata: []antiddos.WeekData{
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,

@@ -105,7 +105,7 @@ Example to query the defense statuses of all EIPs.
 
 Example to query weekly defense statistics about all your EIPs.
 
-	actual, err := antiddos.WeeklyReport(client.ServiceClient(), antiddos.WeeklyReportOpts{}).Extract()
+	actual, err := antiddos.ListWeeklyReports(client.ServiceClient(), antiddos.ListWeeklyReportsOpts{}).Extract()
 	if err != nil {
 	  panic(err)
 	}

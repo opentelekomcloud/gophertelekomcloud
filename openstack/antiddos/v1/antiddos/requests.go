@@ -2,8 +2,6 @@ package antiddos
 
 import (
 	"reflect"
-	"strconv"
-	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -152,37 +150,6 @@ func Update(client *golangsdk.ServiceClient, floatingIpId string, opts UpdateOpt
 	}
 
 	_, r.Err = client.Put(UpdateURL(client, floatingIpId), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-type WeeklyReportOpts struct {
-	// Start date of a seven-day period
-	PeriodStartDate time.Time `q:""`
-	// PeriodStartDate string `q:"period_start_date"`
-}
-
-type WeeklyReportOptsBuilder interface {
-	ToWeeklyReportQuery() (string, error)
-}
-
-func (opts WeeklyReportOpts) ToWeeklyReportQuery() (string, error) {
-	return "?period_start_date=" + strconv.FormatInt(opts.PeriodStartDate.Unix()*1000, 10), nil // q.String(), err
-}
-
-func WeeklyReport(client *golangsdk.ServiceClient, opts WeeklyReportOptsBuilder) (r WeeklyReportResult) {
-	url := WeeklyReportURL(client)
-	if opts != nil {
-		query, err := opts.ToWeeklyReportQuery()
-		if err != nil {
-			r.Err = err
-			return
-		}
-		url += query
-	}
-
-	_, r.Err = client.Get(url, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

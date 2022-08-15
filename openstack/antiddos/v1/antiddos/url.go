@@ -25,7 +25,3 @@ func GetTaskURL(c *golangsdk.ServiceClient) string {
 func UpdateURL(c *golangsdk.ServiceClient, floatingIpId string) string {
 	return c.ServiceURL("antiddos", floatingIpId)
 }
-
-func WeeklyReportURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("antiddos", "weekly")
-}
