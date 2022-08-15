@@ -8,6 +8,9 @@ import (
 func ListDailyReport(client *golangsdk.ServiceClient, floatingIpId string) ([]Data, error) {
 	// GET /v1/{project_id}/antiddos/{floating_ip_id}/daily
 	raw, err := client.Get(client.ServiceURL("antiddos", floatingIpId, "daily"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res []Data
 	err = extract.IntoSlicePtr(raw, &res, "data")

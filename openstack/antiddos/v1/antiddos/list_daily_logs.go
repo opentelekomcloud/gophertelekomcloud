@@ -27,6 +27,9 @@ func ListDailyLogs(client *golangsdk.ServiceClient, floatingIpId string, opts Li
 
 	// GET /v1/{project_id}/antiddos/{floating_ip_id}/logs
 	raw, err := client.Get(client.ServiceURL("antiddos", floatingIpId, "logs")+query.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res ListDailyLogsResponse
 	err = extract.Into(raw, &res)

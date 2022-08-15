@@ -28,6 +28,9 @@ func CreateDefaultConfig(client *golangsdk.ServiceClient, opts ConfigOpts) (*Tas
 	raw, err := client.Post(client.ServiceURL("antiddos", "default-config"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res TaskResponse
 	err = extract.Into(raw, &res)
