@@ -54,7 +54,7 @@ func TestUpdate(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleUpdateSuccessfully(t)
 
-	updateOpt := antiddos.UpdateOpts{
+	updateOpt := antiddos.UpdateDDosOpts{
 		EnableL7:            true,
 		TrafficPosId:        1,
 		HttpRequestPosId:    2,
@@ -63,7 +63,7 @@ func TestUpdate(t *testing.T) {
 	}
 
 	floatingIpId := "82abaa86-8518-47db-8d63-ddf152824635"
-	actual, err := antiddos.Update(client.ServiceClient(), floatingIpId, updateOpt).Extract()
+	actual, err := antiddos.UpdateDDos(client.ServiceClient(), floatingIpId, updateOpt)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &UpdateResponse, actual)
 }

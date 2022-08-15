@@ -71,27 +71,6 @@ type GetTaskResponse struct {
 	TaskMsg string `json:"task_msg,"`
 }
 
-type UpdateResult struct {
-	commonResult
-}
-
-func (r UpdateResult) Extract() (*UpdateResponse, error) {
-	var response UpdateResponse
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-type UpdateResponse struct {
-	// Internal error code
-	ErrorCode string `json:"error_code,"`
-
-	// Internal error description
-	ErrorDescription string `json:"error_description,"`
-
-	// ID of a task. This ID can be used to query the status of the task. This field is reserved for use in task auditing later. It is temporarily unused.
-	TaskId string `json:"task_id,"`
-}
-
 func (r *ListWeeklyReportsResponse) UnmarshalJSON(b []byte) error {
 	type tmp ListWeeklyReportsResponse
 	var s struct {
