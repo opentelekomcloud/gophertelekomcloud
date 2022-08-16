@@ -33,7 +33,7 @@ func CreateDefaultConfig(client *golangsdk.ServiceClient, opts ConfigOpts) (*Tas
 	}
 
 	var res TaskResponse
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

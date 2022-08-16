@@ -23,7 +23,7 @@ func ShowNewTaskStatus(client *golangsdk.ServiceClient, opts ShowNewTaskStatusOp
 	}
 
 	var res ShowNewTaskStatusResponse
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

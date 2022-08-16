@@ -47,7 +47,7 @@ func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([
 	}
 
 	var res ListStatusResponse
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

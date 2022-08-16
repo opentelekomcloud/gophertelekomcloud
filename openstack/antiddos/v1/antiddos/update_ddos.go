@@ -17,7 +17,7 @@ func UpdateDDos(client *golangsdk.ServiceClient, floatingIpId string, opts Confi
 	})
 
 	var res TaskResponse
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

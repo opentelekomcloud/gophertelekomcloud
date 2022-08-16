@@ -19,7 +19,7 @@ func ListWeeklyReports(client *golangsdk.ServiceClient, periodStartDate time.Tim
 	}
 
 	var res ListWeeklyReportsResponse
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

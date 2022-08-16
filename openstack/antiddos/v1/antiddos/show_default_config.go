@@ -13,7 +13,7 @@ func ShowDefaultConfig(client *golangsdk.ServiceClient) (*ConfigOpts, error) {
 	}
 
 	var res ConfigOpts
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}
