@@ -8,6 +8,9 @@ import (
 func ListNewConfigs(client *golangsdk.ServiceClient) (*ListConfigsResponse, error) {
 	// GET /v1/{project_id}/antiddos/query_config_list
 	raw, err := client.Get(client.ServiceURL("antiddos", "query_config_list"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var response ListConfigsResponse
 	err = extract.Into(raw, &response)

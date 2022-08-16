@@ -42,6 +42,9 @@ func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([
 
 	// GET /v1/{project_id}/antiddos
 	raw, err := client.Get(client.ServiceURL("antiddos")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res ListStatusResponse
 	err = extract.Into(raw, &res)

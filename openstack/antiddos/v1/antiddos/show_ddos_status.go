@@ -20,5 +20,5 @@ func ShowDDosStatus(client *golangsdk.ServiceClient, floatingIpId string) (strin
 		return "", err
 	}
 
-	return res.Status, err
+	return res.Status, nil
 }

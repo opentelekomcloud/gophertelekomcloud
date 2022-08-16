@@ -14,6 +14,9 @@ func ListWeeklyReports(client *golangsdk.ServiceClient, periodStartDate time.Tim
 	raw, err := client.Get(
 		client.ServiceURL("antiddos", "weekly")+"?period_start_date="+strconv.FormatInt(periodStartDate.Unix()*1000, 10),
 		nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res ListWeeklyReportsResponse
 	err = extract.Into(raw, &res)
