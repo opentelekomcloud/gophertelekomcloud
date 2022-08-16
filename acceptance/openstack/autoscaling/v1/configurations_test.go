@@ -48,7 +48,7 @@ func TestConfigurationsLifecycle(t *testing.T) {
 		InstanceConfig: configurations.InstanceConfigOpts{
 			FlavorRef: "s3.xlarge.4",
 			ImageRef:  imageID,
-			Disk: []configurations.DiskOpts{
+			Disk: []configurations.Disk{
 				{
 					Size:       40,
 					VolumeType: "SATA",
@@ -56,7 +56,7 @@ func TestConfigurationsLifecycle(t *testing.T) {
 				},
 			},
 			SSHKey: keyPairName,
-			SecurityGroups: []configurations.SecurityGroupOpts{
+			SecurityGroups: []configurations.SecurityGroup{
 				{
 					ID: defaultSGID,
 				},
