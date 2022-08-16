@@ -15,6 +15,9 @@ func UpdateDDos(client *golangsdk.ServiceClient, floatingIpId string, opts Confi
 	raw, err := client.Put(client.ServiceURL("antiddos", floatingIpId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res TaskResponse
 	err = extract.Into(raw.Body, &res)

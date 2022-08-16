@@ -8,9 +8,12 @@ import (
 func ShowAlertConfig(client *golangsdk.ServiceClient) (*ShowAlertConfigResponse, error) {
 	// GET /v2/{project_id}/warnalert/alertconfig/query
 	raw, err := client.Get(client.ServiceURL("warnalert", "alertconfig", "query"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res ShowAlertConfigResponse
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -20,9 +23,9 @@ func ShowAlertConfig(client *golangsdk.ServiceClient) (*ShowAlertConfigResponse,
 
 type ShowAlertConfigResponse struct {
 	// ID of an alarm group
-	TopicUrn *string `json:"topic_urn"`
+	TopicUrn string `json:"topic_urn"`
 	// Description of an alarm group
-	DisplayName *string `json:"display_name"`
+	DisplayName string `json:"display_name"`
 	// Alarm configuration
 	WarnConfig AlertConfigRespWarnConfig `json:"warn_config"`
 }
