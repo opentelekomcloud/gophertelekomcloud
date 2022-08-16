@@ -5,7 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateResult is a struct that contains all the return parameters of creation
 type CreateResult struct {
 	golangsdk.Result
 }

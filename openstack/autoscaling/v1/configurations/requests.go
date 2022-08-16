@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type CreateOptsBuilder interface {
@@ -90,33 +89,6 @@ type SecurityGroupOpts struct {
 	ID string `json:"id" required:"true"`
 }
 
-// Create is a method by which can be able to access to create a configuration
-// of autoscaling
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToConfigurationCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get is a method by which can be able to access to get a configuration of
-// autoscaling detailed information
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
-	return
-}
-
-// Delete
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
-	return
-}
-
 type ListOptsBuilder interface {
 	ToConfigurationListQuery() (string, error)
 }
@@ -134,20 +106,4 @@ func (opts ListOpts) ToConfigurationListQuery() (string, error) {
 		return "", err
 	}
 	return q.String(), err
-}
-
-// List is method that can be able to list all configurations of autoscaling service
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
-	if opts != nil {
-		query, err := opts.ToConfigurationListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ConfigurationPage{pagination.SinglePageBase(r)}
-	})
 }
