@@ -60,7 +60,7 @@ func TestGroupLifecycle(t *testing.T) {
 
 	updateOpts := groups.UpdateOpts{
 		Name: asGroupUpdateName,
-		SecurityGroup: []groups.SecurityGroupOpts{
+		SecurityGroup: []groups.ID{
 			{
 				ID: secGroupID,
 			},

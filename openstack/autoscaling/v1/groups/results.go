@@ -9,25 +9,6 @@ type commonResult struct {
 	golangsdk.Result
 }
 
-// CreateResult is a struct returned by Create request
-type CreateResult struct {
-	commonResult
-}
-
-// UpdateResult is a struct from which can get the result of Update request
-type UpdateResult struct {
-	commonResult
-}
-
-// Extract the ID of AS Group result as a string type.
-func (r commonResult) Extract() (string, error) {
-	var s struct {
-		ID string `json:"scaling_group_id"`
-	}
-	err := r.ExtractInto(&s)
-	return s.ID, err
-}
-
 // DeleteResult contains the body of the deleting group request
 type DeleteResult struct {
 	golangsdk.ErrResult
@@ -61,7 +42,7 @@ type Group struct {
 	LBaaSListeners            []LBaaSListener `json:"lbaas_listeners"`
 	AvailableZones            []string        `json:"available_zones"`
 	Networks                  []Network       `json:"networks"`
-	SecurityGroups            []SecurityGroup `json:"security_groups"`
+	SecurityGroups            []ID            `json:"security_groups"`
 	CreateTime                string          `json:"create_time"`
 	VpcID                     string          `json:"vpc_id"`
 	Detail                    string          `json:"detail"`
@@ -80,24 +61,9 @@ type Group struct {
 }
 
 type Network struct {
-	ID            string        `json:"id"`
-	IPv6Enable    bool          `json:"ipv6_enable"`
-	IPv6Bandwidth IPv6Bandwidth `json:"ipv6_bandwidth"`
-}
-
-type IPv6Bandwidth struct {
-	ID string `json:"id"`
-}
-
-type SecurityGroup struct {
-	ID string `json:"id"`
-}
-
-type LBaaSListener struct {
-	ListenerID   string `json:"listener_id"`
-	PoolID       string `json:"pool_id"`
-	ProtocolPort int    `json:"protocol_port"`
-	Weight       int    `json:"weight"`
+	ID            string `json:"id"`
+	IPv6Enable    bool   `json:"ipv6_enable"`
+	IPv6Bandwidth ID     `json:"ipv6_bandwidth"`
 }
 
 type GroupPage struct {

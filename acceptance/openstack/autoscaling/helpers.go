@@ -15,12 +15,12 @@ func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, netwo
 
 	createOpts := groups.CreateOpts{
 		Name: asName,
-		Networks: []groups.NetworkOpts{
+		Networks: []groups.ID{
 			{
 				ID: networkID,
 			},
 		},
-		SecurityGroup: []groups.SecurityGroupOpts{
+		SecurityGroup: []groups.ID{
 			{
 				ID: defaultSGID,
 			},
