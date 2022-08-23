@@ -33,11 +33,7 @@ func ListDailyLogs(client *golangsdk.ServiceClient, floatingIpId string, opts Li
 
 	var res ListDailyLogsResponse
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return &res, err
 }
 
 type ListDailyLogsResponse struct {

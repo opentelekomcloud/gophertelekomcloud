@@ -14,11 +14,7 @@ func ListDailyReport(client *golangsdk.ServiceClient, floatingIpId string) ([]Da
 
 	var res []Data
 	err = extract.IntoSlicePtr(raw.Body, &res, "data")
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return res, err
 }
 
 type Data struct {

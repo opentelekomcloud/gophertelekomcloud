@@ -14,11 +14,7 @@ func ShowAlertConfig(client *golangsdk.ServiceClient) (*ShowAlertConfigResponse,
 
 	var res ShowAlertConfigResponse
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return &res, err
 }
 
 type ShowAlertConfigResponse struct {

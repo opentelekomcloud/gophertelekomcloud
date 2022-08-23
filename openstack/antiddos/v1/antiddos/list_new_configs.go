@@ -14,11 +14,7 @@ func ListNewConfigs(client *golangsdk.ServiceClient) (*ListConfigsResponse, erro
 
 	var response ListConfigsResponse
 	err = extract.Into(raw.Body, &response)
-	if err != nil {
-		return nil, err
-	}
-
-	return &response, nil
+	return &response, err
 }
 
 type ListConfigsResponse struct {

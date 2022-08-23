@@ -16,9 +16,5 @@ func DeleteDefaultConfig(client *golangsdk.ServiceClient) (*TaskResponse, error)
 
 	var res TaskResponse
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return &res, err
 }

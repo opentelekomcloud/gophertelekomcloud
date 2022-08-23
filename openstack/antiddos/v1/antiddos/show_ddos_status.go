@@ -16,9 +16,5 @@ func ShowDDosStatus(client *golangsdk.ServiceClient, floatingIpId string) (strin
 		Status string `json:"status"`
 	}
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return "", err
-	}
-
-	return res.Status, nil
+	return res.Status, err
 }

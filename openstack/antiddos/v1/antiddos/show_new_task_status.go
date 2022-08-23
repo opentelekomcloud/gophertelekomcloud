@@ -24,11 +24,7 @@ func ShowNewTaskStatus(client *golangsdk.ServiceClient, opts ShowNewTaskStatusOp
 
 	var res ShowNewTaskStatusResponse
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return &res, err
 }
 
 type ShowNewTaskStatusResponse struct {

@@ -14,9 +14,5 @@ func ShowDDos(client *golangsdk.ServiceClient, floatingIpId string) (*ConfigOpts
 
 	var res ConfigOpts
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return &res, err
 }
