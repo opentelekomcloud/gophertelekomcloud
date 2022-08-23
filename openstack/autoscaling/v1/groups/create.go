@@ -1,17 +1,10 @@
 package groups
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// CreateOptsBuilder is an interface from which can build the request of creating group
-type CreateOptsBuilder interface {
-	ToGroupCreateMap() (map[string]interface{}, error)
-}
-
-func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// CreateOpts is a struct contains the parameters of creating group
 type CreateOpts struct {
 	Name                      string          `json:"scaling_group_name" required:"true"`
 	ConfigurationID           string          `json:"scaling_configuration_id,omitempty"`
@@ -47,31 +40,22 @@ type ID struct {
 	ID string `json:"id" required:"true"`
 }
 
-// Create is a method of creating group
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToGroupCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return "", err
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+
+	raw, err := client.Post(client.ServiceURL("scaling_group"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
-}
+	if err != nil {
+		return "", err
+	}
 
-type CreateResult struct {
-	commonResult
-}
-
-type UpdateResult struct {
-	commonResult
-}
-
-func (r commonResult) Extract() (string, error) {
-	var s struct {
+	var res struct {
 		ID string `json:"scaling_group_id"`
 	}
-	err := r.ExtractInto(&s)
-	return s.ID, err
+	err = extract.Into(raw.Body, &res)
+	return res.ID, err
 }

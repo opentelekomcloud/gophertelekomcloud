@@ -2,20 +2,31 @@ package groups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func List(client *golangsdk.ServiceClient, ops ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
-	if ops != nil {
-		q, err := ops.ToGroupListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += q
+type ListOpts struct {
+	Name                string `q:"scaling_group_name"`
+	ConfigurationID     string `q:"scaling_configuration_id"`
+	Status              string `q:"scaling_group_status"`
+	StartNumber         int    `q:"start_number"`
+	Limit               int    `q:"limit"`
+	EnterpriseProjectID string `q:"enterprise_project_id"`
+}
+
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Group, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
 	}
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return GroupPage{pagination.SinglePageBase(r)}
-	})
+	url := client.ServiceURL("scaling_group") + q.String()
+	raw, err := client.Get(url, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []Group
+	err = extract.IntoSlicePtr(raw.Body, &res, "scaling_groups")
+	return res, err
 }

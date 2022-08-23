@@ -1,32 +1,5 @@
 package groups
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-)
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// DeleteResult contains the body of the deleting group request
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// GetResult contains the body of getting detailed group request
-type GetResult struct {
-	golangsdk.Result
-}
-
-// Extract method will parse the result body into Group struct
-func (r GetResult) Extract() (*Group, error) {
-	s := new(Group)
-	err := r.ExtractIntoStructPtr(s, "scaling_group")
-	return s, err
-}
-
-// Group represents the struct of one autoscaling group
 type Group struct {
 	Name                      string          `json:"scaling_group_name"`
 	ID                        string          `json:"scaling_group_id"`
@@ -64,27 +37,4 @@ type Network struct {
 	ID            string `json:"id"`
 	IPv6Enable    bool   `json:"ipv6_enable"`
 	IPv6Bandwidth ID     `json:"ipv6_bandwidth"`
-}
-
-type GroupPage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty returns true if a ListResult contains no Volumes.
-func (r GroupPage) IsEmpty() (bool, error) {
-	groups, err := ExtractGroups(r)
-	return len(groups) == 0, err
-}
-
-// ExtractGroups returns a slice of AS Groups contained in a
-// single page of results.
-func ExtractGroups(r pagination.Page) ([]Group, error) {
-	var s []Group
-	err := (r.(GroupPage)).ExtractIntoSlicePtr(&s, "scaling_groups")
-	return s, err
-}
-
-// ActionResult this is the action result which is the result of enable or disable operations
-type ActionResult struct {
-	golangsdk.ErrResult
 }

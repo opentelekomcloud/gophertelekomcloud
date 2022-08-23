@@ -165,7 +165,7 @@ func (opts ActionOpts) ToActionMap() (map[string]interface{}, error) {
 }
 
 func doAction(client *golangsdk.ServiceClient, id string, opts ActionOptsBuilder) (r ActionResult) {
-	b, err := opts.ToActionMap()
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		r.Err = err
 		return

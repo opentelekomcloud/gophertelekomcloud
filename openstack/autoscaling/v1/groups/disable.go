@@ -2,8 +2,11 @@ package groups
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// Disable is an operation by which can be able to pause the group
-func Disable(client *golangsdk.ServiceClient, id string) (r ActionResult) {
+type ActionOpts struct {
+	Action string `json:"action" required:"true"`
+}
+
+func Disable(client *golangsdk.ServiceClient, id string) error {
 	opts := ActionOpts{
 		Action: "pause",
 	}
