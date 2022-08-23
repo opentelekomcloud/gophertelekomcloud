@@ -1,9 +1,17 @@
 package groups_hcs
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GetGroup is a method of getting the detailed information of the group by id
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(client.ServiceURL("scaling_group", id), &r.Body, nil)
-	return
+func Get(client *golangsdk.ServiceClient, id string) (*Group, error) {
+	raw, err := client.Get(client.ServiceURL("scaling_group", id), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res Group
+	err = extract.IntoStructPtr(raw.Body, &res, "scaling_group")
+	return &res, err
 }

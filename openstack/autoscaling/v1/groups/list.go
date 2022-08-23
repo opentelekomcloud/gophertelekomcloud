@@ -20,8 +20,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Group, error) {
 		return nil, err
 	}
 
-	url := client.ServiceURL("scaling_group") + q.String()
-	raw, err := client.Get(url, nil, nil)
+	raw, err := client.Get(client.ServiceURL("scaling_group")+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}

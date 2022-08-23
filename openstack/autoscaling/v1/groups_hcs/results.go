@@ -1,42 +1,5 @@
 package groups_hcs
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-)
-
-// CreateGroupResult is a struct retured by CreateGroup request
-type CreateResult struct {
-	golangsdk.Result
-}
-
-// Extract the create group result as a string type.
-func (r CreateResult) Extract() (string, error) {
-	var a struct {
-		GroupID string `json:"scaling_group_id"`
-	}
-	err := r.Result.ExtractInto(&a)
-	return a.GroupID, err
-}
-
-// DeleteGroupResult contains the body of the deleting group request
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// GetGroupResult contains the body of getting detailed group request
-type GetResult struct {
-	golangsdk.Result
-}
-
-// Extract method will parse the result body into Group struct
-func (r GetResult) Extract() (Group, error) {
-	var g Group
-	err := r.Result.ExtractIntoStructPtr(&g, "scaling_group")
-	return g, err
-}
-
-// Group represents the struct of one autoscaling group
 type Group struct {
 	Name                      string          `json:"scaling_group_name"`
 	ID                        string          `json:"scaling_group_id"`
@@ -78,39 +41,4 @@ type LBaaSListener struct {
 	PoolID       string `json:"pool_id"`
 	ProtocolPort int    `json:"protocol_port"`
 	Weight       int    `json:"weight"`
-}
-
-type GroupPage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty returns true if a ListResult contains no Volumes.
-func (r GroupPage) IsEmpty() (bool, error) {
-	groups, err := r.Extract()
-	return len(groups) == 0, err
-}
-
-func (r GroupPage) Extract() ([]Group, error) {
-	var gs []Group
-	err := r.Result.ExtractIntoSlicePtr(&gs, "scaling_groups")
-	return gs, err
-}
-
-// UpdateResult is a struct from which can get the result of udpate method
-type UpdateResult struct {
-	golangsdk.Result
-}
-
-// Extract will deserialize the result to group id with string
-func (r UpdateResult) Extract() (string, error) {
-	var a struct {
-		ID string `json:"scaling_group_id"`
-	}
-	err := r.Result.ExtractInto(&a)
-	return a.ID, err
-}
-
-// this is the action result which is the result of enable or disable operations
-type ActionResult struct {
-	golangsdk.ErrResult
 }
