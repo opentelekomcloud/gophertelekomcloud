@@ -16,10 +16,7 @@ func TestConfigurationsList(t *testing.T) {
 
 	listOpts := configurations.ListOpts{}
 
-	allPages, err := configurations.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	configs, err := configurations.ExtractConfigurations(allPages)
+	configs, err := configurations.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, config := range configs {
@@ -67,17 +64,17 @@ func TestConfigurationsLifecycle(t *testing.T) {
 		},
 	}
 	t.Logf("Attempting to create AutoScaling Configuration")
-	configID, err := configurations.Create(client, createOpts).Extract()
+	configID, err := configurations.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created AutoScaling Configuration: %s", configID)
 	defer func() {
 		t.Logf("Attempting to delete AutoScaling Configuration")
-		err := configurations.Delete(client, configID).ExtractErr()
+		err := configurations.Delete(client, configID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted AutoScaling Configuration: %s", configID)
 	}()
 
-	config, err := configurations.Get(client, configID).Extract()
+	config, err := configurations.Get(client, configID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, config)
 	th.AssertEquals(t, 2, len(config.InstanceConfig.SecurityGroups))

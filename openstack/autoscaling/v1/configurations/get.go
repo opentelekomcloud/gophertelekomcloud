@@ -1,20 +1,19 @@
 package configurations
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(client.ServiceURL("scaling_configuration", id), &r.Body, nil)
-	return
-}
+func Get(client *golangsdk.ServiceClient, id string) (*Configuration, error) {
+	raw, err := client.Get(client.ServiceURL("scaling_configuration", id), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type GetResult struct {
-	golangsdk.Result
-}
-
-func (r GetResult) Extract() (Configuration, error) {
-	var s Configuration
-	err := r.ExtractIntoStructPtr(&s, "scaling_configuration")
-	return s, err
+	var res Configuration
+	err = extract.IntoStructPtr(raw.Body, &res, "scaling_configuration")
+	return &res, err
 }
 
 type Configuration struct {
