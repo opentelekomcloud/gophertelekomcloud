@@ -25,13 +25,13 @@ type ListDDosStatusOpts struct {
 
 type DDosStatus struct {
 	// Floating IP address
-	FloatingIpAddress string `json:"floating_ip_address,"`
+	FloatingIpAddress string `json:"floating_ip_address"`
 	// ID of an EIP
-	FloatingIpId string `json:"floating_ip_id,"`
+	FloatingIpId string `json:"floating_ip_id"`
 	// EIP type.
-	NetworkType string `json:"network_type,"`
+	NetworkType string `json:"network_type"`
 	// Defense status
-	Status string `json:"status,"`
+	Status string `json:"status"`
 }
 
 func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([]DDosStatus, error) {
@@ -57,9 +57,9 @@ func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([
 
 type ListStatusResponse struct {
 	// Total number of EIPs
-	Total int `json:"total,"`
+	Total int `json:"total"`
 	// List of defense statuses
-	DDosStatus []DDosStatus `json:"ddosStatus,"`
+	DDosStatus []DDosStatus `json:"ddosStatus"`
 }
 
 func FilterDdosStatus(ddosStatus []DDosStatus, opts ListDDosStatusOpts) ([]DDosStatus, error) {

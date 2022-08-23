@@ -42,24 +42,24 @@ func ListDailyLogs(client *golangsdk.ServiceClient, floatingIpId string, opts Li
 
 type ListDailyLogsResponse struct {
 	// Total number of EIPs
-	Total int `json:"total,"`
+	Total int `json:"total"`
 	// List of events
-	Logs []Logs `json:"logs,"`
+	Logs []Logs `json:"logs"`
 }
 
 type Logs struct {
 	// Start time
-	StartTime int `json:"start_time,"`
+	StartTime int `json:"start_time"`
 	// End time
-	EndTime int `json:"end_time,"`
+	EndTime int `json:"end_time"`
 	// Defense status, the possible value of which is one of the following:
 	// 1: indicates that traffic cleaning is underway.
 	// 2: indicates that traffic is discarded.
-	Status int `json:"status,"`
+	Status int `json:"status"`
 	// Traffic at the triggering point.
-	TriggerBps int `json:"trigger_bps,"`
+	TriggerBps int `json:"trigger_bps"`
 	// Packet rate at the triggering point
-	TriggerPps int `json:"trigger_pps,"`
+	TriggerPps int `json:"trigger_pps"`
 	// HTTP request rate at the triggering point
-	TriggerHttpPps int `json:"trigger_http_pps,"`
+	TriggerHttpPps int `json:"trigger_http_pps"`
 }
