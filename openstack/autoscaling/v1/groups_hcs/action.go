@@ -7,17 +7,15 @@ type ActionOpts struct {
 }
 
 func Enable(client *golangsdk.ServiceClient, id string) error {
-	opts := ActionOpts{
+	return doAction(client, id, ActionOpts{
 		Action: "resume",
-	}
-	return doAction(client, id, opts)
+	})
 }
 
 func Disable(client *golangsdk.ServiceClient, id string) error {
-	opts := ActionOpts{
+	return doAction(client, id, ActionOpts{
 		Action: "pause",
-	}
-	return doAction(client, id, opts)
+	})
 }
 
 func doAction(client *golangsdk.ServiceClient, id string, opts ActionOpts) error {
