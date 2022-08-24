@@ -172,11 +172,7 @@ func HandleListStatusSuccessfully(t *testing.T) {
 }
 
 var ListConfigsResponse = antiddos.ListConfigsResponse{
-	TrafficLimitedList: []struct {
-		TrafficPosId     int `json:"traffic_pos_id"`
-		TrafficPerSecond int `json:"traffic_per_second"`
-		PacketPerSecond  int `json:"packet_per_second"`
-	}{
+	TrafficLimitedList: []antiddos.TrafficLimited{
 		{
 			TrafficPosId:     1,
 			TrafficPerSecond: 10,
@@ -223,10 +219,7 @@ var ListConfigsResponse = antiddos.ListConfigsResponse{
 			PacketPerSecond:  70000,
 		},
 	},
-	HttpLimitedList: []struct {
-		HttpRequestPosId    int `json:"http_request_pos_id"`
-		HttpPacketPerSecond int `json:"http_packet_per_second"`
-	}{
+	HttpLimitedList: []antiddos.HttpLimited{
 		{
 			HttpRequestPosId:    1,
 			HttpPacketPerSecond: 100,
@@ -288,11 +281,7 @@ var ListConfigsResponse = antiddos.ListConfigsResponse{
 			HttpPacketPerSecond: 20000,
 		},
 	},
-	ConnectionLimitedList: []struct {
-		CleaningAccessPosId    int `json:"cleaning_access_pos_id"`
-		NewConnectionLimited   int `json:"new_connection_limited"`
-		TotalConnectionLimited int `json:"total_connection_limited"`
-	}{
+	ConnectionLimitedList: []antiddos.ConnectionLimited{
 		{
 			CleaningAccessPosId:    1,
 			NewConnectionLimited:   10,
@@ -586,10 +575,7 @@ var WeeklyReportResponse = antiddos.ListWeeklyReportsResponse{
 			PeriodStartDate:    responsePeriodTime,
 		},
 	},
-	Top10: []struct {
-		FloatingIpAddress string `json:"floating_ip_address"`
-		Times             int    `json:"times"`
-	}{},
+	Top10: []antiddos.Top10{},
 }
 
 func HandleWeeklyReportSuccessfully(t *testing.T) {
