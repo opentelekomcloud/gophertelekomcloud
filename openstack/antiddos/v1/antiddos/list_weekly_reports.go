@@ -29,12 +29,14 @@ type ListWeeklyReportsResponse struct {
 	// Number of DDoS attacks intercepted in a week
 	Weekdata []WeekData `json:"-"`
 	// Top 10 attacked IP addresses
-	Top10 []struct {
-		// EIP
-		FloatingIpAddress string `json:"floating_ip_address"`
-		// Number of DDoS attacks intercepted, including cleaning operations and black-holes
-		Times int `json:"times"`
-	} `json:"top10"`
+	Top10 []Top10 `json:"top10"`
+}
+
+type Top10 struct {
+	// EIP
+	FloatingIpAddress string `json:"floating_ip_address"`
+	// Number of DDoS attacks intercepted, including cleaning operations and black-holes
+	Times int `json:"times"`
 }
 
 type WeekData struct {
@@ -51,28 +53,20 @@ type WeekData struct {
 }
 
 func (r *ListWeeklyReportsResponse) UnmarshalJSON(b []byte) error {
-	type tmp ListWeeklyReportsResponse
 	var s struct {
-		tmp
+		ListWeeklyReportsResponse
 		Weekdata []struct {
-			// Number of DDoS attacks intercepted
-			DDosInterceptTimes int `json:"ddos_intercept_times"`
-			// Number of DDoS blackholes
-			DDosBlackholeTimes int `json:"ddos_blackhole_times"`
-			// Maximum attack traffic
-			MaxAttackBps int `json:"max_attack_bps"`
-			// Maximum number of attack connections
-			MaxAttackConns int `json:"max_attack_conns"`
-			// Start date
+			WeekData
 			PeriodStartDate int64 `json:"period_start_date"`
 		} `json:"weekdata"`
 	}
+
 	err := json.Unmarshal(b, &s)
 	if err != nil {
 		return err
 	}
 
-	*r = ListWeeklyReportsResponse(s.tmp)
+	*r = s.ListWeeklyReportsResponse
 	r.Weekdata = make([]WeekData, len(s.Weekdata))
 
 	for idx, val := range s.Weekdata {

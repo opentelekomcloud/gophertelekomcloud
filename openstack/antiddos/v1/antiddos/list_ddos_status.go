@@ -52,7 +52,7 @@ func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([
 		return nil, err
 	}
 
-	return FilterDdosStatus(res.DDosStatus, opts)
+	return filterDdosStatus(res.DDosStatus, opts)
 }
 
 type ListStatusResponse struct {
@@ -62,7 +62,7 @@ type ListStatusResponse struct {
 	DDosStatus []DDosStatus `json:"ddosStatus"`
 }
 
-func FilterDdosStatus(ddosStatus []DDosStatus, opts ListDDosStatusOpts) ([]DDosStatus, error) {
+func filterDdosStatus(ddosStatus []DDosStatus, opts ListDDosStatusOpts) ([]DDosStatus, error) {
 	var refinedDdosStatus []DDosStatus
 	var matched bool
 	m := map[string]interface{}{}

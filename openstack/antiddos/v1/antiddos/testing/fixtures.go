@@ -1,4 +1,4 @@
-package antiddos
+package testing
 
 import (
 	"fmt"
