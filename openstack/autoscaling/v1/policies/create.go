@@ -1,12 +1,10 @@
 package policies
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// CreateOpts is a struct which will be used to create a policy
 type CreateOpts struct {
 	Name           string             `json:"scaling_policy_name" required:"true"`
 	ID             string             `json:"scaling_group_id" required:"true"`
@@ -17,17 +15,19 @@ type CreateOpts struct {
 	CoolDownTime   int                `json:"cool_down_time,omitempty"`
 }
 
-// Create is a method which can be able to access to create the policy of autoscaling
-// service.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
-	b, err := opts.ToPolicyCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return "", err
 	}
 
-	_, r.Err = client.Post(client.ServiceURL("scaling_policy"), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("scaling_policy"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+
+	var res struct {
+		ID string `json:"scaling_policy_id"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.ID, err
 }

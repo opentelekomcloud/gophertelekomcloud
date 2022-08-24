@@ -15,10 +15,6 @@ type ActionOpts struct {
 	InstanceNum int    `json:"instance_number,omitempty"`
 }
 
-func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
 type UpdateOpts struct {
 	Name           string             `json:"scaling_policy_name,omitempty"`
 	Type           string             `json:"scaling_policy_type,omitempty"`
@@ -29,7 +25,7 @@ type UpdateOpts struct {
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r UpdateResult) {
-	body, err := opts.ToPolicyUpdateMap()
+	body, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		r.Err = err
 		return
