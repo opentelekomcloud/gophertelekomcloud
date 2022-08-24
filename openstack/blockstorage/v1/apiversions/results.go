@@ -2,6 +2,7 @@ package apiversions
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -27,11 +28,11 @@ func (r APIVersionPage) IsEmpty() (bool, error) {
 // ExtractAPIVersions takes a collection page, extracts all of the elements,
 // and returns them a slice of APIVersion structs. It is effectively a cast.
 func ExtractAPIVersions(r pagination.Page) ([]APIVersion, error) {
-	var s struct {
+	var res struct {
 		Versions []APIVersion `json:"versions"`
 	}
-	err := (r.(APIVersionPage)).ExtractInto(&s)
-	return s.Versions, err
+	err := (r.(APIVersionPage)).ExtractInto(&res)
+	return res.Versions, err
 }
 
 // GetResult represents the result of a get operation.
@@ -41,9 +42,9 @@ type GetResult struct {
 
 // Extract is a function that accepts a result and extracts an API version resource.
 func (r GetResult) Extract() (*APIVersion, error) {
-	var s struct {
+	var res struct {
 		Version *APIVersion `json:"version"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Version, err
+	err = extract.Into(raw.Body, &res)
+	return res.Version, err
 }

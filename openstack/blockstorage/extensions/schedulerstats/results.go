@@ -90,9 +90,9 @@ func (page StoragePoolPage) IsEmpty() (bool, error) {
 // ExtractStoragePools takes a List result and extracts the collection of
 // StoragePools returned by the API.
 func ExtractStoragePools(p pagination.Page) ([]StoragePool, error) {
-	var s struct {
+	var res struct {
 		StoragePools []StoragePool `json:"pools"`
 	}
-	err := (p.(StoragePoolPage)).ExtractInto(&s)
-	return s.StoragePools, err
+	err := (p.(StoragePoolPage)).ExtractInto(&res)
+	return res.StoragePools, err
 }

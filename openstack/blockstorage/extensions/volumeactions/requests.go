@@ -47,7 +47,7 @@ func Attach(client *golangsdk.ServiceClient, id string, opts AttachOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -56,7 +56,7 @@ func Attach(client *golangsdk.ServiceClient, id string, opts AttachOptsBuilder) 
 // BeginDetach will mark the volume as detaching.
 func BeginDetaching(client *golangsdk.ServiceClient, id string) (r BeginDetachingResult) {
 	b := map[string]interface{}{"os-begin_detaching": make(map[string]interface{})}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -87,7 +87,7 @@ func Detach(client *golangsdk.ServiceClient, id string, opts DetachOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -96,7 +96,7 @@ func Detach(client *golangsdk.ServiceClient, id string, opts DetachOptsBuilder) 
 // Reserve will reserve a volume based on volume ID.
 func Reserve(client *golangsdk.ServiceClient, id string) (r ReserveResult) {
 	b := map[string]interface{}{"os-reserve": make(map[string]interface{})}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
@@ -105,7 +105,7 @@ func Reserve(client *golangsdk.ServiceClient, id string) (r ReserveResult) {
 // Unreserve will unreserve a volume based on volume ID.
 func Unreserve(client *golangsdk.ServiceClient, id string) (r UnreserveResult) {
 	b := map[string]interface{}{"os-unreserve": make(map[string]interface{})}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
@@ -145,7 +145,7 @@ func InitializeConnection(client *golangsdk.ServiceClient, id string, opts Initi
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
@@ -183,7 +183,7 @@ func TerminateConnection(client *golangsdk.ServiceClient, id string, opts Termin
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -216,7 +216,7 @@ func ExtendSize(client *golangsdk.ServiceClient, id string, opts ExtendSizeOptsB
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -256,7 +256,7 @@ func UploadImage(client *golangsdk.ServiceClient, id string, opts UploadImageOpt
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -264,6 +264,6 @@ func UploadImage(client *golangsdk.ServiceClient, id string, opts UploadImageOpt
 
 // ForceDelete will delete the volume regardless of state.
 func ForceDelete(client *golangsdk.ServiceClient, id string) (r ForceDeleteResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"os-force_delete": ""}, nil, nil)
+	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"os-force_delete": ""}, nil, nil)
 	return
 }

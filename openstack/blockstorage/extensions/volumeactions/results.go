@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // AttachResult contains the response body and error from an Attach request.
@@ -63,11 +64,11 @@ type ExtendSizeResult struct {
 // This will be a generic map[string]interface{} and the results will be
 // dependent on the type of connection made.
 func (r InitializeConnectionResult) Extract() (map[string]interface{}, error) {
-	var s struct {
+	var res struct {
 		ConnectionInfo map[string]interface{} `json:"connection_info"`
 	}
-	err := r.ExtractInto(&s)
-	return s.ConnectionInfo, err
+	err = extract.Into(raw.Body, &res)
+	return res.ConnectionInfo, err
 }
 
 // ImageVolumeType contains volume type information obtained from UploadImage
@@ -178,11 +179,11 @@ func (r *VolumeImage) UnmarshalJSON(b []byte) error {
 // Extract will get an object with info about the uploaded image out of the
 // UploadImageResult object.
 func (r UploadImageResult) Extract() (VolumeImage, error) {
-	var s struct {
+	var res struct {
 		VolumeImage VolumeImage `json:"os-volume_upload_image"`
 	}
-	err := r.ExtractInto(&s)
-	return s.VolumeImage, err
+	err = extract.Into(raw.Body, &res)
+	return res.VolumeImage, err
 }
 
 // ForceDeleteResult contains the response body and error from a ForceDelete request.

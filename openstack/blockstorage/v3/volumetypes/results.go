@@ -2,6 +2,7 @@ package volumetypes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -47,9 +48,9 @@ func (r VolumeTypePage) NextPageURL() (string, error) {
 
 // ExtractVolumeTypes extracts and returns Volumes. It is used while iterating over a volumetypes.List call.
 func ExtractVolumeTypes(r pagination.Page) ([]VolumeType, error) {
-	var s []VolumeType
-	err := ExtractVolumeTypesInto(r, &s)
-	return s, err
+	var res []VolumeType
+	err := ExtractVolumeTypesInto(r, &res)
+	return res, err
 }
 
 type commonResult struct {
@@ -58,9 +59,9 @@ type commonResult struct {
 
 // Extract will get the Volume Type object out of the commonResult object.
 func (r commonResult) Extract() (*VolumeType, error) {
-	var s VolumeType
-	err := r.ExtractInto(&s)
-	return &s, err
+	var res VolumeType
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 // ExtractInto converts our response data into a volume type struct

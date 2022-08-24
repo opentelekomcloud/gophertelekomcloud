@@ -49,17 +49,17 @@ type Service struct {
 // UnmarshalJSON to override default
 func (r *Service) UnmarshalJSON(b []byte) error {
 	type tmp Service
-	var s struct {
+	var res struct {
 		tmp
 		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
 	}
-	err := json.Unmarshal(b, &s)
+	err := json.Unmarshal(b, &res)
 	if err != nil {
 		return err
 	}
-	*r = Service(s.tmp)
+	*r = Service(res.tmp)
 
-	r.UpdatedAt = time.Time(s.UpdatedAt)
+	r.UpdatedAt = time.Time(res.UpdatedAt)
 
 	return nil
 }
@@ -76,9 +76,9 @@ func (page ServicePage) IsEmpty() (bool, error) {
 }
 
 func ExtractServices(r pagination.Page) ([]Service, error) {
-	var s struct {
+	var res struct {
 		Service []Service `json:"services"`
 	}
-	err := (r.(ServicePage)).ExtractInto(&s)
-	return s.Service, err
+	err := (r.(ServicePage)).ExtractInto(&res)
+	return res.Service, err
 }

@@ -15,6 +15,6 @@ func List(c *golangsdk.ServiceClient) pagination.Pager {
 // Get will retrieve the volume type with the provided ID. To extract the volume
 // type from the result, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, v string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, v), &r.Body, nil)
+	raw, err := client.Get(getURL(client, v), nil, nil)
 	return
 }

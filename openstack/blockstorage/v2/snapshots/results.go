@@ -60,12 +60,12 @@ type SnapshotPage struct {
 
 func (r *Snapshot) UnmarshalJSON(b []byte) error {
 	type tmp Snapshot
-	var s struct {
+	var res struct {
 		tmp
 		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
 		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
 	}
-	err := json.Unmarshal(b, &s)
+	err := json.Unmarshal(b, &res)
 	if err != nil {
 		return err
 	}
@@ -85,11 +85,11 @@ func (r SnapshotPage) IsEmpty() (bool, error) {
 
 // ExtractSnapshots extracts and returns Snapshots. It is used while iterating over a snapshots.List call.
 func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
-	var s struct {
+	var res struct {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
-	err := (r.(SnapshotPage)).ExtractInto(&s)
-	return s.Snapshots, err
+	err := (r.(SnapshotPage)).ExtractInto(&res)
+	return res.Snapshots, err
 }
 
 // UpdateMetadataResult contains the response body and error from an UpdateMetadata request.
@@ -112,9 +112,9 @@ type commonResult struct {
 
 // Extract will get the Snapshot object out of the commonResult object.
 func (r commonResult) Extract() (*Snapshot, error) {
-	var s struct {
+	var res struct {
 		Snapshot *Snapshot `json:"snapshot"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Snapshot, err
+	err = extract.Into(raw.Body, &res)
+	return res.Snapshot, err
 }

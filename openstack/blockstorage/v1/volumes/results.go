@@ -40,11 +40,11 @@ type Volume struct {
 
 func (r *Volume) UnmarshalJSON(b []byte) error {
 	type tmp Volume
-	var s struct {
+	var res struct {
 		tmp
 		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
 	}
-	err := json.Unmarshal(b, &s)
+	err := json.Unmarshal(b, &res)
 	if err != nil {
 		return err
 	}
@@ -83,11 +83,11 @@ func (r VolumePage) IsEmpty() (bool, error) {
 
 // ExtractVolumes extracts and returns Volumes. It is used while iterating over a volumes.List call.
 func ExtractVolumes(r pagination.Page) ([]Volume, error) {
-	var s struct {
+	var res struct {
 		Volumes []Volume `json:"volumes"`
 	}
-	err := (r.(VolumePage)).ExtractInto(&s)
-	return s.Volumes, err
+	err := (r.(VolumePage)).ExtractInto(&res)
+	return res.Volumes, err
 }
 
 // UpdateResult contains the response body and error from an Update request.
@@ -101,9 +101,9 @@ type commonResult struct {
 
 // Extract will get the Volume object out of the commonResult object.
 func (r commonResult) Extract() (*Volume, error) {
-	var s struct {
+	var res struct {
 		Volume *Volume `json:"volume"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Volume, err
+	err = extract.Into(raw.Body, &res)
+	return res.Volume, err
 }

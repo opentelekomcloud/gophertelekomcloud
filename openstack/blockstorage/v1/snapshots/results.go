@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -95,11 +96,11 @@ func (r SnapshotPage) IsEmpty() (bool, error) {
 
 // ExtractSnapshots extracts and returns Snapshots. It is used while iterating over a snapshots.List call.
 func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
-	var s struct {
+	var res struct {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
-	err := (r.(SnapshotPage)).ExtractInto(&s)
-	return s.Snapshots, err
+	err := (r.(SnapshotPage)).ExtractInto(&res)
+	return res.Snapshots, err
 }
 
 // UpdateMetadataResult contains the response body and error from an UpdateMetadata request.
@@ -122,9 +123,9 @@ type commonResult struct {
 
 // Extract will get the Snapshot object out of the commonResult object.
 func (r commonResult) Extract() (*Snapshot, error) {
-	var s struct {
+	var res struct {
 		Snapshot *Snapshot `json:"snapshot"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Snapshot, err
+	err = extract.Into(raw.Body, &res)
+	return res.Snapshot, err
 }

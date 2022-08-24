@@ -32,7 +32,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return
@@ -40,14 +40,14 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Delete will delete the volume type with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }
 
 // Get will retrieve the volume type with the provided ID. To extract the volume
 // type from the result, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }
 

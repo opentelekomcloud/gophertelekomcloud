@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -123,9 +124,9 @@ func (r VolumePage) NextPageURL() (string, error) {
 
 // ExtractVolumes extracts and returns Volumes. It is used while iterating over a volumes.List call.
 func ExtractVolumes(r pagination.Page) ([]Volume, error) {
-	var s []Volume
-	err := ExtractVolumesInto(r, &s)
-	return s, err
+	var res []Volume
+	err := ExtractVolumesInto(r, &res)
+	return res, err
 }
 
 type commonResult struct {
@@ -134,9 +135,9 @@ type commonResult struct {
 
 // Extract will get the Volume object out of the commonResult object.
 func (r commonResult) Extract() (*Volume, error) {
-	var s Volume
-	err := r.ExtractInto(&s)
-	return &s, err
+	var res Volume
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 // ExtractInto converts our response data into a volume struct

@@ -55,7 +55,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -63,14 +63,14 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Delete will delete the existing Volume with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }
 
 // Get retrieves the Volume with the provided ID. To extract the Volume object
 // from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }
 
@@ -167,7 +167,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(updateURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
