@@ -24,6 +24,9 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
 	raw, err := client.Post(client.ServiceURL("scaling_policy"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	if err != nil {
+		return "", err
+	}
 
 	var res struct {
 		ID string `json:"scaling_policy_id"`

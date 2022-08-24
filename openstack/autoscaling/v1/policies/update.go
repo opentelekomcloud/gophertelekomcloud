@@ -1,6 +1,9 @@
 package policies
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type SchedulePolicyOpts struct {
 	LaunchTime      string `json:"launch_time" required:"true"`
@@ -24,15 +27,22 @@ type UpdateOpts struct {
 	CoolDownTime   int                `json:"cool_down_time,omitempty"`
 }
 
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (string, error) {
 	body, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return "", err
 	}
 
-	_, r.Err = client.Put(client.ServiceURL("scaling_policy", id), body, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("scaling_policy", id), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	if err != nil {
+		return "", err
+	}
+
+	var res struct {
+		ID string `json:"scaling_policy_id"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.ID, err
 }
