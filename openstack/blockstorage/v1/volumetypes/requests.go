@@ -32,7 +32,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("types"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return
@@ -40,20 +40,20 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Delete will delete the volume type with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(client.ServiceURL("types", id), nil)
 	return
 }
 
 // Get will retrieve the volume type with the provided ID. To extract the volume
 // type from the result, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(getURL(client, id), nil, nil)
+	raw, err := client.Get(client.ServiceURL("types", id), nil, nil)
 	return
 }
 
 // List returns all volume types.
 func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, listURL(client), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, client.ServiceURL("types"), func(r pagination.PageResult) pagination.Page {
 		return VolumeTypePage{pagination.SinglePageBase(r)}
 	})
 }

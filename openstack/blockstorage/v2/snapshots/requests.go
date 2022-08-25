@@ -37,7 +37,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("snapshots"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -45,14 +45,14 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Delete will delete the existing Snapshot with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(client.ServiceURL("snapshots", id), nil)
 	return
 }
 
 // Get retrieves the Snapshot with the provided ID. To extract the Snapshot
 // object from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(getURL(client, id), nil, nil)
+	raw, err := client.Get(client.ServiceURL("snapshots", id), nil, nil)
 	return
 }
 
@@ -94,7 +94,7 @@ func (opts ListOpts) ToSnapshotListQuery() (string, error) {
 // List returns Snapshots optionally limited by the conditions provided in
 // ListOpts.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("snapshots")
 	if opts != nil {
 		query, err := opts.ToSnapshotListQuery()
 		if err != nil {
@@ -135,7 +135,7 @@ func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetad
 		r.Err = err
 		return
 	}
-	raw, err := client.Put(updateMetadataURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("snapshots", id, "metadata"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
