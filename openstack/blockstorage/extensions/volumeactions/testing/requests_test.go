@@ -16,12 +16,12 @@ func TestAttach(t *testing.T) {
 
 	MockAttachResponse(t)
 
-	options := &volumeactions.AttachOpts{
+	options := volumeactions.AttachOpts{
 		MountPoint:   "/mnt",
 		Mode:         "rw",
 		InstanceUUID: "50902f4f-a974-46a0-85e9-7efc5e22dfdd",
 	}
-	err := volumeactions.Attach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	err := volumeactions.Attach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
 	th.AssertNoErr(t, err)
 }
 
@@ -31,7 +31,7 @@ func TestBeginDetaching(t *testing.T) {
 
 	MockBeginDetachingResponse(t)
 
-	err := volumeactions.BeginDetaching(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c").ExtractErr()
+	err := volumeactions.BeginDetaching(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c")
 	th.AssertNoErr(t, err)
 }
 
@@ -41,7 +41,7 @@ func TestDetach(t *testing.T) {
 
 	MockDetachResponse(t)
 
-	err := volumeactions.Detach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", &volumeactions.DetachOpts{}).ExtractErr()
+	err := volumeactions.Detach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", volumeactions.DetachOpts{})
 	th.AssertNoErr(t, err)
 }
 
@@ -49,14 +49,14 @@ func TestUploadImage(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 	MockUploadImageResponse(t)
-	options := &volumeactions.UploadImageOpts{
+	options := volumeactions.UploadImageOpts{
 		ContainerFormat: "bare",
 		DiskFormat:      "raw",
 		ImageName:       "test",
 		Force:           true,
 	}
 
-	actual, err := volumeactions.UploadImage(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).Extract()
+	actual, err := volumeactions.UploadImage(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
 	th.AssertNoErr(t, err)
 
 	expected := volumeactions.VolumeImage{
@@ -91,7 +91,7 @@ func TestReserve(t *testing.T) {
 
 	MockReserveResponse(t)
 
-	err := volumeactions.Reserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c").ExtractErr()
+	err := volumeactions.Reserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c")
 	th.AssertNoErr(t, err)
 }
 
@@ -101,7 +101,7 @@ func TestUnreserve(t *testing.T) {
 
 	MockUnreserveResponse(t)
 
-	err := volumeactions.Unreserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c").ExtractErr()
+	err := volumeactions.Unreserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c")
 	th.AssertNoErr(t, err)
 }
 
@@ -111,7 +111,7 @@ func TestInitializeConnection(t *testing.T) {
 
 	MockInitializeConnectionResponse(t)
 
-	options := &volumeactions.InitializeConnectionOpts{
+	options := volumeactions.InitializeConnectionOpts{
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
@@ -119,7 +119,7 @@ func TestInitializeConnection(t *testing.T) {
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}
-	_, err := volumeactions.InitializeConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).Extract()
+	_, err := volumeactions.InitializeConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
 	th.AssertNoErr(t, err)
 }
 
@@ -129,7 +129,7 @@ func TestTerminateConnection(t *testing.T) {
 
 	MockTerminateConnectionResponse(t)
 
-	options := &volumeactions.TerminateConnectionOpts{
+	options := volumeactions.TerminateConnectionOpts{
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
@@ -137,7 +137,7 @@ func TestTerminateConnection(t *testing.T) {
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}
-	err := volumeactions.TerminateConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	err := volumeactions.TerminateConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
 	th.AssertNoErr(t, err)
 }
 
@@ -147,11 +147,11 @@ func TestExtendSize(t *testing.T) {
 
 	MockExtendSizeResponse(t)
 
-	options := &volumeactions.ExtendSizeOpts{
+	options := volumeactions.ExtendSizeOpts{
 		NewSize: 3,
 	}
 
-	err := volumeactions.ExtendSize(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	err := volumeactions.ExtendSize(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
 	th.AssertNoErr(t, err)
 }
 
@@ -162,5 +162,5 @@ func TestForceDelete(t *testing.T) {
 	MockForceDeleteResponse(t)
 
 	res := volumeactions.ForceDelete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }

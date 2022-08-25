@@ -2,10 +2,6 @@ package volumeactions
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-type TerminateConnectionOptsBuilder interface {
-	ToVolumeTerminateConnectionMap() (map[string]interface{}, error)
-}
-
 type TerminateConnectionOpts struct {
 	IP        string   `json:"ip,omitempty"`
 	Host      string   `json:"host,omitempty"`
@@ -22,14 +18,13 @@ func (opts TerminateConnectionOpts) ToVolumeTerminateConnectionMap() (map[string
 	return map[string]interface{}{"os-terminate_connection": b}, err
 }
 
-func TerminateConnection(client *golangsdk.ServiceClient, id string, opts TerminateConnectionOptsBuilder) (r TerminateConnectionResult) {
-	b, err := opts.ToVolumeTerminateConnectionMap()
+func TerminateConnection(client *golangsdk.ServiceClient, id string, opts TerminateConnectionOpts) (err error) {
+	b, err := golangsdk.BuildRequestBody(opts, "connector")
+	b = map[string]interface{}{"os-terminate_connection": b}
 	if err != nil {
-		r.Err = err
 		return
 	}
-	raw, err := client.Post(client.ServiceURL("volumes", id, "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
+
+	_, err = client.Post(client.ServiceURL("volumes", id, "action"), b, nil, nil)
 	return
 }

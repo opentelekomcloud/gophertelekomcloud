@@ -2,10 +2,6 @@ package volumeactions
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-type AttachOptsBuilder interface {
-	ToVolumeAttachMap() (map[string]interface{}, error)
-}
-
 type AttachMode string
 
 const (
@@ -24,18 +20,12 @@ type AttachOpts struct {
 	Mode AttachMode `json:"mode,omitempty"`
 }
 
-func (opts AttachOpts) ToVolumeAttachMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "os-attach")
-}
-
-func Attach(client *golangsdk.ServiceClient, id string, opts AttachOptsBuilder) (r AttachResult) {
-	b, err := opts.ToVolumeAttachMap()
+func Attach(client *golangsdk.ServiceClient, id string, opts AttachOpts) (err error) {
+	b, err := golangsdk.BuildRequestBody(opts, "os-attach")
 	if err != nil {
-		r.Err = err
 		return
 	}
-	raw, err := client.Post(client.ServiceURL("volumes", id, "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
+
+	_, err = client.Post(client.ServiceURL("volumes", id, "action"), b, nil, nil)
 	return
 }

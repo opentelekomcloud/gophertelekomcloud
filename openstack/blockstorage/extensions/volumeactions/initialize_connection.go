@@ -1,10 +1,9 @@
 package volumeactions
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
-
-type InitializeConnectionOptsBuilder interface {
-	ToVolumeInitializeConnectionMap() (map[string]interface{}, error)
-}
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type InitializeConnectionOpts struct {
 	IP        string   `json:"ip,omitempty"`
@@ -17,19 +16,23 @@ type InitializeConnectionOpts struct {
 	OSType    string   `json:"os_type,omitempty"`
 }
 
-func (opts InitializeConnectionOpts) ToVolumeInitializeConnectionMap() (map[string]interface{}, error) {
+func InitializeConnection(client *golangsdk.ServiceClient, id string, opts InitializeConnectionOpts) (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "connector")
-	return map[string]interface{}{"os-initialize_connection": b}, err
-}
-
-func InitializeConnection(client *golangsdk.ServiceClient, id string, opts InitializeConnectionOptsBuilder) (r InitializeConnectionResult) {
-	b, err := opts.ToVolumeInitializeConnectionMap()
+	b = map[string]interface{}{"os-initialize_connection": b}
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
+
 	raw, err := client.Post(client.ServiceURL("volumes", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var res struct {
+		ConnectionInfo map[string]interface{} `json:"connection_info"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.ConnectionInfo, err
 }
