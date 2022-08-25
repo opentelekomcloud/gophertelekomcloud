@@ -31,9 +31,9 @@ func NewClient(options golangsdk.AuthOptions) (*golangsdk.ProviderClient, error)
 	return client, nil
 }
 
-func initClientOpts(client *golangsdk.ProviderClient, eo EndpointOpts) (*golangsdk.ServiceClient, error) {
+func NewBlockStorageNoAuth(client *golangsdk.ProviderClient, opts EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc := new(golangsdk.ServiceClient)
-	if eo.CinderEndpoint == "" {
+	if opts.CinderEndpoint == "" {
 		return nil, fmt.Errorf("CinderEndpoint is required")
 	}
 
@@ -42,14 +42,8 @@ func initClientOpts(client *golangsdk.ProviderClient, eo EndpointOpts) (*golangs
 		return nil, fmt.Errorf("Malformed noauth token")
 	}
 
-	endpoint := fmt.Sprintf("%s%s", golangsdk.NormalizeURL(eo.CinderEndpoint), token[1])
+	endpoint := fmt.Sprintf("%s%s", golangsdk.NormalizeURL(opts.CinderEndpoint), token[1])
 	sc.Endpoint = golangsdk.NormalizeURL(endpoint)
 	sc.ProviderClient = client
 	return sc, nil
-}
-
-// NewBlockStorageNoAuth creates a ServiceClient that may be used to access a
-// "noauth" block storage service (V2 or V3 Cinder API).
-func NewBlockStorageNoAuth(client *golangsdk.ProviderClient, eo EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initClientOpts(client, eo)
 }
