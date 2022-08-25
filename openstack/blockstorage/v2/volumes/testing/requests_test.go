@@ -19,7 +19,7 @@ func TestListWithExtensions(t *testing.T) {
 
 	count := 0
 
-	_ = volumes.List(client.ServiceClient(), &volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = volumes.List(client.ServiceClient(), volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := volumes.ExtractVolumes(page)
 		if err != nil {
@@ -105,7 +105,7 @@ func TestListAllWithExtensions(t *testing.T) {
 		extensions.VolumeTenantExt
 	}
 
-	allPages, err := volumes.List(client.ServiceClient(), &volumes.ListOpts{}).AllPages()
+	allPages, err := volumes.List(client.ServiceClient(), volumes.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 
 	var actual []VolumeWithExt
@@ -121,7 +121,7 @@ func TestListAll(t *testing.T) {
 
 	MockListResponse(t)
 
-	allPages, err := volumes.List(client.ServiceClient(), &volumes.ListOpts{}).AllPages()
+	allPages, err := volumes.List(client.ServiceClient(), volumes.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 	actual, err := volumes.ExtractVolumes(allPages)
 	th.AssertNoErr(t, err)
@@ -193,7 +193,7 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	v, err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").Extract()
+	v, err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, v.Name, "vol-001")
@@ -206,8 +206,8 @@ func TestCreate(t *testing.T) {
 
 	MockCreateResponse(t)
 
-	options := &volumes.CreateOpts{Size: 75, Name: "vol-001"}
-	n, err := volumes.Create(client.ServiceClient(), options).Extract()
+	options := volumes.CreateOpts{Size: 75, Name: "vol-001"}
+	n, err := volumes.Create(client.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.Size, 75)
@@ -222,7 +222,7 @@ func TestDelete(t *testing.T) {
 
 	deleteOpts := volumes.DeleteOpts{}
 	res := volumes.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", deleteOpts)
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestUpdate(t *testing.T) {
@@ -232,7 +232,7 @@ func TestUpdate(t *testing.T) {
 	MockUpdateResponse(t)
 
 	options := volumes.UpdateOpts{Name: "vol-002"}
-	v, err := volumes.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options).Extract()
+	v, err := volumes.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, "vol-002", v.Name)
 }
@@ -247,11 +247,11 @@ func TestGetWithExtensions(t *testing.T) {
 		volumes.Volume
 		extensions.VolumeTenantExt
 	}
-	err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").ExtractInto(&s)
+	_, err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "304dc00909ac4d0da6c62d816bcb3459", s.TenantID)
 
-	err = volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").ExtractInto(s)
+	_, err = volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	if err == nil {
 		t.Errorf("Expected error when providing non-pointer struct")
 	}

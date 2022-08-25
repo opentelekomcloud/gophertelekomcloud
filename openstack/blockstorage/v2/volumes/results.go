@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type Attachment struct {
@@ -36,7 +34,6 @@ func (r *Attachment) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-// Volume contains all the information associated with an OpenStack Volume.
 type Volume struct {
 	// Unique identifier for the volume.
 	ID string `json:"id"`
@@ -95,74 +92,4 @@ func (r *Volume) UnmarshalJSON(b []byte) error {
 	r.UpdatedAt = time.Time(s.UpdatedAt)
 
 	return err
-}
-
-// VolumePage is a pagination.pager that is returned from a call to the List function.
-type VolumePage struct {
-	pagination.LinkedPageBase
-}
-
-// IsEmpty returns true if a ListResult contains no Volumes.
-func (r VolumePage) IsEmpty() (bool, error) {
-	volumes, err := ExtractVolumes(r)
-	return len(volumes) == 0, err
-}
-
-// NextPageURL uses the response's embedded link reference to navigate to the
-// next page of results.
-func (r VolumePage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"volumes_links"`
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(s.Links)
-}
-
-// ExtractVolumes extracts and returns Volumes. It is used while iterating over a volumes.List call.
-func ExtractVolumes(r pagination.Page) ([]Volume, error) {
-	var s []Volume
-	err := ExtractVolumesInto(r, &s)
-	return s, err
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract will get the Volume object out of the commonResult object.
-func (r commonResult) Extract() (*Volume, error) {
-	var res Volume
-	err = extract.Into(raw.Body, &res)
-	return &res, err
-}
-
-func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "volume")
-}
-
-func ExtractVolumesInto(r pagination.Page, v interface{}) error {
-	return r.(VolumePage).Result.ExtractIntoSlicePtr(v, "volumes")
-}
-
-// CreateResult contains the response body and error from a Create request.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult contains the response body and error from a Get request.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult contains the response body and error from an Update request.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult contains the response body and error from a Delete request.
-type DeleteResult struct {
-	golangsdk.ErrResult
 }
