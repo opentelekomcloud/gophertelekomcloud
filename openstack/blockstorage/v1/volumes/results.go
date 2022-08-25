@@ -5,10 +5,8 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// Volume contains all the information associated with an OpenStack Volume.
 type Volume struct {
 	// Current status of the volume.
 	Status string `json:"status"`
@@ -40,11 +38,11 @@ type Volume struct {
 
 func (r *Volume) UnmarshalJSON(b []byte) error {
 	type tmp Volume
-	var res struct {
+	var s struct {
 		tmp
 		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
 	}
-	err := json.Unmarshal(b, &res)
+	err := json.Unmarshal(b, &s)
 	if err != nil {
 		return err
 	}
@@ -53,57 +51,4 @@ func (r *Volume) UnmarshalJSON(b []byte) error {
 	r.CreatedAt = time.Time(s.CreatedAt)
 
 	return err
-}
-
-// CreateResult contains the response body and error from a Create request.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult contains the response body and error from a Get request.
-type GetResult struct {
-	commonResult
-}
-
-// DeleteResult contains the response body and error from a Delete request.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// VolumePage is a pagination.pager that is returned from a call to the List function.
-type VolumePage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty returns true if a VolumePage contains no Volumes.
-func (r VolumePage) IsEmpty() (bool, error) {
-	volumes, err := ExtractVolumes(r)
-	return len(volumes) == 0, err
-}
-
-// ExtractVolumes extracts and returns Volumes. It is used while iterating over a volumes.List call.
-func ExtractVolumes(r pagination.Page) ([]Volume, error) {
-	var res struct {
-		Volumes []Volume `json:"volumes"`
-	}
-	err := (r.(VolumePage)).ExtractInto(&res)
-	return res.Volumes, err
-}
-
-// UpdateResult contains the response body and error from an Update request.
-type UpdateResult struct {
-	commonResult
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract will get the Volume object out of the commonResult object.
-func (r commonResult) Extract() (*Volume, error) {
-	var res struct {
-		Volume *Volume `json:"volume"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return res.Volume, err
 }
