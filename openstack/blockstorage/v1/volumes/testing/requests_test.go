@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v1/volumes"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -16,35 +15,23 @@ func TestList(t *testing.T) {
 
 	MockListResponse(t)
 
-	count := 0
-
-	_ = volumes.List(client.ServiceClient(), volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := volumes.ExtractVolumes(page)
-		if err != nil {
-			t.Errorf("Failed to extract volumes: %v", err)
-			return false, err
-		}
-
-		expected := []volumes.Volume{
-			{
-				ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
-				Name: "vol-001",
-			},
-			{
-				ID:   "96c3bda7-c82a-4f50-be73-ca7621794835",
-				Name: "vol-002",
-			},
-		}
-
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
-
-	if count != 1 {
-		t.Errorf("Expected 1 page, got %d", count)
+	actual, err := volumes.List(client.ServiceClient(), volumes.ListOpts{})
+	if err != nil {
+		t.Errorf("Failed to extract volumes: %v", err)
 	}
+
+	expected := []volumes.Volume{
+		{
+			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
+			Name: "vol-001",
+		},
+		{
+			ID:   "96c3bda7-c82a-4f50-be73-ca7621794835",
+			Name: "vol-002",
+		},
+	}
+
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestListAll(t *testing.T) {
@@ -53,9 +40,7 @@ func TestListAll(t *testing.T) {
 
 	MockListResponse(t)
 
-	allPages, err := volumes.List(client.ServiceClient(), volumes.ListOpts{}).AllPages()
-	th.AssertNoErr(t, err)
-	actual, err := volumes.ExtractVolumes(allPages)
+	actual, err := volumes.List(client.ServiceClient(), volumes.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	expected := []volumes.Volume{

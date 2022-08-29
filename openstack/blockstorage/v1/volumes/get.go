@@ -11,9 +11,7 @@ func Get(client *golangsdk.ServiceClient, id string) (*Volume, error) {
 		return nil, err
 	}
 
-	var res struct {
-		Volume Volume `json:"volume"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.Volume, err
+	var res Volume
+	err = extract.IntoStructPtr(raw.Body, &res, "volume")
+	return &res, err
 }

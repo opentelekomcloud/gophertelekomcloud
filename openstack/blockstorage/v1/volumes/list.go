@@ -3,7 +3,6 @@ package volumes
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type ListOpts struct {
@@ -17,30 +16,18 @@ type ListOpts struct {
 	Status string `q:"status"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Volume, error) {
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		return pagination.Pager{Err: err}
+		return nil, err
 	}
 
-	return pagination.NewPager(client, client.ServiceURL("volumes")+query.String(), func(r pagination.PageResult) pagination.Page {
-		return VolumePage{pagination.SinglePageBase(r)}
-	})
-}
-
-type VolumePage struct {
-	pagination.SinglePageBase
-}
-
-func (r VolumePage) IsEmpty() (bool, error) {
-	volumes, err := ExtractVolumes(r)
-	return len(volumes) == 0, err
-}
-
-func ExtractVolumes(r pagination.Page) ([]Volume, error) {
-	var res struct {
-		Volumes []Volume `json:"volumes"`
+	raw, err := client.Get(client.ServiceURL("volumes")+query.String(), nil, nil)
+	if err != nil {
+		return nil, err
 	}
-	err := extract.Into(r.(VolumePage).Result.Body, &res)
-	return res.Volumes, err
+
+	var res []Volume
+	err = extract.IntoSlicePtr(raw.Body, &res, "volumes")
+	return res, err
 }

@@ -30,12 +30,7 @@ func IDFromName(client *golangsdk.ServiceClient, name string) (string, error) {
 		Name: name,
 	}
 
-	pages, err := List(client, listOpts).AllPages()
-	if err != nil {
-		return "", err
-	}
-
-	all, err := ExtractVolumes(pages)
+	all, err := List(client, listOpts)
 	if err != nil {
 		return "", err
 	}
