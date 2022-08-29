@@ -13,9 +13,7 @@ func Get(client *golangsdk.ServiceClient, v string) (*APIVersion, error) {
 		return nil, err
 	}
 
-	var res struct {
-		Version APIVersion `json:"version"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.Version, err
+	var res APIVersion
+	err = extract.IntoStructPtr(raw.Body, &res, "version")
+	return &res, err
 }
