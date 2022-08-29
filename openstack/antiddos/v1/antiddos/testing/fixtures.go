@@ -14,8 +14,8 @@ import (
 const CreateOutput string = `
 {
   "error_code": "10000000",
-  "error_description": "The task has been received and is being handled",
-  "task_id": "82463800-70fe-4cba-9a96-06175e246ab3"
+  "error_msg": "Ok",
+  "task_id": ""
 }
 `
 
@@ -30,13 +30,13 @@ const CreateRequest string = `
 `
 
 var CreateResponse = antiddos.TaskResponse{
-	ErrorCode:        "10000000",
-	ErrorDescription: "The task has been received and is being handled",
-	TaskId:           "82463800-70fe-4cba-9a96-06175e246ab3",
+	ErrorCode:    "10000000",
+	ErrorMessage: "Ok",
+	TaskId:       "",
 }
 
 func HandleCreateSuccessfully(t *testing.T) {
-	th.Mux.HandleFunc("/antiddos/82abaa86-8518-47db-8d63-ddf152824635", func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/antiddos/default-config", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestJSONRequest(t, r, CreateRequest)
@@ -47,21 +47,21 @@ func HandleCreateSuccessfully(t *testing.T) {
 }
 
 var DeleteResponse = antiddos.TaskResponse{
-	ErrorCode:        "10000000",
-	ErrorDescription: "The task has been received and is being handled",
-	TaskId:           "f732e7f1-26b2-40f1-85e9-a8a4d3a43038",
+	ErrorCode:    "10000000",
+	ErrorMessage: "Ok",
+	TaskId:       "",
 }
 
 const DeleteOutput string = `
 {
   "error_code": "10000000",
-  "error_description": "The task has been received and is being handled",
-  "task_id": "f732e7f1-26b2-40f1-85e9-a8a4d3a43038"
+  "error_msg": "Ok",
+  "task_id": ""
 }
 `
 
 func HandleDeleteSuccessfully(t *testing.T) {
-	th.Mux.HandleFunc("/antiddos/82abaa86-8518-47db-8d63-ddf152824635", func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/antiddos/default-config", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
@@ -101,8 +101,8 @@ func HandleGetSuccessfully(t *testing.T) {
 const UpdateOutput string = `
 {
   "error_code": "10000000",
-  "error_description": "The task has been received and is being handled",
-  "task_id": "82463800-70fe-4cba-9a96-06175e246ab3"
+  "error_msg": "Ok",
+  "task_id": ""
 }
 `
 
@@ -117,9 +117,9 @@ const UpdateRequest string = `
 `
 
 var UpdateResponse = antiddos.TaskResponse{
-	ErrorCode:        "10000000",
-	ErrorDescription: "The task has been received and is being handled",
-	TaskId:           "82463800-70fe-4cba-9a96-06175e246ab3",
+	ErrorCode:    "10000000",
+	ErrorMessage: "Ok",
+	TaskId:       "",
 }
 
 func HandleUpdateSuccessfully(t *testing.T) {

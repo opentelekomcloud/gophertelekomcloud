@@ -41,7 +41,7 @@ type TaskResponse struct {
 	// Internal error code
 	ErrorCode string `json:"error_code"`
 	// Internal error description
-	ErrorDescription string `json:"error_description"`
+	ErrorMessage string `json:"error_msg"`
 	// ID of a task. This ID can be used to query the status of the task.
 	// This field is reserved for use in task auditing later. It is temporarily unused.
 	TaskId string `json:"task_id"`
