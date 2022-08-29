@@ -82,7 +82,7 @@ func TestUploadImage(t *testing.T) {
 			UpdatedAt:   time.Date(2016, 5, 4, 9, 15, 33, 0, time.UTC),
 		},
 	}
-	th.AssertDeepEquals(t, expected, actual)
+	th.AssertDeepEquals(t, &expected, actual)
 }
 
 func TestReserve(t *testing.T) {

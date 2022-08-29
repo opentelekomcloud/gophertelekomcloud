@@ -27,7 +27,7 @@ func TestGetUsage(t *testing.T) {
 	HandleSuccessfulRequest(t, "GET", "/os-quota-sets/"+FirstTenantID, getUsageExpectedJSONBody, uriQueryParms)
 	actual, err := quotasets.GetUsage(client.ServiceClient(), FirstTenantID)
 	th.AssertNoErr(t, err)
-	th.CheckDeepEquals(t, getUsageExpectedQuotaSet, actual)
+	th.CheckDeepEquals(t, &getUsageExpectedQuotaSet, actual)
 }
 
 func TestFullUpdate(t *testing.T) {
