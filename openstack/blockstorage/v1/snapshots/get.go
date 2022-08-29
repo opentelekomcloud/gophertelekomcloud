@@ -11,9 +11,7 @@ func Get(client *golangsdk.ServiceClient, id string) (*Snapshot, error) {
 		return nil, err
 	}
 
-	var res struct {
-		Snapshot Snapshot `json:"snapshot"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.Snapshot, err
+	var res Snapshot
+	err = extract.IntoStructPtr(raw.Body, &res, "snapshot")
+	return &res, err
 }

@@ -22,9 +22,7 @@ func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetad
 		return nil, err
 	}
 
-	var res struct {
-		Metadata map[string]interface{} `json:"metadata"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.Metadata, err
+	var res map[string]interface{}
+	err = extract.IntoStructPtr(raw.Body, &res, "metadata")
+	return &res, err
 }

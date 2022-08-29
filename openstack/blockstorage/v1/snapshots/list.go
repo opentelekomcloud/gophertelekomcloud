@@ -33,9 +33,7 @@ func (r SnapshotPage) IsEmpty() (bool, error) {
 }
 
 func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
-	var res struct {
-		Snapshots []Snapshot `json:"snapshots"`
-	}
-	err := extract.Into(r.(SnapshotPage).Result.Body, &res)
-	return res.Snapshots, err
+	var res []Snapshot
+	err := extract.IntoSlicePtr(r.(SnapshotPage).Result.Body, &res, "snapshots")
+	return res, err
 }
