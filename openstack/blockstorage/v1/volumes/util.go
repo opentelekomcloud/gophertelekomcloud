@@ -6,9 +6,9 @@ import (
 
 // WaitForStatus will continually poll the resource, checking for a particular
 // status. It will do this for the amount of seconds defined.
-func WaitForStatus(c *golangsdk.ServiceClient, id, status string, secs int) error {
+func WaitForStatus(client *golangsdk.ServiceClient, id, status string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		current, err := Get(c, id)
+		current, err := Get(client, id)
 		if err != nil {
 			return false, err
 		}
@@ -40,10 +40,10 @@ func IDFromName(client *golangsdk.ServiceClient, name string) (string, error) {
 		return "", err
 	}
 
-	for _, s := range all {
-		if s.Name == name {
+	for _, volume := range all {
+		if volume.Name == name {
 			count++
-			id = s.ID
+			id = volume.ID
 		}
 	}
 
