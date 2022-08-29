@@ -24,9 +24,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Volum
 		return nil, err
 	}
 
-	var res struct {
-		Volume *Volume `json:"volume"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return res.Volume, err
+	var res Volume
+	err = extract.IntoSlicePtr(raw.Body, &res, "volume")
+	return &res, err
 }

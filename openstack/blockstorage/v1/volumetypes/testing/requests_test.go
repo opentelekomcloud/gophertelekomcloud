@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v1/volumetypes"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -17,39 +16,27 @@ func TestList(t *testing.T) {
 
 	MockListResponse(t)
 
-	count := 0
-
-	_ = volumetypes.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := volumetypes.ExtractVolumeTypes(page)
-		if err != nil {
-			t.Errorf("Failed to extract volume types: %v", err)
-			return false, err
-		}
-
-		expected := []volumetypes.VolumeType{
-			{
-				ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
-				Name: "vol-type-001",
-				ExtraSpecs: map[string]interface{}{
-					"capabilities": "gpu",
-				},
-			},
-			{
-				ID:         "96c3bda7-c82a-4f50-be73-ca7621794835",
-				Name:       "vol-type-002",
-				ExtraSpecs: map[string]interface{}{},
-			},
-		}
-
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
-
-	if count != 1 {
-		t.Errorf("Expected 1 page, got %d", count)
+	actual, err := volumetypes.List(client.ServiceClient())
+	if err != nil {
+		t.Errorf("Failed to extract volume types: %v", err)
 	}
+
+	expected := []volumetypes.VolumeType{
+		{
+			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
+			Name: "vol-type-001",
+			ExtraSpecs: map[string]interface{}{
+				"capabilities": "gpu",
+			},
+		},
+		{
+			ID:         "96c3bda7-c82a-4f50-be73-ca7621794835",
+			Name:       "vol-type-002",
+			ExtraSpecs: map[string]interface{}{},
+		},
+	}
+
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestGet(t *testing.T) {
