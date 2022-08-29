@@ -25,6 +25,6 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Volum
 	}
 
 	var res Volume
-	err = extract.IntoSlicePtr(raw.Body, &res, "volume")
+	err = extract.IntoStructPtr(raw.Body, &res, "volume")
 	return &res, err
 }
