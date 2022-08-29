@@ -15,7 +15,7 @@ func TestListAll(t *testing.T) {
 
 	MockListResponse(t)
 	pages := 0
-	err := volumetypes.List(client.ServiceClient(), volumetypes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	err := volumetypes.List(client.ServiceClient(), nil).EachPage(func(page pagination.Page) (bool, error) {
 		pages++
 		actual, err := volumetypes.ExtractVolumeTypes(page)
 		if err != nil {
@@ -53,7 +53,7 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	v, err := volumetypes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	v, err := volumetypes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, v.Name, "vol-type-001")
@@ -71,14 +71,14 @@ func TestCreate(t *testing.T) {
 
 	var isPublic = true
 
-	options := volumetypes.CreateOpts{
+	options := &volumetypes.CreateOpts{
 		Name:        "test_type",
 		IsPublic:    &isPublic,
 		Description: "test_type_desc",
 		ExtraSpecs:  map[string]string{"capabilities": "gpu"},
 	}
 
-	n, err := volumetypes.Create(client.ServiceClient(), options)
+	n, err := volumetypes.Create(client.ServiceClient(), options).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.Name, "test_type")
@@ -96,7 +96,7 @@ func TestDelete(t *testing.T) {
 	MockDeleteResponse(t)
 
 	res := volumetypes.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
-	th.AssertNoErr(t, res)
+	th.AssertNoErr(t, res.Err)
 }
 
 func TestUpdate(t *testing.T) {
@@ -111,7 +111,7 @@ func TestUpdate(t *testing.T) {
 		IsPublic: &isPublic,
 	}
 
-	v, err := volumetypes.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options)
+	v, err := volumetypes.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options).Extract()
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, "vol-type-002", v.Name)
 	th.CheckEquals(t, true, v.IsPublic)

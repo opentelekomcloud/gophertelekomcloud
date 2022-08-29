@@ -18,7 +18,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	_ = snapshots.List(client.ServiceClient(), snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = snapshots.List(client.ServiceClient(), &snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := snapshots.ExtractSnapshots(page)
 		if err != nil {
@@ -63,7 +63,7 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	v, err := snapshots.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	v, err := snapshots.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, v.Name, "snapshot-001")
@@ -77,7 +77,7 @@ func TestCreate(t *testing.T) {
 	MockCreateResponse(t)
 
 	options := snapshots.CreateOpts{VolumeID: "1234", Name: "snapshot-001"}
-	n, err := snapshots.Create(client.ServiceClient(), options)
+	n, err := snapshots.Create(client.ServiceClient(), options).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.VolumeID, "1234")
@@ -93,16 +93,16 @@ func TestUpdateMetadata(t *testing.T) {
 
 	expected := map[string]interface{}{"key": "v1"}
 
-	options := snapshots.UpdateMetadataOpts{
+	options := &snapshots.UpdateMetadataOpts{
 		Metadata: map[string]interface{}{
 			"key": "v1",
 		},
 	}
 
-	actual, err := snapshots.UpdateMetadata(client.ServiceClient(), "123", options)
+	actual, err := snapshots.UpdateMetadata(client.ServiceClient(), "123", options).ExtractMetadata()
 
 	th.AssertNoErr(t, err)
-	th.AssertDeepEquals(t, actual.Metadata, expected)
+	th.AssertDeepEquals(t, actual, expected)
 }
 
 func TestDelete(t *testing.T) {
@@ -112,5 +112,5 @@ func TestDelete(t *testing.T) {
 	MockDeleteResponse(t)
 
 	res := snapshots.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
-	th.AssertNoErr(t, res)
+	th.AssertNoErr(t, res.Err)
 }

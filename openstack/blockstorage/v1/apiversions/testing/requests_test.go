@@ -49,7 +49,7 @@ func TestAPIInfo(t *testing.T) {
 
 	MockGetResponse(t)
 
-	actual, err := apiversions.Get(client.ServiceClient(), "v1")
+	actual, err := apiversions.Get(client.ServiceClient(), "v1").Extract()
 	th.AssertNoErr(t, err)
 
 	expected := apiversions.APIVersion{
