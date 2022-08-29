@@ -9,7 +9,7 @@ type UpdateMetadataOpts struct {
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
 
-func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetadataOpts) (*Snapshot, error) {
+func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetadataOpts) (*map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -23,8 +23,8 @@ func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetad
 	}
 
 	var res struct {
-		Snapshot Snapshot `json:"snapshot"`
+		Metadata map[string]interface{} `json:"metadata"`
 	}
 	err = extract.Into(raw.Body, &res)
-	return &res.Snapshot, err
+	return &res.Metadata, err
 }
