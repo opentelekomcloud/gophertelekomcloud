@@ -36,9 +36,7 @@ func (r APIVersionPage) IsEmpty() (bool, error) {
 }
 
 func ExtractAPIVersions(r pagination.Page) ([]APIVersion, error) {
-	var res struct {
-		Versions []APIVersion `json:"versions"`
-	}
-	err := extract.Into(r.(APIVersionPage).Result.Body, &res)
-	return res.Versions, err
+	var res []APIVersion
+	err := extract.IntoSlicePtr(r.(APIVersionPage).Result.Body, &res, "versions")
+	return res, err
 }
