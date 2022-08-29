@@ -1,18 +1,16 @@
 package antiddos
 
 import (
-	"encoding/json"
 	"strconv"
-	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ListWeeklyReports(client *golangsdk.ServiceClient, periodStartDate time.Time) (*ListWeeklyReportsResponse, error) {
+func ListWeeklyReports(client *golangsdk.ServiceClient, periodStartDate int64) (*ListWeeklyReportsResponse, error) {
 	// GET /v1/{project_id}/antiddos/weekly
 	raw, err := client.Get(
-		client.ServiceURL("antiddos", "weekly")+"?period_start_date="+strconv.FormatInt(periodStartDate.Unix()*1000, 10),
+		client.ServiceURL("antiddos", "weekly")+"?period_start_date="+strconv.FormatInt(periodStartDate, 10),
 		nil, nil)
 	if err != nil {
 		return nil, err
@@ -27,7 +25,7 @@ type ListWeeklyReportsResponse struct {
 	// Number of DDoS attacks intercepted in a week
 	DDosInterceptTimes int `json:"ddos_intercept_times"`
 	// Number of DDoS attacks intercepted in a week
-	Weekdata []WeekData `json:"-"`
+	Weekdata []WeekData `json:"weekdata"`
 	// Top 10 attacked IP addresses
 	Top10 []Top10 `json:"top10"`
 }
@@ -49,35 +47,5 @@ type WeekData struct {
 	// Maximum number of attack connections
 	MaxAttackConns int `json:"max_attack_conns"`
 	// Start date
-	PeriodStartDate time.Time `json:"period_start_date"`
-}
-
-func (r *ListWeeklyReportsResponse) UnmarshalJSON(b []byte) error {
-	var s struct {
-		ListWeeklyReportsResponse
-		Weekdata []struct {
-			WeekData
-			PeriodStartDate int64 `json:"period_start_date"`
-		} `json:"weekdata"`
-	}
-
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-
-	*r = s.ListWeeklyReportsResponse
-	r.Weekdata = make([]WeekData, len(s.Weekdata))
-
-	for idx, val := range s.Weekdata {
-		r.Weekdata[idx] = WeekData{
-			DDosInterceptTimes: val.DDosBlackholeTimes,
-			DDosBlackholeTimes: val.DDosBlackholeTimes,
-			MaxAttackBps:       val.MaxAttackBps,
-			MaxAttackConns:     val.MaxAttackConns,
-			PeriodStartDate:    time.Unix(val.PeriodStartDate/1000, 0).UTC(),
-		}
-	}
-
-	return nil
+	PeriodStartDate int64 `json:"period_start_date"`
 }
