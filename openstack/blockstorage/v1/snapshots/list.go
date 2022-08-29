@@ -3,7 +3,6 @@ package snapshots
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type ListOpts struct {
@@ -12,28 +11,18 @@ type ListOpts struct {
 	VolumeID string `q:"volume_id"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Snapshot, error) {
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		return pagination.Pager{Err: err}
+		return nil, err
 	}
 
-	return pagination.NewPager(client, client.ServiceURL("snapshots")+query.String(), func(r pagination.PageResult) pagination.Page {
-		return SnapshotPage{pagination.SinglePageBase(r)}
-	})
-}
+	raw, err := client.Get(client.ServiceURL("snapshots")+query.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type SnapshotPage struct {
-	pagination.SinglePageBase
-}
-
-func (r SnapshotPage) IsEmpty() (bool, error) {
-	volumes, err := ExtractSnapshots(r)
-	return len(volumes) == 0, err
-}
-
-func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 	var res []Snapshot
-	err := extract.IntoSlicePtr(r.(SnapshotPage).Result.Body, &res, "snapshots")
+	err = extract.IntoSlicePtr(raw.Body, &res, "snapshots")
 	return res, err
 }

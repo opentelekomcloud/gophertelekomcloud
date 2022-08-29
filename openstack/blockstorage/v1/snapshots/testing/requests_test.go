@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v1/snapshots"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -16,45 +15,33 @@ func TestList(t *testing.T) {
 
 	MockListResponse(t)
 
-	count := 0
-
-	_ = snapshots.List(client.ServiceClient(), snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := snapshots.ExtractSnapshots(page)
-		if err != nil {
-			t.Errorf("Failed to extract snapshots: %v", err)
-			return false, err
-		}
-
-		expected := []snapshots.Snapshot{
-			{
-				ID:          "289da7f8-6440-407c-9fb4-7db01ec49164",
-				Name:        "snapshot-001",
-				VolumeID:    "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
-				Status:      "available",
-				Size:        30,
-				CreatedAt:   time.Date(2012, 2, 14, 20, 53, 7, 0, time.UTC),
-				Description: "Daily Backup",
-			},
-			{
-				ID:          "96c3bda7-c82a-4f50-be73-ca7621794835",
-				Name:        "snapshot-002",
-				VolumeID:    "76b8950a-8594-4e5b-8dce-0dfa9c696358",
-				Status:      "available",
-				Size:        25,
-				CreatedAt:   time.Date(2012, 2, 14, 20, 53, 8, 0, time.UTC),
-				Description: "Weekly Backup",
-			},
-		}
-
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
-
-	if count != 1 {
-		t.Errorf("Expected 1 page, got %d", count)
+	actual, err := snapshots.List(client.ServiceClient(), snapshots.ListOpts{})
+	if err != nil {
+		t.Errorf("Failed to extract snapshots: %v", err)
 	}
+
+	expected := []snapshots.Snapshot{
+		{
+			ID:          "289da7f8-6440-407c-9fb4-7db01ec49164",
+			Name:        "snapshot-001",
+			VolumeID:    "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
+			Status:      "available",
+			Size:        30,
+			CreatedAt:   time.Date(2012, 2, 14, 20, 53, 7, 0, time.UTC),
+			Description: "Daily Backup",
+		},
+		{
+			ID:          "96c3bda7-c82a-4f50-be73-ca7621794835",
+			Name:        "snapshot-002",
+			VolumeID:    "76b8950a-8594-4e5b-8dce-0dfa9c696358",
+			Status:      "available",
+			Size:        25,
+			CreatedAt:   time.Date(2012, 2, 14, 20, 53, 8, 0, time.UTC),
+			Description: "Weekly Backup",
+		},
+	}
+
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestGet(t *testing.T) {
