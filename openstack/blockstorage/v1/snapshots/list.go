@@ -2,6 +2,7 @@ package snapshots
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -35,6 +36,6 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 	var res struct {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
-	err := (r.(SnapshotPage)).ExtractInto(&res)
+	err := extract.Into(r.(SnapshotPage), &res)
 	return res.Snapshots, err
 }
