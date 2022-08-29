@@ -5,16 +5,20 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-func List(c *golangsdk.ServiceClient) pagination.Pager {
-	u, _ := url.Parse(c.ServiceURL(""))
+func List(client *golangsdk.ServiceClient) ([]APIVersion, error) {
+	u, _ := url.Parse(client.ServiceURL(""))
 	u.Path = "/"
 
-	return pagination.NewPager(c, u.String(), func(r pagination.PageResult) pagination.Page {
-		return APIVersionPage{pagination.SinglePageBase(r)}
-	})
+	raw, err := client.Get(u.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []APIVersion
+	err = extract.IntoSlicePtr(raw.Body, &res, "versions")
+	return res, err
 }
 
 type APIVersion struct {
@@ -24,19 +28,4 @@ type APIVersion struct {
 	Status string `json:"status"`
 	// date last updated
 	Updated string `json:"updated"`
-}
-
-type APIVersionPage struct {
-	pagination.SinglePageBase
-}
-
-func (r APIVersionPage) IsEmpty() (bool, error) {
-	is, err := ExtractAPIVersions(r)
-	return len(is) == 0, err
-}
-
-func ExtractAPIVersions(r pagination.Page) ([]APIVersion, error) {
-	var res []APIVersion
-	err := extract.IntoSlicePtr(r.(APIVersionPage).Result.Body, &res, "versions")
-	return res, err
 }
