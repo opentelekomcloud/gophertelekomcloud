@@ -2,6 +2,7 @@ package volumetypes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -33,6 +34,7 @@ func ExtractVolumeTypes(r pagination.Page) ([]VolumeType, error) {
 	var res struct {
 		VolumeTypes []VolumeType `json:"volume_types"`
 	}
-	err := (r.(VolumeTypePage)).ExtractInto(&res)
+
+	err := extract.Into(r.(VolumeTypePage).Result, &res)
 	return res.VolumeTypes, err
 }
