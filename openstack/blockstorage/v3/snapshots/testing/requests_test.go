@@ -102,7 +102,7 @@ func TestUpdateMetadata(t *testing.T) {
 	actual, err := snapshots.UpdateMetadata(client.ServiceClient(), "123", options)
 
 	th.AssertNoErr(t, err)
-	th.AssertDeepEquals(t, actual, expected)
+	th.AssertDeepEquals(t, &expected, actual)
 }
 
 func TestDelete(t *testing.T) {
