@@ -36,6 +36,6 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 	var res struct {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
-	err := extract.Into(r.(SnapshotPage), &res)
+	err := extract.Into(r.(SnapshotPage).Result.Body, &res)
 	return res.Snapshots, err
 }

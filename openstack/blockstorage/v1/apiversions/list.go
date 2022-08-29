@@ -39,6 +39,6 @@ func ExtractAPIVersions(r pagination.Page) ([]APIVersion, error) {
 	var res struct {
 		Versions []APIVersion `json:"versions"`
 	}
-	err := extract.Into(r.(APIVersionPage).Body, &res)
+	err := extract.Into(r.(APIVersionPage).Result.Body, &res)
 	return res.Versions, err
 }

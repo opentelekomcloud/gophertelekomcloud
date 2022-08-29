@@ -2,6 +2,7 @@ package volumes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -40,6 +41,6 @@ func ExtractVolumes(r pagination.Page) ([]Volume, error) {
 	var res struct {
 		Volumes []Volume `json:"volumes"`
 	}
-	err := (r.(VolumePage)).ExtractInto(&res)
+	err := extract.Into(r.(VolumePage).Result.Body, &res)
 	return res.Volumes, err
 }
