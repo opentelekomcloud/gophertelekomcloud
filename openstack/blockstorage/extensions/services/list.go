@@ -40,7 +40,7 @@ func ExtractServices(r pagination.Page) ([]Service, error) {
 	var res struct {
 		Service []Service `json:"services"`
 	}
-	err := extract.Into(r.(ServicePage).Body, &res)
+	err := extract.Into(r.(ServicePage).Result.Body, &res)
 	return res.Service, err
 }
 
