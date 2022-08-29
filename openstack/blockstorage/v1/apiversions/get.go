@@ -1,10 +1,10 @@
 package apiversions
 
 import (
+	"strings"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-
-	"strings"
 )
 
 func Get(client *golangsdk.ServiceClient, v string) (*APIVersion, error) {
