@@ -61,7 +61,7 @@ func (r VolumePage) NextPageURL() (string, error) {
 }
 
 func ExtractVolumesInto(r pagination.Page, v interface{}) error {
-	return extract.IntoSlicePtr(r.(VolumePage).Result, v, "volumes")
+	return extract.IntoSlicePtr(r.(VolumePage).Result.Body, v, "volumes")
 }
 
 func ExtractVolumes(r pagination.Page) ([]Volume, error) {
