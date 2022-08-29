@@ -67,6 +67,6 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
 
-	err := extract.Into(r.(SnapshotPage).Body, &res)
+	err := extract.Into(r.(SnapshotPage).Result.Body, &res)
 	return res.Snapshots, err
 }

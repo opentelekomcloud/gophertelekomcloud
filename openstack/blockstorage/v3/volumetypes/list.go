@@ -55,6 +55,6 @@ func ExtractVolumeTypes(r pagination.Page) ([]VolumeType, error) {
 	var res struct {
 		VolumeTypes []VolumeType `json:"volume_types"`
 	}
-	err := extract.Into(r.(VolumeTypePage).Result, &res)
+	err := extract.Into(r.(VolumeTypePage).Result.Body, &res)
 	return res.VolumeTypes, err
 }
