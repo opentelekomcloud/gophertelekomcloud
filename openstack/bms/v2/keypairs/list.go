@@ -8,15 +8,13 @@ import (
 )
 
 type ListOpts struct {
-	// Name is used to refer to this keypair from other services within this
-	// region.
+	// Name is used to refer to this keypair from other services within this region.
 	Name string `json:"name"`
 }
 
-// / List returns a Pager that allows you to iterate over a collection of KeyPairs.
+// List returns a Pager that allows you to iterate over a collection of KeyPairs.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
-	u := listURL(c)
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
+	pages, err := pagination.NewPager(c, c.ServiceURL("os-keypairs"), func(r pagination.PageResult) pagination.Page {
 		return KeyPairPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
@@ -29,12 +27,11 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
 		return nil, err
 	}
 
-	return FilterKeyPairs(allkeypairs, opts)
+	return filterKeyPairs(allkeypairs, opts)
 }
 
-// FilterKeyPairs used to filter keypairs using name
-func FilterKeyPairs(keypairs []KeyPair, opts ListOpts) ([]KeyPair, error) {
-
+// filterKeyPairs used to filter keypairs using name
+func filterKeyPairs(keypairs []KeyPair, opts ListOpts) ([]KeyPair, error) {
 	var refinedKeypairs []KeyPair
 	var matched bool
 	m := map[string]interface{}{}
