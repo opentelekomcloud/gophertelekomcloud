@@ -3,7 +3,7 @@ package testing
 import (
 	"testing"
 
-	apiversions2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v1/apiversions"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v1/apiversions"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -14,10 +14,10 @@ func TestListVersions(t *testing.T) {
 
 	MockListResponse(t)
 
-	actual, err := apiversions2.List(client.ServiceClient())
+	actual, err := apiversions.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
 
-	expected := []apiversions2.APIVersion{
+	expected := []apiversions.APIVersion{
 		{
 			ID:      "v1.0",
 			Status:  "CURRENT",
@@ -39,10 +39,10 @@ func TestAPIInfo(t *testing.T) {
 
 	MockGetResponse(t)
 
-	actual, err := apiversions2.Get(client.ServiceClient(), "v1")
+	actual, err := apiversions.Get(client.ServiceClient(), "v1")
 	th.AssertNoErr(t, err)
 
-	expected := apiversions2.APIVersion{
+	expected := apiversions.APIVersion{
 		ID:      "v1.0",
 		Status:  "CURRENT",
 		Updated: "2012-01-04T11:33:21Z",
