@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	volumetypes2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v1/volumetypes"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v1/volumetypes"
 
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -17,12 +17,12 @@ func TestList(t *testing.T) {
 
 	MockListResponse(t)
 
-	actual, err := volumetypes2.List(client.ServiceClient())
+	actual, err := volumetypes.List(client.ServiceClient())
 	if err != nil {
 		t.Errorf("Failed to extract volume types: %v", err)
 	}
 
-	expected := []volumetypes2.VolumeType{
+	expected := []volumetypes.VolumeType{
 		{
 			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
 			Name: "vol-type-001",
@@ -46,7 +46,7 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	vt, err := volumetypes2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	vt, err := volumetypes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, vt.ExtraSpecs, map[string]interface{}{"serverNumber": "2"})
@@ -84,8 +84,8 @@ func TestCreate(t *testing.T) {
 		`)
 	})
 
-	options := volumetypes2.CreateOpts{Name: "vol-type-001"}
-	n, err := volumetypes2.Create(client.ServiceClient(), options)
+	options := volumetypes.CreateOpts{Name: "vol-type-001"}
+	n, err := volumetypes.Create(client.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.Name, "vol-type-001")
@@ -102,6 +102,6 @@ func TestDelete(t *testing.T) {
 		w.WriteHeader(http.StatusAccepted)
 	})
 
-	err := volumetypes2.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	err := volumetypes.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 }
