@@ -20,11 +20,11 @@ type ListOpts struct {
 
 // List returns collection of nics. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
-func List(c *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, error) {
-	u := c.ServiceURL("servers", serverId, "os-interface")
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return NicPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+func List(client *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, error) {
+	pages, err := pagination.NewPager(client, client.ServiceURL("servers", serverId, "os-interface"),
+		func(r pagination.PageResult) pagination.Page {
+			return NicPage{pagination.LinkedPageBase{PageResult: r}}
+		}).AllPages()
 	if err != nil {
 		return nil, err
 	}
