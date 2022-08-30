@@ -1,17 +1,12 @@
 package apiversions
 
 import (
-	"net/url"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 func List(client *golangsdk.ServiceClient) ([]APIVersion, error) {
-	u, _ := url.Parse(client.ServiceURL(""))
-	u.Path = "/"
-
-	raw, err := client.Get(u.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(""), nil, nil)
 	if err != nil {
 		return nil, err
 	}
