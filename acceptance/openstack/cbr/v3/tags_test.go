@@ -45,9 +45,9 @@ func TestTags(t *testing.T) {
 	vault, err := vaults.Create(client, opts).Extract()
 	th.AssertNoErr(t, err)
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
-	}()
+	})
 
 	projectTags, err := cbrtags.ShowVaultProjectTag(client).Extract()
 	th.AssertNoErr(t, err)
@@ -59,7 +59,7 @@ func TestTags(t *testing.T) {
 			Values: []string{firstTag.Value},
 		}},
 		Action: cbrtags.Filter,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	resourceID := instances.Resources[0].ResourceID
