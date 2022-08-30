@@ -48,6 +48,6 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 }
 
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(singleURL(client, id), &r.Body, nil)
+	raw, err := client.Get(singleURL(client, id), nil, nil)
 	return
 }

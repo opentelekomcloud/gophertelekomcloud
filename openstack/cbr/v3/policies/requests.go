@@ -58,7 +58,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, err = client.Post(listURL(client), reqBody, &r.Body, &golangsdk.RequestOpts{
+	_, err = client.Post(listURL(client), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	r.Err = err
@@ -98,7 +98,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 }
 
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(singleURL(client, id), &r.Body, nil)
+	raw, err := client.Get(singleURL(client, id), nil, nil)
 	return
 }
 
@@ -123,7 +123,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, err = client.Put(singleURL(client, id), reqBody, &r.Body, &golangsdk.RequestOpts{
+	_, err = client.Put(singleURL(client, id), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	r.Err = err
@@ -131,6 +131,6 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 }
 
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(singleURL(client, id), nil)
+	raw, err := client.Delete(singleURL(client, id), nil)
 	return
 }

@@ -63,7 +63,7 @@ func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceIns
 		r.Err = fmt.Errorf("failed to create vault map: %s", err)
 		return
 	}
-	_, err = client.Post(showVaultResourceInstancesURL(client), reqBody, &r.Body, &golangsdk.RequestOpts{
+	_, err = client.Post(showVaultResourceInstancesURL(client), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	r.Err = err

@@ -124,7 +124,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = fmt.Errorf("failed to create vault create map: %s", err)
 		return
 	}
-	_, err = client.Post(rootURL(client), reqBody, &r.Body, &golangsdk.RequestOpts{
+	_, err = client.Post(rootURL(client), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	r.Err = err
@@ -132,12 +132,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 }
 
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(vaultURL(client, id), nil)
+	raw, err := client.Delete(vaultURL(client, id), nil)
 	return
 }
 
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(vaultURL(client, id), &r.Body, nil)
+	raw, err := client.Get(vaultURL(client, id), nil, nil)
 	return
 }
 
@@ -171,7 +171,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = fmt.Errorf("failed to create vault update map: %s", err)
 		return
 	}
-	_, r.Err = client.Put(vaultURL(client, id), reqBody, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(vaultURL(client, id), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -195,7 +195,7 @@ func BindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPolicy
 		r.Err = fmt.Errorf("failed to create bind policy map: %s", err)
 		return
 	}
-	_, r.Err = client.Post(bindPolicyURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(bindPolicyURL(client, vaultID), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -207,7 +207,7 @@ func UnbindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPoli
 		r.Err = fmt.Errorf("failed to create bind policy map: %s", err)
 		return
 	}
-	_, r.Err = client.Post(unbindPolicyURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(unbindPolicyURL(client, vaultID), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -230,7 +230,7 @@ func AssociateResources(client *golangsdk.ServiceClient, vaultID string, opts As
 		r.Err = fmt.Errorf("failed to create associate resource map: %s", err)
 		return
 	}
-	_, r.Err = client.Post(addResourcesURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(addResourcesURL(client, vaultID), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -253,7 +253,7 @@ func DissociateResources(client *golangsdk.ServiceClient, vaultID string, opts D
 		r.Err = fmt.Errorf("failed to create dissociate resource map: %s", err)
 		return
 	}
-	_, r.Err = client.Post(removeResourcesURL(client, vaultID), reqBody, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(removeResourcesURL(client, vaultID), reqBody, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
