@@ -14,7 +14,7 @@ type ListOpts struct {
 	// ID is the unique identifier for the nic.
 	ID string `json:"port_id"`
 
-	// Status indicates whether or not a nic is currently operational.
+	// Status indicates whether a nic is currently operational.
 	Status string `json:"port_state"`
 }
 
