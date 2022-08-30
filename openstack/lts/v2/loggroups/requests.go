@@ -38,10 +38,12 @@ func Create(client *golangsdk.ServiceClient, ops CreateOptsBuilder) (r CreateRes
 
 // Delete a log group by id
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	opts := golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf8"},
-	}
-	_, r.Err = client.Delete(deleteURL(client, id), &opts)
+	// opts := golangsdk.RequestOpts{
+	// 	MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf8"},
+	// }
+	_, r.Err = client.Delete(deleteURL(client, id), &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
 	return
 }
 
