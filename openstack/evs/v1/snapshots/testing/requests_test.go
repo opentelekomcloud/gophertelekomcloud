@@ -4,7 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v1/snapshots"
+	snapshots2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v1/snapshots"
+
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -15,12 +16,12 @@ func TestList(t *testing.T) {
 
 	MockListResponse(t)
 
-	actual, err := snapshots.List(client.ServiceClient(), snapshots.ListOpts{})
+	actual, err := snapshots2.List(client.ServiceClient(), snapshots2.ListOpts{})
 	if err != nil {
 		t.Errorf("Failed to extract snapshots: %v", err)
 	}
 
-	expected := []snapshots.Snapshot{
+	expected := []snapshots2.Snapshot{
 		{
 			ID:          "289da7f8-6440-407c-9fb4-7db01ec49164",
 			Name:        "snapshot-001",
@@ -50,7 +51,7 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	v, err := snapshots.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	v, err := snapshots2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, v.Name, "snapshot-001")
@@ -63,8 +64,8 @@ func TestCreate(t *testing.T) {
 
 	MockCreateResponse(t)
 
-	options := snapshots.CreateOpts{VolumeID: "1234", Name: "snapshot-001"}
-	n, err := snapshots.Create(client.ServiceClient(), options)
+	options := snapshots2.CreateOpts{VolumeID: "1234", Name: "snapshot-001"}
+	n, err := snapshots2.Create(client.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.VolumeID, "1234")
@@ -80,13 +81,13 @@ func TestUpdateMetadata(t *testing.T) {
 
 	expected := map[string]interface{}{"key": "v1"}
 
-	options := snapshots.UpdateMetadataOpts{
+	options := snapshots2.UpdateMetadataOpts{
 		Metadata: map[string]interface{}{
 			"key": "v1",
 		},
 	}
 
-	actual, err := snapshots.UpdateMetadata(client.ServiceClient(), "123", options)
+	actual, err := snapshots2.UpdateMetadata(client.ServiceClient(), "123", options)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, &expected, actual)
 }
@@ -97,6 +98,6 @@ func TestDelete(t *testing.T) {
 
 	MockDeleteResponse(t)
 
-	res := snapshots.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	res := snapshots2.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, res)
 }

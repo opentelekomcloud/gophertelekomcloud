@@ -4,7 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v1/volumes"
+	volumes2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v1/volumes"
+
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -15,12 +16,12 @@ func TestList(t *testing.T) {
 
 	MockListResponse(t)
 
-	actual, err := volumes.List(client.ServiceClient(), volumes.ListOpts{})
+	actual, err := volumes2.List(client.ServiceClient(), volumes2.ListOpts{})
 	if err != nil {
 		t.Errorf("Failed to extract volumes: %v", err)
 	}
 
-	expected := []volumes.Volume{
+	expected := []volumes2.Volume{
 		{
 			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
 			Name: "vol-001",
@@ -40,10 +41,10 @@ func TestListAll(t *testing.T) {
 
 	MockListResponse(t)
 
-	actual, err := volumes.List(client.ServiceClient(), volumes.ListOpts{})
+	actual, err := volumes2.List(client.ServiceClient(), volumes2.ListOpts{})
 	th.AssertNoErr(t, err)
 
-	expected := []volumes.Volume{
+	expected := []volumes2.Volume{
 		{
 			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
 			Name: "vol-001",
@@ -64,10 +65,10 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	actual, err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	actual, err := volumes2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 
-	expected := &volumes.Volume{
+	expected := &volumes2.Volume{
 		Status: "active",
 		Name:   "vol-001",
 		Attachments: []map[string]interface{}{
@@ -103,11 +104,11 @@ func TestCreate(t *testing.T) {
 
 	MockCreateResponse(t)
 
-	options := volumes.CreateOpts{
+	options := volumes2.CreateOpts{
 		Size:             75,
 		AvailabilityZone: "us-east1",
 	}
-	n, err := volumes.Create(client.ServiceClient(), options)
+	n, err := volumes2.Create(client.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.Size, 4)
@@ -120,7 +121,7 @@ func TestDelete(t *testing.T) {
 
 	MockDeleteResponse(t)
 
-	res := volumes.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	res := volumes2.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, res)
 }
 
@@ -130,8 +131,8 @@ func TestUpdate(t *testing.T) {
 
 	MockUpdateResponse(t)
 
-	options := volumes.UpdateOpts{Name: "vol-002"}
-	v, err := volumes.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options)
+	options := volumes2.UpdateOpts{Name: "vol-002"}
+	v, err := volumes2.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, "vol-002", v.Name)
 }
