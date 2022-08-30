@@ -8,26 +8,16 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the
-// List request.
-type ListOptsBuilder interface {
-	ToFlavorListQuery() (string, error)
-}
-
 // The AccessType arguement is optional, and if it is not supplied, OpenStack
 // returns the PublicAccess flavors.
 type AccessType string
 
 const (
-	// PublicAccess returns public flavors and private flavors associated with
-	// that project.
+	// PublicAccess returns public flavors and private flavors associated with that project.
 	PublicAccess AccessType = "true"
-
 	// PrivateAccess (admin only) returns private flavors, across all projects.
 	PrivateAccess AccessType = "false"
-
-	// AllAccess (admin only) returns public and private flavors across all
-	// projects.
+	// AllAccess (admin only) returns public and private flavors across all projects.
 	AllAccess AccessType = "None"
 )
 
@@ -37,23 +27,16 @@ const (
 type ListOpts struct {
 	// Specifies the name of the BMS flavor
 	Name string
-
 	// Specifies the ID of the BMS flavor
 	ID string
-
-	// MinDisk and MinRAM, if provided, elides flavors which do not meet your
-	// criteria.
+	// MinDisk and MinRAM, if provided, elides flavors which do not meet your criteria.
 	MinDisk int `q:"minDisk"`
-
-	MinRAM int `q:"minRam"`
-
+	MinRAM  int `q:"minRam"`
 	// AccessType, if provided, instructs List which set of flavors to return.
 	// If IsPublic not provided, flavors for the current project are returned.
 	AccessType AccessType `q:"is_public"`
-
 	// SortKey allows you to sort by a particular attribute
 	SortKey string `q:"sort_key"`
-
 	// SortDir sets the direction, and is either `asc' or `desc'
 	SortDir string `q:"sort_dir"`
 }
@@ -63,7 +46,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 	if err != nil {
 		return nil, err
 	}
-	u := listURL(c) + q.String()
+	u := c.ServiceURL("flavors", "detail") + q.String()
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
@@ -76,12 +59,11 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 		return nil, err
 	}
 
-	return FilterFlavors(allFlavors, opts)
+	return filterFlavors(allFlavors, opts)
 }
 
-// FilterFlavors used to filter flavors using Id and Name
-func FilterFlavors(flavors []Flavor, opts ListOpts) ([]Flavor, error) {
-
+// filterFlavors used to filter flavors using Id and Name
+func filterFlavors(flavors []Flavor, opts ListOpts) ([]Flavor, error) {
 	var refinedFlavors []Flavor
 	var matched bool
 	m := map[string]interface{}{}
