@@ -3,7 +3,8 @@ package testing
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions/services"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/services"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"

@@ -6,7 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions/services"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/services"
+
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )

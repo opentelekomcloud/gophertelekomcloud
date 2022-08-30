@@ -3,8 +3,9 @@ package testing
 import (
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/noauth"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/noauth"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
