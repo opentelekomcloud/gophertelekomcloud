@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -34,11 +33,11 @@ func List(client *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Ni
 		return nil, err
 	}
 
-	return FilterNICs(allNICs, opts)
+	return filterNICs(allNICs, opts)
 }
 
-// FilterNICs used to filter nics using id and status.
-func FilterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
+// filterNICs used to filter nics using id and status.
+func filterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
 
 	var refinedNICs []Nic
 	var matched bool
@@ -76,13 +75,4 @@ func getStructField(v *Nic, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
 	return f.String()
-}
-
-// Get retrieves a particular nic based on its unique ID.
-func Get(c *golangsdk.ServiceClient, serverId string, id string) (*Nic, error) {
-	raw, err := c.Get(c.ServiceURL("servers", serverId, "os-interface", id), nil, nil)
-
-	var res Nic
-	err = extract.IntoStructPtr(raw.Body, &res, "interfaceAttachment")
-	return &res, err
 }
