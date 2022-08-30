@@ -4,6 +4,7 @@ import (
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -20,7 +21,7 @@ type ListOpts struct {
 // List returns collection of nics. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, error) {
-	u := listURL(c, serverId)
+	u := c.ServiceURL("servers", serverId, "os-interface")
 	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
 		return NicPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
@@ -78,7 +79,10 @@ func getStructField(v *Nic, field string) string {
 }
 
 // Get retrieves a particular nic based on its unique ID.
-func Get(c *golangsdk.ServiceClient, serverId string, id string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, serverId, id), &r.Body, nil)
-	return
+func Get(c *golangsdk.ServiceClient, serverId string, id string) (*Nic, error) {
+	raw, err := c.Get(c.ServiceURL("servers", serverId, "os-interface", id), nil, nil)
+
+	var res Nic
+	err = extract.IntoStructPtr(raw.Body, &res, "interfaceAttachment")
+	return &res, err
 }
