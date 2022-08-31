@@ -32,6 +32,5 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]OperationLog, error
 	}
 
 	var res []OperationLog
-	err = extract.IntoSlicePtr(raw.Body, &res, "operation_log")
-	return res, nil
+	return res, extract.IntoSlicePtr(raw.Body, &res, "operation_log")
 }
