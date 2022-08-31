@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"reflect"
 )
 
@@ -106,13 +107,16 @@ func JsonMarshal(t interface{}) ([]byte, error) {
 }
 
 func Into(body interface{}, to interface{}) error {
-	if reader, ok := body.(io.Reader); ok {
-		if readCloser, ok := reader.(io.Closer); ok {
-			defer readCloser.Close()
-		}
+	if raw, ok := body.(http.Response); ok {
+		body = raw.Body
+	}
+
+	if reader, ok := body.(io.ReadCloser); ok {
+		defer reader.Close()
 		return json.NewDecoder(reader).Decode(to)
 	}
 
+	// Deprecated
 	b, err := JsonMarshal(body)
 	if err != nil {
 		return err
@@ -122,32 +126,35 @@ func Into(body interface{}, to interface{}) error {
 	return err
 }
 
-// IntoStructPtr will unmarshal the given body into the provided
-// interface{} (to).
-func IntoStructPtr(body, to interface{}, label string) error {
+func typeCheck(to interface{}, kind reflect.Kind) error {
 	t := reflect.TypeOf(to)
 	if k := t.Kind(); k != reflect.Ptr {
 		return fmt.Errorf("expected pointer, got %v", k)
 	}
-	switch t.Elem().Kind() {
-	case reflect.Struct:
-		return intoPtr(body, to, label)
-	default:
-		return fmt.Errorf("expected pointer to struct, got: %v", t)
+
+	if kind != t.Elem().Kind() {
+		return fmt.Errorf("expected pointer to %v, got: %v", kind, t)
 	}
+
+	return nil
 }
 
-// IntoSlicePtr will unmarshal the provided body into the provided
-// interface{} (to).
+// IntoStructPtr will unmarshal the given body into the provided Struct.
+func IntoStructPtr(body, to interface{}, label string) error {
+	err := typeCheck(to, reflect.Struct)
+	if err != nil {
+		return err
+	}
+
+	return intoPtr(body, to, label)
+}
+
+// IntoSlicePtr will unmarshal the provided body into the provided Slice.
 func IntoSlicePtr(body, to interface{}, label string) error {
-	t := reflect.TypeOf(to)
-	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("expected pointer, got %v", k)
+	err := typeCheck(to, reflect.Slice)
+	if err != nil {
+		return err
 	}
-	switch t.Elem().Kind() {
-	case reflect.Slice:
-		return intoPtr(body, to, label)
-	default:
-		return fmt.Errorf("expected pointer to slice, got: %v", t)
-	}
+
+	return intoPtr(body, to, label)
 }

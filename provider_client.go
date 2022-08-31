@@ -2,10 +2,10 @@ package golangsdk
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -228,7 +228,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 		}
 	}
 
-	// get latest token from client
+	// get the latest token from client
 	for k, v := range client.AuthenticatedHeaders() {
 		req.Header.Set(k, v)
 	}
@@ -396,12 +396,9 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 		return resp, err
 	}
 
-	// Parse the response body as JSON, if requested to do so.
-	if options.JSONResponse != nil && resp.StatusCode != http.StatusNoContent {
-		defer func() { _ = resp.Body.Close() }()
-		if err := json.NewDecoder(resp.Body).Decode(options.JSONResponse); err != nil {
-			return nil, err
-		}
+	// Deprecated
+	if options.JSONResponse != nil {
+		reflect.ValueOf(options.JSONResponse).Elem().Set(reflect.ValueOf(resp.Body))
 	}
 
 	return resp, nil
