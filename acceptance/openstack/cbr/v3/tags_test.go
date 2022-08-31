@@ -42,11 +42,11 @@ func TestTags(t *testing.T) {
 		Resources:   []vaults.ResourceCreate{},
 		Tags:        combineTag,
 	}
-	vault, err := vaults.Create(client, opts).Extract()
+	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
 	})
 
 	projectTags, err := cbrtags.ShowVaultProjectTag(client).Extract()
