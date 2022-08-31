@@ -11,7 +11,7 @@ type CreateOpts struct {
 }
 
 // Create will create a new Tag based on the values in CreateOpts.
-func Create(c *golangsdk.ServiceClient, serverId string, opts CreateOpts) (*Tags, error) {
+func Create(c *golangsdk.ServiceClient, serverId string, opts CreateOpts) ([]string, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func Create(c *golangsdk.ServiceClient, serverId string, opts CreateOpts) (*Tags
 		return nil, err
 	}
 
-	var res Tags
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	var res []string
+	err = extract.IntoSlicePtr(raw.Body, &res, "tags")
+	return res, err
 }

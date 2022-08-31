@@ -6,18 +6,13 @@ import (
 )
 
 // Get retrieves a particular tag based on its unique ID.
-func Get(c *golangsdk.ServiceClient, serverId string) (*Tags, error) {
+func Get(c *golangsdk.ServiceClient, serverId string) ([]string, error) {
 	raw, err := c.Get(c.ServiceURL("servers", serverId, "tags"), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res Tags
-	err = extract.Into(raw.Body, &res)
-	return &res, err
-}
-
-type Tags struct {
-	// Specifies the tags of a BMS
-	Tags []string `json:"tags"`
+	var res []string
+	err = extract.IntoSlicePtr(raw.Body, &res, "tags")
+	return res, err
 }

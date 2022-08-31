@@ -43,7 +43,7 @@ func TestCreateTag(t *testing.T) {
 	}
 	n, err := tags.Create(fake.ServiceClient(), "2bff7a8a-3934-4f79-b1d6-53dc5540f00e", options)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "__type_baremetal", n.Tags[0])
+	th.AssertEquals(t, "__type_baremetal", n[0])
 }
 
 func TestDeleteTag(t *testing.T) {
@@ -82,6 +82,6 @@ func TestGetTags(t *testing.T) {
 
 	n, err := tags.Get(fake.ServiceClient(), "2bff7a8a-3934-4f79-b1d6-53dc5540f00e")
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "__type_baremetal", n.Tags[0])
+	th.AssertEquals(t, "__type_baremetal", n[0])
 
 }
