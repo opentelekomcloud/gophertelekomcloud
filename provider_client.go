@@ -2,10 +2,10 @@ package golangsdk
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -154,8 +154,8 @@ type RequestOpts struct {
 	// RawBody contains an io.Reader that will be consumed by the request directly. No content-type
 	// will be set unless one is provided explicitly by MoreHeaders.
 	RawBody io.Reader
-	// JSONResponse, if provided, will be populated with the contents of the response body parsed as
-	// JSON.
+	// JSONResponse, if provided, will be populated with the contents of the response body parsed as JSON.
+	// Deprecated: Use http.Response Body instead.
 	JSONResponse interface{}
 	// OkCodes contains a list of numeric HTTP status codes that should be interpreted as success. If
 	// the response has a different code, an error will be returned.
@@ -397,8 +397,11 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	}
 
 	// Deprecated
-	if options.JSONResponse != nil {
-		reflect.ValueOf(options.JSONResponse).Elem().Set(reflect.ValueOf(resp.Body))
+	if options.JSONResponse != nil && resp.StatusCode != http.StatusNoContent {
+		defer func() { _ = resp.Body.Close() }()
+		if err := json.NewDecoder(resp.Body).Decode(options.JSONResponse); err != nil {
+			return nil, err
+		}
 	}
 
 	return resp, nil
