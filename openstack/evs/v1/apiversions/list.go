@@ -19,8 +19,8 @@ func List(client *golangsdk.ServiceClient) ([]APIVersion, error) {
 type APIVersion struct {
 	// unique identifier
 	ID string `json:"id"`
-	// current status
+	// current status e.g. SUPPORTED
 	Status string `json:"status"`
-	// date last updated
+	// date last updated e.g. 2014-06-28T12:20:21Z
 	Updated string `json:"updated"`
 }
