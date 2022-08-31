@@ -116,7 +116,7 @@ func Into(body interface{}, to interface{}) error {
 		return json.NewDecoder(reader).Decode(to)
 	}
 
-	// Deprecated
+	// TODO: remove this branch in pager refactoring
 	b, err := JsonMarshal(body)
 	if err != nil {
 		return err
@@ -133,7 +133,7 @@ func typeCheck(to interface{}, kind reflect.Kind) error {
 	}
 
 	if kind != t.Elem().Kind() {
-		return fmt.Errorf("expected pointer to %v, got: %v", kind, t)
+		return fmt.Errorf("expected pointer to %v, got: %v", kind.String(), t)
 	}
 
 	return nil
