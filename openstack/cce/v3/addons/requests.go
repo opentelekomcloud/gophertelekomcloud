@@ -2,20 +2,9 @@ package addons
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
-
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json"},
-}
-
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToAddonCreateMap() (map[string]interface{}, error)
-}
 
 // CreateOpts contains all the values needed to create a new addon
 type CreateOpts struct {
@@ -54,44 +43,6 @@ type Values struct {
 	Advanced map[string]interface{} `json:"custom,omitempty"`
 }
 
-// ToAddonCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToAddonCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// addon.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId string) (r CreateResult) {
-	b, err := opts.ToAddonCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	raw, err := client.Post(
-		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
-			strings.Join([]string{"addons"}, "/"),
-		b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
-	return
-}
-
-// Get retrieves a particular addon based on its unique ID.
-func Get(client *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
-	raw, err := client.Get(
-		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
-			strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"),
-		nil, &golangsdk.RequestOpts{
-			OkCodes: []int{200},
-		})
-	return
-}
-
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToAddonUpdateMap() (map[string]interface{}, error)
-}
-
 type UpdateMetadata struct {
 	// Add-on annotations in the format of key-value pairs.
 	// For add-on upgrade, the value is fixed at {"addon.upgrade/type":"upgrade"}.
@@ -115,80 +66,8 @@ type UpdateOpts struct {
 	Spec RequestSpec `json:"spec" required:"true"`
 }
 
-func (opts UpdateOpts) ToAddonUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-func Update(client *golangsdk.ServiceClient, id, clusterId string, opts UpdateOpts) (r UpdateResult) {
-	b, err := opts.ToAddonUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	raw, err := client.Put(
-		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
-			strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"),
-		b, nil, &golangsdk.RequestOpts{
-			OkCodes: []int{200},
-		})
-	return
-}
-
-// Delete will permanently delete a particular addon based on its unique ID.
-func Delete(client *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
-	raw, err := client.Delete(
-		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
-			strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"),
-		&golangsdk.RequestOpts{
-			OkCodes:     []int{200},
-			MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-		})
-	return
-}
-
-type ListOptsBuilder interface {
-	ToAddonListQuery() (string, error)
-}
-
 type ListOpts struct {
 	Name string `q:"addon_template_name"`
-}
-
-func (opts ListOpts) ToAddonListQuery() (string, error) {
-	u, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return "", err
-	}
-	return u.String(), nil
-}
-
-func ListTemplates(client *golangsdk.ServiceClient, clusterID string, opts ListOptsBuilder) (r ListTemplateResult) {
-	url := fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:]) +
-		strings.Join([]string{"addontemplates"}, "/")
-	if opts != nil {
-		q, err := opts.ToAddonListQuery()
-		if err != nil {
-			r.Err = err
-			return
-		}
-		url += q
-	}
-	raw, err := client.Get(url, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-func ListAddonInstances(client *golangsdk.ServiceClient, clusterID string) (r ListInstanceResult) {
-	raw, err := client.Get(
-		fmt.Sprintf("%s?cluster_id=%s",
-			fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+
-				strings.Join([]string{"addons"}, "/"), clusterID),
-		nil, &golangsdk.RequestOpts{
-			OkCodes: []int{200},
-		})
-	return
 }
 
 // WaitForAddonRunning - wait until addon status is `running`
@@ -198,9 +77,11 @@ func WaitForAddonRunning(client *golangsdk.ServiceClient, id, clusterID string, 
 		if err != nil {
 			return false, fmt.Errorf("error retriving addon status: %w", err)
 		}
+
 		if addon.Status.Status == "running" {
 			return true, nil
 		}
+
 		return false, nil
 	})
 }
@@ -209,12 +90,14 @@ func WaitForAddonRunning(client *golangsdk.ServiceClient, id, clusterID string, 
 func WaitForAddonDeleted(client *golangsdk.ServiceClient, id, clusterID string, timeoutSeconds int) error {
 	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
 		_, err := Get(client, id, clusterID).Extract()
+
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
 			}
 			return false, fmt.Errorf("error retriving addon status: %w", err)
 		}
+
 		return false, nil
 	})
 }
