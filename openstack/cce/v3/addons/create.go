@@ -12,8 +12,7 @@ import (
 func Create(client *golangsdk.ServiceClient, opts CreateOpts, clusterId string) (r CreateResult) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Post(

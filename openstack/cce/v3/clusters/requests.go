@@ -2,13 +2,9 @@ package clusters
 
 import (
 	"reflect"
-
-	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json"},
-}
+var RequestOpts = map[string]string{"Content-Type": "application/json"}
 
 // ListOpts allows the filtering of list data using given parameters.
 type ListOpts struct {
@@ -17,22 +13,6 @@ type ListOpts struct {
 	Type  string `json:"type"`
 	VpcID string `json:"vpc"`
 	Phase string `json:"phase"`
-}
-
-// List returns collection of clusters.
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Clusters, error) {
-	var res ListResult
-	raw, err := client.Get(client.ServiceURL("clusters"), nil, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-
-	allClusters, err := res.ExtractClusters()
-	if err != nil {
-		return nil, err
-	}
-
-	return filterClusters(allClusters, opts), nil
 }
 
 func filterClusters(clusters []Clusters, opts ListOpts) []Clusters {
@@ -92,12 +72,6 @@ func GetStructNestedField(v *Clusters, field string, structDriller []string) str
 	return f1.String()
 }
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToClusterCreateMap() (map[string]interface{}, error)
-}
-
 // CreateOpts contains all the values needed to create a new cluster
 type CreateOpts struct {
 	// API type, fixed value Cluster
@@ -120,67 +94,8 @@ type CreateMetaData struct {
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
-// ToClusterCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToClusterCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-type ExpirationOptsBuilder interface {
-	ToExpirationGetMap() (map[string]interface{}, error)
-}
-
 type ExpirationOpts struct {
 	Duration int `json:"duration" required:"true"`
-}
-
-func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical cluster.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToClusterCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	raw, err := client.Post(client.ServiceURL("clusters"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
-	return
-}
-
-// Get retrieves a particular cluster based on its unique ID.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(client.ServiceURL("clusters", id), nil, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
-// GetCert retrieves a particular cluster certificate based on its unique ID.
-func GetCert(client *golangsdk.ServiceClient, id string) (r GetCertResult) {
-	raw, err := client.Get(client.ServiceURL("clusters", id, "clustercert"), nil, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders,
-	})
-	return
-}
-
-// GetCertWithExpiration retrieves a particular cluster certificate based on its unique ID.
-func GetCertWithExpiration(client *golangsdk.ServiceClient, id string, opts ExpirationOptsBuilder) (r GetCertResult) {
-	b, err := opts.ToExpirationGetMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	raw, err := client.Post(client.ServiceURL("clusters", id, "clustercert"), b, nil, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders,
-	})
-	return
 }
 
 // UpdateOpts contains all the values needed to update a new cluster
@@ -193,40 +108,6 @@ type UpdateSpec struct {
 	Description string `json:"description,omitempty"`
 }
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToClusterUpdateMap() (map[string]interface{}, error)
-}
-
-// ToClusterUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToClusterUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Update allows clusters to update description.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToClusterUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	raw, err := client.Put(client.ServiceURL("clusters", id), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete will permanently delete a particular cluster based on its unique ID.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(client.ServiceURL("clusters", id), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 type UpdateIpOpts struct {
 	Action    string `json:"action" required:"true"`
 	Spec      IpSpec `json:"spec,omitempty"`
@@ -235,26 +116,4 @@ type UpdateIpOpts struct {
 
 type IpSpec struct {
 	ID string `json:"id" required:"true"`
-}
-
-type UpdateIpOptsBuilder interface {
-	ToMasterIpUpdateMap() (map[string]interface{}, error)
-}
-
-func (opts UpdateIpOpts) ToMasterIpUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "spec")
-}
-
-// Update the access information of a specified cluster.
-func UpdateMasterIp(client *golangsdk.ServiceClient, id string, opts UpdateIpOptsBuilder) (r UpdateIpResult) {
-	b, err := opts.ToMasterIpUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	raw, err := client.Put(client.ServiceURL("clusters", id, "mastereip"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
 }

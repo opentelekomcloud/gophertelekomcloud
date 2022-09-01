@@ -136,8 +136,7 @@ func (opts CreateOpts) ToNodePoolCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToNodePoolCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Post(client.ServiceURL("clusters", clusterid, "nodepools"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
@@ -209,8 +208,7 @@ func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]interface{}, error) {
 func Update(client *golangsdk.ServiceClient, clusterid, nodepoolid string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodePoolUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Put(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), b, nil, &golangsdk.RequestOpts{

@@ -31,8 +31,7 @@ func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
 func Update(client *golangsdk.ServiceClient, clusterID, k8sName string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodeUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Patch(

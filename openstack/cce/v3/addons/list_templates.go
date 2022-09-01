@@ -10,8 +10,7 @@ import (
 func ListTemplates(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) (r ListTemplateResult) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Get(fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+

@@ -10,8 +10,7 @@ import (
 func Update(client *golangsdk.ServiceClient, id, clusterId string, opts UpdateOpts) (r UpdateResult) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Put(

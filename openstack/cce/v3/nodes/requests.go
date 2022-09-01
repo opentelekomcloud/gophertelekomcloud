@@ -123,8 +123,7 @@ func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, clusterID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToNodeCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Post(client.ServiceURL("clusters", clusterID, "nodes"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
@@ -164,8 +163,7 @@ func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
 func Update(client *golangsdk.ServiceClient, clusterID, nodeID string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodeUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	raw, err := client.Put(client.ServiceURL("clusters", clusterID, "nodes", nodeID), b, nil, &golangsdk.RequestOpts{
