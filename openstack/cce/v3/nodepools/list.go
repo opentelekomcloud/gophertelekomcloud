@@ -119,45 +119,6 @@ type CreateSpec struct {
 	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
 }
 
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical Node Pool. When it is created, the Node Pool does not have an internal
-// interface
-type CreateOptsBuilder interface {
-	ToNodePoolCreateMap() (map[string]interface{}, error)
-}
-
-// ToNodePoolCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToNodePoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical node pool.
-func Create(client *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToNodePoolCreateMap()
-	if err != nil {
-		return nil, err
-	}
-
-	raw, err := client.Post(client.ServiceURL("clusters", clusterid, "nodepools"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
-	return
-}
-
-// Get retrieves a particular node pool based on its unique ID and cluster ID.
-func Get(client *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult) {
-	raw, err := client.Get(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), nil, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToNodePoolUpdateMap() (map[string]interface{}, error)
-}
-
 // UpdateOpts contains all the values needed to update a new node pool
 type UpdateOpts struct {
 	// API type, fixed value Node
@@ -197,31 +158,4 @@ type UpdateNodeTemplate struct {
 
 type UpdateMetadata struct {
 	Name string `json:"name,omitempty"`
-}
-
-// ToNodePoolUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Update allows node pools to be updated.
-func Update(client *golangsdk.ServiceClient, clusterid, nodepoolid string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToNodePoolUpdateMap()
-	if err != nil {
-		return nil, err
-	}
-
-	raw, err := client.Put(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete will permanently delete a particular node pool based on its unique ID and cluster ID.
-func Delete(client *golangsdk.ServiceClient, clusterid, nodepoolid string) (r DeleteResult) {
-	raw, err := client.Delete(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
 }
