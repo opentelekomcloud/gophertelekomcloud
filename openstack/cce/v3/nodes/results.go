@@ -2,6 +2,7 @@ package nodes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
@@ -249,28 +250,25 @@ type commonResult struct {
 }
 
 // Extract is a function that accepts a result and extracts a node.
-func (r commonResult) Extract() (*Nodes, error) {
-	var s Nodes
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw commonResult) Extract() (*Nodes, error) {
+	var res Nodes
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // ExtractNode is a function that accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
-func (r commonResult) ExtractNode() ([]Nodes, error) {
-	var s ListNode
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-	return s.Nodes, nil
+func (raw commonResult) ExtractNode() ([]Nodes, error) {
+	var res ListNode
+	err = extract.Into(raw, &res)
+	return res.Nodes, err
 }
 
 // ExtractJob is a function that accepts a result and extracts a job.
-func (r commonResult) ExtractJob() (*Job, error) {
-	var s Job
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw commonResult) ExtractJob() (*Job, error) {
+	var res Job
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // ListResult represents the result of a list operation. Call its ExtractNode

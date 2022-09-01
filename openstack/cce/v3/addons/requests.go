@@ -2,6 +2,7 @@ package addons
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -60,22 +61,28 @@ func (opts CreateOpts) ToAddonCreateMap() (map[string]interface{}, error) {
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // addon.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId string) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId string) (r CreateResult) {
 	b, err := opts.ToAddonCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, clusterId), b, &r.Body, reqOpt)
+
+	raw, err := client.Post(
+		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
+			strings.Join([]string{"addons"}, "/"),
+		b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
 	return
 }
 
 // Get retrieves a particular addon based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id, clusterId), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+func Get(client *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
+	raw, err := client.Get(
+		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
+			strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"),
+		nil, &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+		})
 	return
 }
 
@@ -112,24 +119,31 @@ func (opts UpdateOpts) ToAddonUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func Update(c *golangsdk.ServiceClient, id, clusterId string, opts UpdateOpts) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id, clusterId string, opts UpdateOpts) (r UpdateResult) {
 	b, err := opts.ToAddonUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(resourceURL(c, id, clusterId), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+
+	raw, err := client.Put(
+		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
+			strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"),
+		b, nil, &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+		})
 	return
 }
 
 // Delete will permanently delete a particular addon based on its unique ID.
-func Delete(c *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, id, clusterId), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
+func Delete(client *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
+	raw, err := client.Delete(
+		fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
+			strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"),
+		&golangsdk.RequestOpts{
+			OkCodes:     []int{200},
+			MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		})
 	return
 }
 
@@ -149,8 +163,9 @@ func (opts ListOpts) ToAddonListQuery() (string, error) {
 	return u.String(), nil
 }
 
-func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBuilder) (r ListTemplateResult) {
-	url := templatesURL(c, clusterID)
+func ListTemplates(client *golangsdk.ServiceClient, clusterID string, opts ListOptsBuilder) (r ListTemplateResult) {
+	url := fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:]) +
+		strings.Join([]string{"addontemplates"}, "/")
 	if opts != nil {
 		q, err := opts.ToAddonListQuery()
 		if err != nil {
@@ -159,16 +174,20 @@ func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBu
 		}
 		url += q
 	}
-	_, r.Err = c.Get(url, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Get(url, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
-func ListAddonInstances(c *golangsdk.ServiceClient, clusterID string) (r ListInstanceResult) {
-	_, r.Err = c.Get(instanceURL(c, clusterID), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+func ListAddonInstances(client *golangsdk.ServiceClient, clusterID string) (r ListInstanceResult) {
+	raw, err := client.Get(
+		fmt.Sprintf("%s?cluster_id=%s",
+			fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+
+				strings.Join([]string{"addons"}, "/"), clusterID),
+		nil, &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+		})
 	return
 }
 

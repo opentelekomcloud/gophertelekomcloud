@@ -2,6 +2,7 @@ package addons
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type Addon struct {
@@ -63,10 +64,10 @@ type commonResult struct {
 }
 
 // Extract is a function that accepts a result and extracts an Addon.
-func (r commonResult) Extract() (*Addon, error) {
-	var s Addon
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw commonResult) Extract() (*Addon, error) {
+	var res Addon
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
@@ -162,10 +163,10 @@ type AddonTemplateList struct {
 }
 
 // Extract is a function that accepts a result and extracts an Addon.
-func (r ListTemplateResult) Extract() (*AddonTemplateList, error) {
-	var s AddonTemplateList
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw ListTemplateResult) Extract() (*AddonTemplateList, error) {
+	var res AddonTemplateList
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 type InstanceMetadata struct {
@@ -228,11 +229,8 @@ type AddonInstanceList struct {
 	Items []AddonInstance `json:"items" required:"true"`
 }
 
-func (r ListInstanceResult) Extract() (*AddonInstanceList, error) {
-	s := new(AddonInstanceList)
-	err := r.ExtractInto(s)
-	if err != nil {
-		return nil, err
-	}
-	return s, err
+func (raw ListInstanceResult) Extract() (*AddonInstanceList, error) {
+	var res AddonInstanceList
+	err = extract.Into(raw, &res)
+	return &res, err
 }

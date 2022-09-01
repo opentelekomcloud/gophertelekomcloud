@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
+	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
-	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/common"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 

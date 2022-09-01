@@ -1,19 +1,26 @@
 package nodes
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 // List returns collection of nodes.
 func List(client *golangsdk.ServiceClient, clusterID string) (r ListResult) {
-	_, r.Err = client.Get(listURL(client, clusterID), &r.Body, openstack.StdRequestOpts())
+	raw, err := client.Get(
+		fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+strings.Join([]string{"nodes"}, "/"),
+		nil, openstack.StdRequestOpts())
 	return
 }
 
 // Get retrieves a particular nodes based on its unique ID and cluster ID.
-func Get(c *golangsdk.ServiceClient, clusterID, k8sName string) (r GetResult) {
-	_, r.Err = c.Get(nodeURL(c, clusterID, k8sName), &r.Body, openstack.StdRequestOpts())
+func Get(client *golangsdk.ServiceClient, clusterID, k8sName string) (r GetResult) {
+	raw, err := client.Get(
+		fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+strings.Join([]string{"nodes", k8sName}, "/"),
+		nil, openstack.StdRequestOpts())
 	return
 }
 
@@ -38,17 +45,20 @@ func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update allows nodes to be updated.
-func Update(c *golangsdk.ServiceClient, clusterID, k8sName string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, clusterID, k8sName string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodeUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Patch(nodeURL(c, clusterID, k8sName), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-		MoreHeaders: map[string]string{
-			"Content-Type": "application/merge-patch+json",
-		},
-	})
+
+	raw, err := client.Patch(
+		fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+strings.Join([]string{"nodes", k8sName}, "/"),
+		b, nil, &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+			MoreHeaders: map[string]string{
+				"Content-Type": "application/merge-patch+json",
+			},
+		})
 	return
 }

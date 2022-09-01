@@ -62,9 +62,9 @@ const OutputOTC = `
         "endpoints": {
 			"internal": "https://192.168.0.68:5443",
             "external": "https://10.34.56.78:5443",
-			"external_otc": "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"
+			"external_otc": "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otclient.t-systems.com"
 		}
-                
+
     }
 }`
 
@@ -120,7 +120,7 @@ var ExpectedOTC = &clusters.Clusters{
 		Phase: "Available",
 		Endpoints: []clusters.Endpoints{
 			{Internal: "https://192.168.0.68:5443", External: "https://10.34.56.78:5443",
-				ExternalOTC: "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"},
+				ExternalOTC: "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otclient.t-systems.com"},
 		},
 	},
 }
@@ -190,7 +190,7 @@ const ListOutputOTC = `
                 "endpoints": {
 					"internal": "https://192.168.0.68:5443",
             		"external": "https://10.34.56.78:5443",
-					"external_otc": "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"
+					"external_otc": "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otclient.t-systems.com"
 				}
             }
         }
@@ -230,7 +230,7 @@ var ListExpectedOTC = []clusters.Clusters{
 			Phase: "Available",
 			Endpoints: []clusters.Endpoints{
 				{Internal: "https://192.168.0.68:5443", External: "https://10.34.56.78:5443",
-					ExternalOTC: "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"},
+					ExternalOTC: "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otclient.t-systems.com"},
 			},
 		},
 	},

@@ -2,6 +2,7 @@ package nodes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type ListNodes struct {
@@ -117,28 +118,28 @@ type ListResult struct {
 	golangsdk.Result
 }
 
-func (r ListResult) Extract() (*ListNodes, error) {
-	s := new(ListNodes)
-	err := r.ExtractIntoStructPtr(s, "")
-	return s, err
+func (raw ListResult) Extract() (*ListNodes, error) {
+	var res ListNodes
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 type GetResult struct {
 	golangsdk.Result
 }
 
-func (r GetResult) Extract() (*GetNode, error) {
-	s := new(GetNode)
-	err := r.ExtractIntoStructPtr(s, "")
-	return s, err
+func (raw GetResult) Extract() (*GetNode, error) {
+	var res GetNode
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 type UpdateResult struct {
 	golangsdk.Result
 }
 
-func (r UpdateResult) Extract() (*GetNode, error) {
-	s := new(GetNode)
-	err := r.ExtractIntoStructPtr(s, "")
-	return s, err
+func (raw UpdateResult) Extract() (*GetNode, error) {
+	var res GetNode
+	err = extract.Into(raw, &res)
+	return &res, err
 }

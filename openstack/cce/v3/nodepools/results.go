@@ -2,6 +2,7 @@ package nodepools
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
 
@@ -84,21 +85,18 @@ type commonResult struct {
 }
 
 // Extract is a function that accepts a result and extracts a node pool.
-func (r commonResult) Extract() (*NodePool, error) {
-	var s NodePool
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw commonResult) Extract() (*NodePool, error) {
+	var res NodePool
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // ExtractNodePool is a function that accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
-func (r commonResult) ExtractNodePool() ([]NodePool, error) {
-	var s ListNodePool
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-	return s.NodePools, nil
+func (raw commonResult) ExtractNodePool() ([]NodePool, error) {
+	var res ListNodePool
+	err = extract.Into(raw, &res)
+	return res.NodePools, err
 }
 
 // ListResult represents the result of a list operation. Call its ExtractNode

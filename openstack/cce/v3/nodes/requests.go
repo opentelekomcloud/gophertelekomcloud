@@ -19,23 +19,22 @@ type ListOpts struct {
 
 // List returns collection of nodes.
 func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]Nodes, error) {
-	var r ListResult
-	_, r.Err = client.Get(rootURL(client, clusterID), &r.Body, &golangsdk.RequestOpts{
+	var res ListResult
+	raw, err := client.Get(client.ServiceURL("clusters", clusterID, "nodes"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
 
-	allNodes, err := r.ExtractNode()
+	allNodes, err := res.ExtractNode()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return FilterNodes(allNodes, opts), nil
+	return filterNodes(allNodes, opts), nil
 }
 
-func FilterNodes(nodes []Nodes, opts ListOpts) []Nodes {
-
+func filterNodes(nodes []Nodes, opts ListOpts) []Nodes {
 	var refinedNodes []Nodes
 	var matched bool
 
@@ -121,20 +120,20 @@ func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical node.
-func Create(c *golangsdk.ServiceClient, clusterID string, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, clusterID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToNodeCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, clusterID), b, &r.Body, reqOpt)
+
+	raw, err := client.Post(client.ServiceURL("clusters", clusterID, "nodes"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
 	return
 }
 
 // Get retrieves a particular nodes based on its unique ID and cluster ID.
-func Get(c *golangsdk.ServiceClient, clusterID, nodeID string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, clusterID, nodeID), &r.Body, &golangsdk.RequestOpts{
+func Get(client *golangsdk.ServiceClient, clusterID, nodeID string) (r GetResult) {
+	raw, err := client.Get(client.ServiceURL("clusters", clusterID, "nodes", nodeID), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -162,21 +161,22 @@ func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update allows nodes to be updated.
-func Update(c *golangsdk.ServiceClient, clusterID, nodeID string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, clusterID, nodeID string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodeUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(resourceURL(c, clusterID, nodeID), b, &r.Body, &golangsdk.RequestOpts{
+
+	raw, err := client.Put(client.ServiceURL("clusters", clusterID, "nodes", nodeID), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // Delete will permanently delete a particular node based on its unique ID and cluster ID.
-func Delete(c *golangsdk.ServiceClient, clusterID, nodeID string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, clusterID, nodeID), &golangsdk.RequestOpts{
+func Delete(client *golangsdk.ServiceClient, clusterID, nodeID string) (r DeleteResult) {
+	raw, err := client.Delete(client.ServiceURL("clusters", clusterID, "nodes", nodeID), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -184,8 +184,8 @@ func Delete(c *golangsdk.ServiceClient, clusterID, nodeID string) (r DeleteResul
 }
 
 // GetJobDetails retrieves a particular job based on its unique ID
-func GetJobDetails(c *golangsdk.ServiceClient, jobID string) (r GetResult) {
-	_, r.Err = c.Get(getJobURL(c, jobID), &r.Body, &golangsdk.RequestOpts{
+func GetJobDetails(client *golangsdk.ServiceClient, jobID string) (r GetResult) {
+	raw, err := client.Get(client.ServiceURL("jobs", jobID), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type ListCluster struct {
@@ -244,23 +245,18 @@ type commonResult struct {
 }
 
 // Extract is a function that accepts a result and extracts a cluster.
-func (r commonResult) Extract() (*Clusters, error) {
-	var s Clusters
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw commonResult) Extract() (*Clusters, error) {
+	var res Clusters
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // ExtractCluster is a function that accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
-func (r commonResult) ExtractClusters() ([]Clusters, error) {
-	var s ListCluster
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.Clusters, nil
-
+func (raw commonResult) ExtractClusters() ([]Clusters, error) {
+	var res ListCluster
+	err = extract.Into(raw, &res)
+	return res.Clusters, err
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
@@ -298,17 +294,17 @@ type GetCertResult struct {
 }
 
 // Extract is a function that accepts a result and extracts a cluster.
-func (r GetCertResult) Extract() (*Certificate, error) {
-	var s Certificate
-	err := r.ExtractInto(&s)
-	return &s, err
+func (raw GetCertResult) Extract() (*Certificate, error) {
+	var res Certificate
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // ExtractMap is a function that accepts a result and extracts a kubeconfig.
-func (r GetCertResult) ExtractMap() (map[string]interface{}, error) {
-	var s map[string]interface{}
-	err := r.ExtractInto(&s)
-	return s, err
+func (raw GetCertResult) ExtractMap() (map[string]interface{}, error) {
+	var res map[string]interface{}
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // UpdateIpResult represents the result of an update operation. Call its Extract

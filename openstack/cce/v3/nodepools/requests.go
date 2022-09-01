@@ -20,23 +20,22 @@ type ListOpts struct {
 
 // List returns collection of node pools.
 func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]NodePool, error) {
-	var r ListResult
-	_, r.Err = client.Get(rootURL(client, clusterID), &r.Body, &golangsdk.RequestOpts{
+	var res ListResult
+	raw, err := client.Get(client.ServiceURL("clusters", clusterID, "nodepools"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
 
-	allNodePools, err := r.ExtractNodePool()
+	allNodePools, err := res.ExtractNodePool()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return FilterNodePools(allNodePools, opts), nil
+	return filterNodePools(allNodePools, opts), nil
 }
 
-func FilterNodePools(nodepools []NodePool, opts ListOpts) []NodePool {
-
+func filterNodePools(nodepools []NodePool, opts ListOpts) []NodePool {
 	var refinedNodePools []NodePool
 	var matched bool
 
@@ -134,20 +133,20 @@ func (opts CreateOpts) ToNodePoolCreateMap() (map[string]interface{}, error) {
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical node pool.
-func Create(c *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToNodePoolCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, clusterid), b, &r.Body, reqOpt)
+
+	raw, err := client.Post(client.ServiceURL("clusters", clusterid, "nodepools"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
 	return
 }
 
 // Get retrieves a particular node pool based on its unique ID and cluster ID.
-func Get(c *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, clusterid, nodepoolid), &r.Body, &golangsdk.RequestOpts{
+func Get(client *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult) {
+	raw, err := client.Get(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -207,21 +206,22 @@ func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update allows node pools to be updated.
-func Update(c *golangsdk.ServiceClient, clusterid, nodepoolid string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, clusterid, nodepoolid string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToNodePoolUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(resourceURL(c, clusterid, nodepoolid), b, &r.Body, &golangsdk.RequestOpts{
+
+	raw, err := client.Put(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // Delete will permanently delete a particular node pool based on its unique ID and cluster ID.
-func Delete(c *golangsdk.ServiceClient, clusterid, nodepoolid string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, clusterid, nodepoolid), &golangsdk.RequestOpts{
+func Delete(client *golangsdk.ServiceClient, clusterid, nodepoolid string) (r DeleteResult) {
+	raw, err := client.Delete(client.ServiceURL("clusters", clusterid, "nodepools", nodepoolid), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})

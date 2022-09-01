@@ -21,22 +21,21 @@ type ListOpts struct {
 
 // List returns collection of clusters.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Clusters, error) {
-	var r ListResult
-	_, r.Err = client.Get(rootURL(client), &r.Body, &golangsdk.RequestOpts{
+	var res ListResult
+	raw, err := client.Get(client.ServiceURL("clusters"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
 
-	allClusters, err := r.ExtractClusters()
+	allClusters, err := res.ExtractClusters()
 	if err != nil {
 		return nil, err
 	}
 
-	return FilterClusters(allClusters, opts), nil
+	return filterClusters(allClusters, opts), nil
 }
 
-func FilterClusters(clusters []Clusters, opts ListOpts) []Clusters {
-
+func filterClusters(clusters []Clusters, opts ListOpts) []Clusters {
 	var refinedClusters []Clusters
 	var matched bool
 	m := map[string]FilterStruct{}
@@ -140,20 +139,20 @@ func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) 
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical cluster.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToClusterCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, reqOpt)
+
+	raw, err := client.Post(client.ServiceURL("clusters"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
 	return
 }
 
 // Get retrieves a particular cluster based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &golangsdk.RequestOpts{
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
+	raw, err := client.Get(client.ServiceURL("clusters", id), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -161,8 +160,8 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 }
 
 // GetCert retrieves a particular cluster certificate based on its unique ID.
-func GetCert(c *golangsdk.ServiceClient, id string) (r GetCertResult) {
-	_, r.Err = c.Get(certificateURL(c, id), &r.Body, &golangsdk.RequestOpts{
+func GetCert(client *golangsdk.ServiceClient, id string) (r GetCertResult) {
+	raw, err := client.Get(client.ServiceURL("clusters", id, "clustercert"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders,
 	})
@@ -170,14 +169,14 @@ func GetCert(c *golangsdk.ServiceClient, id string) (r GetCertResult) {
 }
 
 // GetCertWithExpiration retrieves a particular cluster certificate based on its unique ID.
-func GetCertWithExpiration(c *golangsdk.ServiceClient, id string, opts ExpirationOptsBuilder) (r GetCertResult) {
+func GetCertWithExpiration(client *golangsdk.ServiceClient, id string, opts ExpirationOptsBuilder) (r GetCertResult) {
 	b, err := opts.ToExpirationGetMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = c.Post(certificateURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("clusters", id, "clustercert"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders,
 	})
@@ -206,21 +205,22 @@ func (opts UpdateOpts) ToClusterUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update allows clusters to update description.
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToClusterUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(resourceURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
+
+	raw, err := client.Put(client.ServiceURL("clusters", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
 }
 
 // Delete will permanently delete a particular cluster based on its unique ID.
-func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, id), &golangsdk.RequestOpts{
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+	raw, err := client.Delete(client.ServiceURL("clusters", id), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -246,13 +246,14 @@ func (opts UpdateIpOpts) ToMasterIpUpdateMap() (map[string]interface{}, error) {
 }
 
 // Update the access information of a specified cluster.
-func UpdateMasterIp(c *golangsdk.ServiceClient, id string, opts UpdateIpOptsBuilder) (r UpdateIpResult) {
+func UpdateMasterIp(client *golangsdk.ServiceClient, id string, opts UpdateIpOptsBuilder) (r UpdateIpResult) {
 	b, err := opts.ToMasterIpUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(masterIpURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
+
+	raw, err := client.Put(client.ServiceURL("clusters", id, "mastereip"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
