@@ -44,6 +44,8 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 
 // Get a log group with detailed information by id
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(getURL(client, id), &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
 	return
 }
