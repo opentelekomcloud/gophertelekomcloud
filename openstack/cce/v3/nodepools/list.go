@@ -4,12 +4,8 @@ import (
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
-
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json"},
-}
 
 // ListOpts allows the filtering of list data using given parameters.
 type ListOpts struct {
@@ -20,19 +16,31 @@ type ListOpts struct {
 
 // List returns collection of node pools.
 func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]NodePool, error) {
-	var res ListResult
 	raw, err := client.Get(client.ServiceURL("clusters", clusterID, "nodepools"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: RequestOpts, JSONBody: nil,
 	})
-
-	allNodePools, err := res.ExtractNodePool()
-
 	if err != nil {
 		return nil, err
 	}
 
-	return filterNodePools(allNodePools, opts), nil
+	var res ListNodePool
+	err = extract.Into(raw, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return filterNodePools(res.NodePools, opts), nil
+}
+
+// ListNodePool - Describes the Node Pool Structure of cluster
+type ListNodePool struct {
+	// API type, fixed value "List"
+	Kind string `json:"kind"`
+	// API version, fixed value "v3"
+	Apiversion string `json:"apiVersion"`
+	// all Node Pools
+	NodePools []NodePool `json:"items"`
 }
 
 func filterNodePools(nodepools []NodePool, opts ListOpts) []NodePool {
@@ -57,7 +65,7 @@ func filterNodePools(nodepools []NodePool, opts ListOpts) []NodePool {
 			matched = true
 
 			for key, value := range m {
-				if sVal := GetStructNestedField(&nodepool, key, value.Driller); !(sVal == value.Value) {
+				if sVal := getStructNestedField(&nodepool, key, value.Driller); !(sVal == value.Value) {
 					matched = false
 				}
 			}
@@ -71,7 +79,7 @@ func filterNodePools(nodepools []NodePool, opts ListOpts) []NodePool {
 	return refinedNodePools
 }
 
-func GetStructNestedField(v *NodePool, field string, structDriller []string) string {
+func getStructNestedField(v *NodePool, field string, structDriller []string) string {
 	r := reflect.ValueOf(v)
 	for _, drillField := range structDriller {
 		f := reflect.Indirect(r).FieldByName(drillField).Interface()
@@ -84,78 +92,4 @@ func GetStructNestedField(v *NodePool, field string, structDriller []string) str
 type FilterStruct struct {
 	Value   string
 	Driller []string
-}
-
-// CreateOpts allows extensions to add additional parameters to the
-// Create request.
-type CreateOpts struct {
-	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
-	// Metadata required to create a Node Pool
-	Metadata CreateMetaData `json:"metadata" required:"true"`
-	// specifications to create a Node Pool
-	Spec CreateSpec `json:"spec" required:"true"`
-}
-
-// CreateMetaData required to create a Node Pool
-type CreateMetaData struct {
-	// Name of the node pool.
-	Name string `json:"name" required:"true"`
-}
-
-// CreateSpec describes Node pools specification
-type CreateSpec struct {
-	// Node pool type. Currently, only `vm`(ECSs) are supported.
-	Type string `json:"type" required:"true"`
-	// Node template
-	NodeTemplate nodes.Spec `json:"nodeTemplate" required:"true"`
-	// Initial number of expected nodes
-	InitialNodeCount int `json:"initialNodeCount"`
-	// Auto scaling parameters
-	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
-	// Node management parameters
-	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
-}
-
-// UpdateOpts contains all the values needed to update a new node pool
-type UpdateOpts struct {
-	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
-	// Metadata required to update a Node Pool
-	Metadata UpdateMetaData `json:"metadata" required:"true"`
-	// specifications to update a Node Pool
-	Spec UpdateSpec `json:"spec,omitempty" required:"true"`
-}
-
-// UpdateMetaData required to update a Node Pool
-type UpdateMetaData struct {
-	// Name of the node pool.
-	Name string `json:"name" required:"true"`
-}
-
-// UpdateSpec describes Node pools update specification
-type UpdateSpec struct {
-	// Node type. Currently, only VM nodes are supported.
-	Type string `json:"type,omitempty"`
-	// Node template
-	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate,omitempty"`
-	// Initial number of expected nodes
-	InitialNodeCount int `json:"initialNodeCount"`
-	// Auto scaling parameters
-	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
-}
-
-type UpdateNodeTemplate struct {
-	// Tag of a Kubernetes node, key value pair format
-	K8sTags map[string]string `json:"k8sTags,omitempty"`
-	// taints to created nodes to configure anti-affinity
-	Taints []nodes.TaintSpec `json:"taints,omitempty"`
-}
-
-type UpdateMetadata struct {
-	Name string `json:"name,omitempty"`
 }
