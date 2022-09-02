@@ -35,6 +35,24 @@ func deleteOBSBucket(t *testing.T, bucketName string) {
 	client, err := clients.NewOBSClientWithoutHeader()
 	th.AssertNoErr(t, err)
 
+	input := &obs.ListObjectsInput{}
+	input.Bucket = bucketName
+
+	objectsList, err := client.ListObjects(input)
+	th.AssertNoErr(t, err)
+
+	objects := make([]obs.ObjectToDelete, len(objectsList.Contents))
+	for i, content := range objectsList.Contents {
+		objects[i].Key = content.Key
+	}
+	deleteOpts := &obs.DeleteObjectsInput{
+		Bucket:  bucketName,
+		Objects: objects,
+	}
+	_, err = client.DeleteObjects(deleteOpts)
+	th.AssertNoErr(t, err)
+	t.Logf("Deleted OBS Bucket objects: %s", objects)
+
 	_, err = client.DeleteBucket(bucketName)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted OBS Bucket: %s", bucketName)
