@@ -87,12 +87,12 @@ func (a *testAddons) TestAddonsLifecycle() {
 
 	addonID := addon.Metadata.Id
 
-	defer func() {
+	t.Cleanup(func() {
 		err := addons.Delete(client, addonID, a.clusterID)
 		th.AssertNoErr(t, err)
 
 		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, a.clusterID, 600))
-	}()
+	})
 
 	getAddon, err := addons.Get(client, addonID, a.clusterID)
 	th.AssertNoErr(t, err)

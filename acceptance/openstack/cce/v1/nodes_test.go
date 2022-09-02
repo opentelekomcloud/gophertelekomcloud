@@ -51,7 +51,9 @@ func (s *testNodes) TestNodeLifecycle() {
 	privateIP := "192.168.1.12" // suppose used subnet is 192.168.0.0/16
 
 	kp := cce.CreateKeypair(t)
-	defer cce.DeleteKeypair(t, kp)
+	t.Cleanup(func() {
+		cce.DeleteKeypair(t, kp)
+	})
 
 	opts := nodes.CreateOpts{
 		Kind:       "Node",
@@ -117,7 +119,7 @@ func (s *testNodes) TestNodeLifecycle() {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
 		err = golangsdk.WaitFor(1800, func() (bool, error) {
 			_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
@@ -130,7 +132,7 @@ func (s *testNodes) TestNodeLifecycle() {
 			return false, nil
 		})
 		th.AssertNoErr(t, err)
-	}()
+	})
 
 	clientV1, err := clients.NewCceV1Client()
 	th.AssertNoErr(t, err)

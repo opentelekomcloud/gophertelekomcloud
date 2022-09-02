@@ -53,7 +53,9 @@ func (s *testNodes) TestNodeLifecycle() {
 	privateIP := "192.168.1.12" // suppose used subnet is 192.168.0.0/16
 
 	kp := cce.CreateKeypair(t)
-	defer cce.DeleteKeypair(t, kp)
+	t.Cleanup(func() {
+		cce.DeleteKeypair(t, kp)
+	})
 
 	var encryption string
 	if s.kmsID != "" {
