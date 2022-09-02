@@ -82,19 +82,19 @@ func (a *testAddons) TestAddonsLifecycle() {
 		},
 	}
 
-	addon, err := addons.Create(client, cOpts, a.clusterID).Extract()
+	addon, err := addons.Create(client, cOpts, a.clusterID)
 	th.AssertNoErr(t, err)
 
 	addonID := addon.Metadata.Id
 
 	defer func() {
-		err := addons.Delete(client, addonID, a.clusterID).ExtractErr()
+		err := addons.Delete(client, addonID, a.clusterID)
 		th.AssertNoErr(t, err)
 
 		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, a.clusterID, 600))
 	}()
 
-	getAddon, err := addons.Get(client, addonID, a.clusterID).Extract()
+	getAddon, err := addons.Get(client, addonID, a.clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
 	th.AssertEquals(t, "1.17.2", getAddon.Spec.Version)
@@ -124,10 +124,10 @@ func (a *testAddons) TestAddonsLifecycle() {
 	uOpts.Spec.Values.Advanced["scaleDownEnabled"] = false
 	uOpts.Spec.Values.Advanced["scaleDownDelayAfterAdd"] = 11
 
-	_, err = addons.Update(client, addonID, a.clusterID, uOpts).Extract()
+	_, err = addons.Update(client, addonID, a.clusterID, uOpts)
 	th.AssertNoErr(t, err)
 
-	getAddon2, err := addons.Get(client, addonID, a.clusterID).Extract()
+	getAddon2, err := addons.Get(client, addonID, a.clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, false, getAddon2.Spec.Values.Advanced["scaleDownEnabled"])
 	th.AssertEquals(t, 11.0, getAddon2.Spec.Values.Advanced["scaleDownDelayAfterAdd"])
@@ -139,7 +139,7 @@ func (a *testAddons) TestListAddonTemplates() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListTemplates(client, a.clusterID, nil).Extract()
+	list, err := addons.ListTemplates(client, a.clusterID, addons.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	if len(list.Items) == 0 {
@@ -157,11 +157,11 @@ func (a *testAddons) TestListAddonInstances() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListAddonInstances(client, a.clusterID).Extract()
+	list, err := addons.ListAddonInstances(client, a.clusterID)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, len(list.Items), 2)
 	// check if listed addon exists
-	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID).Extract()
+	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID)
 	th.AssertNoErr(t, err)
 }

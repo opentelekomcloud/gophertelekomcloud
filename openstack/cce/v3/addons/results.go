@@ -1,10 +1,5 @@
 package addons
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-)
-
 type Addon struct {
 	// API type, fixed value Addon
 	Kind string `json:"kind" required:"true"`
@@ -18,7 +13,7 @@ type Addon struct {
 	Status Status `json:"status"`
 }
 
-// Metadata required to create an addon
+// MetaData required to create an addon
 type MetaData struct {
 	// Addon unique name
 	Name string `json:"name"`
@@ -30,7 +25,7 @@ type MetaData struct {
 	Annotations map[string]string `json:"annotaions"`
 }
 
-// Specifications to create an addon
+// Spec to create an addon
 type Spec struct {
 	// For the addon version.
 	Version string `json:"version" required:"true"`
@@ -57,49 +52,6 @@ type Status struct {
 	Message string `json:"message"`
 	// The target versions of the addon
 	TargetVersions []string `json:"targetVersions"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts an Addon.
-func (raw commonResult) Extract() (*Addon, error) {
-	var res Addon
-	err = extract.Into(raw, &res)
-	return &res, err
-}
-
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as an Addon.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as an Addon.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as an Addon.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult represents the result of a delete operation. Call its ExtractErr
-// method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type ListTemplateResult struct {
-	golangsdk.Result
-}
-
-type ListInstanceResult struct {
-	golangsdk.Result
 }
 
 type SupportVersion struct {
@@ -162,13 +114,6 @@ type AddonTemplateList struct {
 	Items []AddonTemplate `json:"items" required:"true"`
 }
 
-// Extract is a function that accepts a result and extracts an Addon.
-func (raw ListTemplateResult) Extract() (*AddonTemplateList, error) {
-	var res AddonTemplateList
-	err = extract.Into(raw, &res)
-	return &res, err
-}
-
 type InstanceMetadata struct {
 	ID                string            `json:"uid"`
 	Name              string            `json:"name"`
@@ -227,10 +172,4 @@ type AddonInstanceList struct {
 	Metadata string `json:"metadata"`
 	// Add-on template list
 	Items []AddonInstance `json:"items" required:"true"`
-}
-
-func (raw ListInstanceResult) Extract() (*AddonInstanceList, error) {
-	var res AddonInstanceList
-	err = extract.Into(raw, &res)
-	return &res, err
 }
