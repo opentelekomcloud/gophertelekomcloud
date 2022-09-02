@@ -136,7 +136,7 @@ func (s *testNodes) TestNodeLifecycle() {
 	th.AssertNoErr(t, err)
 
 	k8Name := state.Status.PrivateIP
-	k8Node, err := nodesv1.Get(clientV1, s.clusterID, k8Name).Extract()
+	k8Node, err := nodesv1.Get(clientV1, s.clusterID, k8Name)
 	th.AssertNoErr(t, err)
 	val, ok := k8Node.Metadata.Labels["app"]
 	th.AssertEquals(t, true, ok)
