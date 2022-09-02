@@ -8,15 +8,19 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestTrackersLifecycle(t *testing.T) {
+func TrackersLifecycle(t *testing.T) {
 	client, err := clients.NewCTSV1Client()
 	th.AssertNoErr(t, err)
 
 	bucketName := createOBSBucket(t)
-	defer deleteOBSBucket(t, bucketName)
+	t.Cleanup(func() {
+		deleteOBSBucket(t, bucketName)
+	})
 
 	smn := createSMNTopic(t)
-	defer deleteSMNTopic(t, smn.TopicUrn)
+	t.Cleanup(func() {
+		deleteSMNTopic(t, smn.TopicUrn)
+	})
 
 	t.Logf("Attempting to create CTSv1 Tracker")
 	createOpts := tracker.CreateOptsWithSMN{
@@ -28,12 +32,13 @@ func TestTrackersLifecycle(t *testing.T) {
 		},
 	}
 	ctsTracker, err := tracker.Create(client, createOpts).Extract()
-	defer func() {
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete CTSv1 Tracker: %s", ctsTracker.TrackerName)
 		err := tracker.Delete(client).ExtractErr()
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted CTSv1 Tracker: %s", ctsTracker.TrackerName)
-	}()
+	})
+
 	th.AssertNoErr(t, err)
 	t.Logf("Created CTSv1 Tracker: %s", ctsTracker.TrackerName)
 	th.AssertEquals(t, true, ctsTracker.SimpleMessageNotification.IsSupportSMN)
@@ -59,5 +64,6 @@ func TestTrackersLifecycle(t *testing.T) {
 	if len(trackerList) == 0 {
 		t.Fatalf("CTS tracker wasn't found: %s", ctsTracker.TrackerName)
 	}
+
 	th.AssertEquals(t, updateOpts.Status, trackerList[0].Status)
 }
