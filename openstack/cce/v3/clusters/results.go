@@ -2,19 +2,7 @@ package clusters
 
 import (
 	"encoding/json"
-
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
-
-type ListCluster struct {
-	// API type, fixed value Cluster
-	Kind string `json:"kind"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion"`
-	// all Clusters
-	Clusters []Clusters `json:"items"`
-}
 
 type Clusters struct {
 	// API type, fixed value Cluster
@@ -29,7 +17,7 @@ type Clusters struct {
 	Status Status `json:"status"`
 }
 
-// Metadata required to create a cluster
+// MetaData required to create a cluster
 type MetaData struct {
 	// Cluster unique name
 	Name string `json:"name"`
@@ -41,7 +29,7 @@ type MetaData struct {
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
-// Specifications to create a cluster
+// Spec to create a cluster
 type Spec struct {
 	// Cluster category: CCE, Turbo
 	Category string `json:"category,omitempty"`
@@ -74,7 +62,6 @@ type Spec struct {
 	KubeProxyMode string `json:"kubeProxyMode,omitempty"`
 }
 
-// Node network parameters
 type HostNetworkSpec struct {
 	// The ID of the VPC used to create the node
 	VpcId string `json:"vpc" required:"true"`
@@ -87,7 +74,6 @@ type HostNetworkSpec struct {
 	SecurityGroup string `json:"SecurityGroup,omitempty"`
 }
 
-// Container network parameters
 type ContainerNetworkSpec struct {
 	// Container network type: overlay_l2 , underlay_ipvlan or vpc-router
 	Mode string `json:"mode" required:"true"`
@@ -102,7 +88,6 @@ type EniNetworkSpec struct {
 	Cidr string `json:"eniSubnetCIDR" required:"true"`
 }
 
-// Authentication parameters
 type AuthenticationSpec struct {
 	// Authentication mode: rbac , x509 or authenticating_proxy
 	Mode                string            `json:"mode" required:"true"`
@@ -144,63 +129,6 @@ type Endpoints struct {
 	ExternalOTC string `json:"external_otc"`
 }
 
-type Certificate struct {
-	// API type, fixed value Config
-	Kind string `json:"kind"`
-	// API version, fixed value v1
-	ApiVersion string `json:"apiVersion"`
-	// Cluster list
-	Clusters []CertClusters `json:"clusters"`
-	// User list
-	Users []CertUsers `json:"users"`
-	// Context list
-	Contexts []CertContexts `json:"contexts"`
-	// The current context
-	CurrentContext string `json:"current-context"`
-}
-
-type CertClusters struct {
-	// Cluster name
-	Name string `json:"name"`
-	// Cluster information
-	Cluster CertCluster `json:"cluster"`
-}
-
-type CertCluster struct {
-	// Server IP address
-	Server string `json:"server"`
-	// Certificate data
-	CertAuthorityData string `json:"certificate-authority-data"`
-}
-
-type CertUsers struct {
-	// User name
-	Name string `json:"name"`
-	// Cluster information
-	User CertUser `json:"user"`
-}
-
-type CertUser struct {
-	// Client certificate
-	ClientCertData string `json:"client-certificate-data"`
-	// Client key data
-	ClientKeyData string `json:"client-key-data"`
-}
-
-type CertContexts struct {
-	// Context name
-	Name string `json:"name"`
-	// Context information
-	Context CertContext `json:"context"`
-}
-
-type CertContext struct {
-	// Cluster name
-	Cluster string `json:"cluster"`
-	// User name
-	User string `json:"user"`
-}
-
 // UnmarshalJSON helps to unmarshal Status fields into needed values.
 // OTC and Huawei have different data types and child fields for `endpoints` field in Cluster Status.
 // This function handles the unmarshal for both
@@ -238,77 +166,4 @@ func (r *Status) UnmarshalJSON(b []byte) error {
 	r.Endpoints = s.Endpoints
 
 	return err
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a cluster.
-func (raw commonResult) Extract() (*Clusters, error) {
-	var res Clusters
-	err = extract.Into(raw, &res)
-	return &res, err
-}
-
-// ExtractCluster is a function that accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
-func (raw commonResult) ExtractClusters() ([]Clusters, error) {
-	var res ListCluster
-	err = extract.Into(raw, &res)
-	return res.Clusters, err
-}
-
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a Cluster.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Cluster.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Cluster.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult represents the result of a delete operation. Call its ExtractErr
-// method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// ListResult represents the result of a list operation. Call its ExtractCluster
-// method to interpret it as a Cluster.
-type ListResult struct {
-	commonResult
-}
-
-type GetCertResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a cluster.
-func (raw GetCertResult) Extract() (*Certificate, error) {
-	var res Certificate
-	err = extract.Into(raw, &res)
-	return &res, err
-}
-
-// ExtractMap is a function that accepts a result and extracts a kubeconfig.
-func (raw GetCertResult) ExtractMap() (map[string]interface{}, error) {
-	var res map[string]interface{}
-	err = extract.Into(raw, &res)
-	return &res, err
-}
-
-// UpdateIpResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Cluster.
-type UpdateIpResult struct {
-	golangsdk.ErrResult
 }

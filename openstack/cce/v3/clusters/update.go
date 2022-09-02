@@ -1,9 +1,12 @@
 package clusters
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 // Update allows clusters to update description.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Clusters, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -12,5 +15,11 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r Upda
 	raw, err := client.Put(client.ServiceURL("clusters", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var res Clusters
+	err = extract.Into(raw, &res)
+	return &res, err
 }

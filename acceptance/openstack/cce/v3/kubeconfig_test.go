@@ -47,13 +47,13 @@ func (s *testKubeConfig) TestKubeConfigReading() {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
-	kubeConfig, err := clusters.GetCert(client, s.clusterID).ExtractMap()
+	kubeConfig, err := clusters.GetCert(client, s.clusterID)
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfig)
 
 	kubeConfigExp, err := clusters.GetCertWithExpiration(client, s.clusterID, clusters.ExpirationOpts{
 		Duration: 5,
-	}).ExtractMap()
+	})
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfigExp)
 }
