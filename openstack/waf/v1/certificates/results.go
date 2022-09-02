@@ -1,11 +1,10 @@
 package certificates
 
 import (
-	"fmt"
-	"reflect"
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -62,16 +61,15 @@ type CertificatePage struct {
 	pagination.OffsetPageBase
 }
 
-// IsEmpty returns true if this Page has no items in it.
-func (p CertificatePage) IsEmpty() (bool, error) {
-	if b, ok := p.Body.(map[string]interface{}); ok {
-		items := b["items"].([]interface{})
-		return len(items) == 0, nil
+func (p CertificatePage) GetBodyAsSlice() ([]interface{}, error) {
+	items := make([]interface{}, 0)
+
+	err := extract.IntoSlicePtr(p.BodyReader(), &items, "items")
+	if err != nil {
+		return nil, err
 	}
-	err := golangsdk.ErrUnexpectedType{}
-	err.Expected = "map[string]interface{}"
-	err.Actual = fmt.Sprintf("%v", reflect.TypeOf(p.Body))
-	return true, err
+
+	return items, nil
 }
 
 func (p CertificatePage) NextPageURL() (string, error) {
@@ -96,6 +94,7 @@ func (p CertificatePage) NextPageURL() (string, error) {
 
 func ExtractCertificates(p pagination.Page) ([]Certificate, error) {
 	var certs []Certificate
-	err := (p.(CertificatePage)).ExtractIntoSlicePtr(&certs, "items")
+	body := p.(CertificatePage).BodyReader()
+	err := extract.IntoSlicePtr(body, &certs, "items")
 	return certs, err
 }

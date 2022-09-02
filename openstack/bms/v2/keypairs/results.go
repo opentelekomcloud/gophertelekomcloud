@@ -33,7 +33,7 @@ func ExtractKeyPairs(r pagination.Page) ([]KeyPair, error) {
 		KeyPair KeyPair `json:"keypair"`
 	}
 
-	err := extract.IntoSlicePtr(r.(KeyPairPage).Result.Body, &res, "keypairs")
+	err := extract.IntoSlicePtr(r.(KeyPairPage).Result.BodyReader(), &res, "keypairs")
 	results := make([]KeyPair, len(res))
 
 	for i, pair := range res {

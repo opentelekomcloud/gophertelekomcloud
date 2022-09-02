@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"reflect"
 )
 
-func intoPtr(body, to interface{}, label string) error {
+func intoPtr(body io.Reader, to interface{}, label string) error {
 	if label == "" {
 		return Into(body, &to)
 	}
@@ -106,24 +105,12 @@ func JsonMarshal(t interface{}) ([]byte, error) {
 	return buffer.Bytes(), err
 }
 
-func Into(body interface{}, to interface{}) error {
-	if raw, ok := body.(http.Response); ok {
-		body = raw.Body
+func Into(body io.Reader, to interface{}) error {
+	if closer, ok := body.(io.ReadCloser); ok {
+		defer closer.Close()
 	}
 
-	if reader, ok := body.(io.ReadCloser); ok {
-		defer reader.Close()
-		return json.NewDecoder(reader).Decode(to)
-	}
-
-	// TODO: remove this branch in pager refactoring
-	b, err := JsonMarshal(body)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(b, to)
-
-	return err
+	return json.NewDecoder(body).Decode(to)
 }
 
 func typeCheck(to interface{}, kind reflect.Kind) error {
@@ -140,7 +127,7 @@ func typeCheck(to interface{}, kind reflect.Kind) error {
 }
 
 // IntoStructPtr will unmarshal the given body into the provided Struct.
-func IntoStructPtr(body, to interface{}, label string) error {
+func IntoStructPtr(body io.Reader, to interface{}, label string) error {
 	err := typeCheck(to, reflect.Struct)
 	if err != nil {
 		return err
@@ -150,7 +137,7 @@ func IntoStructPtr(body, to interface{}, label string) error {
 }
 
 // IntoSlicePtr will unmarshal the provided body into the provided Slice.
-func IntoSlicePtr(body, to interface{}, label string) error {
+func IntoSlicePtr(body io.Reader, to interface{}, label string) error {
 	err := typeCheck(to, reflect.Slice)
 	if err != nil {
 		return err

@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"testing"
@@ -183,13 +182,8 @@ func TestGetImage(t *testing.T) {
 
 func TestNextPageURL(t *testing.T) {
 	var page images.ImagePage
-	var body map[string]interface{}
 	bodyString := []byte(`{"images":{"links":[{"href":"http://192.154.23.87/12345/images/image3","rel":"bookmark"}]}, "images_links":[{"href":"http://192.154.23.87/12345/images/image4","rel":"next"}]}`)
-	err := json.Unmarshal(bodyString, &body)
-	if err != nil {
-		t.Fatalf("Error unmarshaling data into page body: %v", err)
-	}
-	page.Body = body
+	page.Body = bodyString
 
 	expected := "http://192.154.23.87/12345/images/image4"
 	actual, err := page.NextPageURL()

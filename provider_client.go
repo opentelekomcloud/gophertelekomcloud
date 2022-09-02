@@ -2,7 +2,6 @@ package golangsdk
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -399,8 +398,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	// Parse the response body as JSON, if requested to do so.
 	// TODO: When all refactoring of the extract is done, remove this.
 	if options.JSONResponse != nil && resp.StatusCode != http.StatusNoContent {
-		defer func() { _ = resp.Body.Close() }()
-		if err := json.NewDecoder(resp.Body).Decode(options.JSONResponse); err != nil {
+		if err := extract.Into(resp.Body, &options.JSONResponse); err != nil {
 			return nil, err
 		}
 	}
