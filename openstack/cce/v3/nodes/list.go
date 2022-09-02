@@ -4,11 +4,8 @@ import (
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
-
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json"},
-}
 
 // ListOpts allows the filtering of list data using given parameters.
 type ListOpts struct {
@@ -19,19 +16,28 @@ type ListOpts struct {
 
 // List returns collection of nodes.
 func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]Nodes, error) {
-	var res ListResult
 	raw, err := client.Get(client.ServiceURL("clusters", clusterID, "nodes"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: RequestOpts, JSONBody: nil,
 	})
 
-	allNodes, err := res.ExtractNode()
-
+	var res ListNode
+	err = extract.Into(raw, &res)
 	if err != nil {
 		return nil, err
 	}
 
-	return filterNodes(allNodes, opts), nil
+	return filterNodes(res.Nodes, opts), nil
+}
+
+// ListNode describes the Node Structure of cluster
+type ListNode struct {
+	// API type, fixed value "List"
+	Kind string `json:"kind"`
+	// API version, fixed value "v3"
+	Apiversion string `json:"apiVersion"`
+	// all Clusters
+	Nodes []Nodes `json:"items"`
 }
 
 func filterNodes(nodes []Nodes, opts ListOpts) []Nodes {
@@ -83,35 +89,4 @@ func GetStructNestedField(v *Nodes, field string, structDriller []string) string
 type FilterStruct struct {
 	Value   string
 	Driller []string
-}
-
-// CreateOpts is a struct contains the parameters of creating Node
-type CreateOpts struct {
-	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Metadata required to create a Node
-	Metadata CreateMetaData `json:"metadata"`
-	// specifications to create a Node
-	Spec Spec `json:"spec" required:"true"`
-}
-
-// CreateMetaData required to create a Node
-type CreateMetaData struct {
-	// Node name
-	Name string `json:"name,omitempty"`
-	// Node tag, key value pair format
-	Labels map[string]string `json:"labels,omitempty"`
-	// Node annotation, key value pair format
-	Annotations map[string]string `json:"annotations,omitempty"`
-}
-
-// UpdateOpts contains all the values needed to update a new node
-type UpdateOpts struct {
-	Metadata UpdateMetadata `json:"metadata,omitempty"`
-}
-
-type UpdateMetadata struct {
-	Name string `json:"name,omitempty"`
 }
