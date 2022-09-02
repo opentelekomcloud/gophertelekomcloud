@@ -14,7 +14,7 @@ type SortDir string
 // SortKey is a type for specifying by which key to sort a list of servers.
 type SortKey string
 
-var (
+const (
 	// SortAsc is used to sort a list of servers in ascending order.
 	SortAsc SortDir = "asc"
 	// SortDesc is used to sort a list of servers in descending order.
@@ -33,7 +33,7 @@ var (
 	SortAvailabilityZone SortKey = "availability_zone"
 )
 
-// ListServerOpts allows the filtering and sorting of paginated collections through
+// ListOpts allows the filtering and sorting of paginated collections through
 // the API. Filtering is achieved by passing in struct field values that map to
 // the server attributes you want to see returned.
 type ListOpts struct {
@@ -81,7 +81,7 @@ type ListOpts struct {
 	SortDir SortDir `q:"sort_dir"`
 }
 
-// ListServer returns a Pager which allows you to iterate over a collection of
+// List returns a Pager which allows you to iterate over a collection of
 // BMS Server resources. It accepts a ListServerOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
@@ -90,10 +90,11 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	u := listURL(c) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+
+	pages, err := pagination.NewPager(c, c.ServiceURL("servers", "detail")+q.String(),
+		func(r pagination.PageResult) pagination.Page {
+			return ServerPage{pagination.LinkedPageBase{PageResult: r}}
+		}).AllPages()
 
 	if err != nil {
 		return nil, err
@@ -103,10 +104,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	return FilterServers(allservers, opts)
+	return filterServers(allservers, opts)
 }
 
-func FilterServers(servers []Server, opts ListOpts) ([]Server, error) {
+func filterServers(servers []Server, opts ListOpts) ([]Server, error) {
 	var refinedServers []Server
 	var matched bool
 	m := map[string]interface{}{}
@@ -160,12 +161,4 @@ func getStructServerField(v *Server, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
 	return f.String()
-}
-
-// Get requests details on a single server, by ID.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, &golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{"X-OpenStack-Nova-API-Version": "2.26"},
-	})
-	return
 }
