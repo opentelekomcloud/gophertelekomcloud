@@ -2,18 +2,12 @@ package pagination
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-)
-
-var (
-	// ErrPageNotAvailable is returned from a Pager when a next or previous page is requested, but does not exist.
-	ErrPageNotAvailable = errors.New("The requested page does not exist.")
 )
 
 // Page must be satisfied by the result type of any resource collection.
@@ -145,7 +139,7 @@ func (p Pager) AllPages() (Page, error) {
 		return testPage, nil
 	}
 
-	if _, err := testPage.GetBodyAsSlice(); err != nil {
+	if _, err := testPage.GetBodyAsSlice(); err == nil {
 		var pagesSlice []interface{}
 
 		// Iterate over the pages to concatenate the bodies.
@@ -165,7 +159,7 @@ func (p Pager) AllPages() (Page, error) {
 		if err != nil {
 			return nil, err
 		}
-	} else if _, err := testPage.GetBodyAsMap(); err != nil {
+	} else if _, err := testPage.GetBodyAsMap(); err == nil {
 		var pagesSlice []interface{}
 
 		// key is the map key for the page body if the body type is `map[string]interface{}`.
