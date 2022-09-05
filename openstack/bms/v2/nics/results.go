@@ -55,6 +55,6 @@ func (r NicPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractNics(r pagination.Page) ([]Nic, error) {
 	var res []Nic
-	err := extract.IntoSlicePtr(r.(NicPage).Body, &res, "interfaceAttachments")
+	err := extract.IntoSlicePtr(r.(NicPage).Result.Body, &res, "interfaceAttachments")
 	return res, err
 }
