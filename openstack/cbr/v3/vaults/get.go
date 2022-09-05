@@ -12,5 +12,5 @@ func Get(client *golangsdk.ServiceClient, id string) (*Vault, error) {
 	}
 
 	var res Vault
-	return &res, extract.IntoStructPtr(raw, &res, "vault")
+	return &res, extract.IntoStructPtr(raw.Body, &res, "vault")
 }

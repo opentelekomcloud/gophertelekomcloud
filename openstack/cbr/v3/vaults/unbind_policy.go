@@ -19,5 +19,5 @@ func UnbindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPoli
 	}
 
 	var res PolicyBinding
-	return &res, extract.IntoStructPtr(raw, &res, "dissociate_policy")
+	return &res, extract.IntoStructPtr(raw.Body, &res, "dissociate_policy")
 }

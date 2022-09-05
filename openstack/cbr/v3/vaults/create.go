@@ -91,5 +91,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Vault, error) {
 	}
 
 	var res Vault
-	return &res, extract.IntoStructPtr(raw, &res, "vault")
+	return &res, extract.IntoStructPtr(raw.Body, &res, "vault")
 }

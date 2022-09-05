@@ -37,5 +37,5 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Vault
 	}
 
 	var res Vault
-	return &res, extract.IntoStructPtr(raw, &res, "vault")
+	return &res, extract.IntoStructPtr(raw.Body, &res, "vault")
 }

@@ -50,5 +50,5 @@ func AssociateResources(client *golangsdk.ServiceClient, vaultID string, opts As
 	}
 
 	var res []string
-	return res, extract.IntoSlicePtr(raw, &res, "add_resource_ids")
+	return res, extract.IntoSlicePtr(raw.Body, &res, "add_resource_ids")
 }

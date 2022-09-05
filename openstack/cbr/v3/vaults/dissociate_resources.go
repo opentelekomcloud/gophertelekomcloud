@@ -23,5 +23,5 @@ func DissociateResources(client *golangsdk.ServiceClient, vaultID string, opts D
 	}
 
 	var res []string
-	return res, extract.IntoSlicePtr(raw, &res, "remove_resource_ids")
+	return res, extract.IntoSlicePtr(raw.Body, &res, "remove_resource_ids")
 }

@@ -23,7 +23,7 @@ func BindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPolicy
 	}
 
 	var res PolicyBinding
-	return &res, extract.IntoStructPtr(raw, &res, "associate_policy")
+	return &res, extract.IntoStructPtr(raw.Body, &res, "associate_policy")
 }
 
 type PolicyBinding struct {
