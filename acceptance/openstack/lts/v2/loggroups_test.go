@@ -14,11 +14,6 @@ func TestLtsGroupsLifecycle(t *testing.T) {
 	client, err := clients.NewLtsV2Client()
 	th.AssertNoErr(t, err)
 
-	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
-	if az == "" {
-		az = "eu-de-02"
-	}
-
 	name := tools.RandomString("test-group-", 3)
 	createOpts := loggroups.CreateOpts{
 		LogGroupName: name,
