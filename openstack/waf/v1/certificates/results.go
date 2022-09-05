@@ -92,6 +92,15 @@ func (p CertificatePage) NextPageURL() (string, error) {
 	return currentURL.String(), nil
 }
 
+func (p CertificatePage) IsEmpty() (bool, error) {
+	certificates, err := ExtractCertificates(p)
+	if err != nil {
+		return false, err
+	}
+
+	return len(certificates) == 0, nil
+}
+
 func ExtractCertificates(p pagination.Page) ([]Certificate, error) {
 	var certs []Certificate
 	body := p.(CertificatePage).BodyReader()
