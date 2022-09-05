@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
@@ -17,7 +19,7 @@ func TestListNode(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/cec124c2-58f1-11e8-ad73-0255ac101926/nodes", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
@@ -106,7 +108,7 @@ func TestGetV3Node(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/cec124c2-58f1-11e8-ad73-0255ac101926/nodes/cf4bc001-58f1-11e8-ad73-0255ac101926", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, Output)
@@ -124,7 +126,7 @@ func TestCreateV3Node(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/cec124c2-58f1-11e8-ad73-0255ac101926/nodes", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 
@@ -207,7 +209,7 @@ func TestUpdateV3Node(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/cec124c2-58f1-11e8-ad73-0255ac101926/nodes/cf4bc001-58f1-11e8-ad73-0255ac101926", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PUT")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 		th.TestJSONRequest(t, r, `
@@ -235,7 +237,7 @@ func TestDeleteNode(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/cec124c2-58f1-11e8-ad73-0255ac101926/nodes/cf4bc001-58f1-11e8-ad73-0255ac101926", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -249,7 +251,7 @@ func TestGetV3Job(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/jobs/73ce03fd-8b1b-11e8-8f9d-0255ac10193f", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, JobOutput)

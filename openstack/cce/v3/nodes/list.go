@@ -20,6 +20,9 @@ func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]N
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts, JSONBody: nil,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res ListNode
 	err = extract.Into(raw, &res)

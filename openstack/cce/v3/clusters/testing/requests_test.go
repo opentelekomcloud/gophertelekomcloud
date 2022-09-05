@@ -5,10 +5,17 @@ import (
 	"net/http"
 	"testing"
 
-	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
+	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
+
+func serviceClient() *golangsdk.ServiceClient {
+	sc := client.ServiceClient()
+	sc.ResourceBase = sc.Endpoint + "api/" + "v3/" + "projects/" + "c59fd21fd2a94963b822d8985b884673/"
+	return sc
+}
 
 func TestGetV3Cluster(t *testing.T) {
 	th.SetupHTTP()
@@ -16,13 +23,13 @@ func TestGetV3Cluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/daa97872-59d7-11e8-a787-0255ac101f54", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, Output)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
+	actual, err := clusters.Get(serviceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -35,13 +42,13 @@ func TestGetV3ClusterOTC(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/daa97872-59d7-11e8-a787-0255ac101f54", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, OutputOTC)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
+	actual, err := clusters.Get(serviceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 	expected := ExpectedOTC
 	th.AssertDeepEquals(t, expected, actual)
@@ -55,7 +62,7 @@ func TestListV3Cluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -65,7 +72,7 @@ func TestListV3Cluster(t *testing.T) {
 
 	// count := 0
 
-	actual, err := clusters.List(fake.ServiceClient(), clusters.ListOpts{})
+	actual, err := clusters.List(serviceClient(), clusters.ListOpts{})
 	if err != nil {
 		t.Errorf("Failed to extract clusters: %v", err)
 	}
@@ -82,7 +89,7 @@ func TestListV3ClusterOTC(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -92,7 +99,7 @@ func TestListV3ClusterOTC(t *testing.T) {
 
 	// count := 0
 
-	actual, err := clusters.List(fake.ServiceClient(), clusters.ListOpts{})
+	actual, err := clusters.List(serviceClient(), clusters.ListOpts{})
 	if err != nil {
 		t.Errorf("Failed to extract clusters: %v", err)
 	}
@@ -108,7 +115,7 @@ func TestCreateV3Cluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 
@@ -158,7 +165,7 @@ func TestCreateV3Cluster(t *testing.T) {
 				AuthenticatingProxy: make(map[string]string)},
 		},
 	}
-	actual, err := clusters.Create(fake.ServiceClient(), options)
+	actual, err := clusters.Create(serviceClient(), options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -171,7 +178,7 @@ func TestCreateV3TurboCluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 
@@ -231,7 +238,7 @@ func TestCreateV3TurboCluster(t *testing.T) {
 				AuthenticatingProxy: make(map[string]string)},
 		},
 	}
-	actual, err := clusters.Create(fake.ServiceClient(), options)
+	actual, err := clusters.Create(serviceClient(), options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -244,7 +251,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/daa97872-59d7-11e8-a787-0255ac101f54", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PUT")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
 		th.TestHeader(t, r, "Accept", "application/json")
 		th.TestJSONRequest(t, r, `
@@ -261,7 +268,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 	options := clusters.UpdateOpts{Spec: clusters.UpdateSpec{Description: "new description"}}
-	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options)
+	actual, err := clusters.Update(serviceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -273,11 +280,11 @@ func TestDeleteV3Cluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/daa97872-59d7-11e8-a787-0255ac101f54", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
+	err := clusters.Delete(serviceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 
 }
@@ -288,11 +295,11 @@ func TestDeleteV3TurboCluster(t *testing.T) {
 
 	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters/daa97872-59d7-11e8-a787-0255ac101f54", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
+	err := clusters.Delete(serviceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 
 }
