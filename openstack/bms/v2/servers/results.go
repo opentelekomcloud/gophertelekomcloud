@@ -21,7 +21,7 @@ func (r ServerPage) IsEmpty() (bool, error) {
 // NextPageURL uses the response's embedded link reference to navigate to the next page of results.
 func (r ServerPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(res, &res, "servers_links")
+	err := extract.IntoSlicePtr(r.Result.Body, &res, "servers_links")
 	if err != nil {
 		return "", err
 	}
