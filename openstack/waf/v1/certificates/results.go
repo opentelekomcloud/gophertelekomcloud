@@ -1,6 +1,7 @@
 package certificates
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -61,15 +62,19 @@ type CertificatePage struct {
 	pagination.OffsetPageBase
 }
 
-func (p CertificatePage) GetBodyAsSlice() ([]interface{}, error) {
-	items := make([]interface{}, 0)
-
-	err := extract.IntoSlicePtr(p.BodyReader(), &items, "items")
+// IsEmpty returns true if this Page has no items in it.
+func (p CertificatePage) IsEmpty() (bool, error) {
+	body, err := p.GetBodyAsMap()
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
-	return items, nil
+	items, ok := body["items"].([]interface{})
+	if !ok {
+		return false, fmt.Errorf("map `items` are not a slice: %+v", body)
+	}
+
+	return len(items) == 0, nil
 }
 
 func (p CertificatePage) NextPageURL() (string, error) {
@@ -90,15 +95,6 @@ func (p CertificatePage) NextPageURL() (string, error) {
 	q.Set("offset", strconv.Itoa(p.LastElement()))
 	currentURL.RawQuery = q.Encode()
 	return currentURL.String(), nil
-}
-
-func (p CertificatePage) IsEmpty() (bool, error) {
-	certificates, err := ExtractCertificates(p)
-	if err != nil {
-		return false, err
-	}
-
-	return len(certificates) == 0, nil
 }
 
 func ExtractCertificates(p pagination.Page) ([]Certificate, error) {
