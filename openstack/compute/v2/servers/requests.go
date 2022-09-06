@@ -282,36 +282,35 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	reqBody, err := opts.ToServerCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(listURL(client), reqBody, &r.Body, nil)
+	raw, err := client.Post(listURL(client), reqBody, nil, nil)
 	return
 }
 
 // Delete requests that a server previously provisioned be removed from your
 // account.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }
 
 // ForceDelete forces the deletion of a server.
 func ForceDelete(client *golangsdk.ServiceClient, id string) (r ActionResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"forceDelete": ""}, nil, nil)
+	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"forceDelete": ""}, nil, nil)
 	return
 }
 
 // Get requests details on a single server, by ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Get(getURL(client, id), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 203},
 	})
 	return
 }
 
 func GetNICs(client *golangsdk.ServiceClient, id string) (r GetNICResult) {
-	_, r.Err = client.Get(getNICManagementURL(client, id), &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Get(getNICManagementURL(client, id), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -347,10 +346,9 @@ func (opts UpdateOpts) ToServerUpdateMap() (map[string]interface{}, error) {
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToServerUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(updateURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -364,7 +362,7 @@ func ChangeAdminPassword(client *golangsdk.ServiceClient, id, newPassword string
 			"adminPass": newPassword,
 		},
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, nil)
+	raw, err := client.Post(actionURL(client, id), b, nil, nil)
 	return
 }
 
@@ -398,27 +396,26 @@ func (opts RebootOpts) ToServerRebootMap() (map[string]interface{}, error) {
 }
 
 /*
-	Reboot requests that a given server reboot.
+Reboot requests that a given server reboot.
 
-	Two methods exist for rebooting a server:
+Two methods exist for rebooting a server:
 
-	HardReboot (aka PowerCycle) starts the server instance by physically cutting
-	power to the machine, or if a VM, terminating it at the hypervisor level.
-	It's done. Caput. Full stop.
-	Then, after a brief while, power is rtored or the VM instance restarted.
+HardReboot (aka PowerCycle) starts the server instance by physically cutting
+power to the machine, or if a VM, terminating it at the hypervisor level.
+It's done. Caput. Full stop.
+Then, after a brief while, power is rtored or the VM instance restarted.
 
-	SoftReboot (aka OSReboot) simply tells the OS to restart under its own
-	procedure.
-	E.g., in Linux, asking it to enter runlevel 6, or executing
-	"sudo shutdown -r now", or by asking Windows to rtart the machine.
+SoftReboot (aka OSReboot) simply tells the OS to restart under its own
+procedure.
+E.g., in Linux, asking it to enter runlevel 6, or executing
+"sudo shutdown -r now", or by asking Windows to rtart the machine.
 */
 func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOptsBuilder) (r ActionResult) {
 	b, err := opts.ToServerRebootMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, nil)
+	raw, err := client.Post(actionURL(client, id), b, nil, nil)
 	return
 }
 
@@ -494,10 +491,9 @@ func (opts RebuildOpts) ToServerRebuildMap() (map[string]interface{}, error) {
 func Rebuild(client *golangsdk.ServiceClient, id string, opts RebuildOptsBuilder) (r RebuildResult) {
 	b, err := opts.ToServerRebuildMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, nil)
+	raw, err := client.Post(actionURL(client, id), b, nil, nil)
 	return
 }
 
@@ -532,17 +528,16 @@ func (opts ResizeOpts) ToServerResizeMap() (map[string]interface{}, error) {
 func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOptsBuilder) (r ActionResult) {
 	b, err := opts.ToServerResizeMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, nil)
+	raw, err := client.Post(actionURL(client, id), b, nil, nil)
 	return
 }
 
 // ConfirmResize confirms a previous resize operation on a server.
 // See Resize() for more details.
 func ConfirmResize(client *golangsdk.ServiceClient, id string) (r ActionResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"confirmResize": nil}, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"confirmResize": nil}, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201, 202, 204},
 	})
 	return
@@ -551,7 +546,7 @@ func ConfirmResize(client *golangsdk.ServiceClient, id string) (r ActionResult) 
 // RevertResize cancels a previous resize operation on a server.
 // See Resize() for more details.
 func RevertResize(client *golangsdk.ServiceClient, id string) (r ActionResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"revertResize": nil}, nil, nil)
+	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"revertResize": nil}, nil, nil)
 	return
 }
 
@@ -584,10 +579,9 @@ func (opts MetadataOpts) ToMetadataUpdateMap() (map[string]interface{}, error) {
 func ResetMetadata(client *golangsdk.ServiceClient, id string, opts ResetMetadataOptsBuilder) (r ResetMetadataResult) {
 	b, err := opts.ToMetadataResetMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(metadataURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(metadataURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -595,7 +589,7 @@ func ResetMetadata(client *golangsdk.ServiceClient, id string, opts ResetMetadat
 
 // Metadata requests all the metadata for the given server ID.
 func Metadata(client *golangsdk.ServiceClient, id string) (r GetMetadataResult) {
-	_, r.Err = client.Get(metadataURL(client, id), &r.Body, nil)
+	raw, err := client.Get(metadataURL(client, id), nil, nil)
 	return
 }
 
@@ -611,10 +605,9 @@ type UpdateMetadataOptsBuilder interface {
 func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetadataOptsBuilder) (r UpdateMetadataResult) {
 	b, err := opts.ToMetadataUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(metadataURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(metadataURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -651,10 +644,9 @@ func (opts MetadatumOpts) ToMetadatumCreateMap() (map[string]interface{}, string
 func CreateMetadatum(client *golangsdk.ServiceClient, id string, opts MetadatumOptsBuilder) (r CreateMetadatumResult) {
 	b, key, err := opts.ToMetadatumCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(metadatumURL(client, id, key), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(metadatumURL(client, id, key), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -663,14 +655,14 @@ func CreateMetadatum(client *golangsdk.ServiceClient, id string, opts MetadatumO
 // Metadatum requests the key-value pair with the given key for the given
 // server ID.
 func Metadatum(client *golangsdk.ServiceClient, id, key string) (r GetMetadatumResult) {
-	_, r.Err = client.Get(metadatumURL(client, id, key), &r.Body, nil)
+	raw, err := client.Get(metadatumURL(client, id, key), nil, nil)
 	return
 }
 
 // DeleteMetadatum will delete the key-value pair with the given key for the
 // given server ID.
 func DeleteMetadatum(client *golangsdk.ServiceClient, id, key string) (r DeleteMetadatumResult) {
-	_, r.Err = client.Delete(metadatumURL(client, id, key), nil)
+	raw, err := client.Delete(metadatumURL(client, id, key), nil)
 	return
 }
 
@@ -717,15 +709,13 @@ func (opts CreateImageOpts) ToServerCreateImageMap() (map[string]interface{}, er
 func CreateImage(client *golangsdk.ServiceClient, id string, opts CreateImageOptsBuilder) (r CreateImageResult) {
 	b, err := opts.ToServerCreateImageMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 	resp, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 	r.Header = resp.Header
 	return
@@ -770,7 +760,7 @@ func IDFromName(client *golangsdk.ServiceClient, name string) (string, error) {
 // GetPassword makes a request against the nova API to get the encrypted
 // administrative password.
 func GetPassword(client *golangsdk.ServiceClient, serverId string) (r GetPasswordResult) {
-	_, r.Err = client.Get(passwordURL(client, serverId), &r.Body, nil)
+	raw, err := client.Get(passwordURL(client, serverId), nil, nil)
 	return
 }
 
@@ -796,10 +786,9 @@ func (opts ShowConsoleOutputOpts) ToServerShowConsoleOutputMap() (map[string]int
 func ShowConsoleOutput(client *golangsdk.ServiceClient, id string, opts ShowConsoleOutputOptsBuilder) (r ShowConsoleOutputResult) {
 	b, err := opts.ToServerShowConsoleOutputMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

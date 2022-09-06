@@ -2,6 +2,6 @@ package services
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func listURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-services")
+func listURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-services")
 }

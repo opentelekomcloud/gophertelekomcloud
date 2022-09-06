@@ -53,10 +53,9 @@ func (opts CreateOpts) ToSecGroupCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToSecGroupCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(rootURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -81,10 +80,9 @@ func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]interface{}, error) {
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToSecGroupUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(resourceURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -92,21 +90,21 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 
 // Get will return details for a particular security group.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	raw, err := client.Get(resourceURL(client, id), nil, nil)
 	return
 }
 
 // Delete will permanently delete a security group from the project.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	raw, err := client.Delete(resourceURL(client, id), nil)
 	return
 }
 
 // DeleteWithRetry will try to permanently delete a particular security
 // group based on its unique ID and RetryTimeout.
-func DeleteWithRetry(c *golangsdk.ServiceClient, id string, timeout int) error {
+func DeleteWithRetry(client *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
-		_, err := c.Delete(resourceURL(c, id), nil)
+		_, err := client.Delete(resourceURL(client, id), nil)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault400); ok {
 				time.Sleep(10 * time.Second)
@@ -166,10 +164,9 @@ func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 func CreateRule(client *golangsdk.ServiceClient, opts CreateRuleOptsBuilder) (r CreateRuleResult) {
 	b, err := opts.ToRuleCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(rootRuleURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(rootRuleURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -177,7 +174,7 @@ func CreateRule(client *golangsdk.ServiceClient, opts CreateRuleOptsBuilder) (r 
 
 // DeleteRule will permanently delete a rule from a security group.
 func DeleteRule(client *golangsdk.ServiceClient, id string) (r DeleteRuleResult) {
-	_, r.Err = client.Delete(resourceRuleURL(client, id), nil)
+	raw, err := client.Delete(resourceRuleURL(client, id), nil)
 	return
 }
 
@@ -190,12 +187,12 @@ func actionMap(prefix, groupName string) map[string]map[string]string {
 // AddServer will associate a server and a security group, enforcing the
 // rules of the group on the server.
 func AddServer(client *golangsdk.ServiceClient, serverID, groupName string) (r AddServerResult) {
-	_, r.Err = client.Post(serverActionURL(client, serverID), actionMap("add", groupName), nil, nil)
+	raw, err := client.Post(serverActionURL(client, serverID), actionMap("add", groupName), nil, nil)
 	return
 }
 
 // RemoveServer will disassociate a server from a security group.
 func RemoveServer(client *golangsdk.ServiceClient, serverID, groupName string) (r RemoveServerResult) {
-	_, r.Err = client.Post(serverActionURL(client, serverID), actionMap("remove", groupName), nil, nil)
+	raw, err := client.Post(serverActionURL(client, serverID), actionMap("remove", groupName), nil, nil)
 	return
 }

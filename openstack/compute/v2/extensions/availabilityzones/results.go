@@ -68,9 +68,9 @@ type AvailabilityZonePage struct {
 // ExtractAvailabilityZones returns a slice of AvailabilityZones contained in a
 // single page of results.
 func ExtractAvailabilityZones(r pagination.Page) ([]AvailabilityZone, error) {
-	var s struct {
+	var res struct {
 		AvailabilityZoneInfo []AvailabilityZone `json:"availabilityZoneInfo"`
 	}
-	err := (r.(AvailabilityZonePage)).ExtractInto(&s)
-	return s.AvailabilityZoneInfo, err
+	err := (r.(AvailabilityZonePage)).ExtractInto(&res)
+	return res, err
 }

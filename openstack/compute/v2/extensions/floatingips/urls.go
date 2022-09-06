@@ -4,34 +4,34 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "os-floating-ips"
 
-func resourceURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(resourcePath)
+func resourceURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(resourcePath)
 }
 
-func listURL(c *golangsdk.ServiceClient) string {
-	return resourceURL(c)
+func listURL(client *golangsdk.ServiceClient) string {
+	return resourceURL(client)
 }
 
-func createURL(c *golangsdk.ServiceClient) string {
-	return resourceURL(c)
+func createURL(client *golangsdk.ServiceClient) string {
+	return resourceURL(client)
 }
 
-func getURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(resourcePath, id)
+func getURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(resourcePath, id)
 }
 
-func deleteURL(c *golangsdk.ServiceClient, id string) string {
-	return getURL(c, id)
+func deleteURL(client *golangsdk.ServiceClient, id string) string {
+	return getURL(client, id)
 }
 
-func serverURL(c *golangsdk.ServiceClient, serverID string) string {
-	return c.ServiceURL("servers/" + serverID + "/action")
+func serverURL(client *golangsdk.ServiceClient, serverID string) string {
+	return client.ServiceURL("servers/" + serverID + "/action")
 }
 
-func associateURL(c *golangsdk.ServiceClient, serverID string) string {
-	return serverURL(c, serverID)
+func associateURL(client *golangsdk.ServiceClient, serverID string) string {
+	return serverURL(client, serverID)
 }
 
-func disassociateURL(c *golangsdk.ServiceClient, serverID string) string {
-	return serverURL(c, serverID)
+func disassociateURL(client *golangsdk.ServiceClient, serverID string) string {
+	return serverURL(client, serverID)
 }

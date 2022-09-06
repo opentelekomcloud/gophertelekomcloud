@@ -2,18 +2,18 @@ package hypervisors
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func hypervisorsListDetailURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-hypervisors", "detail")
+func hypervisorsListDetailURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-hypervisors", "detail")
 }
 
-func hypervisorsStatisticsURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-hypervisors", "statistics")
+func hypervisorsStatisticsURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-hypervisors", "statistics")
 }
 
-func hypervisorsGetURL(c *golangsdk.ServiceClient, hypervisorID string) string {
-	return c.ServiceURL("os-hypervisors", hypervisorID)
+func hypervisorsGetURL(client *golangsdk.ServiceClient, hypervisorID string) string {
+	return client.ServiceURL("os-hypervisors", hypervisorID)
 }
 
-func hypervisorsUptimeURL(c *golangsdk.ServiceClient, hypervisorID string) string {
-	return c.ServiceURL("os-hypervisors", hypervisorID, "uptime")
+func hypervisorsUptimeURL(client *golangsdk.ServiceClient, hypervisorID string) string {
+	return client.ServiceURL("os-hypervisors", hypervisorID, "uptime")
 }

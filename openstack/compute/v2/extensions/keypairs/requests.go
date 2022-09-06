@@ -64,10 +64,9 @@ func (opts CreateOpts) ToKeyPairCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToKeyPairCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -75,12 +74,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Get returns public data about a previously uploaded KeyPair.
 func Get(client *golangsdk.ServiceClient, name string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, name), &r.Body, nil)
+	raw, err := client.Get(getURL(client, name), nil, nil)
 	return
 }
 
 // Delete requests the deletion of a previous stored KeyPair from the server.
 func Delete(client *golangsdk.ServiceClient, name string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, name), nil)
+	raw, err := client.Delete(deleteURL(client, name), nil)
 	return
 }

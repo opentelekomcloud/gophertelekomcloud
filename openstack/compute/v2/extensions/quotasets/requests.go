@@ -6,13 +6,13 @@ import (
 
 // Get returns public data about a previously created QuotaSet.
 func Get(client *golangsdk.ServiceClient, tenantID string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, tenantID), &r.Body, nil)
+	raw, err := client.Get(getURL(client, tenantID), nil, nil)
 	return
 }
 
 // GetDetail returns detailed public data about a previously created QuotaSet.
 func GetDetail(client *golangsdk.ServiceClient, tenantID string) (r GetDetailResult) {
-	_, r.Err = client.Get(getDetailURL(client, tenantID), &r.Body, nil)
+	raw, err := client.Get(getDetailURL(client, tenantID), nil, nil)
 	return
 }
 
@@ -20,17 +20,16 @@ func GetDetail(client *golangsdk.ServiceClient, tenantID string) (r GetDetailRes
 func Update(client *golangsdk.ServiceClient, tenantID string, opts UpdateOptsBuilder) (r UpdateResult) {
 	reqBody, err := opts.ToComputeQuotaUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
-	_, r.Err = client.Put(updateURL(client, tenantID), reqBody, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	raw, err := client.Put(updateURL(client, tenantID), reqBody, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	return
 }
 
 // Resets the quotas for the given tenant to their default values.
 func Delete(client *golangsdk.ServiceClient, tenantID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, tenantID), nil)
+	raw, err := client.Delete(deleteURL(client, tenantID), nil)
 	return
 }
 

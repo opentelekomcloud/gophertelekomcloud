@@ -4,10 +4,10 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const rulepath = "os-security-group-default-rules"
 
-func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(rulepath, id)
+func resourceURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(rulepath, id)
 }
 
-func rootURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(rulepath)
+func rootURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(rulepath)
 }

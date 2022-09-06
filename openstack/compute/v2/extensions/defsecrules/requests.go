@@ -53,10 +53,9 @@ func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToRuleCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(rootURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -64,12 +63,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Get will return details for a particular default rule.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	raw, err := client.Get(resourceURL(client, id), nil, nil)
 	return
 }
 
 // Delete will permanently delete a rule the project's default security group.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	raw, err := client.Delete(resourceURL(client, id), nil)
 	return
 }

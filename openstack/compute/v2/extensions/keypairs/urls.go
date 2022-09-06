@@ -4,22 +4,22 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "os-keypairs"
 
-func resourceURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(resourcePath)
+func resourceURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(resourcePath)
 }
 
-func listURL(c *golangsdk.ServiceClient) string {
-	return resourceURL(c)
+func listURL(client *golangsdk.ServiceClient) string {
+	return resourceURL(client)
 }
 
-func createURL(c *golangsdk.ServiceClient) string {
-	return resourceURL(c)
+func createURL(client *golangsdk.ServiceClient) string {
+	return resourceURL(client)
 }
 
-func getURL(c *golangsdk.ServiceClient, name string) string {
-	return c.ServiceURL(resourcePath, name)
+func getURL(client *golangsdk.ServiceClient, name string) string {
+	return client.ServiceURL(resourcePath, name)
 }
 
-func deleteURL(c *golangsdk.ServiceClient, name string) string {
-	return getURL(c, name)
+func deleteURL(client *golangsdk.ServiceClient, name string) string {
+	return getURL(client, name)
 }

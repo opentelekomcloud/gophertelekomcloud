@@ -2,34 +2,34 @@ package aggregates
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func aggregatesListURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-aggregates")
+func aggregatesListURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-aggregates")
 }
 
-func aggregatesCreateURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-aggregates")
+func aggregatesCreateURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-aggregates")
 }
 
-func aggregatesDeleteURL(c *golangsdk.ServiceClient, aggregateID string) string {
-	return c.ServiceURL("os-aggregates", aggregateID)
+func aggregatesDeleteURL(client *golangsdk.ServiceClient, aggregateID string) string {
+	return client.ServiceURL("os-aggregates", aggregateID)
 }
 
-func aggregatesGetURL(c *golangsdk.ServiceClient, aggregateID string) string {
-	return c.ServiceURL("os-aggregates", aggregateID)
+func aggregatesGetURL(client *golangsdk.ServiceClient, aggregateID string) string {
+	return client.ServiceURL("os-aggregates", aggregateID)
 }
 
-func aggregatesUpdateURL(c *golangsdk.ServiceClient, aggregateID string) string {
-	return c.ServiceURL("os-aggregates", aggregateID)
+func aggregatesUpdateURL(client *golangsdk.ServiceClient, aggregateID string) string {
+	return client.ServiceURL("os-aggregates", aggregateID)
 }
 
-func aggregatesAddHostURL(c *golangsdk.ServiceClient, aggregateID string) string {
-	return c.ServiceURL("os-aggregates", aggregateID, "action")
+func aggregatesAddHostURL(client *golangsdk.ServiceClient, aggregateID string) string {
+	return client.ServiceURL("os-aggregates", aggregateID, "action")
 }
 
-func aggregatesRemoveHostURL(c *golangsdk.ServiceClient, aggregateID string) string {
-	return c.ServiceURL("os-aggregates", aggregateID, "action")
+func aggregatesRemoveHostURL(client *golangsdk.ServiceClient, aggregateID string) string {
+	return client.ServiceURL("os-aggregates", aggregateID, "action")
 }
 
-func aggregatesSetMetadataURL(c *golangsdk.ServiceClient, aggregateID string) string {
-	return c.ServiceURL("os-aggregates", aggregateID, "action")
+func aggregatesSetMetadataURL(client *golangsdk.ServiceClient, aggregateID string) string {
+	return client.ServiceURL("os-aggregates", aggregateID, "action")
 }

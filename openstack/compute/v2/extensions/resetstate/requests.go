@@ -18,6 +18,6 @@ const (
 // ResetState will reset the state of a server
 func ResetState(client *golangsdk.ServiceClient, id string, state ServerState) (r ResetResult) {
 	stateMap := map[string]interface{}{"state": state}
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"os-resetState": stateMap}, nil, nil)
+	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"os-resetState": stateMap}, nil, nil)
 	return
 }

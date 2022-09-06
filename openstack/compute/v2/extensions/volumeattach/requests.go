@@ -37,10 +37,9 @@ func (opts CreateOpts) ToVolumeAttachmentCreateMap() (map[string]interface{}, er
 func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToVolumeAttachmentCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createURL(client, serverID), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client, serverID), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -48,13 +47,13 @@ func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBui
 
 // Get returns public data about a previously created VolumeAttachment.
 func Get(client *golangsdk.ServiceClient, serverID, attachmentID string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, serverID, attachmentID), &r.Body, nil)
+	raw, err := client.Get(getURL(client, serverID, attachmentID), nil, nil)
 	return
 }
 
 // Delete requests the deletion of a previous stored VolumeAttachment from
 // the server.
 func Delete(client *golangsdk.ServiceClient, serverID, attachmentID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, serverID, attachmentID), nil)
+	raw, err := client.Delete(deleteURL(client, serverID, attachmentID), nil)
 	return
 }

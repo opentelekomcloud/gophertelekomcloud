@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -36,11 +37,11 @@ func (page DefaultRulePage) IsEmpty() (bool, error) {
 // ExtractDefaultRules returns a slice of DefaultRules contained in a single
 // page of results.
 func ExtractDefaultRules(r pagination.Page) ([]DefaultRule, error) {
-	var s struct {
+	var res struct {
 		DefaultRules []DefaultRule `json:"security_group_default_rules"`
 	}
-	err := (r.(DefaultRulePage)).ExtractInto(&s)
-	return s.DefaultRules, err
+	err := (r.(DefaultRulePage)).ExtractInto(&res)
+	return res, err
 }
 
 type commonResult struct {
@@ -58,11 +59,11 @@ type GetResult struct {
 }
 
 // Extract will extract a DefaultRule struct from a Create or Get response.
-func (r commonResult) Extract() (*DefaultRule, error) {
-	var s struct {
+func (raw commonResult) Extract() (*DefaultRule, error) {
+	var res struct {
 		DefaultRule DefaultRule `json:"security_group_default_rule"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	return &s.DefaultRule, err
 }
 

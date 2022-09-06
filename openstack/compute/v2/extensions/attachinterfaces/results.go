@@ -2,6 +2,7 @@ package attachinterfaces
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -10,12 +11,12 @@ type attachInterfaceResult struct {
 }
 
 // Extract interprets any attachInterfaceResult as an Interface, if possible.
-func (r attachInterfaceResult) Extract() (*Interface, error) {
-	var s struct {
+func (raw attachInterfaceResult) Extract() (*Interface, error) {
+	var res struct {
 		Interface *Interface `json:"interfaceAttachment"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Interface, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // GetResult is the response from a Get operation. Call its Extract
@@ -72,9 +73,9 @@ func (r InterfacePage) IsEmpty() (bool, error) {
 // ExtractInterfaces interprets the results of a single page from a List() call,
 // producing a slice of Interface structs.
 func ExtractInterfaces(r pagination.Page) ([]Interface, error) {
-	var s struct {
+	var res struct {
 		Interfaces []Interface `json:"interfaceAttachments"`
 	}
-	err := (r.(InterfacePage)).ExtractInto(&s)
-	return s.Interfaces, err
+	err := (r.(InterfacePage)).ExtractInto(&res)
+	return res, err
 }

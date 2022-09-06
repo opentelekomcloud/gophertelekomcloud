@@ -6,6 +6,6 @@ import (
 
 const resourcePath = "limits"
 
-func getURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(resourcePath)
+func getURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(resourcePath)
 }

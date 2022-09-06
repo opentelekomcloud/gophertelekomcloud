@@ -14,6 +14,6 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 
 // Get returns data about a previously created Network.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }

@@ -75,12 +75,12 @@ type Absolute struct {
 }
 
 // Extract interprets a limits result as a Limits.
-func (r GetResult) Extract() (*Limits, error) {
-	var s struct {
+func (raw GetResult) Extract() (*Limits, error) {
+	var res struct {
 		Limits *Limits `json:"limits"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Limits, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // GetResult is the response from a Get operation. Call its Extract

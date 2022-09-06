@@ -37,10 +37,9 @@ func (opts CreateOpts) ToServerGroupCreateMap() (map[string]interface{}, error) 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToServerGroupCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -48,12 +47,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Get returns data about a previously created ServerGroup.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }
 
 // Delete requests the deletion of a previously allocated ServerGroup.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }

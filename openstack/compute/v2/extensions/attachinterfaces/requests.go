@@ -14,7 +14,7 @@ func List(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
 
 // Get requests details on a single interface attachment by the server and port IDs.
 func Get(client *golangsdk.ServiceClient, serverID, portID string) (r GetResult) {
-	_, r.Err = client.Get(getInterfaceURL(client, serverID, portID), &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Get(getInterfaceURL(client, serverID, portID), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -55,10 +55,9 @@ func (opts CreateOpts) ToAttachInterfacesCreateMap() (map[string]interface{}, er
 func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToAttachInterfacesCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createInterfaceURL(client, serverID), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createInterfaceURL(client, serverID), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -67,6 +66,6 @@ func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBui
 // Delete makes a request against the nova API to detach a single interface from the server.
 // It needs server and port IDs to make a such request.
 func Delete(client *golangsdk.ServiceClient, serverID, portID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteInterfaceURL(client, serverID, portID), nil)
+	raw, err := client.Delete(deleteInterfaceURL(client, serverID, portID), nil)
 	return
 }

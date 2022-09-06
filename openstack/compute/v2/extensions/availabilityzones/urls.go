@@ -2,10 +2,10 @@ package availabilityzones
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func listURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-availability-zone")
+func listURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-availability-zone")
 }
 
-func listDetailURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("os-availability-zone", "detail")
+func listDetailURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("os-availability-zone", "detail")
 }

@@ -7,26 +7,26 @@ const (
 	rulepath     = "os-security-group-rules"
 )
 
-func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(secgrouppath, id)
+func resourceURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(secgrouppath, id)
 }
 
-func rootURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(secgrouppath)
+func rootURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(secgrouppath)
 }
 
-func listByServerURL(c *golangsdk.ServiceClient, serverID string) string {
-	return c.ServiceURL("servers", serverID, secgrouppath)
+func listByServerURL(client *golangsdk.ServiceClient, serverID string) string {
+	return client.ServiceURL("servers", serverID, secgrouppath)
 }
 
-func rootRuleURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL(rulepath)
+func rootRuleURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(rulepath)
 }
 
-func resourceRuleURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(rulepath, id)
+func resourceRuleURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL(rulepath, id)
 }
 
-func serverActionURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL("servers", id, "action")
+func serverActionURL(client *golangsdk.ServiceClient, id string) string {
+	return client.ServiceURL("servers", id, "action")
 }

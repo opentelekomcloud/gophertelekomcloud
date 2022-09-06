@@ -4,18 +4,18 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "os-quota-sets"
 
-func getURL(c *golangsdk.ServiceClient, tenantID string) string {
-	return c.ServiceURL(resourcePath, tenantID)
+func getURL(client *golangsdk.ServiceClient, tenantID string) string {
+	return client.ServiceURL(resourcePath, tenantID)
 }
 
-func getDetailURL(c *golangsdk.ServiceClient, tenantID string) string {
-	return c.ServiceURL(resourcePath, tenantID, "detail")
+func getDetailURL(client *golangsdk.ServiceClient, tenantID string) string {
+	return client.ServiceURL(resourcePath, tenantID, "detail")
 }
 
-func updateURL(c *golangsdk.ServiceClient, tenantID string) string {
-	return getURL(c, tenantID)
+func updateURL(client *golangsdk.ServiceClient, tenantID string) string {
+	return getURL(client, tenantID)
 }
 
-func deleteURL(c *golangsdk.ServiceClient, tenantID string) string {
-	return getURL(c, tenantID)
+func deleteURL(client *golangsdk.ServiceClient, tenantID string) string {
+	return getURL(client, tenantID)
 }

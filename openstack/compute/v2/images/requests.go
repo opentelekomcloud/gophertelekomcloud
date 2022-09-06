@@ -62,13 +62,13 @@ func ListDetail(client *golangsdk.ServiceClient, opts ListOptsBuilder) paginatio
 
 // Get returns data about a specific image by its ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }
 
 // Delete deletes the specified image ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }
 

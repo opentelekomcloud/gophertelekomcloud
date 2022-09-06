@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -136,11 +137,11 @@ func (page SecurityGroupPage) IsEmpty() (bool, error) {
 // ExtractSecurityGroups returns a slice of SecurityGroups contained in a
 // single page of results.
 func ExtractSecurityGroups(r pagination.Page) ([]SecurityGroup, error) {
-	var s struct {
+	var res struct {
 		SecurityGroups []SecurityGroup `json:"security_groups"`
 	}
-	err := (r.(SecurityGroupPage)).ExtractInto(&s)
-	return s.SecurityGroups, err
+	err := (r.(SecurityGroupPage)).ExtractInto(&res)
+	return res, err
 }
 
 type commonResult struct {
@@ -166,12 +167,12 @@ type UpdateResult struct {
 }
 
 // Extract will extract a SecurityGroup struct from most responses.
-func (r commonResult) Extract() (*SecurityGroup, error) {
-	var s struct {
+func (raw commonResult) Extract() (*SecurityGroup, error) {
+	var res struct {
 		SecurityGroup *SecurityGroup `json:"security_group"`
 	}
-	err := r.ExtractInto(&s)
-	return s.SecurityGroup, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateRuleResult represents the result when adding rules to a security group.
@@ -181,12 +182,12 @@ type CreateRuleResult struct {
 }
 
 // Extract will extract a Rule struct from a CreateRuleResult.
-func (r CreateRuleResult) Extract() (*Rule, error) {
-	var s struct {
+func (raw CreateRuleResult) Extract() (*Rule, error) {
+	var res struct {
 		Rule *Rule `json:"security_group_rule"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Rule, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // DeleteResult is the response from delete operation. Call its ExtractErr

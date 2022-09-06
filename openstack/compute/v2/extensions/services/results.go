@@ -65,9 +65,9 @@ func (page ServicePage) IsEmpty() (bool, error) {
 }
 
 func ExtractServices(r pagination.Page) ([]Service, error) {
-	var s struct {
+	var res struct {
 		Service []Service `json:"services"`
 	}
-	err := (r.(ServicePage)).ExtractInto(&s)
-	return s.Service, err
+	err := (r.(ServicePage)).ExtractInto(&res)
+	return res, err
 }

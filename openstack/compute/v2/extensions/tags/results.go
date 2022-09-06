@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type commonResult struct {
@@ -16,10 +17,10 @@ type Tags struct {
 }
 
 // Extract interprets any commonResult as a Tags.
-func (r commonResult) Extract() (*Tags, error) {
-	var s *Tags
-	err := r.ExtractInto(&s)
-	return s, err
+func (raw commonResult) Extract() (*Tags, error) {
+	var res Tags
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateResult represents the result of a Create operation

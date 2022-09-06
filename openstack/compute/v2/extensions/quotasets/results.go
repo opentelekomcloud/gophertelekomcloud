@@ -2,6 +2,7 @@ package quotasets
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -134,11 +135,11 @@ func (page QuotaSetPage) IsEmpty() (bool, error) {
 
 // ExtractQuotaSets interprets a page of results as a slice of QuotaSets.
 func ExtractQuotaSets(r pagination.Page) ([]QuotaSet, error) {
-	var s struct {
+	var res struct {
 		QuotaSets []QuotaSet `json:"quotas"`
 	}
-	err := (r.(QuotaSetPage)).ExtractInto(&s)
-	return s.QuotaSets, err
+	err := (r.(QuotaSetPage)).ExtractInto(&res)
+	return res, err
 }
 
 type quotaResult struct {
@@ -147,12 +148,12 @@ type quotaResult struct {
 
 // Extract is a method that attempts to interpret any QuotaSet resource response
 // as a QuotaSet struct.
-func (r quotaResult) Extract() (*QuotaSet, error) {
-	var s struct {
+func (raw quotaResult) Extract() (*QuotaSet, error) {
+	var res struct {
 		QuotaSet *QuotaSet `json:"quota_set"`
 	}
-	err := r.ExtractInto(&s)
-	return s.QuotaSet, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // GetResult is the response from a Get operation. Call its Extract method to
@@ -185,10 +186,10 @@ type GetDetailResult struct {
 
 // Extract is a method that attempts to interpret any QuotaDetailSet
 // resource response as a set of QuotaDetailSet structs.
-func (r quotaDetailResult) Extract() (QuotaDetailSet, error) {
-	var s struct {
+func (raw quotaDetailResult) Extract() (QuotaDetailSet, error) {
+	var res struct {
 		QuotaData QuotaDetailSet `json:"quota_set"`
 	}
-	err := r.ExtractInto(&s)
-	return s.QuotaData, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }

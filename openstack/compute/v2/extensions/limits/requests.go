@@ -37,6 +37,6 @@ func Get(client *golangsdk.ServiceClient, opts GetOptsBuilder) (r GetResult) {
 		url += query
 	}
 
-	_, r.Err = client.Get(url, &r.Body, nil)
+	raw, err := client.Get(url, nil, nil)
 	return
 }

@@ -2,6 +2,7 @@ package tenantnetworks
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -30,11 +31,11 @@ func (page NetworkPage) IsEmpty() (bool, error) {
 
 // ExtractNetworks interprets a page of results as a slice of Network.
 func ExtractNetworks(r pagination.Page) ([]Network, error) {
-	var s struct {
+	var res struct {
 		Networks []Network `json:"networks"`
 	}
-	err := (r.(NetworkPage)).ExtractInto(&s)
-	return s.Networks, err
+	err := (r.(NetworkPage)).ExtractInto(&res)
+	return res, err
 }
 
 type NetworkResult struct {
@@ -43,12 +44,12 @@ type NetworkResult struct {
 
 // Extract is a method that attempts to interpret any Network resource response
 // as a Network struct.
-func (r NetworkResult) Extract() (*Network, error) {
-	var s struct {
+func (raw NetworkResult) Extract() (*Network, error) {
+	var res struct {
 		Network *Network `json:"network"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Network, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // GetResult is the response from a Get operation. Call its Extract method to

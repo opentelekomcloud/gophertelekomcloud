@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -77,23 +78,23 @@ func (page AggregatesPage) IsEmpty() (bool, error) {
 
 // ExtractAggregates interprets a page of results as a slice of Aggregates.
 func ExtractAggregates(p pagination.Page) ([]Aggregate, error) {
-	var a struct {
+	var res struct {
 		Aggregates []Aggregate `json:"aggregates"`
 	}
-	err := (p.(AggregatesPage)).ExtractInto(&a)
-	return a.Aggregates, err
+	err := (p.(AggregatesPage)).ExtractInto(&res)
+	return res, err
 }
 
 type aggregatesResult struct {
 	golangsdk.Result
 }
 
-func (r aggregatesResult) Extract() (*Aggregate, error) {
-	var s struct {
+func (raw aggregatesResult) Extract() (*Aggregate, error) {
+	var res struct {
 		Aggregate *Aggregate `json:"aggregate"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Aggregate, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 type CreateResult struct {

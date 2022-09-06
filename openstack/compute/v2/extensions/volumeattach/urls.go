@@ -4,22 +4,22 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 
 const resourcePath = "os-volume_attachments"
 
-func resourceURL(c *golangsdk.ServiceClient, serverID string) string {
-	return c.ServiceURL("servers", serverID, resourcePath)
+func resourceURL(client *golangsdk.ServiceClient, serverID string) string {
+	return client.ServiceURL("servers", serverID, resourcePath)
 }
 
-func listURL(c *golangsdk.ServiceClient, serverID string) string {
-	return resourceURL(c, serverID)
+func listURL(client *golangsdk.ServiceClient, serverID string) string {
+	return resourceURL(client, serverID)
 }
 
-func createURL(c *golangsdk.ServiceClient, serverID string) string {
-	return resourceURL(c, serverID)
+func createURL(client *golangsdk.ServiceClient, serverID string) string {
+	return resourceURL(client, serverID)
 }
 
-func getURL(c *golangsdk.ServiceClient, serverID, aID string) string {
-	return c.ServiceURL("servers", serverID, resourcePath, aID)
+func getURL(client *golangsdk.ServiceClient, serverID, aID string) string {
+	return client.ServiceURL("servers", serverID, resourcePath, aID)
 }
 
-func deleteURL(c *golangsdk.ServiceClient, serverID, aID string) string {
-	return getURL(c, serverID, aID)
+func deleteURL(client *golangsdk.ServiceClient, serverID, aID string) string {
+	return getURL(client, serverID, aID)
 }

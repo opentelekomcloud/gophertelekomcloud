@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -32,12 +33,12 @@ type DeleteResult struct {
 
 // Extract provides access to the individual Flavor returned by the Get and
 // Create functions.
-func (r commonResult) Extract() (*Flavor, error) {
-	var s struct {
+func (raw commonResult) Extract() (*Flavor, error) {
+	var res struct {
 		Flavor *Flavor `json:"flavor"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Flavor, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // Flavor represent (virtual) hardware configurations for server resources
@@ -117,24 +118,24 @@ func (page FlavorPage) IsEmpty() (bool, error) {
 // NextPageURL uses the response's embedded link reference to navigate to the
 // next page of results.
 func (page FlavorPage) NextPageURL() (string, error) {
-	var s struct {
+	var res struct {
 		Links []golangsdk.Link `json:"flavors_links"`
 	}
-	err := page.ExtractInto(&s)
+	err = extract.Into(page.Result.Body, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }
 
 // ExtractFlavors provides access to the list of flavors in a page acquired
 // from the ListDetail operation.
 func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
-	var s struct {
+	var res struct {
 		Flavors []Flavor `json:"flavors"`
 	}
-	err := (r.(FlavorPage)).ExtractInto(&s)
-	return s.Flavors, err
+	err := (r.(FlavorPage)).ExtractInto(&res)
+	return res, err
 }
 
 // AccessPage contains a single page of all FlavorAccess entries for a flavor.
@@ -150,11 +151,11 @@ func (page AccessPage) IsEmpty() (bool, error) {
 
 // ExtractAccesses interprets a page of results as a slice of FlavorAccess.
 func ExtractAccesses(r pagination.Page) ([]FlavorAccess, error) {
-	var s struct {
+	var res struct {
 		FlavorAccesses []FlavorAccess `json:"flavor_access"`
 	}
-	err := (r.(AccessPage)).ExtractInto(&s)
-	return s.FlavorAccesses, err
+	err := (r.(AccessPage)).ExtractInto(&res)
+	return res, err
 }
 
 type accessResult struct {
@@ -175,12 +176,12 @@ type RemoveAccessResult struct {
 
 // Extract provides access to the result of an access create or delete.
 // The result will be all accesses that the flavor has.
-func (r accessResult) Extract() ([]FlavorAccess, error) {
-	var s struct {
+func (raw accessResult) Extract() ([]FlavorAccess, error) {
+	var res struct {
 		FlavorAccesses []FlavorAccess `json:"flavor_access"`
 	}
-	err := r.ExtractInto(&s)
-	return s.FlavorAccesses, err
+	err = extract.Into(raw, &res)
+	return res, err
 }
 
 // FlavorAccess represents an ACL of tenant access to a specific Flavor.
@@ -193,12 +194,12 @@ type FlavorAccess struct {
 }
 
 // Extract interprets any extraSpecsResult as ExtraSpecs, if possible.
-func (r extraSpecsResult) Extract() (map[string]string, error) {
-	var s struct {
+func (raw extraSpecsResult) Extract() (map[string]string, error) {
+	var res struct {
 		ExtraSpecs map[string]string `json:"extra_specs"`
 	}
-	err := r.ExtractInto(&s)
-	return s.ExtraSpecs, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // extraSpecsResult contains the result of a call for (potentially) multiple
@@ -245,8 +246,8 @@ type DeleteExtraSpecResult struct {
 }
 
 // Extract interprets any extraSpecResult as an ExtraSpec, if possible.
-func (r extraSpecResult) Extract() (map[string]string, error) {
-	var s map[string]string
-	err := r.ExtractInto(&s)
-	return s, err
+func (raw extraSpecResult) Extract() (map[string]string, error) {
+	var res map[string]string
+	err = extract.Into(raw, &res)
+	return &res, err
 }

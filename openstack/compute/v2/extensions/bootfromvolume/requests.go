@@ -122,10 +122,9 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts servers.CreateOptsBuilder) (r servers.CreateResult) {
 	b, err := opts.ToServerCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return

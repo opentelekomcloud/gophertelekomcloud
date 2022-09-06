@@ -2,6 +2,7 @@ package images
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -18,12 +19,12 @@ type DeleteResult struct {
 }
 
 // Extract interprets a GetResult as an Image.
-func (r GetResult) Extract() (*Image, error) {
-	var s struct {
+func (raw GetResult) Extract() (*Image, error) {
+	var res struct {
 		Image *Image `json:"image"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Image, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // Image represents an Image returned by the Compute API.
@@ -74,22 +75,22 @@ func (page ImagePage) IsEmpty() (bool, error) {
 // NextPageURL uses the response's embedded link reference to navigate to the
 // next page of results.
 func (page ImagePage) NextPageURL() (string, error) {
-	var s struct {
+	var res struct {
 		Links []golangsdk.Link `json:"images_links"`
 	}
-	err := page.ExtractInto(&s)
+	err = extract.Into(page.Result.Body, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }
 
 // ExtractImages converts a page of List results into a slice of usable Image
 // structs.
 func ExtractImages(r pagination.Page) ([]Image, error) {
-	var s struct {
+	var res struct {
 		Images []Image `json:"images"`
 	}
-	err := (r.(ImagePage)).ExtractInto(&s)
-	return s.Images, err
+	err := (r.(ImagePage)).ExtractInto(&res)
+	return res, err
 }

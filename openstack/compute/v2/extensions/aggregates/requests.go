@@ -33,10 +33,9 @@ func (opts CreateOpts) ToAggregatesCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
 	b, err := opts.ToAggregatesCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(aggregatesCreateURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(aggregatesCreateURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -45,7 +44,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
 // Delete makes a request against the API to delete an aggregate.
 func Delete(client *golangsdk.ServiceClient, aggregateID int) (r DeleteResult) {
 	v := strconv.Itoa(aggregateID)
-	_, r.Err = client.Delete(aggregatesDeleteURL(client, v), &golangsdk.RequestOpts{
+	raw, err := client.Delete(aggregatesDeleteURL(client, v), &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -54,7 +53,7 @@ func Delete(client *golangsdk.ServiceClient, aggregateID int) (r DeleteResult) {
 // Get makes a request against the API to get details for a specific aggregate.
 func Get(client *golangsdk.ServiceClient, aggregateID int) (r GetResult) {
 	v := strconv.Itoa(aggregateID)
-	_, r.Err = client.Get(aggregatesGetURL(client, v), &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Get(aggregatesGetURL(client, v), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -81,10 +80,9 @@ func Update(client *golangsdk.ServiceClient, aggregateID int, opts UpdateOpts) (
 
 	b, err := opts.ToAggregatesUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(aggregatesUpdateURL(client, v), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(aggregatesUpdateURL(client, v), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -105,10 +103,9 @@ func AddHost(client *golangsdk.ServiceClient, aggregateID int, opts AddHostOpts)
 
 	b, err := opts.ToAggregatesAddHostMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(aggregatesAddHostURL(client, v), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(aggregatesAddHostURL(client, v), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -129,10 +126,9 @@ func RemoveHost(client *golangsdk.ServiceClient, aggregateID int, opts RemoveHos
 
 	b, err := opts.ToAggregatesRemoveHostMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(aggregatesRemoveHostURL(client, v), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(aggregatesRemoveHostURL(client, v), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -152,10 +148,9 @@ func SetMetadata(client *golangsdk.ServiceClient, aggregateID int, opts SetMetad
 
 	b, err := opts.ToSetMetadataMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(aggregatesSetMetadataURL(client, v), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(aggregatesSetMetadataURL(client, v), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

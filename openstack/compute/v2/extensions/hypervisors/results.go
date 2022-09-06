@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -184,11 +185,11 @@ func (page HypervisorPage) IsEmpty() (bool, error) {
 
 // ExtractHypervisors interprets a page of results as a slice of Hypervisors.
 func ExtractHypervisors(p pagination.Page) ([]Hypervisor, error) {
-	var h struct {
+	var res struct {
 		Hypervisors []Hypervisor `json:"hypervisors"`
 	}
-	err := (p.(HypervisorPage)).ExtractInto(&h)
-	return h.Hypervisors, err
+	err := (p.(HypervisorPage)).ExtractInto(&res)
+	return res, err
 }
 
 type HypervisorResult struct {
@@ -196,11 +197,11 @@ type HypervisorResult struct {
 }
 
 // Extract interprets any HypervisorResult as a Hypervisor, if possible.
-func (r HypervisorResult) Extract() (*Hypervisor, error) {
-	var s struct {
+func (raw HypervisorResult) Extract() (*Hypervisor, error) {
+	var res struct {
 		Hypervisor Hypervisor `json:"hypervisor"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	return &s.Hypervisor, err
 }
 
@@ -249,11 +250,11 @@ type StatisticsResult struct {
 }
 
 // Extract interprets any StatisticsResult as a Statistics, if possible.
-func (r StatisticsResult) Extract() (*Statistics, error) {
-	var s struct {
+func (raw StatisticsResult) Extract() (*Statistics, error) {
+	var res struct {
 		Stats Statistics `json:"hypervisor_statistics"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	return &s.Stats, err
 }
 
@@ -281,10 +282,10 @@ type UptimeResult struct {
 }
 
 // Extract interprets any UptimeResult as a Uptime, if possible.
-func (r UptimeResult) Extract() (*Uptime, error) {
-	var s struct {
+func (raw UptimeResult) Extract() (*Uptime, error) {
+	var res struct {
 		Uptime Uptime `json:"hypervisor"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	return &s.Uptime, err
 }

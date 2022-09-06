@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -128,24 +129,24 @@ func (r SingleTenantPage) IsEmpty() (bool, error) {
 
 // NextPageURL uses the response's embedded link reference to navigate to the
 // next page of results.
-func (r SingleTenantPage) NextPageURL() (string, error) {
-	var s struct {
+func (raw SingleTenantPage) NextPageURL() (string, error) {
+	var res struct {
 		Links []golangsdk.Link `json:"tenant_usage_links"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }
 
 // ExtractSingleTenant interprets a SingleTenantPage as a TenantUsage result.
 func ExtractSingleTenant(page pagination.Page) (*TenantUsage, error) {
-	var s struct {
+	var res struct {
 		TenantUsage *TenantUsage `json:"tenant_usage"`
 	}
-	err := (page.(SingleTenantPage)).ExtractInto(&s)
-	return s.TenantUsage, err
+	err := (page.(SingleTenantPage)).ExtractInto(&res)
+	return &res, err
 }
 
 // AllTenantsPage stores a single, only page of TenantUsage results from a
@@ -156,11 +157,11 @@ type AllTenantsPage struct {
 
 // ExtractAllTenants interprets a AllTenantsPage as a TenantUsage result.
 func ExtractAllTenants(page pagination.Page) ([]TenantUsage, error) {
-	var s struct {
+	var res struct {
 		TenantUsages []TenantUsage `json:"tenant_usages"`
 	}
-	err := (page.(AllTenantsPage)).ExtractInto(&s)
-	return s.TenantUsages, err
+	err := (page.(AllTenantsPage)).ExtractInto(&res)
+	return res, err
 }
 
 // IsEmpty determines whether or not an AllTenantsPage is empty.
@@ -171,13 +172,13 @@ func (r AllTenantsPage) IsEmpty() (bool, error) {
 
 // NextPageURL uses the response's embedded link reference to navigate to the
 // next page of results.
-func (r AllTenantsPage) NextPageURL() (string, error) {
-	var s struct {
+func (raw AllTenantsPage) NextPageURL() (string, error) {
+	var res struct {
 		Links []golangsdk.Link `json:"tenant_usages_links"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }

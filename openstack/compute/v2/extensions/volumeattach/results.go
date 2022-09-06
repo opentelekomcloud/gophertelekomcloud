@@ -2,6 +2,7 @@ package volumeattach
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -36,11 +37,11 @@ func (page VolumeAttachmentPage) IsEmpty() (bool, error) {
 // ExtractVolumeAttachments interprets a page of results as a slice of
 // VolumeAttachment.
 func ExtractVolumeAttachments(r pagination.Page) ([]VolumeAttachment, error) {
-	var s struct {
+	var res struct {
 		VolumeAttachments []VolumeAttachment `json:"volumeAttachments"`
 	}
-	err := (r.(VolumeAttachmentPage)).ExtractInto(&s)
-	return s.VolumeAttachments, err
+	err := (r.(VolumeAttachmentPage)).ExtractInto(&res)
+	return res, err
 }
 
 // VolumeAttachmentResult is the result from a volume attachment operation.
@@ -50,12 +51,12 @@ type VolumeAttachmentResult struct {
 
 // Extract is a method that attempts to interpret any VolumeAttachment resource
 // response as a VolumeAttachment struct.
-func (r VolumeAttachmentResult) Extract() (*VolumeAttachment, error) {
-	var s struct {
+func (raw VolumeAttachmentResult) Extract() (*VolumeAttachment, error) {
+	var res struct {
 		VolumeAttachment *VolumeAttachment `json:"volumeAttachment"`
 	}
-	err := r.ExtractInto(&s)
-	return s.VolumeAttachment, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateResult is the response from a Create operation. Call its Extract method

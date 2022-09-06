@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -18,9 +19,9 @@ type serverResult struct {
 }
 
 // Extract interprets any serverResult as a Server, if possible.
-func (r serverResult) Extract() (*Server, error) {
-	var s Server
-	err := r.ExtractInto(&s)
+func (raw serverResult) Extract() (*Server, error) {
+	var res Server
+	err = extract.Into(raw, &res)
 	return &s, err
 }
 
@@ -86,13 +87,13 @@ type ShowConsoleOutputResult struct {
 }
 
 // Extract will return the console output from a ShowConsoleOutput request.
-func (r ShowConsoleOutputResult) Extract() (string, error) {
-	var s struct {
+func (raw ShowConsoleOutputResult) Extract() (string, error) {
+	var res struct {
 		Output string `json:"output"`
 	}
 
-	err := r.ExtractInto(&s)
-	return s.Output, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // GetPasswordResult represent the result of a get os-server-password operation.
@@ -105,16 +106,17 @@ type GetPasswordResult struct {
 // If privateKey != nil the password is decrypted with the private key.
 // If privateKey == nil the encrypted password is returned and can be decrypted
 // with:
-//   echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
-func (r GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string, error) {
-	var s struct {
+//
+//	echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
+func (raw GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string, error) {
+	var res struct {
 		Password string `json:"password"`
 	}
-	err := r.ExtractInto(&s)
-	if err == nil && privateKey != nil && s.Password != "" {
-		return decryptPassword(s.Password, privateKey)
+	err = extract.Into(raw, &res)
+	if err == nil && privateKey != nil && res.Password != "" {
+		return decryptPassword(res.Password, privateKey)
 	}
-	return s.Password, err
+	return res, err
 }
 
 func decryptPassword(encryptedPassword string, privateKey *rsa.PrivateKey) (string, error) {
@@ -259,10 +261,10 @@ func (r *Server) UnmarshalJSON(b []byte) error {
 }
 
 // Extract interprets any serverResult as a Server, if possible.
-func (r GetNICResult) Extract() ([]NIC, error) {
-	var s []NIC
-	err := r.ExtractIntoSlicePtr(&s, "interfaceAttachments")
-	return s, err
+func (raw GetNICResult) Extract() ([]NIC, error) {
+	var res []NIC
+	err = extract.IntoSlicePtr(raw, &res, "interfaceAttachments")
+	return res, err
 }
 
 type NIC struct {
@@ -294,15 +296,15 @@ func (r ServerPage) IsEmpty() (bool, error) {
 
 // NextPageURL uses the response's embedded link reference to navigate to the
 // next page of results.
-func (r ServerPage) NextPageURL() (string, error) {
-	var s struct {
+func (raw ServerPage) NextPageURL() (string, error) {
+	var res struct {
 		Links []golangsdk.Link `json:"servers_links"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }
 
 // ExtractServers interprets the results of a single page from a List() call,
@@ -363,21 +365,21 @@ type DeleteMetadatumResult struct {
 }
 
 // Extract interprets any MetadataResult as a Metadata, if possible.
-func (r MetadataResult) Extract() (map[string]string, error) {
-	var s struct {
+func (raw MetadataResult) Extract() (map[string]string, error) {
+	var res struct {
 		Metadata map[string]string `json:"metadata"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Metadata, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // Extract interprets any MetadatumResult as a Metadatum, if possible.
-func (r MetadatumResult) Extract() (map[string]string, error) {
-	var s struct {
+func (raw MetadatumResult) Extract() (map[string]string, error) {
+	var res struct {
 		Metadatum map[string]string `json:"meta"`
 	}
-	err := r.ExtractInto(&s)
-	return s.Metadatum, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // Address represents an IP address.
@@ -403,11 +405,11 @@ func (r AddressPage) IsEmpty() (bool, error) {
 // ExtractAddresses interprets the results of a single page from a
 // ListAddresses() call, producing a map of addresses.
 func ExtractAddresses(r pagination.Page) (map[string][]Address, error) {
-	var s struct {
+	var res struct {
 		Addresses map[string][]Address `json:"addresses"`
 	}
-	err := (r.(AddressPage)).ExtractInto(&s)
-	return s.Addresses, err
+	err := (r.(AddressPage)).ExtractInto(&res)
+	return &res, err
 }
 
 // NetworkAddressPage abstracts the raw results of making a
@@ -428,16 +430,16 @@ func (r NetworkAddressPage) IsEmpty() (bool, error) {
 // ExtractNetworkAddresses interprets the results of a single page from a
 // ListAddressesByNetwork() call, producing a slice of addresses.
 func ExtractNetworkAddresses(r pagination.Page) ([]Address, error) {
-	var s map[string][]Address
-	err := (r.(NetworkAddressPage)).ExtractInto(&s)
+	var res map[string][]Address
+	err := (r.(NetworkAddressPage)).ExtractInto(&res)
 	if err != nil {
 		return nil, err
 	}
 
 	var key string
-	for k := range s {
+	for k := range res {
 		key = k
 	}
 
-	return s[key], err
+	return res[key], err
 }

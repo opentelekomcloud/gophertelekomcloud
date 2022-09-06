@@ -32,21 +32,21 @@ func (opts CreateOpts) ToTagsCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, server_id string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToTagsCreateMap()
 	if err != nil {
-		r.Err = err
-		return r
+		return nil, err
+		r
 	}
-	_, r.Err = client.Put(createURL(client, server_id), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	raw, err := client.Put(createURL(client, server_id), b, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	return
 }
 
 // Get implements tags get request
 func Get(client *golangsdk.ServiceClient, server_id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, server_id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, server_id), nil, nil)
 	return
 }
 
 // Delete implements image delete request
 func Delete(client *golangsdk.ServiceClient, server_id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, server_id), nil)
+	raw, err := client.Delete(deleteURL(client, server_id), nil)
 	return
 }

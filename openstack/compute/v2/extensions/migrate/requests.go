@@ -6,7 +6,7 @@ import (
 
 // Migrate will initiate a migration of the instance to another host.
 func Migrate(client *golangsdk.ServiceClient, id string) (r MigrateResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"migrate": nil}, nil, nil)
+	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"migrate": nil}, nil, nil)
 	return
 }
 
@@ -42,9 +42,8 @@ func (opts LiveMigrateOpts) ToLiveMigrateMap() (map[string]interface{}, error) {
 func LiveMigrate(client *golangsdk.ServiceClient, id string, opts LiveMigrateOptsBuilder) (r MigrateResult) {
 	b, err := opts.ToLiveMigrateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, nil, nil)
+	raw, err := client.Post(actionURL(client, id), b, nil, nil)
 	return
 }

@@ -19,10 +19,10 @@ type UnrescueResult struct {
 }
 
 // Extract interprets any RescueResult as an AdminPass, if possible.
-func (r RescueResult) Extract() (string, error) {
-	var s struct {
+func (raw RescueResult) Extract() (string, error) {
+	var res struct {
 		AdminPass string `json:"adminPass"`
 	}
-	err := r.ExtractInto(&s)
-	return s.AdminPass, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }

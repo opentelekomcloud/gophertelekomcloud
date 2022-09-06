@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -62,11 +63,11 @@ func (page FloatingIPPage) IsEmpty() (bool, error) {
 
 // ExtractFloatingIPs interprets a page of results as a slice of FloatingIPs.
 func ExtractFloatingIPs(r pagination.Page) ([]FloatingIP, error) {
-	var s struct {
+	var res struct {
 		FloatingIPs []FloatingIP `json:"floating_ips"`
 	}
-	err := (r.(FloatingIPPage)).ExtractInto(&s)
-	return s.FloatingIPs, err
+	err := (r.(FloatingIPPage)).ExtractInto(&res)
+	return res, err
 }
 
 // FloatingIPResult is the raw result from a FloatingIP request.
@@ -76,12 +77,12 @@ type FloatingIPResult struct {
 
 // Extract is a method that attempts to interpret any FloatingIP resource
 // response as a FloatingIP struct.
-func (r FloatingIPResult) Extract() (*FloatingIP, error) {
-	var s struct {
+func (raw FloatingIPResult) Extract() (*FloatingIP, error) {
+	var res struct {
 		FloatingIP *FloatingIP `json:"floating_ip"`
 	}
-	err := r.ExtractInto(&s)
-	return s.FloatingIP, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateResult is the response from a Create operation. Call its Extract method

@@ -11,13 +11,13 @@ type EvacuateResult struct {
 	golangsdk.Result
 }
 
-func (r EvacuateResult) ExtractAdminPass() (string, error) {
-	var s struct {
+func (raw EvacuateResult) ExtractAdminPass() (string, error) {
+	var res struct {
 		AdminPass string `json:"adminPass"`
 	}
-	err := r.ExtractInto(&s)
+	err = extract.Into(raw, &res)
 	if err != nil && err.Error() == "EOF" {
 		return "", nil
 	}
-	return s.AdminPass, err
+	return &res, err
 }

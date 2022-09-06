@@ -2,6 +2,7 @@ package servergroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -47,11 +48,11 @@ func (page ServerGroupPage) IsEmpty() (bool, error) {
 // ExtractServerGroups interprets a page of results as a slice of
 // ServerGroups.
 func ExtractServerGroups(r pagination.Page) ([]ServerGroup, error) {
-	var s struct {
+	var res struct {
 		ServerGroups []ServerGroup `json:"server_groups"`
 	}
-	err := (r.(ServerGroupPage)).ExtractInto(&s)
-	return s.ServerGroups, err
+	err := (r.(ServerGroupPage)).ExtractInto(&res)
+	return res, err
 }
 
 type ServerGroupResult struct {
@@ -60,12 +61,12 @@ type ServerGroupResult struct {
 
 // Extract is a method that attempts to interpret any Server Group resource
 // response as a ServerGroup struct.
-func (r ServerGroupResult) Extract() (*ServerGroup, error) {
-	var s struct {
+func (raw ServerGroupResult) Extract() (*ServerGroup, error) {
+	var res struct {
 		ServerGroup *ServerGroup `json:"server_group"`
 	}
-	err := r.ExtractInto(&s)
-	return s.ServerGroup, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateResult is the response from a Create operation. Call its Extract method

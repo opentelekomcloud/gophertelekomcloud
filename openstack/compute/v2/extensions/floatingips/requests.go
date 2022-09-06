@@ -33,10 +33,9 @@ func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToFloatingIPCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -44,13 +43,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Get returns data about a previously created Floating IP.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }
 
 // Delete requests the deletion of a previous allocated Floating IP.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }
 
@@ -78,10 +77,9 @@ func (opts AssociateOpts) ToFloatingIPAssociateMap() (map[string]interface{}, er
 func AssociateInstance(client *golangsdk.ServiceClient, serverID string, opts AssociateOptsBuilder) (r AssociateResult) {
 	b, err := opts.ToFloatingIPAssociateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(associateURL(client, serverID), b, nil, nil)
+	raw, err := client.Post(associateURL(client, serverID), b, nil, nil)
 	return
 }
 
@@ -106,9 +104,8 @@ func (opts DisassociateOpts) ToFloatingIPDisassociateMap() (map[string]interface
 func DisassociateInstance(client *golangsdk.ServiceClient, serverID string, opts DisassociateOptsBuilder) (r DisassociateResult) {
 	b, err := opts.ToFloatingIPDisassociateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(disassociateURL(client, serverID), b, nil, nil)
+	raw, err := client.Post(disassociateURL(client, serverID), b, nil, nil)
 	return
 }

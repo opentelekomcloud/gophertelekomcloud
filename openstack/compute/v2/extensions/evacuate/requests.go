@@ -31,10 +31,9 @@ func (opts EvacuateOpts) ToEvacuateMap() (map[string]interface{}, error) {
 func Evacuate(client *golangsdk.ServiceClient, id string, opts EvacuateOptsBuilder) (r EvacuateResult) {
 	b, err := opts.ToEvacuateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

@@ -2,6 +2,7 @@ package keypairs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -47,12 +48,12 @@ func ExtractKeyPairs(r pagination.Page) ([]KeyPair, error) {
 	type pair struct {
 		KeyPair KeyPair `json:"keypair"`
 	}
-	var s struct {
+	var res struct {
 		KeyPairs []pair `json:"keypairs"`
 	}
-	err := (r.(KeyPairPage)).ExtractInto(&s)
-	results := make([]KeyPair, len(s.KeyPairs))
-	for i, pair := range s.KeyPairs {
+	err := (r.(KeyPairPage)).ExtractInto(&res)
+	results := make([]KeyPair, len(res.KeyPairs))
+	for i, pair := range res.KeyPairs {
 		results[i] = pair.KeyPair
 	}
 	return results, err
@@ -64,12 +65,12 @@ type keyPairResult struct {
 
 // Extract is a method that attempts to interpret any KeyPair resource response
 // as a KeyPair struct.
-func (r keyPairResult) Extract() (*KeyPair, error) {
-	var s struct {
+func (raw keyPairResult) Extract() (*KeyPair, error) {
+	var res struct {
 		KeyPair *KeyPair `json:"keypair"`
 	}
-	err := r.ExtractInto(&s)
-	return s.KeyPair, err
+	err = extract.Into(raw, &res)
+	return &res, err
 }
 
 // CreateResult is the response from a Create operation. Call its Extract method

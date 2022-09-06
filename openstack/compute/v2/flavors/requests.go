@@ -12,12 +12,12 @@ type ListOptsBuilder interface {
 }
 
 /*
-	AccessType maps to OpenStack's Flavor.is_public field. Although the is_public
-	field is boolean, the request options are ternary, which is why AccessType is
-	a string. The following values are allowed:
+AccessType maps to OpenStack's Flavor.is_public field. Although the is_public
+field is boolean, the request options are ternary, which is why AccessType is
+a string. The following values are allowed:
 
-	The AccessType arguement is optional, and if it is not supplied, OpenStack
-	returns the PublicAccess flavors.
+The AccessType arguement is optional, and if it is not supplied, OpenStack
+returns the PublicAccess flavors.
 */
 type AccessType string
 
@@ -35,12 +35,12 @@ const (
 )
 
 /*
-	ListOpts filters the results returned by the List() function.
-	For example, a flavor with a minDisk field of 10 will not be returned if you
-	specify MinDisk set to 20.
+ListOpts filters the results returned by the List() function.
+For example, a flavor with a minDisk field of 10 will not be returned if you
+specify MinDisk set to 20.
 
-	Typically, software will use the last ID of the previous call to List to set
-	the Marker for the current call.
+Typically, software will use the last ID of the previous call to List to set
+the Marker for the current call.
 */
 type ListOpts struct {
 	// ChangesSince, if provided, instructs List to return only those things which
@@ -142,10 +142,9 @@ func (opts CreateOpts) ToFlavorCreateMap() (map[string]interface{}, error) {
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToFlavorCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return
@@ -154,13 +153,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // Get retrieves details of a single flavor. Use ExtractFlavor to convert its
 // result into a Flavor.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	raw, err := client.Get(getURL(client, id), nil, nil)
 	return
 }
 
 // Delete deletes the specified flavor ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	raw, err := client.Delete(deleteURL(client, id), nil)
 	return
 }
 
@@ -194,10 +193,9 @@ func (opts AddAccessOpts) ToFlavorAddAccessMap() (map[string]interface{}, error)
 func AddAccess(client *golangsdk.ServiceClient, id string, opts AddAccessOptsBuilder) (r AddAccessResult) {
 	b, err := opts.ToFlavorAddAccessMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(accessActionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(accessActionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -224,10 +222,9 @@ func (opts RemoveAccessOpts) ToFlavorRemoveAccessMap() (map[string]interface{}, 
 func RemoveAccess(client *golangsdk.ServiceClient, id string, opts RemoveAccessOptsBuilder) (r RemoveAccessResult) {
 	b, err := opts.ToFlavorRemoveAccessMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(accessActionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(accessActionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -235,12 +232,12 @@ func RemoveAccess(client *golangsdk.ServiceClient, id string, opts RemoveAccessO
 
 // ExtraSpecs requests all the extra-specs for the given flavor ID.
 func ListExtraSpecs(client *golangsdk.ServiceClient, flavorID string) (r ListExtraSpecsResult) {
-	_, r.Err = client.Get(extraSpecsListURL(client, flavorID), &r.Body, nil)
+	raw, err := client.Get(extraSpecsListURL(client, flavorID), nil, nil)
 	return
 }
 
 func GetExtraSpec(client *golangsdk.ServiceClient, flavorID string, key string) (r GetExtraSpecResult) {
-	_, r.Err = client.Get(extraSpecsGetURL(client, flavorID, key), &r.Body, nil)
+	raw, err := client.Get(extraSpecsGetURL(client, flavorID, key), nil, nil)
 	return
 }
 
@@ -264,10 +261,9 @@ func (opts ExtraSpecsOpts) ToFlavorExtraSpecsCreateMap() (map[string]interface{}
 func CreateExtraSpecs(client *golangsdk.ServiceClient, flavorID string, opts CreateExtraSpecsOptsBuilder) (r CreateExtraSpecsResult) {
 	b, err := opts.ToFlavorExtraSpecsCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(extraSpecsCreateURL(client, flavorID), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(extraSpecsCreateURL(client, flavorID), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -302,10 +298,9 @@ func (opts ExtraSpecsOpts) ToFlavorExtraSpecUpdateMap() (map[string]string, stri
 func UpdateExtraSpec(client *golangsdk.ServiceClient, flavorID string, opts UpdateExtraSpecOptsBuilder) (r UpdateExtraSpecResult) {
 	b, key, err := opts.ToFlavorExtraSpecUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(extraSpecUpdateURL(client, flavorID, key), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(extraSpecUpdateURL(client, flavorID, key), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -314,7 +309,7 @@ func UpdateExtraSpec(client *golangsdk.ServiceClient, flavorID string, opts Upda
 // DeleteExtraSpec will delete the key-value pair with the given key for the given
 // flavor ID.
 func DeleteExtraSpec(client *golangsdk.ServiceClient, flavorID, key string) (r DeleteExtraSpecResult) {
-	_, r.Err = client.Delete(extraSpecDeleteURL(client, flavorID, key), &golangsdk.RequestOpts{
+	raw, err := client.Delete(extraSpecDeleteURL(client, flavorID, key), &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
