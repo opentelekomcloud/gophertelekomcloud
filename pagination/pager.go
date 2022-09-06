@@ -1,18 +1,13 @@
 package pagination
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-)
-
-var (
-	// ErrPageNotAvailable is returned from a Pager when a next or previous page is requested, but does not exist.
-	ErrPageNotAvailable = errors.New("The requested page does not exist.")
 )
 
 // Page must be satisfied by the result type of any resource collection.
@@ -30,7 +25,11 @@ type Page interface {
 	IsEmpty() (bool, error)
 
 	// GetBody returns the Page Body. This is used in the `AllPages` method.
-	GetBody() interface{}
+	GetBody() []byte
+	// GetBodyAsSlice tries to convert page body to a slice.
+	GetBodyAsSlice() ([]interface{}, error)
+	// GetBodyAsMap tries to convert page body to a map.
+	GetBodyAsMap() (map[string]interface{}, error)
 }
 
 // Pager knows how to advance through a specific resource collection, one page at a time.
@@ -123,17 +122,15 @@ func (p Pager) EachPage(handler func(Page) (bool, error)) error {
 // AllPages returns all the pages from a `List` operation in a single page,
 // allowing the user to retrieve all the pages at once.
 func (p Pager) AllPages() (Page, error) {
-	// pagesSlice holds all the pages until they get converted into as Page Body.
-	var pagesSlice []interface{}
 	// body will contain the final concatenated Page body.
-	var body reflect.Value
+	var body []byte
 
 	// Grab a test page to ascertain the page body type.
 	testPage, err := p.fetchNextPage(p.initialURL)
 	if err != nil {
 		return nil, err
 	}
-	// Store the page type so we can use reflection to create a new mega-page of
+	// Store the page type, so we can use reflection to create a new mega-page of
 	// that type.
 	pageType := reflect.TypeOf(testPage)
 
@@ -142,15 +139,37 @@ func (p Pager) AllPages() (Page, error) {
 		return testPage, nil
 	}
 
-	// Switch on the page body type. Recognized types are `map[string]interface{}`,
-	// `[]byte`, and `[]interface{}`.
-	switch pb := testPage.GetBody().(type) {
-	case map[string]interface{}:
+	if _, err := testPage.GetBodyAsSlice(); err == nil {
+		var pagesSlice []interface{}
+
+		// Iterate over the pages to concatenate the bodies.
+		err = p.EachPage(func(page Page) (bool, error) {
+			b, err := page.GetBodyAsSlice()
+			if err != nil {
+				return false, fmt.Errorf("error paginating page with slice body: %w", err)
+			}
+			pagesSlice = append(pagesSlice, b...)
+			return true, nil
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		body, err = json.Marshal(pagesSlice)
+		if err != nil {
+			return nil, err
+		}
+	} else if _, err := testPage.GetBodyAsMap(); err == nil {
+		var pagesSlice []interface{}
+
 		// key is the map key for the page body if the body type is `map[string]interface{}`.
 		var key string
 		// Iterate over the pages to concatenate the bodies.
 		err = p.EachPage(func(page Page) (bool, error) {
-			b := page.GetBody().(map[string]interface{})
+			b, err := page.GetBodyAsMap()
+			if err != nil {
+				return false, fmt.Errorf("error paginating page with map body: %w", err)
+			}
 			for k, v := range b {
 				// If it's a linked page, we don't want the `links`, we want the other one.
 				if !strings.HasSuffix(k, "links") {
@@ -167,15 +186,23 @@ func (p Pager) AllPages() (Page, error) {
 		if err != nil {
 			return nil, err
 		}
-		// Set body to value of type `map[string]interface{}`
-		body = reflect.MakeMap(reflect.MapOf(reflect.TypeOf(key), reflect.TypeOf(pagesSlice)))
-		body.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(pagesSlice))
-	case []byte:
+
+		mapBody := map[string]interface{}{
+			key: pagesSlice,
+		}
+
+		body, err = json.Marshal(mapBody)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		var pagesSlice [][]byte
+
 		// Iterate over the pages to concatenate the bodies.
 		err = p.EachPage(func(page Page) (bool, error) {
-			b := page.GetBody().([]byte)
+			b := page.GetBody()
 			pagesSlice = append(pagesSlice, b)
-			// seperate pages with a comma
+			// separate pages with a comma
 			pagesSlice = append(pagesSlice, []byte{10})
 			return true, nil
 		})
@@ -189,31 +216,10 @@ func (p Pager) AllPages() (Page, error) {
 		var b []byte
 		// Combine the slice of slices in to a single slice.
 		for _, slice := range pagesSlice {
-			b = append(b, slice.([]byte)...)
+			b = append(b, slice...)
 		}
-		// Set body to value of type `bytes`.
-		body = reflect.New(reflect.TypeOf(b)).Elem()
-		body.SetBytes(b)
-	case []interface{}:
-		// Iterate over the pages to concatenate the bodies.
-		err = p.EachPage(func(page Page) (bool, error) {
-			b := page.GetBody().([]interface{})
-			pagesSlice = append(pagesSlice, b...)
-			return true, nil
-		})
-		if err != nil {
-			return nil, err
-		}
-		// Set body to value of type `[]interface{}`
-		body = reflect.MakeSlice(reflect.TypeOf(pagesSlice), len(pagesSlice), len(pagesSlice))
-		for i, s := range pagesSlice {
-			body.Index(i).Set(reflect.ValueOf(s))
-		}
-	default:
-		err := golangsdk.ErrUnexpectedType{}
-		err.Expected = "map[string]interface{}/[]byte/[]interface{}"
-		err.Actual = fmt.Sprintf("%T", pb)
-		return nil, err
+
+		body = b
 	}
 
 	// Each `Extract*` function is expecting a specific type of page coming back,
@@ -223,7 +229,7 @@ func (p Pager) AllPages() (Page, error) {
 	// pages.
 	page := reflect.New(pageType)
 	// Set the page body to be the concatenated pages.
-	page.Elem().FieldByName("Body").Set(body)
+	page.Elem().FieldByName("Body").Set(reflect.ValueOf(body))
 	// Set any additional headers that were pass along. The `objectstorage` pacakge,
 	// for example, passes a Content-Type header.
 	h := make(http.Header)
