@@ -94,6 +94,10 @@ func TestDownload(t *testing.T) {
 	rdr, err := imagedata.Download(fakeclient.ServiceClient(), "da3b75d9-3f4a-40e7-8a2c-bfab23927dea").Extract()
 	th.AssertNoErr(t, err)
 
+	t.Cleanup(func() {
+		_ = rdr.Close()
+	})
+
 	bs, err := ioutil.ReadAll(rdr)
 	th.AssertNoErr(t, err)
 

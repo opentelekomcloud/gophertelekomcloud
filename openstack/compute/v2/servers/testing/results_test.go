@@ -2,8 +2,6 @@ package testing
 
 import (
 	"crypto/rsa"
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	"golang.org/x/crypto/ssh"
@@ -16,13 +14,7 @@ import (
 
 // Fail - No password in JSON.
 func TestExtractPassword_no_pwd_data(t *testing.T) {
-
-	var dejson interface{}
-	err := json.Unmarshal([]byte(`{ "Crappy data": ".-.-." }`), &dejson)
-	if err != nil {
-		t.Fatalf("%s", err)
-	}
-	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: dejson}}
+	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: []byte(`{ "Crappy data": ".-.-." }`)}}
 
 	pwd, err := resp.ExtractPassword(nil)
 	th.AssertNoErr(t, err)
@@ -32,15 +24,9 @@ func TestExtractPassword_no_pwd_data(t *testing.T) {
 // Ok - return encrypted password when no private key is given.
 func TestExtractPassword_encrypted_pwd(t *testing.T) {
 
-	var dejson interface{}
 	sejson := []byte(`{"password":"PP8EnwPO9DhEc8+O/6CKAkPF379mKsUsfFY6yyw0734XXvKsSdV9KbiHQ2hrBvzeZxtGMrlFaikVunCRizyLLWLMuOi4hoH+qy9F9sQid61gQIGkxwDAt85d/7Eau2/KzorFnZhgxArl7IiqJ67X6xjKkR3zur+Yp3V/mtVIehpPYIaAvPbcp2t4mQXl1I9J8yrQfEZOctLL1L4heDEVXnxvNihVLK6pivlVggp6SZCtjj9cduZGrYGsxsOCso1dqJQr7GCojfwvuLOoG0OYwEGuWVTZppxWxi/q1QgeHFhGKA5QUXlz7pS71oqpjYsTeViuHnfvlqb5TVYZpQ1haw=="}`)
 
-	err := json.Unmarshal(sejson, &dejson)
-	fmt.Printf("%v\n", dejson)
-	if err != nil {
-		t.Fatalf("%s", err)
-	}
-	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: dejson}}
+	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: sejson}}
 
 	pwd, err := resp.ExtractPassword(nil)
 	th.AssertNoErr(t, err)
@@ -49,7 +35,8 @@ func TestExtractPassword_encrypted_pwd(t *testing.T) {
 
 // Ok - return decrypted password when private key is given.
 // Decrytion can be verified by:
-//   echo "<enc_pwd>" | base64 -D | openssl rsautl -decrypt -inkey <privateKey.pem>
+//
+//	echo "<enc_pwd>" | base64 -D | openssl rsautl -decrypt -inkey <privateKey.pem>
 func TestExtractPassword_decrypted_pwd(t *testing.T) {
 
 	privateKey, err := ssh.ParseRawPrivateKey([]byte(`
@@ -85,15 +72,9 @@ KSde3I0ybDz7iS2EtceKB7m4C0slYd+oBkm4efuF00rCOKDwpFq45m0=
 		t.Fatalf("Error parsing private key: %s\n", err)
 	}
 
-	var dejson interface{}
 	sejson := []byte(`{"password":"PP8EnwPO9DhEc8+O/6CKAkPF379mKsUsfFY6yyw0734XXvKsSdV9KbiHQ2hrBvzeZxtGMrlFaikVunCRizyLLWLMuOi4hoH+qy9F9sQid61gQIGkxwDAt85d/7Eau2/KzorFnZhgxArl7IiqJ67X6xjKkR3zur+Yp3V/mtVIehpPYIaAvPbcp2t4mQXl1I9J8yrQfEZOctLL1L4heDEVXnxvNihVLK6pivlVggp6SZCtjj9cduZGrYGsxsOCso1dqJQr7GCojfwvuLOoG0OYwEGuWVTZppxWxi/q1QgeHFhGKA5QUXlz7pS71oqpjYsTeViuHnfvlqb5TVYZpQ1haw=="}`)
 
-	err = json.Unmarshal(sejson, &dejson)
-	fmt.Printf("%v\n", dejson)
-	if err != nil {
-		t.Fatalf("%s", err)
-	}
-	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: dejson}}
+	resp := servers.GetPasswordResult{Result: golangsdk.Result{Body: sejson}}
 
 	pwd, err := resp.ExtractPassword(privateKey.(*rsa.PrivateKey))
 	th.AssertNoErr(t, err)
