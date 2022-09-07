@@ -1,7 +1,6 @@
 package imagedata
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -23,12 +22,11 @@ type StageResult struct {
 // method to gain access to the image data.
 type DownloadResult struct {
 	golangsdk.Result
+
+	reader io.ReadCloser
 }
 
 // Extract builds images model from io.Reader
-func (r DownloadResult) Extract() (io.Reader, error) {
-	if r, ok := r.Body.(io.Reader); ok {
-		return r, nil
-	}
-	return nil, fmt.Errorf("Expected io.Reader but got: %T(%#v)", r.Body, r.Body)
+func (r DownloadResult) Extract() (io.ReadCloser, error) {
+	return r.reader, nil
 }

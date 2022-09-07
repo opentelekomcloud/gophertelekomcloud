@@ -1,14 +1,12 @@
 package testing
 
 import (
-	"encoding/json"
 	"net/http"
 	"testing"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 const testTokenID = "130f6c17-420e-4a0b-97b0-0c9cf2a05f30"
@@ -293,12 +291,13 @@ var ExpectedProject = tokens.Project{
 }
 
 func getGetResult(t *testing.T) tokens.GetResult {
+	t.Helper()
+
 	result := tokens.GetResult{}
 	result.Header = http.Header{
 		"X-Subject-Token": []string{testTokenID},
 	}
-	err := json.Unmarshal([]byte(TokenOutput), &result.Body)
-	testhelper.AssertNoErr(t, err)
+	result.Body = []byte(TokenOutput)
 	return result
 }
 
@@ -309,11 +308,12 @@ var ExpectedDomain = tokens.Domain{
 }
 
 func getGetDomainResult(t *testing.T) tokens.GetResult {
+	t.Helper()
+
 	result := tokens.GetResult{}
 	result.Header = http.Header{
 		"X-Subject-Token": []string{testTokenID},
 	}
-	err := json.Unmarshal([]byte(DomainToken), &result.Body)
-	testhelper.AssertNoErr(t, err)
+	result.Body = []byte(DomainToken)
 	return result
 }

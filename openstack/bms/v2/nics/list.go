@@ -13,17 +13,17 @@ type ListOpts struct {
 	// ID is the unique identifier for the nic.
 	ID string `json:"port_id"`
 
-	// Status indicates whether or not a nic is currently operational.
+	// Status indicates whether a nic is currently operational.
 	Status string `json:"port_state"`
 }
 
 // List returns collection of nics. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
-func List(c *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, error) {
-	u := listURL(c, serverId)
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return NicPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+func List(client *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, error) {
+	pages, err := pagination.NewPager(client, client.ServiceURL("servers", serverId, "os-interface"),
+		func(r pagination.PageResult) pagination.Page {
+			return NicPage{pagination.LinkedPageBase{PageResult: r}}
+		}).AllPages()
 	if err != nil {
 		return nil, err
 	}
@@ -33,11 +33,11 @@ func List(c *golangsdk.ServiceClient, serverId string, opts ListOpts) ([]Nic, er
 		return nil, err
 	}
 
-	return FilterNICs(allNICs, opts)
+	return filterNICs(allNICs, opts)
 }
 
-// FilterNICs used to filter nics using id and status.
-func FilterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
+// filterNICs used to filter nics using id and status.
+func filterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
 
 	var refinedNICs []Nic
 	var matched bool
@@ -75,10 +75,4 @@ func getStructField(v *Nic, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
 	return f.String()
-}
-
-// Get retrieves a particular nic based on its unique ID.
-func Get(c *golangsdk.ServiceClient, serverId string, id string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, serverId, id), &r.Body, nil)
-	return
 }

@@ -16,7 +16,14 @@ func (r GetResult) Extract() ([]byte, error) {
 	if r.Err != nil {
 		return nil, r.Err
 	}
-	template, err := json.MarshalIndent(r.Body, "", "  ")
+	mapBody := make(map[string]interface{})
+
+	// make sure return pretty-printed body
+	if err := json.Unmarshal(r.Body, &mapBody); err != nil {
+		return nil, err
+	}
+
+	template, err := json.MarshalIndent(mapBody, "", "  ")
 	if err != nil {
 		return nil, err
 	}
