@@ -7,7 +7,7 @@ import (
 
 // SingleTenant returns usage data about a single tenant.
 func SingleTenant(client *golangsdk.ServiceClient, tenantID string, opts SingleTenantOptsBuilder) pagination.Pager {
-	u := getTenantURL(client, tenantID)
+	u := client.ServiceURL("os-simple-tenant-usage", tenantID)
 	if opts != nil {
 		query, err := opts.ToUsageSingleTenantQuery()
 		if err != nil {

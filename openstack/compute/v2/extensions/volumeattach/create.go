@@ -8,7 +8,7 @@ func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBui
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(createURL(client, serverID), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("servers", serverID, "os-volume_attachments"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

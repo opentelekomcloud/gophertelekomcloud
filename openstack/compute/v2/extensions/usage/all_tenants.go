@@ -7,7 +7,7 @@ import (
 
 // AllTenants returns usage data about all tenants.
 func AllTenants(client *golangsdk.ServiceClient, opts AllTenantsOptsBuilder) pagination.Pager {
-	u := allTenantsURL(client)
+	u := client.ServiceURL("os-simple-tenant-usage")
 	if opts != nil {
 		query, err := opts.ToUsageAllTenantsQuery()
 		if err != nil {
