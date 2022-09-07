@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type AddHostOpts struct {
@@ -12,7 +13,7 @@ type AddHostOpts struct {
 }
 
 // AddHost makes a request against the API to add host to a specific aggregate.
-func AddHost(client *golangsdk.ServiceClient, aggregateID int, opts AddHostOpts) (r ActionResult) {
+func AddHost(client *golangsdk.ServiceClient, aggregateID int, opts AddHostOpts) (*Aggregate, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "add_host")
 	if err != nil {
 		return nil, err
@@ -25,5 +26,7 @@ func AddHost(client *golangsdk.ServiceClient, aggregateID int, opts AddHostOpts)
 		return nil, err
 	}
 
-	return
+	var res Aggregate
+	err = extract.IntoStructPtr(raw.Body, &res, "aggregate")
+	return &res, err
 }
