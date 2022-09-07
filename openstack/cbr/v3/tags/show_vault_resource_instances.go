@@ -1,35 +1,23 @@
 package tags
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-func ShowVaultProjectTag(client *golangsdk.ServiceClient) (r tags.ListResult) {
-	return tags.List(client, baseURL)
-}
-
-// ----------------------------------------------------------------------------
-
 type ActionType string
+type CloudType string
+type ObjectType string
 
 const (
 	Filter = "filter"
 	Count  = "count"
-)
 
-type CloudType string
-
-const (
 	Public = "public"
 	Hybrid = "hybrid"
-)
 
-type ObjectType string
-
-const (
 	Server = "server"
 	Disk   = "disk"
 )
@@ -57,33 +45,37 @@ type ResourceInstancesRequest struct {
 	ObjectType ObjectType         `json:"object_type,omitempty"`
 }
 
-func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceInstancesRequest) (r InstancesResult) {
-	reqBody, err := golangsdk.BuildRequestBody(req, "")
+func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceInstancesRequest) (*InstancesResponse, error) {
+	b, err := golangsdk.BuildRequestBody(req, "")
 	if err != nil {
-		r.Err = fmt.Errorf("failed to create vault map: %s", err)
-		return
+		return nil, err
 	}
-	_, err = client.Post(showVaultResourceInstancesURL(client), reqBody, &r.Body, &golangsdk.RequestOpts{
+
+	// POST /v3/{project_id}/vault/resource_instances/action
+	raw, err := client.Post(client.ServiceURL("vault", "resource_instances", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	r.Err = err
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var res InstancesResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
-// ----------------------------------------------------------------------------
-
-func ShowVaultTag(client *golangsdk.ServiceClient, id string) (r tags.GetResult) {
-	return tags.Get(client, baseURL, id)
+type InstancesResponse struct {
+	Resources  []TagResource `json:"resources"`
+	TotalCount int           `json:"total_count"`
 }
 
-// ----------------------------------------------------------------------------
-
-func CreateVaultTags(client *golangsdk.ServiceClient, id string, req []tags.ResourceTag) (r tags.ActionResult) {
-	return tags.Create(client, baseURL, id, req)
+type TagResource struct {
+	ResourceID     string             `json:"resource_id"`
+	ResourceDetail BoxedVault         `json:"resource_detail"`
+	Tags           []tags.ResourceTag `json:"tags"`
+	ResourceName   string             `json:"resource_name"`
 }
 
-// ----------------------------------------------------------------------------
-
-func DeleteVaultTag(client *golangsdk.ServiceClient, id string, req []tags.ResourceTag) (r tags.ActionResult) {
-	return tags.Delete(client, baseURL, id, req)
+type BoxedVault struct {
+	Vault vaults.Vault `json:"vault"`
 }

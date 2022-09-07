@@ -2,12 +2,9 @@ package backups
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-type GetResult struct {
-	golangsdk.Result
-}
 
 type Backup struct {
 	CheckpointID string            `json:"checkpoint_id"`
@@ -32,6 +29,7 @@ type Backup struct {
 	ProviderID   string            `json:"provider_id"`
 	Children     []BackupResp      `json:"children"`
 }
+
 type BackupExtendInfo struct {
 	AutoTrigger          bool        `json:"auto_trigger"`
 	Bootable             bool        `json:"bootable"`
@@ -72,28 +70,17 @@ type ImageData struct {
 	ImageID string `json:"image_id"`
 }
 
-func (r GetResult) Extract() (*Backup, error) {
-	s := new(Backup)
-	err := r.ExtractIntoStructPtr(s, "backup")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
 type BackupPage struct {
 	pagination.LinkedPageBase
 }
 
 func (r BackupPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"backups_links"`
-	}
-	err := r.ExtractInto(&s)
+	var res []golangsdk.Link
+	err := extract.IntoSlicePtr(r.Result.BodyReader(), &res, "backups_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res)
 }
 
 func (r BackupPage) IsEmpty() (bool, error) {
@@ -102,18 +89,10 @@ func (r BackupPage) IsEmpty() (bool, error) {
 }
 
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var s []Backup
-	err := r.(BackupPage).Result.ExtractIntoSlicePtr(&s, "backups")
+	var res []Backup
+	err := extract.IntoSlicePtr(r.(BackupPage).Result.BodyReader(), &res, "backups")
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
-}
-
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type RestoreBackupResult struct {
-	golangsdk.ErrResult
+	return res, nil
 }

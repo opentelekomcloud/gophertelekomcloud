@@ -30,17 +30,15 @@ func TestPolicyLifecycle(t *testing.T) {
 		},
 		Enabled:       &iTrue,
 		OperationType: "backup",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		err = policies.Delete(client, policy.ID).ExtractErr()
+	t.Cleanup(func() {
+		err = policies.Delete(client, policy.ID)
 		th.AssertNoErr(t, err)
-	}()
+	})
 
-	allPages, err := policies.List(client, policies.ListOpts{}).AllPages()
-	th.AssertNoErr(t, err)
-	allPolicies, err := policies.ExtractPolicies(allPages)
+	allPolicies, err := policies.List(client, policies.ListOpts{})
 	th.AssertNoErr(t, err)
 	found := false
 	for _, p := range allPolicies {
@@ -57,12 +55,12 @@ func TestPolicyLifecycle(t *testing.T) {
 		Name:    "name2",
 	}
 
-	updated, err := policies.Update(client, policy.ID, updateOpts).Extract()
+	updated, err := policies.Update(client, policy.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, *updateOpts.Enabled, updated.Enabled)
 	th.CheckEquals(t, updateOpts.Name, updated.Name)
 
-	current, err := policies.Get(client, policy.ID).Extract()
+	current, err := policies.Get(client, policy.ID)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, *updateOpts.Enabled, current.Enabled)
 	th.CheckEquals(t, updateOpts.Name, current.Name)
