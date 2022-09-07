@@ -32,15 +32,17 @@ func TestBackupLifecycle(t *testing.T) {
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
 	}
-	vault, err := vaults.Create(client, opts).Extract()
+	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
-	defer func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
-	}()
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
 
 	// Create Volume
 	volume := openstack.CreateVolume(t)
-	defer openstack.DeleteVolume(t, volume.ID)
+	t.Cleanup(func() {
+		openstack.DeleteVolume(t, volume.ID)
+	})
 
 	// Associate server to the vault
 	aOpts := vaults.AssociateResourcesOpts{
@@ -51,7 +53,7 @@ func TestBackupLifecycle(t *testing.T) {
 			},
 		},
 	}
-	associated, err := vaults.AssociateResources(client, vault.ID, aOpts).Extract()
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(associated))
 
@@ -70,7 +72,7 @@ func TestBackupLifecycle(t *testing.T) {
 	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)
 	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
 
-	checkpointGet, err := checkpoint.Get(client, checkp.ID).Extract()
+	checkpointGet, err := checkpoint.Get(client, checkp.ID)
 	th.AssertNoErr(t, err)
 	// Checks are disabled due to STO-10008 bug
 	// th.AssertEquals(t, description, checkpointGet.ExtraInfo.Description)
@@ -85,13 +87,11 @@ func TestBackupLifecycle(t *testing.T) {
 	allBackups, err := backups.List(client, listOpts)
 	th.AssertNoErr(t, err)
 	bOpts := backups.RestoreBackupOpts{
-		Restore: backups.RestoreBackupStruct{
-			VolumeID: allBackups[0].ResourceID,
-		},
+		VolumeID: allBackups[0].ResourceID,
 	}
 	restoreErr := RestoreBackup(t, client, allBackups[0].ID, bOpts)
 	th.AssertNoErr(t, restoreErr)
-	errBack := backups.Delete(client, allBackups[0].ID).ExtractErr()
+	errBack := backups.Delete(client, allBackups[0].ID)
 	th.AssertNoErr(t, errBack)
 	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
 }
@@ -115,15 +115,18 @@ func TestBackupListing(t *testing.T) {
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
 	}
-	vault, err := vaults.Create(client, opts).Extract()
+	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
-	defer func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
-	}()
+
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
 
 	// Create Volume
 	volume := openstack.CreateVolume(t)
-	defer openstack.DeleteVolume(t, volume.ID)
+	t.Cleanup(func() {
+		openstack.DeleteVolume(t, volume.ID)
+	})
 
 	// Associate server to the vault
 	aOpts := vaults.AssociateResourcesOpts{
@@ -134,7 +137,7 @@ func TestBackupListing(t *testing.T) {
 			},
 		},
 	}
-	associated, err := vaults.AssociateResources(client, vault.ID, aOpts).Extract()
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(associated))
 
@@ -175,7 +178,7 @@ func TestBackupListing(t *testing.T) {
 		th.AssertEquals(t, allBackups[0].ID, list[0].ID)
 
 	}
-	errBack := backups.Delete(client, allBackups[0].ID).ExtractErr()
+	errBack := backups.Delete(client, allBackups[0].ID)
 	th.AssertNoErr(t, errBack)
 	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
 }

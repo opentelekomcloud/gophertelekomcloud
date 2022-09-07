@@ -11,11 +11,11 @@ import (
 )
 
 func CreateCheckpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts checkpoint.CreateOpts) *checkpoint.Checkpoint {
-	backup, err := checkpoint.Create(client, createOpts).Extract()
+	backup, err := checkpoint.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	err = golangsdk.WaitFor(600, func() (bool, error) {
-		checkp, err := checkpoint.Get(client, backup.ID).Extract()
+		checkp, err := checkpoint.Get(client, backup.ID)
 		if err != nil {
 			return false, err
 		}
@@ -33,11 +33,11 @@ func CreateCheckpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts 
 }
 
 func RestoreBackup(t *testing.T, client *golangsdk.ServiceClient, id string, opts backups.RestoreBackupOpts) error {
-	errRest := backups.RestoreBackup(client, id, opts).ExtractErr()
+	errRest := backups.RestoreBackup(client, id, opts)
 	th.AssertNoErr(t, errRest)
 
 	err := golangsdk.WaitFor(600, func() (bool, error) {
-		back, err := backups.Get(client, id).Extract()
+		back, err := backups.Get(client, id)
 		if err != nil {
 			return false, err
 		}
@@ -56,7 +56,7 @@ func RestoreBackup(t *testing.T, client *golangsdk.ServiceClient, id string, opt
 
 func waitForBackupDelete(client *golangsdk.ServiceClient, secs int, id string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := backups.Get(client, id).Extract()
+		_, err := backups.Get(client, id)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
