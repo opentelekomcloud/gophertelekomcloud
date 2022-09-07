@@ -69,7 +69,7 @@ func ExtractClusters(r pagination.Page) ([]Cluster, error) {
 	return clusters, err
 }
 
-func (p ClusterPage) GetBody() interface{} {
+func (p ClusterPage) GetBody() []byte {
 	return p.Body
 }
 

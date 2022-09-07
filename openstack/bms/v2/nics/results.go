@@ -2,6 +2,7 @@ package nics
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -10,27 +11,21 @@ type FixedIP struct {
 	IPAddress string `json:"ip_address"`
 }
 
-// Nic Manage and perform other operations on Nic, including querying Nics as well as
-// querying Nic.
+// Nic Manage and perform other operations on Nic, including querying Nics as well as querying Nic.
 type Nic struct {
 	// ID is the unique identifier for the nic.
 	ID string `json:"port_id"`
-
 	// Specifies the ID of the network to which the NIC port belongs.
 	NetworkID string `json:"net_id"`
-
-	// Status indicates whether or not a nic is currently operational.
+	// Status indicates whether a nic is currently operational.
 	Status string `json:"port_state"`
-
 	// Specifies the NIC private IP address.
 	FixedIP []FixedIP `json:"fixed_ips"`
-
 	// Specifies the MAC address of the NIC.
 	MACAddress string `json:"mac_addr"`
 }
 
-// NicPage is the page returned by a pager when traversing over a
-// collection of nics.
+// NicPage is the page returned by a pager when traversing over a collection of nics.
 type NicPage struct {
 	pagination.LinkedPageBase
 }
@@ -39,14 +34,14 @@ type NicPage struct {
 // the end of a page and the pager seeks to traverse over a new one. In order
 // to do this, it needs to construct the next page's URL.
 func (r NicPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"interfaceAttachments_links"`
-	}
-	err := r.ExtractInto(&s)
+	var res []golangsdk.Link
+
+	err := extract.IntoSlicePtr(r.BodyReader(), &res, "interfaceAttachments_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+
+	return golangsdk.ExtractNextURL(res)
 }
 
 // IsEmpty checks whether a NicPage struct is empty.
@@ -59,28 +54,7 @@ func (r NicPage) IsEmpty() (bool, error) {
 // and extracts the elements into a slice of Nic structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractNics(r pagination.Page) ([]Nic, error) {
-	var s struct {
-		Nics []Nic `json:"interfaceAttachments"`
-	}
-	err := (r.(NicPage)).ExtractInto(&s)
-	return s.Nics, err
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a nic.
-func (r commonResult) Extract() (*Nic, error) {
-	var s struct {
-		Nic *Nic `json:"interfaceAttachment"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Nic, err
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Nic.
-type GetResult struct {
-	commonResult
+	var res []Nic
+	err := extract.IntoSlicePtr(r.(NicPage).BodyReader(), &res, "interfaceAttachments")
+	return res, err
 }

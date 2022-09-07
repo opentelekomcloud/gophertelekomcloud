@@ -2,7 +2,7 @@ package golangsdk
 
 import (
 	"bytes"
-	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -154,8 +154,9 @@ type RequestOpts struct {
 	// RawBody contains an io.Reader that will be consumed by the request directly. No content-type
 	// will be set unless one is provided explicitly by MoreHeaders.
 	RawBody io.Reader
-	// JSONResponse, if provided, will be populated with the contents of the response body parsed as
-	// JSON.
+	// JSONResponse, if provided, will be populated with the contents of the response body parsed as JSON.
+	// Not that setting it will drain and close Response.Body.
+	// Deprecated: Use http.Response Body instead.
 	JSONResponse interface{}
 	// OkCodes contains a list of numeric HTTP status codes that should be interpreted as success. If
 	// the response has a different code, an error will be returned.
@@ -228,7 +229,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 		}
 	}
 
-	// get latest token from client
+	// get the latest token from client
 	for k, v := range client.AuthenticatedHeaders() {
 		req.Header.Set(k, v)
 	}
@@ -397,10 +398,21 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	}
 
 	// Parse the response body as JSON, if requested to do so.
+	// TODO: When all refactoring of the extract is done, remove this.
 	if options.JSONResponse != nil && resp.StatusCode != http.StatusNoContent {
-		defer func() { _ = resp.Body.Close() }()
-		if err := json.NewDecoder(resp.Body).Decode(options.JSONResponse); err != nil {
-			return nil, err
+		switch r := options.JSONResponse.(type) {
+		case *[]byte:
+			data, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, fmt.Errorf("error reading response body: %w", err)
+			}
+			defer resp.Body.Close()
+
+			*r = data
+		default:
+			if err := extract.Into(resp.Body, &r); err != nil {
+				return nil, err
+			}
 		}
 	}
 

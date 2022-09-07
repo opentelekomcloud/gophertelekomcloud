@@ -3,12 +3,13 @@ package extract
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
 )
 
-func intoPtr(body, to interface{}, label string) error {
+func intoPtr(body io.Reader, to interface{}, label string) error {
 	if label == "" {
 		return Into(body, &to)
 	}
@@ -97,6 +98,7 @@ func intoPtr(body, to interface{}, label string) error {
 	return err
 }
 
+// JsonMarshal marshals input to bytes via buffer with disabled HTML escaping.
 func JsonMarshal(t interface{}) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 	enc := json.NewEncoder(buffer)
@@ -105,49 +107,62 @@ func JsonMarshal(t interface{}) ([]byte, error) {
 	return buffer.Bytes(), err
 }
 
-func Into(body interface{}, to interface{}) error {
-	if reader, ok := body.(io.Reader); ok {
-		if readCloser, ok := reader.(io.Closer); ok {
-			defer readCloser.Close()
-		}
-		return json.NewDecoder(reader).Decode(to)
+// Into parses input as JSON and convert to a structure.
+func Into(body io.Reader, to interface{}) error {
+	if closer, ok := body.(io.ReadCloser); ok {
+		defer closer.Close()
 	}
 
-	b, err := JsonMarshal(body)
+	// json.NewDecoder(..).Decode() replaced with reading whole body for better
+	// error tracing and debug simplicity
+	// TODO: compare this solution to original one in terms of performance
+
+	byteBody, err := io.ReadAll(body)
+	if err != nil {
+		return fmt.Errorf("error reading from stream: %w", err)
+	}
+
+	if len(byteBody) == 0 {
+		return nil // empty body - nothing to extract
+	}
+
+	err = json.Unmarshal(byteBody, to)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return fmt.Errorf("error extracting %s into %T: %w", byteBody, to, err)
+	}
+
+	return nil
+}
+
+func typeCheck(to interface{}, kind reflect.Kind) error {
+	t := reflect.TypeOf(to)
+	if k := t.Kind(); k != reflect.Ptr {
+		return fmt.Errorf("expected pointer, got %v", k)
+	}
+
+	if kind != t.Elem().Kind() {
+		return fmt.Errorf("expected pointer to %v, got: %v", kind.String(), t)
+	}
+
+	return nil
+}
+
+// IntoStructPtr will unmarshal the given body into the provided Struct.
+func IntoStructPtr(body io.Reader, to interface{}, label string) error {
+	err := typeCheck(to, reflect.Struct)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(b, to)
 
-	return err
+	return intoPtr(body, to, label)
 }
 
-// IntoStructPtr will unmarshal the given body into the provided
-// interface{} (to).
-func IntoStructPtr(body, to interface{}, label string) error {
-	t := reflect.TypeOf(to)
-	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("expected pointer, got %v", k)
+// IntoSlicePtr will unmarshal the provided body into the provided Slice.
+func IntoSlicePtr(body io.Reader, to interface{}, label string) error {
+	err := typeCheck(to, reflect.Slice)
+	if err != nil {
+		return err
 	}
-	switch t.Elem().Kind() {
-	case reflect.Struct:
-		return intoPtr(body, to, label)
-	default:
-		return fmt.Errorf("expected pointer to struct, got: %v", t)
-	}
-}
 
-// IntoSlicePtr will unmarshal the provided body into the provided
-// interface{} (to).
-func IntoSlicePtr(body, to interface{}, label string) error {
-	t := reflect.TypeOf(to)
-	if k := t.Kind(); k != reflect.Ptr {
-		return fmt.Errorf("expected pointer, got %v", k)
-	}
-	switch t.Elem().Kind() {
-	case reflect.Slice:
-		return intoPtr(body, to, label)
-	default:
-		return fmt.Errorf("expected pointer to slice, got: %v", t)
-	}
+	return intoPtr(body, to, label)
 }

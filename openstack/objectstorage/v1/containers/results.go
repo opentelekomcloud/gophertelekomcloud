@@ -76,7 +76,7 @@ func ExtractNames(page pagination.Page) ([]string, error) {
 	case strings.HasPrefix(ct, "text/plain"):
 		names := make([]string, 0, 50)
 
-		body := string(page.(ContainerPage).Body.([]uint8))
+		body := string(page.(ContainerPage).Body)
 		for _, name := range strings.Split(body, "\n") {
 			if len(name) > 0 {
 				names = append(names, name)

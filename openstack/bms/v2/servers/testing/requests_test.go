@@ -120,7 +120,7 @@ func TestGetServer(t *testing.T) {
 		`)
 	})
 
-	n, err := servers.Get(fake.ServiceClient(), "2bff7a8a-3934-4f79-b1d6-53dc5540f00e").Extract()
+	n, err := servers.Get(fake.ServiceClient(), "2bff7a8a-3934-4f79-b1d6-53dc5540f00e")
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "1d3bf3ae-bc4a-4890-86f8-8c31a6eb764f", n.ID)
 	th.AssertEquals(t, "ACTIVE", n.Status)
