@@ -76,7 +76,7 @@ type BackupPage struct {
 
 func (r BackupPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(r.Body, &res, "backups_links")
+	err := extract.IntoSlicePtr(r.Result.BodyReader(), &res, "backups_links")
 	if err != nil {
 		return "", err
 	}
@@ -90,7 +90,7 @@ func (r BackupPage) IsEmpty() (bool, error) {
 
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
 	var res []Backup
-	err := extract.IntoSlicePtr(r.(BackupPage).Result.Body, &res, "backups")
+	err := extract.IntoSlicePtr(r.(BackupPage).Result.BodyReader(), &res, "backups")
 	if err != nil {
 		return nil, err
 	}
