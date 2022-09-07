@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // SingleTenantOpts are options for fetching usage of a single tenant.
@@ -36,21 +35,6 @@ func (opts SingleTenantOpts) ToUsageSingleTenantQuery() (string, error) {
 
 	q := &url.URL{RawQuery: params.Encode()}
 	return q.String(), nil
-}
-
-// SingleTenant returns usage data about a single tenant.
-func SingleTenant(client *golangsdk.ServiceClient, tenantID string, opts SingleTenantOptsBuilder) pagination.Pager {
-	u := getTenantURL(client, tenantID)
-	if opts != nil {
-		query, err := opts.ToUsageSingleTenantQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		u += query
-	}
-	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
-		return SingleTenantPage{pagination.LinkedPageBase{PageResult: r}}
-	})
 }
 
 // AllTenantsOpts are options for fetching usage of all tenants.
@@ -88,19 +72,4 @@ func (opts AllTenantsOpts) ToUsageAllTenantsQuery() (string, error) {
 
 	q := &url.URL{RawQuery: params.Encode()}
 	return q.String(), nil
-}
-
-// AllTenants returns usage data about all tenants.
-func AllTenants(client *golangsdk.ServiceClient, opts AllTenantsOptsBuilder) pagination.Pager {
-	u := allTenantsURL(client)
-	if opts != nil {
-		query, err := opts.ToUsageAllTenantsQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		u += query
-	}
-	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
-		return AllTenantsPage{pagination.LinkedPageBase{PageResult: r}}
-	})
 }
