@@ -25,7 +25,7 @@ func GetCertWithExpiration(client *golangsdk.ServiceClient, id string, opts Expi
 	}
 
 	var res Certificate
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

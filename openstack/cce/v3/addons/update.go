@@ -46,6 +46,6 @@ func Update(client *golangsdk.ServiceClient, id, clusterId string, opts UpdateOp
 	}
 
 	var res Addon
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

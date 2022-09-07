@@ -16,7 +16,7 @@ func GetJobDetails(client *golangsdk.ServiceClient, jobID string) (*Job, error) 
 	}
 
 	var res Job
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

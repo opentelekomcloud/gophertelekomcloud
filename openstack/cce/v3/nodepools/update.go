@@ -58,6 +58,6 @@ func Update(client *golangsdk.ServiceClient, clusterid, nodepoolid string, opts 
 	}
 
 	var res NodePool
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

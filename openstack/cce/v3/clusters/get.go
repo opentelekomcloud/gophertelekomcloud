@@ -16,6 +16,6 @@ func Get(client *golangsdk.ServiceClient, id string) (*Clusters, error) {
 	}
 
 	var res Clusters
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

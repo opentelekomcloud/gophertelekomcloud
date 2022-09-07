@@ -25,7 +25,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Clusters, error) {
 	}
 
 	var res ListCluster
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

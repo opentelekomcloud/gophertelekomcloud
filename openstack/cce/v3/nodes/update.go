@@ -29,6 +29,6 @@ func Update(client *golangsdk.ServiceClient, clusterID, nodeID string, opts Upda
 	}
 
 	var res Nodes
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

@@ -37,6 +37,6 @@ func Update(client *golangsdk.ServiceClient, clusterID, k8sName string, opts Upd
 	}
 
 	var res GetNode
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

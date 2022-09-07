@@ -20,6 +20,6 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Clust
 	}
 
 	var res Clusters
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

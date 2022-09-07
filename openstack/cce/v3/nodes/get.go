@@ -18,6 +18,6 @@ func Get(client *golangsdk.ServiceClient, clusterID, nodeID string) (*Nodes, err
 	}
 
 	var res Nodes
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

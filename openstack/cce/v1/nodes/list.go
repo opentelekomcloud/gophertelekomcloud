@@ -18,7 +18,7 @@ func List(client *golangsdk.ServiceClient, clusterID string) (*ListNodes, error)
 	}
 
 	var res ListNodes
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

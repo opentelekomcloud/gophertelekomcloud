@@ -19,6 +19,6 @@ func ListAddonInstances(client *golangsdk.ServiceClient, clusterID string) (*Add
 	}
 
 	var res AddonInstanceList
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

@@ -19,6 +19,6 @@ func Get(client *golangsdk.ServiceClient, id, clusterId string) (*Addon, error) 
 	}
 
 	var res Addon
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

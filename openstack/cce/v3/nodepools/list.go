@@ -25,7 +25,7 @@ func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]N
 	}
 
 	var res ListNodePool
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return nil, err
 	}

@@ -27,6 +27,6 @@ func ListTemplates(client *golangsdk.ServiceClient, clusterID string, opts ListO
 	}
 
 	var res AddonTemplateList
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

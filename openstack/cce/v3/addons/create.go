@@ -59,6 +59,6 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts, clusterId string) 
 	}
 
 	var res Addon
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

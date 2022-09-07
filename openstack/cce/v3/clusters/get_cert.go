@@ -16,7 +16,7 @@ func GetCert(client *golangsdk.ServiceClient, id string) (*Certificate, error) {
 	}
 
 	var res Certificate
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

@@ -40,6 +40,6 @@ func Create(client *golangsdk.ServiceClient, clusterID string, opts CreateOpts) 
 	}
 
 	var res Nodes
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
