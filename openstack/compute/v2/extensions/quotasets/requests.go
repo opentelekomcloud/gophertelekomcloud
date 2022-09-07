@@ -16,7 +16,7 @@ func GetDetail(client *golangsdk.ServiceClient, tenantID string) (r GetDetailRes
 	return
 }
 
-// Updates the quotas for the given tenantID and returns the new QuotaSet.
+// Update updates the quotas for the given tenantID and returns the new QuotaSet.
 func Update(client *golangsdk.ServiceClient, tenantID string, opts UpdateOptsBuilder) (r UpdateResult) {
 	reqBody, err := opts.ToComputeQuotaUpdateMap()
 	if err != nil {
@@ -28,15 +28,15 @@ func Update(client *golangsdk.ServiceClient, tenantID string, opts UpdateOptsBui
 	return
 }
 
-// Resets the quotas for the given tenant to their default values.
+// Delete resets the quotas for the given tenant to their default values.
 func Delete(client *golangsdk.ServiceClient, tenantID string) (r DeleteResult) {
 	_, r.Err = client.Delete(deleteURL(client, tenantID), nil)
 	return
 }
 
-// Options for Updating the quotas of a Tenant.
-// All int-values are pointers so they can be nil if they are not needed.
-// You can use gopercloud.IntToPointer() for convenience
+// UpdateOpts - options for Updating the quotas of a Tenant.
+// All int-values are pointers, so they can be nil if they are not needed.
+// You can use golangsdk.IntToPointer() for convenience
 type UpdateOpts struct {
 	// FixedIPs is number of fixed ips alloted this quota_set.
 	FixedIPs *int `json:"fixed_ips,omitempty"`
