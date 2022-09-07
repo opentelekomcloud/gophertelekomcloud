@@ -29,30 +29,6 @@ func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// Create requests the creation of a new Floating IP.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToFloatingIPCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get returns data about a previously created Floating IP.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(getURL(client, id), nil, nil)
-	return
-}
-
-// Delete requests the deletion of a previous allocated Floating IP.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, id), nil)
-	return
-}
-
 // AssociateOptsBuilder allows extensions to add additional parameters to the
 // Associate request.
 type AssociateOptsBuilder interface {
@@ -73,16 +49,6 @@ func (opts AssociateOpts) ToFloatingIPAssociateMap() (map[string]interface{}, er
 	return golangsdk.BuildRequestBody(opts, "addFloatingIp")
 }
 
-// AssociateInstance pairs an allocated Floating IP with a server.
-func AssociateInstance(client *golangsdk.ServiceClient, serverID string, opts AssociateOptsBuilder) (r AssociateResult) {
-	b, err := opts.ToFloatingIPAssociateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(associateURL(client, serverID), b, nil, nil)
-	return
-}
-
 // DisassociateOptsBuilder allows extensions to add additional parameters to
 // the Disassociate request.
 type DisassociateOptsBuilder interface {
@@ -98,14 +64,4 @@ type DisassociateOpts struct {
 // ToFloatingIPDisassociateMap constructs a request body from DisassociateOpts.
 func (opts DisassociateOpts) ToFloatingIPDisassociateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "removeFloatingIp")
-}
-
-// DisassociateInstance decouples an allocated Floating IP from an instance
-func DisassociateInstance(client *golangsdk.ServiceClient, serverID string, opts DisassociateOptsBuilder) (r DisassociateResult) {
-	b, err := opts.ToFloatingIPDisassociateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(disassociateURL(client, serverID), b, nil, nil)
-	return
 }
