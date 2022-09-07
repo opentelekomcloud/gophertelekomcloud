@@ -12,7 +12,7 @@ import (
 
 func TestGet(t *testing.T) {
 	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	t.Cleanup(th.TeardownHTTP)
 	HandleGetSuccessfully(t)
 	actual, err := quotasets.Get(client.ServiceClient(), FirstTenantID).Extract()
 	th.AssertNoErr(t, err)
@@ -21,7 +21,7 @@ func TestGet(t *testing.T) {
 
 func TestGetDetail(t *testing.T) {
 	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	t.Cleanup(th.TeardownHTTP)
 	HandleGetDetailSuccessfully(t)
 	actual, err := quotasets.GetDetail(client.ServiceClient(), FirstTenantID).Extract()
 	th.CheckDeepEquals(t, FirstQuotaDetailsSet, actual)
@@ -30,7 +30,7 @@ func TestGetDetail(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	t.Cleanup(th.TeardownHTTP)
 	HandlePutSuccessfully(t)
 	actual, err := quotasets.Update(client.ServiceClient(), FirstTenantID, UpdatedQuotaSet).Extract()
 	th.AssertNoErr(t, err)
@@ -39,7 +39,7 @@ func TestUpdate(t *testing.T) {
 
 func TestPartialUpdate(t *testing.T) {
 	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	t.Cleanup(th.TeardownHTTP)
 	HandlePartialPutSuccessfully(t)
 	opts := quotasets.UpdateOpts{Cores: golangsdk.IntToPointer(200), Force: true}
 	actual, err := quotasets.Update(client.ServiceClient(), FirstTenantID, opts).Extract()
@@ -49,7 +49,7 @@ func TestPartialUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	t.Cleanup(th.TeardownHTTP)
 	HandleDeleteSuccessfully(t)
 	_, err := quotasets.Delete(client.ServiceClient(), FirstTenantID).Extract()
 	th.AssertNoErr(t, err)
@@ -58,7 +58,7 @@ func TestDelete(t *testing.T) {
 type ErrorUpdateOpts quotasets.UpdateOpts
 
 func (opts ErrorUpdateOpts) ToComputeQuotaUpdateMap() (map[string]interface{}, error) {
-	return nil, errors.New("This is an error")
+	return nil, errors.New("this is an error")
 }
 
 func TestErrorInToComputeQuotaUpdateMap(t *testing.T) {

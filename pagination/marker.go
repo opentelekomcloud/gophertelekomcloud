@@ -2,9 +2,6 @@ package pagination
 
 import (
 	"fmt"
-	"reflect"
-
-	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // MarkerPage is a stricter Page interface that describes additional functionality required for use with NewMarkerPager.
@@ -42,17 +39,16 @@ func (current MarkerPageBase) NextPageURL() (string, error) {
 
 // IsEmpty satisifies the IsEmpty method of the Page interface
 func (current MarkerPageBase) IsEmpty() (bool, error) {
-	if b, ok := current.Body.([]interface{}); ok {
-		return len(b) == 0, nil
+	body, err := current.GetBodyAsSlice()
+	if err != nil {
+		return false, fmt.Errorf("error converting page body to slice: %w", err)
 	}
-	err := golangsdk.ErrUnexpectedType{}
-	err.Expected = "[]interface{}"
-	err.Actual = fmt.Sprintf("%v", reflect.TypeOf(current.Body))
-	return true, err
+
+	return len(body) == 0, nil
 }
 
 // GetBody returns the linked page's body. This method is needed to satisfy the
 // Page interface.
-func (current MarkerPageBase) GetBody() interface{} {
+func (current MarkerPageBase) GetBody() []byte {
 	return current.Body
 }
