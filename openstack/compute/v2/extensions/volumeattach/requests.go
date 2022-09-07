@@ -2,16 +2,7 @@ package volumeattach
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// List returns a Pager that allows you to iterate over a collection of
-// VolumeAttachments.
-func List(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
-	return pagination.NewPager(client, listURL(client, serverID), func(r pagination.PageResult) pagination.Page {
-		return VolumeAttachmentPage{pagination.SinglePageBase(r)}
-	})
-}
 
 // CreateOptsBuilder allows extensions to add parameters to the Create request.
 type CreateOptsBuilder interface {
@@ -31,29 +22,4 @@ type CreateOpts struct {
 // ToVolumeAttachmentCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToVolumeAttachmentCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "volumeAttachment")
-}
-
-// Create requests the creation of a new volume attachment on the server.
-func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToVolumeAttachmentCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(createURL(client, serverID), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get returns public data about a previously created VolumeAttachment.
-func Get(client *golangsdk.ServiceClient, serverID, attachmentID string) (r GetResult) {
-	raw, err := client.Get(getURL(client, serverID, attachmentID), nil, nil)
-	return
-}
-
-// Delete requests the deletion of a previous stored VolumeAttachment from
-// the server.
-func Delete(client *golangsdk.ServiceClient, serverID, attachmentID string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, serverID, attachmentID), nil)
-	return
 }
