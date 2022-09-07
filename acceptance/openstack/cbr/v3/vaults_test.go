@@ -26,7 +26,7 @@ func TestVaultLifecycle(t *testing.T) {
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
 	}
-	vault, err := vaults.Create(client, opts).Extract()
+	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, opts.Billing.ConsistentLevel, vault.Billing.ConsistentLevel)
@@ -36,23 +36,23 @@ func TestVaultLifecycle(t *testing.T) {
 	th.AssertEquals(t, opts.Name, vault.Name)
 	th.AssertEquals(t, opts.Description, vault.Description)
 
-	defer func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
-	}()
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
 
-	getVault, err := vaults.Get(client, vault.ID).Extract()
+	getVault, err := vaults.Get(client, vault.ID)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, vault, getVault)
 
 	updateOpts := vaults.UpdateOpts{
 		Name: tools.RandomString("cbr-test-2-", 5),
 	}
-	updated, err := vaults.Update(client, vault.ID, updateOpts).Extract()
+	updated, err := vaults.Update(client, vault.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vault.ID, updated.ID)
 	th.AssertEquals(t, updateOpts.Name, updated.Name)
 
-	getUpdated, err := vaults.Get(client, vault.ID).Extract()
+	getUpdated, err := vaults.Get(client, vault.ID)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, updated, getUpdated)
 }
@@ -72,16 +72,18 @@ func TestVaultResources(t *testing.T) {
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
 	}
-	vault, err := vaults.Create(client, opts).Extract()
+	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
-	}()
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
 
 	resourceType := "OS::Cinder::Volume"
 	volume := openstack.CreateVolume(t)
-	defer openstack.DeleteVolume(t, volume.ID)
+	t.Cleanup(func() {
+		openstack.DeleteVolume(t, volume.ID)
+	})
 
 	aOpts := vaults.AssociateResourcesOpts{
 		Resources: []vaults.ResourceCreate{
@@ -92,13 +94,13 @@ func TestVaultResources(t *testing.T) {
 			},
 		},
 	}
-	associated, err := vaults.AssociateResources(client, vault.ID, aOpts).Extract()
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(associated))
 	th.AssertEquals(t, volume.ID, associated[0])
 
 	dOpts := vaults.DissociateResourcesOpts{ResourceIDs: associated}
-	dissociated, err := vaults.DissociateResources(client, vault.ID, dOpts).Extract()
+	dissociated, err := vaults.DissociateResources(client, vault.ID, dOpts)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, associated, dissociated)
 }
@@ -118,12 +120,12 @@ func TestVaultPolicy(t *testing.T) {
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
 	}
-	vault, err := vaults.Create(client, opts).Extract()
+	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID).ExtractErr())
-	}()
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
 
 	iTrue := true
 	policy, err := policies.Create(client, policies.CreateOpts{
@@ -143,19 +145,19 @@ func TestVaultPolicy(t *testing.T) {
 		},
 		Enabled:       &iTrue,
 		OperationType: "backup",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, policy.ID).ExtractErr())
-	}()
+	t.Cleanup(func() {
+		th.AssertNoErr(t, policies.Delete(client, policy.ID))
+	})
 
-	bind, err := vaults.BindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policy.ID}).Extract()
+	bind, err := vaults.BindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policy.ID})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vault.ID, bind.VaultID)
 	th.AssertEquals(t, policy.ID, bind.PolicyID)
 
-	unbind, err := vaults.UnbindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policy.ID}).Extract()
+	unbind, err := vaults.UnbindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policy.ID})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vault.ID, unbind.VaultID)
 	th.AssertEquals(t, policy.ID, unbind.PolicyID)
