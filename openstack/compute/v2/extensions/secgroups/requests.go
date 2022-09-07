@@ -55,7 +55,7 @@ func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]interface{}, error) {
 // group based on its unique ID and RetryTimeout.
 func DeleteWithRetry(client *golangsdk.ServiceClient, id string, timeout int) error {
 	return golangsdk.WaitFor(timeout, func() (bool, error) {
-		_, err := client.Delete(resourceURL(client, id), nil)
+		_, err := client.Delete(client.ServiceURL("os-security-groups", id), nil)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault400); ok {
 				time.Sleep(10 * time.Second)

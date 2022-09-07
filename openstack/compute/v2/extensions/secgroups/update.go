@@ -9,7 +9,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Put(resourceURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("os-security-groups", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

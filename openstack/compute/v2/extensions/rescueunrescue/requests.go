@@ -34,7 +34,7 @@ func Rescue(client *golangsdk.ServiceClient, id string, opts RescueOptsBuilder) 
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -42,6 +42,6 @@ func Rescue(client *golangsdk.ServiceClient, id string, opts RescueOptsBuilder) 
 
 // Unrescue instructs the provider to return the server from RESCUE mode.
 func Unrescue(client *golangsdk.ServiceClient, id string) (r UnrescueResult) {
-	raw, err := client.Post(actionURL(client, id), map[string]interface{}{"unrescue": nil}, nil, nil)
+	raw, err := client.Post(client.ServiceURL("servers", id, "action"), map[string]interface{}{"unrescue": nil}, nil, nil)
 	return
 }

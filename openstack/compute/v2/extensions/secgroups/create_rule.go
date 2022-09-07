@@ -10,7 +10,7 @@ func CreateRule(client *golangsdk.ServiceClient, opts CreateRuleOptsBuilder) (r 
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(rootRuleURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-security-group-rules"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
