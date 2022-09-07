@@ -1,18 +1,8 @@
 package aggregates
 
 import (
-	"strconv"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// List makes a request against the API to list aggregates.
-func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, aggregatesListURL(client), func(r pagination.PageResult) pagination.Page {
-		return AggregatesPage{pagination.SinglePageBase(r)}
-	})
-}
 
 type CreateOpts struct {
 	// The name of the host aggregate.
@@ -27,36 +17,6 @@ type CreateOpts struct {
 
 func (opts CreateOpts) ToAggregatesCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "aggregate")
-}
-
-// Create makes a request against the API to create an aggregate.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
-	b, err := opts.ToAggregatesCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(aggregatesCreateURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete makes a request against the API to delete an aggregate.
-func Delete(client *golangsdk.ServiceClient, aggregateID int) (r DeleteResult) {
-	v := strconv.Itoa(aggregateID)
-	raw, err := client.Delete(aggregatesDeleteURL(client, v), &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get makes a request against the API to get details for a specific aggregate.
-func Get(client *golangsdk.ServiceClient, aggregateID int) (r GetResult) {
-	v := strconv.Itoa(aggregateID)
-	raw, err := client.Get(aggregatesGetURL(client, v), nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
 }
 
 type UpdateOpts struct {
@@ -74,20 +34,6 @@ func (opts UpdateOpts) ToAggregatesUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "aggregate")
 }
 
-// Update makes a request against the API to update a specific aggregate.
-func Update(client *golangsdk.ServiceClient, aggregateID int, opts UpdateOpts) (r UpdateResult) {
-	v := strconv.Itoa(aggregateID)
-
-	b, err := opts.ToAggregatesUpdateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Put(aggregatesUpdateURL(client, v), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 type AddHostOpts struct {
 	// The name of the host.
 	Host string `json:"host" required:"true"`
@@ -95,20 +41,6 @@ type AddHostOpts struct {
 
 func (opts AddHostOpts) ToAggregatesAddHostMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "add_host")
-}
-
-// AddHost makes a request against the API to add host to a specific aggregate.
-func AddHost(client *golangsdk.ServiceClient, aggregateID int, opts AddHostOpts) (r ActionResult) {
-	v := strconv.Itoa(aggregateID)
-
-	b, err := opts.ToAggregatesAddHostMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(aggregatesAddHostURL(client, v), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
 }
 
 type RemoveHostOpts struct {
@@ -120,38 +52,10 @@ func (opts RemoveHostOpts) ToAggregatesRemoveHostMap() (map[string]interface{}, 
 	return golangsdk.BuildRequestBody(opts, "remove_host")
 }
 
-// RemoveHost makes a request against the API to remove host from a specific aggregate.
-func RemoveHost(client *golangsdk.ServiceClient, aggregateID int, opts RemoveHostOpts) (r ActionResult) {
-	v := strconv.Itoa(aggregateID)
-
-	b, err := opts.ToAggregatesRemoveHostMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(aggregatesRemoveHostURL(client, v), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 type SetMetadataOpts struct {
 	Metadata map[string]interface{} `json:"metadata" required:"true"`
 }
 
 func (opts SetMetadataOpts) ToSetMetadataMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "set_metadata")
-}
-
-// SetMetadata makes a request against the API to set metadata to a specific aggregate.
-func SetMetadata(client *golangsdk.ServiceClient, aggregateID int, opts SetMetadataOpts) (r ActionResult) {
-	v := strconv.Itoa(aggregateID)
-
-	b, err := opts.ToSetMetadataMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(aggregatesSetMetadataURL(client, v), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
 }
