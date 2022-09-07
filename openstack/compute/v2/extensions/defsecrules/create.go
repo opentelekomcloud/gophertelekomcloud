@@ -8,7 +8,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(rootURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-security-group-default-rules"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

@@ -124,7 +124,7 @@ func Create(client *golangsdk.ServiceClient, opts servers.CreateOptsBuilder) (r 
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-volumes_boot"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return
