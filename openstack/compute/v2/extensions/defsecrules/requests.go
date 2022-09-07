@@ -4,15 +4,7 @@ import (
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// List will return a collection of default rules.
-func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, rootURL(client), func(r pagination.PageResult) pagination.Page {
-		return DefaultRulePage{pagination.SinglePageBase(r)}
-	})
-}
 
 // CreateOpts represents the configuration for adding a new default rule.
 type CreateOpts struct {
@@ -47,28 +39,4 @@ func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 		return nil, golangsdk.ErrMissingInput{Argument: "ToPort"}
 	}
 	return golangsdk.BuildRequestBody(opts, "security_group_default_rule")
-}
-
-// Create is the operation responsible for creating a new default rule.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToRuleCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(rootURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get will return details for a particular default rule.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(resourceURL(client, id), nil, nil)
-	return
-}
-
-// Delete will permanently delete a rule the project's default security group.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(resourceURL(client, id), nil)
-	return
 }
