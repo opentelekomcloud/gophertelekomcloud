@@ -4,35 +4,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-// Get returns public data about a previously created QuotaSet.
-func Get(client *golangsdk.ServiceClient, tenantID string) (r GetResult) {
-	raw, err := client.Get(getURL(client, tenantID), nil, nil)
-	return
-}
-
-// GetDetail returns detailed public data about a previously created QuotaSet.
-func GetDetail(client *golangsdk.ServiceClient, tenantID string) (r GetDetailResult) {
-	raw, err := client.Get(getDetailURL(client, tenantID), nil, nil)
-	return
-}
-
-// Update updates the quotas for the given tenantID and returns the new QuotaSet.
-func Update(client *golangsdk.ServiceClient, tenantID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	reqBody, err := opts.ToComputeQuotaUpdateMap()
-	if err != nil {
-		return nil, err
-	}
-
-	raw, err := client.Put(updateURL(client, tenantID), reqBody, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
-	return
-}
-
-// Delete resets the quotas for the given tenant to their default values.
-func Delete(client *golangsdk.ServiceClient, tenantID string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, tenantID), nil)
-	return
-}
-
 // UpdateOpts - options for Updating the quotas of a Tenant.
 // All int-values are pointers, so they can be nil if they are not needed.
 // You can use golangsdk.IntToPointer() for convenience
