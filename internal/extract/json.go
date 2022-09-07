@@ -3,13 +3,13 @@ package extract
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"reflect"
 )
 
-func intoPtr(body, to interface{}, label string) error {
+func intoPtr(body io.Reader, to interface{}, label string) error {
 	if label == "" {
 		return Into(body, &to)
 	}
@@ -98,6 +98,7 @@ func intoPtr(body, to interface{}, label string) error {
 	return err
 }
 
+// JsonMarshal marshals input to bytes via buffer with disabled HTML escaping.
 func JsonMarshal(t interface{}) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 	enc := json.NewEncoder(buffer)
@@ -106,24 +107,31 @@ func JsonMarshal(t interface{}) ([]byte, error) {
 	return buffer.Bytes(), err
 }
 
-func Into(body interface{}, to interface{}) error {
-	if raw, ok := body.(http.Response); ok {
-		body = raw.Body
+// Into parses input as JSON and convert to a structure.
+func Into(body io.Reader, to interface{}) error {
+	if closer, ok := body.(io.ReadCloser); ok {
+		defer closer.Close()
 	}
 
-	if reader, ok := body.(io.ReadCloser); ok {
-		defer reader.Close()
-		return json.NewDecoder(reader).Decode(to)
-	}
+	// json.NewDecoder(..).Decode() replaced with reading whole body for better
+	// error tracing and debug simplicity
+	// TODO: compare this solution to original one in terms of performance
 
-	// TODO: remove this branch in pager refactoring
-	b, err := JsonMarshal(body)
+	byteBody, err := io.ReadAll(body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error reading from stream: %w", err)
 	}
-	err = json.Unmarshal(b, to)
 
-	return err
+	if len(byteBody) == 0 {
+		return nil // empty body - nothing to extract
+	}
+
+	err = json.Unmarshal(byteBody, to)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return fmt.Errorf("error extracting %s into %T: %w", byteBody, to, err)
+	}
+
+	return nil
 }
 
 func typeCheck(to interface{}, kind reflect.Kind) error {
@@ -140,7 +148,7 @@ func typeCheck(to interface{}, kind reflect.Kind) error {
 }
 
 // IntoStructPtr will unmarshal the given body into the provided Struct.
-func IntoStructPtr(body, to interface{}, label string) error {
+func IntoStructPtr(body io.Reader, to interface{}, label string) error {
 	err := typeCheck(to, reflect.Struct)
 	if err != nil {
 		return err
@@ -150,7 +158,7 @@ func IntoStructPtr(body, to interface{}, label string) error {
 }
 
 // IntoSlicePtr will unmarshal the provided body into the provided Slice.
-func IntoSlicePtr(body, to interface{}, label string) error {
+func IntoSlicePtr(body io.Reader, to interface{}, label string) error {
 	err := typeCheck(to, reflect.Slice)
 	if err != nil {
 		return err

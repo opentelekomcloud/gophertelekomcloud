@@ -88,7 +88,7 @@ func (page FlavorPage) IsEmpty() (bool, error) {
 // next page of results.
 func (page FlavorPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(page.Result.Body, &res, "flavors_links")
+	err := extract.IntoSlicePtr(page.Result.BodyReader(), &res, "flavors_links")
 	if err != nil {
 		return "", err
 	}
@@ -99,6 +99,6 @@ func (page FlavorPage) NextPageURL() (string, error) {
 // from the List operation.
 func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
 	var res []Flavor
-	err := extract.IntoSlicePtr(r.(FlavorPage).Result.Body, &res, "flavors")
+	err := extract.IntoSlicePtr(r.(FlavorPage).Result.BodyReader(), &res, "flavors")
 	return res, err
 }
