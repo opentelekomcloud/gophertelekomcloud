@@ -2,23 +2,7 @@ package attachinterfaces
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// List makes a request against the nova API to list the server's interfaces.
-func List(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
-	return pagination.NewPager(client, listInterfaceURL(client, serverID), func(r pagination.PageResult) pagination.Page {
-		return InterfacePage{pagination.SinglePageBase(r)}
-	})
-}
-
-// Get requests details on a single interface attachment by the server and port IDs.
-func Get(client *golangsdk.ServiceClient, serverID, portID string) (r GetResult) {
-	raw, err := client.Get(getInterfaceURL(client, serverID, portID), nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
@@ -49,23 +33,4 @@ type CreateOpts struct {
 // ToAttachInterfacesCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToAttachInterfacesCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "interfaceAttachment")
-}
-
-// Create requests the creation of a new interface attachment on the server.
-func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToAttachInterfacesCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(createInterfaceURL(client, serverID), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete makes a request against the nova API to detach a single interface from the server.
-// It needs server and port IDs to make a such request.
-func Delete(client *golangsdk.ServiceClient, serverID, portID string) (r DeleteResult) {
-	raw, err := client.Delete(deleteInterfaceURL(client, serverID, portID), nil)
-	return
 }
