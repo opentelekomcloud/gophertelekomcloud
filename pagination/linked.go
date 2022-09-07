@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // LinkedPageBase may be embedded to implement a page that provides navigational "Next" and "Previous" links within its result.
@@ -31,8 +32,10 @@ func (current LinkedPageBase) NextPageURL() (string, error) {
 		path = current.LinkPath
 	}
 
-	submap, ok := current.Body.(map[string]interface{})
-	if !ok {
+	submap := make(map[string]interface{})
+
+	err := extract.Into(current.BodyReader(), &submap)
+	if err != nil {
 		err := golangsdk.ErrUnexpectedType{}
 		err.Expected = "map[string]interface{}"
 		err.Actual = fmt.Sprintf("%v", reflect.TypeOf(current.Body))
@@ -74,20 +77,19 @@ func (current LinkedPageBase) NextPageURL() (string, error) {
 	}
 }
 
-// IsEmpty satisifies the IsEmpty method of the Page interface
+// IsEmpty satisfies the IsEmpty method of the Page interface
 func (current LinkedPageBase) IsEmpty() (bool, error) {
-	if b, ok := current.Body.([]interface{}); ok {
-		return len(b) == 0, nil
+	body, err := current.GetBodyAsSlice()
+	if err != nil {
+		return false, fmt.Errorf("error converting page body to slice: %w", err)
 	}
-	err := golangsdk.ErrUnexpectedType{}
-	err.Expected = "[]interface{}"
-	err.Actual = fmt.Sprintf("%v", reflect.TypeOf(current.Body))
-	return true, err
+
+	return len(body) == 0, nil
 }
 
 // GetBody returns the linked page's body. This method is needed to satisfy the
 // Page interface.
-func (current LinkedPageBase) GetBody() interface{} {
+func (current LinkedPageBase) GetBody() []byte {
 	return current.Body
 }
 

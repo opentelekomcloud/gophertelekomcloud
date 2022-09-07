@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -28,9 +29,8 @@ provider- or extension-specific information as well.
 Deprecated: use functions from internal/extract package instead
 */
 type Result struct {
-	// Body is the payload of the HTTP response from the server. In most cases,
-	// this will be the deserialized JSON structure.
-	Body interface{}
+	// Body is the payload of the HTTP response from the server.
+	Body []byte
 
 	// Header contains the HTTP header structure from the original response.
 	Header http.Header
@@ -38,6 +38,11 @@ type Result struct {
 	// Err is an error that occurred during the operation. It's deferred until
 	// extraction to make it easier to chain the Extract call.
 	Err error
+}
+
+// BodyReader returns cached body as *bytes.Reader
+func (r Result) BodyReader() io.Reader {
+	return bytes.NewReader(r.Body)
 }
 
 type JsonRDSInstanceStatus struct {
@@ -61,7 +66,7 @@ func (r Result) ExtractInto(to interface{}) error {
 		return r.Err
 	}
 
-	return extract.Into(r.Body, to)
+	return extract.Into(bytes.NewReader(r.Body), to)
 }
 
 // ExtractIntoStructPtr will unmarshal the Result (r) into the provided
@@ -80,7 +85,7 @@ func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 		return r.Err
 	}
 
-	return extract.IntoStructPtr(r.Body, to, label)
+	return extract.IntoStructPtr(bytes.NewReader(r.Body), to, label)
 }
 
 // ExtractIntoSlicePtr will unmarshal the Result (r) into the provided
@@ -99,7 +104,7 @@ func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 		return r.Err
 	}
 
-	return extract.IntoSlicePtr(r.Body, to, label)
+	return extract.IntoSlicePtr(bytes.NewReader(r.Body), to, label)
 }
 
 func PrettyPrintJSON(body interface{}) string {

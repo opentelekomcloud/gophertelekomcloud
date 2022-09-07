@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/metadata"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -111,11 +112,7 @@ type UpdateMetadataResult struct {
 
 // ExtractMetadata returns the metadata from a response from snapshots.UpdateMetadata.
 func (r UpdateMetadataResult) ExtractMetadata() (map[string]interface{}, error) {
-	if r.Err != nil {
-		return nil, r.Err
-	}
-	m := r.Body.(map[string]interface{})["metadata"]
-	return m.(map[string]interface{}), nil
+	return metadata.Extract(r.BodyReader())
 }
 
 type commonResult struct {
