@@ -5,53 +5,38 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// Flavor represent (virtual) hardware configurations for server resources
-// in a region.
+// Flavor represent (virtual) hardware configurations for server resources in a region.
 type Flavor struct {
 	// ID is the flavor's unique ID.
 	ID string `json:"id"`
-
 	// Disk is the amount of root disk, measured in GB.
 	Disk int `json:"disk"`
-
-	// MinDisk and MinRAM, if provided, elides flavors which do not meet your
-	// criteria.
+	// MinDisk and MinRAM, if provided, elides flavors which do not meet your criteria.
 	MinDisk int `json:"minDisk"`
-
-	MinRAM int `json:"minRam"`
-
+	MinRAM  int `json:"minRam"`
 	// RAM is the amount of memory, measured in MB.
 	RAM int `json:"ram"`
-
 	// Name is the name of the flavor.
 	Name string `json:"name"`
-
 	// RxTxFactor describes bandwidth alterations of the flavor.
 	RxTxFactor float64 `json:"rxtx_factor"`
-
 	// Swap is the amount of swap space, measured in MB.
 	Swap int `json:"-"`
-
 	// VCPUs indicates how many (virtual) CPUs are available for this flavor.
 	VCPUs int `json:"vcpus"`
-
 	// IsPublic indicates whether the flavor is public.
 	IsPublic bool `json:"os-flavor-access:is_public"`
-
 	// Ephemeral is the amount of ephemeral disk space, measured in GB.
 	Ephemeral int `json:"OS-FLV-EXT-DATA:ephemeral"`
-
-	// Whether or not the flavor has been administratively disabled
+	// Whether the flavor has been administratively disabled
 	Disabled bool `json:"OS-FLV-DISABLED:disabled"`
-
 	// Specifies the shortcut link of the BMS flavor.
-	Links []golangsdk.Link `json:"links"`
-
-	SortKey string `json:"sort_key"`
-
+	Links   []golangsdk.Link `json:"links"`
+	SortKey string           `json:"sort_key"`
 	// SortDir sets the direction, and is either `asc' or `desc'
 	SortDir string `json:"sort_dir"`
 }
@@ -102,22 +87,18 @@ func (page FlavorPage) IsEmpty() (bool, error) {
 // NextPageURL uses the response's embedded link reference to navigate to the
 // next page of results.
 func (page FlavorPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"flavors_links"`
-	}
-	err := page.ExtractInto(&s)
+	var res []golangsdk.Link
+	err := extract.IntoSlicePtr(page.Result.BodyReader(), &res, "flavors_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res)
 }
 
 // ExtractFlavors provides access to the list of flavors in a page acquired
 // from the List operation.
 func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
-	var s struct {
-		Flavors []Flavor `json:"flavors"`
-	}
-	err := (r.(FlavorPage)).ExtractInto(&s)
-	return s.Flavors, err
+	var res []Flavor
+	err := extract.IntoSlicePtr(r.(FlavorPage).Result.BodyReader(), &res, "flavors")
+	return res, err
 }

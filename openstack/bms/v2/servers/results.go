@@ -4,12 +4,9 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-type commonResult struct {
-	golangsdk.Result
-}
 
 type ServerPage struct {
 	pagination.LinkedPageBase
@@ -21,43 +18,23 @@ func (r ServerPage) IsEmpty() (bool, error) {
 	return len(s) == 0, err
 }
 
-// NextPageURL uses the response's embedded link reference to navigate to the
-// next page of results.
+// NextPageURL uses the response's embedded link reference to navigate to the next page of results.
 func (r ServerPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"servers_links"`
-	}
-	err := r.ExtractInto(&s)
+	var res []golangsdk.Link
+	err := extract.IntoSlicePtr(r.BodyReader(), &res, "servers_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a server.
-type GetResult struct {
-	commonResult
-}
-
-// Extract is a function that accepts a result and extracts a server.
-func (r commonResult) Extract() (*Server, error) {
-	var s struct {
-		Server *Server `json:"server"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Server, err
+	return golangsdk.ExtractNextURL(res)
 }
 
 // ExtractServers accepts a Page struct, specifically a ServerPage struct,
 // and extracts the elements into a slice of Server structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractServers(r pagination.Page) ([]Server, error) {
-	var s struct {
-		Servers []Server `json:"servers"`
-	}
-	err := (r.(ServerPage)).ExtractInto(&s)
-	return s.Servers, err
+	var res []Server
+	err := extract.IntoSlicePtr(r.(ServerPage).BodyReader(), &res, "servers")
+	return res, err
 }
 
 // Server exposes fields corresponding to a given server on the user's account.
@@ -93,11 +70,12 @@ type Server struct {
 	Addresses map[string]interface{} `json:"addresses"`
 	// Metadata includes a list of all user-specified key-value pairs attached to the server.
 	Metadata map[string]string `json:"metadata"`
-	// Links includes HTTP references to the itself, useful for passing along to other APIs that might want a server reference.
+	// Links includes HTTP references to itself, useful for passing along to other APIs that might want a server reference.
 	Links []Links `json:"links"`
 	// KeyName indicates which public key was injected into the server on launch.
 	KeyName string `json:"key_name"`
-	// AdminPass will generally be empty.  However, it will contain the administrative password chosen when provisioning a new server without a set AdminPass setting in the first place.
+	// AdminPass will generally be empty.  However, it will contain the administrative password chosen when
+	// provisioning a new server without a set AdminPass setting in the first place.
 	// Note that this is the ONLY time this field will be valid.
 	AdminPass string `json:"adminPass"`
 	// SecurityGroups includes the security groups that this instance has applied to it

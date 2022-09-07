@@ -32,7 +32,8 @@ func Download(client *golangsdk.ServiceClient, id string) (r DownloadResult) {
 	var resp *http.Response
 	resp, r.Err = client.Get(downloadURL(client, id), nil, nil)
 	if resp != nil {
-		r.Body = resp.Body
+		r.Body = nil
+		r.reader = resp.Body
 		r.Header = resp.Header
 	}
 	return

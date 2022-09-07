@@ -37,41 +37,41 @@ var getExpectedQuotaSet = quotasets2.QuotaSet{
 
 var getUsageExpectedJSONBody = `
 {
-	"quota_set" : {
-		"id": "555544443333222211110000ffffeeee",
-		"volumes" : {
-			"in_use": 15,
-			"limit": 16,
-			"reserved": 17
-		},
-		"snapshots" : {
-			"in_use": 18,
-			"limit": 19,
-			"reserved": 20
-		},
-		"gigabytes" : {
-			"in_use": 21,
-			"limit": 22,
-			"reserved": 23
-		},
-		"per_volume_gigabytes" : {
-			"in_use": 24,
-			"limit": 25,
-			"reserved": 26
-		},
-		"backups" : {
-			"in_use": 27,
-			"limit": 28,
-			"reserved": 29
-		},
-		"backup_gigabytes" : {
-			"in_use": 30,
-			"limit": 31,
-			"reserved": 32
-		}
-		}
-	}
-}`
+  "quota_set": {
+    "id": "555544443333222211110000ffffeeee",
+    "volumes": {
+      "in_use": 15,
+      "limit": 16,
+      "reserved": 17
+    },
+    "snapshots": {
+      "in_use": 18,
+      "limit": 19,
+      "reserved": 20
+    },
+    "gigabytes": {
+      "in_use": 21,
+      "limit": 22,
+      "reserved": 23
+    },
+    "per_volume_gigabytes": {
+      "in_use": 24,
+      "limit": 25,
+      "reserved": 26
+    },
+    "backups": {
+      "in_use": 27,
+      "limit": 28,
+      "reserved": 29
+    },
+    "backup_gigabytes": {
+      "in_use": 30,
+      "limit": 31,
+      "reserved": 32
+    }
+  }
+}
+`
 
 var getUsageExpectedQuotaSet = quotasets2.QuotaUsageSet{
 	ID:                 FirstTenantID,

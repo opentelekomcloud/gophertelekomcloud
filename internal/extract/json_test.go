@@ -23,38 +23,48 @@ func randomString(prefix string, n int) string {
 	return prefix + string(bytes)
 }
 
+type localCloser struct {
+	*bytes.Reader
+
+	closed bool
+}
+
+func (lc *localCloser) Close() error {
+	lc.closed = true
+	return nil
+}
+
 func TestInto(t *testing.T) {
 	key := "data_key"
 	value := randomString("v-", 20)
 
 	expected := map[string]string{key: value}
 
-	cases := map[string]interface{}{
-		"map": map[string]string{key: value},
-		"struct": struct {
-			DataKey string `json:"data_key"`
-		}{value},
-		"struct with other fields": struct {
-			DataKey  string `json:"data_key"`
-			DataKey2 string `json:"-"`
-		}{value, "difgljdfgn"},
-		"io.Reader": bytes.NewReader([]byte(fmt.Sprintf(`{ "data_key":  "%s"}`, value))),
-	}
+	t.Run("io.Reader", func(t *testing.T) {
+		t.Parallel()
 
-	for name, source := range cases {
-		source := source // avoid issues with parallel tests
-		expectedValue := expected[key]
+		data := bytes.NewReader([]byte(fmt.Sprintf(`{ "data_key":  "%s"}`, value)))
 
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
+		actual := make(map[string]string)
+		err := Into(data, &actual)
 
-			actual := make(map[string]string)
-			err := Into(source, &actual)
+		assert.NoError(t, err) // not exiting after one fail
+		assert.EqualValues(t, expected[key], actual[key])
+	})
 
-			assert.NoError(t, err) // not exiting after one fail
-			assert.EqualValues(t, expectedValue, actual[key])
-		})
-	}
+	t.Run("io.ReadCloser", func(t *testing.T) {
+		t.Parallel()
+
+		data := bytes.NewReader([]byte(fmt.Sprintf(`{ "data_key":  "%s"}`, value)))
+		closer := &localCloser{Reader: data}
+
+		actual := make(map[string]string)
+		err := Into(closer, &actual)
+
+		assert.NoError(t, err) // not exiting after one fail
+		assert.EqualValues(t, expected[key], actual[key])
+		assert.True(t, closer.closed)
+	})
 }
 
 type TestDataType struct {
