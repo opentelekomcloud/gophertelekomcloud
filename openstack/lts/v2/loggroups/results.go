@@ -24,7 +24,7 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-// Log group response
+// LogGroup response
 type LogGroup struct {
 	ID           string `json:"log_group_id"`
 	Name         string `json:"log_group_name"`

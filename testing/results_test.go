@@ -95,18 +95,12 @@ type TestPersonWithExtensionsNamed struct {
 func TestUnmarshalAnonymousStructs(t *testing.T) {
 	var actual TestPersonWithExtensions
 
-	var dejson interface{}
 	sejson := []byte(singleResponse)
-	err := json.Unmarshal(sejson, &dejson)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	var singleResult = golangsdk.Result{
-		Body: dejson,
+		Body: sejson,
 	}
 
-	err = singleResult.ExtractIntoStructPtr(&actual, "person")
+	err := singleResult.ExtractIntoStructPtr(&actual, "person")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, "Bill unmarshalled", actual.Name)
@@ -118,18 +112,13 @@ func TestUnmarshalAnonymousStructs(t *testing.T) {
 func TestUnmarshalSliceOfAnonymousStructs(t *testing.T) {
 	var actual []TestPersonWithExtensions
 
-	var dejson interface{}
 	sejson := []byte(multiResponse)
-	err := json.Unmarshal(sejson, &dejson)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	var multiResult = golangsdk.Result{
-		Body: dejson,
+		Body: sejson,
 	}
 
-	err = multiResult.ExtractIntoSlicePtr(&actual, "people")
+	err := multiResult.ExtractIntoSlicePtr(&actual, "people")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, "Bill unmarshalled", actual[0].Name)
@@ -143,18 +132,12 @@ func TestUnmarshalSliceOfAnonymousStructs(t *testing.T) {
 func TestUnmarshalSliceofStruct(t *testing.T) {
 	var actual []TestPerson
 
-	var dejson interface{}
 	sejson := []byte(multiResponse)
-	err := json.Unmarshal(sejson, &dejson)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	var multiResult = golangsdk.Result{
-		Body: dejson,
+		Body: sejson,
 	}
 
-	err = multiResult.ExtractIntoSlicePtr(&actual, "people")
+	err := multiResult.ExtractIntoSlicePtr(&actual, "people")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, "Bill unmarshalled", actual[0].Name)
@@ -165,18 +148,13 @@ func TestUnmarshalSliceofStruct(t *testing.T) {
 func TestUnmarshalNamedStructs(t *testing.T) {
 	var actual TestPersonWithExtensionsNamed
 
-	var dejson interface{}
 	sejson := []byte(singleResponse)
-	err := json.Unmarshal(sejson, &dejson)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	var singleResult = golangsdk.Result{
-		Body: dejson,
+		Body: sejson,
 	}
 
-	err = singleResult.ExtractIntoStructPtr(&actual, "person")
+	err := singleResult.ExtractIntoStructPtr(&actual, "person")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, "", actual.TestPerson.Name)
@@ -187,18 +165,13 @@ func TestUnmarshalNamedStructs(t *testing.T) {
 func TestUnmarshalSliceOfNamedStructs(t *testing.T) {
 	var actual []TestPersonWithExtensionsNamed
 
-	var dejson interface{}
 	sejson := []byte(multiResponse)
-	err := json.Unmarshal(sejson, &dejson)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	var multiResult = golangsdk.Result{
-		Body: dejson,
+		Body: sejson,
 	}
 
-	err = multiResult.ExtractIntoSlicePtr(&actual, "people")
+	err := multiResult.ExtractIntoSlicePtr(&actual, "people")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, "", actual[0].TestPerson.Name)

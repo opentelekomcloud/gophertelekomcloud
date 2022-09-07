@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -39,17 +38,11 @@ func TestHostRoute(t *testing.T) {
   }}
 `)
 
-	var dejson interface{}
-	err := json.Unmarshal(sejson, &dejson)
-	if err != nil {
-		t.Fatalf("%s", err)
-	}
-
-	resp := golangsdk.Result{Body: dejson}
+	resp := golangsdk.Result{Body: sejson}
 	var subnetWrapper struct {
 		Subnet subnets.Subnet `json:"subnet"`
 	}
-	err = resp.ExtractInto(&subnetWrapper)
+	err := resp.ExtractInto(&subnetWrapper)
 	if err != nil {
 		t.Fatalf("%s", err)
 	}
