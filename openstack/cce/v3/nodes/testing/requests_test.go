@@ -5,13 +5,18 @@ import (
 	"net/http"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
-
-	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
+
+func serviceClient() *golangsdk.ServiceClient {
+	sc := client.ServiceClient()
+	sc.ResourceBase = sc.Endpoint + "api/" + "v3/" + "projects/" + "c59fd21fd2a94963b822d8985b884673/"
+	return sc
+}
 
 func TestListNode(t *testing.T) {
 	th.SetupHTTP()
@@ -72,7 +77,7 @@ func TestListNode(t *testing.T) {
 	})
 
 	listNodes := nodes.ListOpts{Name: "test-node-1234"}
-	actual, err := nodes.List(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", listNodes)
+	actual, err := nodes.List(serviceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", listNodes)
 
 	if err != nil {
 		t.Errorf("Failed to extract nodes: %v", err)
@@ -114,7 +119,7 @@ func TestGetV3Node(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 
-	actual, err := nodes.Get(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
+	actual, err := nodes.Get(serviceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -197,7 +202,7 @@ func TestCreateV3Node(t *testing.T) {
 			Count: 1,
 		},
 	}
-	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options)
+	actual, err := nodes.Create(serviceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -225,7 +230,7 @@ func TestUpdateV3Node(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 	options := nodes.UpdateOpts{Metadata: nodes.UpdateMetadata{Name: "test-node"}}
-	actual, err := nodes.Update(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926", options)
+	actual, err := nodes.Update(serviceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -241,7 +246,7 @@ func TestDeleteNode(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := nodes.Delete(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
+	err := nodes.Delete(serviceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
 	th.AssertNoErr(t, err)
 }
 
@@ -257,7 +262,7 @@ func TestGetV3Job(t *testing.T) {
 		_, _ = fmt.Fprint(w, JobOutput)
 	})
 
-	actual, err := nodes.GetJobDetails(fake.ServiceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f")
+	actual, err := nodes.GetJobDetails(serviceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f")
 	th.AssertNoErr(t, err)
 	expected := ExpectedJob
 	th.AssertDeepEquals(t, expected, actual)
