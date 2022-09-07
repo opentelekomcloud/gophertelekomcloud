@@ -2,10 +2,7 @@ package pagination
 
 import (
 	"fmt"
-	"reflect"
 	"strconv"
-
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type OffsetPage interface {
@@ -49,16 +46,15 @@ func (p OffsetPageBase) NextPageURL() (string, error) {
 
 // IsEmpty returns true if this Page has no items in it.
 func (p OffsetPageBase) IsEmpty() (bool, error) {
-	if b, ok := p.Body.([]interface{}); ok {
-		return len(b) == 0, nil
+	body, err := p.GetBodyAsSlice()
+	if err != nil {
+		return false, fmt.Errorf("error converting page body to slice: %w", err)
 	}
-	err := golangsdk.ErrUnexpectedType{}
-	err.Expected = "[]interface{}"
-	err.Actual = fmt.Sprintf("%v", reflect.TypeOf(p.Body))
-	return true, err
+
+	return len(body) == 0, nil
 }
 
 // GetBody returns the Page Body. This is used in the `AllPages` method.
-func (p OffsetPageBase) GetBody() interface{} {
+func (p OffsetPageBase) GetBody() []byte {
 	return p.Body
 }
