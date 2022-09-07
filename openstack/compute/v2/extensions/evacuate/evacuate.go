@@ -33,7 +33,7 @@ func Evacuate(client *golangsdk.ServiceClient, id string, opts EvacuateOptsBuild
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

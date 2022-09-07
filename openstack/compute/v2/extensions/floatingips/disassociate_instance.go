@@ -8,6 +8,6 @@ func DisassociateInstance(client *golangsdk.ServiceClient, serverID string, opts
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(disassociateURL(client, serverID), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("servers/"+serverID+"/action"), b, nil, nil)
 	return
 }

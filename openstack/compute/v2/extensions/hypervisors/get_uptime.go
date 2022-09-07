@@ -9,7 +9,7 @@ import (
 // GetUptime makes a request against the API to get uptime for specific hypervisor.
 func GetUptime(client *golangsdk.ServiceClient, hypervisorID int) (r UptimeResult) {
 	v := strconv.Itoa(hypervisorID)
-	raw, err := client.Get(hypervisorsUptimeURL(client, v), nil, &golangsdk.RequestOpts{
+	raw, err := client.Get(client.ServiceURL("os-hypervisors", v, "uptime"), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

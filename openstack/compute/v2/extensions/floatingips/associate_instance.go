@@ -8,6 +8,6 @@ func AssociateInstance(client *golangsdk.ServiceClient, serverID string, opts As
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(associateURL(client, serverID), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("servers/"+serverID+"/action"), b, nil, nil)
 	return
 }
