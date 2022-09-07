@@ -63,7 +63,7 @@ func (raw commonResult) Extract() (*DefaultRule, error) {
 	var res struct {
 		DefaultRule DefaultRule `json:"security_group_default_rule"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &s.DefaultRule, err
 }
 

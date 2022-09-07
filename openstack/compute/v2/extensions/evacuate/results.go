@@ -2,6 +2,7 @@ package evacuate
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // EvacuateResult is the response from an Evacuate operation.
@@ -15,7 +16,7 @@ func (raw EvacuateResult) ExtractAdminPass() (string, error) {
 	var res struct {
 		AdminPass string `json:"adminPass"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil && err.Error() == "EOF" {
 		return "", nil
 	}

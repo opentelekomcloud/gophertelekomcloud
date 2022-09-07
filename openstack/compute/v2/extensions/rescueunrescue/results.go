@@ -1,6 +1,9 @@
 package rescueunrescue
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type commonResult struct {
 	golangsdk.Result
@@ -23,6 +26,6 @@ func (raw RescueResult) Extract() (string, error) {
 	var res struct {
 		AdminPass string `json:"adminPass"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

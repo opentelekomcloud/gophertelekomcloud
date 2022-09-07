@@ -15,7 +15,7 @@ func (raw attachInterfaceResult) Extract() (*Interface, error) {
 	var res struct {
 		Interface *Interface `json:"interfaceAttachment"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

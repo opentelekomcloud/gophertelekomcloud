@@ -37,7 +37,7 @@ func (raw commonResult) Extract() (*Flavor, error) {
 	var res struct {
 		Flavor *Flavor `json:"flavor"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
@@ -180,7 +180,7 @@ func (raw accessResult) Extract() ([]FlavorAccess, error) {
 	var res struct {
 		FlavorAccesses []FlavorAccess `json:"flavor_access"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return res, err
 }
 
@@ -198,7 +198,7 @@ func (raw extraSpecsResult) Extract() (map[string]string, error) {
 	var res struct {
 		ExtraSpecs map[string]string `json:"extra_specs"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
@@ -248,6 +248,6 @@ type DeleteExtraSpecResult struct {
 // Extract interprets any extraSpecResult as an ExtraSpec, if possible.
 func (raw extraSpecResult) Extract() (map[string]string, error) {
 	var res map[string]string
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

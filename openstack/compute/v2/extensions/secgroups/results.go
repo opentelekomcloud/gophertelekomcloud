@@ -171,7 +171,7 @@ func (raw commonResult) Extract() (*SecurityGroup, error) {
 	var res struct {
 		SecurityGroup *SecurityGroup `json:"security_group"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
@@ -186,7 +186,7 @@ func (raw CreateRuleResult) Extract() (*Rule, error) {
 	var res struct {
 		Rule *Rule `json:"security_group_rule"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

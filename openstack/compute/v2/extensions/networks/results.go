@@ -123,7 +123,7 @@ func (raw NetworkResult) Extract() (*Network, error) {
 	var res struct {
 		Network *Network `json:"network"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

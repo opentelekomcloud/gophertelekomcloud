@@ -19,7 +19,7 @@ type Tags struct {
 // Extract interprets any commonResult as a Tags.
 func (raw commonResult) Extract() (*Tags, error) {
 	var res Tags
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

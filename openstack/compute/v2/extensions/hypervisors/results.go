@@ -201,7 +201,7 @@ func (raw HypervisorResult) Extract() (*Hypervisor, error) {
 	var res struct {
 		Hypervisor Hypervisor `json:"hypervisor"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &s.Hypervisor, err
 }
 
@@ -254,7 +254,7 @@ func (raw StatisticsResult) Extract() (*Statistics, error) {
 	var res struct {
 		Stats Statistics `json:"hypervisor_statistics"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &s.Stats, err
 }
 
@@ -286,6 +286,6 @@ func (raw UptimeResult) Extract() (*Uptime, error) {
 	var res struct {
 		Uptime Uptime `json:"hypervisor"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &s.Uptime, err
 }

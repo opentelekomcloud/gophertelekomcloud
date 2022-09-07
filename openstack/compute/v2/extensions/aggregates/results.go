@@ -90,10 +90,8 @@ type aggregatesResult struct {
 }
 
 func (raw aggregatesResult) Extract() (*Aggregate, error) {
-	var res struct {
-		Aggregate *Aggregate `json:"aggregate"`
-	}
-	err = extract.Into(raw, &res)
+	var res Aggregate
+	err = extract.IntoStructPtr(raw.Body, &res, "aggregate")
 	return &res, err
 }
 

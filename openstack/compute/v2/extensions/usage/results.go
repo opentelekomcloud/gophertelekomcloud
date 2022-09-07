@@ -133,7 +133,7 @@ func (raw SingleTenantPage) NextPageURL() (string, error) {
 	var res struct {
 		Links []golangsdk.Link `json:"tenant_usage_links"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return "", err
 	}
@@ -176,7 +176,7 @@ func (raw AllTenantsPage) NextPageURL() (string, error) {
 	var res struct {
 		Links []golangsdk.Link `json:"tenant_usages_links"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return "", err
 	}

@@ -69,7 +69,7 @@ func (raw keyPairResult) Extract() (*KeyPair, error) {
 	var res struct {
 		KeyPair *KeyPair `json:"keypair"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

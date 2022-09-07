@@ -34,15 +34,6 @@ func (opts UpdateOpts) ToAggregatesUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "aggregate")
 }
 
-type AddHostOpts struct {
-	// The name of the host.
-	Host string `json:"host" required:"true"`
-}
-
-func (opts AddHostOpts) ToAggregatesAddHostMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "add_host")
-}
-
 type RemoveHostOpts struct {
 	// The name of the host.
 	Host string `json:"host" required:"true"`

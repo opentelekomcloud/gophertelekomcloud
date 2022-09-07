@@ -152,7 +152,7 @@ func (raw quotaResult) Extract() (*QuotaSet, error) {
 	var res struct {
 		QuotaSet *QuotaSet `json:"quota_set"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
@@ -190,6 +190,6 @@ func (raw quotaDetailResult) Extract() (QuotaDetailSet, error) {
 	var res struct {
 		QuotaData QuotaDetailSet `json:"quota_set"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

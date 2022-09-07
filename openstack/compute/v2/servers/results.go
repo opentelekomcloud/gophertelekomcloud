@@ -21,7 +21,7 @@ type serverResult struct {
 // Extract interprets any serverResult as a Server, if possible.
 func (raw serverResult) Extract() (*Server, error) {
 	var res Server
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &s, err
 }
 
@@ -92,7 +92,7 @@ func (raw ShowConsoleOutputResult) Extract() (string, error) {
 		Output string `json:"output"`
 	}
 
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
@@ -112,7 +112,7 @@ func (raw GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string
 	var res struct {
 		Password string `json:"password"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err == nil && privateKey != nil && res.Password != "" {
 		return decryptPassword(res.Password, privateKey)
 	}
@@ -263,7 +263,7 @@ func (r *Server) UnmarshalJSON(b []byte) error {
 // Extract interprets any serverResult as a Server, if possible.
 func (raw GetNICResult) Extract() ([]NIC, error) {
 	var res []NIC
-	err = extract.IntoSlicePtr(raw, &res, "interfaceAttachments")
+	err = extract.IntoSlicePtr(raw.Body, &res, "interfaceAttachments")
 	return res, err
 }
 
@@ -300,7 +300,7 @@ func (raw ServerPage) NextPageURL() (string, error) {
 	var res struct {
 		Links []golangsdk.Link `json:"servers_links"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return "", err
 	}
@@ -369,7 +369,7 @@ func (raw MetadataResult) Extract() (map[string]string, error) {
 	var res struct {
 		Metadata map[string]string `json:"metadata"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
@@ -378,7 +378,7 @@ func (raw MetadatumResult) Extract() (map[string]string, error) {
 	var res struct {
 		Metadatum map[string]string `json:"meta"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

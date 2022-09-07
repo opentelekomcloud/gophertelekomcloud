@@ -81,7 +81,7 @@ func (raw FloatingIPResult) Extract() (*FloatingIP, error) {
 	var res struct {
 		FloatingIP *FloatingIP `json:"floating_ip"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

@@ -23,7 +23,7 @@ func (raw GetResult) Extract() (*Image, error) {
 	var res struct {
 		Image *Image `json:"image"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

@@ -65,7 +65,7 @@ func (raw ServerGroupResult) Extract() (*ServerGroup, error) {
 	var res struct {
 		ServerGroup *ServerGroup `json:"server_group"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 

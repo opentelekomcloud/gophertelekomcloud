@@ -2,6 +2,7 @@ package limits
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // Limits is a struct that contains the response of a limit query.
@@ -79,7 +80,7 @@ func (raw GetResult) Extract() (*Limits, error) {
 	var res struct {
 		Limits *Limits `json:"limits"`
 	}
-	err = extract.Into(raw, &res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
