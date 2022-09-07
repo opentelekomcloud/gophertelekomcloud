@@ -13,18 +13,6 @@ func commonList(client *golangsdk.ServiceClient, url string) pagination.Pager {
 	})
 }
 
-// List will return a collection of all the security groups for a particular
-// tenant.
-func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return commonList(client, rootURL(client))
-}
-
-// ListByServer will return a collection of all the security groups which are
-// associated with a particular server.
-func ListByServer(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
-	return commonList(client, listByServerURL(client, serverID))
-}
-
 // GroupOpts is the underlying struct responsible for creating or updating
 // security groups. It therefore represents the mutable attributes of a
 // security group.
@@ -49,18 +37,6 @@ func (opts CreateOpts) ToSecGroupCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "security_group")
 }
 
-// Create will create a new security group.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToSecGroupCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(rootURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // UpdateOpts is the struct responsible for updating an existing security group.
 type UpdateOpts GroupOpts
 
@@ -73,31 +49,6 @@ type UpdateOptsBuilder interface {
 // ToSecGroupUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "security_group")
-}
-
-// Update will modify the mutable properties of a security group, notably its
-// name and description.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToSecGroupUpdateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Put(resourceURL(client, id), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get will return details for a particular security group.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(resourceURL(client, id), nil, nil)
-	return
-}
-
-// Delete will permanently delete a security group from the project.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(resourceURL(client, id), nil)
-	return
 }
 
 // DeleteWithRetry will try to permanently delete a particular security
@@ -158,41 +109,8 @@ func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "security_group_rule")
 }
 
-// CreateRule will add a new rule to an existing security group (whose ID is
-// specified in CreateRuleOpts). You have the option of controlling inbound
-// traffic from either an IP range (CIDR) or from another security group.
-func CreateRule(client *golangsdk.ServiceClient, opts CreateRuleOptsBuilder) (r CreateRuleResult) {
-	b, err := opts.ToRuleCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(rootRuleURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// DeleteRule will permanently delete a rule from a security group.
-func DeleteRule(client *golangsdk.ServiceClient, id string) (r DeleteRuleResult) {
-	raw, err := client.Delete(resourceRuleURL(client, id), nil)
-	return
-}
-
 func actionMap(prefix, groupName string) map[string]map[string]string {
 	return map[string]map[string]string{
 		prefix + "SecurityGroup": {"name": groupName},
 	}
-}
-
-// AddServer will associate a server and a security group, enforcing the
-// rules of the group on the server.
-func AddServer(client *golangsdk.ServiceClient, serverID, groupName string) (r AddServerResult) {
-	raw, err := client.Post(serverActionURL(client, serverID), actionMap("add", groupName), nil, nil)
-	return
-}
-
-// RemoveServer will disassociate a server from a security group.
-func RemoveServer(client *golangsdk.ServiceClient, serverID, groupName string) (r RemoveServerResult) {
-	raw, err := client.Post(serverActionURL(client, serverID), actionMap("remove", groupName), nil, nil)
-	return
 }
