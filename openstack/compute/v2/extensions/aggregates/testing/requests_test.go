@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/aggregates"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -14,29 +13,14 @@ func TestListAggregates(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleListSuccessfully(t)
 
-	pages := 0
-	err := aggregates.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		pages++
-
-		actual, err := aggregates.ExtractAggregates(page)
-		if err != nil {
-			return false, err
-		}
-
-		if len(actual) != 2 {
-			t.Fatalf("Expected 2 aggregates, got %d", len(actual))
-		}
-		th.CheckDeepEquals(t, FirstFakeAggregate, actual[0])
-		th.CheckDeepEquals(t, SecondFakeAggregate, actual[1])
-
-		return true, nil
-	})
-
+	actual, err := aggregates.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
 
-	if pages != 1 {
-		t.Errorf("Expected 1 page, saw %d", pages)
+	if len(actual) != 2 {
+		t.Fatalf("Expected 2 aggregates, got %d", len(actual))
 	}
+	th.CheckDeepEquals(t, FirstFakeAggregate, actual[0])
+	th.CheckDeepEquals(t, SecondFakeAggregate, actual[1])
 }
 
 func TestCreateAggregates(t *testing.T) {
@@ -51,7 +35,7 @@ func TestCreateAggregates(t *testing.T) {
 		AvailabilityZone: "london",
 	}
 
-	actual, err := aggregates.Create(client.ServiceClient(), opts).Extract()
+	actual, err := aggregates.Create(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, &expected, actual)
@@ -62,7 +46,7 @@ func TestDeleteAggregates(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := aggregates.Delete(client.ServiceClient(), AggregateIDtoDelete).ExtractErr()
+	err := aggregates.Delete(client.ServiceClient(), AggregateIDtoDelete)
 	th.AssertNoErr(t, err)
 }
 
@@ -73,7 +57,7 @@ func TestGetAggregates(t *testing.T) {
 
 	expected := SecondFakeAggregate
 
-	actual, err := aggregates.Get(client.ServiceClient(), AggregateIDtoGet).Extract()
+	actual, err := aggregates.Get(client.ServiceClient(), AggregateIDtoGet)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, &expected, actual)
@@ -91,7 +75,7 @@ func TestUpdateAggregate(t *testing.T) {
 		AvailabilityZone: "nova2",
 	}
 
-	actual, err := aggregates.Update(client.ServiceClient(), expected.ID, opts).Extract()
+	actual, err := aggregates.Update(client.ServiceClient(), expected.ID, opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, &expected, actual)
@@ -108,7 +92,7 @@ func TestAddHostAggregate(t *testing.T) {
 		Host: "cmp1",
 	}
 
-	actual, err := aggregates.AddHost(client.ServiceClient(), expected.ID, opts).Extract()
+	actual, err := aggregates.AddHost(client.ServiceClient(), expected.ID, opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, &expected, actual)
@@ -125,7 +109,7 @@ func TestRemoveHostAggregate(t *testing.T) {
 		Host: "cmp1",
 	}
 
-	actual, err := aggregates.RemoveHost(client.ServiceClient(), expected.ID, opts).Extract()
+	actual, err := aggregates.RemoveHost(client.ServiceClient(), expected.ID, opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, &expected, actual)
@@ -142,7 +126,7 @@ func TestSetMetadataAggregate(t *testing.T) {
 		Metadata: map[string]interface{}{"key": "value"},
 	}
 
-	actual, err := aggregates.SetMetadata(client.ServiceClient(), expected.ID, opts).Extract()
+	actual, err := aggregates.SetMetadata(client.ServiceClient(), expected.ID, opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, &expected, actual)

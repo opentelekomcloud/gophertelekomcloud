@@ -13,6 +13,6 @@ func List(client *golangsdk.ServiceClient) ([]Aggregate, error) {
 	}
 
 	var res []Aggregate
-	err = extract.IntoStructPtr(raw.Body, &res, "aggregates")
+	err = extract.IntoSlicePtr(raw.Body, &res, "aggregates")
 	return res, err
 }
