@@ -14,7 +14,7 @@ func SetMetadata(client *golangsdk.ServiceClient, aggregateID int, opts SetMetad
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(aggregatesSetMetadataURL(client, v), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-aggregates", v, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

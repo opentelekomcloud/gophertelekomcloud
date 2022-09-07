@@ -7,7 +7,7 @@ import (
 
 // List will return the existing availability zones.
 func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, listURL(client), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, client.ServiceURL("os-availability-zone"), func(r pagination.PageResult) pagination.Page {
 		return AvailabilityZonePage{pagination.SinglePageBase(r)}
 	})
 }

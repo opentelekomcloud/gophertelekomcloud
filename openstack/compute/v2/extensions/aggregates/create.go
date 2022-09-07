@@ -8,7 +8,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(aggregatesCreateURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-aggregates"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

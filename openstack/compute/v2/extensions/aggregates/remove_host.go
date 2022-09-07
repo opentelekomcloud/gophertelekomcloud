@@ -14,7 +14,7 @@ func RemoveHost(client *golangsdk.ServiceClient, aggregateID int, opts RemoveHos
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(aggregatesRemoveHostURL(client, v), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-aggregates", v, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

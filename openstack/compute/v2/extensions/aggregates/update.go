@@ -14,7 +14,7 @@ func Update(client *golangsdk.ServiceClient, aggregateID int, opts UpdateOpts) (
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Put(aggregatesUpdateURL(client, v), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("os-aggregates", v), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
