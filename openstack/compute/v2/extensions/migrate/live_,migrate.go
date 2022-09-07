@@ -38,6 +38,6 @@ func LiveMigrate(client *golangsdk.ServiceClient, id string, opts LiveMigrateOpt
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(actionURL(client, id), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, nil)
 	return
 }

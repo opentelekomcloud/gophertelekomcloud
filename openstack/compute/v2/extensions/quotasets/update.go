@@ -9,6 +9,6 @@ func Update(client *golangsdk.ServiceClient, tenantID string, opts UpdateOptsBui
 		return nil, err
 	}
 
-	raw, err := client.Put(updateURL(client, tenantID), reqBody, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	raw, err := client.Put(client.ServiceURL("os-quota-sets", tenantID), reqBody, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	return
 }
