@@ -27,7 +27,7 @@ func (opts GetOpts) ToLimitsQuery() (string, error) {
 
 // Get returns the limits about the currently scoped tenant.
 func Get(client *golangsdk.ServiceClient, opts GetOptsBuilder) (r GetResult) {
-	url := getURL(client)
+	url := client.ServiceURL("limits")
 	if opts != nil {
 		query, err := opts.ToLimitsQuery()
 		if err != nil {

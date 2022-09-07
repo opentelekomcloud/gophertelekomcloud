@@ -9,7 +9,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("os-keypairs"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
