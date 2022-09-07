@@ -3,7 +3,6 @@ package keypairs
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsExt adds a KeyPair option to the base CreateOpts.
@@ -31,13 +30,6 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 	return base, nil
 }
 
-// List returns a Pager that allows you to iterate over a collection of KeyPairs.
-func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, listURL(client), func(r pagination.PageResult) pagination.Page {
-		return KeyPairPage{pagination.SinglePageBase(r)}
-	})
-}
-
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
@@ -57,29 +49,4 @@ type CreateOpts struct {
 // ToKeyPairCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToKeyPairCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "keypair")
-}
-
-// Create requests the creation of a new KeyPair on the server, or to import a
-// pre-existing keypair.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToKeyPairCreateMap()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := client.Post(createURL(client), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get returns public data about a previously uploaded KeyPair.
-func Get(client *golangsdk.ServiceClient, name string) (r GetResult) {
-	raw, err := client.Get(getURL(client, name), nil, nil)
-	return
-}
-
-// Delete requests the deletion of a previous stored KeyPair from the server.
-func Delete(client *golangsdk.ServiceClient, name string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, name), nil)
-	return
 }
