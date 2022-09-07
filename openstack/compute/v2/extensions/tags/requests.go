@@ -35,18 +35,18 @@ func Create(client *golangsdk.ServiceClient, server_id string, opts CreateOptsBu
 		return nil, err
 		r
 	}
-	raw, err := client.Put(createURL(client, server_id), b, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	raw, err := client.Put(client.ServiceURL("servers", server_id, "tags"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	return
 }
 
 // Get implements tags get request
 func Get(client *golangsdk.ServiceClient, server_id string) (r GetResult) {
-	raw, err := client.Get(getURL(client, server_id), nil, nil)
+	raw, err := client.Get(client.ServiceURL("servers", server_id, "tags"), nil, nil)
 	return
 }
 
 // Delete implements image delete request
 func Delete(client *golangsdk.ServiceClient, server_id string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, server_id), nil)
+	raw, err := client.Delete(client.ServiceURL("servers", server_id, "tags"), nil)
 	return
 }

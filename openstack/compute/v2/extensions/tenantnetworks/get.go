@@ -6,6 +6,6 @@ import (
 
 // Get returns data about a previously created Network.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(getURL(client, id), nil, nil)
+	raw, err := client.Get(client.ServiceURL("os-tenant-networks", id), nil, nil)
 	return
 }
