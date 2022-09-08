@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions/volumetenants"
 	volumes2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/volumes"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -102,7 +103,7 @@ func TestListAllWithExtensions(t *testing.T) {
 
 	type VolumeWithExt struct {
 		volumes2.Volume
-		volumeTenantExt
+		volumetenants.VolumeTenantExt
 	}
 
 	allPages, err := volumes2.List(client.ServiceClient(), volumes2.ListOpts{}).AllPages()
@@ -245,7 +246,7 @@ func TestGetWithExtensions(t *testing.T) {
 
 	var s struct {
 		volumes2.Volume
-		volumeTenantExt
+		volumetenants.VolumeTenantExt
 	}
 	_, err := volumes2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
@@ -255,9 +256,4 @@ func TestGetWithExtensions(t *testing.T) {
 	if err == nil {
 		t.Errorf("Expected error when providing non-pointer struct")
 	}
-}
-
-type volumeTenantExt struct {
-	// TenantID is the id of the project that owns the volume.
-	TenantID string `json:"os-vol-tenant-attr:tenant_id"`
 }
