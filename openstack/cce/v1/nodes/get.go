@@ -11,8 +11,10 @@ import (
 
 // Get retrieves a particular nodes based on its unique ID and cluster ID.
 func Get(client *golangsdk.ServiceClient, clusterID, k8sName string) (*GetNode, error) {
-	raw, err := client.Get(fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+
-		strings.Join([]string{"nodes", k8sName}, "/"), nil, openstack.StdRequestOpts())
+	url := fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:]) +
+		strings.Join([]string{"nodes", k8sName}, "/")
+
+	raw, err := client.Get(url, nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

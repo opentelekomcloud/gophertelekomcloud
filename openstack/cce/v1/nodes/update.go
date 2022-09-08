@@ -24,9 +24,11 @@ func Update(client *golangsdk.ServiceClient, clusterID, k8sName string, opts Upd
 		return nil, err
 	}
 
+	url := fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:]) +
+		strings.Join([]string{"nodes", k8sName}, "/")
+
 	raw, err := client.Patch(
-		fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+
-			strings.Join([]string{"nodes", k8sName}, "/"), b, nil, &golangsdk.RequestOpts{
+		url, b, nil, &golangsdk.RequestOpts{
 			OkCodes: []int{200},
 			MoreHeaders: map[string]string{
 				"Content-Type": "application/merge-patch+json",

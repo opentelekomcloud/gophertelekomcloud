@@ -2,7 +2,6 @@ package nodes
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -11,8 +10,9 @@ import (
 
 // List returns collection of nodes.
 func List(client *golangsdk.ServiceClient, clusterID string) (*ListNodes, error) {
-	raw, err := client.Get(fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+
-		strings.Join([]string{"nodes"}, "/"), nil, openstack.StdRequestOpts())
+	url := fmt.Sprintf("https://%s.%s%s", clusterID, client.ResourceBaseURL()[8:], "nodes")
+
+	raw, err := client.Get(url, nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}
