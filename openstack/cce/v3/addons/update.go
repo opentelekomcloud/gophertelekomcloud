@@ -37,8 +37,10 @@ func Update(client *golangsdk.ServiceClient, id, clusterId string, opts UpdateOp
 		return nil, err
 	}
 
-	raw, err := client.Put(fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
-		strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"), b, nil, &golangsdk.RequestOpts{
+	url := fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:]) +
+		strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/")
+
+	raw, err := client.Put(url, b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

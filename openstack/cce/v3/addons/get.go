@@ -10,8 +10,10 @@ import (
 
 // Get retrieves a particular addon based on its unique ID.
 func Get(client *golangsdk.ServiceClient, id, clusterId string) (*Addon, error) {
-	raw, err := client.Get(fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:])+
-		strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/"), nil, &golangsdk.RequestOpts{
+	url := fmt.Sprintf("https://%s.%s", clusterId, client.ResourceBaseURL()[8:]) +
+		strings.Join([]string{"addons", id + "?cluster_id=" + clusterId}, "/")
+
+	raw, err := client.Get(url, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

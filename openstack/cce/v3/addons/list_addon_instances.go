@@ -2,16 +2,16 @@ package addons
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 func ListAddonInstances(client *golangsdk.ServiceClient, clusterID string) (*AddonInstanceList, error) {
-	raw, err := client.Get(fmt.Sprintf("%s?cluster_id=%s",
-		fmt.Sprintf("https://%s.%s", clusterID, client.ResourceBaseURL()[8:])+
-			strings.Join([]string{"addons"}, "/"), clusterID), nil, &golangsdk.RequestOpts{
+	sprintf := fmt.Sprintf("%s?cluster_id=%s",
+		fmt.Sprintf("https://%s.%s%s", clusterID, client.ResourceBaseURL()[8:], "addons"), clusterID)
+
+	raw, err := client.Get(sprintf, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

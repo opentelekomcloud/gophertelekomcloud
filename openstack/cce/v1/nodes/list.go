@@ -11,7 +11,6 @@ import (
 // List returns collection of nodes.
 func List(client *golangsdk.ServiceClient, clusterID string) (*ListNodes, error) {
 	url := fmt.Sprintf("https://%s.%s%s", clusterID, client.ResourceBaseURL()[8:], "nodes")
-
 	raw, err := client.Get(url, nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
