@@ -53,17 +53,6 @@ func TestPartialUpdate(t *testing.T) {
 	th.CheckDeepEquals(t, &partiualUpdateExpectedQuotaSet, actual)
 }
 
-func TestErrorInToBlockStorageQuotaUpdateMap(t *testing.T) {
-	opts := quotasets.UpdateOpts{}
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	HandleSuccessfulRequest(t, "PUT", "/os-quota-sets/"+FirstTenantID, "", nil)
-	_, err := quotasets.Update(client.ServiceClient(), FirstTenantID, opts)
-	if err == nil {
-		t.Fatal("Error handling failed")
-	}
-}
-
 func TestDelete(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
