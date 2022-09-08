@@ -42,8 +42,7 @@ func NewBlockStorageNoAuth(client *golangsdk.ProviderClient, opts EndpointOpts) 
 		return nil, fmt.Errorf("Malformed noauth token")
 	}
 
-	endpoint := fmt.Sprintf("%s%s", golangsdk.NormalizeURL(opts.CinderEndpoint), token[1])
-	sc.Endpoint = golangsdk.NormalizeURL(endpoint)
+	sc.Endpoint = golangsdk.NormalizeURL(fmt.Sprintf("%s%s", golangsdk.NormalizeURL(opts.CinderEndpoint), token[1]))
 	sc.ProviderClient = client
 	return sc, nil
 }
