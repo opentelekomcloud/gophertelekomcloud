@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type ListOpts struct {
@@ -16,32 +15,20 @@ type ListOpts struct {
 	Host string `q:"host"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Service, error) {
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		return pagination.Pager{Err: err}
+		return nil, err
 	}
 
-	return pagination.NewPager(client, client.ServiceURL("os-services")+query.String(), func(r pagination.PageResult) pagination.Page {
-		return ServicePage{pagination.SinglePageBase(r)}
-	})
-}
-
-type ServicePage struct {
-	pagination.SinglePageBase
-}
-
-func (page ServicePage) IsEmpty() (bool, error) {
-	services, err := ExtractServices(page)
-	return len(services) == 0, err
-}
-
-func ExtractServices(r pagination.Page) ([]Service, error) {
-	var res struct {
-		Service []Service `json:"services"`
+	raw, err := client.Get(client.ServiceURL("os-services")+query.String(), nil, nil)
+	if err != nil {
+		return nil, err
 	}
-	err := extract.Into(r.(ServicePage).Result.Body, &res)
-	return res.Service, err
+
+	var res []Service
+	err = extract.IntoSlicePtr(raw.Body, &res, "services")
+	return res, err
 }
 
 type Service struct {

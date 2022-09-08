@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type ListOpts struct {
@@ -16,32 +15,20 @@ type ListOpts struct {
 	Detail bool `q:"detail"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]StoragePool, error) {
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		return pagination.Pager{Err: err}
+		return nil, err
 	}
 
-	return pagination.NewPager(client, client.ServiceURL("scheduler-stats", "get_pools")+query.String(), func(r pagination.PageResult) pagination.Page {
-		return StoragePoolPage{pagination.SinglePageBase(r)}
-	})
-}
-
-type StoragePoolPage struct {
-	pagination.SinglePageBase
-}
-
-func (page StoragePoolPage) IsEmpty() (bool, error) {
-	va, err := ExtractStoragePools(page)
-	return len(va) == 0, err
-}
-
-func ExtractStoragePools(p pagination.Page) ([]StoragePool, error) {
-	var res struct {
-		StoragePools []StoragePool `json:"pools"`
+	raw, err := client.Get(client.ServiceURL("scheduler-stats", "get_pools")+query.String(), nil, nil)
+	if err != nil {
+		return nil, err
 	}
-	err := extract.Into(p.(StoragePoolPage).Body, &res)
-	return res.StoragePools, err
+
+	var res []StoragePool
+	err = extract.IntoSlicePtr(raw.Body, &res, "pools")
+	return res, err
 }
 
 type StoragePool struct {

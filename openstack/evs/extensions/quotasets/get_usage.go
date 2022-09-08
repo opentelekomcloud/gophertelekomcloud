@@ -13,11 +13,9 @@ func GetUsage(client *golangsdk.ServiceClient, projectID string) (*QuotaUsageSet
 		return nil, err
 	}
 
-	var res struct {
-		QuotaUsageSet QuotaUsageSet `json:"quota_set"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.QuotaUsageSet, err
+	var res QuotaUsageSet
+	err = extract.IntoStructPtr(raw.Body, &res, "quota_set")
+	return &res, err
 }
 
 type QuotaUsageSet struct {

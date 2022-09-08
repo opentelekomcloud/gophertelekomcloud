@@ -24,11 +24,9 @@ func GetDefaults(client *golangsdk.ServiceClient, projectID string) (*QuotaSet, 
 		return nil, err
 	}
 
-	var res struct {
-		QuotaSet QuotaSet `json:"quota_set"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.QuotaSet, err
+	var res QuotaSet
+	err = extract.IntoStructPtr(raw.Body, &res, "quota_set")
+	return &res, err
 }
 
 type QuotaSet struct {
