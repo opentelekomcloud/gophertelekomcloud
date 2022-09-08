@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
+	volumes2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/volumes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/extensions"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -19,19 +20,19 @@ func TestListWithExtensions(t *testing.T) {
 
 	count := 0
 
-	_ = volumes.List(client.ServiceClient(), volumes.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = volumes2.List(client.ServiceClient(), volumes2.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
-		actual, err := volumes.ExtractVolumes(page)
+		actual, err := volumes2.ExtractVolumes(page)
 		if err != nil {
 			t.Errorf("Failed to extract volumes: %v", err)
 			return false, err
 		}
 
-		expected := []volumes.Volume{
+		expected := []volumes2.Volume{
 			{
 				ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
 				Name: "vol-001",
-				Attachments: []volumes.Attachment{{
+				Attachments: []volumes2.Attachment{{
 					ServerID:     "83ec2e3b-4321-422b-8706-a84185f52a0a",
 					AttachmentID: "05551600-a936-4d4a-ba42-79a037c1-c91a",
 					AttachedAt:   time.Date(2016, 8, 6, 14, 48, 20, 0, time.UTC),
@@ -62,7 +63,7 @@ func TestListWithExtensions(t *testing.T) {
 			{
 				ID:                 "96c3bda7-c82a-4f50-be73-ca7621794835",
 				Name:               "vol-002",
-				Attachments:        []volumes.Attachment{},
+				Attachments:        []volumes2.Attachment{},
 				AvailabilityZone:   "nova",
 				Bootable:           "false",
 				ConsistencyGroupID: "",
@@ -101,15 +102,15 @@ func TestListAllWithExtensions(t *testing.T) {
 	MockListResponse(t)
 
 	type VolumeWithExt struct {
-		volumes.Volume
+		volumes2.Volume
 		extensions.VolumeTenantExt
 	}
 
-	allPages, err := volumes.List(client.ServiceClient(), volumes.ListOpts{}).AllPages()
+	allPages, err := volumes2.List(client.ServiceClient(), volumes2.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 
 	var actual []VolumeWithExt
-	err = volumes.ExtractVolumesInto(allPages, &actual)
+	err = volumes2.ExtractVolumesInto(allPages, &actual)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 2, len(actual))
 	th.AssertEquals(t, "304dc00909ac4d0da6c62d816bcb3459", actual[0].TenantID)
@@ -121,16 +122,16 @@ func TestListAll(t *testing.T) {
 
 	MockListResponse(t)
 
-	allPages, err := volumes.List(client.ServiceClient(), volumes.ListOpts{}).AllPages()
+	allPages, err := volumes2.List(client.ServiceClient(), volumes2.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
-	actual, err := volumes.ExtractVolumes(allPages)
+	actual, err := volumes2.ExtractVolumes(allPages)
 	th.AssertNoErr(t, err)
 
-	expected := []volumes.Volume{
+	expected := []volumes2.Volume{
 		{
 			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
 			Name: "vol-001",
-			Attachments: []volumes.Attachment{{
+			Attachments: []volumes2.Attachment{{
 				ServerID:     "83ec2e3b-4321-422b-8706-a84185f52a0a",
 				AttachmentID: "05551600-a936-4d4a-ba42-79a037c1-c91a",
 				AttachedAt:   time.Date(2016, 8, 6, 14, 48, 20, 0, time.UTC),
@@ -161,7 +162,7 @@ func TestListAll(t *testing.T) {
 		{
 			ID:                 "96c3bda7-c82a-4f50-be73-ca7621794835",
 			Name:               "vol-002",
-			Attachments:        []volumes.Attachment{},
+			Attachments:        []volumes2.Attachment{},
 			AvailabilityZone:   "nova",
 			Bootable:           "false",
 			ConsistencyGroupID: "",
@@ -193,7 +194,7 @@ func TestGet(t *testing.T) {
 
 	MockGetResponse(t)
 
-	v, err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	v, err := volumes2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, v.Name, "vol-001")
@@ -206,8 +207,8 @@ func TestCreate(t *testing.T) {
 
 	MockCreateResponse(t)
 
-	options := volumes.CreateOpts{Size: 75, Name: "vol-001"}
-	n, err := volumes.Create(client.ServiceClient(), options)
+	options := volumes2.CreateOpts{Size: 75, Name: "vol-001"}
+	n, err := volumes2.Create(client.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, n.Size, 75)
@@ -220,8 +221,8 @@ func TestDelete(t *testing.T) {
 
 	MockDeleteResponse(t)
 
-	deleteOpts := volumes.DeleteOpts{}
-	res := volumes.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", deleteOpts)
+	deleteOpts := volumes2.DeleteOpts{}
+	res := volumes2.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", deleteOpts)
 	th.AssertNoErr(t, res)
 }
 
@@ -231,8 +232,8 @@ func TestUpdate(t *testing.T) {
 
 	MockUpdateResponse(t)
 
-	options := volumes.UpdateOpts{Name: "vol-002"}
-	v, err := volumes.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options)
+	options := volumes2.UpdateOpts{Name: "vol-002"}
+	v, err := volumes2.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, "vol-002", v.Name)
 }
@@ -244,14 +245,14 @@ func TestGetWithExtensions(t *testing.T) {
 	MockGetResponse(t)
 
 	var s struct {
-		volumes.Volume
+		volumes2.Volume
 		extensions.VolumeTenantExt
 	}
-	_, err := volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	_, err := volumes2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "304dc00909ac4d0da6c62d816bcb3459", s.TenantID)
 
-	_, err = volumes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	_, err = volumes2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	if err == nil {
 		t.Errorf("Expected error when providing non-pointer struct")
 	}

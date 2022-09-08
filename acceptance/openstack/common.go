@@ -7,10 +7,11 @@ import (
 	"net"
 	"testing"
 
+	volumes2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/volumes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
@@ -75,10 +76,10 @@ func DeleteSecurityGroup(t *testing.T, secGroupID string) {
 	t.Logf("Security group %s was deleted", secGroupID)
 }
 
-func CreateVolume(t *testing.T) *volumes.Volume {
+func CreateVolume(t *testing.T) *volumes2.Volume {
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
-	vol, err := volumes.Create(client, volumes.CreateOpts{
+	vol, err := volumes2.Create(client, volumes2.CreateOpts{
 		Name:       tools.RandomString("test-vol-", 6),
 		Size:       10,
 		VolumeType: "SSD",
@@ -86,7 +87,7 @@ func CreateVolume(t *testing.T) *volumes.Volume {
 	th.AssertNoErr(t, err)
 
 	err = golangsdk.WaitFor(300, func() (bool, error) {
-		volume, err := volumes.Get(client, vol.ID).Extract()
+		volume, err := volumes2.Get(client, vol.ID).Extract()
 		if err != nil {
 			return false, err
 		}
@@ -106,7 +107,7 @@ func CreateVolume(t *testing.T) *volumes.Volume {
 func DeleteVolume(t *testing.T, id string) {
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}).ExtractErr())
+	th.AssertNoErr(t, volumes2.Delete(client, id, volumes2.DeleteOpts{Cascade: true}).ExtractErr())
 }
 
 const (
