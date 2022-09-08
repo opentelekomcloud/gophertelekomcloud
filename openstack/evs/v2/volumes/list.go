@@ -50,18 +50,16 @@ func (r VolumePage) IsEmpty() (bool, error) {
 }
 
 func (r VolumePage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"volumes_links"`
-	}
-	err := extract.Into(r.Body, &s)
+	var res []golangsdk.Link
+	err := extract.IntoSlicePtr(r.BodyReader(), &res, "volumes_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res)
 }
 
 func ExtractVolumesInto(r pagination.Page, v interface{}) error {
-	return extract.IntoSlicePtr(r.(VolumePage).Result.Body, v, "volumes")
+	return extract.IntoSlicePtr(r.(VolumePage).BodyReader(), v, "volumes")
 }
 
 func ExtractVolumes(r pagination.Page) ([]Volume, error) {

@@ -31,8 +31,3 @@ type CreateResult struct {
 type GetResult struct {
 	commonResult
 }
-
-// DeleteResult model
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
