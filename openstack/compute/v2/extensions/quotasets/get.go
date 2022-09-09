@@ -1,9 +1,11 @@
 package quotasets
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
 
 // Get returns public data about a previously created QuotaSet.
-func Get(client *golangsdk.ServiceClient, tenantID string) (r GetResult) {
+func Get(client *golangsdk.ServiceClient, tenantID string) (*QuotaSet, error) {
 	raw, err := client.Get(client.ServiceURL("os-quota-sets", tenantID), nil, nil)
-	return
+	return extra(err, raw)
 }
