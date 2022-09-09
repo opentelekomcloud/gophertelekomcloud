@@ -2,12 +2,19 @@ package floatingips
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
+// DisassociateOpts specifies the required information to disassociate a
+// Floating IP with a server.
+type DisassociateOpts struct {
+	FloatingIP string `json:"address" required:"true"`
+}
+
 // DisassociateInstance decouples an allocated Floating IP from an instance
-func DisassociateInstance(client *golangsdk.ServiceClient, serverID string, opts DisassociateOptsBuilder) (r DisassociateResult) {
-	b, err := opts.ToFloatingIPDisassociateMap()
+func DisassociateInstance(client *golangsdk.ServiceClient, serverID string, opts DisassociateOpts) (err error) {
+	b, err := golangsdk.BuildRequestBody(opts, "removeFloatingIp")
 	if err != nil {
-		return nil, err
+		return
 	}
-	raw, err := client.Post(client.ServiceURL("servers/"+serverID+"/action"), b, nil, nil)
+
+	_, err = client.Post(client.ServiceURL("servers/"+serverID+"/action"), b, nil, nil)
 	return
 }

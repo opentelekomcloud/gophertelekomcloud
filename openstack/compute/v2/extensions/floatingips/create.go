@@ -1,15 +1,24 @@
 package floatingips
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
+
+// CreateOpts specifies a Floating IP allocation request.
+type CreateOpts struct {
+	// Pool is the pool of Floating IPs to allocate one from.
+	Pool string `json:"pool" required:"true"`
+}
 
 // Create requests the creation of a new Floating IP.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToFloatingIPCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*FloatingIP, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
+
 	raw, err := client.Post(client.ServiceURL("os-floating-ips"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	return extra(err, raw)
 }
