@@ -2,7 +2,6 @@ package aggregates
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type CreateOpts struct {
@@ -25,11 +24,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Aggregate, error
 	raw, err := client.Post(client.ServiceURL("os-aggregates"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	var res Aggregate
-	err = extract.IntoStructPtr(raw.Body, &res, "aggregate")
-	return &res, err
+	return extra(err, raw)
 }

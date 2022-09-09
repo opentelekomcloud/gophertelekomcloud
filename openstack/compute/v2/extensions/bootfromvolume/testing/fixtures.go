@@ -37,7 +37,7 @@ const ExpectedNewVolumeRequest = `
 `
 
 var NewVolumeRequest = bootfromvolume.CreateOptsExt{
-	CreateOptsBuilder: BaseCreateOpts,
+	CreateOpts: BaseCreateOpts,
 	BlockDevice: []bootfromvolume.BlockDevice{
 		{
 			UUID:                "123456",
@@ -69,7 +69,7 @@ const ExpectedExistingVolumeRequest = `
 `
 
 var ExistingVolumeRequest = bootfromvolume.CreateOptsExt{
-	CreateOptsBuilder: BaseCreateOpts,
+	CreateOpts: BaseCreateOpts,
 	BlockDevice: []bootfromvolume.BlockDevice{
 		{
 			UUID:                "123456",
@@ -100,7 +100,7 @@ const ExpectedImageRequest = `
 `
 
 var ImageRequest = bootfromvolume.CreateOptsExt{
-	CreateOptsBuilder: BaseCreateOptsWithImageRef,
+	CreateOpts: BaseCreateOptsWithImageRef,
 	BlockDevice: []bootfromvolume.BlockDevice{
 		{
 			BootIndex:           0,
@@ -148,7 +148,7 @@ const ExpectedMultiEphemeralRequest = `
 `
 
 var MultiEphemeralRequest = bootfromvolume.CreateOptsExt{
-	CreateOptsBuilder: BaseCreateOptsWithImageRef,
+	CreateOpts: BaseCreateOptsWithImageRef,
 	BlockDevice: []bootfromvolume.BlockDevice{
 		{
 			BootIndex:           0,
@@ -205,7 +205,7 @@ const ExpectedImageAndNewVolumeRequest = `
 `
 
 var ImageAndNewVolumeRequest = bootfromvolume.CreateOptsExt{
-	CreateOptsBuilder: BaseCreateOptsWithImageRef,
+	CreateOpts: BaseCreateOptsWithImageRef,
 	BlockDevice: []bootfromvolume.BlockDevice{
 		{
 			BootIndex:           0,
@@ -254,7 +254,7 @@ const ExpectedImageAndExistingVolumeRequest = `
 `
 
 var ImageAndExistingVolumeRequest = bootfromvolume.CreateOptsExt{
-	CreateOptsBuilder: BaseCreateOptsWithImageRef,
+	CreateOpts: BaseCreateOptsWithImageRef,
 	BlockDevice: []bootfromvolume.BlockDevice{
 		{
 			BootIndex:           0,

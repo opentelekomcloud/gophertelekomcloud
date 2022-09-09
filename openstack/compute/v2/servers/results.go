@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"path"
 	"time"
@@ -18,11 +19,22 @@ type serverResult struct {
 	golangsdk.Result
 }
 
+// Deprecated: For internal use only.
+func Extract(err error, raw *http.Response) (*Server, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res Server
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
+
 // Extract interprets any serverResult as a Server, if possible.
 func (raw serverResult) Extract() (*Server, error) {
 	var res Server
 	err = extract.Into(raw.Body, &res)
-	return &s, err
+	return &res, err
 }
 
 func (r serverResult) ExtractInto(v interface{}) error {

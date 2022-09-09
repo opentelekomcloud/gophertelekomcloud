@@ -2,9 +2,11 @@ package aggregates
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // Aggregate represents a host aggregate in the OpenStack cloud.
@@ -52,4 +54,14 @@ func (r *Aggregate) UnmarshalJSON(b []byte) error {
 	r.DeletedAt = time.Time(s.DeletedAt)
 
 	return nil
+}
+
+func extra(err error, raw *http.Response) (*Aggregate, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res Aggregate
+	err = extract.IntoStructPtr(raw.Body, &res, "aggregate")
+	return &res, err
 }
