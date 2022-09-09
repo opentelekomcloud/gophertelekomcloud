@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/hypervisors"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -14,29 +13,14 @@ func TestListHypervisors(t *testing.T) {
 	defer testhelper.TeardownHTTP()
 	HandleHypervisorListSuccessfully(t)
 
-	pages := 0
-	err := hypervisors.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		pages++
-
-		actual, err := hypervisors.ExtractHypervisors(page)
-		if err != nil {
-			return false, err
-		}
-
-		if len(actual) != 2 {
-			t.Fatalf("Expected 2 hypervisors, got %d", len(actual))
-		}
-		testhelper.CheckDeepEquals(t, HypervisorFake, actual[0])
-		testhelper.CheckDeepEquals(t, HypervisorFake, actual[1])
-
-		return true, nil
-	})
-
+	actual, err := hypervisors.List(client.ServiceClient())
 	testhelper.AssertNoErr(t, err)
 
-	if pages != 1 {
-		t.Errorf("Expected 1 page, saw %d", pages)
+	if len(actual) != 2 {
+		t.Fatalf("Expected 2 hypervisors, got %d", len(actual))
 	}
+	testhelper.CheckDeepEquals(t, HypervisorFake, actual[0])
+	testhelper.CheckDeepEquals(t, HypervisorFake, actual[1])
 }
 
 func TestListAllHypervisors(t *testing.T) {
@@ -44,9 +28,7 @@ func TestListAllHypervisors(t *testing.T) {
 	defer testhelper.TeardownHTTP()
 	HandleHypervisorListSuccessfully(t)
 
-	allPages, err := hypervisors.List(client.ServiceClient()).AllPages()
-	testhelper.AssertNoErr(t, err)
-	actual, err := hypervisors.ExtractHypervisors(allPages)
+	actual, err := hypervisors.List(client.ServiceClient())
 	testhelper.AssertNoErr(t, err)
 	testhelper.CheckDeepEquals(t, HypervisorFake, actual[0])
 	testhelper.CheckDeepEquals(t, HypervisorFake, actual[1])
@@ -59,7 +41,7 @@ func TestHypervisorsStatistics(t *testing.T) {
 
 	expected := HypervisorsStatisticsExpected
 
-	actual, err := hypervisors.GetStatistics(client.ServiceClient()).Extract()
+	actual, err := hypervisors.GetStatistics(client.ServiceClient())
 	testhelper.AssertNoErr(t, err)
 	testhelper.CheckDeepEquals(t, &expected, actual)
 }
@@ -70,8 +52,7 @@ func TestGetHypervisor(t *testing.T) {
 	HandleHypervisorGetSuccessfully(t)
 
 	expected := HypervisorFake
-
-	actual, err := hypervisors.Get(client.ServiceClient(), expected.ID).Extract()
+	actual, err := hypervisors.Get(client.ServiceClient(), expected.ID)
 	testhelper.AssertNoErr(t, err)
 	testhelper.CheckDeepEquals(t, &expected, actual)
 }
@@ -83,7 +64,7 @@ func TestHypervisorsUptime(t *testing.T) {
 
 	expected := HypervisorUptimeExpected
 
-	actual, err := hypervisors.GetUptime(client.ServiceClient(), HypervisorFake.ID).Extract()
+	actual, err := hypervisors.GetUptime(client.ServiceClient(), HypervisorFake.ID)
 	testhelper.AssertNoErr(t, err)
 	testhelper.CheckDeepEquals(t, &expected, actual)
 }
