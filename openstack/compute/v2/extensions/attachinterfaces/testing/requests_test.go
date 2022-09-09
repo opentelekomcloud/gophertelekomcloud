@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/attachinterfaces"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -15,22 +14,13 @@ func TestListInterface(t *testing.T) {
 	HandleInterfaceListSuccessfully(t)
 
 	expected := ListInterfacesExpected
-	pages := 0
-	err := attachinterfaces.List(client.ServiceClient(), "b07e7a3b-d951-4efc-a4f9-ac9f001afb7f").EachPage(func(page pagination.Page) (bool, error) {
-		pages++
-
-		actual, err := attachinterfaces.ExtractInterfaces(page)
-		th.AssertNoErr(t, err)
-
-		if len(actual) != 1 {
-			t.Fatalf("Expected 1 interface, got %d", len(actual))
-		}
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
+	actual, err := attachinterfaces.List(client.ServiceClient(), "b07e7a3b-d951-4efc-a4f9-ac9f001afb7f")
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, 1, pages)
+
+	if len(actual) != 1 {
+		t.Fatalf("Expected 1 interface, got %d", len(actual))
+	}
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestListInterfacesAllPages(t *testing.T) {
@@ -38,9 +28,7 @@ func TestListInterfacesAllPages(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleInterfaceListSuccessfully(t)
 
-	allPages, err := attachinterfaces.List(client.ServiceClient(), "b07e7a3b-d951-4efc-a4f9-ac9f001afb7f").AllPages()
-	th.AssertNoErr(t, err)
-	_, err = attachinterfaces.ExtractInterfaces(allPages)
+	_, err := attachinterfaces.List(client.ServiceClient(), "b07e7a3b-d951-4efc-a4f9-ac9f001afb7f")
 	th.AssertNoErr(t, err)
 }
 
@@ -54,7 +42,7 @@ func TestGetInterface(t *testing.T) {
 	serverID := "b07e7a3b-d951-4efc-a4f9-ac9f001afb7f"
 	interfaceID := "0dde1598-b374-474e-986f-5b8dd1df1d4e"
 
-	actual, err := attachinterfaces.Get(client.ServiceClient(), serverID, interfaceID).Extract()
+	actual, err := attachinterfaces.Get(client.ServiceClient(), serverID, interfaceID)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &expected, actual)
 }
@@ -71,7 +59,7 @@ func TestCreateInterface(t *testing.T) {
 
 	actual, err := attachinterfaces.Create(client.ServiceClient(), serverID, attachinterfaces.CreateOpts{
 		NetworkID: networkID,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &expected, actual)
 }
@@ -84,6 +72,6 @@ func TestDeleteInterface(t *testing.T) {
 	serverID := "b07e7a3b-d951-4efc-a4f9-ac9f001afb7f"
 	portID := "0dde1598-b374-474e-986f-5b8dd1df1d4e"
 
-	err := attachinterfaces.Delete(client.ServiceClient(), serverID, portID).ExtractErr()
+	err := attachinterfaces.Delete(client.ServiceClient(), serverID, portID)
 	th.AssertNoErr(t, err)
 }
