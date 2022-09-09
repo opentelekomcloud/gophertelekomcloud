@@ -7,15 +7,14 @@ import (
 
 // CreateOptsExt adds a KeyPair option to the base CreateOpts.
 type CreateOptsExt struct {
-	servers.CreateOptsBuilder
-
+	servers.CreateOpts
 	// KeyName is the name of the key pair.
 	KeyName string `json:"key_name,omitempty"`
 }
 
 // ToServerCreateMap adds the key_name to the base server creation options.
 func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
-	base, err := opts.CreateOptsBuilder.ToServerCreateMap()
+	base, err := opts.CreateOpts.ToServerCreateMap()
 	if err != nil {
 		return nil, err
 	}
@@ -30,23 +29,24 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 	return base, nil
 }
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToKeyPairCreateMap() (map[string]interface{}, error)
-}
-
 // CreateOpts specifies KeyPair creation or import parameters.
 type CreateOpts struct {
 	// Name is a friendly name to refer to this KeyPair in other services.
 	Name string `json:"name" required:"true"`
-
 	// PublicKey [optional] is a pregenerated OpenSSH-formatted public key.
 	// If provided, this key will be imported and no new key will be created.
 	PublicKey string `json:"public_key,omitempty"`
 }
 
-// ToKeyPairCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToKeyPairCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "keypair")
+// Create requests the creation of a new KeyPair on the server, or to import a pre-existing keypair.
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*KeyPair, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "keypair")
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := client.Post(client.ServiceURL("os-keypairs"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return extra(err, raw)
 }
