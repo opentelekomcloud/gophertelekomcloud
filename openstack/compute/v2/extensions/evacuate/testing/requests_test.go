@@ -19,7 +19,7 @@ func TestEvacuate(t *testing.T) {
 		Host:            "derp",
 		AdminPass:       "MySecretPass",
 		OnSharedStorage: false,
-	}).ExtractAdminPass()
+	})
 	th.AssertNoErr(t, err)
 }
 
@@ -32,7 +32,7 @@ func TestEvacuateWithHost(t *testing.T) {
 
 	_, err := evacuate.Evacuate(client.ServiceClient(), serverID, evacuate.EvacuateOpts{
 		Host: "derp",
-	}).ExtractAdminPass()
+	})
 	th.AssertNoErr(t, err)
 }
 
@@ -43,7 +43,7 @@ func TestEvacuateWithNoOpts(t *testing.T) {
 
 	mockEvacuateResponseWithNoOpts(t, serverID)
 
-	_, err := evacuate.Evacuate(client.ServiceClient(), serverID, evacuate.EvacuateOpts{}).ExtractAdminPass()
+	_, err := evacuate.Evacuate(client.ServiceClient(), serverID, evacuate.EvacuateOpts{})
 	th.AssertNoErr(t, err)
 }
 
@@ -54,7 +54,7 @@ func TestEvacuateAdminpassResponse(t *testing.T) {
 
 	mockEvacuateAdminpassResponse(t, serverID)
 
-	actual, err := evacuate.Evacuate(client.ServiceClient(), serverID, evacuate.EvacuateOpts{}).ExtractAdminPass()
+	actual, err := evacuate.Evacuate(client.ServiceClient(), serverID, evacuate.EvacuateOpts{})
 	th.CheckEquals(t, "MySecretPass", actual)
 	th.AssertNoErr(t, err)
 }

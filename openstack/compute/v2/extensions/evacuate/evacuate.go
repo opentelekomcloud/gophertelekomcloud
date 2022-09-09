@@ -2,39 +2,36 @@ package evacuate
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
-
-// EvacuateOptsBuilder allows extensions to add additional parameters to the
-// the Evacuate request.
-type EvacuateOptsBuilder interface {
-	ToEvacuateMap() (map[string]interface{}, error)
-}
 
 // EvacuateOpts specifies Evacuate action parameters.
 type EvacuateOpts struct {
 	// The name of the host to which the server is evacuated
 	Host string `json:"host,omitempty"`
-
 	// Indicates whether server is on shared storage
 	OnSharedStorage bool `json:"onSharedStorage"`
-
 	// An administrative password to access the evacuated server
 	AdminPass string `json:"adminPass,omitempty"`
 }
 
-// ToServerGroupCreateMap constructs a request body from CreateOpts.
-func (opts EvacuateOpts) ToEvacuateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "evacuate")
-}
-
 // Evacuate will Evacuate a failed instance to another host.
-func Evacuate(client *golangsdk.ServiceClient, id string, opts EvacuateOptsBuilder) (r EvacuateResult) {
-	b, err := opts.ToEvacuateMap()
+func Evacuate(client *golangsdk.ServiceClient, id string, opts EvacuateOpts) (string, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "evacuate")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
+
 	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	if err != nil {
+		return "", err
+	}
+
+	var res struct {
+		AdminPass string `json:"adminPass"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.AdminPass, err
 }
