@@ -15,10 +15,7 @@ func TestList(t *testing.T) {
 
 	HandleGetSuccessfully(t)
 
-	allPages, err := az.List(client.ServiceClient()).AllPages()
-	th.AssertNoErr(t, err)
-
-	actual, err := az.ExtractAvailabilityZones(allPages)
+	actual, err := az.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, AZResult, actual)
@@ -31,10 +28,7 @@ func TestListDetail(t *testing.T) {
 
 	HandleGetDetailSuccessfully(t)
 
-	allPages, err := az.ListDetail(client.ServiceClient()).AllPages()
-	th.AssertNoErr(t, err)
-
-	actual, err := az.ExtractAvailabilityZones(allPages)
+	actual, err := az.ListDetail(client.ServiceClient())
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, AZDetailResult, actual)
