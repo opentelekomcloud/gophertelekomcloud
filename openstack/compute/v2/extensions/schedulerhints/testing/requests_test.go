@@ -34,8 +34,8 @@ func TestCreateOpts(t *testing.T) {
 	}
 
 	ext := schedulerhints.CreateOptsExt{
-		CreateOptsBuilder: base,
-		SchedulerHints:    schedulerHints,
+		CreateOpts:     base,
+		SchedulerHints: schedulerHints,
 	}
 
 	expected := `
@@ -98,8 +98,8 @@ func TestCreateOptsWithComplexQuery(t *testing.T) {
 	}
 
 	ext := schedulerhints.CreateOptsExt{
-		CreateOptsBuilder: base,
-		SchedulerHints:    schedulerHints,
+		CreateOpts:     base,
+		SchedulerHints: schedulerHints,
 	}
 
 	expected := `
