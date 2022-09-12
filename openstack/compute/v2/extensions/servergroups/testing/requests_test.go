@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/servergroups"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -14,17 +13,9 @@ func TestList(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleListSuccessfully(t)
 
-	count := 0
-	err := servergroups.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := servergroups.ExtractServerGroups(page)
-		th.AssertNoErr(t, err)
-		th.CheckDeepEquals(t, ExpectedServerGroupSlice, actual)
-
-		return true, nil
-	})
+	actual, err := servergroups.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, 1, count)
+	th.CheckDeepEquals(t, ExpectedServerGroupSlice, actual)
 }
 
 func TestCreate(t *testing.T) {
@@ -35,7 +26,7 @@ func TestCreate(t *testing.T) {
 	actual, err := servergroups.Create(client.ServiceClient(), servergroups.CreateOpts{
 		Name:     "test",
 		Policies: []string{"anti-affinity"},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &CreatedServerGroup, actual)
 }
@@ -45,7 +36,7 @@ func TestGet(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleGetSuccessfully(t)
 
-	actual, err := servergroups.Get(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0").Extract()
+	actual, err := servergroups.Get(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0")
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &FirstServerGroup, actual)
 }
@@ -55,6 +46,6 @@ func TestDelete(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := servergroups.Delete(client.ServiceClient(), "616fb98f-46ca-475e-917e-2563e5a8cd19").ExtractErr()
+	err := servergroups.Delete(client.ServiceClient(), "616fb98f-46ca-475e-917e-2563e5a8cd19")
 	th.AssertNoErr(t, err)
 }
