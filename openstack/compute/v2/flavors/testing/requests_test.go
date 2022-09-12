@@ -75,7 +75,7 @@ func TestListFlavors(t *testing.T) {
 
 	pageCount := 0
 	// Get public and private flavors
-	err := flavors.ListDetail(fake.ServiceClient(), nil).EachPage(func(page pagination.Page) (bool, error) {
+	err := flavors.ListDetail(fake.ServiceClient(), flavors.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		pageCount += 1
 
 		actual, err := flavors.ExtractFlavors(page)
@@ -126,7 +126,7 @@ func TestGetFlavor(t *testing.T) {
 		`)
 	})
 
-	actual, err := flavors.Get(fake.ServiceClient(), "12345").Extract()
+	actual, err := flavors.Get(fake.ServiceClient(), "12345")
 	if err != nil {
 		t.Fatalf("Unable to get flavor: %v", err)
 	}
@@ -168,7 +168,7 @@ func TestCreateFlavor(t *testing.T) {
 	})
 
 	disk := 1
-	opts := &flavors.CreateOpts{
+	opts := flavors.CreateOpts{
 		ID:         "1",
 		Name:       "m1.tiny",
 		Disk:       &disk,
@@ -176,7 +176,7 @@ func TestCreateFlavor(t *testing.T) {
 		VCPUs:      1,
 		RxTxFactor: 1.0,
 	}
-	actual, err := flavors.Create(fake.ServiceClient(), opts).Extract()
+	actual, err := flavors.Create(fake.ServiceClient(), opts)
 	if err != nil {
 		t.Fatalf("Unable to create flavor: %v", err)
 	}
@@ -205,7 +205,7 @@ func TestDeleteFlavor(t *testing.T) {
 	})
 
 	res := flavors.Delete(fake.ServiceClient(), "12345678")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestFlavorAccessesList(t *testing.T) {
@@ -235,10 +235,7 @@ func TestFlavorAccessesList(t *testing.T) {
 		},
 	}
 
-	allPages, err := flavors.ListAccesses(fake.ServiceClient(), "12345678").AllPages()
-	th.AssertNoErr(t, err)
-
-	actual, err := flavors.ExtractAccesses(allPages)
+	actual, err := flavors.ListAccesses(fake.ServiceClient(), "12345678")
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -280,11 +277,11 @@ func TestFlavorAccessAdd(t *testing.T) {
 		},
 	}
 
-	addAccessOpts := flavors.AddAccessOpts{
+	addAccessOpts := flavors.AccessOpts{
 		Tenant: "2f954bcf047c4ee9b09a37d49ae6db54",
 	}
 
-	actual, err := flavors.AddAccess(fake.ServiceClient(), "12345678", addAccessOpts).Extract()
+	actual, err := flavors.AddAccess(fake.ServiceClient(), "12345678", addAccessOpts)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -314,11 +311,11 @@ func TestFlavorAccessRemove(t *testing.T) {
 			`)
 	})
 
-	removeAccessOpts := flavors.RemoveAccessOpts{
+	removeAccessOpts := flavors.AccessOpts{
 		Tenant: "2f954bcf047c4ee9b09a37d49ae6db54",
 	}
 
-	actual, err := flavors.RemoveAccess(fake.ServiceClient(), "12345678", removeAccessOpts).Extract()
+	actual, err := flavors.RemoveAccess(fake.ServiceClient(), "12345678", removeAccessOpts)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, []flavors.FlavorAccess{}, actual)
 }
@@ -329,7 +326,7 @@ func TestFlavorExtraSpecsList(t *testing.T) {
 	HandleExtraSpecsListSuccessfully(t)
 
 	expected := ExtraSpecs
-	actual, err := flavors.ListExtraSpecs(fake.ServiceClient(), "1").Extract()
+	actual, err := flavors.ListExtraSpecs(fake.ServiceClient(), "1")
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, expected, actual)
 }
@@ -340,7 +337,7 @@ func TestFlavorExtraSpecGet(t *testing.T) {
 	HandleExtraSpecGetSuccessfully(t)
 
 	expected := ExtraSpec
-	actual, err := flavors.GetExtraSpec(fake.ServiceClient(), "1", "hw:cpu_policy").Extract()
+	actual, err := flavors.GetExtraSpec(fake.ServiceClient(), "1", "hw:cpu_policy")
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, expected, actual)
 }
@@ -350,12 +347,12 @@ func TestFlavorExtraSpecsCreate(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleExtraSpecsCreateSuccessfully(t)
 
-	createOpts := flavors.ExtraSpecsOpts{
+	createOpts := map[string]string{
 		"hw:cpu_policy":        "CPU-POLICY",
 		"hw:cpu_thread_policy": "CPU-THREAD-POLICY",
 	}
 	expected := ExtraSpecs
-	actual, err := flavors.CreateExtraSpecs(fake.ServiceClient(), "1", createOpts).Extract()
+	actual, err := flavors.CreateExtraSpecs(fake.ServiceClient(), "1", createOpts)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, expected, actual)
 }
@@ -365,11 +362,11 @@ func TestFlavorExtraSpecUpdate(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleExtraSpecUpdateSuccessfully(t)
 
-	updateOpts := flavors.ExtraSpecsOpts{
+	updateOpts := map[string]string{
 		"hw:cpu_policy": "CPU-POLICY-2",
 	}
 	expected := UpdatedExtraSpec
-	actual, err := flavors.UpdateExtraSpec(fake.ServiceClient(), "1", updateOpts).Extract()
+	actual, err := flavors.UpdateExtraSpec(fake.ServiceClient(), "1", updateOpts)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, expected, actual)
 }
@@ -380,5 +377,5 @@ func TestFlavorExtraSpecDelete(t *testing.T) {
 	HandleExtraSpecDeleteSuccessfully(t)
 
 	res := flavors.DeleteExtraSpec(fake.ServiceClient(), "1", "hw:cpu_policy")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
