@@ -41,33 +41,24 @@ func (raw commonResult) Extract() (*Flavor, error) {
 	return &res, err
 }
 
-// Flavor represent (virtual) hardware configurations for server resources
-// in a region.
+// Flavor represent (virtual) hardware configurations for server resources in a region.
 type Flavor struct {
 	// ID is the flavor's unique ID.
 	ID string `json:"id"`
-
 	// Disk is the amount of root disk, measured in GB.
 	Disk int `json:"disk"`
-
 	// RAM is the amount of memory, measured in MB.
 	RAM int `json:"ram"`
-
 	// Name is the name of the flavor.
 	Name string `json:"name"`
-
 	// RxTxFactor describes bandwidth alterations of the flavor.
 	RxTxFactor float64 `json:"rxtx_factor"`
-
 	// Swap is the amount of swap space, measured in MB.
 	Swap int `json:"-"`
-
 	// VCPUs indicates how many (virtual) CPUs are available for this flavor.
 	VCPUs int `json:"vcpus"`
-
 	// IsPublic indicates whether the flavor is public.
 	IsPublic bool `json:"os-flavor-access:is_public"`
-
 	// Ephemeral is the amount of ephemeral disk space, measured in GB.
 	Ephemeral int `json:"OS-FLV-EXT-DATA:ephemeral"`
 }

@@ -2,7 +2,6 @@ package images
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the
@@ -13,25 +12,18 @@ type ListOptsBuilder interface {
 
 // ListOpts contain options filtering Images returned from a call to ListDetail.
 type ListOpts struct {
-	// ChangesSince filters Images based on the last changed status (in date-time
-	// format).
+	// ChangesSince filters Images based on the last changed status (in date-time format).
 	ChangesSince string `q:"changes-since"`
-
 	// Limit limits the number of Images to return.
 	Limit int `q:"limit"`
-
 	// Mark is an Image UUID at which to set a marker.
 	Marker string `q:"marker"`
-
 	// Name is the name of the Image.
 	Name string `q:"name"`
-
 	// Server is the name of the Server (in URL format).
 	Server string `q:"server"`
-
 	// Status is the current status of the Image.
 	Status string `q:"status"`
-
 	// Type is the type of image (e.g. BASE, SERVER, ALL).
 	Type string `q:"type"`
 }
@@ -43,33 +35,6 @@ func (opts ListOpts) ToImageListQuery() (string, error) {
 		return "", err
 	}
 	return q.String(), err
-}
-
-// ListDetail enumerates the available images.
-func ListDetail(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listDetailURL(client)
-	if opts != nil {
-		query, err := opts.ToImageListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ImagePage{pagination.LinkedPageBase{PageResult: r}}
-	})
-}
-
-// Get returns data about a specific image by its ID.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	raw, err := client.Get(getURL(client, id), nil, nil)
-	return
-}
-
-// Delete deletes the specified image ID.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	raw, err := client.Delete(deleteURL(client, id), nil)
-	return
 }
 
 // IDFromName is a convienience function that returns an image's ID given its
