@@ -1,15 +1,27 @@
 package secgroups
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
+
+// GroupOpts is the underlying struct responsible for creating or updating
+// security groups. It therefore represents the mutable attributes of a security group.
+type GroupOpts struct {
+	// the name of your security group.
+	Name string `json:"name" required:"true"`
+	// the description of your security group.
+	Description string `json:"description" required:"true"`
+}
 
 // Create will create a new security group.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToSecGroupCreateMap()
+func Create(client *golangsdk.ServiceClient, opts GroupOpts) (*SecurityGroup, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "security_group")
 	if err != nil {
 		return nil, err
 	}
+
 	raw, err := client.Post(client.ServiceURL("os-security-groups"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	return extra(err, raw)
 }
