@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/tenantnetworks"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -14,17 +13,9 @@ func TestList(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleListSuccessfully(t)
 
-	count := 0
-	err := tenantnetworks.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := tenantnetworks.ExtractNetworks(page)
-		th.AssertNoErr(t, err)
-		th.CheckDeepEquals(t, ExpectedNetworkSlice, actual)
-
-		return true, nil
-	})
+	actual, err := tenantnetworks.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, 1, count)
+	th.CheckDeepEquals(t, ExpectedNetworkSlice, actual)
 }
 
 func TestGet(t *testing.T) {
@@ -32,7 +23,7 @@ func TestGet(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleGetSuccessfully(t)
 
-	actual, err := tenantnetworks.Get(client.ServiceClient(), "20c8acc0-f747-4d71-a389-46d078ebf000").Extract()
+	actual, err := tenantnetworks.Get(client.ServiceClient(), "20c8acc0-f747-4d71-a389-46d078ebf000")
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &SecondNetwork, actual)
 }
