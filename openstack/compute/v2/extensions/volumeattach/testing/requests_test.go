@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/volumeattach"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -45,17 +44,9 @@ func TestList(t *testing.T) {
 
 	serverID := "4d8c3732-a248-40ed-bebc-539a6ffd25c0"
 
-	count := 0
-	err := volumeattach.List(client.ServiceClient(), serverID).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := volumeattach.ExtractVolumeAttachments(page)
-		th.AssertNoErr(t, err)
-		th.CheckDeepEquals(t, ExpectedVolumeAttachmentSlice, actual)
-
-		return true, nil
-	})
+	actual, err := volumeattach.List(client.ServiceClient(), serverID)
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, 1, count)
+	th.CheckDeepEquals(t, ExpectedVolumeAttachmentSlice, actual)
 }
 
 func TestCreate(t *testing.T) {
@@ -69,7 +60,7 @@ func TestCreate(t *testing.T) {
 	actual, err := volumeattach.Create(client.ServiceClient(), serverID, volumeattach.CreateOpts{
 		Device:   "/dev/vdc",
 		VolumeID: "a26887c6-c47b-4654-abb5-dfadf7d3f804",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &CreatedVolumeAttachment, actual)
 }
@@ -83,7 +74,7 @@ func TestGet(t *testing.T) {
 	aID := "a26887c6-c47b-4654-abb5-dfadf7d3f804"
 	serverID := "4d8c3732-a248-40ed-bebc-539a6ffd25c0"
 
-	actual, err := volumeattach.Get(client.ServiceClient(), serverID, aID).Extract()
+	actual, err := volumeattach.Get(client.ServiceClient(), serverID, aID)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &SecondVolumeAttachment, actual)
 }
@@ -97,6 +88,6 @@ func TestDelete(t *testing.T) {
 	aID := "a26887c6-c47b-4654-abb5-dfadf7d3f804"
 	serverID := "4d8c3732-a248-40ed-bebc-539a6ffd25c0"
 
-	err := volumeattach.Delete(client.ServiceClient(), serverID, aID).ExtractErr()
+	err := volumeattach.Delete(client.ServiceClient(), serverID, aID)
 	th.AssertNoErr(t, err)
 }
