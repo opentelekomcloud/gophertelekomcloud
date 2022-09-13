@@ -33,9 +33,7 @@ func DefaultSecurityGroup(t *testing.T) string {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	securityGroupPages, err := secgroups.List(client).AllPages()
-	th.AssertNoErr(t, err)
-	securityGroups, err := secgroups.ExtractSecurityGroups(securityGroupPages)
+	securityGroups, err := secgroups.List(client)
 	th.AssertNoErr(t, err)
 	var sgId string
 	for _, val := range securityGroups {
@@ -54,11 +52,11 @@ func CreateSecurityGroup(t *testing.T) string {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	createSGOpts := secgroups.CreateOpts{
+	createSGOpts := secgroups.GroupOpts{
 		Name:        tools.RandomString("acc-sg-", 3),
 		Description: "security group for acceptance testing",
 	}
-	secGroup, err := secgroups.Create(client, createSGOpts).Extract()
+	secGroup, err := secgroups.Create(client, createSGOpts)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Security group %s was created", secGroup.ID)
