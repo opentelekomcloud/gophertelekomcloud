@@ -2,6 +2,12 @@ package servers
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
+// ResizeOpts represents the configuration options used to control a Resize operation.
+type ResizeOpts struct {
+	// FlavorRef is the ID of the flavor you wish your server to become.
+	FlavorRef string `json:"flavorRef" required:"true"`
+}
+
 // Resize instructs the provider to change the flavor of the server.
 //
 // Note that this implies rebuilding it.
@@ -11,8 +17,8 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 // While in this state, you can explore the use of the new server's
 // configuration. If you like it, call ConfirmResize() to commit the resize
 // permanently. Otherwise, call RevertResize() to restore the old configuration.
-func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOptsBuilder) (err error) {
-	b, err := opts.ToServerResizeMap()
+func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOpts) (err error) {
+	b, err := golangsdk.BuildRequestBody(opts, "resize")
 	if err != nil {
 		return
 	}

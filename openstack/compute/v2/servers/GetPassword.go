@@ -2,6 +2,8 @@ package servers
 
 import (
 	"crypto/rsa"
+	"encoding/base64"
+	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -28,4 +30,19 @@ func GetPassword(client *golangsdk.ServiceClient, serverId string, privateKey *r
 		return decryptPassword(res.Password, privateKey)
 	}
 	return res.Password, err
+}
+
+func decryptPassword(encryptedPassword string, privateKey *rsa.PrivateKey) (string, error) {
+	b64EncryptedPassword := make([]byte, base64.StdEncoding.DecodedLen(len(encryptedPassword)))
+
+	n, err := base64.StdEncoding.Decode(b64EncryptedPassword, []byte(encryptedPassword))
+	if err != nil {
+		return "", fmt.Errorf("failed to base64 decode encrypted password: %w", err)
+	}
+	password, err := rsa.DecryptPKCS1v15(nil, privateKey, b64EncryptedPassword[0:n])
+	if err != nil {
+		return "", fmt.Errorf("failed to decrypt password: %w", err)
+	}
+
+	return string(password), nil
 }

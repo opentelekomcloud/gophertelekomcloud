@@ -2,6 +2,24 @@ package servers
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
+// RebootMethod describes the mechanisms by which a server reboot can be requested.
+type RebootMethod string
+
+// These constants determine how a server should be rebooted.
+// See the Reboot() function for further details.
+const (
+	SoftReboot RebootMethod = "SOFT"
+	HardReboot RebootMethod = "HARD"
+	OSReboot                = SoftReboot
+	PowerCycle              = HardReboot
+)
+
+// RebootOpts provides options to the reboot request.
+type RebootOpts struct {
+	// Type is the type of reboot to perform on the server.
+	Type RebootMethod `json:"type" required:"true"`
+}
+
 /*
 Reboot requests that a given server reboot.
 
@@ -18,7 +36,7 @@ E.g., in Linux, asking it to enter runlevel 6, or executing
 "sudo shutdown -r now", or by asking Windows to rtart the machine.
 */
 func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOpts) (err error) {
-	b, err := opts.ToServerRebootMap()
+	b, err := golangsdk.BuildRequestBody(opts, "reboot")
 	if err != nil {
 		return
 	}
