@@ -383,32 +383,6 @@ type UpdateMetadataOptsBuilder interface {
 	ToMetadataUpdateMap() (map[string]interface{}, error)
 }
 
-// MetadatumOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type MetadatumOptsBuilder interface {
-	ToMetadatumCreateMap() (map[string]interface{}, string, error)
-}
-
-// MetadatumOpts is a map of length one that contains a key-value pair.
-type MetadatumOpts map[string]string
-
-// ToMetadatumCreateMap assembles a body for a Create request based on the
-// contents of a MetadataumOpts.
-func (opts MetadatumOpts) ToMetadatumCreateMap() (map[string]interface{}, string, error) {
-	if len(opts) != 1 {
-		err := golangsdk.ErrInvalidInput{}
-		err.Argument = "servers.MetadatumOpts"
-		err.Info = "Must have 1 and only 1 key-value pair"
-		return nil, "", err
-	}
-	metadatum := map[string]interface{}{"meta": opts}
-	var key string
-	for k := range metadatum["meta"].(MetadatumOpts) {
-		key = k
-	}
-	return metadatum, key, nil
-}
-
 // CreateImageOptsBuilder allows extensions to add additional parameters to the
 // CreateImage request.
 type CreateImageOptsBuilder interface {

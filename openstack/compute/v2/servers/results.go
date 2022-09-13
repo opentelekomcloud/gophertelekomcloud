@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
-	"path"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -20,18 +18,11 @@ type serverResult struct {
 }
 
 // Deprecated: For internal use only.
-func Extract(err error, raw *http.Response) (*Server, error) {
+func ExtractSer(err error, raw *http.Response) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
 
-	var res Server
-	err = extract.Into(raw.Body, &res)
-	return &res, err
-}
-
-// Extract interprets any serverResult as a Server, if possible.
-func (raw serverResult) Extract() (*Server, error) {
 	var res Server
 	err = extract.Into(raw.Body, &res)
 	return &res, err
@@ -144,23 +135,6 @@ func decryptPassword(encryptedPassword string, privateKey *rsa.PrivateKey) (stri
 	}
 
 	return string(password), nil
-}
-
-// ExtractImageID gets the ID of the newly created server image from the header.
-func (r CreateImageResult) ExtractImageID() (string, error) {
-	if r.Err != nil {
-		return "", r.Err
-	}
-	// Get the image id from the header
-	u, err := url.ParseRequestURI(r.Header.Get("Location"))
-	if err != nil {
-		return "", err
-	}
-	imageID := path.Base(u.Path)
-	if imageID == "." || imageID == "/" {
-		return "", fmt.Errorf("failed to parse the ID of newly created image: %s", u)
-	}
-	return imageID, nil
 }
 
 // Server represents a server/instance in the OpenStack cloud.
@@ -376,19 +350,22 @@ type DeleteMetadatumResult struct {
 	golangsdk.ErrResult
 }
 
+func extraTum(err error, raw *http.Response) (map[string]string, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res struct {
+		Metadatum map[string]string `json:"meta"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.Metadatum, err
+}
+
 // Extract interprets any MetadataResult as a Metadata, if possible.
 func (raw MetadataResult) Extract() (map[string]string, error) {
 	var res struct {
 		Metadata map[string]string `json:"metadata"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res, err
-}
-
-// Extract interprets any MetadatumResult as a Metadatum, if possible.
-func (raw MetadatumResult) Extract() (map[string]string, error) {
-	var res struct {
-		Metadatum map[string]string `json:"meta"`
 	}
 	err = extract.Into(raw.Body, &res)
 	return &res, err

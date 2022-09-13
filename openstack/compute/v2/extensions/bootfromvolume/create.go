@@ -107,5 +107,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsExt) (*servers.Serve
 	raw, err := client.Post(client.ServiceURL("os-volumes_boot"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return servers.Extract(err, raw)
+	return servers.ExtractSer(err, raw)
 }
