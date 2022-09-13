@@ -246,7 +246,7 @@ func TestGetServerWithExtensions(t *testing.T) {
 		diskconfig.ServerDiskConfigExt
 	}
 
-	_, err := servers.GetInto(client.ServiceClient(), "1234asdf", &s)
+	err := servers.GetInto(client.ServiceClient(), "1234asdf", &s)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "nova", s.AvailabilityZone)
 	th.AssertEquals(t, "RUNNING", s.PowerState.String())
@@ -254,7 +254,7 @@ func TestGetServerWithExtensions(t *testing.T) {
 	th.AssertEquals(t, "active", s.VmState)
 	th.AssertEquals(t, diskconfig.Manual, s.DiskConfig)
 
-	_, err = servers.GetInto(client.ServiceClient(), "1234asdf", s)
+	err = servers.GetInto(client.ServiceClient(), "1234asdf", s)
 	if err == nil {
 		t.Errorf("Expected error when providing non-pointer struct")
 	}

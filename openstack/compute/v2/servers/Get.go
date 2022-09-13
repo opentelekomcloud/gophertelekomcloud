@@ -13,14 +13,14 @@ func Get(client *golangsdk.ServiceClient, id string) (*Server, error) {
 	return ExtractSer(err, raw)
 }
 
-func GetInto(client *golangsdk.ServiceClient, id string, v interface{}) (*interface{}, error) {
+func GetInto(client *golangsdk.ServiceClient, id string, v interface{}) (err error) {
 	raw, err := get(client, id)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	err = extract.IntoStructPtr(raw.Body, &v, "server")
-	return &v, err
+	return
 }
 
 func get(client *golangsdk.ServiceClient, id string) (*http.Response, error) {
