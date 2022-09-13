@@ -6,7 +6,7 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 // transitions to a specified status. It will do this for at most the number of seconds specified.
 func WaitForStatus(client *golangsdk.ServiceClient, id, status string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		current, err := Get(client, id).Extract()
+		current, err := Get(client, id)
 		if err != nil {
 			return false, err
 		}

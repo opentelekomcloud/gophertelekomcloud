@@ -9,7 +9,7 @@ import (
 )
 
 // CreateImage makes a request against the nova API to schedule an image to be created of the server
-func CreateImage(client *golangsdk.ServiceClient, id string, opts CreateImageOptsBuilder) (string, error) {
+func CreateImage(client *golangsdk.ServiceClient, id string, opts CreateImageOpts) (string, error) {
 	b, err := opts.ToServerCreateImageMap()
 	if err != nil {
 		return "", err

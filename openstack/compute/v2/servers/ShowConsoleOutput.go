@@ -1,15 +1,27 @@
 package servers
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 // ShowConsoleOutput makes a request against the nova API to get console log from the server
-func ShowConsoleOutput(client *golangsdk.ServiceClient, id string, opts ShowConsoleOutputOptsBuilder) (r ShowConsoleOutputResult) {
+func ShowConsoleOutput(client *golangsdk.ServiceClient, id string, opts ShowConsoleOutputOpts) (string, error) {
 	b, err := opts.ToServerShowConsoleOutputMap()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
+
 	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	if err != nil {
+		return "", err
+	}
+
+	var res struct {
+		Output string `json:"output"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.Output, err
 }

@@ -105,12 +105,6 @@ type GetPasswordResult struct {
 	golangsdk.Result
 }
 
-// ExtractPassword gets the encrypted password.
-// If privateKey != nil the password is decrypted with the private key.
-// If privateKey == nil the encrypted password is returned and can be decrypted
-// with:
-//
-//	echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
 func (raw GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string, error) {
 	var res struct {
 		Password string `json:"password"`
@@ -360,6 +354,18 @@ func extraTum(err error, raw *http.Response) (map[string]string, error) {
 	}
 	err = extract.Into(raw.Body, &res)
 	return res.Metadatum, err
+}
+
+func extraMet(err error, raw *http.Response) (map[string]string, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res struct {
+		Metadata map[string]string `json:"metadata"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return res.Metadata, err
 }
 
 // Extract interprets any MetadataResult as a Metadata, if possible.

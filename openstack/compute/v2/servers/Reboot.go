@@ -17,11 +17,12 @@ procedure.
 E.g., in Linux, asking it to enter runlevel 6, or executing
 "sudo shutdown -r now", or by asking Windows to rtart the machine.
 */
-func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOptsBuilder) (r ActionResult) {
+func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOpts) (err error) {
 	b, err := opts.ToServerRebootMap()
 	if err != nil {
-		return nil, err
+		return
 	}
-	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, nil)
+
+	_, err = client.Post(client.ServiceURL("servers", id, "action"), b, nil, nil)
 	return
 }

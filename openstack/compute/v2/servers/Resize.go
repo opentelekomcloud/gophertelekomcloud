@@ -11,11 +11,12 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 // While in this state, you can explore the use of the new server's
 // configuration. If you like it, call ConfirmResize() to commit the resize
 // permanently. Otherwise, call RevertResize() to restore the old configuration.
-func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOptsBuilder) (r ActionResult) {
+func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOptsBuilder) (err error) {
 	b, err := opts.ToServerResizeMap()
 	if err != nil {
-		return nil, err
+		return
 	}
-	raw, err := client.Post(client.ServiceURL("servers", id, "action"), b, nil, nil)
+
+	_, err = client.Post(client.ServiceURL("servers", id, "action"), b, nil, nil)
 	return
 }
