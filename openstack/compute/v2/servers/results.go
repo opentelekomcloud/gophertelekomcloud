@@ -11,7 +11,10 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// Deprecated: For internal use only.
+type ServerResult struct {
+	golangsdk.Result
+}
+
 func ExtractSer(err error, raw *http.Response) (*Server, error) {
 	if err != nil {
 		return nil, err
@@ -20,6 +23,10 @@ func ExtractSer(err error, raw *http.Response) (*Server, error) {
 	var res Server
 	err = extract.Into(raw.Body, &res)
 	return &res, err
+}
+
+func (r ServerResult) ExtractInto(v interface{}) error {
+	return extract.IntoStructPtr(r.BodyReader(), v, "server")
 }
 
 // Server represents a server/instance in the OpenStack cloud.

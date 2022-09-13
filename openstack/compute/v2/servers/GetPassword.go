@@ -27,12 +27,12 @@ func GetPassword(client *golangsdk.ServiceClient, serverId string, privateKey *r
 	}
 	err = extract.Into(raw.Body, &res)
 	if err == nil && privateKey != nil && res.Password != "" {
-		return decryptPassword(res.Password, privateKey)
+		return DecryptPassword(res.Password, privateKey)
 	}
 	return res.Password, err
 }
 
-func decryptPassword(encryptedPassword string, privateKey *rsa.PrivateKey) (string, error) {
+func DecryptPassword(encryptedPassword string, privateKey *rsa.PrivateKey) (string, error) {
 	b64EncryptedPassword := make([]byte, base64.StdEncoding.DecodedLen(len(encryptedPassword)))
 
 	n, err := base64.StdEncoding.Decode(b64EncryptedPassword, []byte(encryptedPassword))

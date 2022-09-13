@@ -1,11 +1,31 @@
 package servers
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"net/http"
+
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 // Get requests details on a single server, by ID.
 func Get(client *golangsdk.ServiceClient, id string) (*Server, error) {
+	raw, err := get(client, id)
+	return ExtractSer(err, raw)
+}
+
+func GetInto(client *golangsdk.ServiceClient, id string, v interface{}) (*interface{}, error) {
+	raw, err := get(client, id)
+	if err != nil {
+		return nil, err
+	}
+
+	err = extract.IntoStructPtr(raw.Body, &v, "server")
+	return &v, err
+}
+
+func get(client *golangsdk.ServiceClient, id string) (*http.Response, error) {
 	raw, err := client.Get(client.ServiceURL("servers", id), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 203},
 	})
-	return ExtractSer(err, raw)
+	return raw, err
 }

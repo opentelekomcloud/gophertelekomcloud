@@ -66,6 +66,11 @@ type Network struct {
 	FixedIP string
 }
 
+// CreateOptsBuilder allows extensions to add additional parameters to the Create request.
+type CreateOptsBuilder interface {
+	ToServerCreateMap() (map[string]interface{}, error)
+}
+
 // ToServerCreateMap assembles a request body based on the contents of a CreateOpts.
 func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 	sc := opts.ServiceClient
@@ -150,7 +155,7 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 }
 
 // Create requests a server to be provisioned to the user in the current tenant.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Server, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (*Server, error) {
 	b, err := opts.ToServerCreateMap()
 	if err != nil {
 		return nil, err
