@@ -3,7 +3,6 @@ package backup
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ListOpts allows the filtering and sorting of paginated collections through
@@ -23,36 +22,6 @@ type ListOpts struct {
 	CheckpointId string `q:"checkpoint_id"`
 	ID           string
 	ResourceType string `q:"resource_type"`
-}
-
-// List returns collection of
-// backups. It accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
-	if err != nil {
-		return nil, err
-	}
-	u := listURL(c) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return СsbsBackupPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
-
-	if err != nil {
-		return nil, err
-	}
-
-	allBackups, err := ExtractBackups(pages)
-	if err != nil {
-		return nil, err
-	}
-
-	if opts.ID != "" {
-		return FilterBackupsById(allBackups, opts.ID)
-	}
-
-	return allBackups, nil
-
 }
 
 func FilterBackupsById(backups []Backup, filterId string) ([]Backup, error) {
@@ -91,21 +60,6 @@ func (opts CreateOpts) ToBackupCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "protect")
 }
 
-// Create will create a new backup based on the values in CreateOpts. To extract
-// the checkpoint object from the response, call the Extract method on the
-// CreateResult.
-func Create(client *golangsdk.ServiceClient, resourceID string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToBackupCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(rootURL(client, resourceID), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // ResourceBackupCapabilityOptsBuilder allows extensions to add additional parameters to the
 // QueryResourceBackupCapability request.
 type ResourceBackupCapabilityOptsBuilder interface {
@@ -139,25 +93,8 @@ func QueryResourceBackupCapability(client *golangsdk.ServiceClient, opts Resourc
 
 		return
 	}
-	_, r.Err = client.Post(resourceURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("providers", providerID, "resources", "action"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get will get a single backup with specific ID. To extract the Backup object from the response,
-// call the ExtractBackup method on the GetResult.
-func Get(client *golangsdk.ServiceClient, backupID string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, backupID), &r.Body, nil)
-
-	return
-}
-
-// Delete will delete an existing backup.
-func Delete(client *golangsdk.ServiceClient, checkpointID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, checkpointID), &golangsdk.RequestOpts{
-		OkCodes:      []int{200},
-		JSONResponse: nil,
 	})
 	return
 }

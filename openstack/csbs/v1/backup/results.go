@@ -6,6 +6,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
+const providerID = "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
+
 type Checkpoint struct {
 	Status         string         `json:"status"`
 	CreatedAt      string         `json:"created_at"`

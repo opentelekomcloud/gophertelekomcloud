@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type ListOpts struct {
@@ -16,29 +15,6 @@ type ListOpts struct {
 	Marker     string `q:"marker"`
 	Offset     int    `q:"offset"`
 	AllTenants string `q:"all_tenants"`
-}
-
-// List returns a Pager which allows you to iterate over a collection of
-// backup policies. It accepts a ListOpts struct, which allows you to
-// filter the returned collection for greater efficiency.
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
-	query, err := golangsdk.BuildQueryString(&opts)
-	if err != nil {
-		return nil, err
-	}
-	url := rootURL(client) + query.String()
-	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
-	if err != nil {
-		return nil, err
-	}
-	policies, err := ExtractBackupPolicies(pages)
-	if err != nil {
-		return nil, err
-	}
-
-	return FilterPolicies(policies, opts)
 }
 
 func FilterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, error) {
@@ -148,31 +124,6 @@ func (opts CreateOpts) ToBackupPolicyCreateMap() (map[string]interface{}, error)
 	return golangsdk.BuildRequestBody(opts, "policy")
 }
 
-// Create will create a new backup policy based on the values in CreateOpts. To extract
-// the Backup object from the response, call the Extract method on the
-// CreateResult.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToBackupPolicyCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Get will get a single backup policy with specific ID.
-// call the Extract method on the GetResult.
-func Get(client *golangsdk.ServiceClient, policyId string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, policyId), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
@@ -201,27 +152,4 @@ type ScheduledOperationToUpdate struct {
 // ToPoliciesUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToPoliciesUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "policy")
-}
-
-// Update allows backup policies to be updated.
-// call the Extract method on the UpdateResult.
-func Update(c *golangsdk.ServiceClient, policyId string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToPoliciesUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Put(resourceURL(c, policyId), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete will delete an existing backup policy.
-func Delete(client *golangsdk.ServiceClient, policyId string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, policyId), &golangsdk.RequestOpts{
-		OkCodes:      []int{200},
-		JSONResponse: nil,
-	})
-	return
 }
