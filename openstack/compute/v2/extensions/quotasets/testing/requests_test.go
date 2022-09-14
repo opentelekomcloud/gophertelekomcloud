@@ -23,7 +23,7 @@ func TestGetDetail(t *testing.T) {
 	t.Cleanup(th.TeardownHTTP)
 	HandleGetDetailSuccessfully(t)
 	actual, err := quotasets.GetDetail(client.ServiceClient(), FirstTenantID)
-	th.CheckDeepEquals(t, FirstQuotaDetailsSet, actual)
+	th.CheckDeepEquals(t, &FirstQuotaDetailsSet, actual)
 	th.AssertNoErr(t, err)
 }
 

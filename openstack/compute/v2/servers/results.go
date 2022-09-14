@@ -21,7 +21,7 @@ func ExtractSer(err error, raw *http.Response) (*Server, error) {
 	}
 
 	var res Server
-	err = extract.Into(raw.Body, &res)
+	err = extract.IntoStructPtr(raw.Body, &res, "server")
 	return &res, err
 }
 

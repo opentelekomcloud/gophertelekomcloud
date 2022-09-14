@@ -96,8 +96,7 @@ func TestCreateServer(t *testing.T) {
 		FlavorRef: "1",
 	})
 	th.AssertNoErr(t, err)
-
-	th.CheckDeepEquals(t, ServerDerp, *actual)
+	th.CheckDeepEquals(t, &ServerDerp, actual)
 }
 
 func TestCreateServerWithCustomField(t *testing.T) {
