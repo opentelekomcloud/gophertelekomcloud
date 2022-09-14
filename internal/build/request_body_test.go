@@ -2,7 +2,6 @@ package build
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
@@ -106,7 +105,7 @@ func TestRequestBody_String(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			require.Equal(t, data.expected, fmt.Sprintf("%s", data.requestBody))
+			require.Equal(t, data.expected, data.requestBody.String())
 		})
 	}
 }
@@ -115,7 +114,7 @@ func TestRequestBody_String_Err(t *testing.T) {
 	t.Parallel()
 
 	body := Body{Wrapped: complex(float64(1), float64(2))}
-	require.Equal(t, "!err: json: unsupported type: complex128", fmt.Sprintf("%s", body))
+	require.Equal(t, "!err: json: unsupported type: complex128", body.String())
 }
 
 func TestBuildRequestBody(t *testing.T) {
