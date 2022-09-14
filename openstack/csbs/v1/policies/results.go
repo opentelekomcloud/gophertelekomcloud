@@ -2,12 +2,12 @@ package policies
 
 import (
 	"encoding/json"
+	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type CreateBackupPolicy struct {
@@ -22,6 +22,16 @@ type CreateBackupPolicy struct {
 	ScheduledOperations []CreateScheduledOperationResp `json:"scheduled_operations"`
 	Status              string                         `json:"status"`
 	Tags                []ResourceTag                  `json:"tags"`
+}
+
+func extra(err error, raw *http.Response) (*CreateBackupPolicy, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res CreateBackupPolicy
+	err = extract.IntoSlicePtr(raw.Body, &res, "policy")
+	return &res, err
 }
 
 type BackupPolicy struct {
@@ -193,88 +203,4 @@ func (r *CreateOperationDefinitionResp) UnmarshalJSON(b []byte) error {
 	}
 
 	return err
-}
-
-// Extract will get the backup policies object from the commonResult
-func (r commonResult) Extract() (*BackupPolicy, error) {
-	var res struct {
-		BackupPolicy *BackupPolicy `json:"policy"`
-	}
-
-	err = extract.Into(raw.Body, &res)
-	return &res.BackupPolicy, err
-}
-
-func (r cuResult) Extract() (*CreateBackupPolicy, error) {
-	var res struct {
-		BackupPolicy *CreateBackupPolicy `json:"policy"`
-	}
-
-	err = extract.Into(raw.Body, &res)
-	return &res.BackupPolicy, err
-}
-
-// BackupPolicyPage is the page returned by a pager when traversing over a
-// collection of backup policies.
-type BackupPolicyPage struct {
-	pagination.LinkedPageBase
-}
-
-// NextPageURL is invoked when a paginated collection of backup policies has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
-func (r BackupPolicyPage) NextPageURL() (string, error) {
-	var res struct {
-		Links []golangsdk.Link `json:"policies_links"`
-	}
-	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(res.Links)
-}
-
-// IsEmpty checks whether a BackupPolicyPage struct is empty.
-func (r BackupPolicyPage) IsEmpty() (bool, error) {
-	is, err := ExtractBackupPolicies(r)
-	return len(is) == 0, err
-}
-
-// ExtractBackupPolicies accepts a Page struct, specifically a BackupPolicyPage struct,
-// and extracts the elements into a slice of Policy structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractBackupPolicies(r pagination.Page) ([]BackupPolicy, error) {
-	var res struct {
-		BackupPolicies []BackupPolicy `json:"policies"`
-	}
-	err := (r.(BackupPolicyPage)).ExtractInto(&res)
-	return res.BackupPolicies, err
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-type cuResult struct {
-	golangsdk.Result
-}
-
-type CreateResult struct {
-	cuResult
-}
-
-type GetResult struct {
-	commonResult
-}
-
-type DeleteResult struct {
-	commonResult
-}
-
-type UpdateResult struct {
-	cuResult
-}
-
-type ListResult struct {
-	commonResult
 }

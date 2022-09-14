@@ -26,7 +26,7 @@ func TestGet(t *testing.T) {
 		_, _ = fmt.Fprint(w, getResponse)
 	})
 
-	s, err := policies.Get(fake.ServiceClient(), policies_id).Extract()
+	s, err := policies.Get(fake.ServiceClient(), policies_id)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "5af626d2-19b9-4dc4-8e95-ddba008318b3", s.ID)
 	th.AssertEquals(t, "c2c-policy", s.Name)
@@ -52,7 +52,7 @@ func TestCreate(t *testing.T) {
 		_, _ = fmt.Fprint(w, createResponse)
 	})
 
-	options := &policies.CreateOpts{
+	options := policies.CreateOpts{
 		Name:        "c2c-policy",
 		Description: "My plan",
 		ProviderId:  "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
@@ -78,7 +78,7 @@ func TestCreate(t *testing.T) {
 			Type: "OS::Nova::Server",
 			Name: "resource1"}},
 	}
-	n, err := policies.Create(fake.ServiceClient(), options).Extract()
+	n, err := policies.Create(fake.ServiceClient(), options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n.ID, "5af626d2-19b9-4dc4-8e95-ddba008318b3")
@@ -100,7 +100,7 @@ func TestDelete(t *testing.T) {
 
 	result := policies.Delete(fake.ServiceClient(), policies_id)
 
-	th.AssertNoErr(t, result.Err)
+	th.AssertNoErr(t, result)
 }
 
 func TestUpdate(t *testing.T) {
@@ -118,7 +118,7 @@ func TestUpdate(t *testing.T) {
 		_, _ = fmt.Fprint(w, updateResponse)
 	})
 
-	options := &policies.UpdateOpts{
+	options := policies.UpdateOpts{
 		Name: "c2c-policy-update",
 		Parameters: policies.PolicyParam{
 			Common: map[string]interface{}{},
@@ -139,7 +139,7 @@ func TestUpdate(t *testing.T) {
 			},
 		}},
 	}
-	n, err := policies.Update(fake.ServiceClient(), policies_id, options).Extract()
+	n, err := policies.Update(fake.ServiceClient(), policies_id, options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n.Name, "c2c-policy-update")
