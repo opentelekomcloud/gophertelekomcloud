@@ -2,6 +2,7 @@ package backup
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -112,31 +113,31 @@ type VolumeBackup struct {
 
 func (r QueryResult) ExtractQueryResponse() ([]ResourceCapability, error) {
 	var s []ResourceCapability
-	err := r.ExtractIntoSlicePtr(&s, "protectable")
+	err := extract.IntoSlicePtr(raw.Body, &res, "protectable")
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+	return res, nil
 }
 
 // Extract will get the checkpoint object from the golangsdk.Result
 func (r CreateResult) Extract() (*Checkpoint, error) {
 	s := new(Checkpoint)
-	err := r.ExtractIntoStructPtr(s, "checkpoint")
+	err := extract.IntoStructPtr(raw.Body, s, "checkpoint")
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+	return res, nil
 }
 
 // Extract will get the backup object from the golangsdk.Result
 func (r GetResult) Extract() (*Backup, error) {
 	s := new(Backup)
-	err := r.ExtractIntoStructPtr(s, "checkpoint_item")
+	err := extract.IntoStructPtr(raw.Body, s, "checkpoint_item")
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+	return res, nil
 }
 
 // СsbsBackupPage is the page returned by a pager when traversing over a
@@ -149,14 +150,14 @@ type СsbsBackupPage struct {
 // the end of a page and the pager seeks to traverse over a new one. In order
 // to do this, it needs to construct the next page's URL.
 func (r СsbsBackupPage) NextPageURL() (string, error) {
-	var s struct {
+	var res struct {
 		Links []golangsdk.Link `json:"checkpoint_items_links"`
 	}
-	err := r.ExtractInto(&s)
+	err := extract.Into(raw.Body, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }
 
 // IsEmpty checks whether a СsbsBackupPage struct is empty.
@@ -169,12 +170,12 @@ func (r СsbsBackupPage) IsEmpty() (bool, error) {
 // and extracts the elements into a slice of Backup structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var s []Backup
-	err := (r.(СsbsBackupPage)).ExtractIntoSlicePtr(&s, "checkpoint_items")
+	var res []Backup
+	err := (r.(СsbsBackupPage)).ExtractIntoSlicePtr(&res, "checkpoint_items")
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+	return res, nil
 }
 
 type CreateResult struct {

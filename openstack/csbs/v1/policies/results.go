@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -196,21 +197,21 @@ func (r *CreateOperationDefinitionResp) UnmarshalJSON(b []byte) error {
 
 // Extract will get the backup policies object from the commonResult
 func (r commonResult) Extract() (*BackupPolicy, error) {
-	var s struct {
+	var res struct {
 		BackupPolicy *BackupPolicy `json:"policy"`
 	}
 
-	err := r.ExtractInto(&s)
-	return s.BackupPolicy, err
+	err := extract.Into(raw.Body, &res)
+	return res.BackupPolicy, err
 }
 
 func (r cuResult) Extract() (*CreateBackupPolicy, error) {
-	var s struct {
+	var res struct {
 		BackupPolicy *CreateBackupPolicy `json:"policy"`
 	}
 
-	err := r.ExtractInto(&s)
-	return s.BackupPolicy, err
+	err := extract.Into(raw.Body, &res)
+	return res.BackupPolicy, err
 }
 
 // BackupPolicyPage is the page returned by a pager when traversing over a
@@ -223,14 +224,14 @@ type BackupPolicyPage struct {
 // the end of a page and the pager seeks to traverse over a new one. In order
 // to do this, it needs to construct the next page's URL.
 func (r BackupPolicyPage) NextPageURL() (string, error) {
-	var s struct {
+	var res struct {
 		Links []golangsdk.Link `json:"policies_links"`
 	}
-	err := r.ExtractInto(&s)
+	err := extract.Into(raw.Body, &res)
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(res.Links)
 }
 
 // IsEmpty checks whether a BackupPolicyPage struct is empty.
@@ -243,11 +244,11 @@ func (r BackupPolicyPage) IsEmpty() (bool, error) {
 // and extracts the elements into a slice of Policy structs. In other words,
 // a generic collection is mapped into a relevant slice.
 func ExtractBackupPolicies(r pagination.Page) ([]BackupPolicy, error) {
-	var s struct {
+	var res struct {
 		BackupPolicies []BackupPolicy `json:"policies"`
 	}
-	err := (r.(BackupPolicyPage)).ExtractInto(&s)
-	return s.BackupPolicies, err
+	err := (r.(BackupPolicyPage)).ExtractInto(&res)
+	return res.BackupPolicies, err
 }
 
 type commonResult struct {

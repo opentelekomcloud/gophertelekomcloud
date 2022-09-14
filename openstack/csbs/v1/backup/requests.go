@@ -2,7 +2,6 @@ package backup
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 // ListOpts allows the filtering and sorting of paginated collections through
@@ -43,23 +42,6 @@ type CreateOptsBuilder interface {
 	ToBackupCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOpts contains the options for create a Backup. This object is
-// passed to backup.Create().
-type CreateOpts struct {
-	BackupName   string             `json:"backup_name,omitempty"`
-	Description  string             `json:"description,omitempty"`
-	ResourceType string             `json:"resource_type,omitempty"`
-	Incremental  *bool              `json:"incremental,omitempty"`
-	Tags         []tags.ResourceTag `json:"tags,omitempty"`
-	ExtraInfo    interface{}        `json:"extra_info,omitempty"`
-}
-
-// ToBackupCreateMap assembles a request body based on the contents of a
-// CreateOpts.
-func (opts CreateOpts) ToBackupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protect")
-}
-
 // ResourceBackupCapabilityOptsBuilder allows extensions to add additional parameters to the
 // QueryResourceBackupCapability request.
 type ResourceBackupCapabilityOptsBuilder interface {
@@ -93,7 +75,7 @@ func QueryResourceBackupCapability(client *golangsdk.ServiceClient, opts Resourc
 
 		return
 	}
-	_, r.Err = client.Post(client.ServiceURL("providers", providerID, "resources", "action"), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("providers", providerID, "resources", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
