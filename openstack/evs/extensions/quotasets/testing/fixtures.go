@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	quotasets2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/quotasets"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/quotasets"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -26,7 +26,7 @@ var getExpectedJSONBody = `
 	}
 }`
 
-var getExpectedQuotaSet = quotasets2.QuotaSet{
+var getExpectedQuotaSet = quotasets.QuotaSet{
 	Volumes:            8,
 	Snapshots:          9,
 	Gigabytes:          10,
@@ -73,14 +73,14 @@ var getUsageExpectedJSONBody = `
 }
 `
 
-var getUsageExpectedQuotaSet = quotasets2.QuotaUsageSet{
+var getUsageExpectedQuotaSet = quotasets.QuotaUsageSet{
 	ID:                 FirstTenantID,
-	Volumes:            quotasets2.QuotaUsage{InUse: 15, Limit: 16, Reserved: 17},
-	Snapshots:          quotasets2.QuotaUsage{InUse: 18, Limit: 19, Reserved: 20},
-	Gigabytes:          quotasets2.QuotaUsage{InUse: 21, Limit: 22, Reserved: 23},
-	PerVolumeGigabytes: quotasets2.QuotaUsage{InUse: 24, Limit: 25, Reserved: 26},
-	Backups:            quotasets2.QuotaUsage{InUse: 27, Limit: 28, Reserved: 29},
-	BackupGigabytes:    quotasets2.QuotaUsage{InUse: 30, Limit: 31, Reserved: 32},
+	Volumes:            quotasets.QuotaUsage{InUse: 15, Limit: 16, Reserved: 17},
+	Snapshots:          quotasets.QuotaUsage{InUse: 18, Limit: 19, Reserved: 20},
+	Gigabytes:          quotasets.QuotaUsage{InUse: 21, Limit: 22, Reserved: 23},
+	PerVolumeGigabytes: quotasets.QuotaUsage{InUse: 24, Limit: 25, Reserved: 26},
+	Backups:            quotasets.QuotaUsage{InUse: 27, Limit: 28, Reserved: 29},
+	BackupGigabytes:    quotasets.QuotaUsage{InUse: 30, Limit: 31, Reserved: 32},
 }
 
 var fullUpdateExpectedJSONBody = `
@@ -95,7 +95,7 @@ var fullUpdateExpectedJSONBody = `
 	}
 }`
 
-var fullUpdateOpts = quotasets2.UpdateOpts{
+var fullUpdateOpts = quotasets.UpdateOpts{
 	Volumes:            golangsdk.IntToPointer(8),
 	Snapshots:          golangsdk.IntToPointer(9),
 	Gigabytes:          golangsdk.IntToPointer(10),
@@ -104,7 +104,7 @@ var fullUpdateOpts = quotasets2.UpdateOpts{
 	BackupGigabytes:    golangsdk.IntToPointer(13),
 }
 
-var fullUpdateExpectedQuotaSet = quotasets2.QuotaSet{
+var fullUpdateExpectedQuotaSet = quotasets.QuotaSet{
 	Volumes:            8,
 	Snapshots:          9,
 	Gigabytes:          10,
@@ -125,7 +125,7 @@ var partialUpdateExpectedJSONBody = `
 	}
 }`
 
-var partialUpdateOpts = quotasets2.UpdateOpts{
+var partialUpdateOpts = quotasets.UpdateOpts{
 	Volumes:            golangsdk.IntToPointer(200),
 	Snapshots:          golangsdk.IntToPointer(0),
 	Gigabytes:          golangsdk.IntToPointer(0),
@@ -134,7 +134,7 @@ var partialUpdateOpts = quotasets2.UpdateOpts{
 	BackupGigabytes:    golangsdk.IntToPointer(0),
 }
 
-var partiualUpdateExpectedQuotaSet = quotasets2.QuotaSet{Volumes: 200}
+var partiualUpdateExpectedQuotaSet = quotasets.QuotaSet{Volumes: 200}
 
 // HandleSuccessfulRequest configures the test server to respond to an HTTP request.
 func HandleSuccessfulRequest(t *testing.T, httpMethod, uriPath, jsonOutput string, uriQueryParams map[string]string) {
