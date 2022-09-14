@@ -10,7 +10,7 @@ func Update(c *golangsdk.ServiceClient, policyId string, opts UpdateOptsBuilder)
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(c.ServiceURL("policies", policyId), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Put(c.ServiceURL("policies", policyId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

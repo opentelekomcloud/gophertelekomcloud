@@ -2,6 +2,7 @@ package backup
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
@@ -17,15 +18,44 @@ type CreateOpts struct {
 
 // Create will create a new backup based on the values in CreateOpts. To extract
 // the checkpoint object from the response, call the Extract method on the CreateResult.
-func Create(client *golangsdk.ServiceClient, resourceID string, opts CreateOpts) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, resourceID string, opts CreateOpts) (*Checkpoint, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "protect")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
-	_, r.Err = client.Post(client.ServiceURL("providers", providerID, "resources", resourceID, "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
+	raw, err := client.Post(client.ServiceURL("providers", providerID, "resources", resourceID, "action"), b,
+		nil, &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	var res Checkpoint
+	err = extract.IntoStructPtr(raw.Body, &res, "checkpoint")
+	return &res, err
+}
+
+type Checkpoint struct {
+	Status         string         `json:"status"`
+	CreatedAt      string         `json:"created_at"`
+	Id             string         `json:"id"`
+	ResourceGraph  string         `json:"resource_graph"`
+	ProjectId      string         `json:"project_id"`
+	ProtectionPlan ProtectionPlan `json:"protection_plan"`
+	ExtraInfo      interface{}    `json:"extra_info"`
+}
+
+type ProtectionPlan struct {
+	Id              string               `json:"id"`
+	Name            string               `json:"name"`
+	BackupResources []СsbsBackupResource `json:"resources"`
+}
+
+type СsbsBackupResource struct {
+	ID        string      `json:"id"`
+	Type      string      `json:"type"`
+	Name      string      `json:"name"`
+	ExtraInfo interface{} `json:"extra_info"`
 }

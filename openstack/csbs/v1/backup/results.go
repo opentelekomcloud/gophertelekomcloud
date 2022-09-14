@@ -1,44 +1,10 @@
 package backup
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 const providerID = "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
-
-type Checkpoint struct {
-	Status         string         `json:"status"`
-	CreatedAt      string         `json:"created_at"`
-	Id             string         `json:"id"`
-	ResourceGraph  string         `json:"resource_graph"`
-	ProjectId      string         `json:"project_id"`
-	ProtectionPlan ProtectionPlan `json:"protection_plan"`
-	ExtraInfo      interface{}    `json:"extra_info"`
-}
-
-type ProtectionPlan struct {
-	Id              string               `json:"id"`
-	Name            string               `json:"name"`
-	BackupResources []СsbsBackupResource `json:"resources"`
-}
-
-type СsbsBackupResource struct {
-	ID        string      `json:"id"`
-	Type      string      `json:"type"`
-	Name      string      `json:"name"`
-	ExtraInfo interface{} `json:"extra_info"`
-}
-
-type ResourceCapability struct {
-	Result       bool   `json:"result"`
-	ResourceType string `json:"resource_type"`
-	ErrorCode    string `json:"error_code"`
-	ErrorMsg     string `json:"error_msg"`
-	ResourceId   string `json:"resource_id"`
-}
 
 type Backup struct {
 	CheckpointId string             `json:"checkpoint_id"`
@@ -109,87 +75,4 @@ type VolumeBackup struct {
 	SpaceSavingRatio int    `json:"space_saving_ratio"`
 	Status           string `json:"status"`
 	SourceVolumeName string `json:"source_volume_name"`
-}
-
-func (r QueryResult) ExtractQueryResponse() ([]ResourceCapability, error) {
-	var s []ResourceCapability
-	err := extract.IntoSlicePtr(raw.Body, &res, "protectable")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-// Extract will get the checkpoint object from the golangsdk.Result
-func (r CreateResult) Extract() (*Checkpoint, error) {
-	s := new(Checkpoint)
-	err := extract.IntoStructPtr(raw.Body, s, "checkpoint")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-// Extract will get the backup object from the golangsdk.Result
-func (r GetResult) Extract() (*Backup, error) {
-	s := new(Backup)
-	err := extract.IntoStructPtr(raw.Body, s, "checkpoint_item")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-// СsbsBackupPage is the page returned by a pager when traversing over a
-// collection of backups.
-type СsbsBackupPage struct {
-	pagination.LinkedPageBase
-}
-
-// NextPageURL is invoked when a paginated collection of backups has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
-func (r СsbsBackupPage) NextPageURL() (string, error) {
-	var res struct {
-		Links []golangsdk.Link `json:"checkpoint_items_links"`
-	}
-	err := extract.Into(raw.Body, &res)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(res.Links)
-}
-
-// IsEmpty checks whether a СsbsBackupPage struct is empty.
-func (r СsbsBackupPage) IsEmpty() (bool, error) {
-	is, err := ExtractBackups(r)
-	return len(is) == 0, err
-}
-
-// ExtractBackups accepts a Page struct, specifically a СsbsBackupPage struct,
-// and extracts the elements into a slice of Backup structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var res []Backup
-	err := (r.(СsbsBackupPage)).ExtractIntoSlicePtr(&res, "checkpoint_items")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-type CreateResult struct {
-	golangsdk.Result
-}
-
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type GetResult struct {
-	golangsdk.Result
-}
-
-type QueryResult struct {
-	golangsdk.Result
 }

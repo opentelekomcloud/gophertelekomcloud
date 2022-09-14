@@ -201,8 +201,8 @@ func (r commonResult) Extract() (*BackupPolicy, error) {
 		BackupPolicy *BackupPolicy `json:"policy"`
 	}
 
-	err := extract.Into(raw.Body, &res)
-	return res.BackupPolicy, err
+	err = extract.Into(raw.Body, &res)
+	return &res.BackupPolicy, err
 }
 
 func (r cuResult) Extract() (*CreateBackupPolicy, error) {
@@ -210,8 +210,8 @@ func (r cuResult) Extract() (*CreateBackupPolicy, error) {
 		BackupPolicy *CreateBackupPolicy `json:"policy"`
 	}
 
-	err := extract.Into(raw.Body, &res)
-	return res.BackupPolicy, err
+	err = extract.Into(raw.Body, &res)
+	return &res.BackupPolicy, err
 }
 
 // BackupPolicyPage is the page returned by a pager when traversing over a
@@ -227,7 +227,7 @@ func (r BackupPolicyPage) NextPageURL() (string, error) {
 	var res struct {
 		Links []golangsdk.Link `json:"policies_links"`
 	}
-	err := extract.Into(raw.Body, &res)
+	err = extract.Into(raw.Body, &res)
 	if err != nil {
 		return "", err
 	}
