@@ -12,7 +12,7 @@ import (
 )
 
 // Backward compatibility test.
-// Proofing we can replace deprecated methods with new ones.
+// Proving we can replace deprecated methods with new ones.
 //
 // Compare results of old methods with results of currently used methods.
 //
