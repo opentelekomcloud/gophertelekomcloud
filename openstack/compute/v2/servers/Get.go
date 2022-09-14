@@ -19,7 +19,7 @@ func GetInto(client *golangsdk.ServiceClient, id string, v interface{}) (err err
 		return
 	}
 
-	err = extract.IntoStructPtr(raw.Body, &v, "server")
+	err = extract.IntoStructPtr(raw.Body, v, "server")
 	return
 }
 
