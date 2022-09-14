@@ -90,7 +90,7 @@ func (opts ResizeOptsExt) ToServerResizeMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	base, err := golangsdk.BuildRequestBody(opts, "resize")
+	base, err := golangsdk.BuildRequestBody(opts.ResizeOpts, "resize")
 	if err != nil {
 		return nil, err
 	}
