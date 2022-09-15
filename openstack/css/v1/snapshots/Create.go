@@ -9,7 +9,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId s
 	if err != nil {
 		return nil, err
 	}
-	raw, err = client.Post(client.ServiceURL("clusters", clusterId, "index_snapshot"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("clusters", clusterId, "index_snapshot"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return

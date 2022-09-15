@@ -7,7 +7,7 @@ func UpdateConfiguration(client *golangsdk.ServiceClient, clusterID string, opts
 	if err != nil {
 		return nil, err
 	}
-	raw, err = client.Post(client.ServiceURL("clusters", clusterID, "index_snapshot", "setting"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("clusters", clusterID, "index_snapshot", "setting"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
