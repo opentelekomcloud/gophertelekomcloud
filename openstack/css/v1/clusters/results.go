@@ -2,6 +2,7 @@ package clusters
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -52,10 +53,10 @@ type CreateResult struct {
 }
 
 func (r CreateResult) Extract() (*CreatedCluster, error) {
-	var s struct {
+	var res struct {
 		Cluster *CreatedCluster `json:"cluster"`
 	}
-	err := r.ExtractInto(&s)
+	err := extract.Into(raw.Body, &res)
 	return s.Cluster, err
 }
 

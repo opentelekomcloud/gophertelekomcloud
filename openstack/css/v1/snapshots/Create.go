@@ -7,10 +7,9 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId string) (r CreateResult) {
 	b, err := opts.ToSnapshotCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(client.ServiceURL("clusters", clusterId, "index_snapshot"), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err = client.Post(client.ServiceURL("clusters", clusterId, "index_snapshot"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return

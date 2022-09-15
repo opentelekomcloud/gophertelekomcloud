@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // Policy contains all the information associated with a snapshot policy.
@@ -86,18 +87,18 @@ func (r PolicyResult) Extract() (*Policy, error) {
 
 // Extract will get the Snapshot object out of the CreateResult object.
 func (r CreateResult) Extract() (*Snapshot, error) {
-	var s struct {
+	var res struct {
 		Snapshot *Snapshot `json:"backup"`
 	}
-	err := r.ExtractInto(&s)
+	err := extract.Into(raw.Body, &res)
 	return s.Snapshot, err
 }
 
 // Extract will get all Snapshot objects out of the ListResult object.
 func (r ListResult) Extract() ([]Snapshot, error) {
-	var s struct {
+	var res struct {
 		Snapshots []Snapshot `json:"backups"`
 	}
-	err := r.ExtractInto(&s)
+	err := extract.Into(raw.Body, &res)
 	return s.Snapshots, err
 }

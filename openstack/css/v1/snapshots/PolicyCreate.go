@@ -6,10 +6,9 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 func PolicyCreate(client *golangsdk.ServiceClient, opts CreateOptsBuilder, clusterId string) (r ErrorResult) {
 	b, err := opts.ToSnapshotCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(client.ServiceURL("clusters", clusterId, "index_snapshot/policy"), b, nil, &golangsdk.RequestOpts{
+	raw, err = client.Post(client.ServiceURL("clusters", clusterId, "index_snapshot/policy"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

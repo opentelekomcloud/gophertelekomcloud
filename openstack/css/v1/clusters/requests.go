@@ -191,10 +191,9 @@ func ExtendCluster(client *golangsdk.ServiceClient, clusterID string, opts Clust
 
 	b, err := opts.ToExtendClusterMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(url, b, &r.Body, &golangsdk.RequestOpts{
+	raw, err = client.Post(url, b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
