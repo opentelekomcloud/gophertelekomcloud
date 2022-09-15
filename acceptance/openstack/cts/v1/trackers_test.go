@@ -8,7 +8,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TrackersLifecycle(t *testing.T) {
+func TestTrackersLifecycle(t *testing.T) {
 	client, err := clients.NewCTSV1Client()
 	th.AssertNoErr(t, err)
 
@@ -26,9 +26,9 @@ func TrackersLifecycle(t *testing.T) {
 	createOpts := tracker.CreateOptsWithSMN{
 		BucketName: bucketName,
 		SimpleMessageNotification: tracker.SimpleMessageNotification{
-			IsSupportSMN:          true,
+			IsSupportSMN:          false,
 			TopicID:               smn.TopicUrn,
-			IsSendAllKeyOperation: true,
+			IsSendAllKeyOperation: false,
 		},
 	}
 	ctsTracker, err := tracker.Create(client, createOpts).Extract()
@@ -38,11 +38,10 @@ func TrackersLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted CTSv1 Tracker: %s", ctsTracker.TrackerName)
 	})
-
 	th.AssertNoErr(t, err)
 	t.Logf("Created CTSv1 Tracker: %s", ctsTracker.TrackerName)
-	th.AssertEquals(t, true, ctsTracker.SimpleMessageNotification.IsSupportSMN)
-	th.AssertEquals(t, true, ctsTracker.SimpleMessageNotification.IsSendAllKeyOperation)
+	th.AssertEquals(t, false, ctsTracker.SimpleMessageNotification.IsSupportSMN)
+	th.AssertEquals(t, false, ctsTracker.SimpleMessageNotification.IsSendAllKeyOperation)
 	th.AssertEquals(t, "enabled", ctsTracker.Status)
 
 	t.Logf("Attempting to update CTSv1 Tracker: %s", ctsTracker.TrackerName)
@@ -64,6 +63,5 @@ func TrackersLifecycle(t *testing.T) {
 	if len(trackerList) == 0 {
 		t.Fatalf("CTS tracker wasn't found: %s", ctsTracker.TrackerName)
 	}
-
 	th.AssertEquals(t, updateOpts.Status, trackerList[0].Status)
 }
