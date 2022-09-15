@@ -25,9 +25,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*VolumeType, erro
 		return nil, err
 	}
 
-	var res struct {
-		VolumeType VolumeType `json:"volume_type"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.VolumeType, err
+	var res VolumeType
+	err = extract.IntoStructPtr(raw.Body, &res, "volume_type")
+	return &res, err
 }
