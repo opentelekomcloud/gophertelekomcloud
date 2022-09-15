@@ -119,7 +119,7 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) string {
 			Encrypted: "0",
 		},
 	}
-	created, err := clusters.Create(client, opts).Extract()
+	created, err := clusters.Create(client, opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, clusters.WaitForClusterOperationSucces(client, created.ID, timeout))
@@ -127,6 +127,6 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) string {
 }
 
 func deleteCluster(t *testing.T, client *golangsdk.ServiceClient, id string) {
-	err := clusters.Delete(client, id).ExtractErr()
+	err := clusters.Delete(client, id)
 	th.AssertNoErr(t, err)
 }
