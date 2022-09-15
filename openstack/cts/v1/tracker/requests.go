@@ -16,24 +16,7 @@ type ListOpts struct {
 	Status         string
 }
 
-// List returns collection of Tracker. It accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Tracker, error) {
-	var r ListResult
-	_, r.Err = client.Get(rootURL(client), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-
-	allTracker, err := r.ExtractTracker()
-	if err != nil {
-		return nil, err
-	}
-
-	return FilterTracker(allTracker, opts)
-}
-
 func FilterTracker(tracker []Tracker, opts ListOpts) ([]Tracker, error) {
-
 	var refinedTracker []Tracker
 	var matched bool
 	m := map[string]interface{}{}
@@ -115,22 +98,6 @@ func (opts CreateOptsWithSMN) ToTrackerCreateMap() (map[string]interface{}, erro
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// Create will create a new tracker based on the values in CreateOpts. To extract
-// the tracker name  from the response, call the Extract method on the
-// CreateResult.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToTrackerCreateMap()
-
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{201},
-	})
-	return
-}
-
 // UpdateOptsWithSMN contains all the values needed to update a  tracker
 type UpdateOptsWithSMN struct {
 	Status                    string                    `json:"status,omitempty"`
@@ -159,24 +126,4 @@ func (opts UpdateOptsWithSMN) ToTrackerUpdateMap() (map[string]interface{}, erro
 
 func (opts UpdateOpts) ToTrackerUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
-}
-
-func Update(client *golangsdk.ServiceClient, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToTrackerUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Put(resourceURL(client), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete will permanently delete a particular tracker.
-func Delete(client *golangsdk.ServiceClient) (r DeleteResult) {
-	_, r.Err = client.Delete(rootURL(client), &golangsdk.RequestOpts{
-		OkCodes: []int{204},
-	})
-	return
 }
