@@ -30,7 +30,7 @@ func extra(err error, raw *http.Response) (*CreateBackupPolicy, error) {
 	}
 
 	var res CreateBackupPolicy
-	err = extract.IntoSlicePtr(raw.Body, &res, "policy")
+	err = extract.IntoStructPtr(raw.Body, &res, "policy")
 	return &res, err
 }
 
