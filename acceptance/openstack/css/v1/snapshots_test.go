@@ -14,7 +14,6 @@ import (
 )
 
 func TestSnapshotWorkflow(t *testing.T) {
-
 	agencyID := clients.EnvOS.GetEnv("AGENCY_ID")
 	if agencyID == "" {
 		t.Skipf("OS_AGENCY_ID is required for this test")
@@ -32,7 +31,7 @@ func TestSnapshotWorkflow(t *testing.T) {
 		Bucket: bucketName,
 		Agency: agencyID,
 	}
-	err = snapshots.UpdateConfiguration(client, clusterID, basicOpts).ExtractErr()
+	err = snapshots.UpdateConfiguration(client, clusterID, basicOpts)
 	th.AssertNoErr(t, err)
 
 	policyOpts := snapshots.PolicyCreateOpts{
@@ -42,16 +41,16 @@ func TestSnapshotWorkflow(t *testing.T) {
 		Enable:     "true",
 		DeleteAuto: "true",
 	}
-	th.AssertNoErr(t, snapshots.PolicyCreate(client, policyOpts, clusterID).ExtractErr())
+	th.AssertNoErr(t, snapshots.PolicyCreate(client, policyOpts, clusterID))
 
-	policy, err := snapshots.PolicyGet(client, clusterID).Extract()
+	policy, err := snapshots.PolicyGet(client, clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, basicOpts.Bucket, policy.Bucket)
 	th.AssertEquals(t, basicOpts.SnapshotCmkID, policy.SnapshotCmkID)
 	th.AssertEquals(t, policyOpts.Prefix, policy.Prefix)
 	tools.PrintResource(t, policy)
 
-	th.AssertNoErr(t, snapshots.Disable(client, clusterID).ExtractErr())
+	th.AssertNoErr(t, snapshots.Disable(client, clusterID))
 }
 
 func createBucket(t *testing.T) string {
