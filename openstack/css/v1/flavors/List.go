@@ -6,7 +6,7 @@ import (
 )
 
 func List(client *golangsdk.ServiceClient) (p pagination.Pager) {
-	return pagination.NewPager(client, listURL(client), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, client.ServiceURL("flavors"), func(r pagination.PageResult) pagination.Page {
 		return VersionPage{pagination.SinglePageBase(r)}
 	})
 }
