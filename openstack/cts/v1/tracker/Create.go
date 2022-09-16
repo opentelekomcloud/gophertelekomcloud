@@ -6,14 +6,11 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 // the tracker name  from the response, call the Extract method on the
 // CreateResult.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
-	b, err := opts.ToTrackerCreateMap()
-
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(client.ServiceURL("tracker"), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{201},
-	})
+
+	raw, err := client.Post(client.ServiceURL("tracker"), b, nil, nil)
 	return
 }
