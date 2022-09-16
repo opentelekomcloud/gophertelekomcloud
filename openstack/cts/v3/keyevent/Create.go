@@ -2,7 +2,6 @@ package keyevent
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type CreateNotificationOpts struct {
@@ -18,7 +17,8 @@ type CreateNotificationOpts struct {
 	OperationType OperationType `json:"operation_type"`
 	// Operation list.
 	Operations []Operations `json:"operations,omitempty"`
-	// List of users whose operations will trigger notifications. Currently, up to 50 users in 10 user groups can be configured.
+	// List of users whose operations will trigger notifications.
+	// Currently, up to 50 users in 10 user groups can be configured.
 	NotifyUserList []NotificationUsers `json:"notify_user_list,omitempty"`
 	// Topic URN.
 	// 	To obtain the topic_urn, call the SMN API for querying topics.
@@ -58,20 +58,14 @@ func Create(client *golangsdk.ServiceClient, opts CreateNotificationOpts) (*Noti
 
 	// POST /v3/{project_id}/notifications
 	raw, err := client.Post(client.ServiceURL("notifications"), b, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var res NotificationResponse
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	return extra(err, raw)
 }
 
-type CreateNotificationStatus string
+type NotificationStatus string
 
 const (
-	Enabled  CreateNotificationStatus = "enabled"
-	Disabled CreateNotificationStatus = "disabled"
+	Enabled  NotificationStatus = "enabled"
+	Disabled NotificationStatus = "disabled"
 )
 
 type NotificationType string

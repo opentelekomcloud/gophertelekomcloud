@@ -15,6 +15,7 @@ type ListNotificationsOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListNotificationsOpts) ([]NotificationResponse, error) {
+	// GET /v3/{project_id}/notifications/{notification_type}
 	url := client.ServiceURL("notifications", string(opts.NotificationType)) + "?notification_name=" + opts.NotificationName
 	raw, err := client.Get(url, nil, nil)
 	if err != nil {
@@ -43,7 +44,7 @@ type NotificationResponse struct {
 	// Enumerated values:
 	// 	enabled
 	// 	disabled
-	Status *CreateNotificationStatus `json:"status,omitempty"`
+	Status NotificationStatus `json:"status,omitempty"`
 	// Unique resource ID of an SMN topic. You can obtain the ID by querying the topic list.
 	TopicId string `json:"topic_id,omitempty"`
 	// Unique notification ID.
