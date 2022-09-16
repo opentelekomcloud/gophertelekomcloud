@@ -6,9 +6,7 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 // the returned collection for greater efficiency.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Tracker, error) {
 	var r ListResult
-	raw, err := client.Get(client.ServiceURL("tracker"), nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+	raw, err := client.Get(client.ServiceURL("tracker"), nil, nil)
 
 	allTracker, err := r.ExtractTracker()
 	if err != nil {
