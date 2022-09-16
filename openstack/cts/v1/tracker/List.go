@@ -1,17 +1,26 @@
 package tracker
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// List returns collection of Tracker. It accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
+type ListOpts struct {
+	TrackerName string `q:"tracker_name"`
+}
+
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Tracker, error) {
-	var r ListResult
-	raw, err := client.Get(client.ServiceURL("tracker"), nil, nil)
-
-	allTracker, err := r.ExtractTracker()
+	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
 
-	return FilterTracker(allTracker, opts)
+	raw, err := client.Get(client.ServiceURL("tracker")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []Tracker
+	err = extract.Into(raw.Body, &res)
+	return res, err
 }

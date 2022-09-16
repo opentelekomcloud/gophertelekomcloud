@@ -9,14 +9,19 @@ type ListNotificationsOpts struct {
 	// Notification type.
 	// Enumerated value:
 	// 	smn
-	NotificationType NotificationType `json:"notification_type"`
+	NotificationType NotificationType
 	// Notification name. If this parameter is not specified, all key event notifications configured in the current tenant account are returned.
-	NotificationName string `json:"notification_name,omitempty"`
+	NotificationName string `q:"notification_name,omitempty"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListNotificationsOpts) ([]NotificationResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
 	// GET /v3/{project_id}/notifications/{notification_type}
-	url := client.ServiceURL("notifications", string(opts.NotificationType)) + "?notification_name=" + opts.NotificationName
+	url := client.ServiceURL("notifications", string(opts.NotificationType)) + q.String()
 	raw, err := client.Get(url, nil, nil)
 	if err != nil {
 		return nil, err

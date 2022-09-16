@@ -1,16 +1,31 @@
 package tracker
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
 
-// Create will create a new tracker based on the values in CreateOpts. To extract
-// the tracker name  from the response, call the Extract method on the
-// CreateResult.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
+type CreateOpts struct {
+	// OBS bucket name. The value contains 3 to 63 characters and must start with a digit or lowercase letter.
+	// Only lowercase letters, digits, hyphens (-), and periods (.) are allowed.
+	BucketName string `json:"bucket_name" required:"true"`
+	// Prefix of trace files that need to be stored in OBS buckets. The value can contain 0 to 64 characters,
+	// including letters, digits, hyphens (-), underscores (_), and periods (.).
+	FilePrefixName string `json:"file_prefix_name,omitempty"`
+	// Whether trace analysis is enabled.
+	// When you enable trace analysis, a log group named CTS and a log stream named system-trace are created in LTS.
+	Lts CreateLts `json:"lts,omitempty"`
+}
+
+type CreateLts struct {
+	IsLtsEnabled *bool `json:"is_lts_enabled,omitempty"`
+}
+
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Tracker, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	raw, err := client.Post(client.ServiceURL("tracker"), b, nil, nil)
-	return
+	return extra(err, raw)
 }

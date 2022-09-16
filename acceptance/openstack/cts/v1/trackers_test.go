@@ -31,7 +31,7 @@ func TestTrackersLifecycle(t *testing.T) {
 			IsSendAllKeyOperation: false,
 		},
 	}
-	ctsTracker, err := tracker.Create(client, createOpts).Extract()
+	ctsTracker, err := tracker.Create(client, createOpts)
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete CTSv1 Tracker: %s", ctsTracker.TrackerName)
 		err := tracker.Delete(client).ExtractErr()
@@ -49,7 +49,7 @@ func TestTrackersLifecycle(t *testing.T) {
 		BucketName: bucketName,
 		Status:     "disabled",
 	}
-	_, err = tracker.Update(client, updateOpts).Extract()
+	_, err = tracker.Update(client, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 
