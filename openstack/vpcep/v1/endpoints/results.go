@@ -37,7 +37,7 @@ type Endpoint struct {
 	// Specifies the domain status.
 	//    frozen: indicates that the domain is frozen.
 	//    active: indicates that the domain is normal.
-	ActiveStatus string `json:"active_status"`
+	ActiveStatus []string `json:"active_status"`
 
 	// Specifies the ID of the VPC where the VPC endpoint is to be created.
 	RouterID string `json:"vpc_id"`
