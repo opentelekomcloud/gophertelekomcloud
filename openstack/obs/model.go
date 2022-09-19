@@ -25,25 +25,6 @@ type BaseModel struct {
 	ResponseHeaders map[string][]string `xml:"-"`
 }
 
-type Bucket struct {
-	XMLName      xml.Name  `xml:"Bucket"`
-	Name         string    `xml:"Name"`
-	CreationDate time.Time `xml:"CreationDate"`
-	Location     string    `xml:"Location"`
-}
-
-type Owner struct {
-	XMLName     xml.Name `xml:"Owner"`
-	ID          string   `xml:"ID"`
-	DisplayName string   `xml:"DisplayName,omitempty"`
-}
-
-type Initiator struct {
-	XMLName     xml.Name `xml:"Initiator"`
-	ID          string   `xml:"ID"`
-	DisplayName string   `xml:"DisplayName,omitempty"`
-}
-
 type ListBucketsInput struct {
 	QueryLocation bool
 }
@@ -53,16 +34,6 @@ type ListBucketsOutput struct {
 	XMLName xml.Name `xml:"ListAllMyBucketsResult"`
 	Owner   Owner    `xml:"Owner"`
 	Buckets []Bucket `xml:"Buckets>Bucket"`
-}
-
-type bucketLocationObs struct {
-	XMLName  xml.Name `xml:"Location"`
-	Location string   `xml:",chardata"`
-}
-
-type BucketLocation struct {
-	XMLName  xml.Name `xml:"CreateBucketConfiguration"`
-	Location string   `xml:"LocationConstraint,omitempty"`
 }
 
 type CreateBucketInput struct {
@@ -78,11 +49,7 @@ type CreateBucketInput struct {
 	GrantReadDeliveredId        string           `xml:"-"`
 	GrantFullControlDeliveredId string           `xml:"-"`
 	Epid                        string           `xml:"-"`
-}
-
-type BucketStoragePolicy struct {
-	XMLName      xml.Name         `xml:"StoragePolicy"`
-	StorageClass StorageClassType `xml:"DefaultStorageClass"`
+	IsFSFileInterface           bool             `xml:"-"`
 }
 
 type SetBucketStoragePolicyInput struct {
@@ -100,10 +67,6 @@ type GetBucketStoragePolicyOutput struct {
 	StorageClass string
 }
 
-type bucketStoragePolicyObs struct {
-	XMLName      xml.Name `xml:"StorageClass"`
-	StorageClass string   `xml:",chardata"`
-}
 type getBucketStoragePolicyOutputObs struct {
 	BaseModel
 	bucketStoragePolicyObs
@@ -121,16 +84,6 @@ type ListObjectsInput struct {
 	ListObjsInput
 	Bucket string
 	Marker string
-}
-
-type Content struct {
-	XMLName      xml.Name         `xml:"Contents"`
-	Owner        Owner            `xml:"Owner"`
-	ETag         string           `xml:"ETag"`
-	Key          string           `xml:"Key"`
-	LastModified time.Time        `xml:"LastModified"`
-	Size         int64            `xml:"Size"`
-	StorageClass StorageClassType `xml:"StorageClass"`
 }
 
 type ListObjectsOutput struct {
@@ -153,23 +106,6 @@ type ListVersionsInput struct {
 	Bucket          string
 	KeyMarker       string
 	VersionIdMarker string
-}
-
-type Version struct {
-	DeleteMarker
-	XMLName xml.Name `xml:"Version"`
-	ETag    string   `xml:"ETag"`
-	Size    int64    `xml:"Size"`
-}
-
-type DeleteMarker struct {
-	XMLName      xml.Name         `xml:"DeleteMarker"`
-	Key          string           `xml:"Key"`
-	VersionId    string           `xml:"VersionId"`
-	IsLatest     bool             `xml:"IsLatest"`
-	LastModified time.Time        `xml:"LastModified"`
-	Owner        Owner            `xml:"Owner"`
-	StorageClass StorageClassType `xml:"StorageClass"`
 }
 
 type ListVersionsOutput struct {
@@ -199,16 +135,6 @@ type ListMultipartUploadsInput struct {
 	UploadIdMarker string
 }
 
-type Upload struct {
-	XMLName      xml.Name         `xml:"Upload"`
-	Key          string           `xml:"Key"`
-	UploadId     string           `xml:"UploadId"`
-	Initiated    time.Time        `xml:"Initiated"`
-	StorageClass StorageClassType `xml:"StorageClass"`
-	Owner        Owner            `xml:"Owner"`
-	Initiator    Initiator        `xml:"Initiator"`
-}
-
 type ListMultipartUploadsOutput struct {
 	BaseModel
 	XMLName            xml.Name `xml:"ListMultipartUploadsResult"`
@@ -223,11 +149,6 @@ type ListMultipartUploadsOutput struct {
 	Prefix             string   `xml:"Prefix"`
 	Uploads            []Upload `xml:"Upload"`
 	CommonPrefixes     []string `xml:"CommonPrefixes>Prefix"`
-}
-
-type BucketQuota struct {
-	XMLName xml.Name `xml:"Quota"`
-	Quota   int64    `xml:"StorageQuota"`
 }
 
 type SetBucketQuotaInput struct {
@@ -260,48 +181,6 @@ type GetBucketLocationOutput struct {
 	Location string `xml:"-"`
 }
 
-type Grantee struct {
-	XMLName     xml.Name     `xml:"Grantee"`
-	Type        GranteeType  `xml:"type,attr"`
-	ID          string       `xml:"ID,omitempty"`
-	DisplayName string       `xml:"DisplayName,omitempty"`
-	URI         GroupUriType `xml:"URI,omitempty"`
-}
-
-type granteeObs struct {
-	XMLName     xml.Name    `xml:"Grantee"`
-	Type        GranteeType `xml:"type,attr"`
-	ID          string      `xml:"ID,omitempty"`
-	DisplayName string      `xml:"DisplayName,omitempty"`
-	Canned      string      `xml:"Canned,omitempty"`
-}
-
-type Grant struct {
-	XMLName    xml.Name       `xml:"Grant"`
-	Grantee    Grantee        `xml:"Grantee"`
-	Permission PermissionType `xml:"Permission"`
-	Delivered  bool           `xml:"Delivered"`
-}
-type grantObs struct {
-	XMLName    xml.Name       `xml:"Grant"`
-	Grantee    granteeObs     `xml:"Grantee"`
-	Permission PermissionType `xml:"Permission"`
-	Delivered  bool           `xml:"Delivered"`
-}
-
-type AccessControlPolicy struct {
-	XMLName   xml.Name `xml:"AccessControlPolicy"`
-	Owner     Owner    `xml:"Owner"`
-	Grants    []Grant  `xml:"AccessControlList>Grant"`
-	Delivered string   `xml:"Delivered,omitempty"`
-}
-
-type accessControlPolicyObs struct {
-	XMLName xml.Name   `xml:"AccessControlPolicy"`
-	Owner   Owner      `xml:"Owner"`
-	Grants  []grantObs `xml:"AccessControlList>Grant"`
-}
-
 type GetBucketAclOutput struct {
 	BaseModel
 	AccessControlPolicy
@@ -328,21 +207,6 @@ type GetBucketPolicyOutput struct {
 	Policy string `json:"body"`
 }
 
-type CorsRule struct {
-	XMLName       xml.Name `xml:"CORSRule"`
-	ID            string   `xml:"ID,omitempty"`
-	AllowedOrigin []string `xml:"AllowedOrigin"`
-	AllowedMethod []string `xml:"AllowedMethod"`
-	AllowedHeader []string `xml:"AllowedHeader,omitempty"`
-	MaxAgeSeconds int      `xml:"MaxAgeSeconds"`
-	ExposeHeader  []string `xml:"ExposeHeader,omitempty"`
-}
-
-type BucketCors struct {
-	XMLName   xml.Name   `xml:"CORSConfiguration"`
-	CorsRules []CorsRule `xml:"CORSRule"`
-}
-
 type SetBucketCorsInput struct {
 	Bucket string `xml:"-"`
 	BucketCors
@@ -353,11 +217,6 @@ type GetBucketCorsOutput struct {
 	BucketCors
 }
 
-type BucketVersioningConfiguration struct {
-	XMLName xml.Name             `xml:"VersioningConfiguration"`
-	Status  VersioningStatusType `xml:"Status"`
-}
-
 type SetBucketVersioningInput struct {
 	Bucket string `xml:"-"`
 	BucketVersioningConfiguration
@@ -366,49 +225,6 @@ type SetBucketVersioningInput struct {
 type GetBucketVersioningOutput struct {
 	BaseModel
 	BucketVersioningConfiguration
-}
-
-type IndexDocument struct {
-	Suffix string `xml:"Suffix"`
-}
-
-type ErrorDocument struct {
-	Key string `xml:"Key,omitempty"`
-}
-
-type Condition struct {
-	XMLName                     xml.Name `xml:"Condition"`
-	KeyPrefixEquals             string   `xml:"KeyPrefixEquals,omitempty"`
-	HttpErrorCodeReturnedEquals string   `xml:"HttpErrorCodeReturnedEquals,omitempty"`
-}
-
-type Redirect struct {
-	XMLName              xml.Name     `xml:"Redirect"`
-	Protocol             ProtocolType `xml:"Protocol,omitempty"`
-	HostName             string       `xml:"HostName,omitempty"`
-	ReplaceKeyPrefixWith string       `xml:"ReplaceKeyPrefixWith,omitempty"`
-	ReplaceKeyWith       string       `xml:"ReplaceKeyWith,omitempty"`
-	HttpRedirectCode     string       `xml:"HttpRedirectCode,omitempty"`
-}
-
-type RoutingRule struct {
-	XMLName   xml.Name  `xml:"RoutingRule"`
-	Condition Condition `xml:"Condition,omitempty"`
-	Redirect  Redirect  `xml:"Redirect"`
-}
-
-type RedirectAllRequestsTo struct {
-	XMLName  xml.Name     `xml:"RedirectAllRequestsTo"`
-	Protocol ProtocolType `xml:"Protocol,omitempty"`
-	HostName string       `xml:"HostName"`
-}
-
-type BucketWebsiteConfiguration struct {
-	XMLName               xml.Name              `xml:"WebsiteConfiguration"`
-	RedirectAllRequestsTo RedirectAllRequestsTo `xml:"RedirectAllRequestsTo,omitempty"`
-	IndexDocument         IndexDocument         `xml:"IndexDocument,omitempty"`
-	ErrorDocument         ErrorDocument         `xml:"ErrorDocument,omitempty"`
-	RoutingRules          []RoutingRule         `xml:"RoutingRules>RoutingRule,omitempty"`
 }
 
 type SetBucketWebsiteConfigurationInput struct {
@@ -470,14 +286,6 @@ type GetBucketMetadataOutput struct {
 	Epid          string
 }
 
-type BucketLoggingStatus struct {
-	XMLName      xml.Name `xml:"BucketLoggingStatus"`
-	Agency       string   `xml:"Agency,omitempty"`
-	TargetBucket string   `xml:"LoggingEnabled>TargetBucket,omitempty"`
-	TargetPrefix string   `xml:"LoggingEnabled>TargetPrefix,omitempty"`
-	TargetGrants []Grant  `xml:"LoggingEnabled>TargetGrants>Grant,omitempty"`
-}
-
 type SetBucketLoggingConfigurationInput struct {
 	Bucket string `xml:"-"`
 	BucketLoggingStatus
@@ -486,41 +294,6 @@ type SetBucketLoggingConfigurationInput struct {
 type GetBucketLoggingConfigurationOutput struct {
 	BaseModel
 	BucketLoggingStatus
-}
-
-type Transition struct {
-	XMLName      xml.Name         `xml:"Transition"`
-	Date         time.Time        `xml:"Date,omitempty"`
-	Days         int              `xml:"Days,omitempty"`
-	StorageClass StorageClassType `xml:"StorageClass"`
-}
-
-type Expiration struct {
-	XMLName                   xml.Name  `xml:"Expiration"`
-	Date                      time.Time `xml:"Date,omitempty"`
-	Days                      int       `xml:"Days,omitempty"`
-	ExpiredObjectDeleteMarker bool      `xml:"ExpiredObjectDeleteMarker,omitempty"`
-}
-
-type NoncurrentVersionTransition struct {
-	XMLName        xml.Name         `xml:"NoncurrentVersionTransition"`
-	NoncurrentDays int              `xml:"NoncurrentDays"`
-	StorageClass   StorageClassType `xml:"StorageClass"`
-}
-
-type NoncurrentVersionExpiration struct {
-	XMLName        xml.Name `xml:"NoncurrentVersionExpiration"`
-	NoncurrentDays int      `xml:"NoncurrentDays"`
-}
-
-type LifecycleRule struct {
-	ID                           string                        `xml:"ID,omitempty"`
-	Prefix                       string                        `xml:"Prefix"`
-	Status                       RuleStatusType                `xml:"Status"`
-	Transitions                  []Transition                  `xml:"Transition,omitempty"`
-	Expiration                   Expiration                    `xml:"Expiration,omitempty"`
-	NoncurrentVersionTransitions []NoncurrentVersionTransition `xml:"NoncurrentVersionTransition,omitempty"`
-	NoncurrentVersionExpiration  NoncurrentVersionExpiration   `xml:"NoncurrentVersionExpiration,omitempty"`
 }
 
 type BucketLifecyleConfiguration struct {
@@ -538,14 +311,6 @@ type GetBucketLifecycleConfigurationOutput struct {
 	BucketLifecyleConfiguration
 }
 
-// BucketEncryptionConfiguration defines the bucket encryption configuration
-type BucketEncryptionConfiguration struct {
-	XMLName        xml.Name `xml:"ServerSideEncryptionConfiguration"`
-	SSEAlgorithm   string   `xml:"Rule>ApplyServerSideEncryptionByDefault>SSEAlgorithm"`
-	KMSMasterKeyID string   `xml:"Rule>ApplyServerSideEncryptionByDefault>KMSMasterKeyID,omitempty"`
-	ProjectID      string   `xml:"Rule>ApplyServerSideEncryptionByDefault>ProjectID,omitempty"`
-}
-
 // SetBucketEncryptionInput is the input parameter of SetBucketEncryption function
 type SetBucketEncryptionInput struct {
 	Bucket string `xml:"-"`
@@ -558,17 +323,6 @@ type GetBucketEncryptionOutput struct {
 	BucketEncryptionConfiguration
 }
 
-type Tag struct {
-	XMLName xml.Name `xml:"Tag"`
-	Key     string   `xml:"Key"`
-	Value   string   `xml:"Value"`
-}
-
-type BucketTagging struct {
-	XMLName xml.Name `xml:"Tagging"`
-	Tags    []Tag    `xml:"TagSet>Tag"`
-}
-
 type SetBucketTaggingInput struct {
 	Bucket string `xml:"-"`
 	BucketTagging
@@ -579,41 +333,9 @@ type GetBucketTaggingOutput struct {
 	BucketTagging
 }
 
-type FilterRule struct {
-	XMLName xml.Name `xml:"FilterRule"`
-	Name    string   `xml:"Name,omitempty"`
-	Value   string   `xml:"Value,omitempty"`
-}
-
-type TopicConfiguration struct {
-	XMLName     xml.Name     `xml:"TopicConfiguration"`
-	ID          string       `xml:"Id,omitempty"`
-	Topic       string       `xml:"Topic"`
-	Events      []EventType  `xml:"Event"`
-	FilterRules []FilterRule `xml:"Filter>Object>FilterRule"`
-}
-
-type BucketNotification struct {
-	XMLName             xml.Name             `xml:"NotificationConfiguration"`
-	TopicConfigurations []TopicConfiguration `xml:"TopicConfiguration"`
-}
-
 type SetBucketNotificationInput struct {
 	Bucket string `xml:"-"`
 	BucketNotification
-}
-
-type topicConfigurationS3 struct {
-	XMLName     xml.Name     `xml:"TopicConfiguration"`
-	ID          string       `xml:"Id,omitempty"`
-	Topic       string       `xml:"Topic"`
-	Events      []string     `xml:"Event"`
-	FilterRules []FilterRule `xml:"Filter>S3Key>FilterRule"`
-}
-
-type bucketNotificationS3 struct {
-	XMLName             xml.Name               `xml:"NotificationConfiguration"`
-	TopicConfigurations []topicConfigurationS3 `xml:"TopicConfiguration"`
 }
 
 type getBucketNotificationOutputS3 struct {
@@ -638,25 +360,11 @@ type DeleteObjectOutput struct {
 	DeleteMarker bool
 }
 
-type ObjectToDelete struct {
-	XMLName   xml.Name `xml:"Object"`
-	Key       string   `xml:"Key"`
-	VersionId string   `xml:"VersionId,omitempty"`
-}
-
 type DeleteObjectsInput struct {
 	Bucket  string           `xml:"-"`
 	XMLName xml.Name         `xml:"Delete"`
 	Quiet   bool             `xml:"Quiet,omitempty"`
 	Objects []ObjectToDelete `xml:"Object"`
-}
-
-type Deleted struct {
-	XMLName               xml.Name `xml:"Deleted"`
-	Key                   string   `xml:"Key"`
-	VersionId             string   `xml:"VersionId"`
-	DeleteMarker          bool     `xml:"DeleteMarker"`
-	DeleteMarkerVersionId string   `xml:"DeleteMarkerVersionId"`
 }
 
 type Error struct {
@@ -887,14 +595,6 @@ type UploadPartOutput struct {
 	PartNumber int
 	ETag       string
 	SseHeader  ISseHeader
-}
-
-type Part struct {
-	XMLName      xml.Name  `xml:"Part"`
-	PartNumber   int       `xml:"PartNumber"`
-	ETag         string    `xml:"ETag"`
-	LastModified time.Time `xml:"LastModified,omitempty"`
-	Size         int64     `xml:"Size,omitempty"`
 }
 
 type CompleteMultipartUploadInput struct {

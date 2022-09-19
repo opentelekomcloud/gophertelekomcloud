@@ -20,6 +20,7 @@ import (
 	"strings"
 )
 
+// IReadCloser defines interface with function: setReadCloser
 type IReadCloser interface {
 	setReadCloser(body io.ReadCloser)
 }
@@ -46,6 +47,7 @@ func setHeadersNext(headers map[string][]string, header string, headerNext strin
 	}
 }
 
+// IBaseModel defines interface for base response model
 type IBaseModel interface {
 	setStatusCode(statusCode int)
 
@@ -54,10 +56,12 @@ type IBaseModel interface {
 	setResponseHeaders(responseHeaders map[string][]string)
 }
 
+// ISerializable defines interface with function: trans
 type ISerializable interface {
 	trans(isObs bool) (map[string]string, map[string][]string, interface{}, error)
 }
 
+// DefaultSerializable defines default serializable struct
 type DefaultSerializable struct {
 	params  map[string]string
 	headers map[string][]string
@@ -97,7 +101,34 @@ func (input ListBucketsInput) trans(isObs bool) (params map[string]string, heade
 	if input.QueryLocation && !isObs {
 		setHeaders(headers, HEADER_LOCATION_AMZ, []string{"true"}, isObs)
 	}
+	if input.BucketType != "" {
+		setHeaders(headers, HEADER_BUCKET_TYPE, []string{string(input.BucketType)}, true)
+	}
 	return
+}
+
+func (input CreateBucketInput) prepareGrantHeaders(headers map[string][]string, isObs bool) {
+	if grantReadID := input.GrantReadId; grantReadID != "" {
+		setHeaders(headers, HEADER_GRANT_READ_OBS, []string{grantReadID}, isObs)
+	}
+	if grantWriteID := input.GrantWriteId; grantWriteID != "" {
+		setHeaders(headers, HEADER_GRANT_WRITE_OBS, []string{grantWriteID}, isObs)
+	}
+	if grantReadAcpID := input.GrantReadAcpId; grantReadAcpID != "" {
+		setHeaders(headers, HEADER_GRANT_READ_ACP_OBS, []string{grantReadAcpID}, isObs)
+	}
+	if grantWriteAcpID := input.GrantWriteAcpId; grantWriteAcpID != "" {
+		setHeaders(headers, HEADER_GRANT_WRITE_ACP_OBS, []string{grantWriteAcpID}, isObs)
+	}
+	if grantFullControlID := input.GrantFullControlId; grantFullControlID != "" {
+		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_OBS, []string{grantFullControlID}, isObs)
+	}
+	if grantReadDeliveredID := input.GrantReadDeliveredId; grantReadDeliveredID != "" {
+		setHeaders(headers, HEADER_GRANT_READ_DELIVERED_OBS, []string{grantReadDeliveredID}, true)
+	}
+	if grantFullControlDeliveredID := input.GrantFullControlDeliveredId; grantFullControlDeliveredID != "" {
+		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_DELIVERED_OBS, []string{grantFullControlDeliveredID}, true)
+	}
 }
 
 func (input CreateBucketInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
@@ -114,31 +145,16 @@ func (input CreateBucketInput) trans(isObs bool) (params map[string]string, head
 			}
 		}
 		setHeadersNext(headers, HEADER_STORAGE_CLASS_OBS, HEADER_STORAGE_CLASS, []string{storageClass}, isObs)
-		if epid := input.Epid; epid != "" {
-			setHeaders(headers, HEADER_EPID_HEADERS, []string{epid}, isObs)
-		}
 	}
-	if grantReadId := input.GrantReadId; grantReadId != "" {
-		setHeaders(headers, HEADER_GRANT_READ_OBS, []string{grantReadId}, isObs)
+	if epid := input.Epid; epid != "" {
+		setHeaders(headers, HEADER_EPID_HEADERS, []string{epid}, isObs)
 	}
-	if grantWriteId := input.GrantWriteId; grantWriteId != "" {
-		setHeaders(headers, HEADER_GRANT_WRITE_OBS, []string{grantWriteId}, isObs)
+
+	input.prepareGrantHeaders(headers, isObs)
+	if input.IsFSFileInterface {
+		setHeaders(headers, HEADER_FS_FILE_INTERFACE, []string{"Enabled"}, true)
 	}
-	if grantReadAcpId := input.GrantReadAcpId; grantReadAcpId != "" {
-		setHeaders(headers, HEADER_GRANT_READ_ACP_OBS, []string{grantReadAcpId}, isObs)
-	}
-	if grantWriteAcpId := input.GrantWriteAcpId; grantWriteAcpId != "" {
-		setHeaders(headers, HEADER_GRANT_WRITE_ACP_OBS, []string{grantWriteAcpId}, isObs)
-	}
-	if grantFullControlId := input.GrantFullControlId; grantFullControlId != "" {
-		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_OBS, []string{grantFullControlId}, isObs)
-	}
-	if grantReadDeliveredId := input.GrantReadDeliveredId; grantReadDeliveredId != "" {
-		setHeaders(headers, HEADER_GRANT_READ_DELIVERED_OBS, []string{grantReadDeliveredId}, true)
-	}
-	if grantFullControlDeliveredId := input.GrantFullControlDeliveredId; grantFullControlDeliveredId != "" {
-		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_DELIVERED_OBS, []string{grantFullControlDeliveredId}, true)
-	}
+
 	if location := strings.TrimSpace(input.Location); location != "" {
 		input.Location = location
 
@@ -241,6 +257,9 @@ func (input ListMultipartUploadsInput) trans(_ bool) (params map[string]string, 
 	}
 	if input.UploadIdMarker != "" {
 		params["upload-id-marker"] = input.UploadIdMarker
+	}
+	if input.EncodingType != "" {
+		params["encoding-type"] = input.EncodingType
 	}
 	return
 }

@@ -340,7 +340,7 @@ func GetV2Authorization(ak, sk, method, bucketName, objectKey, queryUrl string, 
 	}
 	headers = copyHeaders(headers)
 	pathStyle := isPathStyle(headers, bucketName)
-	conf := &config{securityProviders: []securityProvider{NewBasicSecurityProvider(ak, sk, "")},
+	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk},
 		urlHolder: &urlHolder{scheme: "https", host: "dummy", port: 443},
 		pathStyle: pathStyle}
 	conf.signature = SignatureObs
@@ -418,7 +418,7 @@ func GetAuthorization(ak, sk, method, bucketName, objectKey, queryUrl string, he
 	if receivedHost, ok := headers[HEADER_HOST]; ok && len(receivedHost) > 0 && !strings.HasPrefix(receivedHost[0], bucketName+".") {
 		pathStyle = true
 	}
-	conf := &config{securityProviders: []securityProvider{NewBasicSecurityProvider(ak, sk, "")},
+	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk},
 		urlHolder: &urlHolder{scheme: "https", host: "dummy", port: 443},
 		pathStyle: pathStyle}
 

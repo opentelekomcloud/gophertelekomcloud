@@ -13,7 +13,7 @@
 package obs
 
 const (
-	obs_sdk_version        = "3.19.11"
+	obs_sdk_version        = "3.21.12"
 	USER_AGENT             = "obs-sdk-go/" + obs_sdk_version
 	HEADER_PREFIX          = "x-amz-"
 	HEADER_PREFIX_META     = "x-amz-meta-"
@@ -102,6 +102,8 @@ const (
 	HEADER_SSEKMS_KEY_OBS = "x-obs-server-side-encryption-kms-key-id"
 
 	HEADER_SUCCESS_ACTION_REDIRECT = "success_action_redirect"
+
+	HEADER_FS_FILE_INTERFACE = "fs-file-interface"
 
 	HEADER_DATE_CAMEL                          = "Date"
 	HEADER_HOST_CAMEL                          = "Host"
