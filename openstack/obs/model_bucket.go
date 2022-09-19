@@ -1,14 +1,3 @@
-// Copyright 2019 Huawei Technologies Co.,Ltd.
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-// this file except in compliance with the License.  You may obtain a copy of the
-// License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software distributed
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-// CONDITIONS OF ANY KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations under the License.
 package obs
 
 import (
@@ -43,7 +32,6 @@ type CreateBucketInput struct {
 	GrantReadDeliveredId        string           `xml:"-"`
 	GrantFullControlDeliveredId string           `xml:"-"`
 	Epid                        string           `xml:"-"`
-	AvailableZone               string           `xml:"-"`
 	IsFSFileInterface           bool             `xml:"-"`
 }
 
@@ -194,7 +182,7 @@ type SetObjectMetadataInput struct {
 	Metadata                map[string]string
 }
 
-//SetObjectMetadataOutput is the result of SetObjectMetadata function
+// SetObjectMetadataOutput is the result of SetObjectMetadata function
 type SetObjectMetadataOutput struct {
 	BaseModel
 	MetadataDirective       MetadataDirectiveType
@@ -221,8 +209,6 @@ type GetBucketMetadataOutput struct {
 	MaxAgeSeconds int
 	ExposeHeader  string
 	Epid          string
-	AZRedundancy  string
-	FSStatus      FSStatusType
 }
 
 // SetBucketLoggingConfigurationInput is the input parameter of SetBucketLoggingConfiguration function
@@ -237,8 +223,8 @@ type GetBucketLoggingConfigurationOutput struct {
 	BucketLoggingStatus
 }
 
-// BucketLifecyleConfiguration defines the bucket lifecycle configuration
-type BucketLifecyleConfiguration struct {
+// BucketLifecycleConfiguration defines the bucket lifecycle configuration
+type BucketLifecycleConfiguration struct {
 	XMLName        xml.Name        `xml:"LifecycleConfiguration"`
 	LifecycleRules []LifecycleRule `xml:"Rule"`
 }
@@ -246,13 +232,13 @@ type BucketLifecyleConfiguration struct {
 // SetBucketLifecycleConfigurationInput is the input parameter of SetBucketLifecycleConfiguration function
 type SetBucketLifecycleConfigurationInput struct {
 	Bucket string `xml:"-"`
-	BucketLifecyleConfiguration
+	BucketLifecycleConfiguration
 }
 
 // GetBucketLifecycleConfigurationOutput is the result of GetBucketLifecycleConfiguration function
 type GetBucketLifecycleConfigurationOutput struct {
 	BaseModel
-	BucketLifecyleConfiguration
+	BucketLifecycleConfiguration
 }
 
 // SetBucketEncryptionInput is the input parameter of SetBucketEncryption function
