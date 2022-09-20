@@ -3,7 +3,6 @@ package obs
 import (
 	"encoding/xml"
 	"io"
-	"net/http"
 	"time"
 )
 
@@ -149,35 +148,4 @@ type CopyPartOutput struct {
 	ETag         string     `xml:"ETag"`
 	LastModified time.Time  `xml:"LastModified"`
 	SseHeader    ISseHeader `xml:"-"`
-}
-
-type CreateSignedUrlInput struct {
-	Method      HttpMethodType
-	Bucket      string
-	Key         string
-	SubResource SubResourceType
-	Expires     int
-	Headers     map[string]string
-	QueryParams map[string]string
-}
-
-type CreateSignedUrlOutput struct {
-	SignedUrl                  string
-	ActualSignedRequestHeaders http.Header
-}
-
-type CreateBrowserBasedSignatureInput struct {
-	Bucket     string
-	Key        string
-	Expires    int
-	FormParams map[string]string
-}
-
-type CreateBrowserBasedSignatureOutput struct {
-	OriginPolicy string
-	Policy       string
-	Algorithm    string
-	Credential   string
-	Date         string
-	Signature    string
 }
