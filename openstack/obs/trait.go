@@ -246,9 +246,6 @@ func (input ListMultipartUploadsInput) trans(_ bool) (params map[string]string, 
 	if input.UploadIdMarker != "" {
 		params["upload-id-marker"] = input.UploadIdMarker
 	}
-	if input.EncodingType != "" {
-		params["encoding-type"] = input.EncodingType
-	}
 	return
 }
 
@@ -769,6 +766,14 @@ func (input CopyPartInput) trans(isObs bool) (params map[string]string, headers 
 			setHeaders(headers, HEADER_SSEC_COPY_SOURCE_KEY_MD5, []string{sseCHeader.GetKeyMD5()}, isObs)
 		}
 
+	}
+	return
+}
+
+func (input HeadObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = make(map[string]string)
+	if input.VersionId != "" {
+		params[PARAM_VERSION_ID] = input.VersionId
 	}
 	return
 }

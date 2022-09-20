@@ -59,6 +59,7 @@ const (
 	HEADER_CACHE_CONTROL                    = "cache-control"
 	HEADER_CONTENT_DISPOSITION              = "content-disposition"
 	HEADER_CONTENT_ENCODING                 = "content-encoding"
+	HEADER_BUCKET_TYPE                      = "bucket-type"
 
 	HEADER_ETAG         = "etag"
 	HEADER_LASTMODIFIED = "last-modified"

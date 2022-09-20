@@ -10,24 +10,17 @@ import (
 // ListObjects lists objects in a bucket.
 //
 // You can use this API to list objects in a bucket. By default, a maximum of 1000 objects are listed.
-func (obsClient ObsClient) ListObjects(input *ListObjectsInput, extensions ...extensionOptions) (output *ListObjectsOutput, err error) {
+func (obsClient ObsClient) ListObjects(input *ListObjectsInput) (output *ListObjectsOutput, err error) {
 	if input == nil {
 		return nil, errors.New("ListObjectsInput is nil")
 	}
 	output = &ListObjectsOutput{}
-	err = obsClient.doActionWithBucket("ListObjects", HTTP_GET, input.Bucket, input, output, extensions)
+	err = obsClient.doActionWithBucket("ListObjects", HTTP_GET, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	} else {
 		if location, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
 			output.Location = location[0]
-		}
-		if output.EncodingType == "url" {
-			err = decodeListObjectsOutput(output)
-			if err != nil {
-				doLog(LEVEL_ERROR, "Failed to get ListObjectsOutput with error: %v.", err)
-				output = nil
-			}
 		}
 	}
 	return
@@ -36,24 +29,17 @@ func (obsClient ObsClient) ListObjects(input *ListObjectsInput, extensions ...ex
 // ListVersions lists versioning objects in a bucket.
 //
 // You can use this API to list versioning objects in a bucket. By default, a maximum of 1000 versioning objects are listed.
-func (obsClient ObsClient) ListVersions(input *ListVersionsInput, extensions ...extensionOptions) (output *ListVersionsOutput, err error) {
+func (obsClient ObsClient) ListVersions(input *ListVersionsInput) (output *ListVersionsOutput, err error) {
 	if input == nil {
 		return nil, errors.New("ListVersionsInput is nil")
 	}
 	output = &ListVersionsOutput{}
-	err = obsClient.doActionWithBucket("ListVersions", HTTP_GET, input.Bucket, input, output, extensions)
+	err = obsClient.doActionWithBucket("ListVersions", HTTP_GET, input.Bucket, input, output)
 	if err != nil {
 		output = nil
 	} else {
 		if location, ok := output.ResponseHeaders[HEADER_BUCKET_REGION]; ok {
 			output.Location = location[0]
-		}
-		if output.EncodingType == "url" {
-			err = decodeListVersionsOutput(output)
-			if err != nil {
-				doLog(LEVEL_ERROR, "Failed to get ListVersionsOutput with error: %v.", err)
-				output = nil
-			}
 		}
 	}
 	return
@@ -62,12 +48,12 @@ func (obsClient ObsClient) ListVersions(input *ListVersionsInput, extensions ...
 // HeadObject checks whether an object exists.
 //
 // You can use this API to check whether an object exists.
-func (obsClient ObsClient) HeadObject(input *HeadObjectInput, extensions ...extensionOptions) (output *BaseModel, err error) {
+func (obsClient ObsClient) HeadObject(input *HeadObjectInput) (output *BaseModel, err error) {
 	if input == nil {
 		return nil, errors.New("HeadObjectInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucketAndKey("HeadObject", HTTP_HEAD, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("HeadObject", HTTP_HEAD, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -75,9 +61,9 @@ func (obsClient ObsClient) HeadObject(input *HeadObjectInput, extensions ...exte
 }
 
 // SetObjectMetadata sets object metadata.
-func (obsClient ObsClient) SetObjectMetadata(input *SetObjectMetadataInput, extensions ...extensionOptions) (output *SetObjectMetadataOutput, err error) {
+func (obsClient ObsClient) SetObjectMetadata(input *SetObjectMetadataInput) (output *SetObjectMetadataOutput, err error) {
 	output = &SetObjectMetadataOutput{}
-	err = obsClient.doActionWithBucketAndKey("SetObjectMetadata", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("SetObjectMetadata", HTTP_PUT, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -89,12 +75,12 @@ func (obsClient ObsClient) SetObjectMetadata(input *SetObjectMetadataInput, exte
 // DeleteObject deletes an object.
 //
 // You can use this API to delete an object from a specified bucket.
-func (obsClient ObsClient) DeleteObject(input *DeleteObjectInput, extensions ...extensionOptions) (output *DeleteObjectOutput, err error) {
+func (obsClient ObsClient) DeleteObject(input *DeleteObjectInput) (output *DeleteObjectOutput, err error) {
 	if input == nil {
 		return nil, errors.New("DeleteObjectInput is nil")
 	}
 	output = &DeleteObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("DeleteObject", HTTP_DELETE, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("DeleteObject", HTTP_DELETE, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -106,20 +92,14 @@ func (obsClient ObsClient) DeleteObject(input *DeleteObjectInput, extensions ...
 // DeleteObjects deletes objects in a batch.
 //
 // You can use this API to batch delete objects from a specified bucket.
-func (obsClient ObsClient) DeleteObjects(input *DeleteObjectsInput, extensions ...extensionOptions) (output *DeleteObjectsOutput, err error) {
+func (obsClient ObsClient) DeleteObjects(input *DeleteObjectsInput) (output *DeleteObjectsOutput, err error) {
 	if input == nil {
 		return nil, errors.New("DeleteObjectsInput is nil")
 	}
 	output = &DeleteObjectsOutput{}
-	err = obsClient.doActionWithBucket("DeleteObjects", HTTP_POST, input.Bucket, input, output, extensions)
+	err = obsClient.doActionWithBucket("DeleteObjects", HTTP_POST, input.Bucket, input, output)
 	if err != nil {
 		output = nil
-	} else if output.EncodingType == "url" {
-		err = decodeDeleteObjectsOutput(output)
-		if err != nil {
-			doLog(LEVEL_ERROR, "Failed to get DeleteObjectsOutput with error: %v.", err)
-			output = nil
-		}
 	}
 	return
 }
@@ -127,12 +107,12 @@ func (obsClient ObsClient) DeleteObjects(input *DeleteObjectsInput, extensions .
 // SetObjectAcl sets ACL for an object.
 //
 // You can use this API to set the ACL for an object in a specified bucket.
-func (obsClient ObsClient) SetObjectAcl(input *SetObjectAclInput, extensions ...extensionOptions) (output *BaseModel, err error) {
+func (obsClient ObsClient) SetObjectAcl(input *SetObjectAclInput) (output *BaseModel, err error) {
 	if input == nil {
 		return nil, errors.New("SetObjectAclInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucketAndKey("SetObjectAcl", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("SetObjectAcl", HTTP_PUT, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -142,29 +122,29 @@ func (obsClient ObsClient) SetObjectAcl(input *SetObjectAclInput, extensions ...
 // GetObjectAcl gets the ACL of an object.
 //
 // You can use this API to obtain the ACL of an object in a specified bucket.
-func (obsClient ObsClient) GetObjectAcl(input *GetObjectAclInput, extensions ...extensionOptions) (output *GetObjectAclOutput, err error) {
+func (obsClient ObsClient) GetObjectAcl(input *GetObjectAclInput) (output *GetObjectAclOutput, err error) {
 	if input == nil {
 		return nil, errors.New("GetObjectAclInput is nil")
 	}
 	output = &GetObjectAclOutput{}
-	err = obsClient.doActionWithBucketAndKey("GetObjectAcl", HTTP_GET, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("GetObjectAcl", HTTP_GET, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
-		if versionID, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
-			output.VersionId = versionID[0]
+		if versionId, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
+			output.VersionId = versionId[0]
 		}
 	}
 	return
 }
 
 // RestoreObject restores an object.
-func (obsClient ObsClient) RestoreObject(input *RestoreObjectInput, extensions ...extensionOptions) (output *BaseModel, err error) {
+func (obsClient ObsClient) RestoreObject(input *RestoreObjectInput) (output *BaseModel, err error) {
 	if input == nil {
 		return nil, errors.New("RestoreObjectInput is nil")
 	}
 	output = &BaseModel{}
-	err = obsClient.doActionWithBucketAndKey("RestoreObject", HTTP_POST, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("RestoreObject", HTTP_POST, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	}
@@ -174,12 +154,12 @@ func (obsClient ObsClient) RestoreObject(input *RestoreObjectInput, extensions .
 // GetObjectMetadata gets object metadata.
 //
 // You can use this API to send a HEAD request to the object of a specified bucket to obtain its metadata.
-func (obsClient ObsClient) GetObjectMetadata(input *GetObjectMetadataInput, extensions ...extensionOptions) (output *GetObjectMetadataOutput, err error) {
+func (obsClient ObsClient) GetObjectMetadata(input *GetObjectMetadataInput) (output *GetObjectMetadataOutput, err error) {
 	if input == nil {
 		return nil, errors.New("GetObjectMetadataInput is nil")
 	}
 	output = &GetObjectMetadataOutput{}
-	err = obsClient.doActionWithBucketAndKey("GetObjectMetadata", HTTP_HEAD, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("GetObjectMetadata", HTTP_HEAD, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -191,12 +171,12 @@ func (obsClient ObsClient) GetObjectMetadata(input *GetObjectMetadataInput, exte
 // GetObject downloads object.
 //
 // You can use this API to download an object in a specified bucket.
-func (obsClient ObsClient) GetObject(input *GetObjectInput, extensions ...extensionOptions) (output *GetObjectOutput, err error) {
+func (obsClient ObsClient) GetObject(input *GetObjectInput) (output *GetObjectOutput, err error) {
 	if input == nil {
 		return nil, errors.New("GetObjectInput is nil")
 	}
 	output = &GetObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("GetObject", HTTP_GET, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("GetObject", HTTP_GET, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -206,7 +186,7 @@ func (obsClient ObsClient) GetObject(input *GetObjectInput, extensions ...extens
 }
 
 // PutObject uploads an object to the specified bucket.
-func (obsClient ObsClient) PutObject(input *PutObjectInput, extensions ...extensionOptions) (output *PutObjectOutput, err error) {
+func (obsClient ObsClient) PutObject(input *PutObjectInput) (output *PutObjectOutput, err error) {
 	if input == nil {
 		return nil, errors.New("PutObjectInput is nil")
 	}
@@ -216,6 +196,7 @@ func (obsClient ObsClient) PutObject(input *PutObjectInput, extensions ...extens
 			input.ContentType = contentType
 		}
 	}
+
 	output = &PutObjectOutput{}
 	var repeatable bool
 	if input.Body != nil {
@@ -225,9 +206,9 @@ func (obsClient ObsClient) PutObject(input *PutObjectInput, extensions ...extens
 		}
 	}
 	if repeatable {
-		err = obsClient.doActionWithBucketAndKey("PutObject", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
+		err = obsClient.doActionWithBucketAndKey("PutObject", HTTP_PUT, input.Bucket, input.Key, input, output)
 	} else {
-		err = obsClient.doActionWithBucketAndKeyUnRepeatable("PutObject", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
+		err = obsClient.doActionWithBucketAndKeyUnRepeatable("PutObject", HTTP_PUT, input.Bucket, input.Key, input, output)
 	}
 	if err != nil {
 		output = nil
@@ -255,7 +236,7 @@ func (obsClient ObsClient) isGetContentType(input *PutObjectInput) bool {
 }
 
 // PutFile uploads a file to the specified bucket.
-func (obsClient ObsClient) PutFile(input *PutFileInput, extensions ...extensionOptions) (output *PutObjectOutput, err error) {
+func (obsClient ObsClient) PutFile(input *PutFileInput) (output *PutObjectOutput, err error) {
 	if input == nil {
 		return nil, errors.New("PutFileInput is nil")
 	}
@@ -302,7 +283,7 @@ func (obsClient ObsClient) PutFile(input *PutFileInput, extensions ...extensionO
 	}
 
 	output = &PutObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("PutFile", HTTP_PUT, _input.Bucket, _input.Key, _input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("PutFile", HTTP_PUT, _input.Bucket, _input.Key, _input, output)
 	if err != nil {
 		output = nil
 	} else {
@@ -314,7 +295,7 @@ func (obsClient ObsClient) PutFile(input *PutFileInput, extensions ...extensionO
 // CopyObject creates a copy for an existing object.
 //
 // You can use this API to create a copy for an object in a specified bucket.
-func (obsClient ObsClient) CopyObject(input *CopyObjectInput, extensions ...extensionOptions) (output *CopyObjectOutput, err error) {
+func (obsClient ObsClient) CopyObject(input *CopyObjectInput) (output *CopyObjectOutput, err error) {
 	if input == nil {
 		return nil, errors.New("CopyObjectInput is nil")
 	}
@@ -327,70 +308,11 @@ func (obsClient ObsClient) CopyObject(input *CopyObjectInput, extensions ...exte
 	}
 
 	output = &CopyObjectOutput{}
-	err = obsClient.doActionWithBucketAndKey("CopyObject", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
+	err = obsClient.doActionWithBucketAndKey("CopyObject", HTTP_PUT, input.Bucket, input.Key, input, output)
 	if err != nil {
 		output = nil
 	} else {
 		ParseCopyObjectOutput(output)
-	}
-	return
-}
-
-func (obsClient ObsClient) AppendObject(input *AppendObjectInput, extensions ...extensionOptions) (output *AppendObjectOutput, err error) {
-	if input == nil {
-		return nil, errors.New("AppendObjectInput is nil")
-	}
-
-	if input.ContentType == "" && input.Key != "" {
-		if contentType, ok := mimeTypes[strings.ToLower(input.Key[strings.LastIndex(input.Key, ".")+1:])]; ok {
-			input.ContentType = contentType
-		}
-	}
-	output = &AppendObjectOutput{}
-	var repeatable bool
-	if input.Body != nil {
-		_, repeatable = input.Body.(*strings.Reader)
-		if input.ContentLength > 0 {
-			input.Body = &readerWrapper{reader: input.Body, totalCount: input.ContentLength}
-		}
-	}
-	if repeatable {
-		err = obsClient.doActionWithBucketAndKey("AppendObject", HTTP_POST, input.Bucket, input.Key, input, output, extensions)
-	} else {
-		err = obsClient.doActionWithBucketAndKeyUnRepeatable("AppendObject", HTTP_POST, input.Bucket, input.Key, input, output, extensions)
-	}
-	if err != nil {
-		output = nil
-	} else {
-		if err = ParseAppendObjectOutput(output); err != nil {
-			output = nil
-		}
-	}
-	return
-}
-
-func (obsClient ObsClient) ModifyObject(input *ModifyObjectInput, extensions ...extensionOptions) (output *ModifyObjectOutput, err error) {
-	if input == nil {
-		return nil, errors.New("ModifyObjectInput is nil")
-	}
-
-	output = &ModifyObjectOutput{}
-	var repeatable bool
-	if input.Body != nil {
-		_, repeatable = input.Body.(*strings.Reader)
-		if input.ContentLength > 0 {
-			input.Body = &readerWrapper{reader: input.Body, totalCount: input.ContentLength}
-		}
-	}
-	if repeatable {
-		err = obsClient.doActionWithBucketAndKey("ModifyObject", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
-	} else {
-		err = obsClient.doActionWithBucketAndKeyUnRepeatable("ModifyObject", HTTP_PUT, input.Bucket, input.Key, input, output, extensions)
-	}
-	if err != nil {
-		output = nil
-	} else {
-		ParseModifyObjectOutput(output)
 	}
 	return
 }

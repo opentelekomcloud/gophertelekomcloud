@@ -294,33 +294,6 @@ type DownloadFileInput struct {
 	CheckpointFile    string
 }
 
-type AppendObjectInput struct {
-	PutObjectBasicInput
-	Body     io.Reader
-	Position int64
-}
-
-type AppendObjectOutput struct {
-	BaseModel
-	VersionId          string
-	SseHeader          ISseHeader
-	NextAppendPosition int64
-	ETag               string
-}
-
-type ModifyObjectInput struct {
-	Bucket        string
-	Key           string
-	Position      int64
-	Body          io.Reader
-	ContentLength int64
-}
-
-type ModifyObjectOutput struct {
-	BaseModel
-	ETag string
-}
-
 // HeadObjectInput is the input parameter of HeadObject function
 type HeadObjectInput struct {
 	Bucket    string
