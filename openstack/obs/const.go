@@ -165,6 +165,11 @@ const (
 	HTTP_DELETE  = "DELETE"
 	HTTP_HEAD    = "HEAD"
 	HTTP_OPTIONS = "OPTIONS"
+
+	MAX_PART_SIZE     = 5 * 1024 * 1024 * 1024
+	MIN_PART_SIZE     = 100 * 1024
+	DEFAULT_PART_SIZE = 9 * 1024 * 1024
+	MAX_PART_NUM      = 10000
 )
 
 type SignatureType string
