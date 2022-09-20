@@ -347,10 +347,7 @@ func (input DeleteObjectInput) trans(_ bool) (params map[string]string, headers 
 
 func (input DeleteObjectsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceDelete): ""}
-	data, md5, err := ConvertRequestToIoReaderV2(input)
-	if err != nil {
-		return
-	}
+	data, md5 := convertDeleteObjectsToXML(input)
 	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
@@ -390,21 +387,23 @@ func (input RestoreObjectInput) trans(isObs bool) (params map[string]string, hea
 	return
 }
 
+// GetEncryption gets the Encryption field value from SseKmsHeader
 func (header SseKmsHeader) GetEncryption() string {
 	if header.Encryption != "" {
 		return header.Encryption
 	}
 	if !header.isObs {
 		return DEFAULT_SSE_KMS_ENCRYPTION
-	} else {
-		return DEFAULT_SSE_KMS_ENCRYPTION_OBS
 	}
+	return DEFAULT_SSE_KMS_ENCRYPTION_OBS
 }
 
+// GetKey gets the Key field value from SseKmsHeader
 func (header SseKmsHeader) GetKey() string {
 	return header.Key
 }
 
+// GetEncryption gets the Encryption field value from SseCHeader
 func (header SseCHeader) GetEncryption() string {
 	if header.Encryption != "" {
 		return header.Encryption
@@ -412,10 +411,12 @@ func (header SseCHeader) GetEncryption() string {
 	return DEFAULT_SSE_C_ENCRYPTION
 }
 
+// GetKey gets the Key field value from SseCHeader
 func (header SseCHeader) GetKey() string {
 	return header.Key
 }
 
+// GetKeyMD5 gets the KeyMD5 field value from SseCHeader
 func (header SseCHeader) GetKeyMD5() string {
 	if header.KeyMD5 != "" {
 		return header.KeyMD5
@@ -432,11 +433,13 @@ func setSseHeader(headers map[string][]string, sseHeader ISseHeader, sseCOnly bo
 		if sseCHeader, ok := sseHeader.(SseCHeader); ok {
 			setHeaders(headers, HEADER_SSEC_ENCRYPTION, []string{sseCHeader.GetEncryption()}, isObs)
 			setHeaders(headers, HEADER_SSEC_KEY, []string{sseCHeader.GetKey()}, isObs)
-			setHeaders(headers, HEADER_SSEC_KEY_MD5, []string{sseCHeader.GetEncryption()}, isObs)
+			setHeaders(headers, HEADER_SSEC_KEY_MD5, []string{sseCHeader.GetKeyMD5()}, isObs)
 		} else if sseKmsHeader, ok := sseHeader.(SseKmsHeader); !sseCOnly && ok {
 			sseKmsHeader.isObs = isObs
 			setHeaders(headers, HEADER_SSEKMS_ENCRYPTION, []string{sseKmsHeader.GetEncryption()}, isObs)
-			setHeadersNext(headers, HEADER_SSEKMS_KEY_OBS, HEADER_SSEKMS_KEY_AMZ, []string{sseKmsHeader.GetKey()}, isObs)
+			if sseKmsHeader.GetKey() != "" {
+				setHeadersNext(headers, HEADER_SSEKMS_KEY_OBS, HEADER_SSEKMS_KEY_AMZ, []string{sseKmsHeader.GetKey()}, isObs)
+			}
 		}
 	}
 }
@@ -459,6 +462,35 @@ func (input GetObjectMetadataInput) trans(isObs bool) (params map[string]string,
 	return
 }
 
+func (input SetObjectMetadataInput) prepareContentHeaders(headers map[string][]string) {
+	if input.ContentDisposition != "" {
+		headers[HEADER_CONTENT_DISPOSITION_CAMEL] = []string{input.ContentDisposition}
+	}
+	if input.ContentEncoding != "" {
+		headers[HEADER_CONTENT_ENCODING_CAMEL] = []string{input.ContentEncoding}
+	}
+	if input.ContentLanguage != "" {
+		headers[HEADER_CONTENT_LANGUAGE_CAMEL] = []string{input.ContentLanguage}
+	}
+
+	if input.ContentType != "" {
+		headers[HEADER_CONTENT_TYPE_CAML] = []string{input.ContentType}
+	}
+}
+
+func (input SetObjectMetadataInput) prepareStorageClass(headers map[string][]string, isObs bool) {
+	if storageClass := string(input.StorageClass); storageClass != "" {
+		if !isObs {
+			if storageClass == "WARM" {
+				storageClass = "STANDARD_IA"
+			} else if storageClass == "COLD" {
+				storageClass = "GLACIER"
+			}
+		}
+		setHeaders(headers, HEADER_STORAGE_CLASS2, []string{storageClass}, isObs)
+	}
+}
+
 func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceMetadata): ""}
 	if input.VersionId != "" {
@@ -474,35 +506,14 @@ func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string,
 	if input.CacheControl != "" {
 		headers[HEADER_CACHE_CONTROL_CAMEL] = []string{input.CacheControl}
 	}
-	if input.ContentDisposition != "" {
-		headers[HEADER_CONTENT_DISPOSITION_CAMEL] = []string{input.ContentDisposition}
-	}
-	if input.ContentEncoding != "" {
-		headers[HEADER_CONTENT_ENCODING_CAMEL] = []string{input.ContentEncoding}
-	}
-	if input.ContentLanguage != "" {
-		headers[HEADER_CONTENT_LANGUAGE_CAMEL] = []string{input.ContentLanguage}
-	}
-
-	if input.ContentType != "" {
-		headers[HEADER_CONTENT_TYPE_CAML] = []string{input.ContentType}
-	}
+	input.prepareContentHeaders(headers)
 	if input.Expires != "" {
 		headers[HEADER_EXPIRES_CAMEL] = []string{input.Expires}
 	}
 	if input.WebsiteRedirectLocation != "" {
 		setHeaders(headers, HEADER_WEBSITE_REDIRECT_LOCATION, []string{input.WebsiteRedirectLocation}, isObs)
 	}
-	if storageClass := string(input.StorageClass); storageClass != "" {
-		if !isObs {
-			if storageClass == "WARM" {
-				storageClass = "STANDARD_IA"
-			} else if storageClass == "COLD" {
-				storageClass = "GLACIER"
-			}
-		}
-		setHeaders(headers, HEADER_STORAGE_CLASS2, []string{storageClass}, isObs)
-	}
+	input.prepareStorageClass(headers, isObs)
 	if input.Metadata != nil {
 		for key, value := range input.Metadata {
 			key = strings.TrimSpace(key)
@@ -512,11 +523,7 @@ func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string,
 	return
 }
 
-func (input GetObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
-	params, headers, data, err = input.GetObjectMetadataInput.trans(isObs)
-	if err != nil {
-		return
-	}
+func (input GetObjectInput) prepareResponseParams(params map[string]string) {
 	if input.ResponseCacheControl != "" {
 		params[PARAM_RESPONSE_CACHE_CONTROL] = input.ResponseCacheControl
 	}
@@ -535,6 +542,14 @@ func (input GetObjectInput) trans(isObs bool) (params map[string]string, headers
 	if input.ResponseExpires != "" {
 		params[PARAM_RESPONSE_EXPIRES] = input.ResponseExpires
 	}
+}
+
+func (input GetObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params, headers, data, err = input.GetObjectMetadataInput.trans(isObs)
+	if err != nil {
+		return
+	}
+	input.prepareResponseParams(params)
 	if input.ImageProcess != "" {
 		params[PARAM_IMAGE_PROCESS] = input.ImageProcess
 	}
@@ -557,24 +572,28 @@ func (input GetObjectInput) trans(isObs bool) (params map[string]string, headers
 	return
 }
 
+func (input ObjectOperationInput) prepareGrantHeaders(headers map[string][]string) {
+	if GrantReadID := input.GrantReadId; GrantReadID != "" {
+		setHeaders(headers, HEADER_GRANT_READ_OBS, []string{GrantReadID}, true)
+	}
+	if GrantReadAcpID := input.GrantReadAcpId; GrantReadAcpID != "" {
+		setHeaders(headers, HEADER_GRANT_READ_ACP_OBS, []string{GrantReadAcpID}, true)
+	}
+	if GrantWriteAcpID := input.GrantWriteAcpId; GrantWriteAcpID != "" {
+		setHeaders(headers, HEADER_GRANT_WRITE_ACP_OBS, []string{GrantWriteAcpID}, true)
+	}
+	if GrantFullControlID := input.GrantFullControlId; GrantFullControlID != "" {
+		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_OBS, []string{GrantFullControlID}, true)
+	}
+}
+
 func (input ObjectOperationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	headers = make(map[string][]string)
 	params = make(map[string]string)
 	if acl := string(input.ACL); acl != "" {
 		setHeaders(headers, HEADER_ACL, []string{acl}, isObs)
 	}
-	if GrantReadId := input.GrantReadId; GrantReadId != "" {
-		setHeaders(headers, HEADER_GRANT_READ_OBS, []string{GrantReadId}, true)
-	}
-	if GrantReadAcpId := input.GrantReadAcpId; GrantReadAcpId != "" {
-		setHeaders(headers, HEADER_GRANT_READ_ACP_OBS, []string{GrantReadAcpId}, true)
-	}
-	if GrantWriteAcpId := input.GrantWriteAcpId; GrantWriteAcpId != "" {
-		setHeaders(headers, HEADER_GRANT_WRITE_ACP_OBS, []string{GrantWriteAcpId}, true)
-	}
-	if GrantFullControlId := input.GrantFullControlId; GrantFullControlId != "" {
-		setHeaders(headers, HEADER_GRANT_FULL_CONTROL_OBS, []string{GrantFullControlId}, true)
-	}
+	input.prepareGrantHeaders(headers)
 	if storageClass := string(input.StorageClass); storageClass != "" {
 		if !isObs {
 			if storageClass == "WARM" {
@@ -633,6 +652,42 @@ func (input PutObjectInput) trans(isObs bool) (params map[string]string, headers
 	return
 }
 
+func (input CopyObjectInput) prepareReplaceHeaders(headers map[string][]string) {
+	if input.CacheControl != "" {
+		headers[HEADER_CACHE_CONTROL] = []string{input.CacheControl}
+	}
+	if input.ContentDisposition != "" {
+		headers[HEADER_CONTENT_DISPOSITION] = []string{input.ContentDisposition}
+	}
+	if input.ContentEncoding != "" {
+		headers[HEADER_CONTENT_ENCODING] = []string{input.ContentEncoding}
+	}
+	if input.ContentLanguage != "" {
+		headers[HEADER_CONTENT_LANGUAGE] = []string{input.ContentLanguage}
+	}
+	if input.ContentType != "" {
+		headers[HEADER_CONTENT_TYPE] = []string{input.ContentType}
+	}
+	if input.Expires != "" {
+		headers[HEADER_EXPIRES] = []string{input.Expires}
+	}
+}
+
+func (input CopyObjectInput) prepareCopySourceHeaders(headers map[string][]string, isObs bool) {
+	if input.CopySourceIfMatch != "" {
+		setHeaders(headers, HEADER_COPY_SOURCE_IF_MATCH, []string{input.CopySourceIfMatch}, isObs)
+	}
+	if input.CopySourceIfNoneMatch != "" {
+		setHeaders(headers, HEADER_COPY_SOURCE_IF_NONE_MATCH, []string{input.CopySourceIfNoneMatch}, isObs)
+	}
+	if !input.CopySourceIfModifiedSince.IsZero() {
+		setHeaders(headers, HEADER_COPY_SOURCE_IF_MODIFIED_SINCE, []string{FormatUtcToRfc1123(input.CopySourceIfModifiedSince)}, isObs)
+	}
+	if !input.CopySourceIfUnmodifiedSince.IsZero() {
+		setHeaders(headers, HEADER_COPY_SOURCE_IF_UNMODIFIED_SINCE, []string{FormatUtcToRfc1123(input.CopySourceIfUnmodifiedSince)}, isObs)
+	}
+}
+
 func (input CopyObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.ObjectOperationInput.trans(isObs)
 	if err != nil {
@@ -652,38 +707,10 @@ func (input CopyObjectInput) trans(isObs bool) (params map[string]string, header
 	}
 
 	if input.MetadataDirective == ReplaceMetadata {
-		if input.CacheControl != "" {
-			headers[HEADER_CACHE_CONTROL] = []string{input.CacheControl}
-		}
-		if input.ContentDisposition != "" {
-			headers[HEADER_CONTENT_DISPOSITION] = []string{input.ContentDisposition}
-		}
-		if input.ContentEncoding != "" {
-			headers[HEADER_CONTENT_ENCODING] = []string{input.ContentEncoding}
-		}
-		if input.ContentLanguage != "" {
-			headers[HEADER_CONTENT_LANGUAGE] = []string{input.ContentLanguage}
-		}
-		if input.ContentType != "" {
-			headers[HEADER_CONTENT_TYPE] = []string{input.ContentType}
-		}
-		if input.Expires != "" {
-			headers[HEADER_EXPIRES] = []string{input.Expires}
-		}
+		input.prepareReplaceHeaders(headers)
 	}
 
-	if input.CopySourceIfMatch != "" {
-		setHeaders(headers, HEADER_COPY_SOURCE_IF_MATCH, []string{input.CopySourceIfMatch}, isObs)
-	}
-	if input.CopySourceIfNoneMatch != "" {
-		setHeaders(headers, HEADER_COPY_SOURCE_IF_NONE_MATCH, []string{input.CopySourceIfNoneMatch}, isObs)
-	}
-	if !input.CopySourceIfModifiedSince.IsZero() {
-		setHeaders(headers, HEADER_COPY_SOURCE_IF_MODIFIED_SINCE, []string{FormatUtcToRfc1123(input.CopySourceIfModifiedSince)}, isObs)
-	}
-	if !input.CopySourceIfUnmodifiedSince.IsZero() {
-		setHeaders(headers, HEADER_COPY_SOURCE_IF_UNMODIFIED_SINCE, []string{FormatUtcToRfc1123(input.CopySourceIfUnmodifiedSince)}, isObs)
-	}
+	input.prepareCopySourceHeaders(headers, isObs)
 	if input.SourceSseHeader != nil {
 		if sseCHeader, ok := input.SourceSseHeader.(SseCHeader); ok {
 			setHeaders(headers, HEADER_SSEC_COPY_SOURCE_ENCRYPTION, []string{sseCHeader.GetEncryption()}, isObs)
@@ -794,7 +821,7 @@ func (parts partSlice) Swap(i, j int) {
 
 type readerWrapper struct {
 	reader      io.Reader
-	mark        int64 // nolint: structcheck
+	mark        int64
 	totalCount  int64
 	readedCount int64
 }
