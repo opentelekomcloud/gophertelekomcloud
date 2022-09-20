@@ -269,11 +269,6 @@ func getV2StringToSign(method, canonicalizedUrl string, headers map[string][]str
 	return stringToSign
 }
 
-func v2Auth(ak, sk, method, canonicalizedUrl string, headers map[string][]string, isObs bool) map[string]string {
-	stringToSign := getV2StringToSign(method, canonicalizedUrl, headers, isObs)
-	return map[string]string{"Signature": Base64Encode(HmacSha1([]byte(sk), []byte(stringToSign)))}
-}
-
 func getScope(region, shortDate string) string {
 	return fmt.Sprintf("%s/%s/%s/%s", shortDate, region, V4_SERVICE_NAME, V4_SERVICE_SUFFIX)
 }
@@ -281,48 +276,6 @@ func getScope(region, shortDate string) string {
 func getCredential(ak, region, shortDate string) (string, string) {
 	scope := getScope(region, shortDate)
 	return fmt.Sprintf("%s/%s", ak, scope), scope
-}
-
-func getV4StringToSign(method, canonicalizedUrl, queryUrl, scope, longDate, payload string, signedHeaders []string, headers map[string][]string) string {
-	canonicalRequest := make([]string, 0, 10+len(signedHeaders)*4)
-	canonicalRequest = append(canonicalRequest, method)
-	canonicalRequest = append(canonicalRequest, "\n")
-	canonicalRequest = append(canonicalRequest, canonicalizedUrl)
-	canonicalRequest = append(canonicalRequest, "\n")
-	canonicalRequest = append(canonicalRequest, queryUrl)
-	canonicalRequest = append(canonicalRequest, "\n")
-
-	for _, signedHeader := range signedHeaders {
-		values := headers[signedHeader]
-		for _, value := range values {
-			canonicalRequest = append(canonicalRequest, signedHeader)
-			canonicalRequest = append(canonicalRequest, ":")
-			canonicalRequest = append(canonicalRequest, value)
-			canonicalRequest = append(canonicalRequest, "\n")
-		}
-	}
-	canonicalRequest = append(canonicalRequest, "\n")
-	canonicalRequest = append(canonicalRequest, strings.Join(signedHeaders, ";"))
-	canonicalRequest = append(canonicalRequest, "\n")
-	canonicalRequest = append(canonicalRequest, payload)
-
-	_canonicalRequest := strings.Join(canonicalRequest, "")
-
-	doLog(LEVEL_DEBUG, "The v4 auth canonicalRequest:\n%s", _canonicalRequest)
-
-	stringToSign := make([]string, 0, 7)
-	stringToSign = append(stringToSign, V4_HASH_PREFIX)
-	stringToSign = append(stringToSign, "\n")
-	stringToSign = append(stringToSign, longDate)
-	stringToSign = append(stringToSign, "\n")
-	stringToSign = append(stringToSign, scope)
-	stringToSign = append(stringToSign, "\n")
-	stringToSign = append(stringToSign, HexSha256([]byte(_canonicalRequest)))
-
-	_stringToSign := strings.Join(stringToSign, "")
-
-	doLog(LEVEL_DEBUG, "The v4 auth stringToSign:\n%s", _stringToSign)
-	return _stringToSign
 }
 
 func getSignedHeaders(headers map[string][]string) ([]string, map[string][]string) {
@@ -348,59 +301,4 @@ func getSignature(stringToSign, sk, region, shortDate string) string {
 	key = HmacSha256(key, []byte(V4_SERVICE_NAME))
 	key = HmacSha256(key, []byte(V4_SERVICE_SUFFIX))
 	return Hex(HmacSha256(key, []byte(stringToSign)))
-}
-
-func V4Auth(ak, sk, region, method, canonicalizedUrl, queryUrl string, headers map[string][]string) map[string]string {
-	return v4Auth(ak, sk, region, method, canonicalizedUrl, queryUrl, headers)
-}
-
-func v4Auth(ak, sk, region, method, canonicalizedUrl, queryUrl string, headers map[string][]string) map[string]string {
-	var t time.Time
-	if val, ok := headers[HEADER_DATE_AMZ]; ok {
-		var err error
-		t, err = time.Parse(LONG_DATE_FORMAT, val[0])
-		if err != nil {
-			t = time.Now().UTC()
-		}
-	} else if val, ok := headers[PARAM_DATE_AMZ_CAMEL]; ok {
-		var err error
-		t, err = time.Parse(LONG_DATE_FORMAT, val[0])
-		if err != nil {
-			t = time.Now().UTC()
-		}
-	} else if val, ok := headers[HEADER_DATE_CAMEL]; ok {
-		var err error
-		t, err = time.Parse(RFC1123_FORMAT, val[0])
-		if err != nil {
-			t = time.Now().UTC()
-		}
-	} else if val, ok := headers[strings.ToLower(HEADER_DATE_CAMEL)]; ok {
-		var err error
-		t, err = time.Parse(RFC1123_FORMAT, val[0])
-		if err != nil {
-			t = time.Now().UTC()
-		}
-	} else {
-		t = time.Now().UTC()
-	}
-	shortDate := t.Format(SHORT_DATE_FORMAT)
-	longDate := t.Format(LONG_DATE_FORMAT)
-
-	signedHeaders, _headers := getSignedHeaders(headers)
-
-	credential, scope := getCredential(ak, region, shortDate)
-
-	payload := EMPTY_CONTENT_SHA256
-	if val, ok := headers[HEADER_CONTENT_SHA256_AMZ]; ok {
-		payload = val[0]
-	}
-	stringToSign := getV4StringToSign(method, canonicalizedUrl, queryUrl, scope, longDate, payload, signedHeaders, _headers)
-
-	signature := getSignature(stringToSign, sk, region, shortDate)
-
-	ret := make(map[string]string, 3)
-	ret["Credential"] = credential
-	ret["SignedHeaders"] = strings.Join(signedHeaders, ";")
-	ret["Signature"] = signature
-	return ret
 }
