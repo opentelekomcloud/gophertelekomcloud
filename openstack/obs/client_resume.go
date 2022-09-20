@@ -4,7 +4,7 @@ package obs
 //
 // This API is an encapsulated and enhanced version of multipart upload, and aims to eliminate large file
 // upload failures caused by poor network conditions and program breakdowns.
-func (obsClient ObsClient) UploadFile(input *UploadFileInput, extensions ...extensionOptions) (output *CompleteMultipartUploadOutput, err error) {
+func (obsClient ObsClient) UploadFile(input *UploadFileInput) (output *CompleteMultipartUploadOutput, err error) {
 	if input.EnableCheckpoint && input.CheckpointFile == "" {
 		input.CheckpointFile = input.UploadFile + ".uploadfile_record"
 	}
@@ -18,7 +18,7 @@ func (obsClient ObsClient) UploadFile(input *UploadFileInput, extensions ...exte
 		input.PartSize = MAX_PART_SIZE
 	}
 
-	output, err = obsClient.resumeUpload(input, extensions)
+	output, err = obsClient.resumeUpload(input)
 	return
 }
 
@@ -26,7 +26,7 @@ func (obsClient ObsClient) UploadFile(input *UploadFileInput, extensions ...exte
 //
 // This API is an encapsulated and enhanced version of partial download, and aims to eliminate large file
 // download failures caused by poor network conditions and program breakdowns.
-func (obsClient ObsClient) DownloadFile(input *DownloadFileInput, extensions ...extensionOptions) (output *GetObjectMetadataOutput, err error) {
+func (obsClient ObsClient) DownloadFile(input *DownloadFileInput) (output *GetObjectMetadataOutput, err error) {
 	if input.DownloadFile == "" {
 		input.DownloadFile = input.Key
 	}
@@ -42,6 +42,6 @@ func (obsClient ObsClient) DownloadFile(input *DownloadFileInput, extensions ...
 		input.PartSize = DEFAULT_PART_SIZE
 	}
 
-	output, err = obsClient.resumeDownload(input, extensions)
+	output, err = obsClient.resumeDownload(input)
 	return
 }
