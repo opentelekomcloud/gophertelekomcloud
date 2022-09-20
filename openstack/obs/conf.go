@@ -118,7 +118,7 @@ func WithRegion(region string) Configurer {
 }
 
 // WithConnectTimeout is a configurer for ObsClient to set timeout period for establishing
-// an http/https connection, in seconds.
+// a http/https connection, in seconds.
 func WithConnectTimeout(connectTimeout int) Configurer {
 	return func(conf *config) {
 		conf.connectTimeout = connectTimeout
@@ -183,6 +183,42 @@ func WithMaxRedirectCount(maxRedirectCount int) Configurer {
 	}
 }
 
+func (conf *config) prepareConfig() {
+	if conf.connectTimeout <= 0 {
+		conf.connectTimeout = DEFAULT_CONNECT_TIMEOUT
+	}
+
+	if conf.socketTimeout <= 0 {
+		conf.socketTimeout = DEFAULT_SOCKET_TIMEOUT
+	}
+
+	conf.finalTimeout = conf.socketTimeout * 10
+
+	if conf.headerTimeout <= 0 {
+		conf.headerTimeout = DEFAULT_HEADER_TIMEOUT
+	}
+
+	if conf.idleConnTimeout < 0 {
+		conf.idleConnTimeout = DEFAULT_IDLE_CONN_TIMEOUT
+	}
+
+	if conf.maxRetryCount < 0 {
+		conf.maxRetryCount = DEFAULT_MAX_RETRY_COUNT
+	}
+
+	if conf.maxConnsPerHost <= 0 {
+		conf.maxConnsPerHost = DEFAULT_MAX_CONN_PER_HOST
+	}
+
+	if conf.maxRedirectCount < 0 {
+		conf.maxRedirectCount = DEFAULT_MAX_REDIRECT_COUNT
+	}
+
+	if conf.pathStyle && conf.signature == SignatureObs {
+		conf.signature = SignatureV2
+	}
+}
+
 func (conf *config) initConfigWithDefault() error {
 	conf.securityProvider.ak = strings.TrimSpace(conf.securityProvider.ak)
 	conf.securityProvider.sk = strings.TrimSpace(conf.securityProvider.sk)
@@ -244,7 +280,7 @@ func (conf *config) initConfigWithDefault() error {
 	}
 
 	conf.prepareConfig()
-	conf.proxyURL = strings.TrimSpace(conf.proxyURL)
+	conf.proxyUrl = strings.TrimSpace(conf.proxyUrl)
 	return nil
 }
 
