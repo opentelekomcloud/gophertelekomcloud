@@ -14,7 +14,6 @@ type ListMultipartUploadsInput struct {
 	Delimiter      string
 	KeyMarker      string
 	UploadIdMarker string
-	EncodingType   string
 }
 
 // ListMultipartUploadsOutput is the result of ListMultipartUploads function
@@ -32,7 +31,6 @@ type ListMultipartUploadsOutput struct {
 	Prefix             string   `xml:"Prefix"`
 	Uploads            []Upload `xml:"Upload"`
 	CommonPrefixes     []string `xml:"CommonPrefixes>Prefix"`
-	EncodingType       string   `xml:"EncodingType,omitempty"`
 }
 
 // AbortMultipartUploadInput is the input parameter of AbortMultipartUpload function
@@ -45,19 +43,17 @@ type AbortMultipartUploadInput struct {
 // InitiateMultipartUploadInput is the input parameter of InitiateMultipartUpload function
 type InitiateMultipartUploadInput struct {
 	ObjectOperationInput
-	ContentType  string
-	EncodingType string
+	ContentType string
 }
 
 // InitiateMultipartUploadOutput is the result of InitiateMultipartUpload function
 type InitiateMultipartUploadOutput struct {
 	BaseModel
-	XMLName      xml.Name `xml:"InitiateMultipartUploadResult"`
-	Bucket       string   `xml:"Bucket"`
-	Key          string   `xml:"Key"`
-	UploadId     string   `xml:"UploadId"`
-	SseHeader    ISseHeader
-	EncodingType string `xml:"EncodingType,omitempty"`
+	XMLName   xml.Name `xml:"InitiateMultipartUploadResult"`
+	Bucket    string   `xml:"Bucket"`
+	Key       string   `xml:"Key"`
+	UploadId  string   `xml:"UploadId"`
+	SseHeader ISseHeader
 }
 
 // UploadPartInput is the input parameter of UploadPart function
@@ -84,25 +80,23 @@ type UploadPartOutput struct {
 
 // CompleteMultipartUploadInput is the input parameter of CompleteMultipartUpload function
 type CompleteMultipartUploadInput struct {
-	Bucket       string   `xml:"-"`
-	Key          string   `xml:"-"`
-	UploadId     string   `xml:"-"`
-	XMLName      xml.Name `xml:"CompleteMultipartUpload"`
-	Parts        []Part   `xml:"Part"`
-	EncodingType string   `xml:"-"`
+	Bucket   string   `xml:"-"`
+	Key      string   `xml:"-"`
+	UploadId string   `xml:"-"`
+	XMLName  xml.Name `xml:"CompleteMultipartUpload"`
+	Parts    []Part   `xml:"Part"`
 }
 
 // CompleteMultipartUploadOutput is the result of CompleteMultipartUpload function
 type CompleteMultipartUploadOutput struct {
 	BaseModel
-	VersionId    string     `xml:"-"`
-	SseHeader    ISseHeader `xml:"-"`
-	XMLName      xml.Name   `xml:"CompleteMultipartUploadResult"`
-	Location     string     `xml:"Location"`
-	Bucket       string     `xml:"Bucket"`
-	Key          string     `xml:"Key"`
-	ETag         string     `xml:"ETag"`
-	EncodingType string     `xml:"EncodingType,omitempty"`
+	VersionId string     `xml:"-"`
+	SseHeader ISseHeader `xml:"-"`
+	XMLName   xml.Name   `xml:"CompleteMultipartUploadResult"`
+	Location  string     `xml:"Location"`
+	Bucket    string     `xml:"Bucket"`
+	Key       string     `xml:"Key"`
+	ETag      string     `xml:"ETag"`
 }
 
 // ListPartsInput is the input parameter of ListParts function
@@ -112,7 +106,6 @@ type ListPartsInput struct {
 	UploadId         string
 	MaxParts         int
 	PartNumberMarker int
-	EncodingType     string
 }
 
 // ListPartsOutput is the result of ListParts function
@@ -130,7 +123,6 @@ type ListPartsOutput struct {
 	Initiator            Initiator        `xml:"Initiator"`
 	Owner                Owner            `xml:"Owner"`
 	Parts                []Part           `xml:"Part"`
-	EncodingType         string           `xml:"EncodingType,omitempty"`
 }
 
 // CopyPartInput is the input parameter of CopyPart function
