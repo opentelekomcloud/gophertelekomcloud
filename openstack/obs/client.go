@@ -8,16 +8,6 @@ import (
 	"strings"
 )
 
-func (obsClient ObsClient) Refresh(ak, sk, securityToken string) {
-	sp := &securityProvider{ak: strings.TrimSpace(ak), sk: strings.TrimSpace(sk), securityToken: strings.TrimSpace(securityToken)}
-	obsClient.conf.securityProvider = sp
-}
-
-func (obsClient ObsClient) Close() {
-	obsClient.conf.transport.CloseIdleConnections()
-	SyncLog()
-}
-
 func (obsClient ObsClient) ListObjects(input *ListObjectsInput) (output *ListObjectsOutput, err error) {
 	if input == nil {
 		return nil, errors.New("ListObjectsInput is nil")
