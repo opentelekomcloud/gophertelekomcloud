@@ -344,9 +344,3 @@ type Part struct {
 	LastModified time.Time `xml:"LastModified,omitempty"`
 	Size         int64     `xml:"Size,omitempty"`
 }
-
-// BucketPayer defines the request payment configuration
-type BucketPayer struct {
-	XMLName xml.Name  `xml:"RequestPaymentConfiguration"`
-	Payer   PayerType `xml:"Payer"`
-}

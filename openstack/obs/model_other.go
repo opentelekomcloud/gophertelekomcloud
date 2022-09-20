@@ -38,15 +38,3 @@ type CreateBrowserBasedSignatureOutput struct {
 	Date         string
 	Signature    string
 }
-
-// SetBucketRequestPaymentInput is the input parameter of SetBucketRequestPayment function
-type SetBucketRequestPaymentInput struct {
-	Bucket string `xml:"-"`
-	BucketPayer
-}
-
-// GetBucketRequestPaymentOutput is the result of GetBucketRequestPayment function
-type GetBucketRequestPaymentOutput struct {
-	BaseModel
-	BucketPayer
-}
