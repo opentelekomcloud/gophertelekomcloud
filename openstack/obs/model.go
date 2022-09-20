@@ -154,23 +154,6 @@ type RestoreObjectInput struct {
 	Tier      RestoreTierType `xml:"GlacierJobParameters>Tier,omitempty"`
 }
 
-type ISseHeader interface {
-	GetEncryption() string
-	GetKey() string
-}
-
-type SseKmsHeader struct {
-	Encryption string
-	Key        string
-	isObs      bool
-}
-
-type SseCHeader struct {
-	Encryption string
-	Key        string
-	KeyMD5     string
-}
-
 type GetObjectMetadataInput struct {
 	Bucket        string
 	Key           string
