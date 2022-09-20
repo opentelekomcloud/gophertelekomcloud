@@ -213,7 +213,7 @@ func (conf *config) initConfigWithDefault() error {
 		urlHolder.scheme = "http"
 		address = conf.endpoint[len("http://"):]
 	} else {
-		urlHolder.scheme = "http"
+		urlHolder.scheme = "https"
 		address = conf.endpoint
 	}
 
@@ -293,57 +293,73 @@ func DummyQueryEscape(s string) string {
 	return s
 }
 
-func (conf *config) formatUrls(bucketName, objectKey string, params map[string]string, escape bool) (requestUrl string, canonicalizedUrl string) {
-
+func (conf *config) prepareBaseURL(bucketName string) (requestURL string, canonicalizedURL string) {
 	urlHolder := conf.urlHolder
 	if conf.cname {
-		requestUrl = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
+		requestURL = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
 		if conf.signature == "v4" {
-			canonicalizedUrl = "/"
+			canonicalizedURL = "/"
 		} else {
-			canonicalizedUrl = "/" + urlHolder.host + "/"
+			canonicalizedURL = "/" + urlHolder.host + "/"
 		}
 	} else {
 		if bucketName == "" {
-			requestUrl = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
-			canonicalizedUrl = "/"
+			requestURL = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
+			canonicalizedURL = "/"
 		} else {
 			if conf.pathStyle {
-				requestUrl = fmt.Sprintf("%s://%s:%d/%s", urlHolder.scheme, urlHolder.host, urlHolder.port, bucketName)
-				canonicalizedUrl = "/" + bucketName
+				requestURL = fmt.Sprintf("%s://%s:%d/%s", urlHolder.scheme, urlHolder.host, urlHolder.port, bucketName)
+				canonicalizedURL = "/" + bucketName
 			} else {
-				requestUrl = fmt.Sprintf("%s://%s.%s:%d", urlHolder.scheme, bucketName, urlHolder.host, urlHolder.port)
+				requestURL = fmt.Sprintf("%s://%s.%s:%d", urlHolder.scheme, bucketName, urlHolder.host, urlHolder.port)
 				if conf.signature == "v2" || conf.signature == "OBS" {
-					canonicalizedUrl = "/" + bucketName + "/"
+					canonicalizedURL = "/" + bucketName + "/"
 				} else {
-					canonicalizedUrl = "/"
+					canonicalizedURL = "/"
 				}
 			}
 		}
 	}
-	var escapeFunc func(s string) string
-	if escape {
-		escapeFunc = url.QueryEscape
-	} else {
-		escapeFunc = DummyQueryEscape
-	}
+	return
+}
 
-	if objectKey != "" {
-		var encodeObjectKey string
-		if escape {
-			tempKey := []rune(objectKey)
-			result := make([]string, 0, len(tempKey))
-			for _, value := range tempKey {
-				if string(value) == "/" {
-					result = append(result, string(value))
+func (conf *config) prepareObjectKey(escape bool, objectKey string, escapeFunc func(s string) string) (encodeObjectKey string) {
+	if escape {
+		tempKey := []rune(objectKey)
+		result := make([]string, 0, len(tempKey))
+		for _, value := range tempKey {
+			if string(value) == "/" {
+				result = append(result, string(value))
+			} else {
+				if string(value) == " " {
+					result = append(result, url.PathEscape(string(value)))
 				} else {
 					result = append(result, url.QueryEscape(string(value)))
 				}
 			}
-			encodeObjectKey = strings.Join(result, "")
-		} else {
-			encodeObjectKey = escapeFunc(objectKey)
 		}
+		encodeObjectKey = strings.Join(result, "")
+	} else {
+		encodeObjectKey = escapeFunc(objectKey)
+	}
+	return
+}
+
+func (conf *config) prepareEscapeFunc(escape bool) (escapeFunc func(s string) string) {
+	if escape {
+		return url.QueryEscape
+	}
+	return DummyQueryEscape
+}
+
+func (conf *config) formatUrls(bucketName, objectKey string, params map[string]string, escape bool) (requestUrl string, canonicalizedUrl string) {
+	requestUrl, canonicalizedUrl = conf.prepareBaseURL(bucketName)
+	var escapeFunc func(s string) string
+	escapeFunc = conf.prepareEscapeFunc(escape)
+
+	if objectKey != "" {
+		var encodeObjectKey string
+		encodeObjectKey = conf.prepareObjectKey(escape, objectKey, escapeFunc)
 		requestUrl += "/" + encodeObjectKey
 		if !strings.HasSuffix(canonicalizedUrl, "/") {
 			canonicalizedUrl += "/"
