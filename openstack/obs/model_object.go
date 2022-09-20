@@ -13,7 +13,6 @@ type ListObjsInput struct {
 	Delimiter     string
 	Origin        string
 	RequestHeader string
-	EncodingType  string
 }
 
 // ListObjectsInput is the input parameter of ListObjects function
@@ -37,7 +36,6 @@ type ListObjectsOutput struct {
 	Contents       []Content `xml:"Contents"`
 	CommonPrefixes []string  `xml:"CommonPrefixes>Prefix"`
 	Location       string    `xml:"-"`
-	EncodingType   string    `xml:"EncodingType,omitempty"`
 }
 
 // ListVersionsInput is the input parameter of ListVersions function
@@ -65,7 +63,6 @@ type ListVersionsOutput struct {
 	DeleteMarkers       []DeleteMarker `xml:"DeleteMarker"`
 	CommonPrefixes      []string       `xml:"CommonPrefixes>Prefix"`
 	Location            string         `xml:"-"`
-	EncodingType        string         `xml:"EncodingType,omitempty"`
 }
 
 // DeleteObjectInput is the input parameter of DeleteObject function
@@ -84,20 +81,18 @@ type DeleteObjectOutput struct {
 
 // DeleteObjectsInput is the input parameter of DeleteObjects function
 type DeleteObjectsInput struct {
-	Bucket       string           `xml:"-"`
-	XMLName      xml.Name         `xml:"Delete"`
-	Quiet        bool             `xml:"Quiet,omitempty"`
-	Objects      []ObjectToDelete `xml:"Object"`
-	EncodingType string           `xml:"EncodingType"`
+	Bucket  string           `xml:"-"`
+	XMLName xml.Name         `xml:"Delete"`
+	Quiet   bool             `xml:"Quiet,omitempty"`
+	Objects []ObjectToDelete `xml:"Object"`
 }
 
 // DeleteObjectsOutput is the result of DeleteObjects function
 type DeleteObjectsOutput struct {
 	BaseModel
-	XMLName      xml.Name  `xml:"DeleteResult"`
-	Deleteds     []Deleted `xml:"Deleted"`
-	Errors       []Error   `xml:"Error"`
-	EncodingType string    `xml:"EncodingType,omitempty"`
+	XMLName  xml.Name  `xml:"DeleteResult"`
+	Deleteds []Deleted `xml:"Deleted"`
+	Errors   []Error   `xml:"Error"`
 }
 
 // SetObjectAclInput is the input parameter of SetObjectAcl function
