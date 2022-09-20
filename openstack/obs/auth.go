@@ -134,7 +134,7 @@ func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params m
 		sk := obsClient.conf.securityProvider.sk
 		var authorization string
 		if isV4 {
-			headers[HEADER_CONTENT_SHA256_AMZ] = []string{EMPTY_CONTENT_SHA256}
+			headers[HEADER_CONTENT_SHA256_AMZ] = []string{UNSIGNED_PAYLOAD}
 			ret := v4Auth(ak, sk, obsClient.conf.region, method, canonicalizedUrl, parsedRequestUrl.RawQuery, headers)
 			authorization = fmt.Sprintf("%s Credential=%s,SignedHeaders=%s,Signature=%s", V4_HASH_PREFIX, ret["Credential"], ret["SignedHeaders"], ret["Signature"])
 		} else {
@@ -185,6 +185,52 @@ func encodeHeaders(headers map[string][]string) {
 	}
 }
 
+func prepareDateHeader(dataHeader, dateCamelHeader string, headers, _headers map[string][]string) {
+	if _, ok := _headers[HEADER_DATE_CAMEL]; ok {
+		if _, ok := _headers[dataHeader]; ok {
+			_headers[HEADER_DATE_CAMEL] = []string{""}
+		} else if _, ok := headers[dateCamelHeader]; ok {
+			_headers[HEADER_DATE_CAMEL] = []string{""}
+		}
+	} else if _, ok := _headers[strings.ToLower(HEADER_DATE_CAMEL)]; ok {
+		if _, ok := _headers[dataHeader]; ok {
+			_headers[HEADER_DATE_CAMEL] = []string{""}
+		} else if _, ok := headers[dateCamelHeader]; ok {
+			_headers[HEADER_DATE_CAMEL] = []string{""}
+		}
+	}
+}
+
+func getStringToSign(keys []string, isObs bool, _headers map[string][]string) []string {
+	stringToSign := make([]string, 0, len(keys))
+	for _, key := range keys {
+		var value string
+		prefixHeader := HEADER_PREFIX
+		prefixMetaHeader := HEADER_PREFIX_META
+		if isObs {
+			prefixHeader = HEADER_PREFIX_OBS
+			prefixMetaHeader = HEADER_PREFIX_META_OBS
+		}
+		if strings.HasPrefix(key, prefixHeader) {
+			if strings.HasPrefix(key, prefixMetaHeader) {
+				for index, v := range _headers[key] {
+					value += strings.TrimSpace(v)
+					if index != len(_headers[key])-1 {
+						value += ","
+					}
+				}
+			} else {
+				value = strings.Join(_headers[key], ",")
+			}
+			value = fmt.Sprintf("%s:%s", key, value)
+		} else {
+			value = strings.Join(_headers[key], ",")
+		}
+		stringToSign = append(stringToSign, value)
+	}
+	return stringToSign
+}
+
 func attachHeaders(headers map[string][]string, isObs bool) string {
 	length := len(headers)
 	_headers := make(map[string][]string, length)
@@ -218,64 +264,20 @@ func attachHeaders(headers map[string][]string, isObs bool) string {
 		dateCamelHeader = PARAM_DATE_OBS_CAMEL
 		dataHeader = HEADER_DATE_OBS
 	}
-	if _, ok := _headers[HEADER_DATE_CAMEL]; ok {
-		if _, ok := _headers[dataHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
-		} else if _, ok := headers[dateCamelHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
-		}
-	} else if _, ok := _headers[strings.ToLower(HEADER_DATE_CAMEL)]; ok {
-		if _, ok := _headers[dataHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
-		} else if _, ok := headers[dateCamelHeader]; ok {
-			_headers[HEADER_DATE_CAMEL] = []string{""}
-		}
-	}
+	prepareDateHeader(dataHeader, dateCamelHeader, headers, _headers)
 
 	sort.Strings(keys)
-
-	stringToSign := make([]string, 0, len(keys))
-	for _, key := range keys {
-		var value string
-		prefixHeader := HEADER_PREFIX
-		prefixMetaHeader := HEADER_PREFIX_META
-		if isObs {
-			prefixHeader = HEADER_PREFIX_OBS
-			prefixMetaHeader = HEADER_PREFIX_META_OBS
-		}
-		if strings.HasPrefix(key, prefixHeader) {
-			if strings.HasPrefix(key, prefixMetaHeader) {
-				for index, v := range _headers[key] {
-					value += strings.TrimSpace(v)
-					if index != len(_headers[key])-1 {
-						value += ","
-					}
-				}
-			} else {
-				value = strings.Join(_headers[key], ",")
-			}
-			value = fmt.Sprintf("%s:%s", key, value)
-		} else {
-			value = strings.Join(_headers[key], ",")
-		}
-		stringToSign = append(stringToSign, value)
-	}
+	stringToSign := getStringToSign(keys, isObs, _headers)
 	return strings.Join(stringToSign, "\n")
-}
-
-func getV2StringToSign(method, canonicalizedUrl string, headers map[string][]string, isObs bool) string {
-	stringToSign := strings.Join([]string{method, "\n", attachHeaders(headers, isObs), "\n", canonicalizedUrl}, "")
-	doLog(LEVEL_DEBUG, "The v2 auth stringToSign:\n%s", stringToSign)
-	return stringToSign
-}
-
-func getScope(region, shortDate string) string {
-	return fmt.Sprintf("%s/%s/%s/%s", shortDate, region, V4_SERVICE_NAME, V4_SERVICE_SUFFIX)
 }
 
 func getCredential(ak, region, shortDate string) (string, string) {
 	scope := getScope(region, shortDate)
 	return fmt.Sprintf("%s/%s", ak, scope), scope
+}
+
+func getScope(region, shortDate string) string {
+	return fmt.Sprintf("%s/%s/%s/%s", shortDate, region, V4_SERVICE_NAME, V4_SERVICE_SUFFIX)
 }
 
 func getSignedHeaders(headers map[string][]string) ([]string, map[string][]string) {
