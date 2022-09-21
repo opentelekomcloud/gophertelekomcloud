@@ -106,14 +106,6 @@ type Grantee struct {
 	URI         GroupUriType `xml:"URI,omitempty"`
 }
 
-type granteeObs struct {
-	XMLName     xml.Name    `xml:"Grantee"`
-	Type        GranteeType `xml:"type,attr"`
-	ID          string      `xml:"ID,omitempty"`
-	DisplayName string      `xml:"DisplayName,omitempty"`
-	Canned      string      `xml:"Canned,omitempty"`
-}
-
 // Grant defines grant properties
 type Grant struct {
 	XMLName    xml.Name       `xml:"Grant"`
