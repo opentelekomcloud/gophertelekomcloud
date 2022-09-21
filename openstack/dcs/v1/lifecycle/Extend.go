@@ -7,11 +7,10 @@ func Extend(client *golangsdk.ServiceClient, id string, opts ExtendOptsBuilder) 
 
 	body, err := opts.ToExtendMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
-	_, r.Err = client.Post(client.ServiceURL("instances", id, "extend"), body, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances", id, "extend"), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

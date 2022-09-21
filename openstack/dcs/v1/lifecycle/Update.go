@@ -7,11 +7,10 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	body, err := opts.ToInstanceUpdateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
-	_, r.Err = client.Put(client.ServiceURL("instances", id), body, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("instances", id), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

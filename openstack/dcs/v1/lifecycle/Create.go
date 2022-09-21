@@ -6,11 +6,10 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 func Create(client *golangsdk.ServiceClient, ops CreateOpsBuilder) (r CreateResult) {
 	b, err := ops.ToInstanceCreateMap()
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
-	_, r.Err = client.Post(client.ServiceURL("instances"), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
