@@ -9,7 +9,7 @@ func Update(client *golangsdk.ServiceClient, instanceID string, opts UpdateOptsB
 		return
 	}
 
-	_, r.Err = client.Put(rootURL(client, instanceID), b, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("instances", instanceID, "configs"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

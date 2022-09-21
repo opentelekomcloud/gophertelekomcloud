@@ -11,7 +11,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		return
 	}
 
-	_, r.Err = client.Put(updateURL(client, id), body, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("instances", id), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

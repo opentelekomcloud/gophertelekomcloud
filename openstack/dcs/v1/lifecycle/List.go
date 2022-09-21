@@ -6,7 +6,7 @@ import (
 )
 
 func List(client *golangsdk.ServiceClient, opts ListDcsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("instances")
 	if opts != nil {
 		query, err := opts.ToDcsListDetailQuery()
 

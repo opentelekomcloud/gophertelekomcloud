@@ -11,7 +11,7 @@ func UpdatePassword(client *golangsdk.ServiceClient, id string, opts UpdatePassw
 		return
 	}
 
-	_, r.Err = client.Put(passwordURL(client, id), body, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("instances", id, "password"), body, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
