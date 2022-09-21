@@ -5,13 +5,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BackupInstanceBody struct {
+type BackupInstanceOpts struct {
 	// Description of DCS instance backup.
 	Remark string `json:"remark,omitempty"`
 }
 
-func BackupInstance(client *golangsdk.ServiceClient) (string, error) {
-	raw, err := client.Post(client.ServiceURL("availableZones"), nil, nil, &golangsdk.RequestOpts{
+func BackupInstance(client *golangsdk.ServiceClient, instancesId string, opts BackupInstanceOpts) (string, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
+	if err != nil {
+		return "", err
+	}
+
+	raw, err := client.Post(client.ServiceURL("instances", instancesId, "backups"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
@@ -19,7 +24,7 @@ func BackupInstance(client *golangsdk.ServiceClient) (string, error) {
 	}
 
 	var res struct {
-		BackupId string `json:"backup_id,omitempty"`
+		BackupId string `json:"backup_id"`
 	}
 	err = extract.Into(raw.Body, &res)
 	return res.BackupId, err
