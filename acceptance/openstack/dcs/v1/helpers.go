@@ -3,13 +3,13 @@ package v1
 import (
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/others"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/availablezones"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/lifecycle"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/products"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -22,7 +22,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		t.Skip("OS_VPC_ID or OS_NETWORK_ID is missing but test requires using existing network")
 	}
 
-	availabilityZone, err := availablezones.Get(client).Extract()
+	availabilityZone, err := others.Get(client).Extract()
 	th.AssertNoErr(t, err)
 	var az string
 	for _, v := range availabilityZone.AvailableZones {
@@ -35,7 +35,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		t.Skip("Availability Zone ID wasn't found")
 	}
 
-	productList, err := products.Get(client).Extract()
+	productList, err := others.Get(client).Extract()
 	th.AssertNoErr(t, err)
 
 	var productID string
