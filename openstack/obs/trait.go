@@ -821,7 +821,7 @@ func (parts partSlice) Swap(i, j int) {
 
 type readerWrapper struct {
 	reader      io.Reader
-	mark        int64
+	mark        int64 // nolint: structcheck
 	totalCount  int64
 	readedCount int64
 }

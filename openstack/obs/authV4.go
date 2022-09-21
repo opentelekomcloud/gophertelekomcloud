@@ -15,7 +15,7 @@ func getV4StringToSign(method, canonicalizedURL, queryURL, scope, longDate, payl
 	canonicalRequest = append(canonicalRequest, "\n")
 
 	for _, signedHeader := range signedHeaders {
-		values, _ := headers[signedHeader]
+		values := headers[signedHeader]
 		for _, value := range values {
 			canonicalRequest = append(canonicalRequest, signedHeader)
 			canonicalRequest = append(canonicalRequest, ":")

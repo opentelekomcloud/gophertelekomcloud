@@ -489,11 +489,8 @@ func getTemporaryAuthorization(ak, sk, method, bucketName, objectKey, signature 
 			algorithm = params[strings.ToLower(PARAM_ALGORITHM_AMZ_CAMEL)]
 		}
 
-		if _, ok := params[PARAM_SIGNATURE_AMZ_CAMEL]; ok {
-			delete(params, PARAM_SIGNATURE_AMZ_CAMEL)
-		} else if _, ok := params[strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL)]; ok {
-			delete(params, strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL))
-		}
+		delete(params, PARAM_SIGNATURE_AMZ_CAMEL)
+		delete(params, strings.ToLower(PARAM_SIGNATURE_AMZ_CAMEL))
 
 		ret = make(map[string]string, 6)
 		ret[PARAM_ALGORITHM_AMZ_CAMEL] = algorithm

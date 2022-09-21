@@ -98,11 +98,6 @@ type GetBucketAclOutput struct {
 	AccessControlPolicy
 }
 
-type getBucketACLOutputObs struct {
-	BaseModel
-	accessControlPolicyObs
-}
-
 // SetBucketAclInput is the input parameter of SetBucketAcl function
 type SetBucketAclInput struct {
 	Bucket string  `xml:"-"`

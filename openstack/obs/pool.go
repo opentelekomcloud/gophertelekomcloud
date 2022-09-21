@@ -160,7 +160,7 @@ type basicPool struct {
 	maxWorkerCnt      int64
 	workerCnt         int64
 	currentWorkingCnt int64
-	isShutDown        int32
+	isShutDown        int32 // nolint: structcheck
 }
 
 // ErrTaskInvalid will be returned if the task is nil

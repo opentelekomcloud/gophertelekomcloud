@@ -390,12 +390,9 @@ func (conf *config) prepareEscapeFunc(escape bool) (escapeFunc func(s string) st
 
 func (conf *config) formatUrls(bucketName, objectKey string, params map[string]string, escape bool) (requestUrl string, canonicalizedUrl string) {
 	requestUrl, canonicalizedUrl = conf.prepareBaseURL(bucketName)
-	var escapeFunc func(s string) string
-	escapeFunc = conf.prepareEscapeFunc(escape)
 
 	if objectKey != "" {
-		var encodeObjectKey string
-		encodeObjectKey = conf.prepareObjectKey(escape, objectKey, escapeFunc)
+		encodeObjectKey := conf.prepareObjectKey(escape, objectKey, conf.prepareEscapeFunc(escape))
 		requestUrl += "/" + encodeObjectKey
 		if !strings.HasSuffix(canonicalizedUrl, "/") {
 			canonicalizedUrl += "/"
