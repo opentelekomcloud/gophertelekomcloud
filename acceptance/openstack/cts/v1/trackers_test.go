@@ -23,25 +23,23 @@ func TestTrackersLifecycle(t *testing.T) {
 	})
 
 	t.Logf("Attempting to create CTSv1 Tracker")
-	createOpts := tracker.CreateOptsWithSMN{
+	f := false
+	createOpts := tracker.CreateOpts{
 		BucketName: bucketName,
-		SimpleMessageNotification: tracker.SimpleMessageNotification{
-			IsSupportSMN:          false,
-			TopicID:               smn.TopicUrn,
-			IsSendAllKeyOperation: false,
+		Lts: tracker.CreateLts{
+			IsLtsEnabled: &f,
 		},
 	}
 	ctsTracker, err := tracker.Create(client, createOpts)
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete CTSv1 Tracker: %s", ctsTracker.TrackerName)
-		err := tracker.Delete(client).ExtractErr()
+		err := tracker.Delete(client)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted CTSv1 Tracker: %s", ctsTracker.TrackerName)
 	})
 	th.AssertNoErr(t, err)
 	t.Logf("Created CTSv1 Tracker: %s", ctsTracker.TrackerName)
-	th.AssertEquals(t, false, ctsTracker.SimpleMessageNotification.IsSupportSMN)
-	th.AssertEquals(t, false, ctsTracker.SimpleMessageNotification.IsSendAllKeyOperation)
+	th.AssertEquals(t, true, ctsTracker.Lts.IsLtsEnabled)
 	th.AssertEquals(t, "enabled", ctsTracker.Status)
 
 	t.Logf("Attempting to update CTSv1 Tracker: %s", ctsTracker.TrackerName)
@@ -55,8 +53,6 @@ func TestTrackersLifecycle(t *testing.T) {
 
 	listOpts := tracker.ListOpts{
 		TrackerName: ctsTracker.TrackerName,
-		BucketName:  bucketName,
-		Status:      updateOpts.Status,
 	}
 	trackerList, err := tracker.List(client, listOpts)
 	th.AssertNoErr(t, err)
