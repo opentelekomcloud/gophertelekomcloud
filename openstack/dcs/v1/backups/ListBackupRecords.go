@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ListBackupRecordsOpts struct {
+type ListBackupOpts struct {
 	// Start sequence number of the backup record that is to be queried. By default, this parameter is set to 1.
 	Start int32 `q:"start"`
 	// Start time of the period to be queried. Format: yyyyMMddHHmmss, for example, 20170718235959.
@@ -17,7 +17,7 @@ type ListBackupRecordsOpts struct {
 	Limit int32 `q:"limit"`
 }
 
-func ListBackupRecords(client *golangsdk.ServiceClient, instancesId string, opts ListBackupRecordsOpts) (*ListBackupRecordsResponse, error) {
+func ListBackupRecords(client *golangsdk.ServiceClient, instancesId string, opts ListBackupOpts) (*ListBackupRecordsResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ type BackupRecordResponse struct {
 	UpdatedAt string `json:"updated_at"`
 	// Backup progress
 	Progress string `json:"progress"`
-	// Error code returned if DCS instance backup fails. For details about error codes
+	// Error code returned if DCS instance backup fails.
 	ErrorCode string `json:"error_code"`
 	// Description of DCS instance backup
 	Remark string `json:"remark"`
