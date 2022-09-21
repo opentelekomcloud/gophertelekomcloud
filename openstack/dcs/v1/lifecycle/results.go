@@ -1,4 +1,4 @@
-package instances
+package lifecycle
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"

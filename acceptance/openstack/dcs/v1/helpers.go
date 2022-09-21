@@ -8,12 +8,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/availablezones"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/instances"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/lifecycle"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/products"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
+func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle.Instance {
 	t.Logf("Attempting to create DCSv1 instance")
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
@@ -50,7 +50,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 
 	defaultSG := openstack.DefaultSecurityGroup(t)
 	dcsName := tools.RandomString("dcs-instance-", 3)
-	createOpts := instances.CreateOps{
+	createOpts := lifecycle.CreateOps{
 		Name:            dcsName,
 		Description:     "some test DCSv1 instance",
 		Engine:          "Redis",
@@ -63,7 +63,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 		ProductID:       productID,
 		SecurityGroupID: defaultSG,
 	}
-	dcsInstanceCreate, err := instances.Create(client, createOpts).Extract()
+	dcsInstanceCreate, err := lifecycle.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	err = waitForInstanceAvailable(client, 600, dcsInstanceCreate.InstanceID)
@@ -71,7 +71,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 
 	t.Logf("DCSv1 instance successfully created: %s", dcsInstanceCreate.InstanceID)
 
-	dcsInstance, err := instances.Get(client, dcsInstanceCreate.InstanceID).Extract()
+	dcsInstance, err := lifecycle.Get(client, dcsInstanceCreate.InstanceID).Extract()
 	th.AssertNoErr(t, err)
 
 	return dcsInstance
@@ -80,7 +80,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instances
 func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
 	t.Logf("Attempting to delete DCSv1 instance: %s", instanceID)
 
-	err := instances.Delete(client, instanceID).ExtractErr()
+	err := lifecycle.Delete(client, instanceID).ExtractErr()
 	th.AssertNoErr(t, err)
 
 	err = waitForInstanceDeleted(client, 600, instanceID)
@@ -92,7 +92,7 @@ func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID
 
 func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		dcsInstances, err := instances.Get(client, instanceID).Extract()
+		dcsInstances, err := lifecycle.Get(client, instanceID).Extract()
 		if err != nil {
 			return false, err
 		}
@@ -105,7 +105,7 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 
 func waitForInstanceDeleted(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := instances.Get(client, instanceID).Extract()
+		_, err := lifecycle.Get(client, instanceID).Extract()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
