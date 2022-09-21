@@ -4,13 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-func List(client *golangsdk.ServiceClient, instanceID string) (r ListResult) {
-	_, r.Err = client.Get(rootURL(client, instanceID), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 type UpdateOptsBuilder interface {
 	ToConfigUpdateMap() (map[string]interface{}, error)
 }
@@ -27,17 +20,4 @@ type RedisConfig struct {
 
 func (opts UpdateOpts) ToConfigUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
-}
-
-func Update(client *golangsdk.ServiceClient, instanceID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToConfigUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Put(rootURL(client, instanceID), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
-	})
-	return
 }
