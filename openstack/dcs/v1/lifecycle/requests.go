@@ -4,41 +4,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-// CreateOpsBuilder is used for creating instance parameters.
-// any struct providing the parameters should implement this interface
-type CreateOpsBuilder interface {
-	ToInstanceCreateMap() (map[string]interface{}, error)
-}
-
-// CreateOps is a struct that contains all the parameters.
-
-// InstanceBackupPolicy for dcs
-
-// PeriodicalBackupPlan for dcs
-
-type ListDcsInstanceOpts struct {
-	Id            string `q:"id"`
-	Name          string `q:"name"`
-	Type          string `q:"type"`
-	DataStoreType string `q:"datastore_type"`
-	VpcId         string `q:"vpc_id"`
-	SubnetId      string `q:"subnet_id"`
-	Offset        int    `q:"offset"`
-	Limit         int    `q:"limit"`
-}
-
-type ListDcsBuilder interface {
-	ToDcsListDetailQuery() (string, error)
-}
-
-func (opts ListDcsInstanceOpts) ToDcsListDetailQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return "", err
-	}
-	return q.String(), err
-}
-
 // ToInstanceCreateMap is used for type convert
 func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(ops, "")

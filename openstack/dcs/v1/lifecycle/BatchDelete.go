@@ -11,7 +11,7 @@ type BatchDeleteOpts struct {
 	// true: all instances that fail to be created are deleted. In this case, the instances parameter in the request can be empty.
 	// false or other values: The DCS instances specified by the instances parameter in the API request will be deleted.
 	AllFailure *bool `q:"allFailure"`
-	Body       *BatchDeleteBody
+	Body       BatchDeleteBody
 }
 
 type BatchDeleteBody struct {

@@ -11,8 +11,10 @@ type InstanceCreate struct {
 }
 
 type ListDcsResponse struct {
-	Instances  []Instance `json:"instances"`
-	TotalCount int        `json:"instance_num"`
+	// Array of DCS instance details.
+	Instances []Instance `json:"instances"`
+	// Number of DCS instances.
+	TotalCount int `json:"instance_num"`
 }
 
 // UpdateResult is a struct from which can get the result of update method
