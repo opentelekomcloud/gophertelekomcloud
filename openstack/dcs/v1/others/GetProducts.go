@@ -10,6 +10,9 @@ import (
 func GetProducts(client *golangsdk.ServiceClient) ([]Product, error) {
 	// remove projectId from endpoint
 	raw, err := client.Get(strings.Replace(client.ServiceURL("products"), "/"+client.ProjectID, "", -1), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res []Product
 	err = extract.IntoSlicePtr(raw.Body, &res, "products")
