@@ -9,11 +9,6 @@ func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(ops, "")
 }
 
-// UpdateOptsBuilder is an interface which can build the map paramter of update function
-type UpdateOptsBuilder interface {
-	ToInstanceUpdateMap() (map[string]interface{}, error)
-}
-
 // ToInstanceUpdateMap is used for type convert
 func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
@@ -42,26 +37,5 @@ type UpdatePasswordOpts struct {
 
 // ToPasswordUpdateMap is used for type convert
 func (opts UpdatePasswordOpts) ToPasswordUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// ExtendOptsBuilder is an interface which can build the map paramter of extend function
-type ExtendOptsBuilder interface {
-	ToExtendMap() (map[string]interface{}, error)
-}
-
-// ExtendOpts is a struct which represents the parameters of extend function
-type ExtendOpts struct {
-	// New specifications (memory space) of the DCS instance.
-	// The new specification value to which the DCS instance
-	// will be scaled up must be greater than the current specification value.
-	// Unit: GB.
-	NewCapacity int `json:"new_capacity" required:"true"`
-	// New order ID.
-	OrderID string `json:"order_id,omitempty"`
-}
-
-// ToExtendMap is used for type convert
-func (opts ExtendOpts) ToExtendMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
