@@ -48,3 +48,10 @@ func List(client *golangsdk.ServiceClient, opts ListDcsInstanceOpts) (*ListDcsRe
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
+
+type ListDcsResponse struct {
+	// Array of DCS instance details.
+	Instances []Instance `json:"instances"`
+	// Number of DCS instances.
+	TotalCount int `json:"instance_num"`
+}

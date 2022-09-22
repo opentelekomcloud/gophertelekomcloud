@@ -139,8 +139,8 @@ type PeriodicalBackupPlan struct {
 }
 
 // Create an instance with given parameters.
-func Create(client *golangsdk.ServiceClient, ops CreateOps) (string, error) {
-	b, err := ops.ToInstanceCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOps) (string, error) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}
