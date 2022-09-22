@@ -14,29 +14,6 @@ type UpdateOptsBuilder interface {
 	ToInstanceUpdateMap() (map[string]interface{}, error)
 }
 
-// UpdateOpts is a struct which represents the parameters of update function
-type UpdateOpts struct {
-	// DCS instance name.
-	// An instance name is a string of 4–64 characters
-	// that contain letters, digits, underscores (_), and hyphens (-).
-	// An instance name must start with letters.
-	Name string `json:"name,omitempty"`
-	// Brief description of the DCS instance.
-	// A brief description supports up to 1024 characters.
-	Description *string `json:"description,omitempty"`
-	// Backup policy.
-	// This parameter is available for master/standby DCS instances.
-	InstanceBackupPolicy *InstanceBackupPolicy `json:"instance_backup_policy,omitempty"`
-	// Time at which the maintenance time window starts.
-	// Format: HH:mm:ss
-	MaintainBegin string `json:"maintain_begin,omitempty"`
-	// Time at which the maintenance time window ends.
-	// Format: HH:mm:ss
-	MaintainEnd string `json:"maintain_end,omitempty"`
-	// Security group ID.
-	SecurityGroupID string `json:"security_group_id,omitempty"`
-}
-
 // ToInstanceUpdateMap is used for type convert
 func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
