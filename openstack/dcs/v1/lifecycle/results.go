@@ -10,23 +10,6 @@ type InstanceCreate struct {
 	InstanceID string `json:"instance_id"`
 }
 
-// CreateResult is a struct that contains all the return parameters of creation
-type CreateResult struct {
-	golangsdk.Result
-}
-
-// Extract from CreateResult
-func (r CreateResult) Extract() (*InstanceCreate, error) {
-	var s InstanceCreate
-	err := r.Result.ExtractInto(&s)
-	return &s, err
-}
-
-// DeleteResult is a struct which contains the result of deletion
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
 type ListDcsResponse struct {
 	Instances  []Instance `json:"instances"`
 	TotalCount int        `json:"instance_num"`
