@@ -47,8 +47,6 @@ type ListNumberOfInstancesInDifferentStatusResponse struct {
 	RunningCount int32 `json:"running_count"`
 	// Number of abnormal instances.
 	ErrorCount int32 `json:"error_count"`
-	// 已冻结的实例数。
-	FrozenCount int32 `json:"frozen_count"`
 	// Number of instances that fail to be created.
 	CreatefailedCount int32 `json:"createfailed_count"`
 	// Number of instances that are being restarted.
