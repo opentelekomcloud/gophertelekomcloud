@@ -11,95 +11,10 @@ type CreateOpsBuilder interface {
 }
 
 // CreateOps is a struct that contains all the parameters.
-type CreateOps struct {
-	// DCS instance name.
-	// An instance name is a string of 4–64 characters
-	// that contain letters, digits, underscores (_), and hyphens (-).
-	// An instance name must start with letters.
-	Name string `json:"name" required:"true"`
-	// Brief description of the DCS instance.
-	// A brief description supports up to 1024 characters.
-	Description string `json:"description,omitempty"`
-	// Cache engine, which is Redis.
-	Engine string `json:"engine" required:"true"`
-	// Cache engine version, which is 3.0.7.
-	EngineVersion string `json:"engine_version"`
-	// Cache capacity. Unit: GB.
-	//
-	// For a single-node or master/standby DCS Redis 3.0 instance,
-	// the value can be 2, 4, 8, 16, 32, or 64.
-	// For a Proxy Cluster DCS Redis 3.0 instance,
-	// the value can be 64, 128, 256, 512, or 1024.
-
-	// For a single-node or master/standby DCS Redis 4.0 or 5.0 instance,
-	// the value can be 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 24, 48, or 64.
-	// For a Redis Cluster DCS Redis 4.0 or 5.0 instance,
-	// the value can be 4, 8, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, or 1024.
-	Capacity float64 `json:"capacity" required:"true"`
-	// Indicate if no password visit cache instance is allowed.
-	NoPasswordAccess string `json:"no_password_access,omitempty"`
-	// Indicates the password of an instance.
-	// An instance password must meet the following complexity requirements:
-	// Password of a DCS instance.
-	// The password of a DCS Redis instance must meet
-	// the following complexity requirements:
-	// A string of 6–32 characters.
-	// Contains at least two of the following character types:
-	// Uppercase letters
-	// Lowercase letters
-	// Digits
-	// Special characters, such as `~!@#$%^&*()-_=+\|[{}]:'",<.>/?
-	Password string `json:"password,omitempty"`
-	// When NoPasswordAccess is flase, the AccessUser is enabled.
-	AccessUser string `json:"access_user,omitempty"`
-	// Tenant's VPC ID.
-	VPCID string `json:"vpc_id" required:"true"`
-	// Tenant's security group ID.
-	SecurityGroupID string `json:"security_group_id,omitempty"`
-	// Subnet ID.
-	SubnetID string `json:"subnet_id" required:"true"`
-	// IDs of the AZs where cache nodes reside.
-	// In the current version, only one AZ ID can be set in the request.
-	AvailableZones []string `json:"available_zones" required:"true"`
-	// Product ID used to differentiate DCS instance types.
-	ProductID string `json:"product_id" required:"true"`
-	// Backup policy.
-	// This parameter is available for master/standby DCS instances.
-	InstanceBackupPolicy *InstanceBackupPolicy `json:"instance_backup_policy,omitempty"`
-	// Indicates the time at which a maintenance time window starts.
-	// Format: HH:mm:ss
-	MaintainBegin string `json:"maintain_begin,omitempty"`
-	// Indicates the time at which a maintenance time window ends.
-	// Format: HH:mm:ss
-	MaintainEnd string `json:"maintain_end,omitempty"`
-}
 
 // InstanceBackupPolicy for dcs
-type InstanceBackupPolicy struct {
-	// Retention time.
-	// Unit: day.
-	// Range: 1–7.
-	SaveDays int `json:"save_days" required:"true"`
-	// Backup type. Options:
-	// auto: automatic backup.
-	// manual: manual backup.
-	BackupType string `json:"backup_type" required:"true"`
-	// Backup plan.
-	PeriodicalBackupPlan PeriodicalBackupPlan `json:"periodical_backup_plan" required:"true"`
-}
 
 // PeriodicalBackupPlan for dcs
-type PeriodicalBackupPlan struct {
-	// Time at which backup starts.
-	// "00:00-01:00" indicates that backup starts at 00:00:00.
-	BeginAt string `json:"begin_at" required:"true"`
-	// Interval at which backup is performed.
-	// Currently, only weekly backup is supported.
-	PeriodType string `json:"period_type" required:"true"`
-	// Day in a week on which backup starts.
-	// Range: 1–7. Where: 1 indicates Monday; 7 indicates Sunday.
-	BackupAt []int `json:"backup_at" required:"true"`
-}
 
 type ListDcsInstanceOpts struct {
 	Id            string `q:"id"`
