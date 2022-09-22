@@ -50,19 +50,6 @@ func (r GetResult1) Extract() (*GetResponse1, error) {
 	return &s, err
 }
 
-// GetResponse response
-type GetResponse2 struct {
-	MaintainWindows []MaintainWindow `json:"maintain_windows"`
-}
-
-// MaintainWindow for dcs
-type MaintainWindow struct {
-	ID      int    `json:"seq"`
-	Begin   string `json:"begin"`
-	End     string `json:"end"`
-	Default bool   `json:"default"`
-}
-
 // GetResult contains the body of getting detailed
 type GetResult3 struct {
 	golangsdk.Result

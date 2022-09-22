@@ -4,11 +4,28 @@ import (
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// Get maintain windows
-func ListMaintenanceWindows(client *golangsdk.ServiceClient) (r GetResult3) {
-	// remove projectid from endpoint
+func ListMaintenanceWindows(client *golangsdk.ServiceClient) ([]MaintainWindow, error) {
+	// remove projectId from endpoint
 	raw, err := client.Get(strings.Replace(client.ServiceURL("instances/maintain-windows"), "/"+client.ProjectID, "", -1), nil, nil)
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var res []MaintainWindow
+	err = extract.IntoSlicePtr(raw.Body, &res, "maintain_windows")
+	return res, err
+}
+
+type MaintainWindow struct {
+	// Start time of the maintenance time window.
+	ID int `json:"seq"`
+	// Start time of the maintenance time window.
+	Begin string `json:"begin"`
+	// End time of the maintenance time window.
+	End string `json:"end"`
+	// An indicator of whether the maintenance time window is set to the default time segment.
+	Default bool `json:"default"`
 }
