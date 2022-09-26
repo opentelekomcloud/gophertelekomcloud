@@ -86,7 +86,8 @@ func CreateGaussMySqlInstance(client *golangsdk.ServiceClient, opts MysqlInstanc
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("snapshots"), b, nil, nil)
+	// POST https://{Endpoint}/mysql/v3/{project_id}/instances
+	raw, err := client.Post(client.ServiceURL("instances"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}
