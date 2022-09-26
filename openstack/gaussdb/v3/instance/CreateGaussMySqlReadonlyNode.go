@@ -26,7 +26,7 @@ func CreateGaussMySqlReadonlyNode(client *golangsdk.ServiceClient, opts MysqlCre
 	}
 
 	// POST https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/nodes/enlarge
-	raw, err := client.Post(client.ServiceURL("instances"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "nodes", "enlarge"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}

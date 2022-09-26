@@ -7,7 +7,7 @@ import (
 
 type MysqlResetPasswordOpts struct {
 	// Instance ID, which is compliant with the UUID format.
-	InstanceId string `json:"instance_id"`
+	InstanceId string
 	// Database password.
 	// Value range:
 	// The password consists of 8 to 32 characters and contains at least three types of the following:
@@ -24,6 +24,6 @@ func ResetGaussMySqlPassword(client *golangsdk.ServiceClient, opts MysqlResetPas
 	}
 
 	// POST https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/password
-	_, err = client.Post(client.ServiceURL("instances", opts.InstanceId), b, nil, nil)
+	_, err = client.Post(client.ServiceURL("instances", opts.InstanceId, "password"), b, nil, nil)
 	return err
 }
