@@ -1,6 +1,8 @@
 package instance
 
 import (
+	"net/http"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -12,6 +14,10 @@ func DeleteGaussMySqlInstance(client *golangsdk.ServiceClient, instanceId string
 	raw, err := client.Delete(client.ServiceURL("instances", instanceId), &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	return extraJob(err, raw)
+}
+
+func extraJob(err error, raw *http.Response) (string, error) {
 	if err != nil {
 		return "", err
 	}
