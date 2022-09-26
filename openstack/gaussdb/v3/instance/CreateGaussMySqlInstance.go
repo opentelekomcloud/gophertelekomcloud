@@ -81,7 +81,7 @@ type MysqlTags struct {
 }
 
 func CreateGaussMySqlInstance(client *golangsdk.ServiceClient, opts MysqlInstanceOpts) (*CreateGaussMySqlInstanceResponse, error) {
-	b, err := build.RequestBody(opts, "snapshot")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

@@ -20,7 +20,7 @@ type MysqlCreateReadonlyNodeOpts struct {
 }
 
 func CreateGaussMySqlReadonlyNode(client *golangsdk.ServiceClient, opts MysqlCreateReadonlyNodeOpts) (*CreateGaussMySqlReadonlyNodeResponse, error) {
-	b, err := build.RequestBody(opts, "snapshot")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
