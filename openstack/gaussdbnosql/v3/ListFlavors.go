@@ -9,14 +9,14 @@ type ListFlavorsOpts struct {
 	// Region where the instance is deployed.
 	// Valid value:
 	// The value cannot be empty. For details about how to obtain this parameter value, see Regions and Endpoints.
-	Region string `json:"region"`
+	Region string `q:"region"`
 	// engine_name	No	Database type
 	// 	If the value is cassandra, the GaussDB(for Cassandra) DB instance specifications are queried,
 	// 	If this parameter is not transferred, the default value is cassandra.
-	EngineName string `json:"engine_name,omitempty"`
+	EngineName string `q:"engine_name,omitempty"`
 }
 
-func ListFlavors(client *golangsdk.ServiceClient, opts ListFlavorsOpts) ([]string, error) {
+func ListFlavors(client *golangsdk.ServiceClient, opts ListFlavorsOpts) (*ListFlavorsResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -28,9 +28,9 @@ func ListFlavors(client *golangsdk.ServiceClient, opts ListFlavorsOpts) ([]strin
 		return nil, err
 	}
 
-	var res []string
-	err = extract.IntoSlicePtr(raw.Body, &res, "versions")
-	return res, err
+	var res ListFlavorsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type ListFlavorsResponse struct {
