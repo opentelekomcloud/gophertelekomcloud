@@ -63,5 +63,5 @@ type ListFlavorsResult struct {
 	// 	normal: indicates that the specifications are on sale.
 	// 	unsupported: not supported.
 	// 	sellout: indicates that the instance specifications are sold out.
-	AzStatus *interface{} `json:"az_status"`
+	AzStatus string `json:"az_status"`
 }
