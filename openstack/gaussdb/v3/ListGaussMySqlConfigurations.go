@@ -22,7 +22,7 @@ func ListGaussMySqlConfigurations(client *golangsdk.ServiceClient, opts ListGaus
 		return nil, err
 	}
 
-	// https://{Endpoint}/mysql/v3/{project_id}/configurations
+	// GET https://{Endpoint}/mysql/v3/{project_id}/configurations
 	raw, err := client.Get(client.ServiceURL("configurations")+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
