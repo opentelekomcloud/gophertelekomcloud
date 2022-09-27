@@ -13,19 +13,23 @@ import (
 /*
 BuildRequestBody builds a map[string]interface from the given `struct`. If
 parent is not an empty string, the final map[string]interface returned will
-encapsulate the built one. For example:
+encapsulate the built one.
 
-  disk := 1
-  createOpts := flavors.CreateOpts{
-    ID:         "1",
-    Name:       "m1.tiny",
-    Disk:       &disk,
-    RAM:        512,
-    VCPUs:      1,
-    RxTxFactor: 1.0,
-  }
+Deprecated: use `internal/params.BuildRequestBody` instead.
 
-  body, err := golangsdk.BuildRequestBody(createOpts, "flavor")
+For example:
+
+	disk := 1
+	createOpts := flavors.CreateOpts{
+	  ID:         "1",
+	  Name:       "m1.tiny",
+	  Disk:       &disk,
+	  RAM:        512,
+	  VCPUs:      1,
+	  RxTxFactor: 1.0,
+	}
+
+	body, err := golangsdk.BuildRequestBody(createOpts, "flavor")
 
 The above example can be run as-is, however it is recommended to look at how
 BuildRequestBody is used within Gophercloud to more fully understand how it
@@ -172,14 +176,18 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 // EnabledState is a convenience type, mostly used in Create and Update
 // operations. Because the zero value of a bool is FALSE, we need to use a
 // pointer instead to indicate zero-ness.
+// Deprecated, use pointerto.Bool instead
 type EnabledState *bool
 
 // Convenience vars for EnabledState values.
+// Deprecated: use `pointerto.Bool` instead.
 var (
 	iTrue  = true
 	iFalse = false
 
-	Enabled  EnabledState = &iTrue
+	// Enabled is a pointer to `true`.
+	Enabled EnabledState = &iTrue
+	// Disabled is a pointer to `false`.
 	Disabled EnabledState = &iFalse
 )
 
@@ -196,6 +204,7 @@ const (
 
 // IntToPointer is a function for converting integers into integer pointers.
 // This is useful when passing in options to operations.
+// Deprecated: use `pointerto.Int` instead.
 func IntToPointer(i int) *int {
 	return &i
 }
@@ -208,6 +217,8 @@ It takes a string that might be a zero value and returns either a pointer to its
 address or nil. This is useful for allowing users to conveniently omit values
 from an options struct by leaving them zeroed, but still pass nil to the JSON
 serializer so they'll be omitted from the request body.
+
+Deprecated
 */
 func MaybeString(original string) *string {
 	if original != "" {
@@ -223,6 +234,8 @@ resource packages.
 Like MaybeString, it accepts an int that may or may not be a zero value, and
 returns either a pointer to its address or nil. It's intended to hint that the
 JSON serializer should omit its field.
+
+Deprecated
 */
 func MaybeInt(original int) *int {
 	if original != 0 {
@@ -231,19 +244,9 @@ func MaybeInt(original int) *int {
 	return nil
 }
 
-/*
-func isUnderlyingStructZero(v reflect.Value) bool {
-	switch v.Kind() {
-	case reflect.Ptr:
-		return isUnderlyingStructZero(v.Elem())
-	default:
-		return isZero(v)
-	}
-}
-*/
-
 var t time.Time
 
+// isZero checks if given argument has default type value.
 func isZero(v reflect.Value) bool {
 	// fmt.Printf("\n\nchecking isZero for value: %+v\n", v)
 	switch v.Kind() {
@@ -379,22 +382,22 @@ It accepts an arbitrary tagged structure and produces a string map that's
 suitable for use as the HTTP headers of an outgoing request. Field names are
 mapped to header names based in "h" tags.
 
-  type struct Something {
-    Bar string `h:"x_bar"`
-    Baz int    `h:"lorem_ipsum"`
-  }
+	type struct Something {
+	  Bar string `h:"x_bar"`
+	  Baz int    `h:"lorem_ipsum"`
+	}
 
-  instance := Something{
-    Bar: "AAA",
-    Baz: "BBB",
-  }
+	instance := Something{
+	  Bar: "AAA",
+	  Baz: "BBB",
+	}
 
 will be converted into:
 
-  map[string]string{
-    "x_bar": "AAA",
-    "lorem_ipsum": "BBB",
-  }
+	map[string]string{
+	  "x_bar": "AAA",
+	  "lorem_ipsum": "BBB",
+	}
 
 Untagged fields and fields left at their zero values are skipped. Integers,
 booleans and string values are supported.
