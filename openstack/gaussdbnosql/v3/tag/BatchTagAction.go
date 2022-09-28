@@ -37,4 +37,5 @@ func BatchTagAction(client *golangsdk.ServiceClient, opts BatchTagActionOpts) (e
 
 	// POST https://{Endpoint}/v3/{project_id}/instances/{instance_id}/tags/action
 	_, err = client.Post(client.ServiceURL("instances", opts.InstanceId, "tags", "action"), b, nil, nil)
+	return
 }
