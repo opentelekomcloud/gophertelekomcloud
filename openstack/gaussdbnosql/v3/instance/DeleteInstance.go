@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func Delete(client *golangsdk.ServiceClient, instanceId string) (string, error) {
+func DeleteInstance(client *golangsdk.ServiceClient, instanceId string) (string, error) {
 	// DELETE https://{Endpoint}/v3/{project_id}/instances/{instance_id}
 	raw, err := client.Delete(client.ServiceURL("instances", instanceId), nil)
 	if err != nil {
