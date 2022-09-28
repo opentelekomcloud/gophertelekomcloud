@@ -5,13 +5,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-type ExpandInstanceNodeRequest struct {
+type ExpandInstanceNodeOpts struct {
 	InstanceId string
 	// Number of new nodes
 	Num int32 `json:"num"`
 }
 
-func ExpandInstanceNode(client *golangsdk.ServiceClient, opts ResizeInstanceVolumeOpts) (string, error) {
+func ExpandInstanceNode(client *golangsdk.ServiceClient, opts ExpandInstanceNodeOpts) (string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
