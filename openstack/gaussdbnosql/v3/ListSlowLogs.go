@@ -34,7 +34,7 @@ func ListSlowLogs(client *golangsdk.ServiceClient, opts ListSlowLogsOpts) (*List
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/slowlog
-	raw, err := client.Get(client.ServiceURL("instances")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL("instances", opts.InstanceId, "slowlog")+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
