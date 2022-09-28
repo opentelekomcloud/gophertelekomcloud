@@ -24,7 +24,7 @@ type ShrinkInstanceNodeOpts struct {
 	NodeList []string `json:"node_list,omitempty"`
 }
 
-func ShrinkInstanceNode(client *golangsdk.ServiceClient, opts ExpandInstanceNodeOpts) (string, error) {
+func ShrinkInstanceNode(client *golangsdk.ServiceClient, opts ShrinkInstanceNodeOpts) (string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
