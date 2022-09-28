@@ -15,7 +15,7 @@ type ResizeInstanceOption struct {
 	TargetSpecCode string `json:"target_spec_code"`
 }
 
-func ResizeInstance(client *golangsdk.ServiceClient, opts ExpandInstanceNodeOpts) (string, error) {
+func ResizeInstance(client *golangsdk.ServiceClient, opts ResizeInstanceOpts) (string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
