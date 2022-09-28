@@ -36,8 +36,7 @@ func CreateGaussMySqlBackup(client *golangsdk.ServiceClient, opts MysqlCreateBac
 
 type CreateGaussMySqlBackupResponse struct {
 	Backup Backup `json:"backup"`
-	// 任务ID。
-	JobId string `json:"job_id"`
+	JobId  string `json:"job_id"`
 }
 
 type Backup struct {
@@ -52,14 +51,14 @@ type Backup struct {
 	BeginTime string `json:"begin_time"`
 	// Backup status
 	// Valid value:
-	// 	BUILDING: Backup in progress
-	// 	COMPLETED: Backup completed
-	// 	FAILED: Backup failed
-	// 	AVAILABLE: Backup available
+	// BUILDING: Backup in progress
+	// COMPLETED: Backup completed
+	// FAILED: Backup failed
+	// AVAILABLE: Backup available
 	Status string `json:"status"`
 	// Backup type
 	// Valid value:
-	// 	manual: manual full backup
+	// manual: manual full backup
 	Type string `json:"type"`
 	// Instance ID
 	InstanceId string `json:"instance_id"`

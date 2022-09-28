@@ -12,8 +12,8 @@ type MysqlChangeSpecificationOpts struct {
 	// Specification change information.
 	ResizeFlavor MysqlResizeFlavor `json:"resize_flavor"`
 	// Whether the order will be automatically paid after yearly/monthly instances are changed.
-	// 	true: The order will be automatically paid from your account. The default value is true.
-	// 	false: The order will be manually paid.
+	// true: The order will be automatically paid from your account. The default value is true.
+	// false: The order will be manually paid.
 	IsAutoPay string `json:"is_auto_pay,omitempty"`
 }
 

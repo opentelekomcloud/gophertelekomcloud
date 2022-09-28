@@ -14,8 +14,8 @@ type MysqlCreateReadonlyNodeOpts struct {
 	Priorities []int32 `json:"priorities"`
 	// Whether the order will be automatically paid after yearly/monthly instances are created.
 	// This parameter does not affect the payment method of automatic renewal.
-	// 	true: The order will be automatically paid from your account. The default value is true.
-	// 	false: The order will be manually paid.
+	// true: The order will be automatically paid from your account. The default value is true.
+	// false: The order will be manually paid.
 	IsAutoPay string `json:"is_auto_pay,omitempty"`
 }
 
