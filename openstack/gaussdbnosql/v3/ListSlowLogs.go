@@ -16,7 +16,7 @@ type ListSlowLogsOpts struct {
 	NodeId string `q:"node_id,omitempty"`
 	// Statement type. If this parameter is left empty, all statement types are queried.
 	// You can also specify the following log type:
-	// 	SELECT
+	// SELECT
 	Type string `q:"type,omitempty"`
 	// Index offset. Its value range is [0, 1999].
 	// If offset is set to N, the resource query starts from the N+1 piece of data. The value is 0 by default,

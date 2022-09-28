@@ -11,8 +11,8 @@ type ListFlavorsOpts struct {
 	// The value cannot be empty. For details about how to obtain this parameter value, see Regions and Endpoints.
 	Region string `q:"region"`
 	// engine_name	No	Database type
-	// 	If the value is cassandra, the GaussDB(for Cassandra) DB instance specifications are queried,
-	// 	If this parameter is not transferred, the default value is cassandra.
+	// If the value is cassandra, the GaussDB(for Cassandra) DB instance specifications are queried,
+	// If this parameter is not transferred, the default value is cassandra.
 	EngineName string `q:"engine_name,omitempty"`
 }
 
@@ -52,16 +52,16 @@ type ListFlavorsResult struct {
 	// Resource specification code
 	// Example: geminidb.cassandra.8xlarge.4
 	// NOTE
-	// 	geminidb.cassandra indicates GaussDB(for Cassandra).
-	// 	8xlarge.4 indicates the single-node specifications.
+	// geminidb.cassandra indicates GaussDB(for Cassandra).
+	// 8xlarge.4 indicates the single-node specifications.
 	SpecCode string `json:"spec_code"`
 	// ID of the AZ that supports this specification
 	// NOTE
-	// 	This field is discarded and cannot be used.
+	// This field is discarded and cannot be used.
 	AvailabilityZone []string `json:"availability_zone"`
 	// Status of specifications in an AZ. The value can be:
-	// 	normal: indicates that the specifications are on sale.
-	// 	unsupported: not supported.
-	// 	sellout: indicates that the instance specifications are sold out.
+	// normal: indicates that the specifications are on sale.
+	// unsupported: not supported.
+	// sellout: indicates that the instance specifications are sold out.
 	AzStatus string `json:"az_status"`
 }

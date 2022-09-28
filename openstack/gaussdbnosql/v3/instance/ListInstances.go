@@ -23,12 +23,12 @@ type ListInstancesOpts struct {
 	// If this parameter is not transferred, all DB instances are queried.
 	DatastoreType string `q:"datastore_type,omitempty"`
 	// VPC ID. To obtain this parameter value, use either of the following methods:
-	// 	Method 1: Log in to VPC console and view the VPC ID on the VPC details page.
-	// 	Method 2: See the "Querying VPCs" section in the Virtual Private Cloud API Reference.
+	// Method 1: Log in to VPC console and view the VPC ID on the VPC details page.
+	// Method 2: See the "Querying VPCs" section in the Virtual Private Cloud API Reference.
 	VpcId string `q:"vpc_id,omitempty"`
 	// Network ID of the subnet. To obtain this parameter value, use either of the following methods:
-	// 	Method 1: Log in to VPC console and click the target subnet on the Subnets page. You can view the subnet ID on the displayed page.
-	// 	Method 2: See the "Querying Subnets" section in the Virtual Private Cloud API Reference.
+	// Method 1: Log in to VPC console and click the target subnet on the Subnets page. You can view the subnet ID on the displayed page.
+	// Method 2: See the "Querying Subnets" section in the Virtual Private Cloud API Reference.
 	SubnetId string `q:"subnet_id,omitempty"`
 	// Index position. The query starts from the next instance creation time indexed by this parameter under a specified project.
 	// If offset is set to N, the resource query starts from the N+1 piece of data
@@ -69,12 +69,12 @@ type ListInstancesResult struct {
 	Name string `json:"name"`
 	// Instance status
 	// Valid value:
-	// 	normal: indicates that the instance is running properly.
-	// 	abnormal: indicates that the instance is abnormal.
-	// 	creating: indicates that the instance is being created.
-	// 	data_disk_full: indicates that the instance disk is full.
-	// 	createfail: indicates that the instance failed to be created.
-	// 	enlargefail: indicates that nodes failed to be added to the instance.
+	// normal: indicates that the instance is running properly.
+	// abnormal: indicates that the instance is abnormal.
+	// creating: indicates that the instance is being created.
+	// data_disk_full: indicates that the instance disk is full.
+	// createfail: indicates that the instance failed to be created.
+	// enlargefail: indicates that nodes failed to be added to the instance.
 	Status string `json:"status"`
 	// Database port
 	Port string `json:"port"`

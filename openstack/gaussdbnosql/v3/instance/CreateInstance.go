@@ -22,17 +22,17 @@ type CreateInstanceOpts struct {
 	// Separate multiple AZs by commas (,).
 	AvailabilityZone string `json:"availability_zone"`
 	// VPC ID. To obtain this parameter value, use either of the following methods:
-	// 	Method 1: Log in to VPC console and view the VPC ID on the VPC details page.
-	// 	Method 2: See the "Querying VPCs" section in the Virtual Private Cloud API Reference.
+	// Method 1: Log in to VPC console and view the VPC ID on the VPC details page.
+	// Method 2: See the "Querying VPCs" section in the Virtual Private Cloud API Reference.
 	VpcId string `json:"vpc_id"`
 	// Network ID of the subnet. To obtain this parameter value, use either of the following methods:
-	// 	Method 1: Log in to VPC console and click the target subnet on the Subnets page. You can view the subnet ID on the displayed page.
-	// 	Method 2: See the "Querying Subnets" section in the Virtual Private Cloud API Reference.
+	// Method 1: Log in to VPC console and click the target subnet on the Subnets page. You can view the subnet ID on the displayed page.
+	// Method 2: See the "Querying Subnets" section in the Virtual Private Cloud API Reference.
 	SubnetId string `json:"subnet_id"`
 	// Security group ID. To obtain the security group ID, perform either of the following methods:
-	// 	Method 1: Log in to VPC console. Choose Access Control > Security Groups in the navigation pane on the left.
+	// Method 1: Log in to VPC console. Choose Access Control > Security Groups in the navigation pane on the left.
 	// On the displayed page, click the target security group. You can view the security group ID on the displayed page.
-	// 	Method 2: See the "Querying Security Groups" section in the Virtual Private Cloud API Reference.
+	// Method 2: See the "Querying Security Groups" section in the Virtual Private Cloud API Reference.
 	SecurityGroupId string `json:"security_group_id"`
 	// Database password
 	// The value must be 8 to 32 characters in length and contain uppercase letters (A to Z),
@@ -40,7 +40,7 @@ type CreateInstanceOpts struct {
 	// You are advised to enter a strong password to improve security, preventing security risks such as brute force cracking.
 	Password string `json:"password"`
 	// Instance type
-	// 	GaussDB(for Cassandra) supports the cluster type. The value is "Cluster".
+	// GaussDB(for Cassandra) supports the cluster type. The value is "Cluster".
 	Mode string `json:"mode"`
 	// Instance specifications
 	Flavor []InstanceFlavor `json:"flavor"`
@@ -50,9 +50,9 @@ type CreateInstanceOpts struct {
 	BackupStrategy BackupStrategy `json:"backup_strategy,omitempty"`
 	// Specifies whether to enable or disable SSL.
 	// Valid value:
-	// 	The value "0" indicates that SSL is disabled by default.
-	// 	The value "1" indicates that SSL is enabled by default.
-	// 	If this parameter is not transferred, SSL is disabled by default.
+	// The value "0" indicates that SSL is disabled by default.
+	// The value "1" indicates that SSL is enabled by default.
+	// If this parameter is not transferred, SSL is disabled by default.
 	SslOption string `json:"ssl_option,omitempty"`
 }
 
@@ -121,7 +121,7 @@ type Datastore struct {
 
 type InstanceFlavor struct {
 	// Node quantity
-	// 	The number of GaussDB(for Cassandra) instance nodes ranges from 3 to 200.
+	// The number of GaussDB(for Cassandra) instance nodes ranges from 3 to 200.
 	Num string `json:"num"`
 	// Disk type
 	// Valid value: ULTRAHIGH, which indicates the SSD disk.
