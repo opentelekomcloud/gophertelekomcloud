@@ -23,7 +23,4 @@ type SpeedLimitInfo struct {
 
 // PUT /v3/{project_id}/jobs/batch-limit-speed
 
-type BatchSetSpeedResponse struct {
-	Count   int32           `json:"count,omitempty"`
-	Results []ModifyJobResp `json:"results,omitempty"`
-}
+// BatchJobsResponse
