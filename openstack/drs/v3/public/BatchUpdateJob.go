@@ -115,6 +115,6 @@ type SubscriptionInfo struct {
 	Protocol string `json:"protocol,omitempty"`
 }
 
-// BatchJobsResponse
-
 // PUT /v3/{project_id}/jobs/batch-modification
+
+// BatchJobsResponse
