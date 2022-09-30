@@ -15,7 +15,7 @@ type StartInfo struct {
 
 // POST /v3/{project_id}/jobs/batch-starting
 
-type BatchStartJobsResponse struct {
+type BatchJobsResponse struct {
 	Results []IdJobResp `json:"results,omitempty"`
 	Count   int32       `json:"count,omitempty"`
 }

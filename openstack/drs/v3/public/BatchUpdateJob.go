@@ -115,9 +115,6 @@ type SubscriptionInfo struct {
 	Protocol string `json:"protocol,omitempty"`
 }
 
-type BatchUpdateJobResponse struct {
-	Count   int32       `json:"count,omitempty"`
-	Results []IdJobResp `json:"results,omitempty"`
-}
+// BatchJobsResponse
 
 // PUT /v3/{project_id}/jobs/batch-modification

@@ -13,7 +13,4 @@ type RetryInfo struct {
 
 // POST /v3/{project_id}/jobs/batch-retry-task
 
-type BatchRestoreTaskResponse struct {
-	Results []IdJobResp `json:"results,omitempty"`
-	Count   int32       `json:"count,omitempty"`
-}
+// BatchJobsResponse
