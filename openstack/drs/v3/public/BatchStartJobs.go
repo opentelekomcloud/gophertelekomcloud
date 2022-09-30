@@ -16,11 +16,11 @@ type StartInfo struct {
 // POST /v3/{project_id}/jobs/batch-starting
 
 type BatchStartJobsResponse struct {
-	Results []StartJobResp `json:"results,omitempty"`
-	Count   int32          `json:"count,omitempty"`
+	Results []IdJobResp `json:"results,omitempty"`
+	Count   int32       `json:"count,omitempty"`
 }
 
-type StartJobResp struct {
+type IdJobResp struct {
 	// Task ID.
 	Id string `json:"id"`
 	// Status Values: success failed

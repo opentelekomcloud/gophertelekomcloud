@@ -116,21 +116,8 @@ type SubscriptionInfo struct {
 }
 
 type BatchUpdateJobResponse struct {
-	Count   int32           `json:"count,omitempty"`
-	Results []ModifyJobResp `json:"results,omitempty"`
+	Count   int32       `json:"count,omitempty"`
+	Results []IdJobResp `json:"results,omitempty"`
 }
 
 // PUT /v3/{project_id}/jobs/batch-modification
-
-type ModifyJobResp struct {
-	// Task ID.
-	Id string `json:"id"`
-	// Status Values:
-	// success: The task is successful.
-	// failed: The task fails.
-	Status string `json:"status"`
-	// Error code, which is optional and indicates the returned information about the failure status.
-	ErrorCode string `json:"error_code,omitempty"`
-	// Error message, which is optional and indicates the returned information about the failure status.
-	ErrorMsg string `json:"error_msg,omitempty"`
-}
