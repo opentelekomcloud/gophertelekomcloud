@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchQueryJobReqPage struct {
 	Jobs    []string `json:"jobs"`
 	PageReq PageReq  `json:"page_req,omitempty"`
@@ -18,7 +24,22 @@ type PageReq struct {
 	PerPage int32 `json:"per_page,omitempty"`
 }
 
-// POST /v3/{project_id}/jobs/batch-detail
+func BatchListJobDetails(client *golangsdk.ServiceClient, opts BatchQueryJobReqPage) (*BatchListJobDetailsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-detail
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-detail"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchListJobDetailsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchListJobDetailsResponse struct {
 	Count   int32          `json:"count,omitempty"`
