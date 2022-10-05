@@ -22,8 +22,7 @@ type BatchJobsResponse struct {
 
 type IdJobResp struct {
 	// Task ID.
-	Id string `json:"id"`
-	// Status Values: success failed
+	Id     string `json:"id"`
 	Status string `json:"status,omitempty"`
 	// Error code, which is optional and indicates the returned information about the failure status.
 	ErrorCode string `json:"error_code,omitempty"`
