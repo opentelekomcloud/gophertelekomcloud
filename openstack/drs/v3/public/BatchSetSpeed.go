@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchLimitSpeedReq struct {
 	SpeedLimits []LimitSpeedReq `json:"speed_limits"`
 }
@@ -21,6 +27,19 @@ type SpeedLimitInfo struct {
 	Speed string `json:"speed"`
 }
 
-// PUT /v3/{project_id}/jobs/batch-limit-speed
+func BatchSetSpeed(client *golangsdk.ServiceClient, opts BatchUpdateDatabaseObjectReq) (*BatchJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// BatchJobsResponse
+	// PUT /v3/{project_id}/jobs/batch-limit-speed
+	raw, err := client.Put(client.ServiceURL("jobs", "batch-limit-speed"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
