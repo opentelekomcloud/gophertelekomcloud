@@ -1,8 +1,10 @@
 package public
 
-type BatchPrecheckReq struct {
-	Jobs []PreCheckInfo `json:"jobs"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type PreCheckInfo struct {
 	// Task ID.
@@ -11,7 +13,22 @@ type PreCheckInfo struct {
 	PrecheckMode string `json:"precheck_mode"`
 }
 
-// POST /v3/{project_id}/jobs/batch-precheck
+func BatchCheckJobs(client *golangsdk.ServiceClient, opts PreCheckInfo) (*BatchCheckJobsResponse, error) {
+	b, err := build.RequestBody(opts, "jobs")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-precheck
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-precheck"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchCheckJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchCheckJobsResponse struct {
 	Results []PostPreCheckResp `json:"results,omitempty"`
