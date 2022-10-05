@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchReplaceDefinerReq struct {
 	Jobs []ReplaceDefinerInfo `json:"jobs"`
 }
@@ -11,6 +17,19 @@ type ReplaceDefinerInfo struct {
 	ReplaceDefiner bool `json:"replace_definer"`
 }
 
-// POST /v3/{project_id}/jobs/batch-replace-definer
+func BatchSetDefiner(client *golangsdk.ServiceClient, opts BatchRetryReq) (*BatchJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// BatchJobsResponse
+	// POST /v3/{project_id}/jobs/batch-replace-definer
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-replace-definer"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
