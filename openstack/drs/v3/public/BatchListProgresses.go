@@ -1,11 +1,32 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchQueryProgressReq struct {
 	// Request for querying task progress in batches.
 	Jobs []string `json:"jobs"`
 }
 
-// POST /v3/{project_id}/jobs/batch-progress
+func BatchListProgresses(client *golangsdk.ServiceClient, opts BatchQueryProgressReq) (*BatchListProgressesResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-progress
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-progress"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchListProgressesResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchListProgressesResponse struct {
 	Count   int32               `json:"count,omitempty"`
