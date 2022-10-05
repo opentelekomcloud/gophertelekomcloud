@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchQueryParamReq struct {
 	// Request body for querying tasks in batches.
 	Jobs []string `json:"jobs"`
@@ -9,7 +15,22 @@ type BatchQueryParamReq struct {
 	Refresh string `json:"refresh"`
 }
 
-// POST /v3/{project_id}/jobs/batch-get-params
+func BatchShowParams(client *golangsdk.ServiceClient, opts BatchQueryParamReq) (*BatchShowParamsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-get-params
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-get-params"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchShowParamsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchShowParamsResponse struct {
 	ParamsList []QueryDbParamsResp `json:"params_list,omitempty"`
