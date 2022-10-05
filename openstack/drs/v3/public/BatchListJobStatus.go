@@ -1,8 +1,27 @@
 package public
 
-// BatchQueryJobReqPage
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// POST /v3/{project_id}/jobs/batch-status
+func BatchListJobStatus(client *golangsdk.ServiceClient, opts BatchQueryJobReqPage) (*BatchListJobStatusResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-status
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-status"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchListJobStatusResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchListJobStatusResponse struct {
 	Results []QueryJobStatusResp `json:"results,omitempty"`
