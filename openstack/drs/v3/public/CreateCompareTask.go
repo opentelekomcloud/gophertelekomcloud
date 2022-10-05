@@ -40,7 +40,7 @@ type CreateDataLevelCompareReq struct {
 type CompareObjectInfo struct {
 	// Database name.
 	DbName string `json:"db_name"`
-	// 该库下的表名列表。
+	// List of table names in the database.
 	TableName []string `json:"table_name,omitempty"`
 }
 

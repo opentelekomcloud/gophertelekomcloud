@@ -37,8 +37,12 @@ type BatchResetPasswordResponse struct {
 }
 
 type ModifyDbPwdResp struct {
-	Id           string `json:"id,omitempty"`
-	Status       string `json:"status,omitempty"`
+	Id     string `json:"id,omitempty"`
+	Status string `json:"status,omitempty"`
+	// Type. so indicates the source database. ta indicates the destination database.
+	// Values:
+	// so
+	// ta
 	EndPointType string `json:"end_point_type,omitempty"`
 	ErrorCode    string `json:"error_code,omitempty"`
 	ErrorMsg     string `json:"error_msg,omitempty"`

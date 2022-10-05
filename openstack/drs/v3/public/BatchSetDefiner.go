@@ -1,17 +1,13 @@
 package public
 
 type BatchReplaceDefinerReq struct {
-
-	// 批量设置replaceDefiner请求列表
 	Jobs []ReplaceDefinerInfo `json:"jobs"`
 }
 
 type ReplaceDefinerInfo struct {
-
-	// 任务id
+	// Task ID.
 	JobId string `json:"job_id"`
-
-	// 是否使用目标库的用户替换掉definer
+	// Whether to replace the definer with the destination database user.
 	ReplaceDefiner bool `json:"replace_definer"`
 }
 

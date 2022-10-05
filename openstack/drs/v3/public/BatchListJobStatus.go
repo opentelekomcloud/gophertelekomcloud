@@ -5,10 +5,8 @@ package public
 // POST /v3/{project_id}/jobs/batch-status
 
 type BatchListJobStatusResponse struct {
-	// 任务状态信息
 	Results []QueryJobStatusResp `json:"results,omitempty"`
-	// 返回任务数量
-	Count int32 `json:"count,omitempty"`
+	Count   int32                `json:"count,omitempty"`
 }
 
 type QueryJobStatusResp struct {

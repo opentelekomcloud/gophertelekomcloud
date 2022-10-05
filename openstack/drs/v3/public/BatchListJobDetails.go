@@ -8,13 +8,13 @@ type BatchQueryJobReqPage struct {
 type PageReq struct {
 	// Current page number, which cannot exceed the maximum number of pages.
 	// (Number of pages = Number of transferred job IDs/Number of tasks on each page)
-	// ⦁	Minimum value: 1.
-	// ⦁	Default value: 1
+	// Minimum value: 1.
+	// Default value: 1
 	CurPage int32 `json:"cur_page,omitempty"`
 	// Number of items on each page. If this parameter is set to 0, all items are obtained.
-	// ⦁	Minimum value: 0
-	// ⦁	Maximum value: 100
-	// ⦁	Default value: 5
+	// Minimum value: 0
+	// Maximum value: 100
+	// Default value: 5
 	PerPage int32 `json:"per_page,omitempty"`
 }
 
@@ -33,37 +33,37 @@ type QueryJobResp struct {
 	// Task name.
 	Name string `json:"name,omitempty"`
 	// Task status. Values:
-	// ⦁	CREATING: The task is being created.
-	// ⦁	CREATE_FAILED: The task fails to be created.
-	// ⦁	CONFIGURATION: The task is being configured.
-	// ⦁	STARTJOBING: The task is being started.
-	// ⦁	WAITING_FOR_START: The task is waiting to be started.
-	// ⦁	START_JOB_FAILED: The task fails to be started.
-	// ⦁	FULL_TRANSFER_STARTED: Full migration is in progress, and the DR scenario is initialized.
-	// ⦁	FULL_TRANSFER_FAILED: Full migration failed. Initialization failed in the DR scenario.
-	// ⦁	FULL_TRANSFER_COMPLETE: Full migration is complete, and the initialization is complete in the DR scenario.
-	// ⦁	INCRE_TRANSFER_STARTED: Incremental migration is being performed, and the DR task is in progress.
-	// ⦁	INCRE_TRANSFER_FAILED: Incremental migration fails and a DR exception occurs.
-	// ⦁	RELEASE_RESOURCE_STARTED: The task is being stopped.
-	// ⦁	RELEASE_RESOURCE_FAILED: Stop task failed.
-	// ⦁	RELEASE_RESOURCE_COMPLETE: The task is stopped.
-	// ⦁	CHANGE_JOB_STARTED: The task is being changed.
-	// ⦁	CHANGE_JOB_FAILED: Change task failed.
-	// ⦁	CHILD_TRANSFER_STARTING: The subtask is being started.
-	// ⦁	CHILD_TRANSFER_STARTED: The subtask is being migrated.
-	// ⦁	CHILD_TRANSFER_COMPLETE: The subtask migration is complete.
-	// ⦁	CHILD_TRANSFER_FAILED: Migrate subtask failed.
-	// ⦁	RELEASE_CHILD_TRANSFER_STARTED: The subtask is being stopped.
-	// ⦁	RELEASE_CHILD_TRANSFER_COMPLETE: The subtask is complete.
+	// CREATING: The task is being created.
+	// CREATE_FAILED: The task fails to be created.
+	// CONFIGURATION: The task is being configured.
+	// STARTJOBING: The task is being started.
+	// WAITING_FOR_START: The task is waiting to be started.
+	// START_JOB_FAILED: The task fails to be started.
+	// FULL_TRANSFER_STARTED: Full migration is in progress, and the DR scenario is initialized.
+	// FULL_TRANSFER_FAILED: Full migration failed. Initialization failed in the DR scenario.
+	// FULL_TRANSFER_COMPLETE: Full migration is complete, and the initialization is complete in the DR scenario.
+	// INCRE_TRANSFER_STARTED: Incremental migration is being performed, and the DR task is in progress.
+	// INCRE_TRANSFER_FAILED: Incremental migration fails and a DR exception occurs.
+	// RELEASE_RESOURCE_STARTED: The task is being stopped.
+	// RELEASE_RESOURCE_FAILED: Stop task failed.
+	// RELEASE_RESOURCE_COMPLETE: The task is stopped.
+	// CHANGE_JOB_STARTED: The task is being changed.
+	// CHANGE_JOB_FAILED: Change task failed.
+	// CHILD_TRANSFER_STARTING: The subtask is being started.
+	// CHILD_TRANSFER_STARTED: The subtask is being migrated.
+	// CHILD_TRANSFER_COMPLETE: The subtask migration is complete.
+	// CHILD_TRANSFER_FAILED: Migrate subtask failed.
+	// RELEASE_CHILD_TRANSFER_STARTED: The subtask is being stopped.
+	// RELEASE_CHILD_TRANSFER_COMPLETE: The subtask is complete.
 	Status string `json:"status,omitempty"`
 	// Description.
 	Description string `json:"description,omitempty"`
 	// Creation time, in timestamp format.
 	CreateTime string `json:"create_time,omitempty"`
 	// Migration type. Values:
-	// ⦁	FULL_TRANS: full migration
-	// ⦁	INCR_TRANS: incremental migration
-	// ⦁	FULL_INCR_TRANS: full+incremental migration
+	// FULL_TRANS: full migration
+	// INCR_TRANS: incremental migration
+	// FULL_INCR_TRANS: full+incremental migration
 	TaskType string `json:"task_type,omitempty"`
 	// Source database information.
 	SourceEndpoint Endpoint `json:"source_endpoint,omitempty"`
@@ -74,9 +74,9 @@ type QueryJobResp struct {
 	// Information body of the destination database.
 	TargetEndpoint Endpoint `json:"target_endpoint,omitempty"`
 	// Network type. Values:
-	// ⦁	vpn
-	// ⦁	vpc
-	// ⦁	eip
+	// vpn
+	// vpc
+	// eip
 	NetType string `json:"net_type,omitempty"`
 	// Failure cause.
 	FailedReason string `json:"failed_reason,omitempty"`
@@ -89,35 +89,35 @@ type QueryJobResp struct {
 	// Update time, in timestamp format.
 	UpdateTime string `json:"update_time,omitempty"`
 	// Task direction. Values:
-	// ⦁	up: The current cloud is the standby cloud in the DR and to-the-cloud scenarios.
-	// ⦁	down: The current cloud is the active cloud in the DR and out-of-cloud scenarios.
-	// ⦁	non-dbs: self-built databases.
+	// up: The current cloud is the standby cloud in the DR and to-the-cloud scenarios.
+	// down: The current cloud is the active cloud in the DR and out-of-cloud scenarios.
+	// non-dbs: self-built databases.
 	JobDirection string `json:"job_direction,omitempty"`
 	// Migration scenario Values:
-	// ⦁	migration: real-time migration.
-	// ⦁	sync: real-time synchronization.
-	// ⦁	cloudDataGuard: real-time disaster recovery.
+	// migration: real-time migration.
+	// sync: real-time synchronization.
+	// cloudDataGuard: real-time disaster recovery.
 	DbUseType string `json:"db_use_type,omitempty"`
 	// Whether the instance needs to be restarted.
 	NeedRestart bool `json:"need_restart,omitempty"`
 	// Whether the destination instance is restricted to read-only.
 	IsTargetReadonly bool `json:"is_target_readonly,omitempty"`
 	// Conflict policy. Values:
-	// ⦁	stop: The conflict fails.
-	// ⦁	overwrite: Conflicting data is overwritten.
-	// ⦁	ignore: The conflict is ignored.
+	// stop: The conflict fails.
+	// overwrite: Conflicting data is overwritten.
+	// ignore: The conflict is ignored.
 	ConflictPolicy string `json:"conflict_policy,omitempty"`
 	// DDL filtering policy. Values:
-	// ⦁	drop_database: Filters DDLs.
-	// ⦁	drop_databasefilter_all: Filters out all DLLs.
-	// ⦁	"": No filter.
+	// drop_database: Filters DDLs.
+	// drop_databasefilter_all: Filters out all DLLs.
+	// "": No filter.
 	FilterDdlPolicy string `json:"filter_ddl_policy,omitempty"`
 	// Migration speed limit.
 	SpeedLimit []SpeedLimitInfo `json:"speed_limit,omitempty"`
 	// Migration schemes. Values:
-	// ⦁	Replication: primary/standby replication.
-	// ⦁	Tungsten: parses logs.
-	// ⦁	PGBaseBackup: PostgreSQL backup.
+	// Replication: primary/standby replication.
+	// Tungsten: parses logs.
+	// PGBaseBackup: PostgreSQL backup.
 	SchemaType string `json:"schema_type,omitempty"`
 	// The number of nodes.
 	NodeNum string `json:"node_num,omitempty"`
@@ -177,14 +177,14 @@ type QueryJobResp struct {
 
 type InstInfo struct {
 	// Engine type. Values:
-	// ⦁	mysql
-	// ⦁	mongodb
-	// ⦁	cloudDataGuard-mysql
-	// ⦁	mysql-to-taurus
-	// ⦁	postgresql
+	// mysql
+	// mongodb
+	// cloudDataGuard-mysql
+	// mysql-to-taurus
+	// postgresql
 	EngineType string `json:"engine_type,omitempty"`
 	// DB instance type. Values:
-	// ⦁	high
+	// high
 	InstType string `json:"inst_type,omitempty"`
 	// Private IP address of the replication instance.
 	Ip string `json:"ip,omitempty"`
@@ -193,8 +193,8 @@ type InstInfo struct {
 	// Scheduled start time of a replication instance task.
 	StartTime string `json:"start_time,omitempty"`
 	// Replication instance status. Values:
-	// ⦁	active
-	// ⦁	deleted
+	// active
+	// deleted
 	Status string `json:"status,omitempty"`
 	// Storage space of a replication instance.
 	VolumeSize int32 `json:"volume_size,omitempty"`

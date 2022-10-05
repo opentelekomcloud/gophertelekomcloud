@@ -20,9 +20,9 @@ type QueryProgressResp struct {
 	// Incremental migration delay.
 	IncreTransDelay string `json:"incre_trans_delay,omitempty"`
 	// Migration type. Values:
-	// ⦁	FULL_TRANS: full migration
-	// ⦁	INCR_TRANS: incremental migration
-	// ⦁	FULL_INCR_TRANS: full+incremental migration
+	// FULL_TRANS: full migration
+	// INCR_TRANS: incremental migration
+	// FULL_INCR_TRANS: full+incremental migration
 	TaskMode string `json:"task_mode,omitempty"`
 	// Task status.
 	TransferStatus string `json:"transfer_status,omitempty"`
