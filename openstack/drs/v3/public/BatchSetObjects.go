@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchUpdateDatabaseObjectReq struct {
 	Jobs []UpdateDatabaseObjectReq `json:"jobs"`
 }
@@ -40,7 +46,22 @@ type DatabaseInfo struct {
 	Select string `json:"select,omitempty"`
 }
 
-// PUT /v3/{project_id}/jobs/batch-select-objects
+func BatchSetObjects(client *golangsdk.ServiceClient, opts BatchUpdateDatabaseObjectReq) (*BatchSetObjectsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// PUT /v3/{project_id}/jobs/batch-select-objects
+	raw, err := client.Put(client.ServiceURL("jobs", "batch-select-objects"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchSetObjectsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchSetObjectsResponse struct {
 	AllCounts int64                `json:"all_counts,omitempty"`
