@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchStartJobReq struct {
 	// Request list for starting tasks in batches.
 	Jobs []StartInfo `json:"jobs"`
@@ -13,7 +19,22 @@ type StartInfo struct {
 	StartTime string `json:"start_time,omitempty"`
 }
 
-// POST /v3/{project_id}/jobs/batch-starting
+func BatchStartJobs(client *golangsdk.ServiceClient, opts BatchStartJobReq) (*BatchJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-starting
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-starting"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchJobsResponse struct {
 	Results []IdJobResp `json:"results,omitempty"`
