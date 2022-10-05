@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchDeleteJobReq struct {
 	Jobs []DeleteJobReq `json:"jobs"`
 }
@@ -18,6 +24,19 @@ type BatchDeleteJobsResponse struct {
 	Count   int32       `json:"count,omitempty"`
 }
 
-// DELETE /v3/{project_id}/jobs/batch-jobs
+func BatchDeleteJobs(client *golangsdk.ServiceClient, opts BatchDeleteJobReq) (*BatchJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// BatchJobsResponse
+	// DELETE /v3/{project_id}/jobs/batch-jobs
+	raw, err := client.DeleteWithBody(client.ServiceURL("jobs", "batch-jobs"), b, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
