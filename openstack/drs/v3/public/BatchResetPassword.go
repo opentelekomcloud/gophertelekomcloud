@@ -1,6 +1,12 @@
 package public
 
-type BatchModifyPwdReq struct {
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type BatchModifyPwdOpts struct {
 	Jobs []ModifyPwdEndPoint `json:"jobs"`
 }
 
@@ -29,7 +35,22 @@ type KerberosVo struct {
 	UserPrincipal string `json:"user_principal,omitempty"`
 }
 
-// PUT /v3/{project_id}/jobs/batch-modify-pwd
+func BatchResetPassword(client *golangsdk.ServiceClient, opts BatchModifyPwdOpts) (*BatchResetPasswordResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// PUT /v3/{project_id}/jobs/batch-modify-pwd
+	raw, err := client.Put(client.ServiceURL("jobs", "batch-modify-pwd"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchResetPasswordResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchResetPasswordResponse struct {
 	Results []ModifyDbPwdResp `json:"results,omitempty"`
