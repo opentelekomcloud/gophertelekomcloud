@@ -1,6 +1,11 @@
 package public
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
 type BatchCreateJobOpts struct {
 	Jobs []CreateJobOpts `json:"jobs"`
@@ -143,7 +148,22 @@ type Endpoint struct {
 	ClusterMode string `json:"cluster_mode,omitempty"`
 }
 
-// POST /v3/{project_id}/jobs/batch-creation
+func BatchCreateJobs(client *golangsdk.ServiceClient, opts BatchCreateJobOpts) (*BatchCreateJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-creation
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-creation"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchCreateJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchCreateJobsResponse struct {
 	Results []CreateJobResp `json:"results,omitempty"`
