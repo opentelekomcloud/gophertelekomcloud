@@ -1,12 +1,33 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchQueryPrecheckResultReq struct {
 	// Request for querying pre-check results in batches. The value cannot be empty.
 	// The values must comply with the UUID rule. The task ID must be unique.
 	Jobs []string `json:"jobs"`
 }
 
-// POST /v3/{project_id}/jobs/batch-precheck-result
+func BatchCheckResults(client *golangsdk.ServiceClient, opts BatchQueryPrecheckResultReq) (*BatchCheckResultsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-precheck-result
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-precheck-result"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchCheckResultsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchCheckResultsResponse struct {
 	Results []QueryPreCheckResp `json:"results,omitempty"`

@@ -13,7 +13,7 @@ type PreCheckInfo struct {
 	PrecheckMode string `json:"precheck_mode"`
 }
 
-func BatchCheckJobs(client *golangsdk.ServiceClient, opts PreCheckInfo) (*BatchCheckJobsResponse, error) {
+func BatchCheckJobs(client *golangsdk.ServiceClient, opts []PreCheckInfo) (*BatchCheckJobsResponse, error) {
 	b, err := build.RequestBody(opts, "jobs")
 	if err != nil {
 		return nil, err
