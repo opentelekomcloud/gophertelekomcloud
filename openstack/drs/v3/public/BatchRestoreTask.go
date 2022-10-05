@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchRetryReq struct {
 	Jobs []RetryInfo `json:"jobs"`
 }
@@ -11,6 +17,19 @@ type RetryInfo struct {
 	IsSyncReEdit bool `json:"is_sync_re_edit,omitempty"`
 }
 
-// POST /v3/{project_id}/jobs/batch-retry-task
+func BatchRestoreTask(client *golangsdk.ServiceClient, opts BatchRetryReq) (*BatchJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// BatchJobsResponse
+	// POST /v3/{project_id}/jobs/batch-retry-task
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-retry-task"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
