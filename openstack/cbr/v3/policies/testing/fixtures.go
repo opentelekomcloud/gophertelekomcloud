@@ -87,7 +87,7 @@ const (
 )
 
 var (
-	createOpts = &policies.CreateOpts{
+	createOpts = policies.CreateOpts{
 		Name: "policy001",
 		OperationDefinition: &policies.PolicyODCreate{
 			DailyBackups:          0,

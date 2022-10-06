@@ -14,10 +14,7 @@ func TestTaskListAll(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := tasks.ListOpts{}
-	pages, err := tasks.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	tasksList, err := tasks.ExtractTasks(pages)
+	tasksList, err := tasks.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, task := range tasksList {

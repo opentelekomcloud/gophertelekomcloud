@@ -51,7 +51,9 @@ const (
       "status": "accepted",
       "ip": "192.168.0.232",
       "marker_id": 16777337,
-      "active_status": "active",
+      "active_status": [
+		"active"
+	  ],
       "vpc_id": "84758cf5-9c62-43ae-a778-3dbd8370c0a4",
       "service_type": "interface",
       "project_id": "295dacf46a4842fcbf7844dc2dc2489d",
@@ -78,7 +80,9 @@ const (
       "status": "accepted",
       "ip": "192.168.0.115",
       "marker_id": 16777322,
-      "active_status": "active",
+      "active_status": [
+		"active"
+	  ],
       "vpc_id": "84758cf5-9c62-43ae-a778-3dbd8370c0a4",
       "service_type": "interface",
       "project_id": "295dacf46a4842fcbf7844dc2dc2489d",
