@@ -1,6 +1,12 @@
 package public
 
-type QueryJobsReq struct {
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type QueryJobsOpts struct {
 	// Current page. Set the value to 0 to obtain all items.
 	// Default value: 1
 	CurPage int32 `json:"cur_page"`
@@ -84,7 +90,22 @@ type QueryJobsReq struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-// POST /v3/{project_id}/jobs
+func ShowJobList(client *golangsdk.ServiceClient, opts QueryJobsOpts) (*ShowJobListResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs
+	raw, err := client.Post(client.ServiceURL("jobs"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ShowJobListResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ShowJobListResponse struct {
 	TotalRecord int32     `json:"total_record,omitempty"`
