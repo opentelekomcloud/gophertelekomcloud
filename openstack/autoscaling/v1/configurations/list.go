@@ -6,10 +6,15 @@ import (
 )
 
 type ListOpts struct {
-	Name        string `q:"scaling_configuration_name"`
-	ImageID     string `q:"image_id"`
-	StartNumber int    `q:"start_number"`
-	Limit       int    `q:"limit"`
+	// Specifies the AS configuration name.
+	// Supports fuzzy search.
+	Name string `q:"scaling_configuration_name"`
+	// Specifies the image ID. It is same as imageRef.
+	ImageID string `q:"image_id"`
+	// Specifies the start line number. The default value is 0. The minimum parameter value is 0.
+	StartNumber int `q:"start_number"`
+	// Specifies the number of query records. The default value is 20. The value range is 0 to 100.
+	Limit int `q:"limit"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Configuration, error) {
