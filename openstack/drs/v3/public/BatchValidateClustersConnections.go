@@ -1,5 +1,11 @@
 package public
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type BatchSpecialTestConnectionOpts struct {
 	Jobs []BatchJobActionReq `json:"jobs"`
 }
@@ -14,7 +20,22 @@ type BatchJobActionReq struct {
 	Property string `json:"property"`
 }
 
-// POST /v3/{project_id}/jobs/cluster/batch-connection
+func BatchValidateClustersConnections(client *golangsdk.ServiceClient, opts BatchSpecialTestConnectionOpts) (*BatchValidateClustersConnectionsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/cluster/batch-connection
+	raw, err := client.Post(client.ServiceURL("jobs", "cluster", "batch-connection"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchValidateClustersConnectionsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchValidateClustersConnectionsResponse struct {
 	Results []CheckJobResp `json:"results,omitempty"`
