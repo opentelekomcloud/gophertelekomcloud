@@ -1,6 +1,12 @@
 package public
 
-type CreateCompareTaskReq struct {
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type CreateCompareTaskOpts struct {
 	// Task ID.
 	JobId string `json:"job_id"`
 	// Object-level comparison type. If the value is empty, the object-level comparison is not created.
@@ -60,7 +66,22 @@ type CompareTableInfoWithToken struct {
 	MaxToken string `json:"max_token,omitempty"`
 }
 
-// POST /v3/{project_id}/jobs/create-compare-task
+func CreateCompareTask(client *golangsdk.ServiceClient, opts CreateCompareTaskOpts) (*CreateCompareTaskResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/create-compare-task
+	raw, err := client.Post(client.ServiceURL("jobs", "create-compare-task"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res CreateCompareTaskResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type CreateCompareTaskResponse struct {
 	// Task ID
