@@ -1,8 +1,13 @@
 package public
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
-type BatchModifyJobReq struct {
+type BatchModifyJobOpts struct {
 	Jobs []ModifyJobReq `json:"jobs"`
 }
 
@@ -115,6 +120,19 @@ type SubscriptionInfo struct {
 	Protocol string `json:"protocol,omitempty"`
 }
 
-// PUT /v3/{project_id}/jobs/batch-modification
+func BatchUpdateJob(client *golangsdk.ServiceClient, opts BatchModifyJobOpts) (*BatchJobsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// BatchJobsResponse
+	// PUT /v3/{project_id}/jobs/batch-modification
+	raw, err := client.Put(client.ServiceURL("jobs", "batch-modification"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchJobsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
