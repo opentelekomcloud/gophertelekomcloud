@@ -2,31 +2,18 @@ package configurations
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// CreateResult is a struct that contains all the return parameters of creation
-type CreateResult struct {
-	golangsdk.Result
-}
-
-func (r CreateResult) Extract() (string, error) {
-	var a struct {
-		ID string `json:"scaling_configuration_id"`
+func Get(client *golangsdk.ServiceClient, id string) (*Configuration, error) {
+	raw, err := client.Get(client.ServiceURL("scaling_configuration", id), nil, nil)
+	if err != nil {
+		return nil, err
 	}
 
-	err := r.Result.ExtractInto(&a)
-	return a.ID, err
-}
-
-type GetResult struct {
-	golangsdk.Result
-}
-
-func (r GetResult) Extract() (Configuration, error) {
-	var s Configuration
-	err := r.ExtractIntoStructPtr(&s, "scaling_configuration")
-	return s, err
+	var res Configuration
+	err = extract.IntoStructPtr(raw.Body, &res, "scaling_configuration")
+	return &res, err
 }
 
 type Configuration struct {
@@ -90,34 +77,4 @@ type Bandwidth struct {
 
 type SecurityGroup struct {
 	ID string `json:"id"`
-}
-
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type ConfigurationPage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty returns true if a ListResult contains no Volumes.
-func (r ConfigurationPage) IsEmpty() (bool, error) {
-	configs, err := r.Extract()
-	return len(configs) == 0, err
-}
-
-// ExtractConfigurations returns a slice of AS Configurations contained in a
-// single page of results.
-func ExtractConfigurations(r pagination.Page) ([]Configuration, error) {
-	var s struct {
-		Configurations []Configuration `json:"scaling_configurations"`
-	}
-	err := (r.(ConfigurationPage)).ExtractInto(&s)
-	return s.Configurations, err
-}
-
-func (r ConfigurationPage) Extract() ([]Configuration, error) {
-	var cs []Configuration
-	err := r.Result.ExtractIntoSlicePtr(&cs, "scaling_groups")
-	return cs, err
 }

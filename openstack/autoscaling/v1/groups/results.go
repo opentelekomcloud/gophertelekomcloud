@@ -1,51 +1,5 @@
 package groups
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-)
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// CreateResult is a struct returned by Create request
-type CreateResult struct {
-	commonResult
-}
-
-// UpdateResult is a struct from which can get the result of Update request
-type UpdateResult struct {
-	commonResult
-}
-
-// Extract the ID of AS Group result as a string type.
-func (r commonResult) Extract() (string, error) {
-	var s struct {
-		ID string `json:"scaling_group_id"`
-	}
-	err := r.ExtractInto(&s)
-	return s.ID, err
-}
-
-// DeleteResult contains the body of the deleting group request
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// GetResult contains the body of getting detailed group request
-type GetResult struct {
-	golangsdk.Result
-}
-
-// Extract method will parse the result body into Group struct
-func (r GetResult) Extract() (*Group, error) {
-	s := new(Group)
-	err := r.ExtractIntoStructPtr(s, "scaling_group")
-	return s, err
-}
-
-// Group represents the struct of one autoscaling group
 type Group struct {
 	Name                      string          `json:"scaling_group_name"`
 	ID                        string          `json:"scaling_group_id"`
@@ -61,7 +15,7 @@ type Group struct {
 	LBaaSListeners            []LBaaSListener `json:"lbaas_listeners"`
 	AvailableZones            []string        `json:"available_zones"`
 	Networks                  []Network       `json:"networks"`
-	SecurityGroups            []SecurityGroup `json:"security_groups"`
+	SecurityGroups            []ID            `json:"security_groups"`
 	CreateTime                string          `json:"create_time"`
 	VpcID                     string          `json:"vpc_id"`
 	Detail                    string          `json:"detail"`
@@ -80,45 +34,7 @@ type Group struct {
 }
 
 type Network struct {
-	ID            string        `json:"id"`
-	IPv6Enable    bool          `json:"ipv6_enable"`
-	IPv6Bandwidth IPv6Bandwidth `json:"ipv6_bandwidth"`
-}
-
-type IPv6Bandwidth struct {
-	ID string `json:"id"`
-}
-
-type SecurityGroup struct {
-	ID string `json:"id"`
-}
-
-type LBaaSListener struct {
-	ListenerID   string `json:"listener_id"`
-	PoolID       string `json:"pool_id"`
-	ProtocolPort int    `json:"protocol_port"`
-	Weight       int    `json:"weight"`
-}
-
-type GroupPage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty returns true if a ListResult contains no Volumes.
-func (r GroupPage) IsEmpty() (bool, error) {
-	groups, err := ExtractGroups(r)
-	return len(groups) == 0, err
-}
-
-// ExtractGroups returns a slice of AS Groups contained in a
-// single page of results.
-func ExtractGroups(r pagination.Page) ([]Group, error) {
-	var s []Group
-	err := (r.(GroupPage)).ExtractIntoSlicePtr(&s, "scaling_groups")
-	return s, err
-}
-
-// ActionResult this is the action result which is the result of enable or disable operations
-type ActionResult struct {
-	golangsdk.ErrResult
+	ID            string `json:"id"`
+	IPv6Enable    bool   `json:"ipv6_enable"`
+	IPv6Bandwidth ID     `json:"ipv6_bandwidth"`
 }

@@ -2,28 +2,20 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// CreateResult is a struct which represents the create result of policy
-type CreateResult struct {
-	golangsdk.Result
-}
-
-// Extract of CreateResult will deserialize the result of Creation
-func (r CreateResult) Extract() (string, error) {
-	var a struct {
-		ID string `json:"scaling_policy_id"`
+func Get(client *golangsdk.ServiceClient, id string) (*Policy, error) {
+	raw, err := client.Get(client.ServiceURL("scaling_policy", id), nil, nil)
+	if err != nil {
+		return nil, err
 	}
-	err := r.Result.ExtractInto(&a)
-	return a.ID, err
+
+	var res Policy
+	err = extract.IntoStructPtr(raw.Body, &res, "scaling_policy")
+	return &res, err
 }
 
-// DeleteResult is a struct which represents the delete result.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// Policy is a struct that represents the result of get policy
 type Policy struct {
 	PolicyID            string         `json:"scaling_policy_id"`
 	PolicyName          string         `json:"scaling_policy_name"`
@@ -58,29 +50,4 @@ type Metadata struct {
 	BandwidthShareType string `json:"metadata_bandwidth_share_type"`
 	EipID              string `json:"metadata_eip_id"`
 	EipAddress         string `json:"metadata_eip_address"`
-}
-
-// GetResult is a struct which represents the get result
-type GetResult struct {
-	golangsdk.Result
-}
-
-func (r GetResult) Extract() (Policy, error) {
-	var p Policy
-	err := r.Result.ExtractIntoStructPtr(&p, "scaling_policy")
-	return p, err
-}
-
-// UpdateResult is a struct from which can get the result of update method
-type UpdateResult struct {
-	golangsdk.Result
-}
-
-// Extract will deserialize the result to group id with string
-func (r UpdateResult) Extract() (string, error) {
-	var a struct {
-		ID string `json:"scaling_policy_id"`
-	}
-	err := r.Result.ExtractInto(&a)
-	return a.ID, err
 }
