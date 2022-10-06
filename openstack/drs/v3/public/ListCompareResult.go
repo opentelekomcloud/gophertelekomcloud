@@ -1,6 +1,12 @@
 package public
 
-type QueryCompareResultReq struct {
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type QueryCompareResultOpts struct {
 	// Task ID
 	JobId string `json:"job_id"`
 	// ID of the object-level comparison task that requests the query result.
@@ -15,7 +21,22 @@ type QueryCompareResultReq struct {
 	PerPage int32 `json:"per_page"`
 }
 
-// POST /v3/{project_id}/jobs/query-compare-result
+func ListCompareResult(client *golangsdk.ServiceClient, opts QueryCompareResultOpts) (*ListCompareResultResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/query-compare-result
+	raw, err := client.Post(client.ServiceURL("jobs", "query-compare-result"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListCompareResultResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListCompareResultResponse struct {
 	// Task ID
