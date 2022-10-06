@@ -1,6 +1,9 @@
 package groups
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type ActionOpts struct {
 	Action string `json:"action" required:"true"`
@@ -19,7 +22,7 @@ func Disable(client *golangsdk.ServiceClient, id string) error {
 }
 
 func doAction(client *golangsdk.ServiceClient, id string, opts ActionOpts) error {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
 	}

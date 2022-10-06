@@ -6,11 +6,23 @@ import (
 )
 
 type ListOpts struct {
-	Name                string `q:"scaling_group_name"`
-	ConfigurationID     string `q:"scaling_configuration_id"`
-	Status              string `q:"scaling_group_status"`
-	StartNumber         int    `q:"start_number"`
-	Limit               int    `q:"limit"`
+	// Specifies the AS group name.
+	// Supports fuzzy search.
+	Name string `q:"scaling_group_name"`
+	// Specifies the AS configuration ID, which can be obtained using the API for querying AS configurations.
+	ConfigurationID string `q:"scaling_configuration_id"`
+	// Specifies the AS group status. The options are as follows:
+	// INSERVICE: indicates that the AS group is functional.
+	// PAUSED: indicates that the AS group is paused.
+	// ERROR: indicates that the AS group malfunctions.
+	// DELETING: indicates that the AS group is being deleted.
+	Status string `q:"scaling_group_status"`
+	// Specifies the start line number. The default value is 0. The minimum value is 0, and there is no limit on the maximum value.
+	StartNumber int `q:"start_number"`
+	// Specifies the number of query records. The default value is 20. The value range is 0 to 100.
+	Limit int `q:"limit"`
+	// Specifies the enterprise project ID. If all_granted_eps is transferred,
+	// this API will query AS groups in the enterprise projects that you have permissions to.
 	EnterpriseProjectID string `q:"enterprise_project_id"`
 }
 
