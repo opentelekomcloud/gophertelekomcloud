@@ -1,6 +1,12 @@
 package sync
 
-type BatchDataTransformationReq struct {
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type BatchDataTransformationOpts struct {
 	Jobs []CheckDataTransformationReq `json:"jobs"`
 }
 
@@ -57,7 +63,22 @@ type ConfigTransformationVo struct {
 	Values string `json:"values"`
 }
 
-// POST /v3/{project_id}/jobs/batch-transformation
+func BatchChangeData(client *golangsdk.ServiceClient, opts BatchDataTransformationOpts) (*BatchChangeDataResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/batch-transformation
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-transformation"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res BatchChangeDataResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type BatchChangeDataResponse struct {
 	Results []DataTransformationResp `json:"results,omitempty"`
