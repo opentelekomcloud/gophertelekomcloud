@@ -6,12 +6,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchQueryProgressReq struct {
+type BatchQueryProgressOpts struct {
 	// Request for querying task progress in batches.
 	Jobs []string `json:"jobs"`
 }
 
-func BatchListProgresses(client *golangsdk.ServiceClient, opts BatchQueryProgressReq) (*BatchListProgressesResponse, error) {
+func BatchListProgresses(client *golangsdk.ServiceClient, opts BatchQueryProgressOpts) (*BatchListProgressesResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

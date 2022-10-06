@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchPauseJobReq struct {
+type BatchPauseJobOpts struct {
 	// The value cannot contain empty objects. The value of job_id must comply with the UUID rule.
 	Jobs []PauseInfo `json:"jobs"`
 }
@@ -19,7 +19,7 @@ type PauseInfo struct {
 	PauseMode string `json:"pause_mode"`
 }
 
-func BatchStopJobs(client *golangsdk.ServiceClient, opts BatchPauseJobReq) (*BatchJobsResponse, error) {
+func BatchStopJobs(client *golangsdk.ServiceClient, opts BatchPauseJobOpts) (*BatchJobsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

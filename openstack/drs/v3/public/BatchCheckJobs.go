@@ -6,14 +6,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type PreCheckInfo struct {
+type PreCheckInfoOpts struct {
 	// Task ID.
 	JobId string `json:"job_id"`
 	// Pre-check mode. Value: forStartJob
 	PrecheckMode string `json:"precheck_mode"`
 }
 
-func BatchCheckJobs(client *golangsdk.ServiceClient, opts []PreCheckInfo) (*BatchCheckJobsResponse, error) {
+func BatchCheckJobs(client *golangsdk.ServiceClient, opts []PreCheckInfoOpts) (*BatchCheckJobsResponse, error) {
 	b, err := build.RequestBody(opts, "jobs")
 	if err != nil {
 		return nil, err

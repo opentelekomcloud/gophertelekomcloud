@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchDeleteJobReq struct {
+type BatchDeleteJobOpts struct {
 	Jobs []DeleteJobReq `json:"jobs"`
 }
 
@@ -24,7 +24,7 @@ type BatchDeleteJobsResponse struct {
 	Count   int32       `json:"count,omitempty"`
 }
 
-func BatchDeleteJobs(client *golangsdk.ServiceClient, opts BatchDeleteJobReq) (*BatchJobsResponse, error) {
+func BatchDeleteJobs(client *golangsdk.ServiceClient, opts BatchDeleteJobOpts) (*BatchJobsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

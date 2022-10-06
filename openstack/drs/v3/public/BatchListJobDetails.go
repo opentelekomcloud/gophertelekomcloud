@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchQueryJobReqPage struct {
+type BatchQueryJobOpts struct {
 	Jobs    []string `json:"jobs"`
 	PageReq PageReq  `json:"page_req,omitempty"`
 }
@@ -24,7 +24,7 @@ type PageReq struct {
 	PerPage int32 `json:"per_page,omitempty"`
 }
 
-func BatchListJobDetails(client *golangsdk.ServiceClient, opts BatchQueryJobReqPage) (*BatchListJobDetailsResponse, error) {
+func BatchListJobDetails(client *golangsdk.ServiceClient, opts BatchQueryJobOpts) (*BatchListJobDetailsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

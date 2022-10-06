@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchReplaceDefinerReq struct {
+type BatchReplaceDefinerOpts struct {
 	Jobs []ReplaceDefinerInfo `json:"jobs"`
 }
 
@@ -17,7 +17,7 @@ type ReplaceDefinerInfo struct {
 	ReplaceDefiner bool `json:"replace_definer"`
 }
 
-func BatchSetDefiner(client *golangsdk.ServiceClient, opts BatchRetryReq) (*BatchJobsResponse, error) {
+func BatchSetDefiner(client *golangsdk.ServiceClient, opts BatchRetryOpts) (*BatchJobsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

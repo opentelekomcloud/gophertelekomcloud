@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchRetryReq struct {
+type BatchRetryOpts struct {
 	Jobs []RetryInfo `json:"jobs"`
 }
 
@@ -17,7 +17,7 @@ type RetryInfo struct {
 	IsSyncReEdit bool `json:"is_sync_re_edit,omitempty"`
 }
 
-func BatchRestoreTask(client *golangsdk.ServiceClient, opts BatchRetryReq) (*BatchJobsResponse, error) {
+func BatchRestoreTask(client *golangsdk.ServiceClient, opts BatchRetryOpts) (*BatchJobsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

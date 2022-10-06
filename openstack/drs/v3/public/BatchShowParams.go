@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchQueryParamReq struct {
+type BatchQueryParamOpts struct {
 	// Request body for querying tasks in batches.
 	Jobs []string `json:"jobs"`
 	// Whether to obtain database parameters again. 1 indicates yes, and 0 indicates no
@@ -15,7 +15,7 @@ type BatchQueryParamReq struct {
 	Refresh string `json:"refresh"`
 }
 
-func BatchShowParams(client *golangsdk.ServiceClient, opts BatchQueryParamReq) (*BatchShowParamsResponse, error) {
+func BatchShowParams(client *golangsdk.ServiceClient, opts BatchQueryParamOpts) (*BatchShowParamsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

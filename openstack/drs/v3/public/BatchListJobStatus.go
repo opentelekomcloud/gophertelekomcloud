@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func BatchListJobStatus(client *golangsdk.ServiceClient, opts BatchQueryJobReqPage) (*BatchListJobStatusResponse, error) {
+func BatchListJobStatus(client *golangsdk.ServiceClient, opts BatchQueryJobOpts) (*BatchListJobStatusResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

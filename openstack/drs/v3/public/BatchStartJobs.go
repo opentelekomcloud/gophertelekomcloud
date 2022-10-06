@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchStartJobReq struct {
+type BatchStartJobOpts struct {
 	// Request list for starting tasks in batches.
 	Jobs []StartInfo `json:"jobs"`
 }
@@ -19,7 +19,7 @@ type StartInfo struct {
 	StartTime string `json:"start_time,omitempty"`
 }
 
-func BatchStartJobs(client *golangsdk.ServiceClient, opts BatchStartJobReq) (*BatchJobsResponse, error) {
+func BatchStartJobs(client *golangsdk.ServiceClient, opts BatchStartJobOpts) (*BatchJobsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchUpdateDatabaseObjectReq struct {
+type BatchUpdateDatabaseObjectOpts struct {
 	Jobs []UpdateDatabaseObjectReq `json:"jobs"`
 }
 
@@ -46,7 +46,7 @@ type DatabaseInfo struct {
 	Select string `json:"select,omitempty"`
 }
 
-func BatchSetObjects(client *golangsdk.ServiceClient, opts BatchUpdateDatabaseObjectReq) (*BatchSetObjectsResponse, error) {
+func BatchSetObjects(client *golangsdk.ServiceClient, opts BatchUpdateDatabaseObjectOpts) (*BatchSetObjectsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

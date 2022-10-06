@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchLimitSpeedReq struct {
+type BatchLimitSpeedOpts struct {
 	SpeedLimits []LimitSpeedReq `json:"speed_limits"`
 }
 
@@ -27,7 +27,7 @@ type SpeedLimitInfo struct {
 	Speed string `json:"speed"`
 }
 
-func BatchSetSpeed(client *golangsdk.ServiceClient, opts BatchUpdateDatabaseObjectReq) (*BatchJobsResponse, error) {
+func BatchSetSpeed(client *golangsdk.ServiceClient, opts BatchUpdateDatabaseObjectOpts) (*BatchJobsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
