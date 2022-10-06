@@ -1,6 +1,12 @@
 package public
 
-type UpdateParamsRequest struct {
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type UpdateParamsOpts struct {
 	// Task ID.
 	JobId string
 	// Parameter Groups Values: common performance
@@ -16,7 +22,22 @@ type ParamsReqBean struct {
 	TargetValue string `json:"target_value"`
 }
 
-// POST /v3/{project_id}/jobs/{job_id}/params
+func UpdateParams(client *golangsdk.ServiceClient, opts UpdateParamsOpts) (*UpdateParamsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v3/{project_id}/jobs/{job_id}/params
+	raw, err := client.Post(client.ServiceURL("jobs", opts.JobId, "params"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res UpdateParamsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type UpdateParamsResponse struct {
 	// Whether the parameters are modified.
