@@ -1,37 +1,40 @@
 package v1
 
 type RestoreClusterRequest struct {
-	//
+	// ID of the snapshot to be restored
 	SnapshotId string `json:"snapshot_id"`
 
 	Body RestoreClusterRequestBody `json:"body,omitempty"`
 }
 
 type RestoreClusterRequestBody struct {
+	// Object to be restored
 	Restore Restore `json:"restore"`
 }
 
 type Restore struct {
-	//
+	// Cluster name, which must be unique. The cluster name must contain 4 to 64 characters, which must start with a letter.
+	// Only letters, digits, hyphens (-), and underscores (_) are allowed.
 	Name string `json:"name"`
-	//
+	// Subnet ID, which is used for configuring cluster network. The default value is the same as that of the original cluster.
 	SubnetId string `json:"subnet_id,omitempty"`
-	//
+	// Security group ID, which is used for configuring cluster network. The default value is the same as that of the original cluster.
 	SecurityGroupId string `json:"security_group_id,omitempty"`
-	//
+	// VPC ID, which is used for configuring cluster network. The default value is the same as that of the original cluster.
 	VpcId string `json:"vpc_id,omitempty"`
-	//
+	// AZ of a cluster. The default value is the same as that of the original cluster.
 	AvailabilityZone string `json:"availability_zone,omitempty"`
-	//
+	// Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
 	Port int32 `json:"port,omitempty"`
-	//
+	// Public IP address. If the parameter is not specified, public connection is not used by default.
 	PublicIp PublicIp `json:"public_ip,omitempty"`
-	//
+	// Enterprise project. The default enterprise project ID is 0.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 // POST /v1.0/{project_id}/snapshots/{snapshot_id}/actions
 
 type RestoreClusterResponse struct {
+	// Cluster object
 	Cluster Cluster `json:"cluster,omitempty"`
 }

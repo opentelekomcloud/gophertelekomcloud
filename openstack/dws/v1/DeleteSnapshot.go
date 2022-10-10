@@ -1,7 +1,7 @@
 package v1
 
 type DeleteSnapshotRequest struct {
-	//
+	// Snapshot ID
 	SnapshotId string `json:"snapshot_id"`
 }
 
