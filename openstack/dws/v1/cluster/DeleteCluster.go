@@ -7,7 +7,7 @@ type DeleteClusterRequest struct {
 	Body DeleteClusterRequestBody `json:"body,omitempty"`
 }
 type DeleteClusterRequestBody struct {
-	// The number of latest manual snapshots that need to be retained for a cluster.
+	// The number of the latest manual snapshots that need to be retained for a cluster.
 	KeepLastManualSnapshot int32 `json:"keep_last_manual_snapshot"`
 }
 

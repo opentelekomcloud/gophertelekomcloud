@@ -4,11 +4,13 @@ type CreateClusterTagRequest struct {
 	// Resource ID. Currently, you can only add tags to a cluster, so specify this parameter to the cluster ID.
 	ClusterId string `json:"resource_id"`
 
-	Body *CreateTagReq `json:"body,omitempty"`
+	Body CreateTagReq `json:"body,omitempty"`
 }
+
 type CreateTagReq struct {
-	Tag *Tag `json:"tag"`
+	Tag Tag `json:"tag"`
 }
+
 type Tag struct {
 
 	// Tag key. A tag key can contain a maximum of 36 Unicode characters, which cannot be null. The first and last characters cannot be spaces.
@@ -22,5 +24,4 @@ type Tag struct {
 // POST /v1.0/{project_id}/clusters/{resource_id}/tags
 
 type CreateClusterTagResponse struct {
-	HttpStatusCode int `json:"-"`
 }

@@ -9,6 +9,5 @@ type ListClusterTagsRequest struct {
 
 type ListClusterTagsResponse struct {
 	// Tag list.
-	Tags           *[]TagPlain `json:"tags,omitempty"`
-	HttpStatusCode int         `json:"-"`
+	Tags []TagPlain `json:"tags,omitempty"`
 }

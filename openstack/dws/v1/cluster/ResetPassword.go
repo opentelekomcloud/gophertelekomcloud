@@ -2,8 +2,9 @@ package cluster
 
 type ResetPasswordRequest struct {
 	// ID of the cluster whose password is to be reset. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.
-	ClusterId string                   `json:"cluster_id"`
-	Body      ResetPasswordRequestBody `json:"body,omitempty"`
+	ClusterId string `json:"cluster_id"`
+
+	Body ResetPasswordRequestBody `json:"body,omitempty"`
 }
 
 type ResetPasswordRequestBody struct {

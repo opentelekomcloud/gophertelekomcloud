@@ -10,5 +10,4 @@ type DeleteClusterTagRequest struct {
 // DELETE /v1.0/{project_id}/clusters/{resource_id}/tags/{key}
 
 type DeleteClusterTagResponse struct {
-	HttpStatusCode int `json:"-"`
 }
