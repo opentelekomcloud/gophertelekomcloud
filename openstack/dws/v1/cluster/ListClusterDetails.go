@@ -1,4 +1,4 @@
-package v1
+package cluster
 
 type ListClusterDetailsRequest struct {
 	// Cluster ID. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.

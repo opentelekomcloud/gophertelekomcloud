@@ -1,4 +1,4 @@
-package v1
+package cluster
 
 type DeleteClusterRequest struct {
 	// ID of the cluster to be deleted. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.

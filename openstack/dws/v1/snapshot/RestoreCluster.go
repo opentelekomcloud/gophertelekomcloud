@@ -1,4 +1,6 @@
-package v1
+package snapshot
+
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
 
 type RestoreClusterRequest struct {
 	// ID of the snapshot to be restored
@@ -27,7 +29,7 @@ type Restore struct {
 	// Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
 	Port int32 `json:"port,omitempty"`
 	// Public IP address. If the parameter is not specified, public connection is not used by default.
-	PublicIp PublicIp `json:"public_ip,omitempty"`
+	PublicIp cluster.PublicIp `json:"public_ip,omitempty"`
 	// Enterprise project. The default enterprise project ID is 0.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
@@ -36,5 +38,5 @@ type Restore struct {
 
 type RestoreClusterResponse struct {
 	// Cluster object
-	Cluster Cluster `json:"cluster,omitempty"`
+	Cluster cluster.Cluster `json:"cluster,omitempty"`
 }

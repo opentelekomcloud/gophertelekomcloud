@@ -1,4 +1,4 @@
-package v1
+package cluster
 
 type CreateClusterRequestBody struct {
 	// Cluster object
