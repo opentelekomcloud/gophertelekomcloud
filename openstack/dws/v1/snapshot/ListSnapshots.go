@@ -1,9 +1,21 @@
 package snapshot
 
-type ListSnapshotsRequest struct {
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v1.0/{project_id}/snapshots
+func ListClusters(client *golangsdk.ServiceClient) (*ListSnapshotsResponse, error) {
+	// GET /v1.0/{project_id}/snapshots
+	raw, err := client.Get(client.ServiceURL("snapshots"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListSnapshotsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListSnapshotsResponse struct {
 	// List of snapshot objects
