@@ -1,9 +1,10 @@
 package cluster
 
-type CreateClusterOpts struct {
-	// Cluster object
-	Cluster CreateClusterInfo `json:"cluster"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type CreateClusterInfo struct {
 	// Node type
@@ -49,11 +50,23 @@ type PublicIp struct {
 	EipId string `json:"eip_id,omitempty"`
 }
 
-// POST /v1.0/{project_id}/clusters
+func CreateCluster(client *golangsdk.ServiceClient, opts CreateClusterInfo) (string, error) {
+	b, err := build.RequestBody(opts, "cluster")
+	if err != nil {
+		return "", err
+	}
 
-type CreateClusterResponse struct {
-	// Cluster object
-	Cluster Cluster `json:"cluster,omitempty"`
+	// POST /v1.0/{project_id}/clusters
+	raw, err := client.Post(client.ServiceURL("clusters"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	var res Cluster
+	err = extract.IntoStructPtr(raw.Body, &res, "cluster")
+	return res.Id, err
 }
 
 type Cluster struct {

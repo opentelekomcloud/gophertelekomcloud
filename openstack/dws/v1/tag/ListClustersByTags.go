@@ -32,12 +32,12 @@ type ListResourceReq struct {
 	// Keys in this list are in an OR relationship and values in each key-value structure are also in an OR relationship.
 	// If no tag filtering condition is specified, full data is returned.
 	NotTagsAny []TagWithMultiValue `json:"not_tags_any,omitempty"`
-	// Identifies the operation. The value can be filter or count.
+	// Identifies the operation. The value can be filtered or count.
 	// filter: indicates filtering. When both limit and offset are configured, the returned results are displayed in pages.
 	// If both limit and offset are not configured, the returned results are displayed in pages only when the number of result records exceeds 1000.
 	// count indicates the total number of returned records that meet the query criteria.
-	Action ListResourceReqAction `json:"action"`
-	// Maximum number of records returned in the query result. This parameter is not displayed when action is set to count.
+	Action string `json:"action"`
+	// Maximum number of records returned to the query result. This parameter is not displayed when action is set to count.
 	// If action is set to filter, this parameter takes effect. Its value ranges from 1 to 1000 (default).
 	Limit int32 `json:"limit,omitempty"`
 	// Start location of pagination query. The query starts from the next resource of the specified location.
@@ -48,10 +48,6 @@ type ListResourceReq struct {
 	Offset int32 `json:"offset,omitempty"`
 	// Search field. key indicates the field to be matched, for example, resource_name. value indicates the fuzzy match result.
 	Matches []Match `json:"matches,omitempty"`
-}
-
-type ListResourceReqAction struct {
-	value string
 }
 
 type Match struct {
