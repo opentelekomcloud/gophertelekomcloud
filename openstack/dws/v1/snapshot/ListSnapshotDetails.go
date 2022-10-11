@@ -1,15 +1,20 @@
 package snapshot
 
-type ListSnapshotDetailsRequest struct {
-	// Snapshot ID
-	SnapshotId string `json:"snapshot_id"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v1.0/{project_id}/snapshots/{snapshot_id}
+func ListClusterDetails(client *golangsdk.ServiceClient, snapshotId string) (*SnapshotDetail, error) {
+	// GET /v1.0/{project_id}/snapshots/{snapshot_id}
+	raw, err := client.Get(client.ServiceURL("snapshots", snapshotId), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type ListSnapshotDetailsResponse struct {
-	// Snapshot object
-	Snapshot SnapshotDetail `json:"snapshot,omitempty"`
+	var res SnapshotDetail
+	err = extract.IntoStructPtr(raw.Body, &res, "snapshot")
+	return &res, err
 }
 
 type SnapshotDetail struct {
