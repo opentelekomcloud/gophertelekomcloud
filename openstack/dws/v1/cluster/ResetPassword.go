@@ -1,11 +1,9 @@
 package cluster
 
-type ResetPasswordRequest struct {
-	// ID of the cluster whose password is to be reset. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.
-	ClusterId string `json:"cluster_id"`
-
-	Body ResetPasswordOpts `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type ResetPasswordOpts struct {
 	// New password of the GaussDB(DWS) cluster administrator
@@ -22,7 +20,15 @@ type ResetPasswordOpts struct {
 	NewPassword string `json:"new_password"`
 }
 
-// POST /v1.0/{project_id}/clusters/{cluster_id}/reset-password
+func ResetPassword(client *golangsdk.ServiceClient, clusterId string, opts ResetPasswordOpts) (err error) {
+	b, err := build.RequestBody(opts, "cluster")
+	if err != nil {
+		return
+	}
 
-type ResetPasswordResponse struct {
+	// POST /v1.0/{project_id}/clusters/{cluster_id}/reset-password
+	_, err = client.Post(client.ServiceURL("clusters", clusterId, "reset-password"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
 }
