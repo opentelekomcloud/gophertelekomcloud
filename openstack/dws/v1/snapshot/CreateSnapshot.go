@@ -1,6 +1,6 @@
 package snapshot
 
-type CreateSnapshotRequestBody struct {
+type CreateSnapshotOpts struct {
 	// Snapshot object.
 	Snapshot Snapshot `json:"snapshot"`
 }

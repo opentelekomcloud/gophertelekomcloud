@@ -1,6 +1,6 @@
 package cluster
 
-type CreateClusterRequestBody struct {
+type CreateClusterOpts struct {
 	// Cluster object
 	Cluster CreateClusterInfo `json:"cluster"`
 }

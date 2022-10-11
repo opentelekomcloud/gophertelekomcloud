@@ -6,10 +6,10 @@ type RestoreClusterRequest struct {
 	// ID of the snapshot to be restored
 	SnapshotId string `json:"snapshot_id"`
 
-	Body RestoreClusterRequestBody `json:"body,omitempty"`
+	Body RestoreClusterOpts `json:"body,omitempty"`
 }
 
-type RestoreClusterRequestBody struct {
+type RestoreClusterOpts struct {
 	// Object to be restored
 	Restore Restore `json:"restore"`
 }
