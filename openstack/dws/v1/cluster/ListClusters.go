@@ -1,9 +1,21 @@
 package cluster
 
-type ListClustersRequest struct {
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v1.0/{project_id}/clusters
+func ListClusters(client *golangsdk.ServiceClient) (*ListClustersResponse, error) {
+	// GET /v1.0/{project_id}/clusters
+	raw, err := client.Get(client.ServiceURL("clusters"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListClustersResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListClustersResponse struct {
 	// List of cluster objects
