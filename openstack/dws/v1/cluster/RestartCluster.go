@@ -11,7 +11,7 @@ type RestartClusterOpts struct {
 }
 
 func RestartCluster(client *golangsdk.ServiceClient, clusterId string, opts RestartClusterOpts) (err error) {
-	b, err := build.RequestBody(opts, "cluster")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}

@@ -16,7 +16,7 @@ type ScaleOut struct {
 }
 
 func ResizeCluster(client *golangsdk.ServiceClient, clusterId string, opts ResizeClusterOpts) (err error) {
-	b, err := build.RequestBody(opts, "cluster")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}

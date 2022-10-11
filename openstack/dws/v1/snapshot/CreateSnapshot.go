@@ -1,9 +1,10 @@
 package snapshot
 
-type CreateSnapshotOpts struct {
-	// Snapshot object.
-	Snapshot Snapshot `json:"snapshot"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type Snapshot struct {
 	// Snapshot name, which must be unique and start with a letter.
@@ -16,11 +17,23 @@ type Snapshot struct {
 	Description string `json:"description,omitempty"`
 }
 
-// POST /v1.0/{project_id}/snapshots
+func CreateSnapshot(client *golangsdk.ServiceClient, opts Snapshot) (string, error) {
+	b, err := build.RequestBody(opts, "snapshot")
+	if err != nil {
+		return "", err
+	}
 
-type CreateSnapshotResponse struct {
-	// Snapshot object.
-	Snapshot SnapshotResp `json:"snapshot,omitempty"`
+	// POST /v1.0/{project_id}/snapshots
+	raw, err := client.Post(client.ServiceURL("snapshots"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	var res SnapshotResp
+	err = extract.IntoStructPtr(raw.Body, &res, "snapshot")
+	return res.Id, err
 }
 
 type SnapshotResp struct {

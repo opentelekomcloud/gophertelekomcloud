@@ -21,7 +21,7 @@ type ResetPasswordOpts struct {
 }
 
 func ResetPassword(client *golangsdk.ServiceClient, clusterId string, opts ResetPasswordOpts) (err error) {
-	b, err := build.RequestBody(opts, "cluster")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}
