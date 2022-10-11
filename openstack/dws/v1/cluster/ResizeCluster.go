@@ -1,11 +1,9 @@
 package cluster
 
-type ResizeClusterRequest struct {
-	// ID of the cluster to be scaled out. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.
-	ClusterId string `json:"cluster_id"`
-
-	Body ResizeClusterOpts `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type ResizeClusterOpts struct {
 	// Scale out an object.
@@ -17,7 +15,15 @@ type ScaleOut struct {
 	Count int32 `json:"count"`
 }
 
-// POST /v1.0/{project_id}/clusters/{cluster_id}/resize
+func ResizeCluster(client *golangsdk.ServiceClient, clusterId string, opts ResizeClusterOpts) (err error) {
+	b, err := build.RequestBody(opts, "cluster")
+	if err != nil {
+		return
+	}
 
-type ResizeClusterResponse struct {
+	// POST /v1.0/{project_id}/clusters/{cluster_id}/resize
+	_, err = client.Post(client.ServiceURL("clusters", clusterId, "resize"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
 }
