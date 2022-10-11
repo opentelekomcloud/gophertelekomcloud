@@ -1,17 +1,19 @@
 package cluster
 
-type DeleteClusterRequest struct {
-	// ID of the cluster to be deleted. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.
-	ClusterId string `json:"cluster_id"`
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
-	Body DeleteClusterOpts `json:"body,omitempty"`
-}
 type DeleteClusterOpts struct {
 	// The number of the latest manual snapshots that need to be retained for a cluster.
 	KeepLastManualSnapshot int32 `json:"keep_last_manual_snapshot"`
 }
 
-// DELETE /v1.0/{project_id}/clusters/{cluster_id}
+func DeleteCluster(client *golangsdk.ServiceClient, clusterId string, opts DeleteClusterOpts) error {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return err
+	}
 
-type DeleteClusterResponse struct {
+	// DELETE /v1.0/{project_id}/clusters/{cluster_id}
+	_, err = client.Delete(client.ServiceURL("clusters", clusterId)+q.String(), nil)
+	return err
 }
