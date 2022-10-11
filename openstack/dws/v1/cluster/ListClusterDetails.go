@@ -1,15 +1,20 @@
 package cluster
 
-type ListClusterDetailsRequest struct {
-	// Cluster ID. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.
-	ClusterId string `json:"cluster_id"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v1.0/{project_id}/clusters/{cluster_id}
+func ListClusterDetails(client *golangsdk.ServiceClient, clusterId string) (*ClusterDetail, error) {
+	// GET /v1.0/{project_id}/clusters/{cluster_id}
+	raw, err := client.Get(client.ServiceURL("clusters", clusterId), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type ListClusterDetailsResponse struct {
-	// Cluster object
-	Cluster ClusterDetail `json:"cluster,omitempty"`
+	var res ClusterDetail
+	err = extract.IntoStructPtr(raw.Body, &res, "cluster")
+	return &res, err
 }
 
 type ClusterDetail struct {
@@ -33,7 +38,7 @@ type ClusterDetail struct {
 	Port int32 `json:"port"`
 	// Private network connection information about the cluster.
 	Endpoints []Endpoints `json:"endpoints"`
-	//
+	// Unused
 	Nodes []Nodes `json:"nodes"`
 	// Labels in a cluster
 	Tags []Tags `json:"tags"`
@@ -120,9 +125,7 @@ type Endpoints struct {
 }
 
 type Nodes struct {
-	//
-	Id string `json:"id"`
-	//
+	Id     string `json:"id"`
 	Status string `json:"status"`
 }
 

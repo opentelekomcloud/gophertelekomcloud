@@ -33,7 +33,7 @@ type ClusterInfo struct {
 	Port int32 `json:"port"`
 	// Private network connection information about the cluster.
 	Endpoints []Endpoints `json:"endpoints"`
-	//
+	// Unused
 	Nodes []Nodes `json:"nodes"`
 	// Tags in a cluster
 	Tags []Tags `json:"tags"`
