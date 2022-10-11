@@ -1,18 +1,24 @@
 package cluster
 
-type RestartClusterRequest struct {
-	// ID of the cluster to be restarted. For details about how to obtain the ID, see 7.6 Obtaining the Cluster ID.
-	ClusterId string `json:"cluster_id"`
-
-	Body RestartClusterOpts `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type RestartClusterOpts struct {
 	// Restart flag.
 	Restart interface{} `json:"restart"`
 }
 
-// POST /v1.0/{project_id}/clusters/{cluster_id}/restart
+func RestartCluster(client *golangsdk.ServiceClient, clusterId string, opts RestartClusterOpts) (err error) {
+	b, err := build.RequestBody(opts, "cluster")
+	if err != nil {
+		return
+	}
 
-type RestartClusterResponse struct {
+	// POST /v1.0/{project_id}/clusters/{cluster_id}/restart
+	_, err = client.Post(client.ServiceURL("clusters", clusterId, "restart"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
 }
