@@ -1,13 +1,18 @@
 package tag
 
-type ListClusterTagsRequest struct {
-	// Resource ID, for example, 7d85f602-a948-4a30-afd4-e84f47471c15.
-	ClusterId string `json:"resource_id"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v1.0/{project_id}/clusters/{cluster_id}/tags
+func ListClusterTags(client *golangsdk.ServiceClient, clusterId string) ([]TagPlain, error) {
+	// GET /v1.0/{project_id}/clusters/{cluster_id}/tags
+	raw, err := client.Get(client.ServiceURL("clusters", clusterId, "tags"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type ListClusterTagsResponse struct {
-	// Tag list.
-	Tags []TagPlain `json:"tags,omitempty"`
+	var res []TagPlain
+	err = extract.IntoSlicePtr(raw.Body, &res, "tags")
+	return res, err
 }
