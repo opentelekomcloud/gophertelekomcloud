@@ -1,6 +1,9 @@
 package tracker
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type UpdateOpts struct {
 	// OBS bucket name. The value contains 3 to 63 characters and must start with a digit or lowercase letter.
@@ -18,7 +21,7 @@ type UpdateOpts struct {
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Tracker, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

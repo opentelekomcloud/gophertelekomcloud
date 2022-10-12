@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -15,8 +16,8 @@ type UpdateNotificationOpts struct {
 	// and notifications will be sent when any supported operations occur on any of the connected cloud services.
 	// If you choose customized, notifications will be sent when operations defined in operations occur.
 	// Enumerated values:
-	// 	complete
-	// 	customized
+	// complete
+	// customized
 	OperationType OperationType `json:"operation_type"`
 	// Operation list.
 	Operations []Operations `json:"operations,omitempty"`
@@ -25,11 +26,11 @@ type UpdateNotificationOpts struct {
 	NotifyUserList []NotificationUsers `json:"notify_user_list,omitempty"`
 	// Notification status. Possible options include enabled and disabled.
 	// Enumerated values:
-	// 	enabled
-	// 	disabled
+	// enabled
+	// disabled
 	Status NotificationStatus `json:"status"`
 	// Topic URN.
-	// 	To obtain the topic_urn, call the SMN API for querying topics.
+	// To obtain the topic_urn, call the SMN API for querying topics.
 	// Example URN: urn:smn:regionId:f96188c7ccaf4ffba0c9aa149ab2bd57:test_topic_v2
 	TopicId string `json:"topic_id,omitempty"`
 	// Notification ID.
@@ -37,7 +38,7 @@ type UpdateNotificationOpts struct {
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateNotificationOpts) (*NotificationResponse, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 type ListNotificationsOpts struct {
 	// Notification type.
 	// Enumerated value:
-	// 	smn
+	// smn
 	NotificationType NotificationType
 	// Notification name. If this parameter is not specified, all key event notifications configured in the current tenant account are returned.
 	NotificationName string `q:"notification_name,omitempty"`
@@ -37,8 +37,8 @@ type NotificationResponse struct {
 	NotificationName string `json:"notification_name,omitempty"`
 	// Operation type. Possible options include complete and customized.
 	// Enumerated values:
-	// 	customized
-	// 	complete
+	// customized
+	// complete
 	OperationType OperationType `json:"operation_type,omitempty"`
 	// Operation list.
 	Operations []Operations `json:"operations,omitempty"`
@@ -47,8 +47,8 @@ type NotificationResponse struct {
 	NotifyUserList []NotificationUsers `json:"notify_user_list,omitempty"`
 	// Notification status. Possible options include enabled and disabled.
 	// Enumerated values:
-	// 	enabled
-	// 	disabled
+	// enabled
+	// disabled
 	Status NotificationStatus `json:"status,omitempty"`
 	// Unique resource ID of an SMN topic. You can obtain the ID by querying the topic list.
 	TopicId string `json:"topic_id,omitempty"`
@@ -56,7 +56,7 @@ type NotificationResponse struct {
 	NotificationId string `json:"notification_id,omitempty"`
 	// Notification type.
 	// Enumerated value:
-	// 	smn
+	// smn
 	NotificationType NotificationType `json:"notification_type,omitempty"`
 	// Project ID.
 	ProjectId string `json:"project_id,omitempty"`
