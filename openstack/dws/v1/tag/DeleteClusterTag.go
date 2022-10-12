@@ -1,13 +1,16 @@
 package tag
 
-type DeleteClusterTagRequest struct {
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+
+type DeleteClusterTagOpts struct {
 	// Resource ID
-	ClusterId string `json:"resource_id"`
+	ClusterId string
 	// Tag key
-	Key string `json:"key"`
+	Key string
 }
 
-// DELETE /v1.0/{project_id}/clusters/{resource_id}/tags/{key}
-
-type DeleteClusterTagResponse struct {
+func DeleteCluster(client *golangsdk.ServiceClient, opts DeleteClusterTagOpts) error {
+	// DELETE /v1.0/{project_id}/clusters/{resource_id}/tags/{key}
+	_, err := client.Delete(client.ServiceURL("clusters", opts.ClusterId, "tags", opts.Key), nil)
+	return err
 }
