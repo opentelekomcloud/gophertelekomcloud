@@ -1,8 +1,10 @@
 package tag
 
-type ListClustersByTagsRequest struct {
-	Body ListResourceReq `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type ListResourceReq struct {
 	// The resources to be queried contain tags listed in tags. Each resource to be queried contains a maximum of 10 keys.
@@ -57,7 +59,22 @@ type Match struct {
 	Value string `json:"value,omitempty"`
 }
 
-// POST /v1.0/{project_id}/clusters/resource_instances/action
+func ListClustersByTags(client *golangsdk.ServiceClient, opts ListResourceReq) (*ListClustersByTagsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v1.0/{project_id}/clusters/resource_instances/action
+	raw, err := client.Get(client.ServiceURL("clusters", "resource_instances", "action"), b, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListClustersByTagsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListClustersByTagsResponse struct {
 	// Resources that meet the search criteria.
