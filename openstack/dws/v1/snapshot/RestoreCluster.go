@@ -1,15 +1,15 @@
 package snapshot
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
-
-type RestoreClusterRequest struct {
-	// ID of the snapshot to be restored
-	SnapshotId string `json:"snapshot_id"`
-
-	Body RestoreClusterOpts `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
+)
 
 type RestoreClusterOpts struct {
+	// ID of the snapshot to be restored
+	SnapshotId string
 	// Object to be restored
 	Restore Restore `json:"restore"`
 }
@@ -34,9 +34,21 @@ type Restore struct {
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
-// POST /v1.0/{project_id}/snapshots/{snapshot_id}/actions
+func RestoreCluster(client *golangsdk.ServiceClient, opts RestoreClusterOpts) (string, error) {
+	b, err := build.RequestBody(opts, "snapshot")
+	if err != nil {
+		return "", err
+	}
 
-type RestoreClusterResponse struct {
-	// Cluster object
-	Cluster cluster.Cluster `json:"cluster,omitempty"`
+	// POST /v1.0/{project_id}/snapshots/{snapshot_id}/actions
+	raw, err := client.Post(client.ServiceURL("snapshots", opts.SnapshotId, "actions"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	var res cluster.Cluster
+	err = extract.IntoStructPtr(raw.Body, &res, "cluster")
+	return res.Id, err
 }
