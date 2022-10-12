@@ -35,7 +35,7 @@ type Restore struct {
 }
 
 func RestoreCluster(client *golangsdk.ServiceClient, opts RestoreClusterOpts) (string, error) {
-	b, err := build.RequestBody(opts, "snapshot")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}

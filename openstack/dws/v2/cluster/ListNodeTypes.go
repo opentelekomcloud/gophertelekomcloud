@@ -1,13 +1,20 @@
 package cluster
 
-type ListNodeTypesRequest struct {
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v2/{project_id}/node-types
+func ListNodeTypes(client *golangsdk.ServiceClient) ([]NodeTypes, error) {
+	// GET /v2/{project_id}/node-types
+	raw, err := client.Get(client.ServiceURL("node-types"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type ListNodeTypesResponse struct {
-	// List of node type objects
-	NodeTypes []NodeTypes `json:"node_types,omitempty"`
+	var res []NodeTypes
+	err = extract.IntoSlicePtr(raw.Body, &res, "node_types")
+	return res, err
 }
 
 type NodeTypes struct {
