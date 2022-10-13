@@ -17,10 +17,7 @@ func TestGroupsList(t *testing.T) {
 
 	listOpts := groups.ListOpts{}
 
-	allPages, err := groups.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	asGroups, err := groups.ExtractGroups(allPages)
+	asGroups, err := groups.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, group := range asGroups {
@@ -47,7 +44,7 @@ func TestGroupLifecycle(t *testing.T) {
 		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
 	}()
 
-	group, err := groups.Get(client, groupID).Extract()
+	group, err := groups.Get(client, groupID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, group)
 	th.AssertEquals(t, asGroupCreateName, group.Name)
@@ -60,7 +57,7 @@ func TestGroupLifecycle(t *testing.T) {
 
 	updateOpts := groups.UpdateOpts{
 		Name: asGroupUpdateName,
-		SecurityGroup: []groups.SecurityGroupOpts{
+		SecurityGroup: []groups.ID{
 			{
 				ID: secGroupID,
 			},
@@ -68,11 +65,11 @@ func TestGroupLifecycle(t *testing.T) {
 		IsDeletePublicip: &deletePublicIP,
 	}
 
-	groupID, err = groups.Update(client, group.ID, updateOpts).Extract()
+	groupID, err = groups.Update(client, group.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated AutoScaling Group")
 
-	group, err = groups.Get(client, groupID).Extract()
+	group, err = groups.Get(client, groupID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, group)
 	th.AssertEquals(t, asGroupUpdateName, group.Name)
