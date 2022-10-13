@@ -1,17 +1,17 @@
 /*
 Package tracker provides operation records for cloud service resources.
 
-Example to List Tracker
+Example to Get Tracker
+
 	listTracker := tracker.ListOpts{}
-	allTracker, err := tracker.List(client,listTracker)
+	allTracker, err := tracker.Get(client,listTracker)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(allTracker)
 
-
-
 Example to Create a Tracker
+
 	createTracker:=tracker.CreateOpts{
 		BucketName: "obs-e51d",
 		FilePrefixName: "mytracker",
@@ -26,8 +26,8 @@ Example to Create a Tracker
 	fmt.Println(out)
 	fmt.Println(err)
 
-
 Example to Update a Tracker
+
 	updateTracker:=tracker.UpdateOpts{
 		BucketName : "ciros-img",
 		FilePrefixName : "mytracker",
@@ -43,11 +43,9 @@ Example to Update a Tracker
 	out,err:=tracker.Update(client, updateTracker).Extract()
 	fmt.Println(out)
 
-
 Example to Delete a Tracker
+
 	out:= tracker.Delete(client).ExtractErr()
 	fmt.Println(out)
-
-
 */
 package tracker

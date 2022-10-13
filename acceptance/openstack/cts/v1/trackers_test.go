@@ -18,11 +18,6 @@ func TestTrackersLifecycle(t *testing.T) {
 		deleteOBSBucket(t, bucketName)
 	})
 
-	smn := createSMNTopic(t)
-	t.Cleanup(func() {
-		deleteSMNTopic(t, smn.TopicUrn)
-	})
-
 	t.Logf("Attempting to create CTSv1 Tracker")
 	ctsTracker, err := tracker.Create(client, tracker.CreateOpts{
 		BucketName: bucketName,
@@ -51,15 +46,13 @@ func TestTrackersLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 
-	trackerList, err := tracker.List(client, tracker.ListOpts{
+	trackerList, err := tracker.Get(client, tracker.ListOpts{
 		TrackerName: ctsTracker.TrackerName,
 	})
 	th.AssertNoErr(t, err)
-	if len(trackerList) == 0 {
-		t.Fatalf("CTS tracker wasn't found: %s", ctsTracker.TrackerName)
-	}
+
 	th.AssertEquals(t, tracker.UpdateOpts{
 		BucketName: bucketName,
 		Status:     "disabled",
-	}.Status, trackerList[0].Status)
+	}.Status, trackerList.Status)
 }

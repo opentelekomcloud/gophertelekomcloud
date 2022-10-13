@@ -17,6 +17,16 @@ type Tracker struct {
 	// Tracker name. The default value is system.
 	TrackerName string `json:"tracker_name"`
 	Lts         Lts    `json:"lts"`
+
+	IsSupportTraceFilesEncryption bool   `json:"is_support_trace_files_encryption"`
+	CreateTime                    int64  `json:"create_time"`
+	StreamId                      string `json:"streamId"`
+	GroupId                       string `json:"groupId"`
+	IsSupportValidate             bool   `json:"is_support_validate"`
+	TrackerType                   string `json:"tracker_type"`
+	DomainId                      string `json:"domain_id"`
+	ProjectId                     string `json:"project_id"`
+	Id                            string `json:"id"`
 }
 
 type Lts struct {

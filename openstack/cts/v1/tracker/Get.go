@@ -9,7 +9,7 @@ type ListOpts struct {
 	TrackerName string `q:"tracker_name"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Tracker, error) {
+func Get(client *golangsdk.ServiceClient, opts ListOpts) (*Tracker, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Tracker, error) {
 		return nil, err
 	}
 
-	var res []Tracker
+	var res Tracker
 	err = extract.Into(raw.Body, &res)
-	return res, err
+	return &res, err
 }
