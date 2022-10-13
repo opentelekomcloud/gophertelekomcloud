@@ -15,12 +15,12 @@ func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, netwo
 
 	createOpts := groups.CreateOpts{
 		Name: asName,
-		Networks: []groups.NetworkOpts{
+		Networks: []groups.ID{
 			{
 				ID: networkID,
 			},
 		},
-		SecurityGroup: []groups.SecurityGroupOpts{
+		SecurityGroup: []groups.ID{
 			{
 				ID: defaultSGID,
 			},
@@ -29,7 +29,7 @@ func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, netwo
 		IsDeletePublicip: &deletePublicIP,
 	}
 	t.Logf("Attempting to create AutoScaling Group")
-	groupID, err := groups.Create(client, createOpts).Extract()
+	groupID, err := groups.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created AutoScaling Group: %s", groupID)
 
@@ -38,7 +38,7 @@ func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, netwo
 
 func DeleteAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, groupID string) {
 	t.Logf("Attempting to delete AutoScaling Group")
-	err := groups.Delete(client, groupID).ExtractErr()
+	err := groups.Delete(client, groupID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted AutoScaling Group: %s", groupID)
 }

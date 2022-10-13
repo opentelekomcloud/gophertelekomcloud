@@ -1,11 +1,14 @@
 package whitelists
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"strings"
+
+	"github.com/opentelekomcloud/gophertelekomcloud"
+)
 
 const resourcePath = "instance"
 
-// resourceURL will build the url of put and get request url
-// url: client.Endpoint/instance/{instance_id}/whitelist
-func resourceURL(client *golangsdk.ServiceClient, id string) string {
-	return client.ServiceURL(resourcePath, id, "whitelist")
+func whitelistUrl(client *golangsdk.ServiceClient, id string) string {
+	url := client.ServiceURL(resourcePath, id, "whitelist")
+	return strings.Replace(url, "v1.0", "v2", 1)
 }

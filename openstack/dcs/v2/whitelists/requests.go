@@ -39,7 +39,7 @@ func Put(client *golangsdk.ServiceClient, id string, ops WhitelistOptsBuilder) (
 		return
 	}
 
-	_, r.Err = client.Put(resourceURL(client, id), b, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(whitelistUrl(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return
@@ -47,6 +47,6 @@ func Put(client *golangsdk.ServiceClient, id string, ops WhitelistOptsBuilder) (
 
 // Get the instance whitelist groups by instance id
 func Get(client *golangsdk.ServiceClient, id string) (r WhitelistResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(whitelistUrl(client, id), &r.Body, nil)
 	return
 }
