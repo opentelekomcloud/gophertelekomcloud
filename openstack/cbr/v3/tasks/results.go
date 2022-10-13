@@ -1,24 +1,5 @@
 package tasks
 
-import (
-	"fmt"
-
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-)
-
-type taskResult struct {
-	golangsdk.Result
-}
-
-type GetResult struct {
-	taskResult
-}
-
-type TaskPage struct {
-	pagination.SinglePageBase
-}
-
 type OperationLog struct {
 	CheckpointID  string      `json:"checkpoint_id"`
 	CreatedAt     string      `json:"created_at"`
@@ -126,27 +107,4 @@ type OpExtendInfoRestore struct {
 type OpExtendInfoVaultDelete struct {
 	FailCount  int `json:"fail_count"`
 	TotalCount int `json:"total_count"`
-}
-
-func (r taskResult) Extract() (*OperationLog, error) {
-	var s struct {
-		Operation *OperationLog `json:"operation_log"`
-	}
-	if r.Err != nil {
-		return nil, r.Err
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, fmt.Errorf("error extracting task from response: %s", err)
-	}
-	return s.Operation, err
-}
-
-func ExtractTasks(r pagination.Page) ([]OperationLog, error) {
-	var s []OperationLog
-	err := r.(TaskPage).Result.ExtractIntoSlicePtr(&s, "operation_log")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
 }

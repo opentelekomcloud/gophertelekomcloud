@@ -5,12 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToSnapshotCreateMap() (map[string]interface{}, error)
-}
-
 // CreateOpts contains options for creating a Snapshot. This object is passed to
 // the snapshots.Create function. For more information about these parameters,
 // see the Snapshot object.
@@ -22,21 +16,16 @@ type CreateOpts struct {
 	Metadata    map[string]string `json:"metadata,omitempty"`
 }
 
-// ToSnapshotCreateMap assembles a request body based on the contents of a
-// CreateOpts.
-func (opts CreateOpts) ToSnapshotCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "snapshot")
-}
-
 // Create will create a new Snapshot based on the values in CreateOpts. To
 // extract the Snapshot object from the response, call the Extract method on the
 // CreateResult.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToSnapshotCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
+	b, err := golangsdk.BuildRequestBody(opts, "snapshot")
 	if err != nil {
 		r.Err = err
 		return
 	}
+
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
