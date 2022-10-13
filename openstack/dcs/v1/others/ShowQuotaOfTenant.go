@@ -25,22 +25,22 @@ type ShowQuotaOfTenantResponse struct {
 
 type Resources struct {
 	// Resource unit.
-	// 	When type is set to instance, no value is returned.
-	// 	When type is set to ram, GB is returned.
+	// When type is set to instance, no value is returned.
+	// When type is set to ram, GB is returned.
 	Unit string `json:"unit"`
-	// 	Indicates the minimum limit of instance quota when type is set to instance.
-	// 	Indicates the minimum limit of memory quota when type is set to ram.
+	// Indicates the minimum limit of instance quota when type is set to instance.
+	// Indicates the minimum limit of memory quota when type is set to ram.
 	Min int32 `json:"min"`
-	// 	Indicates the maximum limit of instance quota when type is set to instance.
-	// 	Indicates the maximum limit of memory quota when type is set to ram.
+	// Indicates the maximum limit of instance quota when type is set to instance.
+	// Indicates the maximum limit of memory quota when type is set to ram.
 	Max int32 `json:"max"`
 	// Maximum number of instances that can be created and maximum allowed total memory.
 	Quota int32 `json:"quota"`
 	// Number of created instances and used memory.
 	Used int32 `json:"used"`
 	// Values:
-	// 	instances: indicates the instance quota.
-	// 	ram: indicates the memory quota.
+	// instances: indicates the instance quota.
+	// ram: indicates the memory quota.
 	Type string `json:"type"`
 }
 

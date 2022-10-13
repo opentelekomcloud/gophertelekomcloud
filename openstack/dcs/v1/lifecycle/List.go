@@ -22,13 +22,13 @@ type ListDcsInstanceOpts struct {
 	Status string `q:"status"`
 	// An indicator of whether the number of DCS instances that failed to be created will be returned to the API caller.
 	// Options:
-	// 	true: The number of DCS instances that failed to be created will be returned to the API caller.
-	// 	false or others: The number of DCS instances that failed to be created will not be returned to the API caller.
+	// true: The number of DCS instances that failed to be created will be returned to the API caller.
+	// false or others: The number of DCS instances that failed to be created will not be returned to the API caller.
 	IncludeFailure bool `q:"includeFailure"`
 	// An indicator of whether to perform an exact or fuzzy match based on instance name.
 	// Options:
-	// 	true: exact match
-	// 	false: fuzzy match
+	// true: exact match
+	// false: fuzzy match
 	// Default value: false.
 	IsExactMatchName bool `q:"isExactMatchName"`
 }

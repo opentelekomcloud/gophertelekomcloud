@@ -2,6 +2,7 @@ package migration
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -12,21 +13,21 @@ type CreateMigrationTaskOpts struct {
 	Description string `json:"description,omitempty"`
 	// Mode of the migration.
 	// Options:
-	// 	backupfile_import: indicates importing backup files.
-	// 	online_migration: indicates migrating data online.
+	// backupfile_import: indicates importing backup files.
+	// online_migration: indicates migrating data online.
 	MigrationType string `json:"migration_type"`
 	// Type of the migration.
 	// Options:
-	// 	full_amount_migration: indicates a full migration.
-	// 	incremental_migration: indicates an incremental migration.
+	// full_amount_migration: indicates a full migration.
+	// incremental_migration: indicates an incremental migration.
 	MigrationMethod string `json:"migration_method"`
 	// Backup files to be imported when the migration mode is importing backup files.
 	BackupFiles BackupFilesBody `json:"backup_files,omitempty"`
 	// Type of the network for communication between the source and
 	// destination Redis when the migration mode is online data migration.
 	// Options:
-	// 	vpc
-	// 	vpn
+	// vpc
+	// vpn
 	NetworkType string `json:"network_type,omitempty"`
 	// Source Redis information. This parameter is mandatory when the migration mode is online data migration.
 	SourceInstance SourceInstanceBody `json:"source_instance,omitempty"`
@@ -69,7 +70,7 @@ type TargetInstanceBody struct {
 }
 
 func CreateMigrationTask(client *golangsdk.ServiceClient, opts CreateMigrationTaskOpts) (*CreateMigrationTaskResponse, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -92,19 +93,19 @@ type CreateMigrationTaskResponse struct {
 	// Name of the migration task.
 	Name string `json:"name,omitempty"`
 	// Migration task status. The value can be:
-	// 	SUCCESS: Migration succeeded.
-	// 	FAILED: Migration failed.
-	// 	MIGRATING: Migration is in progress.
-	// 	TERMINATED: Migration has been stopped.
-	// 	TERMINATING: Migration is being stopped.
-	// 	RUNNING: The migration task has been created and is waiting to be executed.
-	// 	CREATING: The migration task is being created.
-	// 	FULLMIGRATING: Full migration is in progress.
-	// 	INCRMIGEATING: Incremental migration is in progress.
-	// 	ERROR: faulty
-	// 	DELETED: faulty
-	// 	RELEASED: automatically released
-	// 	MIGRATION_SUCCESS: The migration is successful, and resources are to be cleared.
-	// 	MIGRATION_FAILED: The migration failed, and resources are to be cleared.
+	// SUCCESS: Migration succeeded.
+	// FAILED: Migration failed.
+	// MIGRATING: Migration is in progress.
+	// TERMINATED: Migration has been stopped.
+	// TERMINATING: Migration is being stopped.
+	// RUNNING: The migration task has been created and is waiting to be executed.
+	// CREATING: The migration task is being created.
+	// FULLMIGRATING: Full migration is in progress.
+	// INCRMIGEATING: Incremental migration is in progress.
+	// ERROR: faulty
+	// DELETED: faulty
+	// RELEASED: automatically released
+	// MIGRATION_SUCCESS: The migration is successful, and resources are to be cleared.
+	// MIGRATION_FAILED: The migration failed, and resources are to be cleared.
 	Status string `json:"status,omitempty"`
 }

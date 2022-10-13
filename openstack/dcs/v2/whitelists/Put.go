@@ -24,7 +24,7 @@ type WhitelistGroupOpts struct {
 
 // Put an instance whitelist with given parameters.
 func Put(client *golangsdk.ServiceClient, id string, opts WhitelistOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}

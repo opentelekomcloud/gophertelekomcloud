@@ -2,6 +2,7 @@ package lifecycle
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -27,7 +28,7 @@ func BatchDelete(client *golangsdk.ServiceClient, opts BatchDeleteOpts) ([]Batch
 		return nil, err
 	}
 
-	b, err := golangsdk.BuildRequestBody(opts.Body, "")
+	b, err := build.RequestBody(opts.Body, "")
 	if err != nil {
 		return nil, err
 	}

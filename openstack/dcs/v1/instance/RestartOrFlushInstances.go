@@ -2,6 +2,7 @@ package instance
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -15,7 +16,7 @@ type ChangeInstanceStatusOpts struct {
 }
 
 func RestartOrFlushInstances(client *golangsdk.ServiceClient, opts ChangeInstanceStatusOpts) ([]BatchOpsResult, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

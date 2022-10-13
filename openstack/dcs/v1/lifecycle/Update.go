@@ -1,6 +1,9 @@
 package lifecycle
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // UpdateOpts is a struct which represents the parameters of update function
 type UpdateOpts struct {
@@ -28,7 +31,7 @@ type UpdateOpts struct {
 // Update is a method which can be able to update the instance
 // via accessing to the service with Put method and parameters
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (err error) {
-	body, err := golangsdk.BuildRequestBody(opts, "")
+	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}

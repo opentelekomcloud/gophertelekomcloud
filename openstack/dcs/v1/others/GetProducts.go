@@ -25,11 +25,11 @@ type Product struct {
 	// DCS instance specification code.
 	SpecCode string `json:"spec_code"`
 	// DCS instance type. Options:
-	// 	single: single-node
-	// 	ha: master/standby
-	// 	cluster: Redis Cluster
-	// 	proxy: Proxy Cluster
-	// 	ha_rw_split: read/write splitting
+	// single: single-node
+	// ha: master/standby
+	// cluster: Redis Cluster
+	// proxy: Proxy Cluster
+	// ha_rw_split: read/write splitting
 	CacheMode string `json:"cache_mode"`
 	// Edition of DCS for Redis.
 	ProductType string `json:"product_type"`

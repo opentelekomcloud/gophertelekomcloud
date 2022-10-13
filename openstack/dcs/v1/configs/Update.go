@@ -1,6 +1,9 @@
 package configs
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type UpdateOpts struct {
 	// Array of configuration items of the DCS instance.
@@ -17,7 +20,7 @@ type RedisConfig struct {
 }
 
 func Update(client *golangsdk.ServiceClient, instanceID string, opts UpdateOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}

@@ -1,6 +1,9 @@
 package lifecycle
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // ExtendOpts is a struct which represents the parameters of extend function
 type ExtendOpts struct {
@@ -16,7 +19,7 @@ type ExtendOpts struct {
 
 // Extend is extending for a dcs instance
 func Extend(client *golangsdk.ServiceClient, id string, opts ExtendOpts) (err error) {
-	body, err := golangsdk.BuildRequestBody(opts, "")
+	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}

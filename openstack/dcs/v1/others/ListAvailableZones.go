@@ -31,8 +31,8 @@ type AvailableZone struct {
 	// Port number of the AZ.
 	Port string `json:"port"`
 	// An indicator of whether there are available Redis 3.0 resources in the AZ.
-	// 	true: There are available resources in the AZ.
-	// 	false: There are no available resources in the AZ.
+	// true: There are available resources in the AZ.
+	// false: There are no available resources in the AZ.
 	ResourceAvailability string `json:"resource_availability"`
 	// An indicator of whether there are available Redis 4.0 and 5.0 resources in the AZ.
 	ResourceAvailabilityDcs2 string `json:"resource_availability_dcs2"`

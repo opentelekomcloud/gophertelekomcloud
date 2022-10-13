@@ -2,6 +2,7 @@ package backups
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -11,7 +12,7 @@ type BackupInstanceOpts struct {
 }
 
 func BackupInstance(client *golangsdk.ServiceClient, instancesId string, opts BackupInstanceOpts) (string, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}
