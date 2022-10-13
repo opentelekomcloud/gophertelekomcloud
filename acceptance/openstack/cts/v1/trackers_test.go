@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cts"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cts/v1/tracker"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -13,9 +14,9 @@ func TestTrackersLifecycle(t *testing.T) {
 	client, err := clients.NewCTSV1Client()
 	th.AssertNoErr(t, err)
 
-	bucketName := createOBSBucket(t)
+	bucketName := cts.CreateOBSBucket(t)
 	t.Cleanup(func() {
-		deleteOBSBucket(t, bucketName)
+		cts.DeleteOBSBucket(t, bucketName)
 	})
 
 	t.Logf("Attempting to create CTSv1 Tracker")
@@ -46,7 +47,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 
-	trackerList, err := tracker.Get(client, tracker.ListOpts{
+	trackerList, err := tracker.Get(client, tracker.GetOpts{
 		TrackerName: ctsTracker.TrackerName,
 	})
 	th.AssertNoErr(t, err)

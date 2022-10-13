@@ -5,11 +5,11 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ListOpts struct {
+type GetOpts struct {
 	TrackerName string `q:"tracker_name"`
 }
 
-func Get(client *golangsdk.ServiceClient, opts ListOpts) (*Tracker, error) {
+func Get(client *golangsdk.ServiceClient, opts GetOpts) (*Tracker, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err

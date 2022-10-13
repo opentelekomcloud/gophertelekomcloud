@@ -1,4 +1,4 @@
-package keyevent
+package traces
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"

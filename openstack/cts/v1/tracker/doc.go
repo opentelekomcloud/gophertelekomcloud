@@ -3,7 +3,7 @@ Package tracker provides operation records for cloud service resources.
 
 Example to Get Tracker
 
-	listTracker := tracker.ListOpts{}
+	listTracker := tracker.GetOpts{}
 	allTracker, err := tracker.Get(client,listTracker)
 	if err != nil {
 		panic(err)
