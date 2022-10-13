@@ -66,7 +66,7 @@ type Network struct {
 	FixedIP string
 }
 
-// CreateOptsBuilder allows extensions to add additional parameters to the Create request.
+// CreateOptsBuilder CreateOptsWithCustomField
 type CreateOptsBuilder interface {
 	ToServerCreateMap() (map[string]interface{}, error)
 }
