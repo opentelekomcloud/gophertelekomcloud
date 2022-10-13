@@ -28,7 +28,7 @@ func TestPolicyLifecycle(t *testing.T) {
 		autoscaling.DeleteAutoScalingGroup(t, v1client, groupID)
 	}()
 
-	createOpts := policies.CreateOpts{
+	createOpts := policies.PolicyOpts{
 		PolicyName:   asPolicyCreateName,
 		PolicyType:   "RECURRENCE",
 		ResourceID:   groupID,
@@ -46,17 +46,17 @@ func TestPolicyLifecycle(t *testing.T) {
 	}
 
 	t.Logf("Attempting to create AutoScaling Policy")
-	policyID, err := policies.Create(client, createOpts).Extract()
+	policyID, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created AutoScaling Policy: %s", policyID)
 	defer func() {
 		t.Logf("Attempting to delete AutoScaling Policy")
-		err := policies.Delete(v1client, policyID).ExtractErr()
+		err := policies.Delete(v1client, policyID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted AutoScaling Policy: %s", policyID)
 	}()
 
-	policy, err := policies.Get(client, policyID).Extract()
+	policy, err := policies.Get(client, policyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, asPolicyCreateName, policy.PolicyName)
 	th.AssertEquals(t, 15, policy.PolicyAction.Percentage)
@@ -65,20 +65,20 @@ func TestPolicyLifecycle(t *testing.T) {
 	t.Logf("Attempting to update AutoScaling policy")
 	asPolicyUpdateName := tools.RandomString("as-policy-update-", 3)
 
-	updateOpts := policies.UpdateOpts{
+	updateOpts := policies.PolicyOpts{
 		PolicyName:     asPolicyUpdateName,
 		SchedulePolicy: createOpts.SchedulePolicy,
-		Action: policies.ActionOpts{
+		PolicyAction: policies.ActionOpts{
 			Percentage: 30,
 		},
 		CoolDownTime: 0,
 	}
 
-	policyID, err = policies.Update(client, policy.PolicyID, updateOpts).Extract()
+	policyID, err = policies.Update(client, policy.PolicyID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated AutoScaling Policy")
 
-	policy, err = policies.Get(client, policyID).Extract()
+	policy, err = policies.Get(client, policyID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, policy)
 	th.AssertEquals(t, asPolicyUpdateName, policy.PolicyName)
