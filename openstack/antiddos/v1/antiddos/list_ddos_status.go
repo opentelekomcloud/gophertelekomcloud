@@ -1,8 +1,6 @@
 package antiddos
 
 import (
-	"reflect"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -34,7 +32,7 @@ type DDosStatus struct {
 	Status string `json:"status"`
 }
 
-func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([]DDosStatus, error) {
+func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) (*ListStatusResponse, error) {
 	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return nil, err
@@ -48,11 +46,7 @@ func ListDDosStatus(client *golangsdk.ServiceClient, opts ListDDosStatusOpts) ([
 
 	var res ListStatusResponse
 	err = extract.Into(raw.Body, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return filterDdosStatus(res.DDosStatus, opts)
+	return &res, err
 }
 
 type ListStatusResponse struct {
@@ -60,40 +54,4 @@ type ListStatusResponse struct {
 	Total int `json:"total"`
 	// List of defense statuses
 	DDosStatus []DDosStatus `json:"ddosStatus"`
-}
-
-func filterDdosStatus(ddosStatus []DDosStatus, opts ListDDosStatusOpts) ([]DDosStatus, error) {
-	var refinedDdosStatus []DDosStatus
-	var matched bool
-	m := map[string]interface{}{}
-
-	if opts.FloatingIpId != "" {
-		m["FloatingIpId"] = opts.FloatingIpId
-	}
-
-	if len(m) > 0 && len(ddosStatus) > 0 {
-		for _, ddosStatus := range ddosStatus {
-			matched = true
-
-			for key, value := range m {
-				if sVal := getStructField(&ddosStatus, key); !(sVal == value) {
-					matched = false
-				}
-			}
-
-			if matched {
-				refinedDdosStatus = append(refinedDdosStatus, ddosStatus)
-			}
-		}
-	} else {
-		refinedDdosStatus = ddosStatus
-	}
-
-	return refinedDdosStatus, nil
-}
-
-func getStructField(v *DDosStatus, field string) string {
-	r := reflect.ValueOf(v)
-	f := reflect.Indirect(r).FieldByName(field)
-	return f.String()
 }

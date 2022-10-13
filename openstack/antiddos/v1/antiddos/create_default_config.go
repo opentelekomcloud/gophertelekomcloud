@@ -2,6 +2,7 @@ package antiddos
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -19,7 +20,7 @@ type ConfigOpts struct {
 }
 
 func CreateDefaultConfig(client *golangsdk.ServiceClient, opts ConfigOpts) (*TaskResponse, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

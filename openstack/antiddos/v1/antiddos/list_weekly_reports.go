@@ -9,9 +9,8 @@ import (
 
 func ListWeeklyReports(client *golangsdk.ServiceClient, periodStartDate int64) (*ListWeeklyReportsResponse, error) {
 	// GET /v1/{project_id}/antiddos/weekly
-	raw, err := client.Get(
-		client.ServiceURL("antiddos", "weekly")+"?period_start_date="+strconv.FormatInt(periodStartDate, 10),
-		nil, nil)
+	url := client.ServiceURL("antiddos", "weekly") + "?period_start_date=" + strconv.FormatInt(periodStartDate, 10)
+	raw, err := client.Get(url, nil, nil)
 	if err != nil {
 		return nil, err
 	}
