@@ -59,7 +59,7 @@ func (s *Clusters) TestCreateRequest() {
 		AuthorityEnabled: false,
 	}
 
-	created, err := clusters.Create(fake.ServiceClient(), opts).Extract()
+	created, err := clusters.Create(fake.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, clusterName, created.Name)
@@ -78,7 +78,7 @@ func (s *Clusters) TestGetRequest() {
 		_, _ = fmt.Fprint(w, getResponseBody)
 	})
 
-	cluster, err := clusters.Get(fake.ServiceClient(), clusterID).Extract()
+	cluster, err := clusters.Get(fake.ServiceClient(), clusterID)
 	th.AssertNoErr(t, err)
 	if cluster == nil {
 		t.Fatal("cluster is nil")
@@ -102,10 +102,7 @@ func (s *Clusters) TestListRequest() {
 		_, _ = fmt.Fprint(w, listResponseBody)
 	})
 
-	pages, err := clusters.List(fake.ServiceClient()).AllPages()
-	th.AssertNoErr(t, err)
-
-	clusterSlice, err := clusters.ExtractClusters(pages)
+	clusterSlice, err := clusters.List(fake.ServiceClient())
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, len(clusterSlice), 3)
@@ -125,7 +122,7 @@ func (s *Clusters) TestDeleteRequest() {
 		w.WriteHeader(200)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), clusterID).ExtractErr()
+	err := clusters.Delete(fake.ServiceClient(), clusterID)
 	th.AssertNoErr(t, err)
 }
 
