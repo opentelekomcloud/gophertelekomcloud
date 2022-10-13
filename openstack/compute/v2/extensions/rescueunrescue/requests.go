@@ -2,6 +2,7 @@ package rescueunrescue
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -17,7 +18,7 @@ type RescueOpts struct {
 
 // Rescue instructs the provider to place the server into RESCUE mode.
 func Rescue(client *golangsdk.ServiceClient, id string, opts RescueOpts) (string, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "rescue")
+	b, err := build.RequestBody(opts, "rescue")
 	if err != nil {
 		return "", err
 	}

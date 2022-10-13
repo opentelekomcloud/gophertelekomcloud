@@ -2,6 +2,7 @@ package floatingips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOpts specifies a Floating IP allocation request.
@@ -12,7 +13,7 @@ type CreateOpts struct {
 
 // Create requests the creation of a new Floating IP.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*FloatingIP, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

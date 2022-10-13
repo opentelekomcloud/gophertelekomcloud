@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 type AddHostOpts struct {
@@ -13,7 +14,7 @@ type AddHostOpts struct {
 
 // AddHost makes a request against the API to add host to a specific aggregate.
 func AddHost(client *golangsdk.ServiceClient, aggregateID int, opts AddHostOpts) (*Aggregate, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "add_host")
+	b, err := build.RequestBody(opts, "add_host")
 	if err != nil {
 		return nil, err
 	}

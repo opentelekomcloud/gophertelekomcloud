@@ -2,6 +2,7 @@ package keypairs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 )
 
@@ -40,7 +41,7 @@ type CreateOpts struct {
 
 // Create requests the creation of a new KeyPair on the server, or to import a pre-existing keypair.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*KeyPair, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "keypair")
+	b, err := build.RequestBody(opts, "keypair")
 	if err != nil {
 		return nil, err
 	}

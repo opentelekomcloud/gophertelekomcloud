@@ -1,6 +1,9 @@
 package servers
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // UpdateOpts specifies the base attributes that may be updated on an existing server.
 type UpdateOpts struct {
@@ -16,7 +19,7 @@ type UpdateOpts struct {
 
 // Update requests that various attributes of the indicated server be changed.
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Server, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "server")
+	b, err := build.RequestBody(opts, "server")
 	if err != nil {
 		return nil, err
 	}

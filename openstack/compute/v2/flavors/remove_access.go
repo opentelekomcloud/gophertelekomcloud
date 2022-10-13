@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // RemoveAccess removes/revokes a tenant/project access to a flavor.
 func RemoveAccess(client *golangsdk.ServiceClient, id string, opts AccessOpts) ([]FlavorAccess, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "removeTenantAccess")
+	b, err := build.RequestBody(opts, "removeTenantAccess")
 	if err != nil {
 		return nil, err
 	}

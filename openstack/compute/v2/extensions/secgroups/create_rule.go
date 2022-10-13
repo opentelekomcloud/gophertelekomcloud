@@ -2,6 +2,7 @@ package secgroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -40,7 +41,7 @@ type CreateRuleOpts struct {
 // specified in CreateRuleOpts). You have the option of controlling inbound
 // traffic from either an IP range (CIDR) or from another security group.
 func CreateRule(client *golangsdk.ServiceClient, opts CreateRuleOpts) (*Rule, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "security_group_rule")
+	b, err := build.RequestBody(opts, "security_group_rule")
 	if err != nil {
 		return nil, err
 	}

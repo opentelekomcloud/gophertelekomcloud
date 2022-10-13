@@ -1,6 +1,9 @@
 package quotasets
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // UpdateOpts - options for Updating the quotas of a Tenant.
 // All int-values are pointers, so they can be nil if they are not needed.
@@ -41,7 +44,7 @@ type UpdateOpts struct {
 
 // Update updates the quotas for the given tenantID and returns the new QuotaSet.
 func Update(client *golangsdk.ServiceClient, tenantID string, opts UpdateOpts) (*QuotaSet, error) {
-	reqBody, err := golangsdk.BuildRequestBody(opts, "quota_set")
+	reqBody, err := build.RequestBody(opts, "quota_set")
 	if err != nil {
 		return nil, err
 	}

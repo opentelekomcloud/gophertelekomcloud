@@ -2,6 +2,7 @@ package servergroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOpts specifies Server Group creation parameters.
@@ -14,7 +15,7 @@ type CreateOpts struct {
 
 // Create requests the creation of a new Server Group.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*ServerGroup, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "server_group")
+	b, err := build.RequestBody(opts, "server_group")
 	if err != nil {
 		return nil, err
 	}

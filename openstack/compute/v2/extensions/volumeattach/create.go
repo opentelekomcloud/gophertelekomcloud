@@ -2,6 +2,7 @@ package volumeattach
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOpts specifies volume attachment creation or import parameters.
@@ -14,7 +15,7 @@ type CreateOpts struct {
 
 // Create requests the creation of a new volume attachment on the server.
 func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOpts) (*VolumeAttachment, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "volumeAttachment")
+	b, err := build.RequestBody(opts, "volumeAttachment")
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,9 @@
 package floatingips
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // AssociateOpts specifies the required information to associate a Floating IP with an instance
 type AssociateOpts struct {
@@ -12,7 +15,7 @@ type AssociateOpts struct {
 
 // AssociateInstance pairs an allocated Floating IP with a server.
 func AssociateInstance(client *golangsdk.ServiceClient, serverID string, opts AssociateOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "addFloatingIp")
+	b, err := build.RequestBody(opts, "addFloatingIp")
 	if err != nil {
 		return
 	}

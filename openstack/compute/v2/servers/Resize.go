@@ -1,6 +1,9 @@
 package servers
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // ResizeOpts represents the configuration options used to control a Resize operation.
 type ResizeOpts struct {
@@ -18,7 +21,7 @@ type ResizeOpts struct {
 // configuration. If you like it, call ConfirmResize() to commit the resize
 // permanently. Otherwise, call RevertResize() to restore the old configuration.
 func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "resize")
+	b, err := build.RequestBody(opts, "resize")
 	if err != nil {
 		return
 	}

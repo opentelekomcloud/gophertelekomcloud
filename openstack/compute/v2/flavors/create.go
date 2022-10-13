@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -31,7 +32,7 @@ type CreateOpts struct {
 
 // Create requests the creation of a new flavor.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Flavor, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "flavor")
+	b, err := build.RequestBody(opts, "flavor")
 	if err != nil {
 		return nil, err
 	}

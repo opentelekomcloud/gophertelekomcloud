@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateImageOpts provides options to pass to the CreateImage request.
@@ -18,7 +19,7 @@ type CreateImageOpts struct {
 
 // CreateImage makes a request against the nova API to schedule an image to be created of the server
 func CreateImage(client *golangsdk.ServiceClient, id string, opts CreateImageOpts) (string, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "createImage")
+	b, err := build.RequestBody(opts, "createImage")
 	if err != nil {
 		return "", err
 	}

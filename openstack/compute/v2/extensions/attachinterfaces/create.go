@@ -2,6 +2,7 @@ package attachinterfaces
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -25,7 +26,7 @@ type CreateOpts struct {
 
 // Create requests the creation of a new interface attachment on the server.
 func Create(client *golangsdk.ServiceClient, serverID string, opts CreateOpts) (*Interface, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "interfaceAttachment")
+	b, err := build.RequestBody(opts, "interfaceAttachment")
 	if err != nil {
 		return nil, err
 	}

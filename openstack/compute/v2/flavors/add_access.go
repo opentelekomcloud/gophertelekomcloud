@@ -2,6 +2,7 @@ package flavors
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // AccessOpts represents options for adding access to a flavor.
@@ -12,7 +13,7 @@ type AccessOpts struct {
 
 // AddAccess grants a tenant/project access to a flavor.
 func AddAccess(client *golangsdk.ServiceClient, id string, opts AccessOpts) ([]FlavorAccess, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "addTenantAccess")
+	b, err := build.RequestBody(opts, "addTenantAccess")
 	if err != nil {
 		return nil, err
 	}

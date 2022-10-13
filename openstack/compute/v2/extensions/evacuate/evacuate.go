@@ -2,6 +2,7 @@ package evacuate
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -17,7 +18,7 @@ type EvacuateOpts struct {
 
 // Evacuate will Evacuate a failed instance to another host.
 func Evacuate(client *golangsdk.ServiceClient, id string, opts EvacuateOpts) (string, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "evacuate")
+	b, err := build.RequestBody(opts, "evacuate")
 	if err != nil {
 		return "", err
 	}

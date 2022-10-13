@@ -4,11 +4,16 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
+
+type SetMetadataOpts struct {
+	Metadata map[string]interface{} `json:"metadata" required:"true"`
+}
 
 // SetMetadata makes a request against the API to set metadata to a specific aggregate.
 func SetMetadata(client *golangsdk.ServiceClient, aggregateID int, opts SetMetadataOpts) (*Aggregate, error) {
-	b, err := opts.ToSetMetadataMap()
+	b, err := build.RequestBody(opts, "set_metadata")
 	if err != nil {
 		return nil, err
 	}

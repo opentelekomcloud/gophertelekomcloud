@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -14,7 +15,7 @@ type Tags struct {
 
 // Create implements create tags request
 func Create(client *golangsdk.ServiceClient, serverId string, opts Tags) (*Tags, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

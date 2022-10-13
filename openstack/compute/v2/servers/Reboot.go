@@ -1,6 +1,9 @@
 package servers
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // RebootMethod describes the mechanisms by which a server reboot can be requested.
 type RebootMethod string
@@ -36,7 +39,7 @@ E.g., in Linux, asking it to enter runlevel 6, or executing
 "sudo shutdown -r now", or by asking Windows to rtart the machine.
 */
 func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "reboot")
+	b, err := build.RequestBody(opts, "reboot")
 	if err != nil {
 		return
 	}

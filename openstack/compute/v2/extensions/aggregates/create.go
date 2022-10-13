@@ -2,6 +2,7 @@ package aggregates
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 type CreateOpts struct {
@@ -16,7 +17,7 @@ type CreateOpts struct {
 
 // Create makes a request against the API to create an aggregate.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Aggregate, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "aggregate")
+	b, err := build.RequestBody(opts, "aggregate")
 	if err != nil {
 		return nil, err
 	}

@@ -1,10 +1,13 @@
 package secgroups
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // Update will modify the mutable properties of a security group, notably its name and description.
 func Update(client *golangsdk.ServiceClient, id string, opts GroupOpts) (*SecurityGroup, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "security_group")
+	b, err := build.RequestBody(opts, "security_group")
 	if err != nil {
 		return nil, err
 	}

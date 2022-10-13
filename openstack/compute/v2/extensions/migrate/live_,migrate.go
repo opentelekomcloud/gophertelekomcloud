@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // LiveMigrateOpts specifies parameters of live migrate action.
@@ -21,7 +22,7 @@ type LiveMigrateOpts struct {
 
 // LiveMigrate will initiate a live-migration (without rebooting) of the instance to another host.
 func LiveMigrate(client *golangsdk.ServiceClient, id string, opts LiveMigrateOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "os-migrateLive")
+	b, err := build.RequestBody(opts, "os-migrateLive")
 	if err != nil {
 		return
 	}

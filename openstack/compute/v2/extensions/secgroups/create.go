@@ -2,6 +2,7 @@ package secgroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // GroupOpts is the underlying struct responsible for creating or updating
@@ -15,7 +16,7 @@ type GroupOpts struct {
 
 // Create will create a new security group.
 func Create(client *golangsdk.ServiceClient, opts GroupOpts) (*SecurityGroup, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "security_group")
+	b, err := build.RequestBody(opts, "security_group")
 	if err != nil {
 		return nil, err
 	}
