@@ -29,11 +29,11 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 		},
 	}
 	t.Logf("Attempting to update DCSv1 configuration")
-	err = configs.Update(client, dcsInstance.InstanceID, updateOpts).ExtractErr()
+	err = configs.Update(client, dcsInstance.InstanceID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated DCSv1 configuration")
 
-	configList, err := configs.List(client, dcsInstance.InstanceID).Extract()
+	configList, err := configs.List(client, dcsInstance.InstanceID)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, updateOpts.RedisConfigs[0].ParamID, configList.RedisConfigs[0].ParamID)
 	th.AssertDeepEquals(t, updateOpts.RedisConfigs[0].ParamValue, configList.RedisConfigs[0].ParamValue)
@@ -58,7 +58,7 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Logf("Retrieving whitelist configuration")
-	whitelistResp, err := whitelists.Get(client, dcsInstance.InstanceID).Extract()
+	whitelistResp, err := whitelists.Get(client, dcsInstance.InstanceID)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, whitelistResp.InstanceID, dcsInstance.InstanceID)
 	th.AssertDeepEquals(t, whitelistResp.Groups[0].GroupName, "test-group-1")

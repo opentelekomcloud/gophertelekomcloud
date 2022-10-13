@@ -22,7 +22,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		t.Skip("OS_VPC_ID or OS_NETWORK_ID is missing but test requires using existing network")
 	}
 
-	availabilityZone, err := others.Get(client).Extract()
+	availabilityZone, err := others.ListAvailableZones(client)
 	th.AssertNoErr(t, err)
 	var az string
 	for _, v := range availabilityZone.AvailableZones {
@@ -35,16 +35,16 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		t.Skip("Availability Zone ID wasn't found")
 	}
 
-	productList, err := others.Get(client).Extract()
+	productList, err := others.GetProducts(client)
 	th.AssertNoErr(t, err)
 
-	var productID string
-	for _, v := range productList.Products {
-		if v.SpecCode == "redis.ha.xu1.tiny.r2.128" {
-			productID = v.ProductID
+	var specCode string
+	for _, v := range productList {
+		if v.ProductID == "redis.ha.xu1.tiny.r2.128" {
+			specCode = v.SpecCode
 		}
 	}
-	if productID == "" {
+	if specCode == "" {
 		t.Skip("Product ID wasn't found")
 	}
 
@@ -60,18 +60,18 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		VPCID:           vpcID,
 		SubnetID:        networkID,
 		AvailableZones:  []string{az},
-		ProductID:       productID,
+		SpecCode:        specCode,
 		SecurityGroupID: defaultSG,
 	}
-	dcsInstanceCreate, err := lifecycle.Create(client, createOpts).Extract()
+	instanceID, err := lifecycle.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	err = waitForInstanceAvailable(client, 600, dcsInstanceCreate.InstanceID)
+	err = waitForInstanceAvailable(client, 600, instanceID)
 	th.AssertNoErr(t, err)
 
-	t.Logf("DCSv1 instance successfully created: %s", dcsInstanceCreate.InstanceID)
+	t.Logf("DCSv1 instance successfully created: %s", instanceID)
 
-	dcsInstance, err := lifecycle.Get(client, dcsInstanceCreate.InstanceID).Extract()
+	dcsInstance, err := lifecycle.Get(client, instanceID)
 	th.AssertNoErr(t, err)
 
 	return dcsInstance
@@ -80,7 +80,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
 	t.Logf("Attempting to delete DCSv1 instance: %s", instanceID)
 
-	err := lifecycle.Delete(client, instanceID).ExtractErr()
+	err := lifecycle.Delete(client, instanceID)
 	th.AssertNoErr(t, err)
 
 	err = waitForInstanceDeleted(client, 600, instanceID)
@@ -92,7 +92,7 @@ func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID
 
 func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		dcsInstances, err := lifecycle.Get(client, instanceID).Extract()
+		dcsInstances, err := lifecycle.Get(client, instanceID)
 		if err != nil {
 			return false, err
 		}
@@ -105,7 +105,7 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 
 func waitForInstanceDeleted(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := lifecycle.Get(client, instanceID).Extract()
+		_, err := lifecycle.Get(client, instanceID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
