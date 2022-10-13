@@ -2,6 +2,7 @@ package backup
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -19,7 +20,7 @@ type ResourceCapQueryParams struct {
 // QueryResourceBackupCapability will query whether resources can be backed up based on the values in ResourceBackupCapOpts. To extract
 // the ResourceCap object from the response, call the ExtractQueryResponse method on the QueryResult.
 func QueryResourceBackupCapability(client *golangsdk.ServiceClient, opts ResourceBackupCapOpts) ([]ResourceCapability, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

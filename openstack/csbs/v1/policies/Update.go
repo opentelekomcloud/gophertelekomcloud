@@ -1,6 +1,9 @@
 package policies
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // UpdateOpts contains the values used when updating a backup policy.
 type UpdateOpts struct {
@@ -13,7 +16,7 @@ type UpdateOpts struct {
 
 // Update allows backup policies to be updated. call the Extract method on the UpdateResult.
 func Update(c *golangsdk.ServiceClient, policyId string, opts UpdateOpts) (*CreateBackupPolicy, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "policy")
+	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err
 	}

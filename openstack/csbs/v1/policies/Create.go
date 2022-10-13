@@ -2,6 +2,7 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOpts contains the options for create a Backup Policy. This object is passed to policies.Create().
@@ -18,7 +19,7 @@ type CreateOpts struct {
 // Create will create a new backup policy based on the values in CreateOpts. To extract
 // the Backup object from the response, call the Extract method on the CreateResult.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateBackupPolicy, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "policy")
+	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err
 	}

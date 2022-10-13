@@ -2,6 +2,7 @@ package backup
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -19,7 +20,7 @@ type CreateOpts struct {
 // Create will create a new backup based on the values in CreateOpts. To extract
 // the checkpoint object from the response, call the Extract method on the CreateResult.
 func Create(client *golangsdk.ServiceClient, resourceID string, opts CreateOpts) (*Checkpoint, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "protect")
+	b, err := build.RequestBody(opts, "protect")
 	if err != nil {
 		return nil, err
 	}
