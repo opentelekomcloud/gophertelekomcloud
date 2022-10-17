@@ -73,12 +73,17 @@ type SchedulePolicy struct {
 }
 
 type Action struct {
-	// Specifies the scaling action.
+	// Specifies the operation to be performed. The default operation is ADD.
 	// ADD: adds specified number of instances to the AS group.
-	// REMOVE: removes specified number of instances from the AS group.
+	// REMOVE/REDUCE: removes or reduces specified number of instances from the AS group.
 	// SET: sets the number of instances in the AS group.
 	Operation string `json:"operation"`
-	// Specifies the number of instances to be operated.
+	// Specifies the number of instances to be operated. The default number is 1.
+	// The value range is as follows for a default quota:
+	// If operation is set to SET, the value range is 0 to 200.
+	// If operation is set to ADD, REMOVE, or REDUCE, the value range is 1 to 200.
+	// NOTE:
+	// Either instance_number or instance_percentage is required.
 	InstanceNum int `json:"instance_number"`
 	// Specifies the percentage of instances to be operated. You can increase, decrease,
 	// or set the number of instances in an AS group to the specified percentage of the current number of instances.
