@@ -7,25 +7,25 @@ import (
 
 type ListOpts struct {
 	// Specifies the AS group ID.
-	ScalingGroupId string `json:"scaling_group_id"`
+	ScalingGroupId string `q:"scaling_group_id"`
 	// Specifies the instance lifecycle status in the AS group.
 	// INSERVICE: The instance is enabled.
 	// PENDING: The instance is being added to the AS group.
 	// REMOVING: The instance is being removed from the AS group.
-	LifeCycleState string `json:"life_cycle_state,omitempty"`
+	LifeCycleState string `q:"life_cycle_state,omitempty"`
 	// Specifies the instance health status.
 	// INITIALIZING: The instance is initializing.
 	// NORMAL: The instance is normal.
 	// ERROR: The instance is abnormal.
-	HealthStatus string `json:"health_status,omitempty"`
+	HealthStatus string `q:"health_status,omitempty"`
 	// Specifies the instance protection status.
 	// true: Instance protection is enabled.
 	// false: Instance protection is disabled.
-	ProtectFromScalingDown string `json:"protect_from_scaling_down,omitempty"`
+	ProtectFromScalingDown string `q:"protect_from_scaling_down,omitempty"`
 	// Specifies the start line number. The default value is 0. The minimum parameter value is 0.
-	StartNumber int32 `json:"start_number,omitempty"`
+	StartNumber int32 `q:"start_number,omitempty"`
 	// Specifies the number of query records. The default value is 20. The value range is 0 to 100.
-	Limit int32 `json:"limit,omitempty"`
+	Limit int32 `q:"limit,omitempty"`
 }
 
 func List(client *golangsdk.ServiceClient, groupID string, opts ListOpts) (*ListScalingInstancesResponse, error) {

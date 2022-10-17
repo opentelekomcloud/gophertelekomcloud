@@ -50,7 +50,7 @@ type SchedulePolicy struct {
 	// If scaling_policy_type is set to SCHEDULED, the time format is YYYY-MM-DDThh:mmZ.
 	// If scaling_policy_type is set to RECURRENCE, the time format is hh:mm.
 	LaunchTime string `json:"launch_time"`
-	// Specifies the type of a periodically triggered scaling action.
+	// Specifies the type of periodically triggered scaling action.
 	// Daily: indicates that the scaling action is triggered once a day.
 	// Weekly: indicates that the scaling action is triggered once a week.
 	// Monthly: indicates that the scaling action is triggered once a month.
@@ -80,4 +80,11 @@ type Action struct {
 	Operation string `json:"operation"`
 	// Specifies the number of instances to be operated.
 	InstanceNum int `json:"instance_number"`
+	// Specifies the percentage of instances to be operated. You can increase, decrease,
+	// or set the number of instances in an AS group to the specified percentage of the current number of instances.
+	// If operation is set to ADD, REMOVE or REDUCE, the value of this parameter is an integer from 1 to 20000.
+	// If operation is set to SET, the value is an integer from 0 to 20000.
+	// If neither instance_number nor instance_percentage is specified, the number of instances to be operated is 1.
+	// Either instance_number or instance_percentage is required.
+	InstancePercentage int `json:"instance_percentage"`
 }
