@@ -28,7 +28,7 @@ type Group struct {
 	// Specifies the AZ information.
 	AvailableZones []string `json:"available_zones"`
 	// Specifies the network information.
-	Networks []Network `json:"networks"`
+	Networks []ID `json:"networks"`
 	// Specifies the security group information.
 	SecurityGroups []ID `json:"security_groups"`
 	// Specifies the time when an AS group was created. The time format complies with UTC.
@@ -62,11 +62,6 @@ type Group struct {
 	ActivityType string `json:"activity_type"`
 	// Specifies the priority policy used to select target AZs when adjusting the number of instances in an AS group.
 	MultiAZPriorityPolicy string `json:"multi_az_priority_policy"`
-}
-
-type Network struct {
-	// Specifies the subnet ID.
-	ID            string `json:"id"`
-	IPv6Enable    bool   `json:"ipv6_enable"`
-	IPv6Bandwidth ID     `json:"ipv6_bandwidth"`
+	// Specifies the description of the AS group. The value can contain 1 to 256 characters.
+	Description string `json:"description"`
 }
