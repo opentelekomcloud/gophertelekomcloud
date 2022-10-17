@@ -1,4 +1,4 @@
-package logs
+package policies
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
