@@ -39,7 +39,7 @@ type ListScalingActivityLogsOpts struct {
 	Status string `q:"status,omitempty"`
 }
 
-func ListScalingActivityLogs(client golangsdk.ServiceClient, opts ListScalingActivityLogsOpts) (*ListScalingActivityLogsResponse, error) {
+func ListScalingActivityLogs(client *golangsdk.ServiceClient, opts ListScalingActivityLogsOpts) (*ListScalingActivityLogsResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err

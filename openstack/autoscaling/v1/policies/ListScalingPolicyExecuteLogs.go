@@ -34,7 +34,7 @@ type ListLogsOpts struct {
 	Limit int32 `json:"limit,omitempty"`
 }
 
-func ListScalingPolicyExecuteLogs(client golangsdk.ServiceClient, opts ListLogsOpts) (*ListScalingPolicyExecuteLogsResponse, error) {
+func ListScalingPolicyExecuteLogs(client *golangsdk.ServiceClient, opts ListLogsOpts) (*ListScalingPolicyExecuteLogsResponse, error) {
 	// GET /autoscaling-api/v1/{project_id}/scaling_policy_execute_log/{scaling_policy_id}
 	raw, err := client.Get(client.ServiceURL("scaling_policy_execute_log", opts.ScalingPolicyId), nil, nil)
 	if err != nil {
