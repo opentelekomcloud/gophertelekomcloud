@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/resource"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -82,10 +83,10 @@ func TestQueryResourceCapability(t *testing.T) {
 			_, _ = fmt.Fprint(w, queryResponse)
 		})
 
-	options := backup.ResourceBackupCapOpts{CheckProtectable: []backup.ResourceCapQueryParams{
+	options := resource.ResourceBackupCapOpts{CheckProtectable: []resource.ResourceCapQueryParams{
 		{ResourceId: "069e678a-f1d1-4a38-880b-459bde82fcc6",
 			ResourceType: "OS::Nova::Server"}}}
-	n, err := backup.GetResBackupCapabilities(fake.ServiceClient(), options)
+	n, err := resource.GetResBackupCapabilities(fake.ServiceClient(), options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n[0].ResourceType, "OS::Nova::Server")

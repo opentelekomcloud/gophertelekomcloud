@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/resource"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -36,15 +37,15 @@ func TestBackupLifeCycle(t *testing.T) {
 	}()
 
 	t.Logf("Check if resource is protectable")
-	queryOpts := backup.ResourceBackupCapOpts{
-		CheckProtectable: []backup.ResourceCapQueryParams{
+	queryOpts := resource.ResourceBackupCapOpts{
+		CheckProtectable: []resource.ResourceCapQueryParams{
 			{
 				ResourceId:   ecs.ID,
 				ResourceType: "OS::Nova::Server",
 			},
 		},
 	}
-	query, err := backup.GetResBackupCapabilities(client, queryOpts)
+	query, err := resource.GetResBackupCapabilities(client, queryOpts)
 	th.AssertNoErr(t, err)
 	if query[0].Result {
 		t.Logf("Resource is protectable")

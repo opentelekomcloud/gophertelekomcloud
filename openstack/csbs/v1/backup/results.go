@@ -4,7 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-const providerID = "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
+const ProviderID = "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
 
 type Backup struct {
 	CheckpointId string             `json:"checkpoint_id"`

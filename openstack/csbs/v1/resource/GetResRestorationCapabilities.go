@@ -1,4 +1,4 @@
-package backup
+package resource
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 

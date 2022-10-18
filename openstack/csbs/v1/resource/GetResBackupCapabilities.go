@@ -1,13 +1,13 @@
-package backup
+package resource
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
 )
 
-// ResourceBackupCapOpts contains the options for querying whether resources can be backed up. This object is
-// passed to backup.GetResBackupCapabilities().
+// ResourceBackupCapOpts contains the options for querying whether resources can be backed up.
 type ResourceBackupCapOpts struct {
 	CheckProtectable []ResourceCapQueryParams `json:"check_protectable" required:"true"`
 }
@@ -33,7 +33,8 @@ func doAction(client *golangsdk.ServiceClient, opts interface{}, label string) (
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("providers", providerID, "resources", "action"), b, nil, &golangsdk.RequestOpts{
+	// POST https://{endpoint}/v1/{project_id}/providers/{provider_id}/resources/action
+	raw, err := client.Post(client.ServiceURL("providers", backup.ProviderID, "resources", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
