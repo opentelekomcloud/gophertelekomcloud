@@ -13,7 +13,11 @@ type ResourceBackupCapOpts struct {
 }
 
 type ResourceCapQueryParams struct {
-	ResourceId   string `json:"resource_id" required:"true"`
+	// ID of the resource (server, or EVS disk) to be checked
+	// For details about how to obtain the server ID, see the Elastic Cloud Server API Reference.
+	// For details about how to obtain the disk ID, see the Elastic Volume Service API Reference.
+	ResourceId string `json:"resource_id" required:"true"`
+	// Type of the resource to be checked, for example, OS::Nova::Server for an ECS
 	ResourceType string `json:"resource_type" required:"true"`
 }
 
@@ -38,9 +42,17 @@ func QueryResourceBackupCapability(client *golangsdk.ServiceClient, opts Resourc
 }
 
 type ResourceCapability struct {
-	Result       bool   `json:"result"`
+	// Whether backup or restoration is supported
+	// true: yes
+	// false: no
+	Result bool `json:"result"`
+	// Resource type
+	// Possible values are OS::Nova::Server (ECS) and OS::Ironic::BareMetalServer (BMS).
 	ResourceType string `json:"resource_type"`
-	ErrorCode    string `json:"error_code"`
-	ErrorMsg     string `json:"error_msg"`
-	ResourceId   string `json:"resource_id"`
+	// Error code. If an error occurs, a value is returned.
+	ErrorCode string `json:"error_code"`
+	// Error message, which will be returned if the VM is associated with a backup policy. If an error occurs, a value is returned.
+	ErrorMsg string `json:"error_msg"`
+	// Resource ID
+	ResourceId string `json:"resource_id"`
 }
