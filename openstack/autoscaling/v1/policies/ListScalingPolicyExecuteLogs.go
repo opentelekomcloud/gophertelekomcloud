@@ -9,34 +9,39 @@ type ListLogsOpts struct {
 	// Specifies the AS policy ID.
 	ScalingPolicyId string
 	// Specifies the ID of an AS policy execution log.
-	LogId string `json:"log_id,omitempty"`
+	LogId string `q:"log_id,omitempty"`
 	// Specifies the scaling resource type.
 	// AS group: SCALING_GROUP
 	// Bandwidth: BANDWIDTH
-	ScalingResourceType string `json:"scaling_resource_type,omitempty"`
+	ScalingResourceType string `q:"scaling_resource_type,omitempty"`
 	// Specifies the scaling resource ID.
-	ScalingResourceId string `json:"scaling_resource_id,omitempty"`
+	ScalingResourceId string `q:"scaling_resource_id,omitempty"`
 	// Specifies the AS policy execution type.
 	// SCHEDULED: automatically triggered at a specified time point
 	// RECURRENCE: automatically triggered at a specified time period
 	// ALARM: alarm-triggered
 	// MANUAL: manually triggered
-	ExecuteType string `json:"execute_type,omitempty"`
+	ExecuteType string `q:"execute_type,omitempty"`
 	// Specifies the start time that complies with UTC for querying AS policy execution logs.
 	// The format of the start time is yyyy-MM-ddThh:mm:ssZ.
-	StartTime string `json:"start_time,omitempty"`
+	StartTime string `q:"start_time,omitempty"`
 	// Specifies the end time that complies with UTC for querying AS policy execution logs.
 	// The format of the end time is yyyy-MM-ddThh:mm:ssZ.
-	EndTime string `json:"end_time,omitempty"`
+	EndTime string `q:"end_time,omitempty"`
 	// Specifies the start line number. The default value is 0. The minimum parameter value is 0.
-	StartNumber int32 `json:"start_number,omitempty"`
+	StartNumber int32 `q:"start_number,omitempty"`
 	// Specifies the number of query records. The default value is 20. The value range is 0 to 100.
-	Limit int32 `json:"limit,omitempty"`
+	Limit int32 `q:"limit,omitempty"`
 }
 
 func ListScalingPolicyExecuteLogs(client *golangsdk.ServiceClient, opts ListLogsOpts) (*ListScalingPolicyExecuteLogsResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
 	// GET /autoscaling-api/v1/{project_id}/scaling_policy_execute_log/{scaling_policy_id}
-	raw, err := client.Get(client.ServiceURL("scaling_policy_execute_log", opts.ScalingPolicyId), nil, nil)
+	raw, err := client.Get(client.ServiceURL("scaling_policy_execute_log", opts.ScalingPolicyId)+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
