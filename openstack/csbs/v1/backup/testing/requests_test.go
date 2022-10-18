@@ -85,7 +85,7 @@ func TestQueryResourceCapability(t *testing.T) {
 	options := backup.ResourceBackupCapOpts{CheckProtectable: []backup.ResourceCapQueryParams{
 		{ResourceId: "069e678a-f1d1-4a38-880b-459bde82fcc6",
 			ResourceType: "OS::Nova::Server"}}}
-	n, err := backup.QueryResourceBackupCapability(fake.ServiceClient(), options)
+	n, err := backup.GetResBackupCapabilities(fake.ServiceClient(), options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n[0].ResourceType, "OS::Nova::Server")

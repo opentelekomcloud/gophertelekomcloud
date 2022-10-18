@@ -44,7 +44,7 @@ func TestBackupLifeCycle(t *testing.T) {
 			},
 		},
 	}
-	query, err := backup.QueryResourceBackupCapability(client, queryOpts)
+	query, err := backup.GetResBackupCapabilities(client, queryOpts)
 	th.AssertNoErr(t, err)
 	if query[0].Result {
 		t.Logf("Resource is protectable")

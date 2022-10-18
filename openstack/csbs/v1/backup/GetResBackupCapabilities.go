@@ -7,7 +7,7 @@ import (
 )
 
 // ResourceBackupCapOpts contains the options for querying whether resources can be backed up. This object is
-// passed to backup.QueryResourceBackupCapability().
+// passed to backup.GetResBackupCapabilities().
 type ResourceBackupCapOpts struct {
 	CheckProtectable []ResourceCapQueryParams `json:"check_protectable" required:"true"`
 }
@@ -21,9 +21,13 @@ type ResourceCapQueryParams struct {
 	ResourceType string `json:"resource_type" required:"true"`
 }
 
-// QueryResourceBackupCapability will query whether resources can be backed up based on the values in ResourceBackupCapOpts. To extract
+// GetResBackupCapabilities will query whether resources can be backed up based on the values in ResourceBackupCapOpts. To extract
 // the ResourceCap object from the response, call the ExtractQueryResponse method on the QueryResult.
-func QueryResourceBackupCapability(client *golangsdk.ServiceClient, opts ResourceBackupCapOpts) ([]ResourceCapability, error) {
+func GetResBackupCapabilities(client *golangsdk.ServiceClient, opts ResourceBackupCapOpts) ([]ResourceCapability, error) {
+	return doAction(client, opts, "protectable")
+}
+
+func doAction(client *golangsdk.ServiceClient, opts interface{}, label string) ([]ResourceCapability, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -37,7 +41,7 @@ func QueryResourceBackupCapability(client *golangsdk.ServiceClient, opts Resourc
 	}
 
 	var res []ResourceCapability
-	err = extract.IntoSlicePtr(raw.Body, &res, "protectable")
+	err = extract.IntoSlicePtr(raw.Body, &res, label)
 	return res, err
 }
 
