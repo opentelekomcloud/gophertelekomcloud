@@ -20,7 +20,7 @@ func TestGroupsList(t *testing.T) {
 	asGroups, err := groups.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
-	for _, group := range asGroups {
+	for _, group := range asGroups.ScalingGroups {
 		tools.PrintResource(t, group)
 	}
 }

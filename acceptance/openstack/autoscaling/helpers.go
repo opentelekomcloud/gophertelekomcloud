@@ -38,7 +38,9 @@ func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, netwo
 
 func DeleteAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, groupID string) {
 	t.Logf("Attempting to delete AutoScaling Group")
-	err := groups.Delete(client, groupID)
+	err := groups.Delete(client, groups.DeleteOpts{
+		ScalingGroupId: groupID,
+	})
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted AutoScaling Group: %s", groupID)
 }

@@ -19,7 +19,7 @@ func TestConfigurationsList(t *testing.T) {
 	configs, err := configurations.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
-	for _, config := range configs {
+	for _, config := range configs.ScalingConfigurations {
 		tools.PrintResource(t, config)
 	}
 }
