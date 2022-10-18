@@ -10,18 +10,18 @@ type ListOpts struct {
 	ScalingGroupId string
 	// Specifies the AS policy name.
 	// Supports fuzzy search.
-	ScalingPolicyName string `json:"scaling_policy_name,omitempty"`
+	ScalingPolicyName string `q:"scaling_policy_name,omitempty"`
 	// Specifies the AS policy type.
 	// ALARM: alarm policy
 	// SCHEDULED: scheduled policy
 	// RECURRENCE: periodic policy
-	ScalingPolicyType string `json:"scaling_policy_type,omitempty"`
+	ScalingPolicyType string `q:"scaling_policy_type,omitempty"`
 	// Specifies the AS policy ID.
-	ScalingPolicyId string `json:"scaling_policy_id,omitempty"`
+	ScalingPolicyId string `q:"scaling_policy_id,omitempty"`
 	// Specifies the start line number. The default value is 0. The minimum parameter value is 0.
-	StartNumber int32 `json:"start_number,omitempty"`
+	StartNumber int32 `q:"start_number,omitempty"`
 	// Specifies the number of query records. The default value is 20. The value range is 0 to 100.
-	Limit int32 `json:"limit,omitempty"`
+	Limit int32 `q:"limit,omitempty"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingInstancesResponse, error) {
