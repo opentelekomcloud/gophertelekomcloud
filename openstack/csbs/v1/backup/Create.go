@@ -37,6 +37,7 @@ func Create(client *golangsdk.ServiceClient, resourceID string, opts CreateOpts)
 		return nil, err
 	}
 
+	// POST https://{endpoint}/v1/{project_id}/providers/{provider_id}/resources/{resource_id}/action
 	raw, err := client.Post(client.ServiceURL("providers", ProviderID, "resources", resourceID, "action"), b,
 		nil, &golangsdk.RequestOpts{
 			OkCodes: []int{200},
