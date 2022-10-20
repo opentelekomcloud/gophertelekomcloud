@@ -6,10 +6,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type CreateOpts struct {
-	Restore RestoreOpts `json:"restore"`
-}
-
 type RestoreOpts struct {
 	// Backup provider ID, which specifies whether the backup object is a server or disk.
 	// This parameter has a fixed value. For CSBS, the value is fc4d5750-22e7-4798-8a46-f48f62c4c1da.
@@ -38,8 +34,8 @@ type RestoreTarget struct {
 	Volumes []RestoreVolumeMapping `json:"volumes"`
 }
 
-func CreateRestorationTask(client *golangsdk.ServiceClient, resourceID string, opts CreateOpts) (*RestoreResp, error) {
-	b, err := build.RequestBody(opts, "protect")
+func CreateRestorationTask(client *golangsdk.ServiceClient, opts RestoreOpts) (*RestoreResp, error) {
+	b, err := build.RequestBody(opts, "restore")
 	if err != nil {
 		return nil, err
 	}

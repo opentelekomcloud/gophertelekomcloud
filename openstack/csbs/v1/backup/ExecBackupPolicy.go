@@ -6,11 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ExecOpts struct {
-	Checkpoint CheckpointReq `json:"checkpoint"`
-}
-
-type CheckpointReq struct {
+type CheckpointOpts struct {
 	// Backup policy ID. Refer to the backup policy ID that is returned by the API of 2.2.5 Querying the Backup Policy List.
 	PlanId string `json:"plan_id"`
 	// Backup parameters
@@ -24,8 +20,8 @@ type CheckpointParam struct {
 	Resources []string `json:"resources"`
 }
 
-func ExecBackupPolicy(client *golangsdk.ServiceClient, opts ExecOpts) (*Checkpoint, error) {
-	b, err := build.RequestBody(opts, "protect")
+func ExecBackupPolicy(client *golangsdk.ServiceClient, opts CheckpointOpts) (*Checkpoint, error) {
+	b, err := build.RequestBody(opts, "checkpoint")
 	if err != nil {
 		return nil, err
 	}

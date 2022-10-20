@@ -148,9 +148,6 @@ func updateCSBSPolicy(client *golangsdk.ServiceClient, policyId string) error {
 	updateOpts := policies.UpdateOpts{
 		Description: policyDescriptionUpdate,
 		Name:        policyNameUpdate,
-		Parameters: policies.PolicyParam{
-			Common: map[string]string{},
-		},
 	}
 
 	_, err := policies.Update(client, policyId, updateOpts)
