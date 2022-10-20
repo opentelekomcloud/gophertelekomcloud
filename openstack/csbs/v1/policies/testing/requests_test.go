@@ -120,9 +120,6 @@ func TestUpdate(t *testing.T) {
 
 	options := policies.UpdateOpts{
 		Name: "c2c-policy-update",
-		Parameters: policies.PolicyParam{
-			Common: map[string]interface{}{},
-		},
 		ScheduledOperations: []policies.ScheduledOperationToUpdate{{
 			Name:        "my-backup-policy",
 			Description: "My backup policy",
