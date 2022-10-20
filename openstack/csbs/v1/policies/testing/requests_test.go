@@ -171,20 +171,20 @@ func TestList(t *testing.T) {
 			Status:      "suspended",
 			ProviderId:  "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
 			Description: "My plann",
-			ScheduledOperations: []policies.ScheduledOperationResp{{
+			ScheduledOperations: []policies.ScheduledOperation{{
 
 				Description: "My backup policy",
 				Enabled:     true,
 				TriggerID:   "831b5e69-0b75-420c-918e-9cbcb32d97f1",
-				Trigger: policies.TriggerResp{
-					Properties: policies.TriggerPropertiesResp{
+				Trigger: policies.Trigger{
+					Properties: policies.TriggerProperties{
 						Pattern: "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
 					},
 					Type: "time",
 					ID:   "831b5e69-0b75-420c-918e-9cbcb32d97f1",
 					Name: "default",
 				},
-				OperationDefinition: policies.OperationDefinitionResp{
+				OperationDefinition: policies.OperationDefinition{
 					MaxBackups: 5,
 					ProviderId: "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
 					PlanId:     "4d1ce19b-d681-4e44-a87e-c44eb9bfc4c7",

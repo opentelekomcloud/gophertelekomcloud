@@ -69,7 +69,7 @@ const (
 	prefix = "csbs-acc-"
 )
 
-func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.CreateBackupPolicy, error) {
+func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.BackupPolicy, error) {
 	if os.Getenv("RUN_CSBS") == "" {
 		t.Skip("unstable test")
 	}

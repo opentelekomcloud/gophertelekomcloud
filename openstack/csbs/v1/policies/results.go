@@ -3,99 +3,52 @@ package policies
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-type CreateBackupPolicy struct {
-	CreatedAt           time.Time                      `json:"-"`
-	Description         string                         `json:"description"`
-	ID                  string                         `json:"id"`
-	Name                string                         `json:"name"`
-	Parameters          PolicyParam                    `json:"parameters"`
-	ProjectId           string                         `json:"project_id"`
-	ProviderId          string                         `json:"provider_id"`
-	Resources           []Resource                     `json:"resources"`
-	ScheduledOperations []CreateScheduledOperationResp `json:"scheduled_operations"`
-	Status              string                         `json:"status"`
-	Tags                []ResourceTag                  `json:"tags"`
+type BackupPolicy struct {
+	// Creation time, for example, 2017-04-18T01:21:52.701973
+	CreatedAt time.Time `json:"-"`
+	// Backup policy description
+	// The value consists of 0 to 255 characters and must not contain a greater-than sign (>) or less-than sign (<).
+	Description string `json:"description"`
+	// Backup policy ID
+	ID string `json:"id"`
+	// Backup policy name
+	// The value consists of 1 to 255 characters and can contain only letters, digits, underscores (_), and hyphens (-).
+	Name string `json:"name"`
+	// Parameters of a backup policy
+	Parameters PolicyParam `json:"parameters"`
+	// Project ID
+	ProjectId string `json:"project_id"`
+	// Backup provider ID, which specifies whether the backup object is a server or disk.
+	// This parameter has a fixed value. For CSBS, the value is fc4d5750-22e7-4798-8a46-f48f62c4c1da.
+	ProviderId string `json:"provider_id"`
+	// Backup object list
+	Resources []Resource `json:"resources"`
+	// Scheduling period list
+	ScheduledOperations []ScheduledOperation `json:"scheduled_operations"`
+	// Backup policy status
+	// disabled: indicates that the backup policy is unavailable.
+	// enabled: indicates that the backup policy is available.
+	Status string `json:"status"`
+	// Tag list
+	// Keys in the tag list must be unique.
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
-func extra(err error, raw *http.Response) (*CreateBackupPolicy, error) {
+func extra(err error, raw *http.Response) (*BackupPolicy, error) {
 	if err != nil {
 		return nil, err
 	}
 
-	var res CreateBackupPolicy
+	var res BackupPolicy
 	err = extract.IntoStructPtr(raw.Body, &res, "policy")
 	return &res, err
-}
-
-type BackupPolicy struct {
-	CreatedAt           time.Time                `json:"-"`
-	Description         string                   `json:"description"`
-	ID                  string                   `json:"id"`
-	Name                string                   `json:"name"`
-	Parameters          PolicyParam              `json:"parameters"`
-	ProjectId           string                   `json:"project_id"`
-	ProviderId          string                   `json:"provider_id"`
-	Resources           []Resource               `json:"resources"`
-	ScheduledOperations []ScheduledOperationResp `json:"scheduled_operations"`
-	Status              string                   `json:"status"`
-	Tags                []ResourceTag            `json:"tags"`
-}
-
-type ScheduledOperationResp struct {
-	Description         string                  `json:"description"`
-	Enabled             bool                    `json:"enabled"`
-	Name                string                  `json:"name"`
-	OperationType       string                  `json:"operation_type"`
-	OperationDefinition OperationDefinitionResp `json:"operation_definition"`
-	Trigger             TriggerResp             `json:"trigger"`
-	ID                  string                  `json:"id"`
-	TriggerID           string                  `json:"trigger_id"`
-}
-
-type CreateScheduledOperationResp struct {
-	Description         string                        `json:"description"`
-	Enabled             bool                          `json:"enabled"`
-	Name                string                        `json:"name"`
-	OperationType       string                        `json:"operation_type"`
-	OperationDefinition CreateOperationDefinitionResp `json:"operation_definition"`
-	Trigger             TriggerResp                   `json:"trigger"`
-	ID                  string                        `json:"id"`
-	TriggerID           string                        `json:"trigger_id"`
-}
-
-type OperationDefinitionResp struct {
-	MaxBackups            int    `json:"max_backups"`
-	RetentionDurationDays int    `json:"retention_duration_days"`
-	Permanent             bool   `json:"permanent"`
-	PlanId                string `json:"plan_id"`
-	ProviderId            string `json:"provider_id"`
-}
-
-type CreateOperationDefinitionResp struct {
-	MaxBackups            int    `json:"-"`
-	RetentionDurationDays int    `json:"-"`
-	Permanent             bool   `json:"-"`
-	PlanId                string `json:"plan_id"`
-	ProviderId            string `json:"provider_id"`
-}
-
-type TriggerResp struct {
-	Properties TriggerPropertiesResp `json:"properties"`
-	Name       string                `json:"name"`
-	ID         string                `json:"id"`
-	Type       string                `json:"type"`
-}
-
-type TriggerPropertiesResp struct {
-	Pattern   string    `json:"pattern"`
-	StartTime time.Time `json:"-"`
 }
 
 // UnmarshalJSON helps to unmarshal BackupPolicy fields into needed values.
@@ -112,95 +65,6 @@ func (r *BackupPolicy) UnmarshalJSON(b []byte) error {
 	*r = BackupPolicy(s.tmp)
 
 	r.CreatedAt = time.Time(s.CreatedAt)
-
-	return err
-}
-
-// UnmarshalJSON helps to unmarshal TriggerPropertiesResp fields into needed values.
-func (r *TriggerPropertiesResp) UnmarshalJSON(b []byte) error {
-	type tmp TriggerPropertiesResp
-	var s struct {
-		tmp
-		StartTime golangsdk.JSONRFC3339ZNoTNoZ `json:"start_time"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = TriggerPropertiesResp(s.tmp)
-
-	r.StartTime = time.Time(s.StartTime)
-
-	return err
-}
-
-// UnmarshalJSON helps to unmarshal OperationDefinitionResp fields into needed values.
-func (r *CreateOperationDefinitionResp) UnmarshalJSON(b []byte) error {
-	type tmp CreateOperationDefinitionResp
-	var s struct {
-		tmp
-		MaxBackups            string `json:"max_backups"`
-		RetentionDurationDays string `json:"retention_duration_days"`
-		Permanent             string `json:"permanent"`
-	}
-
-	err := json.Unmarshal(b, &s)
-
-	if err != nil {
-		switch err.(type) {
-		case *json.UnmarshalTypeError: // check if type error occurred (handles if no type conversion is required for cloud)
-
-			var s struct {
-				tmp
-				MaxBackups            int  `json:"max_backups"`
-				RetentionDurationDays int  `json:"retention_duration_days"`
-				Permanent             bool `json:"permanent"`
-			}
-			err := json.Unmarshal(b, &s)
-			if err != nil {
-				return err
-			}
-			*r = CreateOperationDefinitionResp(s.tmp)
-			r.MaxBackups = s.MaxBackups
-			r.RetentionDurationDays = s.RetentionDurationDays
-			r.Permanent = s.Permanent
-			return nil
-		default:
-			return err
-		}
-	}
-
-	*r = CreateOperationDefinitionResp(s.tmp)
-
-	switch s.MaxBackups {
-	case "":
-		r.MaxBackups = 0
-	default:
-		r.MaxBackups, err = strconv.Atoi(s.MaxBackups)
-		if err != nil {
-			return err
-		}
-	}
-
-	switch s.RetentionDurationDays {
-	case "":
-		r.RetentionDurationDays = 0
-	default:
-		r.RetentionDurationDays, err = strconv.Atoi(s.RetentionDurationDays)
-		if err != nil {
-			return err
-		}
-	}
-
-	switch s.Permanent {
-	case "":
-		r.Permanent = false
-	default:
-		r.Permanent, err = strconv.ParseBool(s.Permanent)
-		if err != nil {
-			return err
-		}
-	}
 
 	return err
 }
