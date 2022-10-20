@@ -1,16 +1,5 @@
 package policies
 
-type ListOpts struct {
-	ID         string `json:"id"`
-	Name       string `q:"name"`
-	Sort       string `q:"sort"`
-	Status     string `json:"status"`
-	Limit      int    `q:"limit"`
-	Marker     string `q:"marker"`
-	Offset     int    `q:"offset"`
-	AllTenants string `q:"all_tenants"`
-}
-
 type PolicyParam struct {
 	// General backup policy parameters, which are blank by default
 	Common interface{} `json:"common,omitempty"`

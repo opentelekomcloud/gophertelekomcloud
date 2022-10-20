@@ -1,12 +1,29 @@
 package policies
 
 import (
-	"reflect"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
+
+type ListOpts struct {
+	// Exact matching based on field name
+	Name string `q:"name"`
+	// The value of sort is a group of properties separated by commas (,) and sorting directions.
+	// The value format is <key1>[:<direction>],<key2>[:<direction>], where the value of direction is asc
+	// (in ascending order) or desc (in descending order). If the parameter direction is not specified,
+	// backup policies are sorted in descending order by time. The value of sort contains a maximum of 255 characters.
+	Sort string `q:"sort"`
+	// Number of resources displayed per page. The value must be a positive integer. The value defaults to 1000.
+	Limit int `q:"limit"`
+	// ID of the last record displayed on the previous page when pagination query is applied
+	Marker string `q:"marker"`
+	// Offset value, which is a positive integer.
+	Offset int `q:"offset"`
+	// Whether backup policies of all tenants can be queried
+	// This parameter is only available for administrators.
+	AllTenants string `q:"all_tenants"`
+}
 
 // List returns a Pager which allows you to iterate over a collection of
 // backup policies. It accepts a ListOpts struct, which allows you to
@@ -17,6 +34,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error
 		return nil, err
 	}
 
+	// GET https://{endpoint}/v1/{project_id}/policies
 	pages, err := pagination.NewPager(client, client.ServiceURL("policies")+query.String(),
 		func(r pagination.PageResult) pagination.Page {
 			return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
@@ -26,48 +44,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error
 	}
 
 	policies, err := ExtractBackupPolicies(pages)
-	if err != nil {
-		return nil, err
-	}
-
-	return filterPolicies(policies, opts)
-}
-
-func filterPolicies(policies []BackupPolicy, opts ListOpts) ([]BackupPolicy, error) {
-	var refinedPolicies []BackupPolicy
-	var matched bool
-	m := map[string]interface{}{}
-
-	if opts.ID != "" {
-		m["ID"] = opts.ID
-	}
-	if opts.Status != "" {
-		m["Status"] = opts.Status
-	}
-	if len(m) > 0 && len(policies) > 0 {
-		for _, policy := range policies {
-			matched = true
-
-			for key, value := range m {
-				if sVal := getStructPolicyField(&policy, key); !(sVal == value) {
-					matched = false
-				}
-			}
-
-			if matched {
-				refinedPolicies = append(refinedPolicies, policy)
-			}
-		}
-	} else {
-		refinedPolicies = policies
-	}
-	return refinedPolicies, nil
-}
-
-func getStructPolicyField(v *BackupPolicy, field string) string {
-	r := reflect.ValueOf(v)
-	f := reflect.Indirect(r).FieldByName(field)
-	return f.String()
+	return policies, err
 }
 
 // BackupPolicyPage is the page returned by a pager when traversing over a
