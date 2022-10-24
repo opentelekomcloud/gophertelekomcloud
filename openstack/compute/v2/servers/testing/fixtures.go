@@ -727,8 +727,7 @@ func HandleServerCreationWithCustomFieldSuccessfully(t *testing.T, response stri
 			"server": {
 				"name": "derp",
 				"imageRef": "f90f6034-2570-4974-8351-6b49732ef2eb",
-				"flavorRef": "1",
-				"foo": "bar"
+				"flavorRef": "1"
 			}
 		}`)
 
