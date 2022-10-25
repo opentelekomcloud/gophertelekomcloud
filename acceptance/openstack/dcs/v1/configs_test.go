@@ -14,7 +14,9 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	dcsInstance := createDCSInstance(t, client)
-	defer deleteDCSInstance(t, client, dcsInstance.InstanceID)
+	t.Cleanup(func() {
+		deleteDCSInstance(t, client, dcsInstance.InstanceID)
+	})
 
 	th.AssertEquals(t, dcsInstance.Capacity, 0)
 	th.AssertEquals(t, dcsInstance.CapacityMinor, ".125")
