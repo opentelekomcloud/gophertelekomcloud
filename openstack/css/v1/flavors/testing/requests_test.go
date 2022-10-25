@@ -27,16 +27,7 @@ func TestCSSClusterFlavorsListResult(t *testing.T) {
 
 	client := fake.ServiceClient()
 
-	pages, err := flavors.List(client).AllPages()
-	th.AssertNoErr(t, err)
-
-	empty, err := pages.IsEmpty()
-	th.AssertNoErr(t, err)
-	if empty {
-		t.Fatal("version list is empty")
-	}
-
-	versions, _ := flavors.ExtractVersions(pages)
+	versions, _ := flavors.List(client)
 	for _, version := range versions {
 		if version.Version == "" {
 			t.Error("version object has no object")
