@@ -80,7 +80,7 @@ func TestListStatus(t *testing.T) {
 
 	actual, err := antiddos.ListDDosStatus(client.ServiceClient(), listOpt)
 	th.AssertNoErr(t, err)
-	th.CheckDeepEquals(t, ListStatusResponse, actual)
+	th.CheckDeepEquals(t, ListStatusResponse, actual.DDosStatus)
 }
 
 func TestListConfigs(t *testing.T) {
