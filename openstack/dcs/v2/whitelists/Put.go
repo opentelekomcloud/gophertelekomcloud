@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // WhitelistOpts is a struct that contains all the parameters.

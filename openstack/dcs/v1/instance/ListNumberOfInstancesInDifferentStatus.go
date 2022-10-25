@@ -9,7 +9,7 @@ type StatusOpts struct {
 	// An indicator of whether the number of DCS instances that failed to be created will be returned to the API caller. Options:
 	// true: The number of DCS instances that failed to be created will be returned to the API caller.
 	// false or others: The number of DCS instances that failed to be created will not be returned to the API caller.
-	includeFailure *bool `q:"includeFailure"`
+	IncludeFailure *bool `q:"includeFailure"`
 }
 
 func ListNumberOfInstancesInDifferentStatus(client *golangsdk.ServiceClient, opts StatusOpts) (*ListNumberOfInstancesInDifferentStatusResponse, error) {
