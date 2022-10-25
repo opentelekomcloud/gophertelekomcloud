@@ -147,7 +147,7 @@ func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient) 
 }
 
 func getDmsInstanceAz(t *testing.T, client *golangsdk.ServiceClient) string {
-	az, err := others.ListAvailableZones(client).Extract()
+	az, err := others.ListAvailableZones(client)
 	th.AssertNoErr(t, err)
 
 	return az.AvailableZones[0].ID
