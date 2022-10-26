@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type MysqlCreateBackupRequest struct {
+type MysqlCreateBackupOpts struct {
 	// Instance ID, which is compliant with the UUID format.
 	InstanceId string `json:"instance_id"`
 	// Backup name
@@ -17,7 +17,7 @@ type MysqlCreateBackupRequest struct {
 	Description string `json:"description,omitempty"`
 }
 
-func CreateGaussMySqlBackup(client *golangsdk.ServiceClient, opts MysqlCreateBackupRequest) (*CreateGaussMySqlBackupResponse, error) {
+func CreateGaussMySqlBackup(client *golangsdk.ServiceClient, opts MysqlCreateBackupOpts) (*CreateGaussMySqlBackupResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

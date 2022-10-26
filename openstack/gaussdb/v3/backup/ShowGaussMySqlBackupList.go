@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ShowGaussMySqlBackupListRequest struct {
+type ShowGaussMySqlBackupListOpts struct {
 	// Instance ID
 	InstanceId string `q:"instance_id"`
 	// Backup ID
@@ -26,7 +26,7 @@ type ShowGaussMySqlBackupListRequest struct {
 	EndTime string `q:"end_time"`
 }
 
-func ShowGaussMySqlBackupList(client *golangsdk.ServiceClient, opts ShowGaussMySqlBackupListRequest) (*ShowGaussMySqlBackupListResponse, error) {
+func ShowGaussMySqlBackupList(client *golangsdk.ServiceClient, opts ShowGaussMySqlBackupListOpts) (*ShowGaussMySqlBackupListResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err

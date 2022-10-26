@@ -857,3 +857,8 @@ func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	serviceClient.ResourceBase = serviceClient.Endpoint
 	return serviceClient, err
 }
+
+func NewGaussDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "gaussdb", "mysql/v3")
+	return sc, err
+}

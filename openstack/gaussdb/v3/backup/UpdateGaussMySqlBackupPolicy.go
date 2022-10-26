@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type MysqlUpdateBackupPolicyRequest struct {
+type MysqlUpdateBackupPolicyOpts struct {
 	// Instance ID, which is compliant with the UUID format.
 	InstanceId   string
 	BackupPolicy MysqlBackupPolicy `json:"backup_policy"`
@@ -28,7 +28,7 @@ type MysqlBackupPolicy struct {
 	RetentionNumBackupLevel1 int32 `json:"retention_num_backup_level1,omitempty"`
 }
 
-func UpdateGaussMySqlBackupPolicy(client *golangsdk.ServiceClient, opts MysqlUpdateBackupPolicyRequest) (*UpdateGaussMySqlBackupPolicyResponse, error) {
+func UpdateGaussMySqlBackupPolicy(client *golangsdk.ServiceClient, opts MysqlUpdateBackupPolicyOpts) (*UpdateGaussMySqlBackupPolicyResponse, error) {
 	// PUT https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/backups/policy/update
 	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "backups", "policy", "update"), nil, nil, nil)
 	if err != nil {
