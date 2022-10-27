@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/groups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -37,12 +38,14 @@ func TestGroupLifecycle(t *testing.T) {
 	}
 
 	secGroupID := openstack.CreateSecurityGroup(t)
-	defer openstack.DeleteSecurityGroup(t, secGroupID)
+	t.Cleanup(func() {
+		openstack.DeleteSecurityGroup(t, secGroupID)
+	})
 
 	groupID := autoscaling.CreateAutoScalingGroup(t, client, networkID, vpcID, asGroupCreateName)
-	defer func() {
+	t.Cleanup(func() {
 		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
-	}()
+	})
 
 	group, err := groups.Get(client, groupID)
 	th.AssertNoErr(t, err)
@@ -53,19 +56,16 @@ func TestGroupLifecycle(t *testing.T) {
 
 	t.Logf("Attempting to update AutoScaling Group")
 	asGroupUpdateName := tools.RandomString("as-group-update-", 3)
-	deletePublicIP := false
 
-	updateOpts := groups.UpdateOpts{
+	groupID, err = groups.Update(client, group.ID, groups.UpdateOpts{
 		Name: asGroupUpdateName,
 		SecurityGroup: []groups.ID{
 			{
 				ID: secGroupID,
 			},
 		},
-		IsDeletePublicip: &deletePublicIP,
-	}
-
-	groupID, err = groups.Update(client, group.ID, updateOpts)
+		IsDeletePublicip: pointerto.Bool(false),
+	})
 	th.AssertNoErr(t, err)
 	t.Logf("Updated AutoScaling Group")
 
