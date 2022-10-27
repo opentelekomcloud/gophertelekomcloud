@@ -36,11 +36,12 @@ func TestConfigurationsLifecycle(t *testing.T) {
 	}
 
 	secGroupID := openstack.CreateSecurityGroup(t)
-	defer openstack.DeleteSecurityGroup(t, secGroupID)
+	t.Cleanup(func() {
+		openstack.DeleteSecurityGroup(t, secGroupID)
+	})
 
-	defaultSGID := openstack.DefaultSecurityGroup(t)
-
-	createOpts := configurations.CreateOpts{
+	t.Logf("Attempting to create AutoScaling Configuration")
+	configID, err := configurations.Create(client, configurations.CreateOpts{
 		Name: asCreateName,
 		InstanceConfig: configurations.InstanceConfigOpts{
 			FlavorRef: "s3.xlarge.4",
@@ -50,29 +51,34 @@ func TestConfigurationsLifecycle(t *testing.T) {
 					Size:       40,
 					VolumeType: "SATA",
 					DiskType:   "SYS",
+					Metadata: configurations.SystemMetadata{
+						SystemEncrypted: "0",
+					},
 				},
 			},
 			SSHKey: keyPairName,
 			SecurityGroups: []configurations.SecurityGroup{
 				{
-					ID: defaultSGID,
+					ID: openstack.DefaultSecurityGroup(t),
 				},
 				{
 					ID: secGroupID,
 				},
 			},
+			Metadata: configurations.AdminPassMetadata{
+				AdminPass: "Test1234",
+			},
 		},
-	}
-	t.Logf("Attempting to create AutoScaling Configuration")
-	configID, err := configurations.Create(client, createOpts)
+	})
 	th.AssertNoErr(t, err)
 	t.Logf("Created AutoScaling Configuration: %s", configID)
-	defer func() {
+
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete AutoScaling Configuration")
 		err := configurations.Delete(client, configID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted AutoScaling Configuration: %s", configID)
-	}()
+	})
 
 	config, err := configurations.Get(client, configID)
 	th.AssertNoErr(t, err)
