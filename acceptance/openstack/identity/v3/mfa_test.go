@@ -51,17 +51,18 @@ func TestMFA(t *testing.T) {
 	t.Logf("MFA device created: %v", mfa)
 
 	secret, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString(mfa.Base32StringSeed)
+	totp := otp.NewTOTP(secret)
 	err = users.CreateBindingDevice(client, users.BindMfaDevice{
 		UserId:                   user.ID,
 		SerialNumber:             mfa.SerialNumber,
-		AuthenticationCodeFirst:  otp.NewTOTP(secret).Generate(time.Now().Add(-30 * time.Second)),
-		AuthenticationCodeSecond: otp.NewTOTP(secret).Generate(time.Now()),
+		AuthenticationCodeFirst:  totp.Generate(time.Now().Add(-30 * time.Second)),
+		AuthenticationCodeSecond: totp.Generate(time.Now()),
 	})
 	th.AssertNoErr(t, err)
 
 	err = users.DeleteBindingDevice(client, users.UnbindMfaDevice{
 		UserId:             user.ID,
-		AuthenticationCode: otp.NewTOTP(secret).Generate(time.Now()),
+		AuthenticationCode: totp.Generate(time.Now()),
 		SerialNumber:       mfa.SerialNumber,
 	})
 
