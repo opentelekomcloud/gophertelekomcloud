@@ -22,7 +22,7 @@ func DeleteBindingDevice(client *golangsdk.ServiceClient, opts UnbindMfaDevice) 
 	}
 
 	// PUT /v3.0/OS-MFA/mfa-devices/unbind
-	_, err = client.Put(client.ServiceURL("OS-MFA", "virtual-mfa-devices", "unbind"), b, nil, &golangsdk.RequestOpts{
+	_, err = client.Put(v30(client.ServiceURL("OS-MFA", "virtual-mfa-devices", "unbind")), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

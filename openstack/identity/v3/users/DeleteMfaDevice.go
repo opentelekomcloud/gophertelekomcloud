@@ -19,6 +19,6 @@ func DeleteMfaDevice(client *golangsdk.ServiceClient, opts DeleteMfaDeviceOpts) 
 	}
 
 	// DELETE /v3.0/OS-MFA/virtual-mfa-devices
-	_, err = client.DeleteWithBody(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), b, nil)
+	_, err = client.DeleteWithBody(v30(client.ServiceURL("OS-MFA", "virtual-mfa-devices")), b, nil)
 	return
 }

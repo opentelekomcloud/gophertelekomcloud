@@ -22,7 +22,7 @@ func CreateMfaDevice(client *golangsdk.ServiceClient, opts CreateMfaDeviceOpts) 
 	}
 
 	// POST /v3.0/OS-MFA/virtual-mfa-devices
-	raw, err := client.Post(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), b, nil, nil)
+	raw, err := client.Post(v30(client.ServiceURL("OS-MFA", "virtual-mfa-devices")), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}

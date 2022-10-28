@@ -24,7 +24,6 @@ func TestMFA(t *testing.T) {
 	user, err := users.Create(client, users.CreateOpts{
 		Name:    tools.RandomString("user-name-", 4),
 		Enabled: pointerto.Bool(true),
-		Email:   "test-email@mail.com",
 	}).Extract()
 	if err != nil {
 		t.Fatalf("Unable to create user: %v", err)
