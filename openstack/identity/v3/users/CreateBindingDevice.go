@@ -1,5 +1,10 @@
 package users
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type BindMfaDevice struct {
 	// ID of the user to whom you will bind the virtual MFA device.
 	UserId string `json:"user_id"`
@@ -11,4 +16,15 @@ type BindMfaDevice struct {
 	AuthenticationCodeSecond string `json:"authentication_code_second"`
 }
 
-// PUT /v3.0/OS-MFA/mfa-devices/bind
+func CreateBindingDevice(client *golangsdk.ServiceClient, opts BindMfaDevice) (err error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return
+	}
+
+	// PUT /v3.0/OS-MFA/mfa-devices/bind
+	_, err = client.Put(client.ServiceURL("OS-MFA", "virtual-mfa-devices", "bind"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
+	return
+}

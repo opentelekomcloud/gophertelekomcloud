@@ -1,10 +1,12 @@
 package users
 
-type CreateMfaDeviceReq struct {
-	VirtualMfaDevice CreateMfaDevice `json:"virtual_mfa_device"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-type CreateMfaDevice struct {
+type CreateMfaDeviceOpts struct {
 	// Device name.
 	// Minimum length: 1 character
 	// Maximum length: 64 characters
@@ -13,13 +15,23 @@ type CreateMfaDevice struct {
 	UserId string `json:"user_id"`
 }
 
-// POST /v3.0/OS-MFA/virtual-mfa-devices
+func CreateMfaDevice(client *golangsdk.ServiceClient, opts CreateMfaDeviceOpts) (*CreateMfaDeviceResponse, error) {
+	reqBody, err := build.RequestBody(opts, "virtual_mfa_device")
+	if err != nil {
+		return nil, err
+	}
 
-type CreateMfaDeviceResponse struct {
-	VirtualMfaDevice CreateMfaDeviceRespon `json:"virtual_mfa_device,omitempty"`
+	// POST /v3.0/OS-MFA/virtual-mfa-devices
+	raw, err := client.Post(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), reqBody, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res CreateMfaDeviceResponse
+	return &res, extract.IntoStructPtr(raw.Body, &res, "virtual_mfa_device")
 }
 
-type CreateMfaDeviceRespon struct {
+type CreateMfaDeviceResponse struct {
 	// Serial number of the MFA device.
 	SerialNumber string `json:"serial_number"`
 	// Base32 seed, which a third-party system can use to generate a CAPTCHA code.

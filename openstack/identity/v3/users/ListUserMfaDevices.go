@@ -1,10 +1,20 @@
 package users
 
-// GET /v3.0/OS-MFA/virtual-mfa-devices
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-type ListUserMfaDevicesResponse struct {
-	// 虚拟MFA设备信息列表。
-	VirtualMfaDevices []MfaDeviceResult `json:"virtual_mfa_devices,omitempty"`
+func ListUserMfaDevices(client *golangsdk.ServiceClient) ([]MfaDeviceResult, error) {
+	// GET /v3.0/OS-MFA/virtual-mfa-devices
+	raw, err := client.Get(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []MfaDeviceResult
+	err = extract.IntoSlicePtr(raw.Body, &res, "virtual_mfa_devices")
+	return res, err
 }
 
 type MfaDeviceResult struct {

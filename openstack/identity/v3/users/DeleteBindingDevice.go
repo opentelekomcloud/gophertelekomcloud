@@ -1,5 +1,10 @@
 package users
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type UnbindMfaDevice struct {
 	// ID of the user from whom you will unbind the MFA device.
 	UserId string `json:"user_id"`
@@ -10,4 +15,15 @@ type UnbindMfaDevice struct {
 	SerialNumber string `json:"serial_number"`
 }
 
-// PUT /v3.0/OS-MFA/mfa-devices/unbind
+func DeleteBindingDevice(client *golangsdk.ServiceClient, opts UnbindMfaDevice) (err error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return
+	}
+
+	// PUT /v3.0/OS-MFA/mfa-devices/unbind
+	_, err = client.Put(client.ServiceURL("OS-MFA", "virtual-mfa-devices", "unbind"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
+	return
+}
