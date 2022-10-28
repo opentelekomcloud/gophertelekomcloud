@@ -1,9 +1,12 @@
 package v3
 
 import (
+	"encoding/base32"
 	"os"
 	"testing"
+	"time"
 
+	"github.com/lucasbbb/otp"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
@@ -47,17 +50,18 @@ func TestMFA(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("MFA device created: %v", mfa)
 
+	secret, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString(mfa.Base32StringSeed)
 	err = users.CreateBindingDevice(client, users.BindMfaDevice{
 		UserId:                   user.ID,
 		SerialNumber:             mfa.SerialNumber,
-		AuthenticationCodeFirst:  "977931",
-		AuthenticationCodeSecond: "527347",
+		AuthenticationCodeFirst:  otp.NewTOTP(secret).Generate(time.Now().Add(-30 * time.Second)),
+		AuthenticationCodeSecond: otp.NewTOTP(secret).Generate(time.Now()),
 	})
 	th.AssertNoErr(t, err)
 
 	err = users.DeleteBindingDevice(client, users.UnbindMfaDevice{
 		UserId:             user.ID,
-		AuthenticationCode: "977931",
+		AuthenticationCode: otp.NewTOTP(secret).Generate(time.Now()),
 		SerialNumber:       mfa.SerialNumber,
 	})
 
