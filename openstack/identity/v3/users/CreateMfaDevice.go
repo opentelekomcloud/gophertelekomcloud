@@ -16,13 +16,13 @@ type CreateMfaDeviceOpts struct {
 }
 
 func CreateMfaDevice(client *golangsdk.ServiceClient, opts CreateMfaDeviceOpts) (*CreateMfaDeviceResponse, error) {
-	reqBody, err := build.RequestBody(opts, "virtual_mfa_device")
+	b, err := build.RequestBody(opts, "virtual_mfa_device")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v3.0/OS-MFA/virtual-mfa-devices
-	raw, err := client.Post(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), reqBody, nil, nil)
+	raw, err := client.Post(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}

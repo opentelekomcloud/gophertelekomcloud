@@ -6,6 +6,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/users"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -43,11 +44,9 @@ func TestUserLifecycle(t *testing.T) {
 	client, err := clients.NewIdentityV3AdminClient()
 	th.AssertNoErr(t, err)
 
-	enabled := true
-
 	createOpts := users.CreateOpts{
 		Name:    tools.RandomString("user-name-", 4),
-		Enabled: &enabled,
+		Enabled: pointerto.Bool(true),
 		Email:   "test-email@mail.com",
 	}
 
@@ -56,10 +55,10 @@ func TestUserLifecycle(t *testing.T) {
 		t.Fatalf("Unable to create user: %v", err)
 	}
 
-	defer func() {
+	t.Cleanup(func() {
 		err = users.Delete(client, user.ID).ExtractErr()
 		th.AssertNoErr(t, err)
-	}()
+	})
 
 	th.AssertEquals(t, createOpts.Name, user.Name)
 	th.AssertEquals(t, *createOpts.Enabled, user.Enabled)
@@ -76,10 +75,8 @@ func TestUserLifecycle(t *testing.T) {
 	th.AssertEquals(t, userGet.DomainID, user.DomainID)
 	th.AssertEquals(t, userGet.DefaultProjectID, user.DefaultProjectID)
 
-	enabled = false
-
 	updateOpts := users.UpdateOpts{
-		Enabled:  &enabled,
+		Enabled:  pointerto.Bool(false),
 		Name:     tools.RandomString("new-user-name-", 4),
 		Password: tools.RandomString("Hello-world-", 4),
 		Email:    "new-test-email@mail.com",
