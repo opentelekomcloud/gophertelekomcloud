@@ -47,7 +47,6 @@ func TestUserLifecycle(t *testing.T) {
 	createOpts := users.CreateOpts{
 		Name:    tools.RandomString("user-name-", 4),
 		Enabled: pointerto.Bool(true),
-		Email:   "test-email@mail.com",
 	}
 
 	user, err := users.Create(client, createOpts).Extract()
@@ -62,7 +61,6 @@ func TestUserLifecycle(t *testing.T) {
 
 	th.AssertEquals(t, createOpts.Name, user.Name)
 	th.AssertEquals(t, *createOpts.Enabled, user.Enabled)
-	th.AssertEquals(t, createOpts.Email, user.Email)
 
 	userGet, err := users.Get(client, user.ID).Extract()
 	if err != nil {
@@ -78,8 +76,7 @@ func TestUserLifecycle(t *testing.T) {
 	updateOpts := users.UpdateOpts{
 		Enabled:  pointerto.Bool(false),
 		Name:     tools.RandomString("new-user-name-", 4),
-		Password: tools.RandomString("Hello-world-", 4),
-		Email:    "new-test-email@mail.com",
+		Password: tools.RandomString("Hello-world-", 5),
 	}
 
 	userUpdate, err := users.Update(client, user.ID, updateOpts).Extract()
@@ -92,4 +89,13 @@ func TestUserLifecycle(t *testing.T) {
 	th.AssertEquals(t, userUpdate.Email, updateOpts.Email)
 	th.AssertEquals(t, userUpdate.DomainID, userGet.DomainID)
 	th.AssertEquals(t, userUpdate.DefaultProjectID, userGet.DefaultProjectID)
+
+	extendedUpdateOpts := users.ExtendedUpdateOpts{
+		Email: "test-email@mail.com",
+	}
+	userUpdateExt, err := users.ExtendedUpdate(client, user.ID, extendedUpdateOpts).Extract()
+	if err != nil {
+		t.Fatalf("Unable to update extended user info: %v", err)
+	}
+	th.AssertEquals(t, userUpdateExt.Email, extendedUpdateOpts.Email)
 }
