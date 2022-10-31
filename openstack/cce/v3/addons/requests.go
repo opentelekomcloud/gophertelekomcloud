@@ -166,8 +166,6 @@ func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBu
 }
 
 func GetTemplates(c *golangsdk.ServiceClient) (r ListTemplateResult) {
-	var a = addonTemplatesURL(c)
-	print(a)
 	_, r.Err = c.Get(addonTemplatesURL(c), &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
