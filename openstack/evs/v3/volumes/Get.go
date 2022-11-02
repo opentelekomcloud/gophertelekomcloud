@@ -2,10 +2,9 @@ package volumes
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// Get retrieves the Volume with the provided ID. To extract the Volume object
-// from the response, call the Extract method on the GetResult.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	resp, err := client.Get(client.ServiceURL("volumes", id), &r.Body, nil)
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
+// Get retrieves the Volume with the provided ID.
+func Get(client *golangsdk.ServiceClient, id string) (*Volume, error) {
+	// GET /v3/{project_id}/volumes/{volume_id}
+	raw, err := client.Get(client.ServiceURL("volumes", id), nil, nil)
+	return extra(err, raw)
 }
