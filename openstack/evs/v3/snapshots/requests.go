@@ -37,7 +37,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Post(client.ServiceURL("snapshots"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -46,7 +46,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Delete will delete the existing Snapshot with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	resp, err := client.Delete(deleteURL(client, id), nil)
+	resp, err := client.Delete(client.ServiceURL("snapshots", id), nil)
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
@@ -54,7 +54,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // Get retrieves the Snapshot with the provided ID. To extract the Snapshot
 // object from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	resp, err := client.Get(getURL(client, id), &r.Body, nil)
+	resp, err := client.Get(client.ServiceURL("snapshots", id), &r.Body, nil)
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
@@ -107,7 +107,7 @@ func (opts ListOpts) ToSnapshotListQuery() (string, error) {
 // List returns Snapshots optionally limited by the conditions provided in
 // ListOpts.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("snapshots")
 	if opts != nil {
 		query, err := opts.ToSnapshotListQuery()
 		if err != nil {
@@ -148,7 +148,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Put(client.ServiceURL("snapshots", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -183,7 +183,7 @@ func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetad
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateMetadataURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Put(client.ServiceURL("snapshots", id, "metadata"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)

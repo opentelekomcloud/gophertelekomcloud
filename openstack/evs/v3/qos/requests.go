@@ -64,7 +64,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Post(client.ServiceURL("qos-specs"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -92,7 +92,7 @@ func (opts DeleteOpts) ToQoSDeleteQuery() (string, error) {
 
 // Delete will delete the existing QoS with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOptsBuilder) (r DeleteResult) {
-	url := deleteURL(client, id)
+	url := client.ServiceURL("qos-specs", id)
 	if opts != nil {
 		query, err := opts.ToQoSDeleteQuery()
 		if err != nil {
@@ -131,7 +131,7 @@ func (opts ListOpts) ToQoSListQuery() (string, error) {
 // You may provide criteria by which List curtails its results for easier
 // processing.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("qos-specs")
 	if opts != nil {
 		query, err := opts.ToQoSListQuery()
 		if err != nil {
@@ -147,7 +147,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // Get retrieves details of a single qos. Use Extract to convert its
 // result into a QoS.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	resp, err := client.Get(getURL(client, id), &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Get(client.ServiceURL("qos-specs", id), &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -203,7 +203,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Put(client.ServiceURL("qos-specs", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -232,7 +232,7 @@ func DeleteKeys(client *golangsdk.ServiceClient, qosID string, opts DeleteKeysOp
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(deleteKeysURL(client, qosID), b, nil, &golangsdk.RequestOpts{
+	resp, err := client.Put(client.ServiceURL("qos-specs", qosID, "delete_keys"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -259,7 +259,7 @@ func (opts AssociateOpts) ToQosAssociateQuery() (string, error) {
 
 // Associate will associate a qos with a volute type
 func Associate(client *golangsdk.ServiceClient, qosID string, opts AssociateOptsBuilder) (r AssociateResult) {
-	url := associateURL(client, qosID)
+	url := client.ServiceURL("qos-specs", qosID, "associate")
 	query, err := opts.ToQosAssociateQuery()
 	if err != nil {
 		r.Err = err
@@ -294,7 +294,7 @@ func (opts DisassociateOpts) ToQosDisassociateQuery() (string, error) {
 
 // Disassociate will disassociate a qos from a volute type
 func Disassociate(client *golangsdk.ServiceClient, qosID string, opts DisassociateOptsBuilder) (r DisassociateResult) {
-	url := disassociateURL(client, qosID)
+	url := client.ServiceURL("qos-specs", qosID, "disassociate")
 	query, err := opts.ToQosDisassociateQuery()
 	if err != nil {
 		r.Err = err
@@ -311,7 +311,7 @@ func Disassociate(client *golangsdk.ServiceClient, qosID string, opts Disassocia
 
 // DisassociateAll will disassociate a qos from all volute types
 func DisassociateAll(client *golangsdk.ServiceClient, qosID string) (r DisassociateAllResult) {
-	resp, err := client.Get(disassociateAllURL(client, qosID), nil, &golangsdk.RequestOpts{
+	resp, err := client.Get(client.ServiceURL("qos-specs", qosID, "disassociate_all"), nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -320,7 +320,7 @@ func DisassociateAll(client *golangsdk.ServiceClient, qosID string) (r Disassoci
 
 // ListAssociations retrieves the associations of a QoS.
 func ListAssociations(client *golangsdk.ServiceClient, qosID string) pagination.Pager {
-	url := listAssociationsURL(client, qosID)
+	url := client.ServiceURL("qos-specs", qosID, "associations")
 
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return AssociationPage{pagination.SinglePageBase(r)}

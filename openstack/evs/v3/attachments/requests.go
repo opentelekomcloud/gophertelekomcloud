@@ -46,7 +46,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Post(client.ServiceURL("attachments"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -55,7 +55,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 // Delete will delete the existing Attachment with the provided ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	resp, err := client.Delete(deleteURL(client, id), &golangsdk.RequestOpts{
+	resp, err := client.Delete(client.ServiceURL("attachments", id), &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -65,7 +65,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // Get retrieves the Attachment with the provided ID. To extract the Attachment
 // object from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	resp, err := client.Get(getURL(client, id), &r.Body, nil)
+	resp, err := client.Get(client.ServiceURL("attachments", id), &r.Body, nil)
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
@@ -117,7 +117,7 @@ func (opts ListOpts) ToAttachmentListQuery() (string, error) {
 // List returns Attachments optionally limited by the conditions provided in
 // ListOpts.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("attachments", "detail")
 	if opts != nil {
 		query, err := opts.ToAttachmentListQuery()
 		if err != nil {
@@ -159,7 +159,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Put(client.ServiceURL("attachments", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
@@ -172,7 +172,7 @@ func Complete(client *golangsdk.ServiceClient, id string) (r CompleteResult) {
 	b := map[string]interface{}{
 		"os-complete": nil,
 	}
-	resp, err := client.Post(completeURL(client, id), b, nil, &golangsdk.RequestOpts{
+	resp, err := client.Post(client.ServiceURL("attachments", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
