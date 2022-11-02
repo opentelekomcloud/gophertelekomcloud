@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/metadata"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -38,6 +39,26 @@ type Snapshot struct {
 	Metadata map[string]string `json:"metadata"`
 }
 
+// CreateResult contains the response body and error from a Create request.
+type CreateResult struct {
+	commonResult
+}
+
+// GetResult contains the response body and error from a Get request.
+type GetResult struct {
+	commonResult
+}
+
+// DeleteResult contains the response body and error from a Delete request.
+type DeleteResult struct {
+	golangsdk.ErrResult
+}
+
+// SnapshotPage is a pagination.Pager that is returned from a call to the List function.
+type SnapshotPage struct {
+	pagination.SinglePageBase
+}
+
 func (r *Snapshot) UnmarshalJSON(b []byte) error {
 	type tmp Snapshot
 	var s struct {
@@ -57,35 +78,6 @@ func (r *Snapshot) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-type commonResult struct {
-	golangsdk.Result
-}
-
-// CreateResult contains the response body and error from a Create request.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult contains the response body and error from a Get request.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult contains the response body and error from an Update request.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult contains the response body and error from a Delete request.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// SnapshotPage is a pagination.Pager that is returned from a call to the List function.
-type SnapshotPage struct {
-	pagination.SinglePageBase
-}
-
 // IsEmpty returns true if a SnapshotPage contains no Snapshots.
 func (r SnapshotPage) IsEmpty() (bool, error) {
 	volumes, err := ExtractSnapshots(r)
@@ -99,6 +91,20 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 	}
 	err := (r.(SnapshotPage)).ExtractInto(&s)
 	return s.Snapshots, err
+}
+
+// UpdateMetadataResult contains the response body and error from an UpdateMetadata request.
+type UpdateMetadataResult struct {
+	commonResult
+}
+
+// ExtractMetadata returns the metadata from a response from snapshots.UpdateMetadata.
+func (r UpdateMetadataResult) ExtractMetadata() (map[string]interface{}, error) {
+	return metadata.Extract(r.BodyReader())
+}
+
+type commonResult struct {
+	golangsdk.Result
 }
 
 // Extract will get the Snapshot object out of the commonResult object.
