@@ -71,6 +71,33 @@ type CreateOpts struct {
 	Multiattach bool `json:"multiattach,omitempty"`
 }
 
+// Metadata
+// The preceding table provides only some parameters in metadata for your reference. You can also specify other fields based on the disk creation requirements.
+// If the disk is created from a snapshot, __system__encrypted and __system__cmkid are not supported, and the newly created disk has the same encryption attribute as that of the snapshot's source disk.
+// If the disk is created from an image, __system__encrypted and __system__cmkid are not supported, and the newly created disk has the same encryption attribute as that of the image.
+// If the disk is created from a snapshot, hw:passthrough is not supported, and the newly created disk has the same device type as that of the snapshot's source disk.
+// If the disk is created from an image, hw:passthrough is not supported, and the device type of newly created disk is VBD.
+type Metadata struct {
+	// Specifies the encryption field in metadata. The value can be 0 (not encrypted) or 1 (encrypted).
+	// If this parameter does not exist, the disk will not be encrypted by default.
+	SystemEncrypted string `json:"__system__encrypted"`
+	// Specifies the encryption CMK ID in metadata. This parameter is used together with
+	// __system__encrypted for encryption. The length of cmkid is fixed at 36 bytes.
+	// NOTE
+	// For details about how to obtain the CMK ID, see Querying the List of CMKs in the Key Management Service API Reference.
+	SystemCmkId string `json:"__system__cmkid"`
+	// If this parameter is set to true, the disk device type is SCSI, that is,
+	// Small Computer System Interface (SCSI), which allows ECS OSs to directly
+	// access the underlying storage media and supports SCSI reservation commands.
+	// If this parameter is set to false, the disk device type will be VBD, which supports only simple SCSI read/write commands.
+	// If this parameter does not appear, the disk device type is VBD.
+	// NOTE
+	// If parameter shareable is set to true and parameter hw:passthrough is not specified, shared VBD disks are created.
+	Passthrough string `json:"hw:passthrough"`
+	// If the disk is created from a snapshot and linked cloning needs to be used, set this parameter to 0.
+	FullClone string `json:"full_clone"`
+}
+
 // Create will create a new Volume based on the values in CreateOpts.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Volume, error) {
 	b, err := build.RequestBody(opts, "volume")

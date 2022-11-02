@@ -10,13 +10,21 @@ import (
 
 // Attachment represents a Volume Attachment record
 type Attachment struct {
-	AttachedAt   time.Time `json:"-"`
-	AttachmentID string    `json:"attachment_id"`
-	Device       string    `json:"device"`
-	HostName     string    `json:"host_name"`
-	ID           string    `json:"id"`
-	ServerID     string    `json:"server_id"`
-	VolumeID     string    `json:"volume_id"`
+	// Specifies the time when the disk was attached.
+	// Time format: UTC YYYY-MM-DDTHH:MM:SS.XXXXXX
+	AttachedAt time.Time `json:"-"`
+	// Specifies the ID of the attachment information.
+	AttachmentID string `json:"attachment_id"`
+	// Specifies the device name.
+	Device string `json:"device"`
+	// Specifies the name of the physical host accommodating the server to which the disk is attached.
+	HostName string `json:"host_name"`
+	// Specifies the ID of the attached resource.
+	ID string `json:"id"`
+	// Specifies the ID of the server to which the disk is attached.
+	ServerID string `json:"server_id"`
+	// Specifies the disk ID.
+	VolumeID string `json:"volume_id"`
 }
 
 // UnmarshalJSON is our unmarshalling helper
@@ -41,6 +49,8 @@ func (r *Attachment) UnmarshalJSON(b []byte) error {
 type Volume struct {
 	// Unique identifier for the volume.
 	ID string `json:"id"`
+	// Specifies the disk URI.
+	Links []golangsdk.Link `json:"links"`
 	// Current status of the volume.
 	Status string `json:"status"`
 	// Size of the volume in GB.
@@ -57,15 +67,25 @@ type Volume struct {
 	Name string `json:"name"`
 	// Human-readable description for the volume.
 	Description string `json:"description"`
-	// The type of volume to create, either SATA or SSD.
+	// Specifies the disk type.
+	// Currently, the value can be SSD, SAS, SATA, co-p1, uh-l1, GPSSD, or ESSD.
+	// SSD: specifies the ultra-high I/O disk type.
+	// SAS: specifies the high I/O disk type.
+	// SATA: specifies the common I/O disk type.
+	// co-p1: specifies the high I/O (performance-optimized I) disk type.
+	// uh-l1: specifies the ultra-high I/O (latency-optimized) disk type.
+	// GPSSD: specifies the general purpose SSD disk type.
+	// ESSD: specifies the extreme SSD disk type.
+	// Disks of the co-p1 and uh-l1 types are used exclusively for HPC ECSs and SAP HANA ECSs.
 	VolumeType string `json:"volume_type"`
 	// The ID of the snapshot from which the volume was created
 	SnapshotID string `json:"snapshot_id"`
 	// The ID of another block storage volume from which the current volume was created
+	// Currently, this field is not supported by EVS.
 	SourceVolID string `json:"source_volid"`
 	// The backup ID, from which the volume was restored
 	// This field is supported since 3.47 microversion
-	BackupID *string `json:"backup_id"`
+	BackupID string `json:"backup_id"`
 	// Arbitrary key-value pairs defined by the user.
 	Metadata map[string]string `json:"metadata"`
 	// UserID is the id of the user who created the volume.
@@ -73,12 +93,14 @@ type Volume struct {
 	// Indicates whether this is a bootable volume.
 	Bootable string `json:"bootable"`
 	// Encrypted denotes if the volume is encrypted.
+	// Currently, this field is not supported by EVS.
 	Encrypted bool `json:"encrypted"`
 	// ReplicationStatus is the status of replication.
+	// Currently, this field is not supported by EVS.
 	ReplicationStatus string `json:"replication_status"`
 	// ConsistencyGroupID is the consistency group ID.
 	ConsistencyGroupID string `json:"consistencygroup_id"`
-	// Multiattach denotes if the volume is multi-attach capable.
+	// Specifies whether the disk is shareable.
 	Multiattach bool `json:"multiattach"`
 	// Image metadata entries, only included for volumes that were created from an image, or from a snapshot of a volume originally created from an image.
 	VolumeImageMetadata map[string]string `json:"volume_image_metadata"`
