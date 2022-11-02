@@ -105,7 +105,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Volume, error) {
 		return nil, err
 	}
 
-	raw, err := client.Post(createURL(client), b, nil, nil)
+	// POST /v3/{project_id}/volumes
+	raw, err := client.Post(client.ServiceURL("volumes"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}

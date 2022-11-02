@@ -5,45 +5,10 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// DeleteOptsBuilder allows extensions to add additional parameters to the
-// Delete request.
-type DeleteOptsBuilder interface {
-	ToVolumeDeleteQuery() (string, error)
-}
-
-// DeleteOpts contains options for deleting a Volume. This object is passed to
-// the volumes.Delete function.
-type DeleteOpts struct {
-	// Delete all snapshots of this volume as well.
-	Cascade bool `q:"cascade"`
-}
-
-// ToLoadBalancerDeleteQuery formats a DeleteOpts into a query string.
-func (opts DeleteOpts) ToVolumeDeleteQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	return q.String(), err
-}
-
-// Delete will delete the existing Volume with the provided ID.
-func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOptsBuilder) (r DeleteResult) {
-	url := deleteURL(client, id)
-	if opts != nil {
-		query, err := opts.ToVolumeDeleteQuery()
-		if err != nil {
-			r.Err = err
-			return
-		}
-		url += query
-	}
-	resp, err := client.Delete(url, nil)
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
-}
-
 // Get retrieves the Volume with the provided ID. To extract the Volume object
 // from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	resp, err := client.Get(getURL(client, id), &r.Body, nil)
+	resp, err := client.Get(client.ServiceURL("volumes", id), &r.Body, nil)
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
@@ -95,7 +60,7 @@ func (opts ListOpts) ToVolumeListQuery() (string, error) {
 
 // List returns Volumes optionally limited by the conditions provided in ListOpts.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("volumes", "detail")
 	if opts != nil {
 		query, err := opts.ToVolumeListQuery()
 		if err != nil {
@@ -138,7 +103,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	resp, err := client.Put(client.ServiceURL("volumes", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
