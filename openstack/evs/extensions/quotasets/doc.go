@@ -22,7 +22,7 @@ Example to Get Quota Set Usage
 Example to Update a Quota Set
 
 	updateOpts := quotasets.UpdateOpts{
-		Volumes: gophercloud.IntToPointer(100),
+		Volumes: golangsdk.IntToPointer(100),
 	}
 
 	quotaset, err := quotasets.Update(blockStorageClient, "project-id", updateOpts).Extract()
@@ -35,11 +35,11 @@ Example to Update a Quota Set
 Example to Update a Quota set with volume_type quotas
 
 	updateOpts := quotasets.UpdateOpts{
-		Volumes: gophercloud.IntToPointer(100),
+		Volumes: golangsdk.IntToPointer(100),
 		Extra: map[string]interface{}{
-			"gigabytes_foo": gophercloud.IntToPointer(100),
-			"snapshots_foo": gophercloud.IntToPointer(10),
-			"volumes_foo":   gophercloud.IntToPointer(10),
+			"gigabytes_foo": golangsdk.IntToPointer(100),
+			"snapshots_foo": golangsdk.IntToPointer(10),
+			"volumes_foo":   golangsdk.IntToPointer(10),
 		},
 	}
 

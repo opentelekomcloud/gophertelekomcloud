@@ -4,69 +4,69 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // AttachResult contains the response body and error from an Attach request.
 type AttachResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // BeginDetachingResult contains the response body and error from a BeginDetach
 // request.
 type BeginDetachingResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // DetachResult contains the response body and error from a Detach request.
 type DetachResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // UploadImageResult contains the response body and error from an UploadImage
 // request.
 type UploadImageResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // SetImageMetadataResult contains the response body and error from an SetImageMetadata
 // request.
 type SetImageMetadataResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // SetBootableResult contains the response body and error from a SetBootable
 // request.
 type SetBootableResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // ReserveResult contains the response body and error from a Reserve request.
 type ReserveResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // UnreserveResult contains the response body and error from an Unreserve
 // request.
 type UnreserveResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // TerminateConnectionResult contains the response body and error from a
 // TerminateConnection request.
 type TerminateConnectionResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // InitializeConnectionResult contains the response body and error from an
 // InitializeConnection request.
 type InitializeConnectionResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // ExtendSizeResult contains the response body and error from an ExtendSize request.
 type ExtendSizeResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // Extract will get the connection information out of the
@@ -120,9 +120,9 @@ func (r *ImageVolumeType) UnmarshalJSON(b []byte) error {
 	type tmp ImageVolumeType
 	var s struct {
 		tmp
-		CreatedAt gophercloud.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt gophercloud.JSONRFC3339MilliNoZ `json:"updated_at"`
-		DeletedAt gophercloud.JSONRFC3339MilliNoZ `json:"deleted_at"`
+		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
+		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
+		DeletedAt golangsdk.JSONRFC3339MilliNoZ `json:"deleted_at"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -182,7 +182,7 @@ func (r *VolumeImage) UnmarshalJSON(b []byte) error {
 	type tmp VolumeImage
 	var s struct {
 		tmp
-		UpdatedAt gophercloud.JSONRFC3339MilliNoZ `json:"updated_at"`
+		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -207,15 +207,15 @@ func (r UploadImageResult) Extract() (VolumeImage, error) {
 
 // ForceDeleteResult contains the response body and error from a ForceDelete request.
 type ForceDeleteResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // ChangeTypeResult contains the response body and error from an ChangeType request.
 type ChangeTypeResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // ReImageResult contains the response body and error from a ReImage request.
 type ReImageResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }

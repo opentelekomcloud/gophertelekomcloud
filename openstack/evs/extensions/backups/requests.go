@@ -1,8 +1,8 @@
 package backups
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -19,7 +19,7 @@ type CreateOpts struct {
 	VolumeID string `json:"volume_id" required:"true"`
 
 	// Force will force the creation of a backup regardless of the
-	//volume's status.
+	// volume's status.
 	Force bool `json:"force,omitempty"`
 
 	// Name is the name of the backup.
@@ -49,37 +49,37 @@ type CreateOpts struct {
 // ToBackupCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToBackupCreateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "backup")
+	return golangsdk.BuildRequestBody(opts, "backup")
 }
 
 // Create will create a new Backup based on the values in CreateOpts. To
 // extract the Backup object from the response, call the Extract method on the
 // CreateResult.
-func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToBackupCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Delete will delete the existing Backup with the provided ID.
-func Delete(client *gophercloud.ServiceClient, id string) (r DeleteResult) {
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	resp, err := client.Delete(deleteURL(client, id), nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Get retrieves the Backup with the provided ID. To extract the Backup
 // object from the response, call the Extract method on the GetResult.
-func Get(client *gophercloud.ServiceClient, id string) (r GetResult) {
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	resp, err := client.Get(getURL(client, id), &r.Body, nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -125,13 +125,13 @@ type ListOpts struct {
 
 // ToBackupListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToBackupListQuery() (string, error) {
-	q, err := gophercloud.BuildQueryString(opts)
+	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
 }
 
 // List returns Backups optionally limited by the conditions provided in
 // ListOpts.
-func List(client *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(client)
 	if opts != nil {
 		query, err := opts.ToBackupListQuery()
@@ -174,13 +174,13 @@ type ListDetailOpts struct {
 
 // ToBackupListDetailQuery formats a ListDetailOpts into a query string.
 func (opts ListDetailOpts) ToBackupListDetailQuery() (string, error) {
-	q, err := gophercloud.BuildQueryString(opts)
+	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
 }
 
 // ListDetail returns more detailed information about Backups optionally
 // limited by the conditions provided in ListDetailOpts.
-func ListDetail(client *gophercloud.ServiceClient, opts ListDetailOptsBuilder) pagination.Pager {
+func ListDetail(client *golangsdk.ServiceClient, opts ListDetailOptsBuilder) pagination.Pager {
 	url := listDetailURL(client)
 	if opts != nil {
 		query, err := opts.ToBackupListDetailQuery()
@@ -216,23 +216,23 @@ type UpdateOpts struct {
 // ToBackupUpdateMap assembles a request body based on the contents of
 // an UpdateOpts.
 func (opts UpdateOpts) ToBackupUpdateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "")
+	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // Update will update the Backup with provided information. To extract
 // the updated Backup from the response, call the Extract method on the
 // UpdateResult.
 // Requires microversion 3.9 or later.
-func Update(client *gophercloud.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToBackupUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -249,30 +249,30 @@ type RestoreOpts struct {
 // ToRestoreMap assembles a request body based on the contents of a
 // RestoreOpts.
 func (opts RestoreOpts) ToRestoreMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "restore")
+	return golangsdk.BuildRequestBody(opts, "restore")
 }
 
 // RestoreFromBackup will restore a Backup to a volume based on the values in
 // RestoreOpts. To extract the Restore object from the response, call the
 // Extract method on the RestoreResult.
-func RestoreFromBackup(client *gophercloud.ServiceClient, id string, opts RestoreOpts) (r RestoreResult) {
+func RestoreFromBackup(client *golangsdk.ServiceClient, id string, opts RestoreOpts) (r RestoreResult) {
 	b, err := opts.ToRestoreMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(restoreURL(client, id), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(restoreURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Export will export a Backup information. To extract the Backup export record
 // object from the response, call the Extract method on the ExportResult.
-func Export(client *gophercloud.ServiceClient, id string) (r ExportResult) {
+func Export(client *golangsdk.ServiceClient, id string) (r ExportResult) {
 	resp, err := client.Get(exportURL(client, id), &r.Body, nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -283,21 +283,21 @@ type ImportOpts BackupRecord
 // ToBackupImportMap assembles a request body based on the contents of a
 // ImportOpts.
 func (opts ImportOpts) ToBackupImportMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "backup-record")
+	return golangsdk.BuildRequestBody(opts, "backup-record")
 }
 
 // Import will import a Backup data to a backup based on the values in
 // ImportOpts. To extract the Backup object from the response, call the
 // Extract method on the ImportResult.
-func Import(client *gophercloud.ServiceClient, opts ImportOpts) (r ImportResult) {
+func Import(client *golangsdk.ServiceClient, opts ImportOpts) (r ImportResult) {
 	b, err := opts.ToBackupImportMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(importURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(importURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }

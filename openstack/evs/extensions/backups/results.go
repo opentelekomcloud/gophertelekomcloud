@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Backup contains all the information associated with a Cinder Backup.
@@ -81,7 +81,7 @@ type GetResult struct {
 
 // DeleteResult contains the response body and error from a Delete request.
 type DeleteResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // BackupPage is a pagination.Pager that is returned from a call to the List function.
@@ -94,9 +94,9 @@ func (r *Backup) UnmarshalJSON(b []byte) error {
 	type tmp Backup
 	var s struct {
 		tmp
-		CreatedAt     gophercloud.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt     gophercloud.JSONRFC3339MilliNoZ `json:"updated_at"`
-		DataTimestamp gophercloud.JSONRFC3339MilliNoZ `json:"data_timestamp"`
+		CreatedAt     golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
+		UpdatedAt     golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
+		DataTimestamp golangsdk.JSONRFC3339MilliNoZ `json:"data_timestamp"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -119,13 +119,13 @@ func (r BackupPage) IsEmpty() (bool, error) {
 
 func (page BackupPage) NextPageURL() (string, error) {
 	var s struct {
-		Links []gophercloud.Link `json:"backups_links"`
+		Links []golangsdk.Link `json:"backups_links"`
 	}
 	err := page.ExtractInto(&s)
 	if err != nil {
 		return "", err
 	}
-	return gophercloud.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(s.Links)
 }
 
 // ExtractBackups extracts and returns Backups. It is used while iterating over a backups.List call.
@@ -141,7 +141,7 @@ type UpdateResult struct {
 }
 
 type commonResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // Extract will get the Backup object out of the commonResult object.
@@ -221,7 +221,7 @@ type ImportResponse struct {
 
 // ImportResult contains the response body and error from an import request.
 type ImportResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // Extract will get the Backup object out of the commonResult object.

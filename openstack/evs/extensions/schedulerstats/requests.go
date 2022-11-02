@@ -1,8 +1,8 @@
 package schedulerstats
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the
@@ -23,12 +23,12 @@ type ListOpts struct {
 
 // ToStoragePoolsListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToStoragePoolsListQuery() (string, error) {
-	q, err := gophercloud.BuildQueryString(opts)
+	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
 }
 
 // List makes a request against the API to list storage pool information.
-func List(client *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := storagePoolsListURL(client)
 	if opts != nil {
 		query, err := opts.ToStoragePoolsListQuery()

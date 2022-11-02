@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the List
@@ -22,12 +22,12 @@ type ListOpts struct {
 
 // ToServiceListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToServiceListQuery() (string, error) {
-	q, err := gophercloud.BuildQueryString(opts)
+	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
 }
 
 // List makes a request against the API to list services.
-func List(client *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(client)
 	if opts != nil {
 		query, err := opts.ToServiceListQuery()

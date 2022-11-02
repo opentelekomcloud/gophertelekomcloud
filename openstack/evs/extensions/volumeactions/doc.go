@@ -56,7 +56,7 @@ Example of Initializing a Volume Connection
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
-		Multipath: gophercloud.Disabled,
+		Multipath: golangsdk.Disabled,
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}
@@ -72,7 +72,7 @@ Example of Initializing a Volume Connection
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
-		Multipath: gophercloud.Disabled,
+		Multipath: golangsdk.Disabled,
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}

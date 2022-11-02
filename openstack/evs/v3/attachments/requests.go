@@ -1,8 +1,8 @@
 package attachments
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -34,39 +34,39 @@ type CreateOpts struct {
 // ToAttachmentCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToAttachmentCreateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "attachment")
+	return golangsdk.BuildRequestBody(opts, "attachment")
 }
 
 // Create will create a new Attachment based on the values in CreateOpts. To
 // extract the Attachment object from the response, call the Extract method on
 // the CreateResult.
-func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToAttachmentCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Delete will delete the existing Attachment with the provided ID.
-func Delete(client *gophercloud.ServiceClient, id string) (r DeleteResult) {
-	resp, err := client.Delete(deleteURL(client, id), &gophercloud.RequestOpts{
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+	resp, err := client.Delete(deleteURL(client, id), &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Get retrieves the Attachment with the provided ID. To extract the Attachment
 // object from the response, call the Extract method on the GetResult.
-func Get(client *gophercloud.ServiceClient, id string) (r GetResult) {
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	resp, err := client.Get(getURL(client, id), &r.Body, nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -110,13 +110,13 @@ type ListOpts struct {
 
 // ToAttachmentListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToAttachmentListQuery() (string, error) {
-	q, err := gophercloud.BuildQueryString(opts)
+	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
 }
 
 // List returns Attachments optionally limited by the conditions provided in
 // ListOpts.
-func List(client *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(client)
 	if opts != nil {
 		query, err := opts.ToAttachmentListQuery()
@@ -147,34 +147,34 @@ type UpdateOpts struct {
 // ToAttachmentUpdateMap assembles a request body based on the contents of an
 // UpdateOpts.
 func (opts UpdateOpts) ToAttachmentUpdateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "attachment")
+	return golangsdk.BuildRequestBody(opts, "attachment")
 }
 
 // Update will update the Attachment with provided information. To extract the
 // updated Attachment from the response, call the Extract method on the
 // UpdateResult.
-func Update(client *gophercloud.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToAttachmentUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Complete will complete an attachment for a cinder volume.
 // Available starting in the 3.44 microversion.
-func Complete(client *gophercloud.ServiceClient, id string) (r CompleteResult) {
+func Complete(client *golangsdk.ServiceClient, id string) (r CompleteResult) {
 	b := map[string]interface{}{
 		"os-complete": nil,
 	}
-	resp, err := client.Post(completeURL(client, id), b, nil, &gophercloud.RequestOpts{
+	resp, err := client.Post(completeURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }

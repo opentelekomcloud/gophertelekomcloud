@@ -1,23 +1,23 @@
 package volumes
 
-import "github.com/gophercloud/gophercloud"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func createURL(c *gophercloud.ServiceClient) string {
+func createURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("volumes")
 }
 
-func listURL(c *gophercloud.ServiceClient) string {
+func listURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("volumes", "detail")
 }
 
-func deleteURL(c *gophercloud.ServiceClient, id string) string {
+func deleteURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("volumes", id)
 }
 
-func getURL(c *gophercloud.ServiceClient, id string) string {
+func getURL(c *golangsdk.ServiceClient, id string) string {
 	return deleteURL(c, id)
 }
 
-func updateURL(c *gophercloud.ServiceClient, id string) string {
+func updateURL(c *golangsdk.ServiceClient, id string) string {
 	return deleteURL(c, id)
 }

@@ -1,39 +1,39 @@
 package backups
 
-import "github.com/gophercloud/gophercloud"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func createURL(c *gophercloud.ServiceClient) string {
+func createURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("backups")
 }
 
-func deleteURL(c *gophercloud.ServiceClient, id string) string {
+func deleteURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("backups", id)
 }
 
-func getURL(c *gophercloud.ServiceClient, id string) string {
+func getURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("backups", id)
 }
 
-func listURL(c *gophercloud.ServiceClient) string {
+func listURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("backups")
 }
 
-func listDetailURL(c *gophercloud.ServiceClient) string {
+func listDetailURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("backups", "detail")
 }
 
-func updateURL(c *gophercloud.ServiceClient, id string) string {
+func updateURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("backups", id)
 }
 
-func restoreURL(c *gophercloud.ServiceClient, id string) string {
+func restoreURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("backups", id, "restore")
 }
 
-func exportURL(c *gophercloud.ServiceClient, id string) string {
+func exportURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("backups", id, "export_record")
 }
 
-func importURL(c *gophercloud.ServiceClient) string {
+func importURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("backups", "import_record")
 }

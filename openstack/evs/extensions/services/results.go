@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Service represents a Blockstorage service in the OpenStack cloud.
@@ -51,7 +51,7 @@ func (r *Service) UnmarshalJSON(b []byte) error {
 	type tmp Service
 	var s struct {
 		tmp
-		UpdatedAt gophercloud.JSONRFC3339MilliNoZ `json:"updated_at"`
+		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {

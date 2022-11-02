@@ -1,8 +1,8 @@
 package volumetypes
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -28,37 +28,37 @@ type CreateOpts struct {
 // ToVolumeTypeCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToVolumeTypeCreateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "volume_type")
+	return golangsdk.BuildRequestBody(opts, "volume_type")
 }
 
 // Create will create a new Volume Type based on the values in CreateOpts. To extract
 // the Volume Type object from the response, call the Extract method on the
 // CreateResult.
-func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToVolumeTypeCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Delete will delete the existing Volume Type with the provided ID.
-func Delete(client *gophercloud.ServiceClient, id string) (r DeleteResult) {
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	resp, err := client.Delete(deleteURL(client, id), nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // Get retrieves the Volume Type with the provided ID. To extract the Volume Type object
 // from the response, call the Extract method on the GetResult.
-func Get(client *gophercloud.ServiceClient, id string) (r GetResult) {
+func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	resp, err := client.Get(getURL(client, id), &r.Body, nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -84,12 +84,12 @@ type ListOpts struct {
 
 // ToVolumeTypeListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToVolumeTypeListQuery() (string, error) {
-	q, err := gophercloud.BuildQueryString(opts)
+	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
 }
 
 // List returns Volume types.
-func List(client *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(client)
 
 	if opts != nil {
@@ -123,35 +123,35 @@ type UpdateOpts struct {
 // ToVolumeTypeUpdateMap assembles a request body based on the contents of an
 // UpdateOpts.
 func (opts UpdateOpts) ToVolumeTypeUpdateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "volume_type")
+	return golangsdk.BuildRequestBody(opts, "volume_type")
 }
 
 // Update will update the Volume Type with provided information. To extract the updated
 // Volume Type from the response, call the Extract method on the UpdateResult.
-func Update(client *gophercloud.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToVolumeTypeUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(updateURL(client, id), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // ListExtraSpecs requests all the extra-specs for the given volume type ID.
-func ListExtraSpecs(client *gophercloud.ServiceClient, volumeTypeID string) (r ListExtraSpecsResult) {
+func ListExtraSpecs(client *golangsdk.ServiceClient, volumeTypeID string) (r ListExtraSpecsResult) {
 	resp, err := client.Get(extraSpecsListURL(client, volumeTypeID), &r.Body, nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // GetExtraSpec requests an extra-spec specified by key for the given volume type ID
-func GetExtraSpec(client *gophercloud.ServiceClient, volumeTypeID string, key string) (r GetExtraSpecResult) {
+func GetExtraSpec(client *golangsdk.ServiceClient, volumeTypeID string, key string) (r GetExtraSpecResult) {
 	resp, err := client.Get(extraSpecsGetURL(client, volumeTypeID, key), &r.Body, nil)
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -172,16 +172,16 @@ func (opts ExtraSpecsOpts) ToVolumeTypeExtraSpecsCreateMap() (map[string]interfa
 
 // CreateExtraSpecs will create or update the extra-specs key-value pairs for
 // the specified volume type.
-func CreateExtraSpecs(client *gophercloud.ServiceClient, volumeTypeID string, opts CreateExtraSpecsOptsBuilder) (r CreateExtraSpecsResult) {
+func CreateExtraSpecs(client *golangsdk.ServiceClient, volumeTypeID string, opts CreateExtraSpecsOptsBuilder) (r CreateExtraSpecsResult) {
 	b, err := opts.ToVolumeTypeExtraSpecsCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(extraSpecsCreateURL(client, volumeTypeID), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(extraSpecsCreateURL(client, volumeTypeID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -195,7 +195,7 @@ type UpdateExtraSpecOptsBuilder interface {
 // the contents of a ExtraSpecOpts.
 func (opts ExtraSpecsOpts) ToVolumeTypeExtraSpecUpdateMap() (map[string]string, string, error) {
 	if len(opts) != 1 {
-		err := gophercloud.ErrInvalidInput{}
+		err := golangsdk.ErrInvalidInput{}
 		err.Argument = "volumetypes.ExtraSpecOpts"
 		err.Info = "Must have one and only one key-value pair"
 		return nil, "", err
@@ -211,31 +211,31 @@ func (opts ExtraSpecsOpts) ToVolumeTypeExtraSpecUpdateMap() (map[string]string, 
 
 // UpdateExtraSpec will updates the value of the specified volume type's extra spec
 // for the key in opts.
-func UpdateExtraSpec(client *gophercloud.ServiceClient, volumeTypeID string, opts UpdateExtraSpecOptsBuilder) (r UpdateExtraSpecResult) {
+func UpdateExtraSpec(client *golangsdk.ServiceClient, volumeTypeID string, opts UpdateExtraSpecOptsBuilder) (r UpdateExtraSpecResult) {
 	b, key, err := opts.ToVolumeTypeExtraSpecUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Put(extraSpecUpdateURL(client, volumeTypeID, key), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Put(extraSpecUpdateURL(client, volumeTypeID, key), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // DeleteExtraSpec will delete the key-value pair with the given key for the given
 // volume type ID.
-func DeleteExtraSpec(client *gophercloud.ServiceClient, volumeTypeID, key string) (r DeleteExtraSpecResult) {
-	resp, err := client.Delete(extraSpecDeleteURL(client, volumeTypeID, key), &gophercloud.RequestOpts{
+func DeleteExtraSpec(client *golangsdk.ServiceClient, volumeTypeID, key string) (r DeleteExtraSpecResult) {
+	resp, err := client.Delete(extraSpecDeleteURL(client, volumeTypeID, key), &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
 // ListAccesses retrieves the tenants which have access to a volume type.
-func ListAccesses(client *gophercloud.ServiceClient, id string) pagination.Pager {
+func ListAccesses(client *golangsdk.ServiceClient, id string) pagination.Pager {
 	url := accessURL(client, id)
 
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
@@ -257,20 +257,20 @@ type AddAccessOpts struct {
 
 // ToVolumeTypeAddAccessMap constructs a request body from AddAccessOpts.
 func (opts AddAccessOpts) ToVolumeTypeAddAccessMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "addProjectAccess")
+	return golangsdk.BuildRequestBody(opts, "addProjectAccess")
 }
 
 // AddAccess grants a tenant/project access to a volume type.
-func AddAccess(client *gophercloud.ServiceClient, id string, opts AddAccessOptsBuilder) (r AddAccessResult) {
+func AddAccess(client *golangsdk.ServiceClient, id string, opts AddAccessOptsBuilder) (r AddAccessResult) {
 	b, err := opts.ToVolumeTypeAddAccessMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(accessActionURL(client, id), b, nil, &gophercloud.RequestOpts{
+	resp, err := client.Post(accessActionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }
 
@@ -288,19 +288,19 @@ type RemoveAccessOpts struct {
 
 // ToVolumeTypeRemoveAccessMap constructs a request body from RemoveAccessOpts.
 func (opts RemoveAccessOpts) ToVolumeTypeRemoveAccessMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "removeProjectAccess")
+	return golangsdk.BuildRequestBody(opts, "removeProjectAccess")
 }
 
 // RemoveAccess removes/revokes a tenant/project access to a volume type.
-func RemoveAccess(client *gophercloud.ServiceClient, id string, opts RemoveAccessOptsBuilder) (r RemoveAccessResult) {
+func RemoveAccess(client *golangsdk.ServiceClient, id string, opts RemoveAccessOptsBuilder) (r RemoveAccessResult) {
 	b, err := opts.ToVolumeTypeRemoveAccessMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	resp, err := client.Post(accessActionURL(client, id), b, nil, &gophercloud.RequestOpts{
+	resp, err := client.Post(accessActionURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
+	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
 	return
 }

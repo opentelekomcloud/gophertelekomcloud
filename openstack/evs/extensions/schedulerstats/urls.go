@@ -1,7 +1,7 @@
 package schedulerstats
 
-import "github.com/gophercloud/gophercloud"
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func storagePoolsListURL(c *gophercloud.ServiceClient) string {
+func storagePoolsListURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("scheduler-stats", "get_pools")
 }

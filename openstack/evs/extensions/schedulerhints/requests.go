@@ -3,7 +3,7 @@ package schedulerhints
 import (
 	"regexp"
 
-	"github.com/gophercloud/gophercloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 // SchedulerHints represents a set of scheduling hints that are passed to the
@@ -47,7 +47,7 @@ func (opts SchedulerHints) ToVolumeSchedulerHintsCreateMap() (map[string]interfa
 	if len(opts.DifferentHost) > 0 {
 		for _, diffHost := range opts.DifferentHost {
 			if !uuidRegex.MatchString(diffHost) {
-				err := gophercloud.ErrInvalidInput{}
+				err := golangsdk.ErrInvalidInput{}
 				err.Argument = "schedulerhints.SchedulerHints.DifferentHost"
 				err.Value = opts.DifferentHost
 				err.Info = "The hosts must be in UUID format."
@@ -60,7 +60,7 @@ func (opts SchedulerHints) ToVolumeSchedulerHintsCreateMap() (map[string]interfa
 	if len(opts.SameHost) > 0 {
 		for _, sameHost := range opts.SameHost {
 			if !uuidRegex.MatchString(sameHost) {
-				err := gophercloud.ErrInvalidInput{}
+				err := golangsdk.ErrInvalidInput{}
 				err.Argument = "schedulerhints.SchedulerHints.SameHost"
 				err.Value = opts.SameHost
 				err.Info = "The hosts must be in UUID format."
@@ -72,7 +72,7 @@ func (opts SchedulerHints) ToVolumeSchedulerHintsCreateMap() (map[string]interfa
 
 	if opts.LocalToInstance != "" {
 		if !uuidRegex.MatchString(opts.LocalToInstance) {
-			err := gophercloud.ErrInvalidInput{}
+			err := golangsdk.ErrInvalidInput{}
 			err.Argument = "schedulerhints.SchedulerHints.LocalToInstance"
 			err.Value = opts.LocalToInstance
 			err.Info = "The instance must be in UUID format."

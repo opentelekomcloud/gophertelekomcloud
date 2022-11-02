@@ -1,8 +1,8 @@
 package volumetypes
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // VolumeType contains all the information associated with an OpenStack Volume Type.
@@ -36,13 +36,13 @@ func (r VolumeTypePage) IsEmpty() (bool, error) {
 
 func (page VolumeTypePage) NextPageURL() (string, error) {
 	var s struct {
-		Links []gophercloud.Link `json:"volume_type_links"`
+		Links []golangsdk.Link `json:"volume_type_links"`
 	}
 	err := page.ExtractInto(&s)
 	if err != nil {
 		return "", err
 	}
-	return gophercloud.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(s.Links)
 }
 
 // ExtractVolumeTypes extracts and returns Volumes. It is used while iterating over a volumetypes.List call.
@@ -53,7 +53,7 @@ func ExtractVolumeTypes(r pagination.Page) ([]VolumeType, error) {
 }
 
 type commonResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // Extract will get the Volume Type object out of the commonResult object.
@@ -85,7 +85,7 @@ type CreateResult struct {
 
 // DeleteResult contains the response body and error from a Delete request.
 type DeleteResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // UpdateResult contains the response body and error from an Update request.
@@ -97,7 +97,7 @@ type UpdateResult struct {
 // key-value pairs. Call its Extract method to interpret it as a
 // map[string]interface.
 type extraSpecsResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // ListExtraSpecsResult contains the result of a Get operation. Call its Extract
@@ -124,7 +124,7 @@ func (r extraSpecsResult) Extract() (map[string]string, error) {
 // extraSpecResult contains the result of a call for individual a single
 // key-value pair.
 type extraSpecResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // GetExtraSpecResult contains the result of a Get operation. Call its Extract
@@ -142,7 +142,7 @@ type UpdateExtraSpecResult struct {
 // DeleteExtraSpecResult contains the result of a Delete operation. Call its
 // ExtractErr method to determine if the call succeeded or failed.
 type DeleteExtraSpecResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // Extract interprets any extraSpecResult as an ExtraSpec, if possible.
@@ -184,11 +184,11 @@ func ExtractAccesses(r pagination.Page) ([]VolumeTypeAccess, error) {
 // AddAccessResult is the response from a AddAccess request. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type AddAccessResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // RemoveAccessResult is the response from a RemoveAccess request. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type RemoveAccessResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }

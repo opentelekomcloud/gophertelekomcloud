@@ -1,8 +1,8 @@
 package qos
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // QoS contains all the information associated with an OpenStack QoS specification.
@@ -18,7 +18,7 @@ type QoS struct {
 }
 
 type commonResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // Extract will get the QoS object out of the commonResult object.
@@ -40,7 +40,7 @@ type CreateResult struct {
 
 // DeleteResult contains the response body and error from a Delete request.
 type DeleteResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 type QoSPage struct {
@@ -57,13 +57,13 @@ func (page QoSPage) IsEmpty() (bool, error) {
 // next page of results.
 func (page QoSPage) NextPageURL() (string, error) {
 	var s struct {
-		Links []gophercloud.Link `json:"qos_specs_links"`
+		Links []golangsdk.Link `json:"qos_specs_links"`
 	}
 	err := page.ExtractInto(&s)
 	if err != nil {
 		return "", err
 	}
-	return gophercloud.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(s.Links)
 }
 
 // ExtractQoS provides access to the list of qos in a page acquired
@@ -95,22 +95,22 @@ func (r updateResult) Extract() (map[string]string, error) {
 // key-value pairs. Call its Extract method to interpret it as a
 // map[string]interface.
 type updateResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // AssociateResult contains the response body and error from a Associate request.
 type AssociateResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // DisassociateResult contains the response body and error from a Disassociate request.
 type DisassociateResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // DisassociateAllResult contains the response body and error from a DisassociateAll request.
 type DisassociateAllResult struct {
-	gophercloud.ErrResult
+	golangsdk.ErrResult
 }
 
 // QoS contains all the information associated with an OpenStack QoS specification.
