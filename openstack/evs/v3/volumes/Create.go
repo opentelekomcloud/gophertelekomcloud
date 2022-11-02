@@ -3,7 +3,6 @@ package volumes
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // CreateOpts contains options for creating a Volume. This object is passed to
@@ -107,11 +106,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Volume, error) {
 
 	// POST /v3/{project_id}/volumes
 	raw, err := client.Post(client.ServiceURL("volumes"), b, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var res Volume
-	err = extract.IntoStructPtr(raw.Body, &res, "volume")
-	return &res, err
+	return extra(err, raw)
 }

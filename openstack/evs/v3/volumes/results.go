@@ -2,9 +2,11 @@ package volumes
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -124,6 +126,16 @@ func (r *Volume) UnmarshalJSON(b []byte) error {
 	r.UpdatedAt = time.Time(s.UpdatedAt)
 
 	return err
+}
+
+func extra(err error, raw *http.Response) (*Volume, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res Volume
+	err = extract.IntoStructPtr(raw.Body, &res, "volume")
+	return &res, err
 }
 
 // VolumePage is a pagination.pager that is returned from a call to the List function.

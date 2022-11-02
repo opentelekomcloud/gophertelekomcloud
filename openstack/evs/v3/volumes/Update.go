@@ -26,15 +26,14 @@ type UpdateOpts struct {
 
 // Update will update the Volume with provided information. To extract the updated
 // Volume from the response, call the Extract method on the UpdateResult.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r UpdateResult) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Volume, error) {
 	b, err := build.RequestBody(opts, "volume")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	resp, err := client.Put(client.ServiceURL("volumes", id), b, &r.Body, &golangsdk.RequestOpts{
+
+	raw, err := client.Put(client.ServiceURL("volumes", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
+	return extra(err, raw)
 }
