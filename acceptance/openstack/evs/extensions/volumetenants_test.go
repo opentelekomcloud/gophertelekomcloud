@@ -35,7 +35,7 @@ func TestVolumeTenants(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer blockstorage.DeleteVolume(t, client, volume1)
 
-	allPages, err = volumes.List(client, nil).AllPages()
+	allPages, err = volumes.List(client, volumes.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 
 	err = volumes.ExtractVolumesInto(allPages, &allVolumes)

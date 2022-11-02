@@ -2,8 +2,11 @@ package volumes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
+
+type CreateOptsBuilder interface {
+	ToVolumeCreateMap() (map[string]interface{}, error)
+}
 
 // CreateOpts contains options for creating a Volume. This object is passed to
 // the volumes.Create function. For more information about these parameters, see the Volume object.
@@ -97,9 +100,13 @@ type Metadata struct {
 	FullClone string `json:"full_clone"`
 }
 
+func (c CreateOpts) ToVolumeCreateMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(c, "volume")
+}
+
 // Create will create a new Volume based on the values in CreateOpts.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Volume, error) {
-	b, err := build.RequestBody(opts, "volume")
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (*Volume, error) {
+	b, err := opts.ToVolumeCreateMap()
 	if err != nil {
 		return nil, err
 	}

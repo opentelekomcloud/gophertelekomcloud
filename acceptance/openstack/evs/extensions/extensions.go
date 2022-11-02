@@ -33,7 +33,7 @@ func CreateUploadImage(t *testing.T, client *golangsdk.ServiceClient, volume *vo
 		Force:     true,
 	}
 
-	volumeImage, err := volumeactions.UploadImage(client, volume.ID, uploadImageOpts).Extract()
+	volumeImage, err := volumeactions.UploadImage(client, volume.ID, uploadImageOpts)
 	if err != nil {
 		return volumeImage, err
 	}
@@ -59,7 +59,7 @@ func DeleteUploadedImage(t *testing.T, client *golangsdk.ServiceClient, imageID 
 
 	t.Logf("Removing image %s", imageID)
 
-	err := images.Delete(client, imageID).ExtractErr()
+	err := images.Delete(client, imageID)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func CreateVolumeAttach(t *testing.T, client *golangsdk.ServiceClient, volume *v
 
 	t.Logf("Attempting to attach volume %s to server %s", volume.ID, server.ID)
 
-	if err := volumeactions.Attach(client, volume.ID, attachOpts).ExtractErr(); err != nil {
+	if err := volumeactions.Attach(client, volume.ID, attachOpts); err != nil {
 		return err
 	}
 
@@ -104,7 +104,7 @@ func CreateVolumeReserve(t *testing.T, client *golangsdk.ServiceClient, volume *
 
 	t.Logf("Attempting to reserve volume %s", volume.ID)
 
-	if err := volumeactions.Reserve(client, volume.ID).ExtractErr(); err != nil {
+	if err := volumeactions.Reserve(client, volume.ID); err != nil {
 		return err
 	}
 
@@ -123,7 +123,7 @@ func DeleteVolumeAttach(t *testing.T, client *golangsdk.ServiceClient, volume *v
 		AttachmentID: volume.Attachments[0].AttachmentID,
 	}
 
-	if err := volumeactions.Detach(client, volume.ID, detachOpts).ExtractErr(); err != nil {
+	if err := volumeactions.Detach(client, volume.ID, detachOpts); err != nil {
 		t.Fatalf("Unable to detach volume %s: %v", volume.ID, err)
 	}
 
@@ -144,7 +144,7 @@ func DeleteVolumeReserve(t *testing.T, client *golangsdk.ServiceClient, volume *
 
 	t.Logf("Attempting to unreserve volume %s", volume.ID)
 
-	if err := volumeactions.Unreserve(client, volume.ID).ExtractErr(); err != nil {
+	if err := volumeactions.Unreserve(client, volume.ID); err != nil {
 		t.Fatalf("Unable to unreserve volume %s: %v", volume.ID, err)
 	}
 
@@ -159,7 +159,7 @@ func ExtendVolumeSize(t *testing.T, client *golangsdk.ServiceClient, volume *vol
 		NewSize: 2,
 	}
 
-	err := volumeactions.ExtendSize(client, volume.ID, extendOpts).ExtractErr()
+	err := volumeactions.ExtendSize(client, volume.ID, extendOpts)
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func SetImageMetadata(t *testing.T, client *golangsdk.ServiceClient, volume *vol
 		},
 	}
 
-	err := volumeactions.SetImageMetadata(client, volume.ID, imageMetadataOpts).ExtractErr()
+	err := volumeactions.SetImageMetadata(client, volume.ID, imageMetadataOpts)
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string
 		Name:     backupName,
 	}
 
-	backup, err := backups.Create(client, createOpts).Extract()
+	backup, err := backups.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string
 		return nil, err
 	}
 
-	backup, err = backups.Get(client, backup.ID).Extract()
+	backup, err = backups.Get(client, backup.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +226,7 @@ func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string
 // DeleteBackup will delete a backup. A fatal error will occur if the backup
 // could not be deleted. This works best when used as a deferred function.
 func DeleteBackup(t *testing.T, client *golangsdk.ServiceClient, backupID string) {
-	if err := backups.Delete(client, backupID).ExtractErr(); err != nil {
+	if err := backups.Delete(client, backupID); err != nil {
 		t.Fatalf("Unable to delete backup %s: %s", backupID, err)
 	}
 
@@ -237,7 +237,7 @@ func DeleteBackup(t *testing.T, client *golangsdk.ServiceClient, backupID string
 // status. It will do this for the amount of seconds defined.
 func WaitForBackupStatus(client *golangsdk.ServiceClient, id, status string) error {
 	return tools.WaitFor(func() (bool, error) {
-		current, err := backups.Get(client, id).Extract()
+		current, err := backups.Get(client, id)
 		if err != nil {
 			return false, err
 		}
@@ -258,12 +258,12 @@ func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.
 		Bootable: true,
 	}
 
-	err := volumeactions.SetBootable(client, volume.ID, bootableOpts).ExtractErr()
+	err := volumeactions.SetBootable(client, volume.ID, bootableOpts)
 	if err != nil {
 		return err
 	}
 
-	vol, err := v3.Get(client, volume.ID).Extract()
+	vol, err := v3.Get(client, volume.ID)
 	if err != nil {
 		return err
 	}
@@ -276,12 +276,12 @@ func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.
 		Bootable: false,
 	}
 
-	err = volumeactions.SetBootable(client, volume.ID, bootableOpts).ExtractErr()
+	err = volumeactions.SetBootable(client, volume.ID, bootableOpts)
 	if err != nil {
 		return err
 	}
 
-	vol, err = v3.Get(client, volume.ID).Extract()
+	vol, err = v3.Get(client, volume.ID)
 	if err != nil {
 		return err
 	}
@@ -302,7 +302,7 @@ func ChangeVolumeType(t *testing.T, client *golangsdk.ServiceClient, volume *v3.
 		MigrationPolicy: volumeactions.MigrationPolicyOnDemand,
 	}
 
-	err := volumeactions.ChangeType(client, volume.ID, changeOpts).ExtractErr()
+	err := volumeactions.ChangeType(client, volume.ID, changeOpts)
 	if err != nil {
 		return err
 	}
@@ -323,7 +323,7 @@ func ReImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volu
 		ReImageReserved: false,
 	}
 
-	err := volumeactions.ReImage(client, volume.ID, reimageOpts).ExtractErr()
+	err := volumeactions.ReImage(client, volume.ID, reimageOpts)
 	if err != nil {
 		return err
 	}
@@ -333,7 +333,7 @@ func ReImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volu
 		return err
 	}
 
-	vol, err := v3.Get(client, volume.ID).Extract()
+	vol, err := v3.Get(client, volume.ID)
 	if err != nil {
 		return err
 	}

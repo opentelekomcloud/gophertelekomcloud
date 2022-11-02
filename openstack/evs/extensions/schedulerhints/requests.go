@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
 )
 
 // SchedulerHints represents a set of scheduling hints that are passed to the
@@ -12,33 +13,18 @@ type SchedulerHints struct {
 	// DifferentHost will place the volume on a different back-end that does not
 	// host the given volumes.
 	DifferentHost []string
-
 	// SameHost will place the volume on a back-end that hosts the given volumes.
 	SameHost []string
-
 	// LocalToInstance will place volume on same host on a given instance
 	LocalToInstance string
-
 	// Query is a conditional statement that results in back-ends able to
 	// host the volume.
 	Query string
-
 	// AdditionalProperies are arbitrary key/values that are not validated by nova.
 	AdditionalProperties map[string]interface{}
 }
 
-// VolumeCreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type VolumeCreateOptsBuilder interface {
-	ToVolumeCreateMap() (map[string]interface{}, error)
-}
-
-// CreateOptsBuilder builds the scheduler hints into a serializable format.
-type CreateOptsBuilder interface {
-	ToVolumeSchedulerHintsCreateMap() (map[string]interface{}, error)
-}
-
-// ToVolumeSchedulerHintsMap builds the scheduler hints into a serializable format.
+// ToVolumeSchedulerHintsCreateMap builds the scheduler hints into a serializable format.
 func (opts SchedulerHints) ToVolumeSchedulerHintsCreateMap() (map[string]interface{}, error) {
 	sh := make(map[string]interface{})
 
@@ -96,15 +82,14 @@ func (opts SchedulerHints) ToVolumeSchedulerHintsCreateMap() (map[string]interfa
 
 // CreateOptsExt adds a SchedulerHints option to the base CreateOpts.
 type CreateOptsExt struct {
-	VolumeCreateOptsBuilder
-
+	volumes.CreateOptsBuilder
 	// SchedulerHints provides a set of hints to the scheduler.
-	SchedulerHints CreateOptsBuilder
+	SchedulerHints SchedulerHints
 }
 
 // ToVolumeCreateMap adds the SchedulerHints option to the base volume creation options.
 func (opts CreateOptsExt) ToVolumeCreateMap() (map[string]interface{}, error) {
-	base, err := opts.VolumeCreateOptsBuilder.ToVolumeCreateMap()
+	base, err := opts.CreateOptsBuilder.ToVolumeCreateMap()
 	if err != nil {
 		return nil, err
 	}

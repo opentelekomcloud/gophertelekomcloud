@@ -21,16 +21,16 @@ func TestVolumeAttachments(t *testing.T) {
 
 	server, err := compute.CreateServer(t, computeClient)
 	th.AssertNoErr(t, err)
-	defer compute.DeleteServer(t, computeClient, server)
+	t.Cleanup(func() { compute.DeleteServer(t, computeClient, server) })
 
 	volume, err := CreateVolume(t, blockClient)
 	th.AssertNoErr(t, err)
-	defer DeleteVolume(t, blockClient, volume)
+	t.Cleanup(func() { DeleteVolume(t, blockClient, volume) })
 
 	err = CreateVolumeAttachment(t, blockClient, volume, server)
 	th.AssertNoErr(t, err)
 
-	newVolume, err := volumes.Get(blockClient, volume.ID).Extract()
+	newVolume, err := volumes.Get(blockClient, volume.ID)
 	th.AssertNoErr(t, err)
 
 	DeleteVolumeAttachment(t, blockClient, newVolume)

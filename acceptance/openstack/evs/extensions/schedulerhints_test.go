@@ -11,8 +11,6 @@ import (
 )
 
 func TestSchedulerHints(t *testing.T) {
-	clients.RequireLong(t)
-
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 
@@ -22,12 +20,15 @@ func TestSchedulerHints(t *testing.T) {
 		Name: volumeName,
 	}
 
-	volume1, err := volumes.Create(client, createOpts).Extract()
+	volume1, err := volumes.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	err = volumes.WaitForStatus(client, volume1.ID, "available", 60)
 	th.AssertNoErr(t, err)
-	defer volumes.Delete(client, volume1.ID, volumes.DeleteOpts{})
+	t.Cleanup(func() {
+		err := volumes.Delete(client, volumes.DeleteOpts{VolumeId: volume1.ID})
+		th.AssertNoErr(t, err)
+	})
 
 	volumeName = tools.RandomString("ACPTTEST", 16)
 	base := volumes.CreateOpts{
@@ -42,16 +43,16 @@ func TestSchedulerHints(t *testing.T) {
 	}
 
 	createOptsWithHints := schedulerhints.CreateOptsExt{
-		VolumeCreateOptsBuilder: base,
-		SchedulerHints:          schedulerHints,
+		CreateOptsBuilder: base,
+		SchedulerHints:    schedulerHints,
 	}
 
-	volume2, err := volumes.Create(client, createOptsWithHints).Extract()
+	volume2, err := volumes.Create(client, createOptsWithHints)
 	th.AssertNoErr(t, err)
 
 	err = volumes.WaitForStatus(client, volume2.ID, "available", 60)
 	th.AssertNoErr(t, err)
 
-	err = volumes.Delete(client, volume2.ID, volumes.DeleteOpts{}).ExtractErr()
+	err = volumes.Delete(client, volumes.DeleteOpts{VolumeId: volume2.ID})
 	th.AssertNoErr(t, err)
 }

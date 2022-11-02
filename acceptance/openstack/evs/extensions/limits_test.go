@@ -13,7 +13,7 @@ func TestLimits(t *testing.T) {
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 
-	limits, err := limits.Get(client).Extract()
+	limits, err := limits.Get(client)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, limits)

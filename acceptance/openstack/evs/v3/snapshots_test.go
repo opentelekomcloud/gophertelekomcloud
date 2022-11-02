@@ -32,7 +32,7 @@ func TestSnapshots(t *testing.T) {
 		Description: &updatedSnapshotDescription,
 	}
 	t.Logf("Attempting to update snapshot: %s", updatedSnapshotName)
-	updatedSnapshot, err := snapshots.Update(client, snapshot1.ID, updateOpts).Extract()
+	updatedSnapshot, err := snapshots.Update(client, snapshot1.ID, updateOpts)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, updatedSnapshot)

@@ -24,11 +24,11 @@ func TestQoS(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer DeleteQoS(t, client, qos2)
 
-	getQoS2, err := qos.Get(client, qos2.ID).Extract()
+	getQoS2, err := qos.Get(client, qos2.ID)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, qos2, getQoS2)
 
-	err = qos.DeleteKeys(client, qos2.ID, qos.DeleteKeysOpts{"read_iops_sec"}).ExtractErr()
+	err = qos.DeleteKeys(client, qos2.ID, qos.DeleteKeysOpts{"read_iops_sec"})
 	th.AssertNoErr(t, err)
 
 	updateOpts := qos.UpdateOpts{
@@ -45,7 +45,7 @@ func TestQoS(t *testing.T) {
 		"write_iops_sec": "40000",
 	}
 
-	updatedQosSpecs, err := qos.Update(client, qos2.ID, updateOpts).Extract()
+	updatedQosSpecs, err := qos.Update(client, qos2.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, updatedQosSpecs, expectedQosSpecs)
 
@@ -92,7 +92,7 @@ func TestQoSAssociations(t *testing.T) {
 		VolumeTypeID: vt.ID,
 	}
 
-	err = qos.Associate(client, qos1.ID, associateOpts).ExtractErr()
+	err = qos.Associate(client, qos1.ID, associateOpts)
 	th.AssertNoErr(t, err)
 
 	allQosAssociations, err := qos.ListAssociations(client, qos1.ID).AllPages()
@@ -108,7 +108,7 @@ func TestQoSAssociations(t *testing.T) {
 		VolumeTypeID: vt.ID,
 	}
 
-	err = qos.Disassociate(client, qos1.ID, disassociateOpts).ExtractErr()
+	err = qos.Disassociate(client, qos1.ID, disassociateOpts)
 	th.AssertNoErr(t, err)
 
 	allQosAssociations, err = qos.ListAssociations(client, qos1.ID).AllPages()
@@ -119,9 +119,9 @@ func TestQoSAssociations(t *testing.T) {
 	tools.PrintResource(t, allAssociations)
 	th.AssertEquals(t, 0, len(allAssociations))
 
-	err = qos.Associate(client, qos1.ID, associateOpts).ExtractErr()
+	err = qos.Associate(client, qos1.ID, associateOpts)
 	th.AssertNoErr(t, err)
 
-	err = qos.DisassociateAll(client, qos1.ID).ExtractErr()
+	err = qos.DisassociateAll(client, qos1.ID)
 	th.AssertNoErr(t, err)
 }

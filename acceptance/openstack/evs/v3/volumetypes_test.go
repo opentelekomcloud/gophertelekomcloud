@@ -45,7 +45,7 @@ func TestVolumeTypes(t *testing.T) {
 		IsPublic:    &isPublic,
 	}
 
-	newVT, err := volumetypes.Update(client, vt.ID, updateOpts).Extract()
+	newVT, err := volumetypes.Update(client, vt.ID, updateOpts)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, newVT)
@@ -69,7 +69,7 @@ func TestVolumeTypesExtraSpecs(t *testing.T) {
 		"volume_backend_name": "ssd",
 	}
 
-	createdExtraSpecs, err := volumetypes.CreateExtraSpecs(client, vt.ID, createOpts).Extract()
+	createdExtraSpecs, err := volumetypes.CreateExtraSpecs(client, vt.ID, createOpts)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, createdExtraSpecs)
@@ -78,20 +78,20 @@ func TestVolumeTypesExtraSpecs(t *testing.T) {
 	th.AssertEquals(t, createdExtraSpecs["capabilities"], "gpu")
 	th.AssertEquals(t, createdExtraSpecs["volume_backend_name"], "ssd")
 
-	err = volumetypes.DeleteExtraSpec(client, vt.ID, "volume_backend_name").ExtractErr()
+	err = volumetypes.DeleteExtraSpec(client, vt.ID, "volume_backend_name")
 	th.AssertNoErr(t, err)
 
 	updateOpts := volumetypes.ExtraSpecsOpts{
 		"capabilities": "gpu-2",
 	}
-	updatedExtraSpec, err := volumetypes.UpdateExtraSpec(client, vt.ID, updateOpts).Extract()
+	updatedExtraSpec, err := volumetypes.UpdateExtraSpec(client, vt.ID, updateOpts)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, updatedExtraSpec)
 
 	th.AssertEquals(t, updatedExtraSpec["capabilities"], "gpu-2")
 
-	allExtraSpecs, err := volumetypes.ListExtraSpecs(client, vt.ID).Extract()
+	allExtraSpecs, err := volumetypes.ListExtraSpecs(client, vt.ID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, allExtraSpecs)
@@ -99,7 +99,7 @@ func TestVolumeTypesExtraSpecs(t *testing.T) {
 	th.AssertEquals(t, len(allExtraSpecs), 1)
 	th.AssertEquals(t, allExtraSpecs["capabilities"], "gpu-2")
 
-	singleSpec, err := volumetypes.GetExtraSpec(client, vt.ID, "capabilities").Extract()
+	singleSpec, err := volumetypes.GetExtraSpec(client, vt.ID, "capabilities")
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, singleSpec)
@@ -128,7 +128,7 @@ func TestVolumeTypesAccess(t *testing.T) {
 		Project: project.ID,
 	}
 
-	err = volumetypes.AddAccess(client, vt.ID, addAccessOpts).ExtractErr()
+	err = volumetypes.AddAccess(client, vt.ID, addAccessOpts)
 	th.AssertNoErr(t, err)
 
 	allPages, err := volumetypes.ListAccesses(client, vt.ID).AllPages()
@@ -147,7 +147,7 @@ func TestVolumeTypesAccess(t *testing.T) {
 		Project: project.ID,
 	}
 
-	err = volumetypes.RemoveAccess(client, vt.ID, removeAccessOpts).ExtractErr()
+	err = volumetypes.RemoveAccess(client, vt.ID, removeAccessOpts)
 	th.AssertNoErr(t, err)
 
 	allPages, err = volumetypes.ListAccesses(client, vt.ID).AllPages()

@@ -50,7 +50,7 @@ func TestVolumeActionsAttachCreateDestroy(t *testing.T) {
 	err = CreateVolumeAttach(t, blockClient, volume, server)
 	th.AssertNoErr(t, err)
 
-	newVolume, err := volumes.Get(blockClient, volume.ID).Extract()
+	newVolume, err := volumes.Get(blockClient, volume.ID)
 	th.AssertNoErr(t, err)
 
 	DeleteVolumeAttach(t, blockClient, newVolume)
@@ -82,7 +82,7 @@ func TestVolumeActionsExtendSize(t *testing.T) {
 	err = ExtendVolumeSize(t, blockClient, volume)
 	th.AssertNoErr(t, err)
 
-	newVolume, err := volumes.Get(blockClient, volume.ID).Extract()
+	newVolume, err := volumes.Get(blockClient, volume.ID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, newVolume)
@@ -135,7 +135,7 @@ func TestVolumeActionsChangeType(t *testing.T) {
 	err = ChangeVolumeType(t, client, volume, volumeType2)
 	th.AssertNoErr(t, err)
 
-	newVolume, err := volumes.Get(client, volume.ID).Extract()
+	newVolume, err := volumes.Get(client, volume.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, newVolume.VolumeType, volumeType2.Name)
 
@@ -173,7 +173,7 @@ func TestVolumeConns(t *testing.T) {
     cv, err := volumes.Create(client, &volumes.CreateOpts{
         Size: 1,
         Name: "blockv2-volume",
-    }).Extract()
+    })
     th.AssertNoErr(t, err)
 
     defer func() {
@@ -181,7 +181,7 @@ func TestVolumeConns(t *testing.T) {
         th.AssertNoErr(t, err)
 
         t.Logf("Deleting volume")
-        err = volumes.Delete(client, cv.ID, volumes.DeleteOpts{}).ExtractErr()
+        err = volumes.Delete(client, cv.ID, volumes.DeleteOpts{})
         th.AssertNoErr(t, err)
     }()
 
@@ -198,11 +198,11 @@ func TestVolumeConns(t *testing.T) {
     }
 
     t.Logf("Initializing connection")
-    _, err = volumeactions.InitializeConnection(client, cv.ID, connOpts).Extract()
+    _, err = volumeactions.InitializeConnection(client, cv.ID, connOpts)
     th.AssertNoErr(t, err)
 
     t.Logf("Terminating connection")
-    err = volumeactions.TerminateConnection(client, cv.ID, connOpts).ExtractErr()
+    err = volumeactions.TerminateConnection(client, cv.ID, connOpts)
     th.AssertNoErr(t, err)
 }
 */

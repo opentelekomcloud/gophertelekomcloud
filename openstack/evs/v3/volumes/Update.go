@@ -9,6 +9,7 @@ import (
 // to the volumes.Update function. For more information about the parameters, see
 // the Volume object.
 type UpdateOpts struct {
+	VolumeId string
 	// Specifies the disk name. The value can contain a maximum of 255 bytes.
 	Name string `json:"name,omitempty"`
 	// Specifies the disk description. The value can contain a maximum of 255 bytes.
@@ -26,13 +27,14 @@ type UpdateOpts struct {
 
 // Update will update the Volume with provided information. To extract the updated
 // Volume from the response, call the Extract method on the UpdateResult.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Volume, error) {
+func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Volume, error) {
 	b, err := build.RequestBody(opts, "volume")
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Put(client.ServiceURL("volumes", id), b, nil, &golangsdk.RequestOpts{
+	// PUT /v3/{project_id}/volumes/{volume_id}
+	raw, err := client.Put(client.ServiceURL("volumes", opts.VolumeId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return extra(err, raw)

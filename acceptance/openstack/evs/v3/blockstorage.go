@@ -28,7 +28,7 @@ func CreateSnapshot(t *testing.T, client *golangsdk.ServiceClient, volume *volum
 		Description: snapshotDescription,
 	}
 
-	snapshot, err := snapshots.Create(client, createOpts).Extract()
+	snapshot, err := snapshots.Create(client, createOpts)
 	if err != nil {
 		return snapshot, err
 	}
@@ -60,7 +60,7 @@ func CreateVolume(t *testing.T, client *golangsdk.ServiceClient) (*volumes.Volum
 		Description: volumeDescription,
 	}
 
-	volume, err := volumes.Create(client, createOpts).Extract()
+	volume, err := volumes.Create(client, createOpts)
 	if err != nil {
 		return volume, err
 	}
@@ -95,7 +95,7 @@ func CreateVolumeWithType(t *testing.T, client *golangsdk.ServiceClient, vt *vol
 		VolumeType:  vt.Name,
 	}
 
-	volume, err := volumes.Create(client, createOpts).Extract()
+	volume, err := volumes.Create(client, createOpts)
 	if err != nil {
 		return volume, err
 	}
@@ -129,7 +129,7 @@ func CreateVolumeType(t *testing.T, client *golangsdk.ServiceClient) (*volumetyp
 		Description: description,
 	}
 
-	vt, err := volumetypes.Create(client, createOpts).Extract()
+	vt, err := volumetypes.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func CreateVolumeTypeNoExtraSpecs(t *testing.T, client *golangsdk.ServiceClient)
 		Description: description,
 	}
 
-	vt, err := volumetypes.Create(client, createOpts).Extract()
+	vt, err := volumetypes.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func CreatePrivateVolumeType(t *testing.T, client *golangsdk.ServiceClient) (*vo
 		IsPublic:    &isPublic,
 	}
 
-	vt, err := volumetypes.Create(client, createOpts).Extract()
+	vt, err := volumetypes.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +211,7 @@ func CreatePrivateVolumeType(t *testing.T, client *golangsdk.ServiceClient) (*vo
 // DeleteSnapshot will delete a snapshot. A fatal error will occur if the
 // snapshot failed to be deleted.
 func DeleteSnapshot(t *testing.T, client *golangsdk.ServiceClient, snapshot *snapshots.Snapshot) {
-	err := snapshots.Delete(client, snapshot.ID).ExtractErr()
+	err := snapshots.Delete(client, snapshot.ID)
 	if err != nil {
 		t.Fatalf("Unable to delete snapshot %s: %+v", snapshot.ID, err)
 	}
@@ -219,7 +219,7 @@ func DeleteSnapshot(t *testing.T, client *golangsdk.ServiceClient, snapshot *sna
 	// Volumes can't be deleted until their snapshots have been,
 	// so block until the snapshoth as been deleted.
 	err = tools.WaitFor(func() (bool, error) {
-		_, err := snapshots.Get(client, snapshot.ID).Extract()
+		_, err := snapshots.Get(client, snapshot.ID)
 		if err != nil {
 			return true, nil
 		}
@@ -238,7 +238,7 @@ func DeleteSnapshot(t *testing.T, client *golangsdk.ServiceClient, snapshot *sna
 func DeleteVolume(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) {
 	t.Logf("Attempting to delete volume: %s", volume.ID)
 
-	err := volumes.Delete(client, volume.ID, volumes.DeleteOpts{}).ExtractErr()
+	err := volumes.Delete(client, volume.ID, volumes.DeleteOpts{})
 	if err != nil {
 		t.Fatalf("Unable to delete volume %s: %v", volume.ID, err)
 	}
@@ -246,7 +246,7 @@ func DeleteVolume(t *testing.T, client *golangsdk.ServiceClient, volume *volumes
 	// VolumeTypes can't be deleted until their volumes have been,
 	// so block until the volume is deleted.
 	err = tools.WaitFor(func() (bool, error) {
-		_, err := volumes.Get(client, volume.ID).Extract()
+		_, err := volumes.Get(client, volume.ID)
 		if err != nil {
 			return true, nil
 		}
@@ -266,7 +266,7 @@ func DeleteVolume(t *testing.T, client *golangsdk.ServiceClient, volume *volumes
 func DeleteVolumeType(t *testing.T, client *golangsdk.ServiceClient, vt *volumetypes.VolumeType) {
 	t.Logf("Attempting to delete volume type: %s", vt.ID)
 
-	err := volumetypes.Delete(client, vt.ID).ExtractErr()
+	err := volumetypes.Delete(client, vt.ID)
 	if err != nil {
 		t.Fatalf("Unable to delete volume %s: %v", vt.ID, err)
 	}
@@ -288,7 +288,7 @@ func CreateQoS(t *testing.T, client *golangsdk.ServiceClient) (*qos.QoS, error) 
 		},
 	}
 
-	qs, err := qos.Create(client, createOpts).Extract()
+	qs, err := qos.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -312,7 +312,7 @@ func DeleteQoS(t *testing.T, client *golangsdk.ServiceClient, qs *qos.QoS) {
 		Force: true,
 	}
 
-	err := qos.Delete(client, qs.ID, deleteOpts).ExtractErr()
+	err := qos.Delete(client, qs.ID, deleteOpts)
 	if err != nil {
 		t.Fatalf("Unable to delete QoS %s: %v", qs.ID, err)
 	}

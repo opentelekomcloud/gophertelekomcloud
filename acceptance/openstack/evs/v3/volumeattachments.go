@@ -30,7 +30,7 @@ func CreateVolumeAttachment(t *testing.T, client *golangsdk.ServiceClient, volum
 
 	var err error
 	var attachment *attachments.Attachment
-	if attachment, err = attachments.Create(client, attachOpts).Extract(); err != nil {
+	if attachment, err = attachments.Create(client, attachOpts); err != nil {
 		return err
 	}
 
@@ -39,19 +39,19 @@ func CreateVolumeAttachment(t *testing.T, client *golangsdk.ServiceClient, volum
 	defer func() {
 		client.Microversion = mv
 	}()
-	if err = attachments.Complete(client, attachment.ID).ExtractErr(); err != nil {
+	if err = attachments.Complete(client, attachment.ID); err != nil {
 		return err
 	}
 
 	if err = attachments.WaitForStatus(client, attachment.ID, "attached", 60); err != nil {
-		e := attachments.Delete(client, attachment.ID).ExtractErr()
+		e := attachments.Delete(client, attachment.ID)
 		if e != nil {
 			t.Logf("Failed to delete %q attachment: %s", attachment.ID, err)
 		}
 		return err
 	}
 
-	attachment, err = attachments.Get(client, attachment.ID).Extract()
+	attachment, err = attachments.Get(client, attachment.ID)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func CreateVolumeAttachment(t *testing.T, client *golangsdk.ServiceClient, volum
 				"initiator": "fake",
 			},
 		}
-		attachment, err = attachments.Update(client, attachment.ID, updateOpts).Extract()
+		attachment, err = attachments.Update(client, attachment.ID, updateOpts)
 		if err != nil {
 			return err
 		}
@@ -98,7 +98,7 @@ func CreateVolumeAttachment(t *testing.T, client *golangsdk.ServiceClient, volum
 func DeleteVolumeAttachment(t *testing.T, client *golangsdk.ServiceClient, volume *v3.Volume) {
 	t.Logf("Attepting to detach volume volume: %s", volume.ID)
 
-	if err := attachments.Delete(client, volume.Attachments[0].AttachmentID).ExtractErr(); err != nil {
+	if err := attachments.Delete(client, volume.Attachments[0].AttachmentID); err != nil {
 		t.Fatalf("Unable to detach volume %s: %v", volume.ID, err)
 	}
 

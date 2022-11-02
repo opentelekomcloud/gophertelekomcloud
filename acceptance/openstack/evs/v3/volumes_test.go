@@ -12,27 +12,25 @@ import (
 )
 
 func TestVolumes(t *testing.T) {
-	clients.RequireLong(t)
-
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 
 	volume1, err := CreateVolume(t, client)
 	th.AssertNoErr(t, err)
-	defer DeleteVolume(t, client, volume1)
+	t.Cleanup(func() { DeleteVolume(t, client, volume1) })
 
 	volume2, err := CreateVolume(t, client)
 	th.AssertNoErr(t, err)
-	defer DeleteVolume(t, client, volume2)
+	t.Cleanup(func() { DeleteVolume(t, client, volume2) })
 
 	// Update volume
 	updatedVolumeName := ""
 	updatedVolumeDescription := ""
-	updateOpts := volumes.UpdateOpts{
-		Name:        &updatedVolumeName,
-		Description: &updatedVolumeDescription,
-	}
-	updatedVolume, err := volumes.Update(client, volume1.ID, updateOpts).Extract()
+	updatedVolume, err := volumes.Update(client, volumes.UpdateOpts{
+		VolumeId:    volume1.ID,
+		Name:        updatedVolumeName,
+		Description: updatedVolumeDescription,
+	})
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, updatedVolume)
@@ -64,8 +62,6 @@ func TestVolumes(t *testing.T) {
 }
 
 func TestVolumesMultiAttach(t *testing.T) {
-	clients.RequireLong(t)
-
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 
@@ -78,7 +74,7 @@ func TestVolumesMultiAttach(t *testing.T) {
 		Multiattach: true,
 	}
 
-	vol, err := volumes.Create(client, volOpts).Extract()
+	vol, err := volumes.Create(client, volOpts)
 	th.AssertNoErr(t, err)
 
 	err = volumes.WaitForStatus(client, vol.ID, "available", 60)
@@ -86,13 +82,11 @@ func TestVolumesMultiAttach(t *testing.T) {
 
 	th.AssertEquals(t, vol.Multiattach, true)
 
-	err = volumes.Delete(client, vol.ID, volumes.DeleteOpts{}).ExtractErr()
+	err = volumes.Delete(client, volumes.DeleteOpts{VolumeId: vol.ID})
 	th.AssertNoErr(t, err)
 }
 
 func TestVolumesCascadeDelete(t *testing.T) {
-	clients.RequireLong(t)
-
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 
@@ -110,15 +104,17 @@ func TestVolumesCascadeDelete(t *testing.T) {
 
 	t.Logf("Attempting to delete volume: %s", vol.ID)
 
-	deleteOpts := volumes.DeleteOpts{Cascade: true}
-	err = volumes.Delete(client, vol.ID, deleteOpts).ExtractErr()
+	err = volumes.Delete(client, volumes.DeleteOpts{
+		VolumeId: vol.ID,
+		Cascade:  true,
+	})
 	if err != nil {
 		t.Fatalf("Unable to delete volume %s: %v", vol.ID, err)
 	}
 
 	for _, sid := range []string{snapshot1.ID, snapshot2.ID} {
 		err := tools.WaitFor(func() (bool, error) {
-			_, err := snapshots.Get(client, sid).Extract()
+			_, err := snapshots.Get(client, sid)
 			if err != nil {
 				return true, nil
 			}
@@ -129,7 +125,7 @@ func TestVolumesCascadeDelete(t *testing.T) {
 	}
 
 	err = tools.WaitFor(func() (bool, error) {
-		_, err := volumes.Get(client, vol.ID).Extract()
+		_, err := volumes.Get(client, vol.ID)
 		if err != nil {
 			return true, nil
 		}
@@ -138,5 +134,4 @@ func TestVolumesCascadeDelete(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Logf("Successfully deleted volume: %s", vol.ID)
-
 }
