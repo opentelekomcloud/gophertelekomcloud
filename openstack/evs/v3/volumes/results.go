@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/pagination"
 )
 
+// Attachment represents a Volume Attachment record
 type Attachment struct {
 	AttachedAt   time.Time `json:"-"`
 	AttachmentID string    `json:"attachment_id"`
@@ -17,11 +19,12 @@ type Attachment struct {
 	VolumeID     string    `json:"volume_id"`
 }
 
+// UnmarshalJSON is our unmarshalling helper
 func (r *Attachment) UnmarshalJSON(b []byte) error {
 	type tmp Attachment
 	var s struct {
 		tmp
-		AttachedAt golangsdk.JSONRFC3339MilliNoZ `json:"attached_at"`
+		AttachedAt gophercloud.JSONRFC3339MilliNoZ `json:"attached_at"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -34,7 +37,7 @@ func (r *Attachment) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-// Volume contains all the information associated with a Volume.
+// Volume contains all the information associated with an OpenStack Volume.
 type Volume struct {
 	// Unique identifier for the volume.
 	ID string `json:"id"`
@@ -60,12 +63,11 @@ type Volume struct {
 	SnapshotID string `json:"snapshot_id"`
 	// The ID of another block storage volume from which the current volume was created
 	SourceVolID string `json:"source_volid"`
-	// The ID of the back that can be used to create an EVS disk
-	BackupID string `json:"backup_id"`
-	// Arbitrary key-value pairs defined by the metadata field table.
-	Metadata map[string]string `json:"metadata"`
+	// The backup ID, from which the volume was restored
+	// This field is supported since 3.47 microversion
+	BackupID *string `json:"backup_id"`
 	// Arbitrary key-value pairs defined by the user.
-	Tags map[string]string `json:"tags"`
+	Metadata map[string]string `json:"metadata"`
 	// UserID is the id of the user who created the volume.
 	UserID string `json:"user_id"`
 	// Indicates whether this is a bootable volume.
@@ -78,18 +80,17 @@ type Volume struct {
 	ConsistencyGroupID string `json:"consistencygroup_id"`
 	// Multiattach denotes if the volume is multi-attach capable.
 	Multiattach bool `json:"multiattach"`
-	// wwn of the volume.
-	WWN string `json:"wwn"`
-	// enterprise project ID bound to the volume
-	EnterpriseProjectID string `json:"enterprise_project_id"`
+	// Image metadata entries, only included for volumes that were created from an image, or from a snapshot of a volume originally created from an image.
+	VolumeImageMetadata map[string]string `json:"volume_image_metadata"`
 }
 
+// UnmarshalJSON another unmarshalling function
 func (r *Volume) UnmarshalJSON(b []byte) error {
 	type tmp Volume
 	var s struct {
 		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
+		CreatedAt gophercloud.JSONRFC3339MilliNoZ `json:"created_at"`
+		UpdatedAt gophercloud.JSONRFC3339MilliNoZ `json:"updated_at"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -103,8 +104,37 @@ func (r *Volume) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// VolumePage is a pagination.pager that is returned from a call to the List function.
+type VolumePage struct {
+	pagination.LinkedPageBase
+}
+
+// IsEmpty returns true if a ListResult contains no Volumes.
+func (r VolumePage) IsEmpty() (bool, error) {
+	volumes, err := ExtractVolumes(r)
+	return len(volumes) == 0, err
+}
+
+func (page VolumePage) NextPageURL() (string, error) {
+	var s struct {
+		Links []gophercloud.Link `json:"volumes_links"`
+	}
+	err := page.ExtractInto(&s)
+	if err != nil {
+		return "", err
+	}
+	return gophercloud.ExtractNextURL(s.Links)
+}
+
+// ExtractVolumes extracts and returns Volumes. It is used while iterating over a volumes.List call.
+func ExtractVolumes(r pagination.Page) ([]Volume, error) {
+	var s []Volume
+	err := ExtractVolumesInto(r, &s)
+	return s, err
+}
+
 type commonResult struct {
-	golangsdk.Result
+	gophercloud.Result
 }
 
 // Extract will get the Volume object out of the commonResult object.
@@ -119,7 +149,27 @@ func (r commonResult) ExtractInto(v interface{}) error {
 	return r.Result.ExtractIntoStructPtr(v, "volume")
 }
 
+// ExtractVolumesInto similar to ExtractInto but operates on a `list` of volumes
+func ExtractVolumesInto(r pagination.Page, v interface{}) error {
+	return r.(VolumePage).Result.ExtractIntoSlicePtr(v, "volumes")
+}
+
+// CreateResult contains the response body and error from a Create request.
+type CreateResult struct {
+	commonResult
+}
+
 // GetResult contains the response body and error from a Get request.
 type GetResult struct {
 	commonResult
+}
+
+// UpdateResult contains the response body and error from an Update request.
+type UpdateResult struct {
+	commonResult
+}
+
+// DeleteResult contains the response body and error from a Delete request.
+type DeleteResult struct {
+	gophercloud.ErrResult
 }

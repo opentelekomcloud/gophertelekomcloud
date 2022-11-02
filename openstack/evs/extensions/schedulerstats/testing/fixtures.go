@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/schedulerstats"
-
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/schedulerstats"
+	"github.com/gophercloud/gophercloud/testhelper"
+	"github.com/gophercloud/gophercloud/testhelper/client"
 )
 
 const StoragePoolsListBody = `
@@ -34,6 +33,7 @@ const StoragePoolsListBodyDetail = `
                 "filter_function": null,
                 "free_capacity_gb": 64765,
                 "goodness_function": null,
+                "max_over_subscription_ratio": "1.5",
                 "multiattach": false,
                 "reserved_percentage": 0,
                 "storage_protocol": "ceph",
@@ -50,6 +50,7 @@ const StoragePoolsListBodyDetail = `
                 "filter_function": null,
                 "free_capacity_gb": "unknown",
                 "goodness_function": null,
+                "max_over_subscription_ratio": 1.5,
                 "multiattach": false,
                 "reserved_percentage": 0,
                 "storage_protocol": "ceph",
@@ -68,24 +69,26 @@ var (
 	StoragePoolFake1 = schedulerstats.StoragePool{
 		Name: "rbd:cinder.volumes.ssd@cinder.volumes.ssd#cinder.volumes.ssd",
 		Capabilities: schedulerstats.Capabilities{
-			DriverVersion:     "1.2.0",
-			FreeCapacityGB:    64765,
-			StorageProtocol:   "ceph",
-			TotalCapacityGB:   787947.93,
-			VendorName:        "Open Source",
-			VolumeBackendName: "cinder.volumes.ssd",
+			DriverVersion:            "1.2.0",
+			FreeCapacityGB:           64765,
+			MaxOverSubscriptionRatio: "1.5",
+			StorageProtocol:          "ceph",
+			TotalCapacityGB:          787947.93,
+			VendorName:               "Open Source",
+			VolumeBackendName:        "cinder.volumes.ssd",
 		},
 	}
 
 	StoragePoolFake2 = schedulerstats.StoragePool{
 		Name: "rbd:cinder.volumes.hdd@cinder.volumes.hdd#cinder.volumes.hdd",
 		Capabilities: schedulerstats.Capabilities{
-			DriverVersion:     "1.2.0",
-			FreeCapacityGB:    0.0,
-			StorageProtocol:   "ceph",
-			TotalCapacityGB:   math.Inf(1),
-			VendorName:        "Open Source",
-			VolumeBackendName: "cinder.volumes.hdd",
+			DriverVersion:            "1.2.0",
+			FreeCapacityGB:           0.0,
+			MaxOverSubscriptionRatio: "1.5",
+			StorageProtocol:          "ceph",
+			TotalCapacityGB:          math.Inf(1),
+			VendorName:               "Open Source",
+			VolumeBackendName:        "cinder.volumes.hdd",
 		},
 	}
 )
@@ -97,11 +100,11 @@ func HandleStoragePoolsListSuccessfully(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 
-		_ = r.ParseForm()
+		r.ParseForm()
 		if r.FormValue("detail") == "true" {
-			_, _ = fmt.Fprint(w, StoragePoolsListBodyDetail)
+			fmt.Fprintf(w, StoragePoolsListBodyDetail)
 		} else {
-			_, _ = fmt.Fprint(w, StoragePoolsListBody)
+			fmt.Fprintf(w, StoragePoolsListBody)
 		}
 	})
 }

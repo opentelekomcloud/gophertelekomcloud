@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/services"
-
-	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/services"
+	th "github.com/gophercloud/gophercloud/testhelper"
+	"github.com/gophercloud/gophercloud/testhelper/client"
 )
 
 // ServiceListBody is sample response to the List call
@@ -93,6 +92,6 @@ func HandleListSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, ServiceListBody)
+		fmt.Fprintf(w, ServiceListBody)
 	})
 }

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
-	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+	th "github.com/gophercloud/gophercloud/testhelper"
+	fake "github.com/gophercloud/gophercloud/testhelper/client"
 )
 
 func MockAttachResponse(t *testing.T) {
@@ -30,7 +30,7 @@ func MockAttachResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -50,7 +50,7 @@ func MockBeginDetachingResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -70,7 +70,7 @@ func MockDetachResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -95,7 +95,7 @@ func MockUploadImageResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `
+			fmt.Fprintf(w, `
 {
     "os-volume_upload_image": {
         "container_format": "bare",
@@ -142,7 +142,7 @@ func MockReserveResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -162,7 +162,7 @@ func MockUnreserveResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -193,7 +193,7 @@ func MockInitializeConnectionResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{
+			fmt.Fprintf(w, `{
 "connection_info": {
     "data": {
       "target_portals": [
@@ -250,7 +250,7 @@ func MockTerminateConnectionResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -273,7 +273,7 @@ func MockExtendSizeResponse(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
 
-			_, _ = fmt.Fprint(w, `{}`)
+			fmt.Fprintf(w, `{}`)
 		})
 }
 
@@ -281,11 +281,92 @@ func MockForceDeleteResponse(t *testing.T) {
 	th.Mux.HandleFunc("/volumes/d32019d3-bc6e-4319-9c1d-6722fc136a22/action", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
-		th.TestJSONRequest(t, r, `
-{
-    "os-force_delete": ""
-}
-		`)
+		th.TestBody(t, r, `{"os-force_delete":""}`)
 		w.WriteHeader(http.StatusAccepted)
 	})
+}
+
+func MockSetImageMetadataResponse(t *testing.T) {
+	th.Mux.HandleFunc("/volumes/cd281d77-8217-4830-be95-9528227c105c/action", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, `
+{
+	"os-set_image_metadata": {
+		"metadata": {
+			"label": "test"
+		}
+	}
+}
+		`)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, `{}`)
+	})
+}
+
+func MockSetBootableResponse(t *testing.T) {
+	th.Mux.HandleFunc("/volumes/cd281d77-8217-4830-be95-9528227c105c/action", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, `
+{
+	"os-set_bootable": {
+		"bootable": true
+	}
+}
+		`)
+		w.Header().Add("Content-Type", "application/json")
+		w.Header().Add("Content-Length", "0")
+		w.WriteHeader(http.StatusOK)
+	})
+}
+
+func MockReImageResponse(t *testing.T) {
+	th.Mux.HandleFunc("/volumes/cd281d77-8217-4830-be95-9528227c105c/action", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, `
+{
+	"os-reimage": {
+		"image_id": "71543ced-a8af-45b6-a5c4-a46282108a90",
+		"reimage_reserved": false
+	}
+}
+		`)
+		w.Header().Add("Content-Type", "application/json")
+		w.Header().Add("Content-Length", "0")
+		w.WriteHeader(http.StatusAccepted)
+	})
+}
+
+func MockChangeTypeResponse(t *testing.T) {
+	th.Mux.HandleFunc("/volumes/cd281d77-8217-4830-be95-9528227c105c/action",
+		func(w http.ResponseWriter, r *http.Request) {
+			th.TestMethod(t, r, "POST")
+			th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+			th.TestHeader(t, r, "Content-Type", "application/json")
+			th.TestHeader(t, r, "Accept", "application/json")
+			th.TestJSONRequest(t, r, `
+{
+    "os-retype":
+    {
+		"new_type": "ssd",
+		"migration_policy": "on-demand"
+    }
+}
+          `)
+
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusAccepted)
+
+			fmt.Fprintf(w, `{}`)
+		})
 }

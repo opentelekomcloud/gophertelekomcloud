@@ -4,11 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/volumeactions"
-
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/volumeactions"
+	th "github.com/gophercloud/gophercloud/testhelper"
+	"github.com/gophercloud/gophercloud/testhelper/client"
 )
 
 func TestAttach(t *testing.T) {
@@ -17,12 +16,12 @@ func TestAttach(t *testing.T) {
 
 	MockAttachResponse(t)
 
-	options := volumeactions.AttachOpts{
+	options := &volumeactions.AttachOpts{
 		MountPoint:   "/mnt",
 		Mode:         "rw",
 		InstanceUUID: "50902f4f-a974-46a0-85e9-7efc5e22dfdd",
 	}
-	err := volumeactions.Attach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
+	err := volumeactions.Attach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -32,7 +31,7 @@ func TestBeginDetaching(t *testing.T) {
 
 	MockBeginDetachingResponse(t)
 
-	err := volumeactions.BeginDetaching(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c")
+	err := volumeactions.BeginDetaching(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c").ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -42,7 +41,7 @@ func TestDetach(t *testing.T) {
 
 	MockDetachResponse(t)
 
-	err := volumeactions.Detach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", volumeactions.DetachOpts{})
+	err := volumeactions.Detach(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", &volumeactions.DetachOpts{}).ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -50,14 +49,14 @@ func TestUploadImage(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 	MockUploadImageResponse(t)
-	options := volumeactions.UploadImageOpts{
+	options := &volumeactions.UploadImageOpts{
 		ContainerFormat: "bare",
 		DiskFormat:      "raw",
 		ImageName:       "test",
 		Force:           true,
 	}
 
-	actual, err := volumeactions.UploadImage(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
+	actual, err := volumeactions.UploadImage(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).Extract()
 	th.AssertNoErr(t, err)
 
 	expected := volumeactions.VolumeImage{
@@ -83,7 +82,7 @@ func TestUploadImage(t *testing.T) {
 			UpdatedAt:   time.Date(2016, 5, 4, 9, 15, 33, 0, time.UTC),
 		},
 	}
-	th.AssertDeepEquals(t, &expected, actual)
+	th.AssertDeepEquals(t, expected, actual)
 }
 
 func TestReserve(t *testing.T) {
@@ -92,7 +91,7 @@ func TestReserve(t *testing.T) {
 
 	MockReserveResponse(t)
 
-	err := volumeactions.Reserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c")
+	err := volumeactions.Reserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c").ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -102,7 +101,7 @@ func TestUnreserve(t *testing.T) {
 
 	MockUnreserveResponse(t)
 
-	err := volumeactions.Unreserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c")
+	err := volumeactions.Unreserve(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c").ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -112,15 +111,15 @@ func TestInitializeConnection(t *testing.T) {
 
 	MockInitializeConnectionResponse(t)
 
-	options := volumeactions.InitializeConnectionOpts{
+	options := &volumeactions.InitializeConnectionOpts{
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
-		Multipath: golangsdk.Disabled,
+		Multipath: gophercloud.Disabled,
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}
-	_, err := volumeactions.InitializeConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
+	_, err := volumeactions.InitializeConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).Extract()
 	th.AssertNoErr(t, err)
 }
 
@@ -130,15 +129,15 @@ func TestTerminateConnection(t *testing.T) {
 
 	MockTerminateConnectionResponse(t)
 
-	options := volumeactions.TerminateConnectionOpts{
+	options := &volumeactions.TerminateConnectionOpts{
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
-		Multipath: golangsdk.Enabled,
+		Multipath: gophercloud.Enabled,
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}
-	err := volumeactions.TerminateConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
+	err := volumeactions.TerminateConnection(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -148,11 +147,11 @@ func TestExtendSize(t *testing.T) {
 
 	MockExtendSizeResponse(t)
 
-	options := volumeactions.ExtendSizeOpts{
+	options := &volumeactions.ExtendSizeOpts{
 		NewSize: 3,
 	}
 
-	err := volumeactions.ExtendSize(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options)
+	err := volumeactions.ExtendSize(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
@@ -163,5 +162,65 @@ func TestForceDelete(t *testing.T) {
 	MockForceDeleteResponse(t)
 
 	res := volumeactions.ForceDelete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
-	th.AssertNoErr(t, res)
+	th.AssertNoErr(t, res.Err)
+}
+
+func TestSetImageMetadata(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockSetImageMetadataResponse(t)
+
+	options := &volumeactions.ImageMetadataOpts{
+		Metadata: map[string]string{
+			"label": "test",
+		},
+	}
+
+	err := volumeactions.SetImageMetadata(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	th.AssertNoErr(t, err)
+}
+
+func TestSetBootable(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockSetBootableResponse(t)
+
+	options := volumeactions.BootableOpts{
+		Bootable: true,
+	}
+
+	err := volumeactions.SetBootable(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	th.AssertNoErr(t, err)
+}
+
+func TestReImage(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockReImageResponse(t)
+
+	options := volumeactions.ReImageOpts{
+		ImageID:         "71543ced-a8af-45b6-a5c4-a46282108a90",
+		ReImageReserved: false,
+	}
+
+	err := volumeactions.ReImage(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	th.AssertNoErr(t, err)
+}
+
+func TestChangeType(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockChangeTypeResponse(t)
+
+	options := &volumeactions.ChangeTypeOpts{
+		NewType:         "ssd",
+		MigrationPolicy: "on-demand",
+	}
+
+	err := volumeactions.ChangeType(client.ServiceClient(), "cd281d77-8217-4830-be95-9528227c105c", options).ExtractErr()
+	th.AssertNoErr(t, err)
 }

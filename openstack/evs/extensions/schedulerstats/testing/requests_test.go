@@ -3,10 +3,10 @@ package testing
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/schedulerstats"
-
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
-	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/schedulerstats"
+	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/gophercloud/gophercloud/testhelper"
+	"github.com/gophercloud/gophercloud/testhelper/client"
 )
 
 func TestListStoragePoolsDetail(t *testing.T) {
@@ -14,12 +14,25 @@ func TestListStoragePoolsDetail(t *testing.T) {
 	defer testhelper.TeardownHTTP()
 	HandleStoragePoolsListSuccessfully(t)
 
-	actual, err := schedulerstats.List(client.ServiceClient(), schedulerstats.ListOpts{Detail: true})
+	pages := 0
+	err := schedulerstats.List(client.ServiceClient(), schedulerstats.ListOpts{Detail: true}).EachPage(func(page pagination.Page) (bool, error) {
+		pages++
+
+		actual, err := schedulerstats.ExtractStoragePools(page)
+		testhelper.AssertNoErr(t, err)
+
+		if len(actual) != 2 {
+			t.Fatalf("Expected 2 backends, got %d", len(actual))
+		}
+		testhelper.CheckDeepEquals(t, StoragePoolFake1, actual[0])
+		testhelper.CheckDeepEquals(t, StoragePoolFake2, actual[1])
+
+		return true, nil
+	})
+
 	testhelper.AssertNoErr(t, err)
 
-	if len(actual) != 2 {
-		t.Fatalf("Expected 2 backends, got %d", len(actual))
+	if pages != 1 {
+		t.Errorf("Expected 1 page, saw %d", pages)
 	}
-	testhelper.CheckDeepEquals(t, StoragePoolFake1, actual[0])
-	testhelper.CheckDeepEquals(t, StoragePoolFake2, actual[1])
 }
