@@ -15,5 +15,5 @@ func Update(client *golangsdk.ServiceClient, volumeId string, opts map[string]st
 	raw, err := client.Put(client.ServiceURL("volumes", volumeId, "metadata"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return extra(err, raw)
+	return extraMetadata(err, raw)
 }

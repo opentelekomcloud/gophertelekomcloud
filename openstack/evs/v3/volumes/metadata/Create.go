@@ -18,10 +18,10 @@ func Create(client *golangsdk.ServiceClient, volumeId string, opts map[string]st
 	raw, err := client.Post(client.ServiceURL("volumes", volumeId, "metadata"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return extra(err, raw)
+	return extraMetadata(err, raw)
 }
 
-func extra(err error, raw *http.Response) (map[string]string, error) {
+func extraMetadata(err error, raw *http.Response) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
