@@ -69,6 +69,9 @@ func TestPolicyLifecycle(t *testing.T) {
 
 	updateOpts := policies.PolicyOpts{
 		PolicyName:     asPolicyUpdateName,
+		PolicyType:     "RECURRENCE",
+		ResourceID:     groupID,
+		ResourceType:   "SCALING_GROUP",
 		SchedulePolicy: createOpts.SchedulePolicy,
 		PolicyAction: policies.ActionOpts{
 			Percentage: 30,
