@@ -18,17 +18,6 @@ func Get(client *golangsdk.ServiceClient, projectID string) (*QuotaSet, error) {
 	return &res.QuotaSet, err
 }
 
-func GetDefaults(client *golangsdk.ServiceClient, projectID string) (*QuotaSet, error) {
-	raw, err := client.Get(client.ServiceURL("os-quota-sets", projectID, "defaults"), nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var res QuotaSet
-	err = extract.IntoStructPtr(raw.Body, &res, "quota_set")
-	return &res, err
-}
-
 type QuotaSet struct {
 	// ID is project associated with this QuotaSet.
 	ID string `json:"id"`
