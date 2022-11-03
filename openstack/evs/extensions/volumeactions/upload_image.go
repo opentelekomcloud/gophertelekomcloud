@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -20,7 +21,7 @@ type UploadImageOpts struct {
 }
 
 func UploadImage(client *golangsdk.ServiceClient, id string, opts UploadImageOpts) (*VolumeImage, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "os-volume_upload_image")
+	b, err := build.RequestBody(opts, "os-volume_upload_image")
 	if err != nil {
 		return nil, err
 	}
