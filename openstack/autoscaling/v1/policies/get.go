@@ -77,19 +77,19 @@ type Action struct {
 	// ADD: adds specified number of instances to the AS group.
 	// REMOVE/REDUCE: removes or reduces specified number of instances from the AS group.
 	// SET: sets the number of instances in the AS group.
-	Operation string `json:"operation"`
+	Operation string `json:"operation,omitempty"`
 	// Specifies the number of instances to be operated. The default number is 1.
 	// The value range is as follows for a default quota:
 	// If operation is set to SET, the value range is 0 to 200.
 	// If operation is set to ADD, REMOVE, or REDUCE, the value range is 1 to 200.
 	// NOTE:
 	// Either instance_number or instance_percentage is required.
-	InstanceNum int `json:"instance_number"`
+	InstanceNum int `json:"instance_number,omitempty"`
 	// Specifies the percentage of instances to be operated. You can increase, decrease,
 	// or set the number of instances in an AS group to the specified percentage of the current number of instances.
 	// If operation is set to ADD, REMOVE or REDUCE, the value of this parameter is an integer from 1 to 20000.
 	// If operation is set to SET, the value is an integer from 0 to 20000.
 	// If neither instance_number nor instance_percentage is specified, the number of instances to be operated is 1.
 	// Either instance_number or instance_percentage is required.
-	InstancePercentage int `json:"instance_percentage"`
+	InstancePercentage int `json:"instance_percentage,omitempty"`
 }
