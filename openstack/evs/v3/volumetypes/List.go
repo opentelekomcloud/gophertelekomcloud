@@ -2,17 +2,11 @@ package volumetypes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the List
-// request.
-type ListOptsBuilder interface {
-	ToVolumeTypeListQuery() (string, error)
-}
-
-// ListOpts holds options for listing Volume Types. It is passed to the volumetypes.List
-// function.
+// ListOpts holds options for listing Volume Types. It is passed to the volumetypes.List function.
 type ListOpts struct {
 	// Comma-separated list of sort keys and optional sort directions in the
 	// form of <key>[:<direction>].
@@ -32,18 +26,41 @@ func (opts ListOpts) ToVolumeTypeListQuery() (string, error) {
 }
 
 // List returns Volume types.
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := client.ServiceURL("types")
-
-	if opts != nil {
-		query, err := opts.ToVolumeTypeListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
+func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return pagination.Pager{Err: err}
 	}
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, client.ServiceURL("types")+q.String(), func(r pagination.PageResult) pagination.Page {
 		return VolumeTypePage{pagination.LinkedPageBase{PageResult: r}}
 	})
+}
+
+// VolumeTypePage is a pagination.pager that is returned from a call to the List function.
+type VolumeTypePage struct {
+	pagination.LinkedPageBase
+}
+
+// IsEmpty returns true if a ListResult contains no Volume Types.
+func (r VolumeTypePage) IsEmpty() (bool, error) {
+	volumeTypes, err := ExtractVolumeTypes(r)
+	return len(volumeTypes) == 0, err
+}
+
+func (r VolumeTypePage) NextPageURL() (string, error) {
+	var s struct {
+		Links []golangsdk.Link `json:"volume_type_links"`
+	}
+
+	err := extract.Into(r.BodyReader(), &s)
+	if err != nil {
+		return "", err
+	}
+	return golangsdk.ExtractNextURL(s.Links)
+}
+
+// ExtractVolumeTypesInto similar to ExtractInto but operates on a `list` of volume types
+func ExtractVolumeTypesInto(r pagination.Page, v interface{}) error {
+	return extract.IntoSlicePtr(r.(VolumeTypePage).BodyReader(), v, "volume_types")
 }

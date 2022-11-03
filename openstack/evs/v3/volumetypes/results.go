@@ -23,26 +23,15 @@ type VolumeType struct {
 	PublicAccess bool `json:"os-volume-type-access:is_public"`
 }
 
-// VolumeTypePage is a pagination.pager that is returned from a call to the List function.
-type VolumeTypePage struct {
-	pagination.LinkedPageBase
-}
-
-// IsEmpty returns true if a ListResult contains no Volume Types.
-func (r VolumeTypePage) IsEmpty() (bool, error) {
-	volumetypes, err := ExtractVolumeTypes(r)
-	return len(volumetypes) == 0, err
-}
-
-func (page VolumeTypePage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"volume_type_links"`
-	}
-	err := page.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(s.Links)
+type ExtraSpecs struct {
+	// Reserved field
+	VolumeBackendName string `json:"volume_backend_name"`
+	// Reserved field
+	AvailabilityZone string `json:"availability-zone"`
+	// Reserved field
+	HWAZ string `json:"HW:availability_zone"`
+	// Specifies the AZs that support the current disk type.
+	RESKEYAZ string `json:"RESKEY:availability_zones"`
 }
 
 // ExtractVolumeTypes extracts and returns Volumes. It is used while iterating over a volumetypes.List call.
@@ -66,11 +55,6 @@ func (r commonResult) Extract() (*VolumeType, error) {
 // ExtractInto converts our response data into a volume type struct
 func (r commonResult) ExtractInto(v interface{}) error {
 	return r.Result.ExtractIntoStructPtr(v, "volume_type")
-}
-
-// ExtractVolumeTypesInto similar to ExtractInto but operates on a `list` of volume types
-func ExtractVolumeTypesInto(r pagination.Page, v interface{}) error {
-	return r.(VolumeTypePage).Result.ExtractIntoSlicePtr(v, "volume_types")
 }
 
 // GetResult contains the response body and error from a Get request.
