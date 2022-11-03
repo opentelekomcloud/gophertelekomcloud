@@ -3,9 +3,10 @@ package extensions
 import (
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/volumetenants"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	blockstorage "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/evs/v3"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/volumetenants"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )

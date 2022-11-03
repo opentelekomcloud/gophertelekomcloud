@@ -3,9 +3,9 @@ package extensions
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/backups"
+	backups2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/backups"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	blockstorage "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/evs/v3"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -22,10 +22,10 @@ func TestBackupsCRUD(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer DeleteBackup(t, blockClient, backup.ID)
 
-	allPages, err := backups.List(blockClient, nil).AllPages()
+	allPages, err := backups2.List(blockClient, nil).AllPages()
 	th.AssertNoErr(t, err)
 
-	allBackups, err := backups.ExtractBackups(allPages)
+	allBackups, err := backups2.ExtractBackups(allPages)
 	th.AssertNoErr(t, err)
 
 	var found bool

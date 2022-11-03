@@ -3,9 +3,10 @@ package extensions
 import (
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/schedulerhints"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/schedulerhints"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )

@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
+	backups2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/backups"
+	volumeactions2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/volumeactions"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/backups"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/volumeactions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/volumes"
 	v3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumetypes"
@@ -22,18 +23,18 @@ import (
 
 // CreateUploadImage will upload volume it as volume-baked image. An name of new image or err will be
 // returned
-func CreateUploadImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) (volumeactions.VolumeImage, error) {
+func CreateUploadImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) (volumeactions2.VolumeImage, error) {
 	if testing.Short() {
 		t.Skip("Skipping test that requires volume-backed image uploading in short mode.")
 	}
 
 	imageName := tools.RandomString("ACPTTEST", 16)
-	uploadImageOpts := volumeactions.UploadImageOpts{
+	uploadImageOpts := volumeactions2.UploadImageOpts{
 		ImageName: imageName,
 		Force:     true,
 	}
 
-	volumeImage, err := volumeactions.UploadImage(client, volume.ID, uploadImageOpts)
+	volumeImage, err := volumeactions2.UploadImage(client, volume.ID, uploadImageOpts)
 	if err != nil {
 		return volumeImage, err
 	}
@@ -74,7 +75,7 @@ func CreateVolumeAttach(t *testing.T, client *golangsdk.ServiceClient, volume *v
 		t.Skip("Skipping test that requires volume attachment in short mode.")
 	}
 
-	attachOpts := volumeactions.AttachOpts{
+	attachOpts := volumeactions2.AttachOpts{
 		MountPoint:   "/mnt",
 		Mode:         "rw",
 		InstanceUUID: server.ID,
@@ -82,7 +83,7 @@ func CreateVolumeAttach(t *testing.T, client *golangsdk.ServiceClient, volume *v
 
 	t.Logf("Attempting to attach volume %s to server %s", volume.ID, server.ID)
 
-	if err := volumeactions.Attach(client, volume.ID, attachOpts); err != nil {
+	if err := volumeactions2.Attach(client, volume.ID, attachOpts); err != nil {
 		return err
 	}
 
@@ -104,7 +105,7 @@ func CreateVolumeReserve(t *testing.T, client *golangsdk.ServiceClient, volume *
 
 	t.Logf("Attempting to reserve volume %s", volume.ID)
 
-	if err := volumeactions.Reserve(client, volume.ID); err != nil {
+	if err := volumeactions2.Reserve(client, volume.ID); err != nil {
 		return err
 	}
 
@@ -119,11 +120,11 @@ func CreateVolumeReserve(t *testing.T, client *golangsdk.ServiceClient, volume *
 func DeleteVolumeAttach(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) {
 	t.Logf("Attepting to detach volume volume: %s", volume.ID)
 
-	detachOpts := volumeactions.DetachOpts{
+	detachOpts := volumeactions2.DetachOpts{
 		AttachmentID: volume.Attachments[0].AttachmentID,
 	}
 
-	if err := volumeactions.Detach(client, volume.ID, detachOpts); err != nil {
+	if err := volumeactions2.Detach(client, volume.ID, detachOpts); err != nil {
 		t.Fatalf("Unable to detach volume %s: %v", volume.ID, err)
 	}
 
@@ -144,7 +145,7 @@ func DeleteVolumeReserve(t *testing.T, client *golangsdk.ServiceClient, volume *
 
 	t.Logf("Attempting to unreserve volume %s", volume.ID)
 
-	if err := volumeactions.Unreserve(client, volume.ID); err != nil {
+	if err := volumeactions2.Unreserve(client, volume.ID); err != nil {
 		t.Fatalf("Unable to unreserve volume %s: %v", volume.ID, err)
 	}
 
@@ -155,11 +156,11 @@ func DeleteVolumeReserve(t *testing.T, client *golangsdk.ServiceClient, volume *
 func ExtendVolumeSize(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) error {
 	t.Logf("Attempting to extend the size of volume %s", volume.ID)
 
-	extendOpts := volumeactions.ExtendSizeOpts{
+	extendOpts := volumeactions2.ExtendSizeOpts{
 		NewSize: 2,
 	}
 
-	err := volumeactions.ExtendSize(client, volume.ID, extendOpts)
+	err := volumeactions2.ExtendSize(client, volume.ID, extendOpts)
 	if err != nil {
 		return err
 	}
@@ -175,13 +176,13 @@ func ExtendVolumeSize(t *testing.T, client *golangsdk.ServiceClient, volume *vol
 func SetImageMetadata(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) error {
 	t.Logf("Attempting to apply image metadata to volume %s", volume.ID)
 
-	imageMetadataOpts := volumeactions.ImageMetadataOpts{
+	imageMetadataOpts := volumeactions2.ImageMetadataOpts{
 		Metadata: map[string]string{
 			"image_name": "testimage",
 		},
 	}
 
-	err := volumeactions.SetImageMetadata(client, volume.ID, imageMetadataOpts)
+	err := volumeactions2.SetImageMetadata(client, volume.ID, imageMetadataOpts)
 	if err != nil {
 		return err
 	}
@@ -191,16 +192,16 @@ func SetImageMetadata(t *testing.T, client *golangsdk.ServiceClient, volume *vol
 
 // CreateBackup will create a backup based on a volume. An error will be
 // will be returned if the backup could not be created.
-func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string) (*backups.Backup, error) {
+func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string) (*backups2.Backup, error) {
 	t.Logf("Attempting to create a backup of volume %s", volumeID)
 
 	backupName := tools.RandomString("ACPTTEST", 16)
-	createOpts := backups.CreateOpts{
+	createOpts := backups2.CreateOpts{
 		VolumeID: volumeID,
 		Name:     backupName,
 	}
 
-	backup, err := backups.Create(client, createOpts)
+	backup, err := backups2.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +211,7 @@ func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string
 		return nil, err
 	}
 
-	backup, err = backups.Get(client, backup.ID)
+	backup, err = backups2.Get(client, backup.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +227,7 @@ func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string
 // DeleteBackup will delete a backup. A fatal error will occur if the backup
 // could not be deleted. This works best when used as a deferred function.
 func DeleteBackup(t *testing.T, client *golangsdk.ServiceClient, backupID string) {
-	if err := backups.Delete(client, backupID); err != nil {
+	if err := backups2.Delete(client, backupID); err != nil {
 		t.Fatalf("Unable to delete backup %s: %s", backupID, err)
 	}
 
@@ -237,7 +238,7 @@ func DeleteBackup(t *testing.T, client *golangsdk.ServiceClient, backupID string
 // status. It will do this for the amount of seconds defined.
 func WaitForBackupStatus(client *golangsdk.ServiceClient, id, status string) error {
 	return tools.WaitFor(func() (bool, error) {
-		current, err := backups.Get(client, id)
+		current, err := backups2.Get(client, id)
 		if err != nil {
 			return false, err
 		}
@@ -254,11 +255,11 @@ func WaitForBackupStatus(client *golangsdk.ServiceClient, id, status string) err
 func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) error {
 	t.Logf("Attempting to apply bootable status to volume %s", volume.ID)
 
-	bootableOpts := volumeactions.BootableOpts{
+	bootableOpts := volumeactions2.BootableOpts{
 		Bootable: true,
 	}
 
-	err := volumeactions.SetBootable(client, volume.ID, bootableOpts)
+	err := volumeactions2.SetBootable(client, volume.ID, bootableOpts)
 	if err != nil {
 		return err
 	}
@@ -272,11 +273,11 @@ func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.
 		return fmt.Errorf("Volume bootable status is %q, expected 'true'", vol.Bootable)
 	}
 
-	bootableOpts = volumeactions.BootableOpts{
+	bootableOpts = volumeactions2.BootableOpts{
 		Bootable: false,
 	}
 
-	err = volumeactions.SetBootable(client, volume.ID, bootableOpts)
+	err = volumeactions2.SetBootable(client, volume.ID, bootableOpts)
 	if err != nil {
 		return err
 	}
@@ -297,12 +298,12 @@ func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.
 func ChangeVolumeType(t *testing.T, client *golangsdk.ServiceClient, volume *v3.Volume, vt *volumetypes.VolumeType) error {
 	t.Logf("Attempting to change the type of volume %s from %s to %s", volume.ID, volume.VolumeType, vt.Name)
 
-	changeOpts := volumeactions.ChangeTypeOpts{
+	changeOpts := volumeactions2.ChangeTypeOpts{
 		NewType:         vt.Name,
-		MigrationPolicy: volumeactions.MigrationPolicyOnDemand,
+		MigrationPolicy: volumeactions2.MigrationPolicyOnDemand,
 	}
 
-	err := volumeactions.ChangeType(client, volume.ID, changeOpts)
+	err := volumeactions2.ChangeType(client, volume.ID, changeOpts)
 	if err != nil {
 		return err
 	}
@@ -318,12 +319,12 @@ func ChangeVolumeType(t *testing.T, client *golangsdk.ServiceClient, volume *v3.
 func ReImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume, imageID string) error {
 	t.Logf("Attempting to re-image volume %s", volume.ID)
 
-	reimageOpts := volumeactions.ReImageOpts{
+	reimageOpts := volumeactions2.ReImageOpts{
 		ImageID:         imageID,
 		ReImageReserved: false,
 	}
 
-	err := volumeactions.ReImage(client, volume.ID, reimageOpts)
+	err := volumeactions2.ReImage(client, volume.ID, reimageOpts)
 	if err != nil {
 		return err
 	}
