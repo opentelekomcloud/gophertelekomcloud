@@ -1,6 +1,8 @@
 package metadata
 
 import (
+	"net/http"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -14,6 +16,10 @@ func Create(client *golangsdk.ServiceClient, volumeId string, opts map[string]st
 
 	// POST /v3/{project_id}/volumes/{volume_id}/metadata
 	raw, err := client.Post(client.ServiceURL("volumes", volumeId, "metadata"), b, nil, nil)
+	return extra(err, raw)
+}
+
+func extra(err error, raw *http.Response) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
