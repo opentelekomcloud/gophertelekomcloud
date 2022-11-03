@@ -57,7 +57,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("volumes"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return
@@ -84,7 +84,7 @@ func (opts DeleteOpts) ToVolumeDeleteQuery() (string, error) {
 
 // Delete will delete the existing Volume with the provided ID
 func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOptsBuilder) (r DeleteResult) {
-	url := deleteURL(client, id)
+	url := client.ServiceURL("volumes", id)
 	if opts != nil {
 		q, err := opts.ToVolumeDeleteQuery()
 		if err != nil {
@@ -100,7 +100,7 @@ func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOptsBuilder) 
 // Get retrieves the Volume with the provided ID. To extract the Volume object
 // from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("volumes", id), &r.Body, nil)
 	return
 }
 
@@ -154,7 +154,7 @@ func (opts ListOpts) ToVolumeListQuery() (string, error) {
 
 // List returns Volumes optionally limited by the conditions provided in ListOpts.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("volumes", "detail")
 	if opts != nil {
 		query, err := opts.ToVolumeListQuery()
 		if err != nil {
@@ -197,7 +197,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("volumes", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

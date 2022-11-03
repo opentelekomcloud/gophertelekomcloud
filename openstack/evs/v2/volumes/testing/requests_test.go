@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"

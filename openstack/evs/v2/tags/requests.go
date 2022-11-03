@@ -35,13 +35,13 @@ func Create(client *golangsdk.ServiceClient, resource_type, resource_id string, 
 		r.Err = err
 		return r
 	}
-	_, r.Err = client.Put(createURL(client, resource_type, resource_id), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	_, r.Err = client.Put(client.ServiceURL("os-vendor-tags", resource_type, resource_id), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	return
 }
 
 // Get implements tags get request
 func Get(client *golangsdk.ServiceClient, resource_type, resource_id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, resource_type, resource_id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("os-vendor-tags", resource_type, resource_id), &r.Body, nil)
 	return
 }
 
