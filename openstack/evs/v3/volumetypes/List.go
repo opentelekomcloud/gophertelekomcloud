@@ -64,3 +64,10 @@ func (r VolumeTypePage) NextPageURL() (string, error) {
 func ExtractVolumeTypesInto(r pagination.Page, v interface{}) error {
 	return extract.IntoSlicePtr(r.(VolumeTypePage).BodyReader(), v, "volume_types")
 }
+
+// ExtractVolumeTypes extracts and returns Volumes. It is used while iterating over a volumetypes.List call.
+func ExtractVolumeTypes(r pagination.Page) ([]VolumeType, error) {
+	var s []VolumeType
+	err := ExtractVolumeTypesInto(r, &s)
+	return s, err
+}

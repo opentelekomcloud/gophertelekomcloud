@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	quotasets2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/quotasets"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/quotasets"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -18,7 +18,7 @@ func TestQuotasetGet(t *testing.T) {
 
 	client, projectID := getClientAndProject(t)
 
-	quotaSet, err := quotasets2.Get(client, projectID)
+	quotaSet, err := quotasets.Get(client, projectID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, quotaSet)
@@ -29,7 +29,7 @@ func TestQuotasetGetDefaults(t *testing.T) {
 
 	client, projectID := getClientAndProject(t)
 
-	quotaSet, err := quotasets2.GetDefaults(client, projectID)
+	quotaSet, err := quotasets.GetDefaults(client, projectID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, quotaSet)
@@ -40,13 +40,13 @@ func TestQuotasetGetUsage(t *testing.T) {
 
 	client, projectID := getClientAndProject(t)
 
-	quotaSetUsage, err := quotasets2.GetUsage(client, projectID)
+	quotaSetUsage, err := quotasets.GetUsage(client, projectID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, quotaSetUsage)
 }
 
-var UpdateQuotaOpts = quotasets2.UpdateOpts{
+var UpdateQuotaOpts = quotasets.UpdateOpts{
 	Volumes:            golangsdk.IntToPointer(100),
 	Snapshots:          golangsdk.IntToPointer(200),
 	Gigabytes:          golangsdk.IntToPointer(300),
@@ -59,7 +59,7 @@ var UpdateQuotaOpts = quotasets2.UpdateOpts{
 	},
 }
 
-var UpdatedQuotas = quotasets2.QuotaSet{
+var UpdatedQuotas = quotasets.QuotaSet{
 	Volumes:            100,
 	Snapshots:          200,
 	Gigabytes:          300,
@@ -83,7 +83,7 @@ func TestQuotasetUpdate(t *testing.T) {
 	client, projectID := getClientAndProject(t)
 
 	// save original quotas
-	orig, err := quotasets2.Get(client, projectID)
+	orig, err := quotasets.Get(client, projectID)
 	th.AssertNoErr(t, err)
 
 	// create volumeType to test volume type quota
@@ -91,24 +91,24 @@ func TestQuotasetUpdate(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		restore := quotasets2.UpdateOpts{}
+		restore := quotasets.UpdateOpts{}
 		FillUpdateOptsFromQuotaSet(*orig, &restore)
 
 		err := volumetypes.Delete(client, volumeType.ID)
 		th.AssertNoErr(t, err)
 
-		_, err = quotasets2.Update(client, projectID, restore)
+		_, err = quotasets.Update(client, projectID, restore)
 		th.AssertNoErr(t, err)
 
 	}()
 
 	// test Update
-	resultQuotas, err := quotasets2.Update(client, projectID, UpdateQuotaOpts)
+	resultQuotas, err := quotasets.Update(client, projectID, UpdateQuotaOpts)
 	th.AssertNoErr(t, err)
 
 	// We dont know the default quotas, so just check if the quotas are not the
 	// same as before
-	newQuotas, err := quotasets2.Get(client, projectID)
+	newQuotas, err := quotasets.Get(client, projectID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, resultQuotas.Volumes, newQuotas.Volumes)
 	th.AssertEquals(t, resultQuotas.Extra["volumes_foo"], newQuotas.Extra["volumes_foo"])
@@ -141,26 +141,26 @@ func TestQuotasetDelete(t *testing.T) {
 	client, projectID := getClientAndProject(t)
 
 	// save original quotas
-	orig, err := quotasets2.Get(client, projectID)
+	orig, err := quotasets.Get(client, projectID)
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		restore := quotasets2.UpdateOpts{}
+		restore := quotasets.UpdateOpts{}
 		FillUpdateOptsFromQuotaSet(*orig, &restore)
 
-		_, err = quotasets2.Update(client, projectID, restore)
+		_, err = quotasets.Update(client, projectID, restore)
 		th.AssertNoErr(t, err)
 	}()
 
 	// Obtain environment default quotaset values to validate deletion.
-	defaultQuotaSet, err := quotasets2.GetDefaults(client, projectID)
+	defaultQuotaSet, err := quotasets.GetDefaults(client, projectID)
 	th.AssertNoErr(t, err)
 
 	// Test Delete
-	err = quotasets2.Delete(client, projectID)
+	err = quotasets.Delete(client, projectID)
 	th.AssertNoErr(t, err)
 
-	newQuotas, err := quotasets2.Get(client, projectID)
+	newQuotas, err := quotasets.Get(client, projectID)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, newQuotas.Volumes, defaultQuotaSet.Volumes)
@@ -177,7 +177,7 @@ func getClientAndProject(t *testing.T) (*golangsdk.ServiceClient, string) {
 	return client, projectID
 }
 
-func FillUpdateOptsFromQuotaSet(src quotasets2.QuotaSet, dest *quotasets2.UpdateOpts) {
+func FillUpdateOptsFromQuotaSet(src quotasets.QuotaSet, dest *quotasets.UpdateOpts) {
 	dest.Volumes = &src.Volumes
 	dest.Snapshots = &src.Snapshots
 	dest.Gigabytes = &src.Gigabytes
