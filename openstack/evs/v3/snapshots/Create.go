@@ -38,9 +38,11 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Snapshot, error)
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("snapshots"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
+	// POST /v3/{project_id}/snapshots
+	raw, err := client.Post(client.ServiceURL("snapshots"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res Snapshot
 	err = extract.IntoStructPtr(raw.Body, &res, "snapshot")

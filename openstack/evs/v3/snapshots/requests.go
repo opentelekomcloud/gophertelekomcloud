@@ -5,13 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// Delete will delete the existing Snapshot with the provided ID.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	resp, err := client.Delete(client.ServiceURL("snapshots", id), nil)
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
-}
-
 // Get retrieves the Snapshot with the provided ID. To extract the Snapshot
 // object from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
