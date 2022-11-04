@@ -36,32 +36,6 @@ func SetImageMetadata(client *golangsdk.ServiceClient, id string, opts ImageMeta
 	return
 }
 
-// BootableOpts contains options for setting bootable status to a volume.
-type BootableOpts struct {
-	// Enables or disables the bootable attribute. You can boot an instance from a bootable volume.
-	Bootable bool `json:"bootable"`
-}
-
-// ToBootableMap assembles a request body based on the contents of a
-// BootableOpts.
-func (opts BootableOpts) ToBootableMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "os-set_bootable")
-}
-
-// SetBootable will set bootable status on a volume based on the values in BootableOpts
-func SetBootable(client *golangsdk.ServiceClient, id string, opts BootableOpts) (r SetBootableResult) {
-	b, err := opts.ToBootableMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	resp, err := client.Post(client.ServiceURL("volumes", id, "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
-}
-
 // MigrationPolicy type represents a migration_policy when changing types.
 type MigrationPolicy string
 
