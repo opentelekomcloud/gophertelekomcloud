@@ -65,14 +65,12 @@ func (r VolumePage) IsEmpty() (bool, error) {
 }
 
 func (r VolumePage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"volumes_links"`
-	}
-	err := extract.Into(r.BodyReader(), &s)
+	var s []golangsdk.Link
+	err := extract.IntoSlicePtr(r.BodyReader(), &s, "volumes_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(s)
 }
 
 // ExtractVolumes extracts and returns Volumes. It is used while iterating over a volumes.List call.

@@ -49,15 +49,12 @@ func (r VolumeTypePage) IsEmpty() (bool, error) {
 }
 
 func (r VolumeTypePage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"volume_type_links"`
-	}
-
-	err := extract.Into(r.BodyReader(), &s)
+	var s []golangsdk.Link
+	err := extract.IntoSlicePtr(r.BodyReader(), &s, "volume_type_links")
 	if err != nil {
 		return "", err
 	}
-	return golangsdk.ExtractNextURL(s.Links)
+	return golangsdk.ExtractNextURL(s)
 }
 
 // ExtractVolumeTypesInto similar to ExtractInto but operates on a `list` of volume types

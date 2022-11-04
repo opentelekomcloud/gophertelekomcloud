@@ -52,6 +52,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 		return pagination.Pager{Err: err}
 	}
 
+	// GET /v3/{project_id}/snapshots
 	return pagination.NewPager(client, client.ServiceURL("snapshots")+q.String(), func(r pagination.PageResult) pagination.Page {
 		return SnapshotPage{pagination.LinkedPageBase{PageResult: r}}
 	})
