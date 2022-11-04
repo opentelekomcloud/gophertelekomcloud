@@ -2,9 +2,11 @@ package snapshots
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -121,11 +123,12 @@ type commonResult struct {
 	golangsdk.Result
 }
 
-// Extract will get the Snapshot object out of the commonResult object.
-func (r commonResult) Extract() (*Snapshot, error) {
-	var s struct {
-		Snapshot *Snapshot `json:"snapshot"`
+func extra(err error, raw *http.Response) (*Snapshot, error) {
+	if err != nil {
+		return nil, err
 	}
-	err := r.ExtractInto(&s)
-	return s.Snapshot, err
+
+	var res Snapshot
+	err = extract.IntoStructPtr(raw.Body, &res, "snapshot")
+	return &res, err
 }

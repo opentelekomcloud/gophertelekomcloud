@@ -74,41 +74,6 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 	})
 }
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToSnapshotUpdateMap() (map[string]interface{}, error)
-}
-
-// UpdateOpts contain options for updating an existing Snapshot. This object is passed
-// to the snapshots.Update function. For more information about the parameters, see
-// the Snapshot object.
-type UpdateOpts struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-}
-
-// ToSnapshotUpdateMap assembles a request body based on the contents of an
-// UpdateOpts.
-func (opts UpdateOpts) ToSnapshotUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "snapshot")
-}
-
-// Update will update the Snapshot with provided information. To extract the updated
-// Snapshot from the response, call the Extract method on the UpdateResult.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToSnapshotUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	resp, err := client.Put(client.ServiceURL("snapshots", id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
-}
-
 // UpdateMetadataOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateMetadataOptsBuilder interface {

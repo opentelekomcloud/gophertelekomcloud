@@ -3,7 +3,6 @@ package snapshots
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // CreateOpts contains options for creating a Snapshot. This object is passed to
@@ -40,11 +39,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Snapshot, error)
 
 	// POST /v3/{project_id}/snapshots
 	raw, err := client.Post(client.ServiceURL("snapshots"), b, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var res Snapshot
-	err = extract.IntoStructPtr(raw.Body, &res, "snapshot")
-	return &res, err
+	return extra(err, raw)
 }
