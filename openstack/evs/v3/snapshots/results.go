@@ -7,7 +7,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Snapshot contains all the information associated with a Cinder Snapshot.
@@ -52,11 +51,6 @@ type UpdateResult struct {
 	commonResult
 }
 
-// SnapshotPage is a pagination.Pager that is returned from a call to the List function.
-type SnapshotPage struct {
-	pagination.LinkedPageBase
-}
-
 // UnmarshalJSON converts our JSON API response into our snapshot struct
 func (r *Snapshot) UnmarshalJSON(b []byte) error {
 	type tmp Snapshot
@@ -75,34 +69,6 @@ func (r *Snapshot) UnmarshalJSON(b []byte) error {
 	r.UpdatedAt = time.Time(s.UpdatedAt)
 
 	return err
-}
-
-// IsEmpty returns true if a SnapshotPage contains no Snapshots.
-func (r SnapshotPage) IsEmpty() (bool, error) {
-	volumes, err := ExtractSnapshots(r)
-	return len(volumes) == 0, err
-}
-
-// NextPageURL uses the response's embedded link reference to navigate to the
-// next page of results.
-func (r SnapshotPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"snapshots_links"`
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(s.Links)
-}
-
-// ExtractSnapshots extracts and returns Snapshots. It is used while iterating over a snapshots.List call.
-func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
-	var s struct {
-		Snapshots []Snapshot `json:"snapshots"`
-	}
-	err := (r.(SnapshotPage)).ExtractInto(&s)
-	return s.Snapshots, err
 }
 
 // UpdateMetadataResult contains the response body and error from an UpdateMetadata request.
