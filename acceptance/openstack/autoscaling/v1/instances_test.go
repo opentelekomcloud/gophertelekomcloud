@@ -85,6 +85,7 @@ func TestInstances(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	err = groups.Disable(client, groupID)
+	th.AssertNoErr(t, err)
 
 	inst, err := instances.List(client, instances.ListOpts{
 		ScalingGroupId: groupID,
