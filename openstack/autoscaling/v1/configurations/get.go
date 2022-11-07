@@ -28,6 +28,8 @@ type Configuration struct {
 	InstanceConfig InstanceConfig `json:"instance_config"`
 	// Specifies the time when AS configurations are created. The time format complies with UTC.
 	CreateTime string `json:"create_time"`
+	// Specifies the ID of the AS group to which the AS configuration is bound.
+	ScalingGroupId string `json:"scaling_group_id,omitempty"`
 }
 
 type InstanceConfig struct {
@@ -54,7 +56,7 @@ type InstanceConfig struct {
 	// Specifies the Cloud-Init user data, which is encoded using Base64.
 	UserData string `json:"user_data"`
 	// Specifies the ECS metadata.
-	Metadata map[string]interface{} `json:"metadata"`
+	Metadata AdminPassMetadata `json:"metadata"`
 	// Specifies the security group information.
 	SecurityGroups []SecurityGroup `json:"security_groups"`
 	// This parameter is reserved.
@@ -109,7 +111,19 @@ type Disk struct {
 	// Each disk in an AS configuration must correspond to a disk backup in the full-ECS backup by snapshot_id.
 	SnapshotID string `json:"snapshot_id"`
 	// Specifies the metadata for creating disks.
-	Metadata map[string]interface{} `json:"metadata"`
+	Metadata SystemMetadata `json:"metadata"`
+}
+
+type SystemMetadata struct {
+	// Specifies encryption in metadata. The value can be 0 (encryption disabled) or 1 (encryption enabled).
+	// If this parameter does not exist, the disk will not be encrypted by default.
+	// System disk encryption is not supported.
+	SystemEncrypted string `json:"__system__encrypted"`
+	// Specifies the CMK ID, which indicates encryption in metadata. This parameter is used with __system__encrypted.
+	// NOTE:
+	// For details about how to obtain the CMK ID, see "Querying the List of CMKs" in Key Management Service API Reference.
+	// System disk encryption is not supported.
+	SystemCmkId string `json:"__system__cmkid"`
 }
 
 type Personality struct {
@@ -125,7 +139,7 @@ type Personality struct {
 
 type PublicIp struct {
 	// Specifies the EIP automatically assigned to the ECS.
-	Eip Eip `json:"eip"`
+	Eip Eip `json:"eip,omitempty"`
 }
 
 type Eip struct {
