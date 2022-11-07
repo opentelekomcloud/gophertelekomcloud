@@ -58,10 +58,9 @@ func TestInstances(t *testing.T) {
 		ConfigurationID:      configID,
 	}
 	t.Logf("Attempting to create AutoScaling Group")
-	groupID2, err2 := groups.Create(client, createOpts)
+	groupID, err2 := groups.Create(client, createOpts)
 	th.AssertNoErr(t, err2)
-	t.Logf("Created AutoScaling Group: %s", groupID2)
-	groupID := groupID2
+	t.Logf("Created AutoScaling Group: %s", groupID)
 
 	t.Cleanup(func() {
 		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
