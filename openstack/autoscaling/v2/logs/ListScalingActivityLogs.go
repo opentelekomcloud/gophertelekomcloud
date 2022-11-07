@@ -1,4 +1,4 @@
-package v2
+package logs
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"

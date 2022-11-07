@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v2/logs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v2/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -88,4 +89,8 @@ func TestPolicyLifecycle(t *testing.T) {
 	tools.PrintResource(t, policy)
 	th.AssertEquals(t, asPolicyUpdateName, policy.PolicyName)
 	th.AssertEquals(t, 30, policy.PolicyAction.Percentage)
+
+	activityLogs, err := logs.ListScalingActivityLogs(client, logs.ListScalingActivityLogsOpts{ScalingGroupId: groupID})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, activityLogs)
 }
