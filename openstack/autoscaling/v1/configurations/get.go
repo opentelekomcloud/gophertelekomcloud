@@ -139,7 +139,7 @@ type Personality struct {
 
 type PublicIp struct {
 	// Specifies the EIP automatically assigned to the ECS.
-	Eip Eip `json:"eip"`
+	Eip Eip `json:"eip,omitempty"`
 }
 
 type Eip struct {

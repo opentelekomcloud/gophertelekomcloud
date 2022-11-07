@@ -64,7 +64,9 @@ func TestGroupLifecycle(t *testing.T) {
 				ID: secGroupID,
 			},
 		},
-		IsDeletePublicip: pointerto.Bool(false),
+		IsDeletePublicip:     pointerto.Bool(false),
+		DesireInstanceNumber: 0,
+		MinInstanceNumber:    0,
 	})
 	th.AssertNoErr(t, err)
 	t.Logf("Updated AutoScaling Group")

@@ -8,7 +8,7 @@ type DeleteOpts struct {
 	// Options:
 	// no (default): The instance will not be deleted.
 	// yes: The instance will be deleted.
-	DeleteInstance *bool `q:"instance_delete"`
+	DeleteInstance string `q:"instance_delete"`
 }
 
 func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) error {

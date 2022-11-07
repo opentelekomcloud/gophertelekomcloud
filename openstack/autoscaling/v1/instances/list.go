@@ -7,7 +7,7 @@ import (
 
 type ListOpts struct {
 	// Specifies the AS group ID.
-	ScalingGroupId string `q:"scaling_group_id"`
+	ScalingGroupId string
 	// Specifies the instance lifecycle status in the AS group.
 	// INSERVICE: The instance is enabled.
 	// PENDING: The instance is being added to the AS group.
@@ -28,14 +28,14 @@ type ListOpts struct {
 	Limit int32 `q:"limit,omitempty"`
 }
 
-func List(client *golangsdk.ServiceClient, groupID string, opts ListOpts) (*ListScalingInstancesResponse, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingInstancesResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /autoscaling-api/v1/{project_id}/scaling_group_instance/{scaling_group_id}/list
-	raw, err := client.Get(client.ServiceURL("scaling_group_instance", groupID, "list")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL("scaling_group_instance", opts.ScalingGroupId, "list")+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}

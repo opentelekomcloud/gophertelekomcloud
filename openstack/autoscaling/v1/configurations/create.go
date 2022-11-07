@@ -36,7 +36,7 @@ type InstanceConfigOpts struct {
 	// Specifies the EIP of the ECS. The EIP can be configured in two ways.
 	// Do not use an EIP. In this case, this parameter is unavailable.
 	// Automatically assign an EIP. You need to specify the information about the new EIP.
-	PubicIp PublicIp `json:"public_ip,omitempty"`
+	PubicIp *PublicIp `json:"public_ip,omitempty"`
 	// Specifies the user data to be injected during the ECS creation process. Text, text files, and gzip files can be injected.
 	// Constraints:
 	// The content to be injected must be encoded with base64. The maximum size of the content to be injected (before encoding) is 32 KB.

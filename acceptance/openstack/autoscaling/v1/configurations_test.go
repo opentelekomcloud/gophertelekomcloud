@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/configurations"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -35,53 +35,14 @@ func TestConfigurationsLifecycle(t *testing.T) {
 		t.Skip("OS_KEYPAIR_NAME or OS_IMAGE_ID env vars is missing but AS Configuration test requires")
 	}
 
-	secGroupID := openstack.CreateSecurityGroup(t)
-	t.Cleanup(func() {
-		openstack.DeleteSecurityGroup(t, secGroupID)
-	})
-
-	t.Logf("Attempting to create AutoScaling Configuration")
-	configID, err := configurations.Create(client, configurations.CreateOpts{
-		Name: asCreateName,
-		InstanceConfig: configurations.InstanceConfigOpts{
-			FlavorRef: "s3.xlarge.4",
-			ImageRef:  imageID,
-			Disk: []configurations.Disk{
-				{
-					Size:       40,
-					VolumeType: "SATA",
-					DiskType:   "SYS",
-					Metadata: configurations.SystemMetadata{
-						SystemEncrypted: "0",
-					},
-				},
-			},
-			SSHKey: keyPairName,
-			SecurityGroups: []configurations.SecurityGroup{
-				{
-					ID: openstack.DefaultSecurityGroup(t),
-				},
-				{
-					ID: secGroupID,
-				},
-			},
-			Metadata: configurations.AdminPassMetadata{
-				AdminPass: "Test1234",
-			},
-		},
-	})
-	th.AssertNoErr(t, err)
-	t.Logf("Created AutoScaling Configuration: %s", configID)
+	configID := autoscaling.CreateASConfig(t, client, asCreateName, imageID, keyPairName)
 
 	t.Cleanup(func() {
-		t.Logf("Attempting to delete AutoScaling Configuration")
-		err := configurations.Delete(client, configID)
-		th.AssertNoErr(t, err)
-		t.Logf("Deleted AutoScaling Configuration: %s", configID)
+		autoscaling.DeleteASConfig(t, client, configID)
 	})
 
 	config, err := configurations.Get(client, configID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, config)
-	th.AssertEquals(t, 2, len(config.InstanceConfig.SecurityGroups))
+	th.AssertEquals(t, 1, len(config.InstanceConfig.SecurityGroups))
 }
