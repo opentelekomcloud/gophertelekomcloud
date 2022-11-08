@@ -7,9 +7,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func GetOne(client *golangsdk.ServiceClient, volumeId string, key string) (map[string]string, error) {
-	// GET /v3/{project_id}/volumes/{volume_id}/metadata/{key}
-	raw, err := client.Get(client.ServiceURL("volumes", volumeId, "metadata", key), nil, nil)
+func GetOne(client *golangsdk.ServiceClient, snapshotId string, key string) (map[string]string, error) {
+	// GET /v3/{project_id}/snapshots/{snapshot_id}/metadata/{key}
+	raw, err := client.Get(client.ServiceURL("snapshots", snapshotId, "metadata", key), nil, nil)
 	return extraMeta(err, raw)
 }
 
