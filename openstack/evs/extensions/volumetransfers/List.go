@@ -2,17 +2,11 @@ package volumetransfers
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the List
-// request.
-type ListOptsBuilder interface {
-	ToTransferListQuery() (string, error)
-}
-
-// ListOpts holds options for listing Transfers. It is passed to the transfers.List
-// function.
+// ListOpts holds options for listing Transfers. It is passed to the transfers.List function.
 type ListOpts struct {
 	// AllTenants will retrieve transfers of all tenants/projects.
 	AllTenants bool `q:"all_tenants"`
@@ -34,15 +28,42 @@ func (opts ListOpts) ToTransferListQuery() (string, error) {
 }
 
 // List returns Transfers optionally limited by the conditions provided in ListOpts.
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-
-	url := client.ServiceURL("os-volume-transfer", "detail")
+func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return pagination.Pager{Err: err}
 	}
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
+	// GET /v3/{project_id}/os-volume-transfer
+	return pagination.NewPager(client, client.ServiceURL("os-volume-transfer")+q.String(), func(r pagination.PageResult) pagination.Page {
 		return TransferPage{pagination.LinkedPageBase{PageResult: r}}
 	})
+}
+
+// TransferPage is a pagination.pager that is returned from a call to the List function.
+type TransferPage struct {
+	pagination.LinkedPageBase
+}
+
+// IsEmpty returns true if a ListResult contains no Transfers.
+func (r TransferPage) IsEmpty() (bool, error) {
+	transfers, err := ExtractTransfers(r)
+	return len(transfers) == 0, err
+}
+
+func (r TransferPage) NextPageURL() (string, error) {
+	var res []golangsdk.Link
+	err := extract.IntoSlicePtr(r.BodyReader(), &res, "transfers_links")
+	if err != nil {
+		return "", err
+	}
+
+	return golangsdk.ExtractNextURL(res)
+}
+
+// ExtractTransfers extracts and returns Transfers. It is used while iterating over a transfers.List call.
+func ExtractTransfers(r pagination.Page) ([]Transfer, error) {
+	var res []Transfer
+	err := extract.IntoSlicePtr(r.(TransferPage).Result.BodyReader(), &res, "transfers")
+	return res, err
 }
