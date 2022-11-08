@@ -3,7 +3,7 @@ package extensions
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/volumetenants"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/volumetenants"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	blockstorage "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/evs/v3"
@@ -34,7 +34,7 @@ func TestVolumeTenants(t *testing.T) {
 
 	volume1, err := blockstorage.CreateVolume(t, client)
 	th.AssertNoErr(t, err)
-	defer blockstorage.DeleteVolume(t, client, volume1)
+	t.Cleanup(func() { blockstorage.DeleteVolume(t, client, volume1) })
 
 	allPages, err = volumes.List(client, volumes.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)

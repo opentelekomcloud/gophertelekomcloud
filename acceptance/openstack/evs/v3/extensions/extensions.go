@@ -1,6 +1,3 @@
-// Package extensions contains common functions for creating block storage
-// resources that are extensions of the block storage API. See the `*_test.go`
-// files for example usages.
 package extensions
 
 import (
@@ -13,16 +10,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/volumeactions"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/volumes"
-	backups2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/extensions/backups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
 	v3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumetypes"
-	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-// CreateUploadImage will upload volume it as volume-baked image. An name of new image or err will be
+// CreateUploadImage will upload volume it as volume-baked image. A name of new image or err will be
 // returned
-func CreateUploadImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) (volumeactions.VolumeImage, error) {
+func CreateUploadImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) (*volumeactions.VolumeImage, error) {
 	if testing.Short() {
 		t.Skip("Skipping test that requires volume-backed image uploading in short mode.")
 	}
@@ -59,7 +53,7 @@ func DeleteUploadedImage(t *testing.T, client *golangsdk.ServiceClient, imageID 
 
 	t.Logf("Removing image %s", imageID)
 
-	err := images.Delete(client, imageID)
+	err := images.Delete(client, imageID).ExtractErr()
 	if err != nil {
 		return err
 	}
@@ -171,85 +165,6 @@ func ExtendVolumeSize(t *testing.T, client *golangsdk.ServiceClient, volume *vol
 	return nil
 }
 
-// SetImageMetadata will apply the metadata to a volume.
-func SetImageMetadata(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) error {
-	t.Logf("Attempting to apply image metadata to volume %s", volume.ID)
-
-	imageMetadataOpts := volumeactions.ImageMetadataOpts{
-		Metadata: map[string]string{
-			"image_name": "testimage",
-		},
-	}
-
-	err := volumeactions.SetImageMetadata(client, volume.ID, imageMetadataOpts)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// CreateBackup will create a backup based on a volume. An error will be
-// will be returned if the backup could not be created.
-func CreateBackup(t *testing.T, client *golangsdk.ServiceClient, volumeID string) (*backups2.Backup, error) {
-	t.Logf("Attempting to create a backup of volume %s", volumeID)
-
-	backupName := tools.RandomString("ACPTTEST", 16)
-	createOpts := backups2.CreateOpts{
-		VolumeID: volumeID,
-		Name:     backupName,
-	}
-
-	backup, err := backups2.Create(client, createOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	err = WaitForBackupStatus(client, backup.ID, "available")
-	if err != nil {
-		return nil, err
-	}
-
-	backup, err = backups2.Get(client, backup.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	t.Logf("Successfully created backup %s", backup.ID)
-	tools.PrintResource(t, backup)
-
-	th.AssertEquals(t, backup.Name, backupName)
-
-	return backup, nil
-}
-
-// DeleteBackup will delete a backup. A fatal error will occur if the backup
-// could not be deleted. This works best when used as a deferred function.
-func DeleteBackup(t *testing.T, client *golangsdk.ServiceClient, backupID string) {
-	if err := backups2.Delete(client, backupID); err != nil {
-		t.Fatalf("Unable to delete backup %s: %s", backupID, err)
-	}
-
-	t.Logf("Deleted backup %s", backupID)
-}
-
-// WaitForBackupStatus will continually poll a backup, checking for a particular
-// status. It will do this for the amount of seconds defined.
-func WaitForBackupStatus(client *golangsdk.ServiceClient, id, status string) error {
-	return tools.WaitFor(func() (bool, error) {
-		current, err := backups2.Get(client, id)
-		if err != nil {
-			return false, err
-		}
-
-		if current.Status == status {
-			return true, nil
-		}
-
-		return false, nil
-	})
-}
-
 // SetBootable will set a bootable status to a volume.
 func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume) error {
 	t.Logf("Attempting to apply bootable status to volume %s", volume.ID)
@@ -288,62 +203,6 @@ func SetBootable(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.
 
 	if strings.ToLower(vol.Bootable) == "true" {
 		return fmt.Errorf("Volume bootable status is %q, expected 'false'", vol.Bootable)
-	}
-
-	return nil
-}
-
-// ChangeVolumeType will extend the size of a volume.
-func ChangeVolumeType(t *testing.T, client *golangsdk.ServiceClient, volume *v3.Volume, vt *volumetypes.VolumeType) error {
-	t.Logf("Attempting to change the type of volume %s from %s to %s", volume.ID, volume.VolumeType, vt.Name)
-
-	changeOpts := volumeactions.ChangeTypeOpts{
-		NewType:         vt.Name,
-		MigrationPolicy: volumeactions.MigrationPolicyOnDemand,
-	}
-
-	err := volumeactions.ChangeType(client, volume.ID, changeOpts)
-	if err != nil {
-		return err
-	}
-
-	if err := volumes.WaitForStatus(client, volume.ID, "available", 60); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ReImage will re-image a volume
-func ReImage(t *testing.T, client *golangsdk.ServiceClient, volume *volumes.Volume, imageID string) error {
-	t.Logf("Attempting to re-image volume %s", volume.ID)
-
-	reimageOpts := volumeactions.ReImageOpts{
-		ImageID:         imageID,
-		ReImageReserved: false,
-	}
-
-	err := volumeactions.ReImage(client, volume.ID, reimageOpts)
-	if err != nil {
-		return err
-	}
-
-	err = volumes.WaitForStatus(client, volume.ID, "available", 60)
-	if err != nil {
-		return err
-	}
-
-	vol, err := v3.Get(client, volume.ID)
-	if err != nil {
-		return err
-	}
-
-	if vol.VolumeImageMetadata == nil {
-		return fmt.Errorf("volume does not have VolumeImageMetadata map")
-	}
-
-	if strings.ToLower(vol.VolumeImageMetadata["image_id"]) != imageID {
-		return fmt.Errorf("volume image id '%s', expected '%s'", vol.VolumeImageMetadata["image_id"], imageID)
 	}
 
 	return nil

@@ -29,8 +29,7 @@ type CreateOpts struct {
 }
 
 // Create will create a new Snapshot based on the values in CreateOpts. To
-// extract the Snapshot object from the response, call the Extract method on the
-// CreateResult.
+// extract the Snapshot object from the response, call the Extract method on the CreateResult.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Snapshot, error) {
 	b, err := build.RequestBody(opts, "snapshot")
 	if err != nil {

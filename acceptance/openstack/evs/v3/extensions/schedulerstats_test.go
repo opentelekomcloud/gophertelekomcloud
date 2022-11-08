@@ -10,8 +10,6 @@ import (
 )
 
 func TestSchedulerStatsList(t *testing.T) {
-	clients.RequireAdmin(t)
-
 	blockClient, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 
@@ -19,10 +17,7 @@ func TestSchedulerStatsList(t *testing.T) {
 		Detail: true,
 	}
 
-	allPages, err := schedulerstats.List(blockClient, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	allStats, err := schedulerstats.ExtractStoragePools(allPages)
+	allStats, err := schedulerstats.List(blockClient, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, stat := range allStats {
