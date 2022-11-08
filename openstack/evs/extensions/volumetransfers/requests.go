@@ -5,39 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// AcceptOpts contains options for a Volume transfer accept reqeust.
-type AcceptOpts struct {
-	// The auth key of the volume transfer to accept.
-	AuthKey string `json:"auth_key" required:"true"`
-}
-
-// ToAcceptMap assembles a request body based on the contents of a
-// AcceptOpts.
-func (opts AcceptOpts) ToAcceptMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "accept")
-}
-
-// Accept will accept a volume tranfer request based on the values in AcceptOpts.
-func Accept(client *golangsdk.ServiceClient, id string, opts AcceptOpts) (r CreateResult) {
-	b, err := opts.ToAcceptMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	resp, err := client.Post(client.ServiceURL("os-volume-transfer", id, "accept"), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
-}
-
-// Delete deletes a volume transfer.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	resp, err := client.Delete(client.ServiceURL("os-volume-transfer", id), nil)
-	_, r.Header, r.Err = golangsdk.ParseResponse(resp, err)
-	return
-}
-
 // ListOptsBuilder allows extensions to add additional parameters to the List
 // request.
 type ListOptsBuilder interface {
