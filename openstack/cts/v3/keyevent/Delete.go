@@ -1,14 +1,17 @@
 package keyevent
 
 import (
-	"strings"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-func Delete(client *golangsdk.ServiceClient, notificationId []string) (err error) {
+type DeleteOpts struct {
+	NotificationId []string `q:"notification_id"`
+}
+
+func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (err error) {
+	q, err := golangsdk.BuildQueryString(opts)
 	// DELETE /v3/{project_id}/notifications
-	url := client.ServiceURL("notifications") + "?notification_id=\"" + strings.Join(notificationId, ",") + "\""
+	url := client.ServiceURL("notifications") + q.String()
 	_, err = client.Delete(url, nil)
 	return
 }

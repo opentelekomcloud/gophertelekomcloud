@@ -14,7 +14,7 @@ func TestKeyEventLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	event, err := keyevent.Create(client, keyevent.CreateNotificationOpts{
-		NotificationName: "keyevent_test_notification",
+		NotificationName: tools.RandomString("keyevent_test_", 3),
 		OperationType:    "customized",
 		Operations: []keyevent.Operations{
 			{
@@ -27,7 +27,9 @@ func TestKeyEventLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = keyevent.Delete(client, []string{event.NotificationId})
+		err = keyevent.Delete(client, keyevent.DeleteOpts{
+			NotificationId: []string{event.NotificationId},
+		})
 		th.AssertNoErr(t, err)
 	})
 
@@ -43,6 +45,13 @@ func TestKeyEventLifecycle(t *testing.T) {
 		Status:           "disabled",
 		OperationType:    "customized",
 		NotificationId:   event.NotificationId,
+		Operations: []keyevent.Operations{
+			{
+				ServiceType:  "OBS",
+				ResourceType: "bucket",
+				TraceNames:   []string{"deleteBucket"},
+			},
+		},
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, update)
