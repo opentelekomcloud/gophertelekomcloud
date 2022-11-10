@@ -22,30 +22,16 @@ type BatchOpts struct {
 	Action string `json:"action,omitempty"`
 }
 
-func batch(client *golangsdk.ServiceClient, groupID string, opts BatchOpts) error {
+func BatchAction(client *golangsdk.ServiceClient, groupID string, opts BatchOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return err
+		return
 	}
 
+	// POST /autoscaling-api/v1/{project_id}/scaling_group_instance/{scaling_group_id}/action
 	_, err = client.Post(client.ServiceURL("scaling_group_instance", groupID, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 
-	return err
-}
-
-func BatchAdd(client *golangsdk.ServiceClient, groupID string, instances []string) error {
-	return batch(client, groupID, BatchOpts{
-		Instances: instances,
-		Action:    "ADD",
-	})
-}
-
-func BatchDelete(client *golangsdk.ServiceClient, groupID string, instances []string, deleteEcs string) error {
-	return batch(client, groupID, BatchOpts{
-		Instances:   instances,
-		IsDeleteEcs: deleteEcs,
-		Action:      "REMOVE",
-	})
+	return
 }
