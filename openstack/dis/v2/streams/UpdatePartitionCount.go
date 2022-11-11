@@ -1,12 +1,13 @@
 package streams
 
-type UpdatePartitionCountRequest struct {
+type UpdatePartitionCountOpts struct {
 	// Name of the stream whose partition quantity needs to be changed.
 	// Maximum: 64
 	StreamName string `json:"stream_name"`
 
-	Body *UpdatePartitionCountRequestBody `json:"body,omitempty"`
+	Body UpdatePartitionCountRequestBody `json:"body,omitempty"`
 }
+
 type UpdatePartitionCountRequestBody struct {
 	// Name of the stream whose partition quantity needs to be changed.
 	// Maximum: 64
@@ -24,5 +25,4 @@ type UpdatePartitionCountRequestBody struct {
 // PUT /v2/{project_id}/streams/{stream_name}
 
 type UpdatePartitionCountResponse struct {
-	HttpStatusCode int `json:"-"`
 }

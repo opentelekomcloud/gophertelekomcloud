@@ -13,13 +13,13 @@ type CreateStreamReq struct {
 	// Enumeration values:
 	// COMMON
 	// ADVANCED
-	StreamType *CreateStreamReqStreamType `json:"stream_type,omitempty"`
+	StreamType string `json:"stream_type,omitempty"`
 	// Source data type.
 	// BLOB: a set of binary data stored in a database management system.
 	// Default value: BLOB
 	// Enumeration values:
 	// BLOB
-	DataType *CreateStreamReqDataType `json:"data_type,omitempty"`
+	DataType string `json:"data_type,omitempty"`
 	// Period of time for which data is retained in the stream. Value range: 24-72 Unit: hour Default value: 24 If this parameter is left blank, the default value is used.
 	// Maximum: 7
 	// Default: 24
@@ -36,9 +36,9 @@ type CreateStreamReq struct {
 	// Maximum number of partitions for automatic scale-up when auto scaling is enabled.
 	AutoScaleMaxPartitionCount *int32 `json:"auto_scale_max_partition_count,omitempty"`
 	//
-	DataSchema *string `json:"data_schema,omitempty"`
+	DataSchema string `json:"data_schema,omitempty"`
 	//
-	CsvProperties *CsvProperties `json:"csv_properties,omitempty"`
+	CsvProperties CsvProperties `json:"csv_properties,omitempty"`
 	// Compression type of data. Currently, the value can be:
 	// snappy
 	// gzip
@@ -48,25 +48,18 @@ type CreateStreamReq struct {
 	// snappy
 	// gzip
 	// zip
-	CompressionFormat *CreateStreamReqCompressionFormat `json:"compression_format,omitempty"`
+	CompressionFormat string `json:"compression_format,omitempty"`
 	// List of stream tags.
-	Tags *[]Tag `json:"tags,omitempty"`
+	Tags []Tag `json:"tags,omitempty"`
 	// Stream enterprise projects.
-	SysTags *[]SysTag `json:"sys_tags,omitempty"`
+	SysTags []SysTag `json:"sys_tags,omitempty"`
 }
-type CreateStreamReqStreamType struct {
-	value string
-}
-type CreateStreamReqDataType struct {
-	value string
-}
+
 type CsvProperties struct {
-	//
-	Delimiter *string `json:"delimiter,omitempty"`
+	// Data separator.
+	Delimiter string `json:"delimiter,omitempty"`
 }
-type CreateStreamReqCompressionFormat struct {
-	value string
-}
+
 type Tag struct {
 	// Key.
 	// This field cannot be left blank.
@@ -74,14 +67,14 @@ type Tag struct {
 	// Character set: A-Z, a-z, 0-9, '-', '_', and Unicode characters (\u4E00-\u9FFF).
 	// Minimum: 1
 	// Maximum: 36
-	Key *string `json:"key,omitempty"`
+	Key string `json:"key,omitempty"`
 	// Value.
 	// The value contains a maximum of 43 characters.
 	// Character set: A-Z, a-z, 0-9, '. ', '-', '_', and Unicode characters (\u4E00-\u9FFF).
 	// The value can contain only digits, letters, hyphens (-), and underscores (_).
 	// Minimum: 0
 	// Maximum: 43
-	Value *string `json:"value,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type SysTag struct {
@@ -90,17 +83,13 @@ type SysTag struct {
 	// The value must be _sys_enterprise_project_id.
 	// Enumeration values:
 	// _sys_enterprise_project_id
-	Key *SysTagKey `json:"key,omitempty"`
+	Key string `json:"key,omitempty"`
 	// Value. The value is the enterprise project ID, which needs to be obtained on the enterprise management page.
 	// 36-digit UUID
-	Value *string `json:"value,omitempty"`
-}
-type SysTagKey struct {
-	value string
+	Value string `json:"value,omitempty"`
 }
 
 // POST /v2/{project_id}/streams
 
 type CreateStreamResponse struct {
-	HttpStatusCode int `json:"-"`
 }

@@ -1,6 +1,6 @@
 package checkpoints
 
-type GetCheckpointRequest struct {
+type GetCheckpointOpts struct {
 	// Name of the stream to which the checkpoint belongs.
 	StreamName string `json:"stream_name"`
 	// Identifier of the stream partition to which the checkpoint belongs. The value can be in either of the following formats:
@@ -14,18 +14,14 @@ type GetCheckpointRequest struct {
 	// LAST_READ: Only sequence numbers are recorded in databases.
 	// Enumeration values:
 	// LAST_READ
-	CheckpointType GetCheckpointRequestCheckpointType `json:"checkpoint_type"`
-}
-type GetCheckpointRequestCheckpointType struct {
-	value string
+	CheckpointType string `json:"checkpoint_type"`
 }
 
 // GET /v2/{project_id}/checkpoints
 
 type GetCheckpointResponse struct {
 	// Sequence number used to record the consumption checkpoint of the stream.
-	SequenceNumber *string `json:"sequence_number,omitempty"`
+	SequenceNumber string `json:"sequence_number,omitempty"`
 	// Metadata information of the consumer application.
-	Metadata       *string `json:"metadata,omitempty"`
-	HttpStatusCode int     `json:"-"`
+	Metadata string `json:"metadata,omitempty"`
 }

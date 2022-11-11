@@ -1,6 +1,6 @@
 package apps
 
-type DescribeAppRequest struct {
+type DescribeAppOpts struct {
 	// Name of the app to be queried.
 	AppName string `json:"app_name"`
 }
@@ -9,10 +9,11 @@ type DescribeAppRequest struct {
 
 type DescribeAppResponse struct {
 	// Name of the app.
-	AppName *string `json:"app_name,omitempty"`
+	AppName string `json:"app_name,omitempty"`
 	// Unique identifier of the app.
-	AppId *string `json:"app_id,omitempty"`
+	AppId string `json:"app_id,omitempty"`
 	// Time when the app is created, in milliseconds.
-	CreateTime     *int64 `json:"create_time,omitempty"`
-	HttpStatusCode int    `json:"-"`
+	CreateTime *int64 `json:"create_time,omitempty"`
+	// List of associated streams.
+	CommitCheckPointStreamNames []string `json:"commit_checkpoint_stream_names,omitempty"`
 }

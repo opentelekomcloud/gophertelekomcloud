@@ -1,8 +1,9 @@
 package checkpoints
 
-type CommitCheckpointRequest struct {
-	Body *CommitCheckpointRequestBody `json:"body,omitempty"`
+type CommitCheckpointOpts struct {
+	Body CommitCheckpointRequestBody `json:"body,omitempty"`
 }
+
 type CommitCheckpointRequestBody struct {
 	// Name of the app, which is the unique identifier of a user data consumption program.
 	AppName string `json:"app_name"`
@@ -10,7 +11,7 @@ type CommitCheckpointRequestBody struct {
 	// LAST_READ: Only sequence numbers are recorded in databases.
 	// Enumeration values:
 	// LAST_READ
-	CheckpointType CommitCheckpointRequestBodyCheckpointType `json:"checkpoint_type"`
+	CheckpointType string `json:"checkpoint_type"`
 	// Name of the stream.
 	StreamName string `json:"stream_name"`
 	// Partition identifier of the stream. The value can be in either of the following formats:
@@ -24,14 +25,10 @@ type CommitCheckpointRequestBody struct {
 	// Metadata information of the consumer application.
 	// The metadata information can contain a maximum of 1,000 characters.
 	// Maximum: 1000
-	Metadata *string `json:"metadata,omitempty"`
-}
-type CommitCheckpointRequestBodyCheckpointType struct {
-	value string
+	Metadata string `json:"metadata,omitempty"`
 }
 
 // POST /v2/{project_id}/checkpoints
 
 type CommitCheckpointResponse struct {
-	HttpStatusCode int `json:"-"`
 }

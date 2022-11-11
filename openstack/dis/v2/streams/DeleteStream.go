@@ -1,6 +1,6 @@
 package streams
 
-type DeleteStreamRequest struct {
+type DeleteStreamOpts struct {
 	// Name of the stream to be deleted.
 	// Maximum: 60
 	StreamName string `json:"stream_name"`
@@ -9,5 +9,4 @@ type DeleteStreamRequest struct {
 // DELETE /v2/{project_id}/streams/{stream_name}
 
 type DeleteStreamResponse struct {
-	HttpStatusCode int `json:"-"`
 }

@@ -1,6 +1,6 @@
 package dump
 
-type ListTransferTasksV3Request struct {
+type ListTransferTasksOpts struct {
 	// Name of the stream to be queried.
 	// Maximum: 60
 	StreamName string `json:"stream_name"`
@@ -8,17 +8,16 @@ type ListTransferTasksV3Request struct {
 
 // GET /v2/{project_id}/streams/{stream_name}/transfer-tasks
 
-type ListTransferTasksV3Response struct {
+type ListTransferTasksResponse struct {
 	// Total number of dump tasks.
 	TotalNumber *int32 `json:"total_number,omitempty"`
 	// List of dump tasks.
-	Tasks          *[]TransferTask `json:"tasks,omitempty"`
-	HttpStatusCode int             `json:"-"`
+	Tasks []TransferTask `json:"tasks,omitempty"`
 }
 
 type TransferTask struct {
 	// Name of the dump task.
-	TaskName *string `json:"task_name,omitempty"`
+	TaskName string `json:"task_name,omitempty"`
 	// Dump task status. Possible values:
 	// ERROR: An error occurs.
 	// STARTING: The dump task is being started.
@@ -33,12 +32,12 @@ type TransferTask struct {
 	// RUNNING
 	// DELETE
 	// ABNORMAL
-	State *string `json:"state,omitempty"`
+	State string `json:"state,omitempty"`
 	// Dump destination. Possible values:
 	// OBS: Data is dumped to OBS.
 	// Enumeration values:
 	// OBS
-	DestinationType *string `json:"destination_type,omitempty"`
+	DestinationType string `json:"destination_type,omitempty"`
 	// Time when the dump task is created.
 	CreateTime *int64 `json:"create_time,omitempty"`
 	// Latest dump time of the dump task.

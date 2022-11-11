@@ -1,6 +1,6 @@
 package apps
 
-type DeleteAppRequest struct {
+type DeleteAppOpts struct {
 	// Name of the app to be deleted.
 	AppName string `json:"app_name"`
 }
@@ -8,5 +8,4 @@ type DeleteAppRequest struct {
 // DELETE /v2/{project_id}/apps/{app_name}
 
 type DeleteAppResponse struct {
-	HttpStatusCode int `json:"-"`
 }

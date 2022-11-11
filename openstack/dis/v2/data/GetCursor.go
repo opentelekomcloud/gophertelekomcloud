@@ -1,6 +1,6 @@
 package data
 
-type GetCursorRequest struct {
+type GetCursorOpts struct {
 	// Name of the stream.
 	StreamName string `json:"stream-name"`
 	// Partition ID of the stream. The value can be in either of the following formats:
@@ -22,7 +22,7 @@ type GetCursorRequest struct {
 	// TRIM_HORIZON
 	// LATEST
 	// AT_TIMESTAMP
-	CursorType *string `json:"cursor-type,omitempty"`
+	CursorType string `json:"cursor-type,omitempty"`
 	// Serial number. A sequence number is a unique identifier for each record.
 	// DIS automatically allocates a sequence number when the data producer calls the PutRecords operation to add data to the DIS stream.
 	// SN of the same partition key usually changes with time.
@@ -30,7 +30,7 @@ type GetCursorRequest struct {
 	// The sequence number is closely related to cursor types AT_SEQUENCE_NUMBER and AFTER_SEQUENCE_NUMBER.
 	// The two parameters determine the position of the data to be read.
 	// Value range: 0 to 9,223,372,036,854,775,807
-	StartingSequenceNumber *string `json:"starting-sequence-number,omitempty"`
+	StartingSequenceNumber string `json:"starting-sequence-number,omitempty"`
 	// Timestamp when the data record starts to be read, which is closely related to cursor type AT_TIMESTAMP.
 	// The two parameters determine the position of the data to be read.
 	// Note:
@@ -46,6 +46,5 @@ type GetCursorResponse struct {
 	// The validity period of a data cursor is 5 minutes.
 	// Minimum: 1
 	// Maximum: 512
-	PartitionCursor *string `json:"partition_cursor,omitempty"`
-	HttpStatusCode  int     `json:"-"`
+	PartitionCursor string `json:"partition_cursor,omitempty"`
 }
