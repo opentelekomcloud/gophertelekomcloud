@@ -10,6 +10,10 @@ type DeleteOpts struct {
 
 func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (err error) {
 	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return
+	}
+
 	// DELETE /v3/{project_id}/notifications
 	url := client.ServiceURL("notifications") + q.String()
 	_, err = client.Delete(url, nil)
