@@ -761,15 +761,15 @@ func NewCTSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 
 // NewCTSV2 creates a ServiceClient that can be used to access the Cloud Trace service.
 func NewCTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "ctsv2")
+	sc, err := initClientOpts(client, eo, "cts")
 	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "v2", 1)
 	return sc, err
 }
 
 // NewCTSV3 creates a ServiceClient that can be used to access the Cloud Trace service.
 func NewCTSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "ctsv3")
-	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "v3", 1)
+	sc, err := initClientOpts(client, eo, "cts")
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1.0", "v3", 1)
 	return sc, err
 }
 

@@ -26,7 +26,7 @@ func TestTraces(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete CTSv1 Tracker: %s", ctsTracker.TrackerName)
-		err := tracker.Delete(cv1)
+		err := tracker.Delete(cv1, ctsTracker.TrackerName)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted CTSv1 Tracker: %s", ctsTracker.TrackerName)
 	})
