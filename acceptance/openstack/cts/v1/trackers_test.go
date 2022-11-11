@@ -29,7 +29,7 @@ func TestTrackersLifecycle(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete CTSv1 Tracker: %s", ctsTracker.TrackerName)
-		err := tracker.Delete(client)
+		err := tracker.Delete(client, ctsTracker.TrackerName)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted CTSv1 Tracker: %s", ctsTracker.TrackerName)
 	})
@@ -47,9 +47,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 
-	trackerList, err := tracker.Get(client, tracker.GetOpts{
-		TrackerName: ctsTracker.TrackerName,
-	})
+	trackerList, err := tracker.Get(client, ctsTracker.TrackerName)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, tracker.UpdateOpts{

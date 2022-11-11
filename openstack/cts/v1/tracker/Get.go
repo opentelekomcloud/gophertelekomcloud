@@ -4,16 +4,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type GetOpts struct {
-	TrackerName string `q:"tracker_name"`
-}
-
-func Get(client *golangsdk.ServiceClient, opts GetOpts) (*Tracker, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	raw, err := client.Get(client.ServiceURL("tracker")+q.String(), nil, nil)
+func Get(client *golangsdk.ServiceClient, trackerName string) (*Tracker, error) {
+	// GET /v1.0/{project_id}/tracker?tracker_name={tracker_name}
+	raw, err := client.Get(client.ServiceURL("tracker")+"?tracker_name="+trackerName, nil, nil)
 	return extra(err, raw)
 }

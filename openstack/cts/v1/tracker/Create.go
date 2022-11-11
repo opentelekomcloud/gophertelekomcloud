@@ -27,6 +27,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Tracker, error) 
 		return nil, err
 	}
 
+	// POST /v1.0/{project_id}/tracker
 	raw, err := client.Post(client.ServiceURL("tracker"), b, nil, nil)
 	return extra(err, raw)
 }
