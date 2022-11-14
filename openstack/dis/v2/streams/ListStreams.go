@@ -1,5 +1,7 @@
 package streams
 
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+
 type ListStreamsOpts struct {
 	// The maximum number of DIS streams to list in a single API call.
 	// Value range: 1-100 Default value: 10
@@ -75,7 +77,7 @@ type StreamInfo struct {
 	// Maximum number of partitions for automatic scale-up when auto scaling is enabled.
 	AutoScaleMaxPartitionCount *int32 `json:"auto_scale_max_partition_count,omitempty"`
 	// List of tags for the newly created DIS stream.
-	Tags []Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Stream enterprise projects.
-	SysTags []SysTag `json:"sys_tags,omitempty"`
+	SysTags []tags.ResourceTag `json:"sys_tags,omitempty"`
 }

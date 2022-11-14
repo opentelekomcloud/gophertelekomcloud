@@ -1,4 +1,4 @@
-package policies
+package streams
 
 type CreatePolicyRuleOpts struct {
 	// Unique ID of the stream.

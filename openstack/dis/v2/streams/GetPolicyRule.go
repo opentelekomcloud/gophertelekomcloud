@@ -1,4 +1,4 @@
-package policies
+package streams
 
 type GetPolicyRuleOpts struct {
 	// Name of the DIS stream to be created.

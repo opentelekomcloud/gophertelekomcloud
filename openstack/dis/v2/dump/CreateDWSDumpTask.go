@@ -19,6 +19,11 @@ type CreateDWSDumpTaskOpts struct {
 	DWSDestinationDescriptor DWSDestinationDescriptorOpts `json:"dws_destination_descriptor,omitempty"`
 }
 
+// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+
+type CreateDWSDumpTaskResponse struct {
+}
+
 type DWSDestinationDescriptorOpts struct {
 	// Name of the dump task.
 	// The task name consists of letters, digits, hyphens (-), and underscores (_).
@@ -79,7 +84,8 @@ type DWSDestinationDescriptorOpts struct {
 	KMSUserKeyID string `json:"kms_user_key_id"`
 	// Name of the OBS bucket used to temporarily store data in the DIS stream.
 	OBSBucketPath string `json:"obs_bucket_path"`
-	// User-defined directory created in the OBS bucket and used to temporarily store data in the DIS stream. Directory levels are separated by slashes (/) and cannot start with slashes.
+	// User-defined directory created in the OBS bucket and used to temporarily store data in the DIS stream.
+	// Directory levels are separated by slashes (/) and cannot start with slashes.
 	// The value can contain a maximum of 50 characters, including letters, digits, underscores (_), and slashes (/).
 	// This parameter is left emptyby default.
 	FilePrefix string `json:"file_prefix,omitempty"`
@@ -139,9 +145,4 @@ type Options struct {
 	// Name of the error table that records data format errors.
 	// After the parallel import iscomplete, you can query theerror information table toobtain the detailed errorinformation.
 	ErrorTableName string `json:"error_table_name,omitempty"`
-}
-
-// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
-
-type CreateDWSDumpTaskResponse struct {
 }

@@ -1,5 +1,7 @@
 package streams
 
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+
 type CreateStreamReq struct {
 	// Name of the stream.
 	// The stream name can contain 1 to 64 characters, including letters, digits, underscores (_), and hyphens (-).
@@ -50,43 +52,14 @@ type CreateStreamReq struct {
 	// zip
 	CompressionFormat string `json:"compression_format,omitempty"`
 	// List of stream tags.
-	Tags []Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Stream enterprise projects.
-	SysTags []SysTag `json:"sys_tags,omitempty"`
+	SysTags []tags.ResourceTag `json:"sys_tags,omitempty"`
 }
 
 type CsvProperties struct {
 	// Data separator.
 	Delimiter string `json:"delimiter,omitempty"`
-}
-
-type Tag struct {
-	// Key.
-	// This field cannot be left blank.
-	// The key value of a resource must be unique.
-	// Character set: A-Z, a-z, 0-9, '-', '_', and Unicode characters (\u4E00-\u9FFF).
-	// Minimum: 1
-	// Maximum: 36
-	Key string `json:"key,omitempty"`
-	// Value.
-	// The value contains a maximum of 43 characters.
-	// Character set: A-Z, a-z, 0-9, '. ', '-', '_', and Unicode characters (\u4E00-\u9FFF).
-	// The value can contain only digits, letters, hyphens (-), and underscores (_).
-	// Minimum: 0
-	// Maximum: 43
-	Value string `json:"value,omitempty"`
-}
-
-type SysTag struct {
-	// Key.
-	// This field cannot be left blank.
-	// The value must be _sys_enterprise_project_id.
-	// Enumeration values:
-	// _sys_enterprise_project_id
-	Key string `json:"key,omitempty"`
-	// Value. The value is the enterprise project ID, which needs to be obtained on the enterprise management page.
-	// 36-digit UUID
-	Value string `json:"value,omitempty"`
 }
 
 // POST /v2/{project_id}/streams

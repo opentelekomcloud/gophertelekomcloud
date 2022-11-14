@@ -1,5 +1,7 @@
 package streams
 
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+
 type DescribeStreamOpts struct {
 	// Stream to be queried.
 	// Maximum: 60
@@ -77,12 +79,12 @@ type DescribeStreamResponse struct {
 	// List of scaling operation records.
 	UpdatePartitionCounts []UpdatePartitionCount `json:"update_partition_counts,omitempty"`
 	// List of stream tags.
-	Tags []Tag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Enterprise project of a stream.
-	SysTags []SysTag `json:"sys_tags,omitempty"`
-	// Specifies whether to enable auto scaling.
-	// true: auto scaling is enabled.
-	// false: auto scaling is disabled.
+	SysTags []tags.ResourceTag `json:"sys_tags,omitempty"`
+	// Specifies whether to enable auto-scaling.
+	// true: auto-scaling is enabled.
+	// false: auto-scaling is disabled.
 	// This function is disabled by default.
 	AutoScaleEnabled *bool `json:"auto_scale_enabled,omitempty"`
 	// Minimum number of partitions for automatic scale-down when auto scaling is enabled.

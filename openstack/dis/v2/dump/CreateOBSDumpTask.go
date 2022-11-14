@@ -19,6 +19,11 @@ type CreateOBSDumpTaskOpts struct {
 	OBSDestinationDescriptor *OBSDestinationDescriptorOpts `json:"obs_destination_descriptor,omitempty"`
 }
 
+// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+
+type CreateOBSDumpTaskResponse struct {
+}
+
 type OBSDestinationDescriptorOpts struct {
 	// Name of the dump task.
 	// The task name consists of letters, digits, hyphens (-), and underscores (_).
@@ -134,9 +139,4 @@ type ProcessingSchema struct {
 	// MM-dd-yyyy HH:mm:ss
 	// dd-MM-yyyy HH:mm:ss
 	TimestampFormat string `json:"timestamp_format,omitempty"`
-}
-
-// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
-
-type CreateOBSDumpTaskResponse struct {
 }
