@@ -1,15 +1,13 @@
 package streams
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type UpdateStreamOpts struct {
 	// Name of the stream whose partition quantity needs to be changed.
-	StreamName string                  `json:"stream_name"`
-	Body       UpdateStreamRequestBody `json:"body,omitempty"`
-}
-
-type UpdateStreamRequestBody struct {
-	// Name of the stream to be updated.
-	// Maximum: 64
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Period of time for which data is retained in the stream.
 	// Value range: 24-72 Unit: hour
 	// Default value: 24 If this parameter is left blank, the default value is used.
@@ -44,7 +42,15 @@ type UpdateStreamRequestBody struct {
 	AutoScaleMaxPartitionCount *int64 `json:"auto_scale_max_partition_count,omitempty"`
 }
 
-// PUT /v3/{project_id}/streams/{stream_name}
+func UpdateStream(client *golangsdk.ServiceClient, opts UpdateStreamOpts) error {
+	body, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type UpdateStreamResponse struct {
+	// PUT /v3/{project_id}/streams/{stream_name}
+	_, err = client.Put(client.ServiceURL("streams", opts.StreamName), body, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }

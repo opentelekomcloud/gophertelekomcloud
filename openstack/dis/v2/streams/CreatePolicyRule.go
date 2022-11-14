@@ -1,6 +1,14 @@
 package streams
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type CreatePolicyRuleOpts struct {
+	// Name of the stream for which you want to add an authorization policy.
+	// Maximum: 64
+	StreamName string
 	// Unique ID of the stream.
 	StreamId string `json:"stream_id"`
 	// Authorized users.
@@ -23,7 +31,15 @@ type CreatePolicyRuleOpts struct {
 	Effect string `json:"effect"`
 }
 
-// POST /v2/{project_id}/streams/{stream_name}/policies
+func CreatePolicyRule(client *golangsdk.ServiceClient, opts CreatePolicyRuleOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type CreatePolicyRuleResponse struct {
+	// POST /v2/{project_id}/streams/{stream_name}/policies
+	_, err = client.Post(client.ServiceURL("streams", opts.StreamName, "policies"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }

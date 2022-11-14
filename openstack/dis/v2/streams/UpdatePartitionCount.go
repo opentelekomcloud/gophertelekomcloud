@@ -1,17 +1,14 @@
 package streams
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type UpdatePartitionCountOpts struct {
 	// Name of the stream whose partition quantity needs to be changed.
 	// Maximum: 64
-	StreamName string `json:"stream_name"`
-
-	Body UpdatePartitionCountRequestBody `json:"body,omitempty"`
-}
-
-type UpdatePartitionCountRequestBody struct {
-	// Name of the stream whose partition quantity needs to be changed.
-	// Maximum: 64
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Number of the target partitions.
 	// The value is an integer greater than 0.
 	// If the value is greater than the number of current partitions, scaling-up is required.
@@ -22,7 +19,15 @@ type UpdatePartitionCountRequestBody struct {
 	TargetPartitionCount int32 `json:"target_partition_count"`
 }
 
-// PUT /v2/{project_id}/streams/{stream_name}
+func UpdatePartitionCount(client *golangsdk.ServiceClient, opts UpdatePartitionCountOpts) error {
+	body, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type UpdatePartitionCountResponse struct {
+	// PUT /v2/{project_id}/streams/{stream_name}
+	_, err = client.Put(client.ServiceURL("streams", opts.StreamName), body, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }

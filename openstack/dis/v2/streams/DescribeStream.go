@@ -1,21 +1,40 @@
 package streams
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
 type DescribeStreamOpts struct {
 	// Stream to be queried.
 	// Maximum: 60
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Name of the partition to start the partition list with. The returned partition list does not contain this partition.
-	StartPartitionId string `json:"start_partitionId,omitempty"`
+	StartPartitionId string `q:"start_partitionId,omitempty"`
 	// Maximum number of partitions to list in a single API call. Value range: 1-1,000 Default value: 100
 	// Minimum: 1
 	// Maximum: 1000
 	// Default: 100
-	LimitPartitions *int32 `json:"limit_partitions,omitempty"`
+	LimitPartitions *int32 `q:"limit_partitions,omitempty"`
 }
 
-// GET /v2/{project_id}/streams/{stream_name}
+func DescribeStream(client *golangsdk.ServiceClient, opts DescribeStreamOpts) (*DescribeStreamResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// GET /v2/{project_id}/streams/{stream_name}
+	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName)+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res DescribeStreamResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type DescribeStreamResponse struct {
 	// Name of the stream.
@@ -58,7 +77,7 @@ type DescribeStreamResponse struct {
 	// Enumeration values:
 	// BLOB
 	DataType string `json:"data_type,omitempty"`
-	//
+
 	DataSchema string `json:"data_schema,omitempty"`
 	// Compression type of data. Currently, the value can be:
 	// snappy
@@ -77,7 +96,7 @@ type DescribeStreamResponse struct {
 	// Total number of readable partitions (including partitions in ACTIVE and DELETED state).
 	ReadablePartitionCount *int32 `json:"readable_partition_count,omitempty"`
 	// List of scaling operation records.
-	UpdatePartitionCounts []UpdatePartitionCount `json:"update_partition_counts,omitempty"`
+	UpdatePartitionCounts []UpdatePartitionCountResponse `json:"update_partition_counts,omitempty"`
 	// List of stream tags.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Enterprise project of a stream.
@@ -115,7 +134,7 @@ type PartitionResult struct {
 	ParentPartitions string `json:"parent_partitions,omitempty"`
 }
 
-type UpdatePartitionCount struct {
+type UpdatePartitionCountResponse struct {
 	// Scaling execution timestamp, which is a 13-digit timestamp.
 	CreateTimestamp *int64 `json:"create_timestamp,omitempty"`
 	// Number of partitions before scaling.

@@ -1,20 +1,41 @@
 package data
 
-type PutRecordsOpts struct {
-	Body *PutRecordsRequestBody `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-type PutRecordsRequestBody struct {
+type PutRecordsOpts struct {
 	// Name of the stream.
 	// Maximum: 64
-	StreamName string `json:"stream_name"`
+	StreamName string `q:"stream_name"`
 	// Unique ID of the stream.
 	// If no stream is found by stream_name and stream_id is not empty, stream_id is used to search for the stream.
 	// Note:
 	// This parameter is mandatory when data is uploaded to the authorized stream.
-	StreamId string `json:"stream_id,omitempty"`
+	StreamId string `q:"stream_id,omitempty"`
 	// List of records to be uploaded.
-	Records []PutRecordsRequestEntry `json:"records"`
+	Records []PutRecordsRequestEntry `q:"records"`
+}
+
+func PutRecords(client *golangsdk.ServiceClient, opts PutRecordsOpts) (*PutRecordsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v2/{project_id}/records
+	raw, err := client.Post(client.ServiceURL("records"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var res PutRecordsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type PutRecordsRequestEntry struct {
@@ -33,8 +54,6 @@ type PutRecordsRequestEntry struct {
 	// If partition_id is not transferred, partition_key is used.
 	PartitionKey string `json:"partition_key,omitempty"`
 }
-
-// POST /v2/{project_id}/records
 
 type PutRecordsResponse struct {
 	// Number of data records that fail to be uploaded.

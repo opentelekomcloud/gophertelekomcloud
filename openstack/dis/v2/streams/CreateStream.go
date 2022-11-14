@@ -1,8 +1,12 @@
 package streams
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
-type CreateStreamReq struct {
+type CreateStreamOpts struct {
 	// Name of the stream.
 	// The stream name can contain 1 to 64 characters, including letters, digits, underscores (_), and hyphens (-).
 	// Maximum: 64
@@ -26,20 +30,20 @@ type CreateStreamReq struct {
 	// Maximum: 7
 	// Default: 24
 	DataDuration *int32 `json:"data_duration,omitempty"`
-	// Specifies whether to enable auto scaling.
+	// Specifies whether to enable auto-scaling.
 	// true: Auto scaling is enabled.
 	// false: Auto scaling is disabled.
 	// This function is disabled by default.
 	// Default: false
 	AutoScaleEnabled *bool `json:"auto_scale_enabled,omitempty"`
-	// Minimum number of partitions for automatic scale-down when auto scaling is enabled.
+	// Minimum number of partitions for automatic scale-down when auto-scaling is enabled.
 	// Minimum: 1
 	AutoScaleMinPartitionCount *int64 `json:"auto_scale_min_partition_count,omitempty"`
-	// Maximum number of partitions for automatic scale-up when auto scaling is enabled.
+	// Maximum number of partitions for automatic scale-up when auto-scaling is enabled.
 	AutoScaleMaxPartitionCount *int32 `json:"auto_scale_max_partition_count,omitempty"`
-	//
+
 	DataSchema string `json:"data_schema,omitempty"`
-	//
+
 	CsvProperties CsvProperties `json:"csv_properties,omitempty"`
 	// Compression type of data. Currently, the value can be:
 	// snappy
@@ -62,7 +66,15 @@ type CsvProperties struct {
 	Delimiter string `json:"delimiter,omitempty"`
 }
 
-// POST /v2/{project_id}/streams
+func CreateStream(client *golangsdk.ServiceClient, opts CreateStreamOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type CreateStreamResponse struct {
+	// POST /v2/{project_id}/streams
+	_, err = client.Post(client.ServiceURL("streams"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }

@@ -1,11 +1,9 @@
 package apps
 
-type DeleteAppOpts struct {
-	// Name of the app to be deleted.
-	AppName string `json:"app_name"`
-}
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
-// DELETE /v2/{project_id}/apps/{app_name}
-
-type DeleteAppResponse struct {
+func DeleteApp(client *golangsdk.ServiceClient, appName string) (err error) {
+	// DELETE /v2/{project_id}/apps/{app_name}
+	_, err = client.Delete(client.ServiceURL("apps", appName), nil)
+	return
 }

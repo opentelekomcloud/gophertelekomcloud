@@ -1,9 +1,14 @@
 package dump
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type CreateDWSDumpTaskOpts struct {
 	// Name of the stream.
 	// Maximum: 60
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Dump destination.
 	// Possible values:
 	// - OBS: Data is dumped to OBS.
@@ -19,9 +24,17 @@ type CreateDWSDumpTaskOpts struct {
 	DWSDestinationDescriptor DWSDestinationDescriptorOpts `json:"dws_destination_descriptor,omitempty"`
 }
 
-// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+func CreateDWSDumpTask(client *golangsdk.ServiceClient, opts CreateDWSDumpTaskOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type CreateDWSDumpTaskResponse struct {
+	// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+	_, err = client.Post(client.ServiceURL("streams", opts.StreamName, "transfer-tasks"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }
 
 type DWSDestinationDescriptorOpts struct {
@@ -87,7 +100,7 @@ type DWSDestinationDescriptorOpts struct {
 	// User-defined directory created in the OBS bucket and used to temporarily store data in the DIS stream.
 	// Directory levels are separated by slashes (/) and cannot start with slashes.
 	// The value can contain a maximum of 50 characters, including letters, digits, underscores (_), and slashes (/).
-	// This parameter is left emptyby default.
+	// This parameter is left empty by default.
 	FilePrefix string `json:"file_prefix,omitempty"`
 	// Duration when you can constantly retry dumping data to DWS after the dump fails.
 	// If the dump time exceeds the value of this parameter, the data that fails to be dumped to DWS will be backed up to the OBS bucket_path/file_prefix/dws_error directory.
@@ -101,7 +114,7 @@ type DWSDestinationDescriptorOpts struct {
 	// This parameter is left blank by default.
 	DWSTableColumns string `json:"dws_table_columns,omitempty"`
 	// DWS fault tolerance option (used to specify various parameters of foreign table data).
-	Options Options `json:"optiond,omitempty"`
+	Options Options `json:"options,omitempty"`
 }
 
 type Options struct {
@@ -133,9 +146,9 @@ type Options struct {
 	// Enumeration values:
 	// true/on
 	// false/off
-	CompatibleIllegalChars string `json:"conpatible_illegal_chars,omitempty"`
+	CompatibleIllegalChars string `json:"compatible_illegal_chars,omitempty"`
 	// Maximum number of data format errors allowed during the data import.
-	// If the number of data format errors does not reach the maximum, the dataimport is successful.
+	// If the number of data format errors does not reach the maximum, the data import is successful.
 	// Value range:
 	// - integer
 	// - unlimited
@@ -143,6 +156,6 @@ type Options struct {
 	// indicating that error information is returned immediately
 	RejectLimit string `json:"reject_limit,omitempty"`
 	// Name of the error table that records data format errors.
-	// After the parallel import iscomplete, you can query theerror information table toobtain the detailed errorinformation.
+	// After the parallel import is complete, you can query the error information table to obtain the detailed error information.
 	ErrorTableName string `json:"error_table_name,omitempty"`
 }

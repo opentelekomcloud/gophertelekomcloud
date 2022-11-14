@@ -1,18 +1,38 @@
 package data
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type GetRecordsOpts struct {
 	// Data cursor, which needs to be obtained through the API for obtaining data cursors.
 	// Value range: a string of 1 to 512 characters
 	// Note:
 	// The validity period of a data cursor is 5 minutes.
-	PartitionCursor string `json:"partition-cursor"`
+	PartitionCursor string `q:"partition-cursor"`
 	// Maximum number of bytes that can be obtained for each request.
 	// Note:
 	// If the value is less than the size of a single record in the partition, the record cannot be obtained.
-	MaxFetchBytes *int32 `json:"max_fetch_bytes,omitempty"`
+	MaxFetchBytes *int32 `q:"max_fetch_bytes,omitempty"`
 }
 
-// GET /v2/{project_id}/records
+func GetRecords(client *golangsdk.ServiceClient, opts GetRecordsOpts) (*GetRecordsResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// GET /v2/{project_id}/records
+	raw, err := client.Get(client.ServiceURL("checkpoints")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res GetRecordsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type GetRecordsResponse struct {
 	Records []Record `json:"records,omitempty"`

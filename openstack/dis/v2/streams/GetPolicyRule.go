@@ -1,12 +1,21 @@
 package streams
 
-type GetPolicyRuleOpts struct {
-	// Name of the DIS stream to be created.
-	// Maximum: 60
-	StreamName string `json:"stream_name"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v2/{project_id}/streams/{stream_name}/policies
+func GetPolicyRule(client *golangsdk.ServiceClient, streamName string) (*GetPolicyRuleResponse, error) {
+	// GET /v2/{project_id}/streams/{stream_name}/policies
+	raw, err := client.Get(client.ServiceURL("streams", streamName, "policies"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res GetPolicyRuleResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type GetPolicyRuleResponse struct {
 	// Unique ID of the stream.

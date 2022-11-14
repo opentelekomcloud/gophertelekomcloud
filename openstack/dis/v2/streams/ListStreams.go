@@ -1,6 +1,10 @@
 package streams
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
 type ListStreamsOpts struct {
 	// The maximum number of DIS streams to list in a single API call.
@@ -8,15 +12,30 @@ type ListStreamsOpts struct {
 	// Minimum: 1
 	// Maximum: 500
 	// Default: 10
-	Limit *int32 `json:"limit,omitempty"`
+	Limit *int32 `q:"limit,omitempty"`
 	// Name of the DIS stream to start the stream list with. The returned stream list does not contain this DIS stream name.
 	// If pagination query is required, this parameter is not transferred for query on the first page.
 	// If the value of has_more_streams is true, the query is performed on the next page.
 	// The value of start_stream_name is the name of the last stream in the query result of the first page.
-	StartStreamName string `json:"start_stream_name,omitempty"`
+	StartStreamName string `q:"start_stream_name,omitempty"`
 }
 
-// GET /v2/{project_id}/streams
+func ListStreams(client *golangsdk.ServiceClient, opts ListStreamsOpts) (*ListStreamsResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// GET /v2/{project_id}/streams
+	raw, err := client.Get(client.ServiceURL("streams")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListStreamsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListStreamsResponse struct {
 	// Total number of all the DIS streams created by the current tenant.

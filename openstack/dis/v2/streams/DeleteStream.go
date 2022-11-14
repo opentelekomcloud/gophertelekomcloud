@@ -1,12 +1,9 @@
 package streams
 
-type DeleteStreamOpts struct {
-	// Name of the stream to be deleted.
-	// Maximum: 60
-	StreamName string `json:"stream_name"`
-}
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
-// DELETE /v2/{project_id}/streams/{stream_name}
-
-type DeleteStreamResponse struct {
+func DeleteStream(client *golangsdk.ServiceClient, streamName string) (err error) {
+	// DELETE /v2/{project_id}/streams/{stream_name}
+	_, err = client.Delete(client.ServiceURL("streams", streamName), nil)
+	return
 }

@@ -1,9 +1,14 @@
 package dump
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type CreateMRSDumpTaskOpts struct {
 	// Name of the stream.
 	// Maximum: 60
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Dump destination.
 	// Possible values:
 	// - OBS: Data is dumped to OBS.
@@ -19,9 +24,17 @@ type CreateMRSDumpTaskOpts struct {
 	MRSDestinationDescriptor MRSDestinationDescriptorOpts `json:"mrs_destination_descriptor,omitempty"`
 }
 
-// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+func CreateMRSDumpTask(client *golangsdk.ServiceClient, opts CreateMRSDumpTaskOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type CreateMRSDumpTaskResponse struct {
+	// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+	_, err = client.Post(client.ServiceURL("streams", opts.StreamName, "transfer-tasks"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }
 
 type MRSDestinationDescriptorOpts struct {

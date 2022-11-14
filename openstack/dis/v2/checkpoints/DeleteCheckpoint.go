@@ -1,24 +1,32 @@
 package checkpoints
 
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+
 type DeleteCheckpointOpts struct {
 	// Name of the stream to which the checkpoint belongs.
-	StreamName string `json:"stream_name"`
+	StreamName string `q:"stream_name"`
 	// Name of the application associated with the checkpoint.
 	// Minimum: 1
 	// Maximum: 50
-	AppName string `json:"app_name"`
+	AppName string `q:"app_name"`
 	// Type of the checkpoint. LAST_READ: Only sequence numbers are recorded in databases.
 	// Enumeration values:
 	// LAST_READ
-	CheckpointType string `json:"checkpoint_type"`
+	CheckpointType string `q:"checkpoint_type"`
 	// Identifier of the stream partition to which the checkpoint belongs. The value can be in either of the following formats:
 	// shardId-0000000000
 	// 0
 	// For example, if a stream has three partitions, the partition identifiers are 0, 1, and 2, and shardId-0000000000, shardId-0000000001, shardId-0000000002, respectively.
-	PartitionId string `json:"partition_id,omitempty"`
+	PartitionId string `q:"partition_id,omitempty"`
 }
 
-// DELETE /v2/{project_id}/checkpoints
+func DeleteCheckpoint(client *golangsdk.ServiceClient, opts DeleteCheckpointOpts) (err error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return err
+	}
 
-type DeleteCheckpointResponse struct {
+	// DELETE /v2/{project_id}/checkpoints
+	_, err = client.Delete(client.ServiceURL("checkpoints")+q.String(), nil)
+	return
 }

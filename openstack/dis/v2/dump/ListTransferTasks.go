@@ -1,12 +1,21 @@
 package dump
 
-type ListTransferTasksOpts struct {
-	// Name of the stream to be queried.
-	// Maximum: 60
-	StreamName string `json:"stream_name"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v2/{project_id}/streams/{stream_name}/transfer-tasks
+func ListTransferTasks(client *golangsdk.ServiceClient, streamName string) (*ListTransferTasksResponse, error) {
+	// GET /v2/{project_id}/streams/{stream_name}/transfer-tasks
+	raw, err := client.Get(client.ServiceURL("streams", streamName, "transfer-tasks"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListTransferTasksResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListTransferTasksResponse struct {
 	// Total number of dump tasks.

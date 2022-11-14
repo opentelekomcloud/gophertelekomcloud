@@ -1,18 +1,38 @@
 package apps
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type ListAppOpts struct {
 	// Maximum number of apps to list in a single API call. Value range: 1-100 Default value: 10
 	// Minimum: 1
 	// Maximum: 1000
 	// Default: 10
-	Limit *int32 `json:"limit,omitempty"`
+	Limit *int32 `q:"limit,omitempty"`
 	// Name of the app to start the list with. The returned app list does not contain this app name.
-	StartAppName string `json:"start_app_name,omitempty"`
+	StartAppName string `q:"start_app_name,omitempty"`
 	// Name of the stream whose apps will be returned.
-	StreamName string `json:"stream_name,omitempty"`
+	StreamName string `q:"stream_name,omitempty"`
 }
 
-// GET /v2/{project_id}/apps
+func ListApp(client *golangsdk.ServiceClient, opts ListAppOpts) (*ListAppResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// GET /v2/{project_id}/apps
+	raw, err := client.Get(client.ServiceURL("apps")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListAppResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListAppResponse struct {
 	// Specifies whether there are more matching consumer applications to list.
@@ -24,6 +44,7 @@ type ListAppResponse struct {
 	// Total number of apps that meet criteria.
 	TotalNumber *int32 `json:"total_number,omitempty"`
 }
+
 type DescribeAppResult struct {
 	// Name of the app.
 	AppName string `json:"app_name,omitempty"`

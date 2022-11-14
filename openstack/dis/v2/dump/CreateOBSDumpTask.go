@@ -1,9 +1,14 @@
 package dump
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type CreateOBSDumpTaskOpts struct {
 	// Name of the stream.
 	// Maximum: 60
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Dump destination.
 	// Possible values:
 	// - OBS: Data is dumped to OBS.
@@ -16,12 +21,20 @@ type CreateOBSDumpTaskOpts struct {
 	// OBS
 	DestinationType string `json:"destination_type"`
 	// Parameter list of OBS to which data in the DIS stream will be dumped.
-	OBSDestinationDescriptor *OBSDestinationDescriptorOpts `json:"obs_destination_descriptor,omitempty"`
+	OBSDestinationDescriptor OBSDestinationDescriptorOpts `json:"obs_destination_descriptor,omitempty"`
 }
 
-// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+func CreateOBSDumpTask(client *golangsdk.ServiceClient, opts CreateOBSDumpTaskOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type CreateOBSDumpTaskResponse struct {
+	// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+	_, err = client.Post(client.ServiceURL("streams", opts.StreamName, "transfer-tasks"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }
 
 type OBSDestinationDescriptorOpts struct {

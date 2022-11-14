@@ -1,11 +1,21 @@
 package apps
 
-type DescribeAppOpts struct {
-	// Name of the app to be queried.
-	AppName string `json:"app_name"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// GET /v2/{project_id}/apps/{app_name}
+func DescribeApp(client *golangsdk.ServiceClient, appName string) (*DescribeAppResponse, error) {
+	// GET /v2/{project_id}/apps/{app_name}
+	raw, err := client.Get(client.ServiceURL("apps", appName), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res DescribeAppResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type DescribeAppResponse struct {
 	// Name of the app.

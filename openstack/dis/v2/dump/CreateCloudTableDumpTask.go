@@ -1,9 +1,14 @@
 package dump
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type CreateCloudTableDumpTaskOpts struct {
 	// Name of the stream.
 	// Maximum: 60
-	StreamName string `json:"stream_name"`
+	StreamName string
 	// Dump destination.
 	// Possible values:
 	// - OBS: Data is dumped to OBS.
@@ -17,6 +22,19 @@ type CreateCloudTableDumpTaskOpts struct {
 	DestinationType string `json:"destination_type"`
 	// Parameter list of the CloudTable to which data in the DIS stream will be dumped.
 	CloudTableDestinationDescriptor CloudTableDestinationDescriptorOpts `json:"cloudtable_destination_descriptor,omitempty"`
+}
+
+func CreateCloudTableDumpTask(client *golangsdk.ServiceClient, opts CreateCloudTableDumpTaskOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
+
+	// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
+	_, err = client.Post(client.ServiceURL("streams", opts.StreamName, "transfer-tasks"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }
 
 type CloudTableDestinationDescriptorOpts struct {
@@ -84,18 +102,13 @@ type CloudTableDestinationDescriptorOpts struct {
 	// Value range: a string of letters, digits, and underscores (_)
 	// The maximum length is 50 characters.
 	// This parameter is left empty by default.
-	BackupFilePrerfix string `json:"backup_file_prefix,omitempty"`
+	BackupFilePrefix string `json:"backup_file_prefix,omitempty"`
 	// Time duration for DIS to retry if data fails to be dumped to CloudTable.
 	// If this threshold is exceeded, the data that fails to be dumped will be backed up to the OBS bucket/ backup_file_prefix / cloudtable_error or OBS bucket/ backup_file_prefix / opentsdb_error directory.
 	// Value range: 0-7,200
 	// Unit: second
 	// Default value: 1,800
 	RetryDuration string `json:"retry_duration,omitempty"`
-}
-
-// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
-
-type CreateCloudTableDumpTaskResponse struct {
 }
 
 type CloudtableSchema struct {
@@ -130,7 +143,7 @@ type RowKey struct {
 
 type Column struct {
 	// Name of the HBase column family to which data will be dumped.
-	ColumnFamilyName string `json:"columb_family_name"`
+	ColumnFamilyName string `json:"column_family_name"`
 	// Name of the HBase column to which data will be dumped.
 	// Value range: a string of 1 to 32 characters, consisting of only letters, digits, and underscores (_)
 	ColumnName string `json:"column_name"`

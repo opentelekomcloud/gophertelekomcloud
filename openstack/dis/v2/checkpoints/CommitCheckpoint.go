@@ -1,10 +1,11 @@
 package checkpoints
 
-type CommitCheckpointOpts struct {
-	Body CommitCheckpointRequestBody `json:"body,omitempty"`
-}
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
-type CommitCheckpointRequestBody struct {
+type CommitCheckpointOpts struct {
 	// Name of the app, which is the unique identifier of a user data consumption program.
 	AppName string `json:"app_name"`
 	// Type of the checkpoint.
@@ -28,7 +29,15 @@ type CommitCheckpointRequestBody struct {
 	Metadata string `json:"metadata,omitempty"`
 }
 
-// POST /v2/{project_id}/checkpoints
+func CommitCheckpoint(client *golangsdk.ServiceClient, opts CommitCheckpointOpts) error {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return err
+	}
 
-type CommitCheckpointResponse struct {
+	// POST /v2/{project_id}/checkpoints
+	_, err = client.Post(client.ServiceURL("checkpoints"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return err
 }
