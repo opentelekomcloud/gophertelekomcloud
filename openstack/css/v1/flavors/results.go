@@ -6,33 +6,21 @@ import (
 	"math"
 	"strconv"
 	"strings"
-
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-type ListResult struct {
-	golangsdk.Result
-}
 
 type Flavor struct {
 	// RAM - memory size of an instance.
 	// Unit: GB
 	RAM int `json:"ram"`
-
 	// CPU - number of vCPUs of an instance.
 	CPU int `json:"cpu"`
-
 	// Name - flavor name.
-	Name string `json:"name"`
-
+	Name   string `json:"name"`
 	Region string `json:"region"`
-
 	// DiskMin - minimal disk capacity of an instance.
 	DiskMin int `json:"-"`
 	// DiskMax - maximum disk capacity of an instance.
 	DiskMax int `json:"-"`
-
 	// FlavorID - ID of a flavor.
 	FlavorID string `json:"flavor_id"`
 }
@@ -64,31 +52,11 @@ func (f *Flavor) UnmarshalJSON(b []byte) error {
 type Version struct {
 	// Version - engine version
 	Version string `json:"version"`
-
 	// Type - instance type.
 	// The options are `ess`, `ess-cold`, `ess-master`, and `ess-client`.
 	Type string `json:"type"`
-
 	// Flavors - list of flavors
 	Flavors []Flavor `json:"flavors"`
-}
-
-type VersionPage struct {
-	pagination.SinglePageBase
-}
-
-func (v VersionPage) IsEmpty() (bool, error) {
-	versions, err := ExtractVersions(v)
-	if err != nil {
-		return false, err
-	}
-	return len(versions) == 0, nil
-}
-
-func ExtractVersions(p pagination.Page) ([]Version, error) {
-	var versions []Version
-	err := (p.(VersionPage)).ExtractIntoSlicePtr(&versions, "versions")
-	return versions, err
 }
 
 type Limit struct {
@@ -103,25 +71,18 @@ func (r Limit) Matches(value int) bool {
 	return value >= r.Min && value <= r.Max
 }
 
-// Options to filter version list by
+// FilterOpts to filter version list by
 type FilterOpts struct {
 	Version string
-
 	// One of ess, ess-master, ess-client, ess-cloud
 	Type string
-
 	// Name of the searched flavor
 	FlavorName string
-
-	DiskMin *Limit
-
-	DiskMax *Limit
-
+	DiskMin    *Limit
+	DiskMax    *Limit
 	// Region - region the flavor is available for
 	Region string
-
-	CPU *Limit
-
+	CPU    *Limit
 	// RAM - memory size, GB
 	RAM *Limit
 }
