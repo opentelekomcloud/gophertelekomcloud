@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type CreateClusterInfo struct {
+type CreateClusterOpts struct {
 	// Node type
 	NodeType string `json:"node_type"`
 	// Number of nodes in a cluster. The value ranges from 2 to 256.
@@ -50,7 +50,7 @@ type PublicIp struct {
 	EipId string `json:"eip_id,omitempty"`
 }
 
-func CreateCluster(client *golangsdk.ServiceClient, opts CreateClusterInfo) (string, error) {
+func CreateCluster(client *golangsdk.ServiceClient, opts CreateClusterOpts) (string, error) {
 	b, err := build.RequestBody(opts, "cluster")
 	if err != nil {
 		return "", err
