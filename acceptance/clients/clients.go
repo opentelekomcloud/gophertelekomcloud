@@ -599,6 +599,16 @@ func NewDmsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewDisV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDISServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewSwrV2Client returns authenticated SWR v2 client
 func NewSwrV2Client() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
