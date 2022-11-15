@@ -26,7 +26,11 @@ type CreateStreamOpts struct {
 	// Enumeration values:
 	// BLOB
 	DataType string `json:"data_type,omitempty"`
-	// Period of time for which data is retained in the stream. Value range: 24-72 Unit: hour Default value: 24 If this parameter is left blank, the default value is used.
+	// Period of time for which data is retained in the stream.
+	// Value range: 24-72
+	// Unit: hour
+	// Default value: 24
+	// If this parameter is left blank, the default value is used.
 	// Maximum: 7
 	// Default: 24
 	DataDuration *int32 `json:"data_duration,omitempty"`
@@ -41,9 +45,10 @@ type CreateStreamOpts struct {
 	AutoScaleMinPartitionCount *int64 `json:"auto_scale_min_partition_count,omitempty"`
 	// Maximum number of partitions for automatic scale-up when auto-scaling is enabled.
 	AutoScaleMaxPartitionCount *int32 `json:"auto_scale_max_partition_count,omitempty"`
-
+	// Source data structure that defines JSON and CSV formats.
+	// It is described in the syntax of the Avro schema.
 	DataSchema string `json:"data_schema,omitempty"`
-
+	// Attributes of data in CSV format, such as delimiter.
 	CsvProperties CsvProperties `json:"csv_properties,omitempty"`
 	// Compression type of data. Currently, the value can be:
 	// snappy

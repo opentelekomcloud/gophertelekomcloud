@@ -9,7 +9,9 @@ type GetCheckpointOpts struct {
 	// Name of the stream to which the checkpoint belongs.
 	StreamName string `q:"stream_name"`
 	// Identifier of the stream partition to which the checkpoint belongs.
-	// The value can be in either of the following formats: shardId-00000000000
+	// The value can be in either of the following formats:
+	//  - shardId-0000000000
+	//  - 0
 	// For example, if a stream has three partitions, the partition identifiers are 0, 1, and 2,
 	// or shardId-0000000000, shardId-0000000001, and shardId-0000000002, respectively.
 	PartitionId string `q:"partition_id"`
