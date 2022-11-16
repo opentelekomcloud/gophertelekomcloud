@@ -15,9 +15,6 @@ type ListResourcesOpts struct {
 	// Specifies the region ID.
 	// Maximum length: 36
 	RegionId string `q:"region_id,omitempty"`
-	// Specifies the enterprise project ID.
-	// Maximum length: 36
-	EnterpriseProjectId string `q:"ep_id,omitempty"`
 	// Specifies the resource tag.
 	Tag map[string]string `q:"tag,omitempty"`
 	// Specifies the maximum number of records to return.
@@ -70,10 +67,6 @@ type ResourceEntity struct {
 	ProjectId string `json:"project_id,omitempty"`
 	// Specifies the project name in OpenStack.
 	ProjectName string `json:"project_name,omitempty"`
-	// Specifies the enterprise project ID.
-	EnterpriseProjectId string `json:"ep_id,omitempty"`
-	// Specifies the enterprise project name.
-	EnterpriseProjectName string `json:"ep_name,omitempty"`
 	// Specifies the resource checksum.
 	Checksum string `json:"checksum,omitempty"`
 	// Specifies the time when the resource was created.
