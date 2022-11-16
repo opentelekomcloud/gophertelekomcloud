@@ -15,7 +15,7 @@ type CreateOpts struct {
 	// The name cannot start or end with a period.
 	LogGroupName string `json:"log_group_name" required:"true"`
 	// Log expiration time. The value is fixed to 7 days.
-	TTLInDays *int32 `json:"ttl_in_days"`
+	TTLInDays int `json:"ttl_in_days"`
 }
 
 func Create(client *golangsdk.ServiceClient, ops CreateOpts) (string, error) {
@@ -28,6 +28,9 @@ func Create(client *golangsdk.ServiceClient, ops CreateOpts) (string, error) {
 	raw, err := client.Post(client.ServiceURL("groups"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
+	if err != nil {
+		return "", err
+	}
 
 	var res struct {
 		ID string `json:"log_group_id"`

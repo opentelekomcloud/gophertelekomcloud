@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/loggroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -18,7 +17,7 @@ func TestLtsGroupsLifecycle(t *testing.T) {
 	name := tools.RandomString("test-group-", 3)
 	createOpts := loggroups.CreateOpts{
 		LogGroupName: name,
-		TTLInDays:    pointerto.Int32(7),
+		TTLInDays:    7,
 	}
 
 	created, err := loggroups.Create(client, createOpts)

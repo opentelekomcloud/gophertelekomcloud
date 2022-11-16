@@ -7,9 +7,9 @@ import (
 
 type GetOpts struct {
 	// Log group ID
-	GroupId string `json:"group_id"`
+	GroupId string
 	// ID of a log stream
-	TopicId string `json:"topic_id"`
+	TopicId string
 }
 
 func Get(client *golangsdk.ServiceClient, opts GetOpts) (*GetResponse, error) {

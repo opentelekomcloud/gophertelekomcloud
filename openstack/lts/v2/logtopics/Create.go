@@ -27,6 +27,9 @@ func Create(client *golangsdk.ServiceClient, ops CreateOpts) (string, error) {
 	raw, err := client.Post(client.ServiceURL("log-groups", ops.GroupId, "log-topics"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
+	if err != nil {
+		return "", err
+	}
 
 	var res struct {
 		ID string `json:"log_topic_id"`

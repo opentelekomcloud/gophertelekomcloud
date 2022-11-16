@@ -4,9 +4,9 @@ import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
 type DeleteOpts struct {
 	// ID of a created log group
-	GroupId string `json:"group_id"`
+	GroupId string
 	// ID of a created log stream
-	TopicId string `json:"topic_id"`
+	TopicId string
 }
 
 // Delete a log topic by id
