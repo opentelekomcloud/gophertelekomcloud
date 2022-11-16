@@ -20,7 +20,7 @@ type ShowResourceRelationsOpts struct {
 	// Maximum value: 1000
 	Limit *int32 `q:"limit,omitempty"`
 	// Specifies the pagination parameter.
-	// You can use the marker value returned in the previous request as the number of the first page of records to return in this request.
+	// You can use the marker value returned to the previous request as the number of the first page of records to return in this request.
 	// Minimum length: 4
 	// Maximum length: 400
 	Marker string `q:"marker,omitempty"`

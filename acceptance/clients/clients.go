@@ -484,6 +484,14 @@ func NewRdsV3() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewRmsV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewRMSV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+}
+
 // NewMrsV1 returns authenticated MRS v1 client
 func NewMrsV1() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()

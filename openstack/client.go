@@ -850,6 +850,10 @@ func NewRDSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return initClientOpts(client, eo, "rdsv3")
 }
 
+func NewRMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "rms")
+}
+
 // NewSDRSV1 creates a ServiceClient that may be used with the v1 SDRS service.
 func NewSDRSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "sdrs")

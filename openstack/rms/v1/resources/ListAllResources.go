@@ -11,7 +11,7 @@ type ListAllResourcesOpts struct {
 	RegionId string `q:"region_id,omitempty"`
 	// Specifies the enterprise project ID.
 	// Maximum length: 36
-	EpId string `q:"ep_id,omitempty"`
+	EnterpriseProjectId string `q:"ep_id,omitempty"`
 	// Specifies the resource type.
 	// Maximum length: 40
 	Type string `q:"type,omitempty"`
