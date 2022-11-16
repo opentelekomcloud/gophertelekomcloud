@@ -1,21 +1,20 @@
-package loggroups
+package logtopics
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// CreateOpts is a struct that contains all the parameters.
 type CreateOpts struct {
-	// Log group name.
+	// ID of a created log group
+	GroupId string `json:"group_id"`
+	// Log stream name.
 	// The configuration rules are as follows:
 	// - Must be a string of 1 to 64 characters.
 	// - Only letters, digits, underscores (_), hyphens (-), and periods (.) are allowed.
 	// The name cannot start or end with a period.
-	LogGroupName string `json:"log_group_name" required:"true"`
-	// Log expiration time. The value is fixed to 7 days.
-	TTLInDays *int32 `json:"ttl_in_days"`
+	LogTopicName string `json:"log_topic_name" required:"true"`
 }
 
 func Create(client *golangsdk.ServiceClient, ops CreateOpts) (string, error) {
@@ -24,13 +23,13 @@ func Create(client *golangsdk.ServiceClient, ops CreateOpts) (string, error) {
 		return "", err
 	}
 
-	// POST /v2.0/{project_id}/groups
-	raw, err := client.Post(client.ServiceURL("groups"), b, nil, &golangsdk.RequestOpts{
+	// POST /v2.0/{project_id}/log-groups/{group_id}/log-topics
+	raw, err := client.Post(client.ServiceURL("log-groups", ops.GroupId, "log-topics"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 
 	var res struct {
-		ID string `json:"log_group_id"`
+		ID string `json:"log_topic_id"`
 	}
 	err = extract.Into(raw.Body, &res)
 	return res.ID, err
