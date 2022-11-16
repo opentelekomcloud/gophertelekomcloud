@@ -43,7 +43,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	_, err = tracker.Update(client, tracker.UpdateOpts{
 		BucketName: bucketName,
 		Status:     "disabled",
-	})
+	}, ctsTracker.TrackerName)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 
