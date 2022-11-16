@@ -3,21 +3,6 @@ package loggroups
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
 // Log group Create response
-type CreateResponse struct {
-	ID string `json:"log_group_id"`
-}
-
-// CreateResult is a struct that contains all the return parameters of creation
-type CreateResult struct {
-	golangsdk.Result
-}
-
-// Extract from CreateResult
-func (r CreateResult) Extract() (*CreateResponse, error) {
-	s := new(CreateResponse)
-	err := r.Result.ExtractInto(s)
-	return s, err
-}
 
 // DeleteResult is a struct which contains the result of deletion
 type DeleteResult struct {
