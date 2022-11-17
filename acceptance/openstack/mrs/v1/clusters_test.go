@@ -69,14 +69,14 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		),
 	}
 
-	clResponse, err := cluster.Create(client, createOpts).Extract()
+	clResponse, err := cluster.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	err = waitForClusterToBeActive(client, clResponse.ClusterID, 3000)
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		err = cluster.Delete(client, clResponse.ClusterID).ExtractErr()
+		err = cluster.Delete(client, clResponse.ClusterID)
 		th.AssertNoErr(t, err)
 		err = waitForClusterToBeDeleted(client, clResponse.ClusterID, 3000)
 		th.AssertNoErr(t, err)
@@ -96,7 +96,7 @@ func TestMrsClusterLifecycle(t *testing.T) {
 	err = tags.Create(client, "clusters", clResponse.ClusterID, tagOpts).ExtractErr()
 	th.AssertNoErr(t, err)
 
-	newCluster, err := cluster.Get(client, clResponse.ClusterID).Extract()
+	newCluster, err := cluster.Get(client, clResponse.ClusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(newCluster.ComponentList), 9)
 
@@ -107,7 +107,7 @@ func TestMrsClusterLifecycle(t *testing.T) {
 
 func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		n, err := cluster.Get(client, clusterID).Extract()
+		n, err := cluster.Get(client, clusterID)
 		if err != nil {
 			return false, err
 		}
@@ -122,7 +122,7 @@ func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string,
 
 func waitForClusterToBeDeleted(client *golangsdk.ServiceClient, clusterID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		n, err := cluster.Get(client, clusterID).Extract()
+		n, err := cluster.Get(client, clusterID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

@@ -33,7 +33,7 @@ type BatchOpts struct {
 // ActionType specifies the type of batch operation action to be performed
 type ActionType string
 
-var (
+const (
 	// ActionCreate is used to set action operator to create
 	ActionCreate ActionType = "create"
 	// ActionDelete is used to set action operator to delete
@@ -52,7 +52,7 @@ func BatchAction(client *golangsdk.ServiceClient, clusterID string, opts BatchOp
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(actionURL(client, clusterID), b, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("clusters", clusterID, "tags/action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{204},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
@@ -61,7 +61,7 @@ func BatchAction(client *golangsdk.ServiceClient, clusterID string, opts BatchOp
 
 // Get retrieves the tags of a specific instance.
 func Get(client *golangsdk.ServiceClient, clusterID string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, clusterID), &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Get(client.ServiceURL("clusters", clusterID, "tags"), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
