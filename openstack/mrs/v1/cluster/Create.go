@@ -10,7 +10,7 @@ import (
 type CreateOpts struct {
 	// Cluster billing mode.
 	// Set this parameter to 12.
-	BillingType int32 `json:"billing_type"`
+	BillingType int `json:"billing_type"`
 	// Region of the cluster.
 	DataCenter string `json:"data_center"`
 	// AZ ID.
@@ -73,7 +73,7 @@ type CreateOpts struct {
 	// - 1: streaming cluster
 	// The default value is 0.
 	// Note: Currently, hybrid clusters cannot be created using APIs.
-	ClusterType *int32 `json:"cluster_type,omitempty"`
+	ClusterType *int `json:"cluster_type,omitempty"`
 	// Running mode of an MRS cluster
 	// - 0: normal cluster.
 	// In a normal cluster, Kerberos authentication is disabled,
@@ -87,7 +87,7 @@ type CreateOpts struct {
 	// NOTE
 	// For MRS 1.7.2 or earlier,
 	// the request body contains the cluster_admin_secret field only when safe_mode is set to 1.
-	SafeMode int32 `json:"safe_mode"`
+	SafeMode int `json:"safe_mode"`
 	// Password of the MRS Manager administrator
 	// - Must contain 8 to 32 characters.
 	// - Must contain at least three of
@@ -109,7 +109,7 @@ type CreateOpts struct {
 	// NOTE
 	// This parameter is valid only for clusters of MRS 1.6.3
 	// or later instead of clusters of versions earlier than MRS 1.6.3.
-	LoginMode *int32 `json:"login_mode,omitempty"`
+	LoginMode *int `json:"login_mode,omitempty"`
 	// Password of user root for logging in to a cluster node
 	// If login_mode is set to 0, the request body contains the cluster_master_secret field.
 	// A password must meet the following requirements:
@@ -127,15 +127,63 @@ type CreateOpts struct {
 	// - 1: Collect.
 	// The default value is 1, indicating that OBS buckets will be created
 	// and only used to collect logs that record MRS cluster creation failures.
-	LogCollection *int32 `json:"log_collection,omitempty"`
+	LogCollection *int `json:"log_collection,omitempty"`
 	// List of nodes.
-	NodeGroups []NodeGroupV11 `json:"node_groups,omitempty"`
+	NodeGroups []NodeGroup `json:"node_groups,omitempty"`
 	// List of service components to be installed.
 	ComponentList []ComponentList `json:"component_list"`
 	// Jobs can be submitted when a cluster is created. Currently, only one job can be created.
 	AddJobs []AddJobs `json:"add_jobs,omitempty"`
 	// Bootstrap action script information.
 	BootstrapScripts []BootstrapScript `json:"bootstrap_scripts,omitempty"`
+	// Number of Master nodes. If cluster HA is enabled, set this parameter to 2. If cluster HA is disabled, set this parameter to 1.
+	MasterNodeNum int `json:"master_node_num" required:"true"`
+	// Instance specifications of the Master node, for example, c6.4xlarge.4linux.mrs.
+	// MRS supports host specifications determined by CPU, memory, and disk space.
+	MasterNodeSize string `json:"master_node_size" required:"true"`
+	// Number of Core nodes
+	// Value range: 1 to 500
+	// A maximum of 500 Core nodes are supported by default. If more than 500 Core nodes are required, contact technical support.
+	CoreNodeNum int `json:"core_node_num" required:"true"`
+	// Instance specifications of the Core node, for example, c6.4xlarge.4linux.mrs.
+	CoreNodeSize string `json:"core_node_size" required:"true"`
+	// This parameter is a multi-disk parameter, indicating the data disk storage type of the Master node. Currently, SATA, SAS and SSD are supported.
+	MasterDataVolumeType string `json:"master_data_volume_type,omitempty"`
+	// This parameter is a multi-disk parameter, indicating the data disk storage space of the Master node.
+	// To increase data storage capacity, you can add disks at the same time when creating a cluster.
+	// Value range: 100 GB to 32,000 GB
+	MasterDataVolumeSize int `json:"master_data_volume_size,omitempty"`
+	// This parameter is a multi-disk parameter, indicating the number of data disks of the Master node.
+	// The value can be set to 1 only.
+	MasterDataVolumeCount int `json:"master_data_volume_count,omitempty"`
+	// This parameter is a multi-disk parameter, indicating the data disk storage type of the Core node. Currently, SATA, SAS and SSD are supported.
+	CoreDataVolumeType string `json:"core_data_volume_type,omitempty"`
+	// This parameter is a multi-disk parameter, indicating the data disk storage space of the Core node.
+	// To increase data storage capacity, you can add disks at the same time when creating a cluster.
+	// Value range: 100 GB to 32,000 GB
+	CoreDataVolumeSize int `json:"core_data_volume_size,omitempty"`
+	// This parameter is a multi-disk parameter, indicating the number of data disks of the Core node.
+	// Value range: 1 to 10
+	CoreDataVolumeCount int `json:"core_data_volume_count,omitempty"`
+	// Data disk storage type of the Master and Core nodes. Currently, SATA, SAS and SSD are supported.
+	// Disk parameters can be represented by volume_type and volume_size, or multi-disk parameters.
+	// If the volume_type and volume_size parameters coexist with the multi-disk parameters,
+	// the system reads the volume_type and volume_size parameters first. You are advised to use the multi-disk parameters.
+	// SATA: Common I/O
+	// SAS: High I/O
+	// SSD: Ultra-high I/O
+	VolumeType string `json:"volume_type,omitempty"`
+	// Data disk storage space of the Master and Core nodes. To increase data storage capacity,
+	// you can add disks at the same time when creating a cluster. Select a proper disk storage space based on the following application scenarios:
+	// Separation of data storage and computing: Data is stored in the OBS system.
+	// Costs of clusters are relatively low but computing performance is poor. The clusters can be deleted at any time.
+	// It is recommended when data computing is infrequently performed.
+	// Integration of data storage and computing: Data is stored in the HDFS system.
+	// Costs of clusters are relatively high but computing performance is good. The clusters cannot be deleted in a short term.
+	// It is recommended when data computing is frequently performed.
+	// Value range: 100 GB to 32,000 GB
+	// This parameter is not recommended. For details, see the description of the volume_type parameter.
+	VolumeSize int `json:"volume_size,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateResponse, error) {
@@ -157,7 +205,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateResponse, 
 	return &res, err
 }
 
-type NodeGroupV11 struct {
+type NodeGroup struct {
 	// Node group name.
 	// - master_node_default_group
 	// - core_node_analysis_group
@@ -168,7 +216,7 @@ type NodeGroupV11 struct {
 	// Number of nodes.
 	// The value ranges from 0 to 500 and the default value is 0.
 	// The total number of Core and Task nodes cannot exceed 500.
-	NodeNum int32 `json:"node_num"`
+	NodeNum int `json:"node_num"`
 	// Instance specifications of a node.
 	// For details about the configuration method, see the remarks of master_node_size.
 	NodeSize string `json:"node_size"`
@@ -188,10 +236,10 @@ type NodeGroupV11 struct {
 	DataVolumeType string `json:"data_volume_type,omitempty"`
 	// Number of data disks of a node.
 	// Value range: 0 to 10
-	DataVolumeCount *int32 `json:"data_volume_count,omitempty"`
+	DataVolumeCount *int `json:"data_volume_count,omitempty"`
 	// Data disk storage space of a node.
 	// Value range: 100 GB to 32,000 GB
-	DataVolumeSize *int32 `json:"data_volume_size,omitempty"`
+	DataVolumeSize *int `json:"data_volume_size,omitempty"`
 	// Auto scaling rule information.
 	// This parameter is valid only when group_name is set to task_node_analysis_group or task_node_streaming_group.
 	AutoScalingPolicy *AutoScalingPolicy `json:"auto_scaling_policy,omitempty"`
@@ -202,10 +250,10 @@ type AutoScalingPolicy struct {
 	AutoScalingEnable bool `json:"auto_scaling_enable"`
 	// Minimum number of nodes left in the node group.
 	// Value range: 0 to 500
-	MinCapacity int32 `json:"min_capacity"`
+	MinCapacity int `json:"min_capacity"`
 	// Maximum number of nodes in the node group.
 	// Value range: 0 to 500
-	MaxCapacity int32 `json:"max_capacity"`
+	MaxCapacity int `json:"max_capacity"`
 	// Resource plan list.
 	// If this parameter is left blank, the resource plan is disabled.
 	// When auto scaling is enabled, either a resource plan or an auto scaling rule must be configured.
@@ -234,10 +282,10 @@ type ResourcesPlan struct {
 	EndTime string `json:"end_time"`
 	// Minimum number of the preserved nodes in a node group in a resource plan.
 	// Value range: 0 to 500
-	MinCapacity int32 `json:"min_capacity"`
+	MinCapacity int `json:"min_capacity"`
 	// Maximum number of the preserved nodes in a node group in a resource plan.
 	// Value range: 0 to 500
-	MaxCapacity int32 `json:"max_capacity"`
+	MaxCapacity int `json:"max_capacity"`
 }
 
 type Rules struct {
@@ -258,10 +306,10 @@ type Rules struct {
 	// The unit is minute.
 	// Value range: 0 to 10,080.
 	// One week is equal to 10,080 minutes.
-	CoolDownMinutes int32 `json:"cool_down_minutes"`
+	CoolDownMinutes int `json:"cool_down_minutes"`
 	// Number of nodes that can be adjusted once.
 	// Value range: 1 to 100
-	ScalingAdjustment int32 `json:"scaling_adjustment"`
+	ScalingAdjustment int `json:"scaling_adjustment"`
 	// Condition for triggering a rule.
 	Trigger *Trigger `json:"trigger"`
 }
@@ -283,7 +331,7 @@ type Trigger struct {
 	ComparisonOperator string `json:"comparison_operator,omitempty"`
 	// Number of consecutive five-minute periods, during which a metric threshold is reached
 	// Value range: 1 to 288
-	EvaluationPeriods int32 `json:"evaluation_periods"`
+	EvaluationPeriods int `json:"evaluation_periods"`
 }
 
 type ExecScript struct {

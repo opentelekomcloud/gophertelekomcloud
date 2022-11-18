@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/mrs/v1/cluster"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
@@ -49,21 +50,21 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		MasterNodeSize:     "c3.xlarge.4.linux.mrs",
 		CoreNodeNum:        3,
 		CoreNodeSize:       "c3.xlarge.4.linux.mrs",
-		AvailableZoneID:    az,
+		AvailableZoneId:    az,
 		ClusterName:        name,
 		Vpc:                vpc.Name,
-		VpcID:              vpc.ID,
-		SubnetID:           subnet.NetworkID,
+		VpcId:              vpc.ID,
+		SubnetId:           subnet.NetworkID,
 		SubnetName:         subnet.Name,
 		ClusterVersion:     "MRS 2.1.0",
-		ClusterType:        0,
+		ClusterType:        pointerto.Int(0),
 		VolumeType:         "SATA",
 		VolumeSize:         100,
 		SafeMode:           1,
 		ClusterAdminSecret: "Qwerty123!",
-		LoginMode:          1,
+		LoginMode:          pointerto.Int(1),
 		NodePublicCertName: keyPairName,
-		LogCollection:      1,
+		LogCollection:      pointerto.Int(1),
 		ComponentList: cluster.ExpandComponent(
 			[]string{"Presto", "Hadoop", "Spark", "HBase", "Hive", "Hue", "Loader", "Tez", "Flink"},
 		),
@@ -75,12 +76,12 @@ func TestMrsClusterLifecycle(t *testing.T) {
 	err = waitForClusterToBeActive(client, clResponse.ClusterID, 3000)
 	th.AssertNoErr(t, err)
 
-	defer func() {
+	t.Cleanup(func() {
 		err = cluster.Delete(client, clResponse.ClusterID)
 		th.AssertNoErr(t, err)
 		err = waitForClusterToBeDeleted(client, clResponse.ClusterID, 3000)
 		th.AssertNoErr(t, err)
-	}()
+	})
 
 	tagOpts := []tags.ResourceTag{
 		{
