@@ -121,7 +121,11 @@ func Create(c *golangsdk.ServiceClient, opts interface{}) (*JobExecution, error)
 	// POST /v1.1/{project_id}/jobs/submit-job
 	raw, err := c.Post(c.ServiceURL("jobs", "submit-job"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders})
+		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res JobExecution
 	err = extract.IntoStructPtr(raw.Body, &res, "job_execution")
