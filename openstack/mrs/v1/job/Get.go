@@ -5,13 +5,14 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 func Get(c *golangsdk.ServiceClient, id string) (*JobExecution, error) {
 	// GET /v1.1/{project_id}/job-exes/{job_exe_id}
 	raw, err := c.Get(c.ServiceURL("job-exes", id), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
 	})
 
 	return extra(err, raw)

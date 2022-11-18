@@ -3,6 +3,7 @@ package job
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 type CreateOpts struct {
@@ -120,7 +121,7 @@ func Create(c *golangsdk.ServiceClient, opts interface{}) (*JobExecution, error)
 	// POST /v1.1/{project_id}/jobs/submit-job
 	raw, err := c.Post(c.ServiceURL("jobs", "submit-job"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
+		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
 	})
 
 	return extra(err, raw)
