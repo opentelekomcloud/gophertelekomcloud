@@ -1,4 +1,4 @@
-package job
+package job_object
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 

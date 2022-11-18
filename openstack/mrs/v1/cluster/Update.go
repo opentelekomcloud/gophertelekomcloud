@@ -8,7 +8,7 @@ import (
 
 type UpdateOpts struct {
 	// Cluster ID
-	ClusterId string `json:"cluster_id"`
+	ClusterId string
 	// Service ID.
 	// This parameter is reserved for extension.
 	// You do not need to set this parameter.
