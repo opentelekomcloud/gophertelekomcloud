@@ -23,7 +23,7 @@ func (opts ListOpts) ToListOptsQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder, dbName string) pagination.Pager {
-	url := listURL(client, dbName)
+	url := client.ServiceURL("flavors", dbName)
 	if opts != nil {
 		query, err := opts.ToListOptsQuery()
 		if err != nil {
@@ -38,4 +38,33 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder, dbName string) 
 
 	pagerRDS.Headers = map[string]string{"Content-Type": "application/json"}
 	return pagerRDS
+}
+
+type Flavor struct {
+	VCPUs        string            `json:"vcpus"`
+	RAM          int               `json:"ram"`
+	SpecCode     string            `json:"spec_code"`
+	InstanceMode string            `json:"instance_mode"`
+	AzStatus     map[string]string `json:"az_status"`
+}
+
+type DbFlavorsPage struct {
+	pagination.SinglePageBase
+}
+
+func (r DbFlavorsPage) IsEmpty() (bool, error) {
+	flavors, err := ExtractDbFlavors(r)
+	if err != nil {
+		return false, err
+	}
+	return len(flavors) == 0, err
+}
+
+func ExtractDbFlavors(r pagination.Page) ([]Flavor, error) {
+	var s []Flavor
+	err := (r.(DbFlavorsPage)).ExtractIntoSlicePtr(&s, "flavors")
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
