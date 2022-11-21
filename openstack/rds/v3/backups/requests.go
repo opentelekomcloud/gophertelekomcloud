@@ -4,13 +4,10 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
-}
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
@@ -40,9 +37,8 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 		r.Err = err
 		return
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders}
-	_, r.Err = c.Put(resourceURL(c, id), b, nil, reqOpt)
+	_, r.Err = c.Put(c.ServiceURL("instances", id, "backups/policy"), b, nil,
+		&golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders})
 	return
 }
 
@@ -71,7 +67,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(baseURL(c), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Post(c.ServiceURL("backups"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return
@@ -98,7 +94,7 @@ func (opts ListOpts) ToBackupListQuery() (string, error) {
 }
 
 func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := baseURL(c)
+	url := c.ServiceURL("backups")
 	if opts != nil {
 		q, err := opts.ToBackupListQuery()
 		if err != nil {
@@ -133,7 +129,7 @@ func WaitForBackup(c *golangsdk.ServiceClient, instanceID, backupID string, stat
 }
 
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = c.Delete(backupURL(c, id), &golangsdk.RequestOpts{
+	_, r.Err = c.Delete(c.ServiceURL("backups", id), &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 204},
 	})
 	return
@@ -220,7 +216,7 @@ func RestorePITR(c *golangsdk.ServiceClient, opts RestorePITROptsBuilder) (r Res
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(restoreURL(c), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Post(c.ServiceURL("instances", "recovery"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
