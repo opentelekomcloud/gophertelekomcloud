@@ -22,11 +22,14 @@ type DataStoresResult struct {
 }
 
 type DataStores struct {
+	//
 	DataStores []dataStores `json:"dataStores" `
 }
 
 type dataStores struct {
-	Id   string `json:"id" `
+	//
+	Id string `json:"id" `
+	//
 	Name string `json:"name"`
 }
 

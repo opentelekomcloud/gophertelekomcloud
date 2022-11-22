@@ -27,24 +27,42 @@ type ResizeFlavorResult struct {
 }
 
 type Instance struct {
-	Id                  string         `json:"id"`
-	Name                string         `json:"name"`
-	Status              string         `json:"status"`
-	Datastore           Datastore      `json:"datastore"`
-	Ha                  Ha             `json:"ha"`
-	ConfigurationId     string         `json:"configuration_id"`
-	Port                string         `json:"port"`
-	BackupStrategy      BackupStrategy `json:"backup_strategy"`
-	EnterpriseProjectId string         `json:"enterprise_project_id"`
-	DiskEncryptionId    string         `json:"disk_encryption_id"`
-	FlavorRef           string         `json:"flavor_ref"`
-	Volume              Volume         `json:"volume"`
-	Region              string         `json:"region"`
-	AvailabilityZone    string         `json:"availability_zone"`
-	VpcId               string         `json:"vpc_id"`
-	SubnetId            string         `json:"subnet_id"`
-	SecurityGroupId     string         `json:"security_group_id"`
-	ChargeInfo          ChargeInfo     `json:"charge_info"`
+	//
+	Id string `json:"id"`
+	//
+	Name string `json:"name"`
+	//
+	Status string `json:"status"`
+	//
+	Datastore Datastore `json:"datastore"`
+	//
+	Ha Ha `json:"ha"`
+	//
+	ConfigurationId string `json:"configuration_id"`
+	//
+	Port string `json:"port"`
+	//
+	BackupStrategy BackupStrategy `json:"backup_strategy"`
+	//
+	EnterpriseProjectId string `json:"enterprise_project_id"`
+	//
+	DiskEncryptionId string `json:"disk_encryption_id"`
+	//
+	FlavorRef string `json:"flavor_ref"`
+	//
+	Volume Volume `json:"volume"`
+	//
+	Region string `json:"region"`
+	//
+	AvailabilityZone string `json:"availability_zone"`
+	//
+	VpcId string `json:"vpc_id"`
+	//
+	SubnetId string `json:"subnet_id"`
+	//
+	SecurityGroupId string `json:"security_group_id"`
+	//
+	ChargeInfo ChargeInfo `json:"charge_info"`
 }
 
 func (r CreateResult) Extract() (*CreateRds, error) {
@@ -96,51 +114,86 @@ type ListRdsResult struct {
 }
 
 type ListRdsResponse struct {
-	Instances  []RdsInstanceResponse `json:"instances"`
-	TotalCount int                   `json:"total_count"`
+	//
+	Instances []RdsInstanceResponse `json:"instances"`
+	//
+	TotalCount int `json:"total_count"`
 }
 
 type RdsInstanceResponse struct {
-	Id                  string            `json:"id"`
-	Name                string            `json:"name"`
-	Status              string            `json:"status"`
-	PrivateIps          []string          `json:"private_ips"`
-	PublicIps           []string          `json:"public_ips"`
-	Port                int               `json:"port"`
-	Type                string            `json:"type"`
-	Ha                  Ha                `json:"ha"`
-	Region              string            `json:"region"`
-	DataStore           Datastore         `json:"datastore"`
-	Created             string            `json:"created"`
-	Updated             string            `json:"updated"`
-	DbUserName          string            `json:"db_user_name"`
-	VpcId               string            `json:"vpc_id"`
-	SubnetId            string            `json:"subnet_id"`
-	SecurityGroupId     string            `json:"security_group_id"`
-	FlavorRef           string            `json:"flavor_ref"`
-	Volume              Volume            `json:"volume"`
-	SwitchStrategy      string            `json:"switch_strategy"`
-	BackupStrategy      BackupStrategy    `json:"backup_strategy"`
-	MaintenanceWindow   string            `json:"maintenance_window"`
-	Nodes               []Nodes           `json:"nodes"`
-	RelatedInstance     []RelatedInstance `json:"related_instance"`
-	DiskEncryptionId    string            `json:"disk_encryption_id"`
-	EnterpriseProjectId string            `json:"enterprise_project_id"`
-	TimeZone            string            `json:"time_zone"`
+	//
+	Id string `json:"id"`
+	//
+	Name string `json:"name"`
+	//
+	Status string `json:"status"`
+	//
+	PrivateIps []string `json:"private_ips"`
+	//
+	PublicIps []string `json:"public_ips"`
+	//
+	Port int `json:"port"`
+	//
+	Type string `json:"type"`
+	//
+	Ha Ha `json:"ha"`
+	//
+	Region string `json:"region"`
+	//
+	DataStore Datastore `json:"datastore"`
+	//
+	Created string `json:"created"`
+	//
+	Updated string `json:"updated"`
+	//
+	DbUserName string `json:"db_user_name"`
+	//
+	VpcId string `json:"vpc_id"`
+	//
+	SubnetId string `json:"subnet_id"`
+	//
+	SecurityGroupId string `json:"security_group_id"`
+	//
+	FlavorRef string `json:"flavor_ref"`
+	//
+	Volume Volume `json:"volume"`
+	//
+	SwitchStrategy string `json:"switch_strategy"`
+	//
+	BackupStrategy BackupStrategy `json:"backup_strategy"`
+	//
+	MaintenanceWindow string `json:"maintenance_window"`
+	//
+	Nodes []Nodes `json:"nodes"`
+	//
+	RelatedInstance []RelatedInstance `json:"related_instance"`
+	//
+	DiskEncryptionId string `json:"disk_encryption_id"`
+	//
+	EnterpriseProjectId string `json:"enterprise_project_id"`
+	//
+	TimeZone string `json:"time_zone"`
 
 	Tags []tags.ResourceTag `json:"tags"`
 }
 
 type Nodes struct {
-	Id               string `json:"id"`
-	Name             string `json:"name"`
-	Role             string `json:"role"`
-	Status           string `json:"status"`
+	//
+	Id string `json:"id"`
+	//
+	Name string `json:"name"`
+	//
+	Role string `json:"role"`
+	//
+	Status string `json:"status"`
+	//
 	AvailabilityZone string `json:"availability_zone"`
 }
 
 type RelatedInstance struct {
-	Id   string `json:"id"`
+	//
+	Id string `json:"id"`
+	//
 	Type string `json:"type"`
 }
 
@@ -168,13 +221,18 @@ type ErrorLogResult struct {
 }
 
 type ErrorLogResp struct {
+	//
 	ErrorLogList []Errorlog `json:"error_log_list"`
-	TotalRecord  int        `json:"total_record"`
+	//
+	TotalRecord int `json:"total_record"`
 }
 
 type Errorlog struct {
-	Time    string `json:"time"`
-	Level   string `json:"level"`
+	//
+	Time string `json:"time"`
+	//
+	Level string `json:"level"`
+	//
 	Content string `json:"content"`
 }
 
@@ -198,20 +256,31 @@ func ExtractErrorLog(r pagination.Page) (ErrorLogResp, error) {
 }
 
 type SlowLogResp struct {
+	//
 	Slowloglist []Slowloglist `json:"slow_log_list"`
-	TotalRecord int           `json:"total_record"`
+	//
+	TotalRecord int `json:"total_record"`
 }
 
 type Slowloglist struct {
-	Count        string `json:"count"`
-	Time         string `json:"time"`
-	Locktime     string `json:"lock_time"`
-	Rowssent     string `json:"rows_sent"`
+	//
+	Count string `json:"count"`
+	//
+	Time string `json:"time"`
+	//
+	Locktime string `json:"lock_time"`
+	//
+	Rowssent string `json:"rows_sent"`
+	//
 	Rowsexamined string `json:"rows_examined"`
-	Database     string `json:"database"`
-	Users        string `json:"users"`
-	QuerySample  string `json:"query_sample"`
-	Type         string `json:"type"`
+	//
+	Database string `json:"database"`
+	//
+	Users string `json:"users"`
+	//
+	QuerySample string `json:"query_sample"`
+	//
+	Type string `json:"type"`
 }
 
 type SlowLogPage struct {

@@ -10,11 +10,16 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
+	//
 	InstanceID string `q:"instance_id"`
-	BackupID   string `q:"backup_id"`
+	//
+	BackupID string `q:"backup_id"`
+	//
 	BackupType string `q:"backup_type"`
-	BeginTime  string `q:"begin_time"`
-	EndTime    string `q:"end_time"`
+	//
+	BeginTime string `q:"begin_time"`
+	//
+	EndTime string `q:"end_time"`
 }
 
 func (opts ListOpts) ToBackupListQuery() (string, error) {

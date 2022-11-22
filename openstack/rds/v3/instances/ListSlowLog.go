@@ -6,11 +6,16 @@ import (
 )
 
 type DbSlowLogOpts struct {
+	//
 	StartDate string `q:"start_date"`
-	EndDate   string `q:"end_date"`
-	Offset    string `q:"offset"`
-	Limit     string `q:"limit"`
-	Level     string `q:"level"`
+	//
+	EndDate string `q:"end_date"`
+	//
+	Offset string `q:"offset"`
+	//
+	Limit string `q:"limit"`
+	//
+	Level string `q:"level"`
 }
 
 type DbSlowLogBuilder interface {

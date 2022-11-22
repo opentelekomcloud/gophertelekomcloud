@@ -3,10 +3,12 @@ package instances
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type EnlargeVolumeRdsOpts struct {
+	//
 	EnlargeVolume *EnlargeVolumeSize `json:"enlarge_volume" required:"true"`
 }
 
 type EnlargeVolumeSize struct {
+	//
 	Size int `json:"size" required:"true"`
 }
 
@@ -28,7 +30,7 @@ func EnlargeVolume(client *golangsdk.ServiceClient, opts EnlargeVolumeBuilder, i
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(client.ServiceURL("instances", instanceId, "action"), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("instances", instanceId, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 

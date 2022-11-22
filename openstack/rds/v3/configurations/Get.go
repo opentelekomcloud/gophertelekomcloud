@@ -7,6 +7,6 @@ import (
 
 // Get retrieves a particular Configuration based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(c.ServiceURL("configurations", id), &r.Body, openstack.StdRequestOpts())
+	_, r.Err = c.Get(c.ServiceURL("configurations", id), nil, openstack.StdRequestOpts())
 	return
 }

@@ -8,6 +8,6 @@ import (
 // GetForInstance retrieves Configuration applied to particular RDS instance
 // configuration ID and Name will be empty
 func GetForInstance(c *golangsdk.ServiceClient, instanceID string) (r GetResult) {
-	_, r.Err = c.Get(c.ServiceURL("instances", instanceID, "configurations"), &r.Body, openstack.StdRequestOpts())
+	_, r.Err = c.Get(c.ServiceURL("instances", instanceID, "configurations"), nil, openstack.StdRequestOpts())
 	return
 }

@@ -28,9 +28,12 @@ type ResizeFlavor struct {
 }
 
 type CreateRds struct {
+	//
 	Instance Instance `json:"instance"`
-	JobId    string   `json:"job_id"`
-	OrderId  string   `json:"order_id"`
+	//
+	JobId string `json:"job_id"`
+	//
+	OrderId string `json:"order_id"`
 }
 
 func WaitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string) error {

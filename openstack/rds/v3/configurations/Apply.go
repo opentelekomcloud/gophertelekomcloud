@@ -28,7 +28,7 @@ func Apply(client *golangsdk.ServiceClient, id string, opts ApplyOptsBuilder) (r
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(client.ServiceURL("configurations", id, "apply"), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("configurations", id, "apply"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return

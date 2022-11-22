@@ -6,8 +6,10 @@ import (
 )
 
 type ListOpts struct {
+	//
 	VersionName string `q:"version_name"`
-	SpecCode    string `q:"spec_code"`
+	//
+	SpecCode string `q:"spec_code"`
 }
 
 type ListOptsBuilder interface {
@@ -41,11 +43,16 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder, dbName string) 
 }
 
 type Flavor struct {
-	VCPUs        string            `json:"vcpus"`
-	RAM          int               `json:"ram"`
-	SpecCode     string            `json:"spec_code"`
-	InstanceMode string            `json:"instance_mode"`
-	AzStatus     map[string]string `json:"az_status"`
+	//
+	VCPUs string `json:"vcpus"`
+	//
+	RAM int `json:"ram"`
+	//
+	SpecCode string `json:"spec_code"`
+	//
+	InstanceMode string `json:"instance_mode"`
+	//
+	AzStatus map[string]string `json:"az_status"`
 }
 
 type DbFlavorsPage struct {

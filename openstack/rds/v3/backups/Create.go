@@ -7,14 +7,19 @@ type CreateOptsBuilder interface {
 }
 
 type BackupDatabase struct {
+	//
 	Name string `json:"name"`
 }
 
 type CreateOpts struct {
-	InstanceID  string           `json:"instance_id" required:"true"`
-	Name        string           `json:"name" required:"true"`
-	Description string           `json:"description,omitempty"`
-	Databases   []BackupDatabase `json:"databases,omitempty"`
+	//
+	InstanceID string `json:"instance_id" required:"true"`
+	//
+	Name string `json:"name" required:"true"`
+	//
+	Description string `json:"description,omitempty"`
+	//
+	Databases []BackupDatabase `json:"databases,omitempty"`
 }
 
 func (opts CreateOpts) ToBackupCreateMap() (map[string]interface{}, error) {
@@ -27,7 +32,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(c.ServiceURL("backups"), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = c.Post(c.ServiceURL("backups"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return

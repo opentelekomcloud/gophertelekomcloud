@@ -24,16 +24,26 @@ const (
 )
 
 type Backup struct {
-	ID         string              `json:"id"`
-	InstanceID string              `json:"instance_id"`
-	Name       string              `json:"name"`
-	Type       string              `json:"type"`
-	Size       int                 `json:"size"`
-	Databases  []BackupDatabase    `json:"databases"`
-	BeginTime  string              `json:"begin_time"`
-	EndTime    string              `json:"end_time"`
-	Datastore  instances.Datastore `json:"datastore"`
-	Status     BackupStatus        `json:"status"`
+	//
+	ID string `json:"id"`
+	//
+	InstanceID string `json:"instance_id"`
+	//
+	Name string `json:"name"`
+	//
+	Type string `json:"type"`
+	//
+	Size int `json:"size"`
+	//
+	Databases []BackupDatabase `json:"databases"`
+	//
+	BeginTime string `json:"begin_time"`
+	//
+	EndTime string `json:"end_time"`
+	//
+	Datastore instances.Datastore `json:"datastore"`
+	//
+	Status BackupStatus `json:"status"`
 }
 
 type CreateResult struct {

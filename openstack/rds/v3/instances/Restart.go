@@ -3,6 +3,7 @@ package instances
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type RestartRdsInstanceOpts struct {
+	//
 	Restart struct{} `json:"restart"`
 }
 
@@ -24,7 +25,7 @@ func Restart(client *golangsdk.ServiceClient, opts RestartRdsInstanceBuilder, in
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(client.ServiceURL("instances", instanceId, "action"), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("instances", instanceId, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	return

@@ -6,14 +6,22 @@ import (
 )
 
 type ListOpts struct {
-	Id            string `q:"id"`
-	Name          string `q:"name"`
-	Type          string `q:"type"`
+	//
+	Id string `q:"id"`
+	//
+	Name string `q:"name"`
+	//
+	Type string `q:"type"`
+	//
 	DataStoreType string `q:"datastore_type"`
-	VpcId         string `q:"vpc_id"`
-	SubnetId      string `q:"subnet_id"`
-	Offset        int    `q:"offset"`
-	Limit         int    `q:"limit"`
+	//
+	VpcId string `q:"vpc_id"`
+	//
+	SubnetId string `q:"subnet_id"`
+	//
+	Offset int `q:"offset"`
+	//
+	Limit int `q:"limit"`
 }
 
 type ListRdsBuilder interface {
@@ -29,14 +37,22 @@ func (opts ListOpts) ToRdsListDetailQuery() (string, error) {
 }
 
 type ListRdsInstanceOpts struct {
-	Id            string `q:"id"`
-	Name          string `q:"name"`
-	Type          string `q:"type"`
+	//
+	Id string `q:"id"`
+	//
+	Name string `q:"name"`
+	//
+	Type string `q:"type"`
+	//
 	DataStoreType string `q:"datastore_type"`
-	VpcId         string `q:"vpc_id"`
-	SubnetId      string `q:"subnet_id"`
-	Offset        int    `q:"offset"`
-	Limit         int    `q:"limit"`
+	//
+	VpcId string `q:"vpc_id"`
+	//
+	SubnetId string `q:"subnet_id"`
+	//
+	Offset int `q:"offset"`
+	//
+	Limit int `q:"limit"`
 }
 
 func (opts ListRdsInstanceOpts) ToRdsListDetailQuery() (string, error) {
