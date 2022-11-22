@@ -39,7 +39,7 @@ func RestorePITR(c *golangsdk.ServiceClient, opts RestorePITROptsBuilder) (r Res
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(c.ServiceURL("instances", "recovery"), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Post(c.ServiceURL("instances", "recovery"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return

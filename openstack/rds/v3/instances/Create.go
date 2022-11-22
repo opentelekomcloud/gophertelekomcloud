@@ -1,6 +1,10 @@
 package instances
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type CreateRdsOpts struct {
 	// Specifies the DB instance name.
@@ -109,28 +113,30 @@ type BackupStrategy struct {
 	KeepDays int `json:"keep_days,omitempty"`
 }
 
-type CreateRdsBuilder interface {
-	ToInstancesCreateMap() (map[string]interface{}, error)
-}
-
-func (opts CreateRdsOpts) ToInstancesCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+func Create(client *golangsdk.ServiceClient, opts CreateRdsOpts) (*CreateRds, error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
-	return b, nil
-}
-
-func Create(client *golangsdk.ServiceClient, opts CreateRdsBuilder) (r CreateResult) {
-	b, err := opts.ToInstancesCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
 
 	// POST https://{Endpoint}/v3/{project_id}/instances
-	_, r.Err = client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var res CreateRds
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
+
+type CreateRds struct {
+	// Indicates the DB instance information.
+	Instance Instance `json:"instance"`
+	// Indicates the ID of the DB instance creation task.
+	JobId string `json:"job_id"`
+
+	OrderId string `json:"order_id"`
 }

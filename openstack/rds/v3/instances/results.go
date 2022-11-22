@@ -27,42 +27,51 @@ type ResizeFlavorResult struct {
 }
 
 type Instance struct {
-	//
+	// Indicates the DB instance ID.
+	// NOTE
+	// The v3 DB instance ID is incompatible with the v1 DB instance ID.
 	Id string `json:"id"`
-	//
+	// Indicates the DB instance name. Indicates the DB instance name. DB instances of the same type can have same names under the same tenant.
+	// The value must be 4 to 64 characters in length and start with a letter. It is case-insensitive and can contain only letters, digits, hyphens (-), and underscores (_).
 	Name string `json:"name"`
-	//
+	// Indicates the DB instance status. For example, BUILD indicates that the DB instance is being created.
 	Status string `json:"status"`
-	//
+	// Indicates the database information.
 	Datastore Datastore `json:"datastore"`
-	//
+	// Indicates the HA configuration parameters. This parameter is returned only when primary/standby DB instances are created
 	Ha Ha `json:"ha"`
-	//
+	// Indicates the parameter template ID. This parameter is returned only when a custom parameter template is used during DB instance creation.
 	ConfigurationId string `json:"configuration_id"`
-	//
+	// Indicates the database port, which is the same as the request parameter.
 	Port string `json:"port"`
-	//
+	// Indicates the automated backup policy.
 	BackupStrategy BackupStrategy `json:"backup_strategy"`
-	//
-	EnterpriseProjectId string `json:"enterprise_project_id"`
-	//
+	// Indicates the key ID for disk encryption. By default, this parameter is empty and is returned only when it is specified during the DB instance creation.
 	DiskEncryptionId string `json:"disk_encryption_id"`
-	//
+	// Indicates the specification code. The value cannot be empty.
 	FlavorRef string `json:"flavor_ref"`
-	//
+	// Indicates the volume information.
 	Volume Volume `json:"volume"`
-	//
+	// Indicates the region ID.
 	Region string `json:"region"`
-	//
+	// Indicates the AZ ID.
 	AvailabilityZone string `json:"availability_zone"`
-	//
+	// Indicates the VPC ID. To obtain this parameter value, use either of the following methods:
+	// Method 1: Log in to VPC console and view the VPC ID in the VPC details.
+	// Method 2: See the "Querying VPCs" section in the Virtual Private Cloud API Reference.
 	VpcId string `json:"vpc_id"`
-	//
+	// Indicates the network ID. To obtain this parameter value, use either of the following methods:
+	// Method 1: Log in to VPC console and click the target subnet on the Subnets page. You can view the network ID on the displayed page.
+	// Method 2: See the "Querying Subnets" section under "APIs" or the "Querying Networks" section under "OpenStack Neutron APIs" in Virtual Private Cloud API Reference.
 	SubnetId string `json:"subnet_id"`
-	//
+	// Indicates the security group which the RDS DB instance belongs to. To obtain this parameter value, use either of the following methods:
+	// Method 1: Log in to VPC console. Choose Access Control > Security Groups in the navigation pane on the left. On the displayed page, click the target security group. You can view the security group ID on the displayed page.
+	// Method 2: See the "Querying Security Groups" section in the Virtual Private Cloud API Reference.
 	SecurityGroupId string `json:"security_group_id"`
-	//
+	// Indicates the billing information, which is pay-per-use.
 	ChargeInfo ChargeInfo `json:"charge_info"`
+	// Indicates the Collation set for Microsoft SQL Server.
+	Collation string `json:"collation"`
 }
 
 func (r CreateResult) Extract() (*CreateRds, error) {

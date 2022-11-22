@@ -66,7 +66,7 @@ func CreateReplica(client *golangsdk.ServiceClient, opts CreateReplicaBuilder) (
 		return
 	}
 
-	_, r.Err = client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 

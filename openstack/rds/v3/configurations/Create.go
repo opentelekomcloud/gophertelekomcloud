@@ -42,7 +42,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Post(c.ServiceURL("configurations"), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Post(c.ServiceURL("configurations"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: openstack.StdRequestOpts().MoreHeaders, JSONBody: nil,
 	})

@@ -30,7 +30,7 @@ func EnlargeVolume(client *golangsdk.ServiceClient, opts EnlargeVolumeBuilder, i
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(client.ServiceURL("instances", instanceId, "action"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances", instanceId, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 

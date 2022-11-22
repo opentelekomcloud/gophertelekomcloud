@@ -33,7 +33,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Put(c.ServiceURL("instances", id, "backups/policy"), b, nil,
+	raw, err := c.Put(c.ServiceURL("instances", id, "backups/policy"), b, nil,
 		&golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders})
 	return
 }

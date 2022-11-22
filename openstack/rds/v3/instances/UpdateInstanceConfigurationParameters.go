@@ -22,7 +22,7 @@ func UpdateInstanceConfigurationParameters(client *golangsdk.ServiceClient, inst
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(client.ServiceURL("instances", instanceID, "configurations"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("instances", instanceID, "configurations"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

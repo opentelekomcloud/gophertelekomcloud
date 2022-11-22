@@ -7,7 +7,7 @@ import (
 
 // Delete will permanently delete a particular Configuration based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = c.Delete(c.ServiceURL("configurations", id),
+	raw, err := c.Delete(c.ServiceURL("configurations", id),
 		&golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders})
 	return
 }

@@ -35,6 +35,6 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 	}
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
 		MoreHeaders: openstack.StdRequestOpts().MoreHeaders}
-	_, r.Err = c.Put(c.ServiceURL("configurations", id), b, nil, reqOpt)
+	raw, err := c.Put(c.ServiceURL("configurations", id), b, nil, reqOpt)
 	return
 }
