@@ -2,51 +2,25 @@ package datastores
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func List(client *golangsdk.ServiceClient, databasesname string) pagination.Pager {
-	url := client.ServiceURL("datastores", databasesname)
+func List(client *golangsdk.ServiceClient, databaseName string) ([]DataStores, error) {
+	// GET https://{Endpoint}/v3/{project_id}/datastores/{database_name}
+	raw, err := client.Get(client.ServiceURL("datastores", databaseName), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-	pageRdsList := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return DataStoresPage{pagination.SinglePageBase(r)}
-	})
-
-	rdsheader := map[string]string{"Content-Type": "application/json"}
-	pageRdsList.Headers = rdsheader
-	return pageRdsList
-}
-
-type DataStoresResult struct {
-	golangsdk.Result
+	var res []DataStores
+	err = extract.IntoSlicePtr(raw.Body, &res, "DataStores")
+	return res, err
 }
 
 type DataStores struct {
-	//
-	DataStores []dataStores `json:"dataStores" `
-}
-
-type dataStores struct {
-	//
+	// Indicates the database version ID. Its value is unique.
 	Id string `json:"id" `
-	//
+	// Indicates the database version number. Only the major version number (two digits) is returned.
+	// For example, if the version number is MySQL 5.6.X, only 5.6 is returned.
 	Name string `json:"name"`
-}
-
-type DataStoresPage struct {
-	pagination.SinglePageBase
-}
-
-func (r DataStoresPage) IsEmpty() (bool, error) {
-	data, err := ExtractDataStores(r)
-	if err != nil {
-		return false, err
-	}
-	return len(data.DataStores) == 0, err
-}
-
-func ExtractDataStores(r pagination.Page) (DataStores, error) {
-	var s DataStores
-	err := (r.(DataStoresPage)).ExtractInto(&s)
-	return s, err
 }
