@@ -2,76 +2,67 @@ package flavors
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type ListOpts struct {
-	//
+	// Specifies the database version.
 	VersionName string `q:"version_name"`
-	//
+	// Specifies the specification code.
+	// NOTICE
+	// Only DB instances running Microsoft SQL Server 2017 EE support the creation of read replicas.
+	// Microsoft SQL Server 2017 EE does not support the creation of single DB instances.
+	// The format of the specification code is: {spec code}{instance mode}.
+	// spec code can be obtained from Table 8-10.
+	// instance mode can be any of the following:
+	// For single DB instances, the value is null. Example spe_code: rds.mysql.s1.xlarge
+	// For primary/standby DB instances, the value is .ha. Example spe_code: rds.mysql.s1.xlarge.ha
+	// For read replicas, the value is .rr. Example spe_code: rds.mysql.s1.xlarge.rr
 	SpecCode string `q:"spec_code"`
 }
 
-type ListOptsBuilder interface {
-	ToListOptsQuery() (string, error)
-}
-
-func (opts ListOpts) ToListOptsQuery() (string, error) {
+func List(client *golangsdk.ServiceClient, databaseName string, opts ListOpts) ([]Flavor, error) {
+	// GET https://{Endpoint}/v3/{project_id}/flavors/{database_name}
 	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return "", err
-	}
-	return q.String(), err
-}
-
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder, dbName string) pagination.Pager {
-	url := client.ServiceURL("flavors", dbName)
-	if opts != nil {
-		query, err := opts.ToListOptsQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-
-	pagerRDS := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return DbFlavorsPage{pagination.SinglePageBase(r)}
-	})
-
-	pagerRDS.Headers = map[string]string{"Content-Type": "application/json"}
-	return pagerRDS
-}
-
-type Flavor struct {
-	//
-	VCPUs string `json:"vcpus"`
-	//
-	RAM int `json:"ram"`
-	//
-	SpecCode string `json:"spec_code"`
-	//
-	InstanceMode string `json:"instance_mode"`
-	//
-	AzStatus map[string]string `json:"az_status"`
-}
-
-type DbFlavorsPage struct {
-	pagination.SinglePageBase
-}
-
-func (r DbFlavorsPage) IsEmpty() (bool, error) {
-	flavors, err := ExtractDbFlavors(r)
-	if err != nil {
-		return false, err
-	}
-	return len(flavors) == 0, err
-}
-
-func ExtractDbFlavors(r pagination.Page) ([]Flavor, error) {
-	var s []Flavor
-	err := (r.(DbFlavorsPage)).ExtractIntoSlicePtr(&s, "flavors")
+	raw, err := client.Get(client.ServiceURL("flavors", databaseName)+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+
+	var res []Flavor
+	err = extract.IntoSlicePtr(raw.Body, &res, "flavors")
+	return res, err
+}
+
+type Flavor struct {
+	// Indicates the CPU size. For example, the value 1 indicates 1 vCPU.
+	VCPUs string `json:"vcpus"`
+	// Indicates the memory size in GB.
+	RAM int `json:"ram"`
+	// Indicates the specification ID, which is unique.
+	Id string `json:"id"`
+	// Indicates the resource specification code. Use rds.mysql.m1.xlarge.rr as an example.
+	// rds: indicates the RDS product.
+	// mysql: indicates the DB engine.
+	// m1.xlarge: indicates the high memory performance specifications.
+	// rr: indicates the read replica (.ha indicates primary/standby DB instances).
+	SpecCode string `json:"spec_code"`
+	// Indicates the database version.
+	// Example value for MySQL: ["5.6","5.7","8.0"]
+	VersionName string `json:"version_name"`
+	// Indicates the DB instance type. Its value can be any of the following:
+	// ha: indicates primary/standby DB instances.
+	// replica: indicates read replicas.
+	// single: indicates single DB instances.
+	InstanceMode string `json:"instance_mode"`
+	// Indicates the specification status in an AZ. Its value can be any of the following:
+	// normal: indicates that the specifications in the AZ are available.
+	// unsupported: indicates that the specifications are not supported by the AZ.
+	// sellout: indicates that the specifications in the AZ are sold out.
+	AzStatus map[string]string `json:"az_status"`
+	// Indicates the description of the AZ to which the specifications belong.
+	AzDesc map[string]string `json:"az_desc"`
+	// Indicates the performance specifications. Its value can be any of the following:
+	// normal: general-enhanced
+	GroupType string `json:"group_type"`
 }
