@@ -1,6 +1,8 @@
 package backups
 
 import (
+	"fmt"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -71,4 +73,25 @@ type DeleteResult struct {
 
 type RestoreResult struct {
 	instances.CreateResult
+}
+
+func WaitForBackup(c *golangsdk.ServiceClient, instanceID, backupID string, status BackupStatus) error {
+	return golangsdk.WaitFor(1200, func() (bool, error) {
+		pages, err := List(c, ListOpts{InstanceID: instanceID, BackupID: backupID}).AllPages()
+		if err != nil {
+			return false, fmt.Errorf("error listing backups: %w", err)
+		}
+		backupList, err := ExtractBackups(pages)
+		if err != nil {
+			return false, fmt.Errorf("error extracting backups: %w", err)
+		}
+		if len(backupList) == 0 {
+			if status == StatusDeleted { // when deleted, backup is actually always in status "DELETING"
+				return true, nil
+			}
+			return false, fmt.Errorf("backup %s/%s does not exist", instanceID, backupID)
+		}
+		backup := backupList[0]
+		return backup.Status == status, nil
+	})
 }
