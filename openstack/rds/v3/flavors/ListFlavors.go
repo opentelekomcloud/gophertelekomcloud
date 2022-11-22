@@ -21,7 +21,7 @@ type ListOpts struct {
 	SpecCode string `q:"spec_code"`
 }
 
-func List(client *golangsdk.ServiceClient, databaseName string, opts ListOpts) ([]Flavor, error) {
+func ListFlavors(client *golangsdk.ServiceClient, databaseName string, opts ListOpts) ([]Flavor, error) {
 	// GET https://{Endpoint}/v3/{project_id}/flavors/{database_name}
 	q, err := golangsdk.BuildQueryString(opts)
 	raw, err := client.Get(client.ServiceURL("flavors", databaseName)+q.String(), nil, nil)

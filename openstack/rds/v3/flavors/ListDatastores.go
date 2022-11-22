@@ -1,11 +1,11 @@
-package datastores
+package flavors
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func List(client *golangsdk.ServiceClient, databaseName string) ([]DataStores, error) {
+func ListDatastores(client *golangsdk.ServiceClient, databaseName string) ([]DataStores, error) {
 	// GET https://{Endpoint}/v3/{project_id}/datastores/{database_name}
 	raw, err := client.Get(client.ServiceURL("datastores", databaseName), nil, nil)
 	if err != nil {

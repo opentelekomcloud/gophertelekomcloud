@@ -1,4 +1,4 @@
-package datastores
+package flavors
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"

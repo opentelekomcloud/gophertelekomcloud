@@ -3,23 +3,26 @@ package instances
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type CreateReplicaOpts struct {
-	//
+	// Specifies the DB instance name.
+	// DB instances of the same type can have same names under the same tenant.
+	// The value must be 4 to 64 characters in length and start with a letter. It is case-sensitive and can contain only letters, digits, hyphens (-), and underscores (_).
 	Name string `json:"name"  required:"true"`
-	//
+	// Specifies the DB instance ID, which is used to create a read replica.
 	ReplicaOfId string `json:"replica_of_id" required:"true"`
-	//
+	// Specifies the key ID for disk encryption. The default value is empty.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
-	//
+	// Specifies the key ID for disk encryption. The default value is empty.
 	DiskEncryptionId string `json:"disk_encryption_id,omitempty"`
-	//
+	// Specifies the specification code. The value cannot be empty.
 	FlavorRef string `json:"flavor_ref" required:"true"`
-	//
+	// Specifies the volume information.
 	Volume *Volume `json:"volume" required:"true"`
-	//
-	Region string `json:"region,omitempty"`
-	//
+	// Specifies the region ID. Currently, read replicas can be created only in the same region as that of the primary DB instance.
+	// The value cannot be empty.
+	Region string `json:"region"`
+	// Specifies the AZ ID.
 	AvailabilityZone string `json:"availability_zone" required:"true"`
-	//
+	// Specifies the billing information, which is pay-per-use. By default, pay-per-use is used.
 	ChargeInfo *ChargeInfo `json:"charge_info,omitempty"`
 }
 
@@ -55,6 +58,7 @@ func (opts CreateReplicaOpts) ToCreateReplicaMap() (map[string]interface{}, erro
 	return b, nil
 }
 
+// CreateReplica (Only Microsoft SQL Server 2017 EE supports read replicas and does not support single DB instances.)
 func CreateReplica(client *golangsdk.ServiceClient, opts CreateReplicaBuilder) (r CreateResult) {
 	b, err := opts.ToCreateReplicaMap()
 	if err != nil {

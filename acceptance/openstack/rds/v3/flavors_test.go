@@ -16,7 +16,7 @@ func TestFlavorsList(t *testing.T) {
 	listOpts := flavors.ListOpts{
 		VersionName: "10",
 	}
-	allFlavorPages, err := flavors.List(client, listOpts, "PostgreSQL").AllPages()
+	allFlavorPages, err := flavors.ListFlavors(client, listOpts, "PostgreSQL").AllPages()
 	th.AssertNoErr(t, err)
 
 	rdsFlavors, err := flavors.ExtractDbFlavors(allFlavorPages)
