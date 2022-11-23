@@ -1,38 +1,34 @@
 package instances
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
-
-type SpecCode struct {
-	//
-	Speccode string `json:"spec_code" required:"true"`
-}
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type ResizeFlavorOpts struct {
-	//
-	ResizeFlavor *SpecCode `json:"resize_flavor" required:"true"`
+	InstanceId   string
+	ResizeFlavor SpecCode `json:"resize_flavor" required:"true"`
 }
 
-type ResizeFlavorBuilder interface {
-	ResizeFlavorMap() (map[string]interface{}, error)
+type SpecCode struct {
+	// Specifies the resource specification code. Use rds.mysql.m1.xlarge as an example. rds indicates RDS, mysql indicates the DB engine, and m1.xlarge indicates the performance specification (large-memory). The parameter containing rr indicates the read replica specifications. The parameter not containing rr indicates the single or primary/standby DB instance specifications.
+	SpecCode string `json:"spec_code" required:"true"`
 }
 
-func (opts ResizeFlavorOpts) ResizeFlavorMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(&opts, "")
+func Resize(client *golangsdk.ServiceClient, opts ResizeFlavorOpts) (*string, error) {
+	b, err := build.RequestBody(&opts, "")
 	if err != nil {
 		return nil, err
 	}
-	return b, nil
-}
 
-func Resize(client *golangsdk.ServiceClient, opts ResizeFlavorBuilder, instanceId string) (r ResizeFlavorResult) {
-	b, err := opts.ResizeFlavorMap()
+	// POST https://{Endpoint}/v3/{project_id}/instances/{instance_id}/action
+	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "action"), b, nil, nil)
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	raw, err := client.Post(client.ServiceURL("instances", instanceId, "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
 
-	return
+	var res JobId
+	err = extract.Into(raw.Body, &res)
+	return &res.JobId, err
 }
