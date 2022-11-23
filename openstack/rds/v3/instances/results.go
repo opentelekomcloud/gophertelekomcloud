@@ -84,26 +84,26 @@ type DeleteInstanceRdsResult struct {
 	commonResult
 }
 
-func (r DeleteInstanceRdsResult) Extract() (*DeleteInstanceRdsResponse, error) {
-	var response DeleteInstanceRdsResponse
+func (r DeleteInstanceRdsResult) Extract() (*JobId, error) {
+	var response JobId
 	err := r.ExtractInto(&response)
 	return &response, err
 }
 
-func (r RestartRdsInstanceResult) Extract() (*RestartRdsResponse, error) {
-	var response RestartRdsResponse
+func (r RestartRdsInstanceResult) Extract() (*JobId, error) {
+	var response JobId
 	err := r.ExtractInto(&response)
 	return &response, err
 }
 
-func (r SingleToHaRdsInstanceResult) Extract() (*SingleToHaResponse, error) {
-	var response SingleToHaResponse
+func (r SingleToHaRdsInstanceResult) Extract() (*JobId, error) {
+	var response JobId
 	err := r.ExtractInto(&response)
 	return &response, err
 }
 
-func (r ResizeFlavorResult) Extract() (*ResizeFlavor, error) {
-	var response ResizeFlavor
+func (r ResizeFlavorResult) Extract() (*JobId, error) {
+	var response JobId
 	err := r.ExtractInto(&response)
 	return &response, err
 }
@@ -112,8 +112,8 @@ type EnlargeVolumeResult struct {
 	commonResult
 }
 
-func (r EnlargeVolumeResult) Extract() (*EnlargeVolumeResp, error) {
-	var response EnlargeVolumeResp
+func (r EnlargeVolumeResult) Extract() (*JobId, error) {
+	var response JobId
 	err := r.ExtractInto(&response)
 	return &response, err
 }

@@ -7,23 +7,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type DeleteInstanceRdsResponse struct {
-	JobId string `json:"job_id"`
-}
-
-type EnlargeVolumeResp struct {
-	JobId string `json:"job_id"`
-}
-
-type RestartRdsResponse struct {
-	JobId string `json:"job_id"`
-}
-
-type SingleToHaResponse struct {
-	JobId string `json:"job_id"`
-}
-
-type ResizeFlavor struct {
+type JobId struct {
 	JobId string `json:"job_id"`
 }
 
