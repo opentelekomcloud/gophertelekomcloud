@@ -2,7 +2,6 @@ package instances
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -120,90 +119,6 @@ func (r EnlargeVolumeResult) Extract() (*JobId, error) {
 
 type ListRdsResult struct {
 	commonResult
-}
-
-type ListRdsResponse struct {
-	//
-	Instances []RdsInstanceResponse `json:"instances"`
-	//
-	TotalCount int `json:"total_count"`
-}
-
-type RdsInstanceResponse struct {
-	//
-	Id string `json:"id"`
-	//
-	Name string `json:"name"`
-	//
-	Status string `json:"status"`
-	//
-	PrivateIps []string `json:"private_ips"`
-	//
-	PublicIps []string `json:"public_ips"`
-	//
-	Port int `json:"port"`
-	//
-	Type string `json:"type"`
-	//
-	Ha Ha `json:"ha"`
-	//
-	Region string `json:"region"`
-	//
-	DataStore Datastore `json:"datastore"`
-	//
-	Created string `json:"created"`
-	//
-	Updated string `json:"updated"`
-	//
-	DbUserName string `json:"db_user_name"`
-	//
-	VpcId string `json:"vpc_id"`
-	//
-	SubnetId string `json:"subnet_id"`
-	//
-	SecurityGroupId string `json:"security_group_id"`
-	//
-	FlavorRef string `json:"flavor_ref"`
-	//
-	Volume Volume `json:"volume"`
-	//
-	SwitchStrategy string `json:"switch_strategy"`
-	//
-	BackupStrategy BackupStrategy `json:"backup_strategy"`
-	//
-	MaintenanceWindow string `json:"maintenance_window"`
-	//
-	Nodes []Nodes `json:"nodes"`
-	//
-	RelatedInstance []RelatedInstance `json:"related_instance"`
-	//
-	DiskEncryptionId string `json:"disk_encryption_id"`
-	//
-	EnterpriseProjectId string `json:"enterprise_project_id"`
-	//
-	TimeZone string `json:"time_zone"`
-
-	Tags []tags.ResourceTag `json:"tags"`
-}
-
-type Nodes struct {
-	//
-	Id string `json:"id"`
-	//
-	Name string `json:"name"`
-	//
-	Role string `json:"role"`
-	//
-	Status string `json:"status"`
-	//
-	AvailabilityZone string `json:"availability_zone"`
-}
-
-type RelatedInstance struct {
-	//
-	Id string `json:"id"`
-	//
-	Type string `json:"type"`
 }
 
 type RdsPage struct {

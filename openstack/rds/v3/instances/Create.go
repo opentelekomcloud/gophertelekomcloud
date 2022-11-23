@@ -72,18 +72,20 @@ type Datastore struct {
 	// MySQL
 	// PostgreSQL
 	// SQLServer
-	Type string `json:"type" required:"true"`
+	Type string `json:"type,omitempty"`
 	// Specifies the database version.
 	// MySQL databases support 5.6, 5.7, and 8.0. Example value: 5.7
 	// PostgreSQL databases support 9.5, 9.6, 10, 11, 12, 13 and 14. Example value: 9.6
 	// Microsoft SQL Server databases only support 2014 SE, 2016 SE, 2016 EE, 2017 SE, 2017 EE, 2019 SE and 2109 EE. Example value: 2014_SE
 	// For details about supported database versions, see section Querying Version Information About a DB Engine.
-	Version string `json:"version" required:"true"`
+	Version string `json:"version,omitempty"`
+	// Indicates the complete version number. This parameter is returned only when the DB engine is PostgreSQL.
+	CompleteVersion string `json:"complete_version,omitempty"`
 }
 
 type Ha struct {
 	// Specifies the primary/standby or cluster instance type. The value is Ha (case-insensitive).
-	Mode string `json:"mode" required:"true"`
+	Mode string `json:"mode,omitempty"`
 	// Specifies the replication mode for the standby DB instance.
 	// Value:
 	// For MySQL, the value is async or semisync.
