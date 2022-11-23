@@ -9,6 +9,7 @@ import (
 
 func GetProducts(client *golangsdk.ServiceClient) ([]Product, error) {
 	// remove projectId from endpoint
+	// GET /v1.0/products
 	raw, err := client.Get(strings.Replace(client.ServiceURL("products"), "/"+client.ProjectID, "", -1), nil, nil)
 	if err != nil {
 		return nil, err
@@ -38,7 +39,7 @@ type Product struct {
 	// Storage type.
 	StorageType string `json:"storage_type"`
 	// Details of the specifications.
-	Details []Detail `json:"details"`
+	Details Detail `json:"details"`
 	// Cache engine.
 	Engine string `json:"engine"`
 	// Cache engine version.
@@ -68,28 +69,28 @@ type Product struct {
 
 type Detail struct {
 	// Specification (total memory) of the DCS instance.
-	Capacity string `json:"capacity"`
+	Capacity float32 `json:"capacity"`
 	// Maximum bandwidth supported by the specification.
-	MaxBandwidth string `json:"max_bandwidth"`
+	MaxBandwidth int `json:"max_bandwidth"`
 	// Maximum number of clients supported by the specification,
 	// which is usually equal to the maximum number of connections.
-	MaxClients string `json:"max_clients"`
+	MaxClients int `json:"max_clients"`
 	// Maximum number of connections supported by the specification.
-	MaxConnections string `json:"max_connections"`
+	MaxConnections int `json:"max_connections"`
 	// Maximum inbound bandwidth supported by the specification,
 	// which is usually equal to the maximum bandwidth.
-	MaxInBandwidth string `json:"max_in_bandwidth"`
+	MaxInBandwidth int `json:"max_in_bandwidth"`
 	// Maximum available memory.
-	MaxMemory string `json:"max_memory"`
+	MaxMemory float32 `json:"max_memory"`
 	// Number of tenant IP addresses corresponding to the specifications.
-	TenantIpCount string `json:"tenant_ip_count"`
+	TenantIpCount int `json:"tenant_ip_count"`
 	// Number of shards supported by the specifications.
-	ShardingNum string `json:"sharding_num"`
+	ShardingNum int `json:"sharding_num"`
 	// Number of proxies supported by Proxy Cluster instances of the specified specifications.
 	// If the instance is not a Proxy Cluster instance, the value of this parameter is 0.
-	ProxyNum string `json:"proxy_num"`
+	ProxyNum int `json:"proxy_num"`
 	// Number of DBs of the specifications.
-	DbNumber string `json:"db_number"`
+	DbNumber int `json:"db_number"`
 }
 
 type Flavor struct {
