@@ -147,7 +147,7 @@ type Instance struct {
 	// Product specification code.
 	SpecCode string `json:"spec_code"`
 	// Domain name of the instance.
-	DomainName string `json:"domainName"`
+	DomainName string `json:"domain_name"`
 	// Read-only domain name.
 	ReadonlyDomainName string `json:"readonly_domain_name"`
 	// Scenario where the instance is frozen.

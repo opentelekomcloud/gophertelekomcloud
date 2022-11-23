@@ -57,7 +57,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		EngineVersion:   "5.0",
 		Capacity:        0.125,
 		Password:        "Qwerty123!",
-		VPCID:           vpcID,
+		VPCId:           vpcID,
 		SubnetID:        networkID,
 		AvailableZones:  []string{az},
 		SpecCode:        specCode,

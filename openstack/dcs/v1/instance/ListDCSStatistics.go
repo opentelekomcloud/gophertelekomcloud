@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ListStatisticsOfRunningInstances(client *golangsdk.ServiceClient) ([]InstanceStatistic, error) {
+func ListDCSStatistics(client *golangsdk.ServiceClient) ([]InstanceStatistic, error) {
 	raw, err := client.Get(client.ServiceURL("instances", "statistic"), nil, nil)
 	if err != nil {
 		return nil, err

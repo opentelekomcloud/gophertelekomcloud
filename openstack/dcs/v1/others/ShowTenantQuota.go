@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ShowQuotaOfTenant(client *golangsdk.ServiceClient) (*ShowQuotaOfTenantResponse, error) {
+func ShowTenantQuota(client *golangsdk.ServiceClient) (*ShowQuotaOfTenantResponse, error) {
 	raw, err := client.Get(client.ServiceURL("quota"), nil, nil)
 	if err != nil {
 		return nil, err

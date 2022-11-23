@@ -31,6 +31,8 @@ type ListDcsInstanceOpts struct {
 	// false: fuzzy match
 	// Default value: false.
 	IsExactMatchName bool `q:"isExactMatchName"`
+	// IP address for connecting to the DCS instance
+	Ip string `q:"ip"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListDcsInstanceOpts) (*ListDcsResponse, error) {

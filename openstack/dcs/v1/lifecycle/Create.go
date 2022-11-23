@@ -44,13 +44,13 @@ type CreateOps struct {
 	// Uppercase letters
 	// Digits
 	// Special characters (`~!@#$^&*()-_=+\|{}:,<.>/?)
-	Password string `json:"password" required:"true"`
+	Password string `json:"password,omitempty"`
 	// VPC ID.
 	// Obtain the value by using either of the following methods:
 	// Method 1: Log in to VPC console and view the VPC ID in the VPC details.
 	// Method 2: Call the API for querying VPCs.
 	// For details, see the "Querying VPCs" section in the Virtual Private Cloud API Reference.
-	VPCID string `json:"vpc_id" required:"true"`
+	VPCId string `json:"vpc_id" required:"true"`
 	// ID of the security group which the instance belongs to.
 	// This parameter is mandatory when the engine is Redis and engine_version is 3.0.
 	// DCS Redis 3.0 instances support security group access control.
@@ -83,6 +83,8 @@ type CreateOps struct {
 	// ID of the elastic IP address bound to a DCS Redis instance.
 	// This parameter is mandatory if public access is enabled (that is, enable_publicip is set to true).
 	PublicIpId string `json:"publicip_id,omitempty"`
+	// IP address that is manually specified for a DCS instance.
+	PrivateIps []string `json:"private_ips,omitempty"`
 	// An indicator of whether to enable SSL for public access to a DCS Redis instance.
 	EnableSsl *bool `json:"enable_ssl,omitempty"`
 	// Time at which the maintenance time window starts.
@@ -108,17 +110,21 @@ type CreateOps struct {
 	// If this parameter is not sent or is left empty when you create a Redis 4.0 or 5.0 instance, no critical command will be renamed.
 	// Currently, only COMMAND, KEYS, FLUSHDB, FLUSHALL, and HGETALL commands can be renamed.
 	RenameCommands *interface{} `json:"rename_commands,omitempty"`
+	// An indicator of whether a DCS instance can be accessed in password-free mode.
+	// true: indicates that a DCS instance can be accessed without a password.
+	// false: indicates that a DCS instance can be accessed only after password authentication.
+	NoPasswordAccess string `json:"no_password_access"`
 }
 
 type InstanceBackupPolicy struct {
 	// Retention time.
 	// Unit: day.
 	// Range: 1–7.
-	SaveDays int `json:"save_days" required:"true"`
+	SaveDays int `json:"save_days"`
 	// Backup type. Options:
 	// auto: automatic backup.
 	// manual: manual backup.
-	BackupType string `json:"backup_type" required:"true"`
+	BackupType string `json:"backup_type"`
 	// Backup plan.
 	PeriodicalBackupPlan PeriodicalBackupPlan `json:"periodical_backup_plan" required:"true"`
 }

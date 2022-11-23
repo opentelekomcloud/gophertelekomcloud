@@ -12,7 +12,7 @@ type StatusOpts struct {
 	IncludeFailure *bool `q:"includeFailure"`
 }
 
-func ListNumberOfInstancesInDifferentStatus(client *golangsdk.ServiceClient, opts StatusOpts) (*ListNumberOfInstancesInDifferentStatusResponse, error) {
+func ListDCSStatus(client *golangsdk.ServiceClient, opts StatusOpts) (*ListNumberOfInstancesInDifferentStatusResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
