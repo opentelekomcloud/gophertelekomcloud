@@ -46,14 +46,11 @@ type Volume struct {
 type ChargeInfo struct {
 	// Indicates the billing information, which is pay-per-use.
 	ChargeMode string `json:"charge_mode" required:"true"`
-	//
-	PeriodType string `json:"period_type,omitempty"`
-	//
-	PeriodNum int `json:"period_num,omitempty"`
-	//
+
+	PeriodType  string `json:"period_type,omitempty"`
+	PeriodNum   int    `json:"period_num,omitempty"`
 	IsAutoRenew string `json:"is_auto_renew,omitempty"`
-	//
-	IsAutoPay string `json:"is_auto_pay,omitempty"`
+	IsAutoPay   string `json:"is_auto_pay,omitempty"`
 }
 
 // CreateReplica (Only Microsoft SQL Server 2017 EE supports read replicas and does not support single DB instances.)

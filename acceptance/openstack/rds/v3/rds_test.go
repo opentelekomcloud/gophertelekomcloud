@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/configurations"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -83,11 +84,11 @@ func TestRdsChangeSingleConfigurationValue(t *testing.T) {
 	rds := createRDS(t, client, cc.RegionName)
 	defer deleteRDS(t, client, rds.Id)
 
-	opts := instances.UpdateInstanceConfigurationOpts{Values: map[string]interface{}{
+	opts := configurations.UpdateInstanceConfigurationOpts{Values: map[string]interface{}{
 		"max_connections": "37",
 		"autocommit":      "OFF",
 	}}
-	result, err := instances.UpdateInstanceConfigurationParameters(client, rds.Id, opts).Extract()
+	result, err := configurations.UpdateInstanceConfigurationParameters(client, rds.Id, opts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, result.RestartRequired)
 }

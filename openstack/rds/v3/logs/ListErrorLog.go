@@ -1,11 +1,11 @@
-package instances
+package logs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type DbSlowLogOpts struct {
+type DbErrorlogOpts struct {
 	//
 	StartDate string `q:"start_date"`
 	//
@@ -18,11 +18,11 @@ type DbSlowLogOpts struct {
 	Level string `q:"level"`
 }
 
-type DbSlowLogBuilder interface {
-	ToDbSlowLogListQuery() (string, error)
+type DbErrorlogBuilder interface {
+	DbErrorlogQuery() (string, error)
 }
 
-func (opts DbSlowLogOpts) ToDbSlowLogListQuery() (string, error) {
+func (opts DbErrorlogOpts) DbErrorlogQuery() (string, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return "", err
@@ -30,10 +30,10 @@ func (opts DbSlowLogOpts) ToDbSlowLogListQuery() (string, error) {
 	return q.String(), err
 }
 
-func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogBuilder, instanceID string) pagination.Pager {
-	url := client.ServiceURL("instances", instanceID, "slowlog")
+func ListErrorLog(client *golangsdk.ServiceClient, opts DbErrorlogBuilder, instanceID string) pagination.Pager {
+	url := client.ServiceURL("instances", instanceID, "errorlog")
 	if opts != nil {
-		query, err := opts.ToDbSlowLogListQuery()
+		query, err := opts.DbErrorlogQuery()
 
 		if err != nil {
 			return pagination.Pager{Err: err}
@@ -42,7 +42,7 @@ func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogBuilder, instanc
 	}
 
 	pageRdsList := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return SlowLogPage{pagination.SinglePageBase(r)}
+		return ErrorLogPage{pagination.SinglePageBase(r)}
 	})
 
 	rdsheader := map[string]string{"Content-Type": "application/json"}

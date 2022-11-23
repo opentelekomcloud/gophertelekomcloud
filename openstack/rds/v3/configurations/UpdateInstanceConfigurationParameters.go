@@ -1,7 +1,8 @@
-package instances
+package configurations
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/logs"
 )
 
 type UpdateInstanceConfigurationOptsBuilder interface {
@@ -16,7 +17,7 @@ func (opts UpdateInstanceConfigurationOpts) ToUpdateInstanceConfigurationMap() (
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func UpdateInstanceConfigurationParameters(client *golangsdk.ServiceClient, instanceID string, opts UpdateInstanceConfigurationOptsBuilder) (r UpdateConfigurationResult) {
+func UpdateInstanceConfigurationParameters(client *golangsdk.ServiceClient, instanceID string, opts UpdateInstanceConfigurationOptsBuilder) (r logs.UpdateConfigurationResult) {
 	b, err := opts.ToUpdateInstanceConfigurationMap()
 	if err != nil {
 		r.Err = err
