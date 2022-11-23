@@ -86,7 +86,7 @@ type Instance struct {
 	// Username used for accessing a DCS instance with password authentication.
 	AccessUser string `json:"access_user"`
 	// An indicator of whether public access is enabled for a DCS Redis instance. Options:
-	EnablePublicIp string `json:"enable_publicip"`
+	EnablePublicIp bool `json:"enable_publicip"`
 	// ID of the elastic IP address bound to a DCS Redis instance.
 	// The parameter value is null if public access is disabled.
 	PublicIpId string `json:"publicip_id"`

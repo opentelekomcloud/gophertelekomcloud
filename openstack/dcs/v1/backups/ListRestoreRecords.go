@@ -25,7 +25,7 @@ type ListRestoreRecordsResponse struct {
 	// Array of the restoration records.
 	RestoreRecordResponse []InstanceRestoreInfo `json:"restore_record_response"`
 	// Number of obtained backup records.
-	TotalNum int32 `json:"total_num"`
+	TotalNum int `json:"total_num"`
 }
 
 type InstanceRestoreInfo struct {

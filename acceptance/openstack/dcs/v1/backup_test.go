@@ -13,10 +13,6 @@ func TestDcsBackupLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	dcsInstance := createDCSInstance(t, client)
-	t.Cleanup(func() {
-		deleteDCSInstance(t, client, dcsInstance.InstanceID)
-	})
-
 	backupId, err := backups.BackupInstance(client, dcsInstance.InstanceID, backups.BackupInstanceOpts{Remark: "test"})
 	t.Cleanup(func() {
 		err := backups.DeleteBackupFile(client, dcsInstance.InstanceID, backupId)

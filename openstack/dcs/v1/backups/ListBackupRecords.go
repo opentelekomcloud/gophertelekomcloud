@@ -35,7 +35,7 @@ func ListBackupRecords(client *golangsdk.ServiceClient, instancesId string, opts
 
 type ListBackupRecordsResponse struct {
 	// Number of obtained backup records.
-	TotalNum int32 `json:"total_num"`
+	TotalNum int `json:"total_num"`
 	// Array of the backup records. For details about backup_record_response,
 	BackupRecordResponse []BackupRecordResponse `json:"backup_record_response"`
 }

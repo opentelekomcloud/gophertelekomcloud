@@ -40,7 +40,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 
 	var specCode string
 	for _, v := range productList {
-		if v.ProductID == "redis.ha.xu1.tiny.r2.128" {
+		if v.SpecCode == "redis.ha.xu1.tiny.r2.128" {
 			specCode = v.SpecCode
 		}
 	}
@@ -65,6 +65,9 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 	}
 	instanceID, err := lifecycle.Create(client, createOpts)
 	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		deleteDCSInstance(t, client, instanceID)
+	})
 
 	err = waitForInstanceAvailable(client, 600, instanceID)
 	th.AssertNoErr(t, err)
