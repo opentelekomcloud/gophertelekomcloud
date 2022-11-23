@@ -1,6 +1,8 @@
 package instances
 
 import (
+	"net/http"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -10,6 +12,10 @@ func StartupInstance(client *golangsdk.ServiceClient, instanceId string) (*strin
 	raw, err := client.Post(client.ServiceURL("instances", instanceId, "action", "startup"), nil, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	return extraJob(err, raw)
+}
+
+func extraJob(err error, raw *http.Response) (*string, error) {
 	if err != nil {
 		return nil, err
 	}

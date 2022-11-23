@@ -1,38 +1,28 @@
 package instances
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type EnlargeVolumeRdsOpts struct {
-	//
-	EnlargeVolume *EnlargeVolumeSize `json:"enlarge_volume" required:"true"`
+	InstanceId string
+	// Specifies the target storage space after scaling up.
+	EnlargeVolume EnlargeVolumeSize `json:"enlarge_volume" required:"true"`
 }
 
 type EnlargeVolumeSize struct {
-	//
+	// The minimum start value of each scaling is 10 GB. A DB instance can be scaled up only by a multiple of 10 GB. Value range: 10 GB to 4000 GB
 	Size int `json:"size" required:"true"`
 }
 
-type EnlargeVolumeBuilder interface {
-	ToEnlargeVolumeMap() (map[string]interface{}, error)
-}
-
-func (opts EnlargeVolumeRdsOpts) ToEnlargeVolumeMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(&opts, "")
+func EnlargeVolume(client *golangsdk.ServiceClient, opts EnlargeVolumeRdsOpts) (*string, error) {
+	b, err := build.RequestBody(&opts, "")
 	if err != nil {
 		return nil, err
 	}
-	return b, nil
-}
 
-func EnlargeVolume(client *golangsdk.ServiceClient, opts EnlargeVolumeBuilder, instanceId string) (r EnlargeVolumeResult) {
-	b, err := opts.ToEnlargeVolumeMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	raw, err := client.Post(client.ServiceURL("instances", instanceId, "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
-
-	return
+	// POST https://{Endpoint}/v3/{project_id}/instances/{instance_id}/action
+	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "action"), b, nil, nil)
+	return extraJob(err, raw)
 }
