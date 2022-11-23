@@ -1,6 +1,12 @@
 package instances
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"net/http"
+
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type CreateReplicaOpts struct {
 	// Specifies the DB instance name.
@@ -27,14 +33,18 @@ type CreateReplicaOpts struct {
 }
 
 type Volume struct {
-	//
+	// Indicates the volume type.
+	// Its value can be any of the following and is case-sensitive:
+	// COMMON: indicates the SATA type.
+	// ULTRAHIGH: indicates the SSD type.
 	Type string `json:"type" required:"true"`
-	//
+	// Indicates the volume size.
+	// Its value range is from 40 GB to 4000 GB. The value must be a multiple of 10.
 	Size int `json:"size,omitempty"`
 }
 
 type ChargeInfo struct {
-	//
+	// Indicates the billing information, which is pay-per-use.
 	ChargeMode string `json:"charge_mode" required:"true"`
 	//
 	PeriodType string `json:"period_type,omitempty"`
@@ -46,29 +56,25 @@ type ChargeInfo struct {
 	IsAutoPay string `json:"is_auto_pay,omitempty"`
 }
 
-type CreateReplicaBuilder interface {
-	ToCreateReplicaMap() (map[string]interface{}, error)
-}
-
-func (opts CreateReplicaOpts) ToCreateReplicaMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+// CreateReplica (Only Microsoft SQL Server 2017 EE supports read replicas and does not support single DB instances.)
+func CreateReplica(client *golangsdk.ServiceClient, opts CreateReplicaOpts) (*CreateRds, error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
-	}
-	return b, nil
-}
-
-// CreateReplica (Only Microsoft SQL Server 2017 EE supports read replicas and does not support single DB instances.)
-func CreateReplica(client *golangsdk.ServiceClient, opts CreateReplicaBuilder) (r CreateResult) {
-	b, err := opts.ToCreateReplicaMap()
-	if err != nil {
-		r.Err = err
-		return
 	}
 
 	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
+	return extra(err, raw)
+}
 
-	return
+func extra(err error, raw *http.Response) (*CreateRds, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res CreateRds
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }

@@ -3,7 +3,6 @@ package instances
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type CreateRdsOpts struct {
@@ -123,13 +122,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateRdsOpts) (*CreateRds, er
 	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	var res CreateRds
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	return extra(err, raw)
 }
 
 type CreateRds struct {
