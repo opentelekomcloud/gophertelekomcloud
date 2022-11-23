@@ -11,7 +11,7 @@ import (
 func Get(client *golangsdk.ServiceClient, id string) (*Whitelist, error) {
 	url := client.ServiceURL("instance", id, "whitelist")
 	raw, err := client.Get(strings.Replace(url, "v1.0", "v2", 1), nil, nil)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 
