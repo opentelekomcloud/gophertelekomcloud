@@ -3,6 +3,7 @@ package v1
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/backups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -22,9 +23,19 @@ func TestDcsBackupLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Created DCSv1 backup: %s", backupId)
 
-	backupList, err := backups.ListBackupRecords(client, dcsInstance.InstanceID, backups.ListBackupOpts{})
+	err = golangsdk.WaitFor(300, func() (bool, error) {
+		backupList, err := backups.ListBackupRecords(client, dcsInstance.InstanceID, backups.ListBackupOpts{})
+		if err != nil {
+			return false, err
+		}
+		th.AssertEquals(t, backupList.TotalNum, 1)
+
+		if backupList.BackupRecordResponse[0].Status == "succeed" {
+			return true, nil
+		}
+		return false, nil
+	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, backupList.TotalNum, 1)
 
 	restoreId, err := backups.RestoreInstance(client, dcsInstance.InstanceID, backups.RestoreInstanceOpts{BackupId: backupId, Remark: "test"})
 	th.AssertNoErr(t, err)
