@@ -48,22 +48,29 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		t.Skip("Product ID wasn't found")
 	}
 
-	defaultSG := openstack.DefaultSecurityGroup(t)
-	dcsName := tools.RandomString("dcs-instance-", 3)
-	createOpts := lifecycle.CreateOps{
-		Name:            dcsName,
-		Description:     "some test DCSv1 instance",
-		Engine:          "Redis",
-		EngineVersion:   "5.0",
-		Capacity:        0.125,
-		Password:        "Qwerty123!",
-		VPCId:           vpcID,
-		SubnetID:        networkID,
-		AvailableZones:  []string{az},
-		SpecCode:        specCode,
-		SecurityGroupID: defaultSG,
+	plan := lifecycle.InstanceBackupPolicy{
+		SaveDays:   1,
+		BackupType: "auto",
+		PeriodicalBackupPlan: lifecycle.PeriodicalBackupPlan{
+			BeginAt:    "00:00-01:00",
+			PeriodType: "weekly",
+			BackupAt:   []int{1, 2, 3, 4, 5, 6, 7},
+		},
 	}
-	instanceID, err := lifecycle.Create(client, createOpts)
+	instanceID, err := lifecycle.Create(client, lifecycle.CreateOps{
+		Name:                 tools.RandomString("dcs-instance-", 3),
+		Description:          "some test DCSv1 instance",
+		Engine:               "Redis",
+		EngineVersion:        "5.0",
+		Capacity:             0.125,
+		Password:             "Qwerty123!",
+		VPCId:                vpcID,
+		SubnetID:             networkID,
+		AvailableZones:       []string{az},
+		SpecCode:             specCode,
+		SecurityGroupID:      openstack.DefaultSecurityGroup(t),
+		InstanceBackupPolicy: &plan,
+	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
 		deleteDCSInstance(t, client, instanceID)
@@ -74,10 +81,15 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 
 	t.Logf("DCSv1 instance successfully created: %s", instanceID)
 
-	dcsInstance, err := lifecycle.Get(client, instanceID)
+	ins, err := lifecycle.Get(client, instanceID)
 	th.AssertNoErr(t, err)
 
-	return dcsInstance
+	th.AssertEquals(t, plan.BackupType, ins.InstanceBackupPolicy.Policy.BackupType)
+	th.AssertEquals(t, plan.SaveDays, ins.InstanceBackupPolicy.Policy.SaveDays)
+	th.AssertEquals(t, plan.PeriodicalBackupPlan.BeginAt, ins.InstanceBackupPolicy.Policy.PeriodicalBackupPlan.BeginAt)
+	th.AssertEquals(t, plan.PeriodicalBackupPlan.PeriodType, ins.InstanceBackupPolicy.Policy.PeriodicalBackupPlan.PeriodType)
+
+	return ins
 }
 
 func deleteDCSInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {

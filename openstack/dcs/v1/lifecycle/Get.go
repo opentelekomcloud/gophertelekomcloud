@@ -141,7 +141,7 @@ type Instance struct {
 	OrderID string `json:"order_id"`
 	// Backup policy.
 	// This parameter is available for master/standby and cluster DCS instances.
-	InstanceBackupPolicy InstanceBackupPolicy `json:"instance_backup_policy"`
+	InstanceBackupPolicy BackupPolicy `json:"instance_backup_policy"`
 	// Instance tag key and value.
 	Tags []tags.ResourceTag `json:"tags"`
 	// Product specification code.
@@ -178,4 +178,12 @@ type Instance struct {
 	Task string `json:"task"`
 	// Number of shards.
 	ShardingCount int `json:"sharding_count"`
+}
+
+type BackupPolicy struct {
+	BackupPolicyId string               `json:"backup_policy_id"`
+	CreatedAt      string               `json:"created_at"`
+	UpdatedAt      string               `json:"updated_at"`
+	Policy         InstanceBackupPolicy `json:"policy"`
+	TenantId       string               `json:"tenant_id"`
 }
