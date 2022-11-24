@@ -129,8 +129,6 @@ type Instance struct {
 	CloudServiceTypeCode string `json:"cloud_service_type_code"`
 	// Cloud resource type code.
 	CloudResourceTypeCode string `json:"cloud_resource_type_code"`
-	// Product ID.
-	ProductID string `json:"product_id"`
 	// Security group name.
 	SecurityGroupName string `json:"security_group_name"`
 	// Subnet name.
