@@ -49,8 +49,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 	}
 
 	plan := lifecycle.InstanceBackupPolicy{
-		SaveDays:   1,
-		BackupType: "auto",
+		SaveDays: 1,
 		PeriodicalBackupPlan: lifecycle.PeriodicalBackupPlan{
 			BeginAt:    "00:00-01:00",
 			PeriodType: "weekly",
@@ -76,7 +75,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		deleteDCSInstance(t, client, instanceID)
 	})
 
-	err = waitForInstanceAvailable(client, 600, instanceID)
+	err = waitForInstanceAvailable(client, 100, instanceID)
 	th.AssertNoErr(t, err)
 
 	t.Logf("DCSv1 instance successfully created: %s", instanceID)
@@ -84,7 +83,6 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 	ins, err := lifecycle.Get(client, instanceID)
 	th.AssertNoErr(t, err)
 
-	th.AssertEquals(t, plan.BackupType, ins.InstanceBackupPolicy.Policy.BackupType)
 	th.AssertEquals(t, plan.SaveDays, ins.InstanceBackupPolicy.Policy.SaveDays)
 	th.AssertEquals(t, plan.PeriodicalBackupPlan.BeginAt, ins.InstanceBackupPolicy.Policy.PeriodicalBackupPlan.BeginAt)
 	th.AssertEquals(t, plan.PeriodicalBackupPlan.PeriodType, ins.InstanceBackupPolicy.Policy.PeriodicalBackupPlan.PeriodType)

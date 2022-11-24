@@ -23,7 +23,7 @@ func TestDcsBackupLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Created DCSv1 backup: %s", backupId)
 
-	err = golangsdk.WaitFor(300, func() (bool, error) {
+	err = golangsdk.WaitFor(100, func() (bool, error) {
 		backupList, err := backups.ListBackupRecords(client, dcsInstance.InstanceID, backups.ListBackupOpts{})
 		if err != nil {
 			return false, err
@@ -44,4 +44,7 @@ func TestDcsBackupLifeCycle(t *testing.T) {
 	restoreList, err := backups.ListRestoreRecords(client, dcsInstance.InstanceID, backups.ListBackupOpts{})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, restoreList.TotalNum, 1)
+
+	err = waitForInstanceAvailable(client, 100, dcsInstance.InstanceID)
+	th.AssertNoErr(t, err)
 }
