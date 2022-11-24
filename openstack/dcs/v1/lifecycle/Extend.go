@@ -24,6 +24,7 @@ func Extend(client *golangsdk.ServiceClient, id string, opts ExtendOpts) (err er
 		return
 	}
 
+	// POST /v1.0/{project_id}/instances/{instance_id}/extend
 	_, err = client.Post(client.ServiceURL("instances", id, "extend"), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})

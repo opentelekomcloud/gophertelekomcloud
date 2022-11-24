@@ -20,11 +20,6 @@ type ListDcsInstanceOpts struct {
 	Start int `q:"start"`
 	// DCS instance status.
 	Status string `q:"status"`
-	// An indicator of whether the number of DCS instances that failed to be created will be returned to the API caller.
-	// Options:
-	// true: The number of DCS instances that failed to be created will be returned to the API caller.
-	// false or others: The number of DCS instances that failed to be created will not be returned to the API caller.
-	IncludeFailure bool `q:"includeFailure"`
 	// An indicator of whether to perform an exact or fuzzy match based on instance name.
 	// Options:
 	// true: exact match
@@ -33,6 +28,9 @@ type ListDcsInstanceOpts struct {
 	IsExactMatchName bool `q:"isExactMatchName"`
 	// IP address for connecting to the DCS instance
 	Ip string `q:"ip"`
+	// Query based on the instance tag key and value. {key} indicates the tag key, and {value} indicates the tag value.
+	// To query instances with multiple tag keys and values, separate key-value pairs with commas (,).
+	Tags map[string]string `q:"tags"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListDcsInstanceOpts) (*ListDcsResponse, error) {
@@ -41,6 +39,7 @@ func List(client *golangsdk.ServiceClient, opts ListDcsInstanceOpts) (*ListDcsRe
 		return nil, err
 	}
 
+	// GET /v1.0/{project_id}/instances
 	raw, err := client.Get(client.ServiceURL("instances")+query.String(), nil, nil)
 	if err != nil {
 		return nil, err
