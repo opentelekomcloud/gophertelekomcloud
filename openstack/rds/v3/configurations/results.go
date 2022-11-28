@@ -21,23 +21,6 @@ type ConfigurationCreate struct {
 	Updated string `json:"updated"`
 }
 
-type Parameter struct {
-	// Parameter Name
-	Name string `json:"name"`
-	// Parameter value
-	Value string `json:"value"`
-	// Whether a restart is required
-	RestartRequired bool `json:"restart_required"`
-	// Whether the parameter is read-only
-	ReadOnly bool `json:"readonly"`
-	// Parameter value range
-	ValueRange string `json:"value_range"`
-	// Parameter type
-	Type string `json:"type"`
-	// Parameter description
-	Description string `json:"description"`
-}
-
 func (r CreateResult) ExtractInto(v interface{}) error {
 	return r.Result.ExtractIntoStructPtr(v, "configuration")
 }
