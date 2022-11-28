@@ -10,6 +10,9 @@ import (
 func List(client *golangsdk.ServiceClient) ([]Configuration, error) {
 	// GET https://{Endpoint}/v3/{project_id}/configurations
 	raw, err := client.Get(client.ServiceURL("configurations"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var res []Configuration
 	err = extract.IntoSlicePtr(raw.Body, &res, "configurations")
