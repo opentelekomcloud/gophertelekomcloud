@@ -88,7 +88,7 @@ func TestRdsChangeSingleConfigurationValue(t *testing.T) {
 		"max_connections": "37",
 		"autocommit":      "OFF",
 	}}
-	result, err := configurations.UpdateInstanceConfigurationParameters(client, rds.Id, opts).Extract()
+	result, err := configurations.UpdateInstanceConfiguration(client, rds.Id, opts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, result.RestartRequired)
 }
