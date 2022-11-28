@@ -21,25 +21,6 @@ type ConfigurationCreate struct {
 	Updated string `json:"updated"`
 }
 
-type Configuration struct {
-	// Configuration ID
-	ID string `json:"id"`
-	// Configuration Name
-	Name string `json:"name"`
-	// Database version Name
-	DatastoreVersionName string `json:"datastore_version_name"`
-	// Database Name
-	DatastoreName string `json:"datastore_name"`
-	// Configuration Description
-	Description string `json:"description"`
-	// Indicates the creation time in the following format: yyyy-MM-ddTHH:mm:ssZ.
-	Created string `json:"created"`
-	// Indicates the update time in the following format: yyyy-MM-ddTHH:mm:ssZ.
-	Updated string `json:"updated"`
-	// Configuration Parameters
-	Parameters []Parameter `json:"configuration_parameters"`
-}
-
 type Parameter struct {
 	// Parameter Name
 	Name string `json:"name"`
