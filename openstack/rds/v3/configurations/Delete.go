@@ -9,7 +9,6 @@ import (
 func Delete(c *golangsdk.ServiceClient, id string) (err error) {
 	// DELETE https://{Endpoint}/v3/{project_id}/configurations/{config_id}
 	_, err = c.Delete(c.ServiceURL("configurations", id),
-		&golangsdk.RequestOpts{OkCodes: []int{200},
-			MoreHeaders: openstack.StdRequestOpts().MoreHeaders})
+		&golangsdk.RequestOpts{OkCodes: []int{200}, MoreHeaders: openstack.StdRequestOpts().MoreHeaders})
 	return
 }

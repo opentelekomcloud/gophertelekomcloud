@@ -8,11 +8,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// UpdateResult represents the result of a update operation.
-type UpdateResult struct {
-	golangsdk.ErrResult
-}
-
 type BackupStatus string
 
 const (
