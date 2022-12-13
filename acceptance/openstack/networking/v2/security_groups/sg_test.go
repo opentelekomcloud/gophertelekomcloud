@@ -1,4 +1,4 @@
-package routes
+package security_groups
 
 import (
 	"testing"
