@@ -142,7 +142,7 @@ func TestTooManyRequestsRetry(t *testing.T) {
 
 	code := http.StatusTooManyRequests
 
-	failHandler := &failHandler{ExpectedFailures: 10, ErrorCode: code}
+	failHandler := &failHandler{ExpectedFailures: 5, ErrorCode: code}
 	th.Mux.Handle(fmt.Sprintf("/%d", code), failHandler)
 
 	codeURL := fmt.Sprintf("%d", code)
