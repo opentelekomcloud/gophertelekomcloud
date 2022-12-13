@@ -173,6 +173,7 @@ type RequestOpts struct {
 	RetryCount *int
 	// RetryTimeout specifies time before next retry
 	RetryTimeout *time.Duration
+	
 }
 
 var applicationJSON = "application/json"
