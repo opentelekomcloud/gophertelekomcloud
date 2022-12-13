@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v2/logs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v2/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -23,10 +24,11 @@ func TestPolicyLifecycle(t *testing.T) {
 	if networkID == "" || vpcID == "" {
 		t.Skip("OS_NETWORK_ID or OS_VPC_ID env vars are missing but AS Policy test requires")
 	}
+
 	groupID := autoscaling.CreateAutoScalingGroup(t, v1client, networkID, vpcID, asGroupCreateName)
-	defer func() {
+	t.Cleanup(func() {
 		autoscaling.DeleteAutoScalingGroup(t, v1client, groupID)
-	}()
+	})
 
 	createOpts := policies.PolicyOpts{
 		PolicyName:   asPolicyCreateName,
@@ -49,12 +51,13 @@ func TestPolicyLifecycle(t *testing.T) {
 	policyID, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created AutoScaling Policy: %s", policyID)
-	defer func() {
+
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete AutoScaling Policy")
 		err := policies.Delete(v1client, policyID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted AutoScaling Policy: %s", policyID)
-	}()
+	})
 
 	policy, err := policies.Get(client, policyID)
 	th.AssertNoErr(t, err)
@@ -67,6 +70,9 @@ func TestPolicyLifecycle(t *testing.T) {
 
 	updateOpts := policies.PolicyOpts{
 		PolicyName:     asPolicyUpdateName,
+		PolicyType:     "RECURRENCE",
+		ResourceID:     groupID,
+		ResourceType:   "SCALING_GROUP",
 		SchedulePolicy: createOpts.SchedulePolicy,
 		PolicyAction: policies.ActionOpts{
 			Percentage: 30,
@@ -83,4 +89,8 @@ func TestPolicyLifecycle(t *testing.T) {
 	tools.PrintResource(t, policy)
 	th.AssertEquals(t, asPolicyUpdateName, policy.PolicyName)
 	th.AssertEquals(t, 30, policy.PolicyAction.Percentage)
+
+	activityLogs, err := logs.ListScalingActivityLogs(client, logs.ListScalingActivityLogsOpts{ScalingGroupId: groupID})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, activityLogs)
 }
