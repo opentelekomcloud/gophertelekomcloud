@@ -1,8 +1,10 @@
-package security_groups
+package sgs
 
 import (
+	"log"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/rules"
@@ -62,4 +64,28 @@ func TestThrottlingSgs(t *testing.T) {
 		secgroups.Delete(clientCompute, sg1.ID)
 		secgroups.Delete(clientCompute, sg2.ID)
 	})
+}
+
+func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, count int) ([]string, error) {
+	i := 0
+	createdSgs := make([]string, count)
+	for i < count {
+		opts := rules.CreateOpts{
+			Description:  "description",
+			SecGroupID:   sgID,
+			PortRangeMin: 1000 + i,
+			PortRangeMax: 5000 + i,
+			Direction:    "ingress",
+			EtherType:    "IPv4",
+			Protocol:     "TCP",
+		}
+		log.Printf("[DEBUG] Create OpenTelekomCloud Neutron security group: %#v", opts)
+		securityGroupRule, err := rules.Create(clientV2, opts).Extract()
+		if err != nil {
+			return createdSgs, err
+		}
+		createdSgs[i] = securityGroupRule.ID
+		i += 1
+	}
+	return createdSgs, nil
 }
