@@ -425,7 +425,12 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if err != nil {
 				return nil, fmt.Errorf("error reading response body: %w", err)
 			}
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					_ = fmt.Errorf("error in closing : %w", err)
+				}
+			}(resp.Body)
 
 			*r = data
 		default:
