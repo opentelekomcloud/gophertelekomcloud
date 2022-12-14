@@ -27,29 +27,26 @@ func TestThrottlingSgs(t *testing.T) {
 	}
 	t.Logf("Attempting to create sg: %s", createSGOpts.Name)
 
-	sg1, err := secgroups.Create(clientCompute, createSGOpts).Extract()
+	sg, err := secgroups.Create(clientCompute, createSGOpts).Extract()
 	th.AssertNoErr(t, err)
-	sgs1, err := CreateMultipleSgsRules(clientNetworking, sg1.ID, 100)
-	th.AssertNoErr(t, err)
-	if len(sgs1) == 0 {
-		t.Fatalf("empty rules list for: %s", sg1.ID)
-	}
 
-	createSGOpts2 := secgroups.CreateOpts{
-		Name:        "sg-test-02",
-		Description: "desc",
+	size := 20
+	q := make(chan []string, size)
+	for i := 0; i < size*2; i++ {
+		go func() {
+			err := CreateMultipleSgsRules(clientNetworking, sg.ID, 400, q)
+			if err != nil {
+				return
+			}
+		}()
 	}
-	t.Logf("Attempting to create sg: %s", createSGOpts2.Name)
-	sg2, err := secgroups.Create(clientCompute, createSGOpts2).Extract()
-	th.AssertNoErr(t, err)
-	sgs2, err := CreateMultipleSgsRules(clientNetworking, sg2.ID, 100)
-	th.AssertNoErr(t, err)
-	if len(sgs2) == 0 {
-		t.Fatalf("empty rules list for: %s", sg2.ID)
+	for i := 0; i < size*2; i++ {
+		sgs := <-q
+		t.Log(sgs)
 	}
 
 	rulesOpts := rules.ListOpts{
-		SecGroupID: sg1.ID,
+		SecGroupID: sg.ID,
 	}
 	allPages, err := rules.List(clientNetworking, rulesOpts).AllPages()
 	th.AssertNoErr(t, err)
@@ -61,12 +58,11 @@ func TestThrottlingSgs(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		secgroups.Delete(clientCompute, sg1.ID)
-		secgroups.Delete(clientCompute, sg2.ID)
+		secgroups.Delete(clientCompute, sg.ID)
 	})
 }
 
-func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, count int) ([]string, error) {
+func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, count int, output chan<- []string) error {
 	i := 0
 	createdSgs := make([]string, count)
 	for i < count {
@@ -82,10 +78,12 @@ func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, coun
 		log.Printf("[DEBUG] Create OpenTelekomCloud Neutron security group: %#v", opts)
 		securityGroupRule, err := rules.Create(clientV2, opts).Extract()
 		if err != nil {
-			return createdSgs, err
+			output <- createdSgs
+			return err
 		}
 		createdSgs[i] = securityGroupRule.ID
 		i += 1
 	}
-	return createdSgs, nil
+	output <- createdSgs
+	return nil
 }
