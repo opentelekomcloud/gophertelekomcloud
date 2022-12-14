@@ -137,6 +137,7 @@ func TestGatewayRetry(t *testing.T) {
 }
 
 func TestTooManyRequestsRetry(t *testing.T) {
+	t.Skip("please run only manually, long test")
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
