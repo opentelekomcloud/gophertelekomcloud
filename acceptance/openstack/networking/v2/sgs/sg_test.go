@@ -12,6 +12,7 @@ import (
 )
 
 func TestThrottlingSgs(t *testing.T) {
+	t.Skip("please run only manually, long test")
 	clientNetworking, err := clients.NewNetworkV2Client()
 	if err != nil {
 		t.Fatalf("Unable to create a networking client: %v", err)
