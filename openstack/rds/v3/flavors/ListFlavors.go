@@ -6,6 +6,7 @@ import (
 )
 
 type ListOpts struct {
+	DatabaseName string
 	// Specifies the database version.
 	VersionName string `q:"version_name"`
 	// Specifies the specification code.
@@ -21,10 +22,10 @@ type ListOpts struct {
 	SpecCode string `q:"spec_code"`
 }
 
-func ListFlavors(client *golangsdk.ServiceClient, databaseName string, opts ListOpts) ([]Flavor, error) {
+func ListFlavors(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 	// GET https://{Endpoint}/v3/{project_id}/flavors/{database_name}
 	q, err := golangsdk.BuildQueryString(opts)
-	raw, err := client.Get(client.ServiceURL("flavors", databaseName)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL("flavors", opts.DatabaseName)+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -14,12 +14,11 @@ func TestFlavorsList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := flavors.ListOpts{
-		VersionName: "10",
+		DatabaseName: "PostgreSQL",
+		VersionName:  "10",
 	}
-	allFlavorPages, err := flavors.ListFlavors(client, listOpts, "PostgreSQL").AllPages()
-	th.AssertNoErr(t, err)
 
-	rdsFlavors, err := flavors.ExtractDbFlavors(allFlavorPages)
+	rdsFlavors, err := flavors.ListFlavors(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, rds := range rdsFlavors {

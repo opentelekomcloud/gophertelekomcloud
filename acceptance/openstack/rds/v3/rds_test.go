@@ -15,11 +15,7 @@ func TestRdsList(t *testing.T) {
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
-	listOpts := instances.ListRdsInstanceOpts{}
-	allRdsPages, err := instances.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	rdsInstances, err := instances.ExtractRdsInstances(allRdsPages)
+	rdsInstances, err := instances.List(client, instances.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	for _, rds := range rdsInstances.Instances {
@@ -36,12 +32,12 @@ func TestRdsLifecycle(t *testing.T) {
 
 	// Create RDSv3 instance
 	rds := createRDS(t, client, cc.RegionName)
-	defer deleteRDS(t, client, rds.Id)
+	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
 
-	restart, err := instances.Restart(client, instances.RestartRdsInstanceOpts{}, rds.Id).Extract()
+	restart, err := instances.Restart(client, instances.RestartOpts{InstanceId: rds.Id})
 	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 1200, restart.JobId)
+	err = instances.WaitForJobCompleted(client, 1200, *restart)
 	th.AssertNoErr(t, err)
 
 	tagList := []tags.ResourceTag{
@@ -61,12 +57,9 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, rds)
 
-	listOpts := instances.ListRdsInstanceOpts{
+	newRds, err := instances.List(client, instances.ListOpts{
 		Id: rds.Id,
-	}
-	allPages, err := instances.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-	newRds, err := instances.ExtractRdsInstances(allPages)
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(newRds.Instances), 1)
 	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
@@ -82,13 +75,15 @@ func TestRdsChangeSingleConfigurationValue(t *testing.T) {
 
 	// Create RDSv3 instance
 	rds := createRDS(t, client, cc.RegionName)
-	defer deleteRDS(t, client, rds.Id)
+	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
 
-	opts := configurations.UpdateInstanceConfigurationOpts{Values: map[string]interface{}{
-		"max_connections": "37",
-		"autocommit":      "OFF",
-	}}
-	result, err := configurations.UpdateInstanceConfiguration(client, rds.Id, opts).Extract()
+	opts := configurations.UpdateInstanceConfigurationOpts{
+		InstanceId: rds.Id,
+		Values: map[string]interface{}{
+			"max_connections": "37",
+			"autocommit":      "OFF",
+		}}
+	result, err := configurations.UpdateInstanceConfiguration(client, opts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, result.RestartRequired)
 }
@@ -102,7 +97,7 @@ func TestRdsReadReplicaLifecycle(t *testing.T) {
 
 	// Create RDSv3 instance
 	rds := createRDS(t, client, cc.RegionName)
-	defer deleteRDS(t, client, rds.Id)
+	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
 
 	t.Logf("Attempting to create RDSv3 Read Replica")
@@ -127,19 +122,16 @@ func TestRdsReadReplicaLifecycle(t *testing.T) {
 		AvailabilityZone: az,
 	}
 
-	createResult := instances.CreateReplica(client, createOpts)
-	rdsReadReplica, err := createResult.Extract()
+	rdsReadReplica, err := instances.CreateReplica(client, createOpts)
 	th.AssertNoErr(t, err)
-	jobResponse, err := createResult.ExtractJobResponse()
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID)
+	err = instances.WaitForJobCompleted(client, 1200, rdsReadReplica.JobId)
 	th.AssertNoErr(t, err)
 	t.Logf("Created RDSv3 Read Replica: %s", rdsReadReplica.Instance.Id)
 
-	defer func() {
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete RDSv3 Read Replica: %s", rdsReadReplica.Instance.Id)
-		_, err := instances.Delete(client, rdsReadReplica.Instance.Id).ExtractJobResponse()
+		_, err := instances.Delete(client, rdsReadReplica.Instance.Id)
 		th.AssertNoErr(t, err)
 		t.Logf("RDSv3 Read Replica instance deleted: %s", rdsReadReplica.Instance.Id)
-	}()
+	})
 }
