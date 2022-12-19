@@ -25,12 +25,12 @@ func TestBackupWorkflow(t *testing.T) {
 	b, err := backups.Create(client, backups.CreateOpts{
 		InstanceID: rds.Id,
 		Name:       tools.RandomString("rds-backup-", 5),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	t.Log("Backup creation started")
 
 	t.Cleanup(func() {
-		th.AssertNoErr(t, backups.Delete(client, b.ID).ExtractErr())
+		th.AssertNoErr(t, backups.Delete(client, b.ID))
 		t.Log("Backup deleted")
 	})
 
@@ -38,9 +38,7 @@ func TestBackupWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Log("Backup creation complete")
 
-	pages, err := backups.List(client, backups.ListOpts{InstanceID: b.InstanceID, BackupID: b.ID}).AllPages()
-	th.AssertNoErr(t, err)
-	backupList, err := backups.ExtractBackups(pages)
+	backupList, err := backups.List(client, backups.ListOpts{InstanceID: b.InstanceID, BackupID: b.ID})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(backupList))
 	tools.PrintResource(t, backupList[0])

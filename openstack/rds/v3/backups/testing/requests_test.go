@@ -135,21 +135,6 @@ func exampleRestorePITROpts() backups.RestorePITROpts {
 			InstanceID: "d8e6ca5a624745bcb546a227aa3ae1cfin01",
 		},
 	}
-
-}
-
-func TestRestoreRequestBody(t *testing.T) {
-	opts := exampleRestoreOpts()
-	result, err := opts.ToBackupRestoreMap()
-	th.AssertNoErr(t, err)
-	th.AssertJSONEquals(t, expectedRequest, result)
-}
-
-func TestRestoreRequestBodyPITR(t *testing.T) {
-	opts := exampleRestorePITROpts()
-	result, err := opts.ToPITRRestoreMap()
-	th.AssertNoErr(t, err)
-	th.AssertJSONEquals(t, expectedPITRRequest, result)
 }
 
 func TestRestoreRequest(t *testing.T) {

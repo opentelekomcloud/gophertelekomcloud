@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type BackupStatus string
@@ -56,48 +55,9 @@ type Backup struct {
 	Status BackupStatus `json:"status"`
 }
 
-type CreateResult struct {
-	golangsdk.Result
-}
-
-type BackupPage struct {
-	pagination.SinglePageBase
-}
-
-func (p BackupPage) IsEmpty() (bool, error) {
-	bs, err := ExtractBackups(p)
-	return len(bs) == 0, err
-}
-
-func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var bks []Backup
-	err := r.(BackupPage).ExtractIntoSlicePtr(&bks, "backups")
-	if err != nil {
-		return nil, err
-	}
-	return bks, nil
-}
-
-func (r CreateResult) Extract() (*Backup, error) {
-	backup := new(Backup)
-	err := r.ExtractIntoStructPtr(backup, "backup")
-	if err != nil {
-		return nil, err
-	}
-	return backup, nil
-}
-
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
 func WaitForBackup(c *golangsdk.ServiceClient, instanceID, backupID string, status BackupStatus) error {
 	return golangsdk.WaitFor(1200, func() (bool, error) {
-		pages, err := List(c, ListOpts{InstanceID: instanceID, BackupID: backupID}).AllPages()
-		if err != nil {
-			return false, fmt.Errorf("error listing backups: %w", err)
-		}
-		backupList, err := ExtractBackups(pages)
+		backupList, err := List(c, ListOpts{InstanceID: instanceID, BackupID: backupID})
 		if err != nil {
 			return false, fmt.Errorf("error extracting backups: %w", err)
 		}
