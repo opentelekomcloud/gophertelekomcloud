@@ -2,50 +2,82 @@ package logs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 type DbSlowLogOpts struct {
-	//
+	// Specifies the ID of the queried DB instance.
+	InstanceID string
+	// Specifies the start date in the "yyyy-mm-ddThh:mm:ssZ" format.
+	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
 	StartDate string `q:"start_date"`
-	//
+	// Specifies the end time in the "yyyy-mm-ddThh:mm:ssZ" format.
+	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset. You can only query slow logs generated within a month.
 	EndDate string `q:"end_date"`
-	//
+	// Specifies the page offset, such as 1, 2, 3, or 4. The parameter value is 1 by default if it is not specified.
 	Offset string `q:"offset"`
-	//
+	// Specifies the number of records on a page. Its value range is from 1 to 100. The parameter value is 10 by default if it is not specified.
 	Limit string `q:"limit"`
+	// Specifies the statement type. If it is left blank, all statement types are queried. Valid value:
 	//
+	// INSERT
+	// UPDATE
+	// SELECT
+	// DELETE
+	// CREATE
 	Level string `q:"level"`
 }
 
-type DbSlowLogBuilder interface {
-	ToDbSlowLogListQuery() (string, error)
-}
-
-func (opts DbSlowLogOpts) ToDbSlowLogListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogOpts) (*SlowLogResp, error) {
+	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return q.String(), err
+
+	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/slowlog
+	url := client.ServiceURL("instances", opts.InstanceID, "slowlog") + query.String()
+	raw, err := client.Get(url, nil, openstack.StdRequestOpts())
+	if err != nil {
+		return nil, err
+	}
+
+	var res SlowLogResp
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
-func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogBuilder, instanceID string) pagination.Pager {
-	url := client.ServiceURL("instances", instanceID, "slowlog")
-	if opts != nil {
-		query, err := opts.ToDbSlowLogListQuery()
+type SlowLogResp struct {
+	// Indicates detailed information.
+	Slowloglist []Slowloglist `json:"slow_log_list"`
+	// Indicates the total number of records.
+	TotalRecord int `json:"total_record"`
+}
 
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-
-	pageRdsList := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return SlowLogPage{pagination.SinglePageBase(r)}
-	})
-
-	rdsheader := map[string]string{"Content-Type": "application/json"}
-	pageRdsList.Headers = rdsheader
-	return pageRdsList
+type Slowloglist struct {
+	// Indicates the number of executions.
+	Count string `json:"count"`
+	// Indicates the execution time.
+	Time string `json:"time"`
+	// Indicates the lock wait time.
+	// This parameter is not present in the response for PostgreSQL DB engine.
+	LockTime string `json:"lock_time"`
+	// Indicates the number of sent rows.
+	// This parameter is not present in the response for PostgreSQL DB engine.
+	RowsSent string `json:"rows_sent"`
+	// Indicates the number of scanned rows.
+	// This parameter is not present in the response for PostgreSQL DB engine.
+	RowsExamined string `json:"rows_examined"`
+	// Indicates the database which the slow log belongs to.
+	Database string `json:"database"`
+	// Indicates the account.
+	Users string `json:"users"`
+	// Indicates the execution syntax.
+	QuerySample string `json:"query_sample"`
+	// Indicates the statement type.
+	Type string `json:"type"`
+	// Indicates the time in the UTC format.
+	StartTime string `json:"start_time"`
+	// Indicates the IP address.
+	ClientIp string `json:"client_ip"`
 }

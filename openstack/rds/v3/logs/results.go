@@ -28,34 +28,6 @@ func ExtractErrorLog(r pagination.Page) (ErrorLogResp, error) {
 	return s, err
 }
 
-type SlowLogResp struct {
-	//
-	Slowloglist []Slowloglist `json:"slow_log_list"`
-	//
-	TotalRecord int `json:"total_record"`
-}
-
-type Slowloglist struct {
-	//
-	Count string `json:"count"`
-	//
-	Time string `json:"time"`
-	//
-	Locktime string `json:"lock_time"`
-	//
-	Rowssent string `json:"rows_sent"`
-	//
-	Rowsexamined string `json:"rows_examined"`
-	//
-	Database string `json:"database"`
-	//
-	Users string `json:"users"`
-	//
-	QuerySample string `json:"query_sample"`
-	//
-	Type string `json:"type"`
-}
-
 type SlowLogPage struct {
 	pagination.SinglePageBase
 }
