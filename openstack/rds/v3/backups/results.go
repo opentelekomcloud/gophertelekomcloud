@@ -19,25 +19,38 @@ const (
 )
 
 type Backup struct {
-	//
+	// Indicates the backup ID.
 	ID string `json:"id"`
-	//
+	// Indicates the DB instance ID.
 	InstanceID string `json:"instance_id"`
-	//
+	// Indicates the backup name.
 	Name string `json:"name"`
+	// Indicates the backup description.
+	Description string `json:"description"`
+	// Indicates the backup type. Value:
 	//
+	// auto: automated full backup
+	// manual: manual full backup
+	// fragment: differential full backup
+	// incremental: automated incremental backup
 	Type string `json:"type"`
 	//
 	Size int `json:"size"`
 	//
+	// Indicates a list of self-built Microsoft SQL Server databases that are partially backed up. (Only Microsoft SQL Server support partial backups.)
 	Databases []BackupDatabase `json:"databases"`
-	//
+	// Indicates the backup start time in the "yyyy-mm-ddThh:mm:ssZ" format, where "T" indicates the start time of the time field, and "Z" indicates the time zone offset.
 	BeginTime string `json:"begin_time"`
 	//
 	EndTime string `json:"end_time"`
 	//
 	Datastore instances.Datastore `json:"datastore"`
+	// Indicates the backup status. Value:
 	//
+	// BUILDING: Backup in progress
+	// COMPLETED: Backup completed
+	// FAILED: Backup failed
+	// DELETING: Backup being deleted
 	Status BackupStatus `json:"status"`
 }
 
