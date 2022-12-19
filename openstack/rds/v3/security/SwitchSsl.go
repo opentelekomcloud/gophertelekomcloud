@@ -1,5 +1,10 @@
 package security
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type SwitchSslOpts struct {
 	// Specifies the DB instance ID.
 	InstanceId string
@@ -9,6 +14,14 @@ type SwitchSslOpts struct {
 	SslOption bool `json:"ssl_option"`
 }
 
-// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/ssl
+func SwitchSsl(c *golangsdk.ServiceClient, opts SwitchSslOpts) (err error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return
+	}
 
-// 200
+	// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/ssl
+	_, err = c.Put(c.ServiceURL("instances", opts.InstanceId, "ssl"), b, nil,
+		&golangsdk.RequestOpts{OkCodes: []int{200}})
+	return
+}
