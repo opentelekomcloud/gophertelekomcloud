@@ -9,22 +9,6 @@ type ErrorLogResult struct {
 	golangsdk.Result
 }
 
-type ErrorLogResp struct {
-	//
-	ErrorLogList []Errorlog `json:"error_log_list"`
-	//
-	TotalRecord int `json:"total_record"`
-}
-
-type Errorlog struct {
-	//
-	Time string `json:"time"`
-	//
-	Level string `json:"level"`
-	//
-	Content string `json:"content"`
-}
-
 type ErrorLogPage struct {
 	pagination.SinglePageBase
 }

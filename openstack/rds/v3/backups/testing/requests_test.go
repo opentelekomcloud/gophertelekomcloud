@@ -151,7 +151,7 @@ func TestRestoreRequest(t *testing.T) {
 	})
 
 	opts := exampleRestoreOpts()
-	backup, err := backups.RestoreToNew(client.ServiceClient(), opts).Extract()
+	backup, err := backups.RestoreToNew(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, backup)
 }
@@ -170,7 +170,7 @@ func TestRestoreRequestPITR(t *testing.T) {
 	})
 
 	opts := exampleRestorePITROpts()
-	backup, err := backups.RestorePITR(client.ServiceClient(), opts).Extract()
+	backup, err := backups.RestorePITR(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, backup)
 }
