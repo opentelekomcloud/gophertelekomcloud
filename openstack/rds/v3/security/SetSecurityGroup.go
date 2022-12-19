@@ -1,11 +1,24 @@
 package security
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type SetSecurityGroupOpts struct {
 	InstanceId string
 	// Specifies the security group ID.
 	SecurityGroupId string `json:"security_group_id"`
 }
 
-// PUT /v3/{project_id}/instances/{instance_id}/security-group
+func SetSecurityGroup(c *golangsdk.ServiceClient, opts UpdateDataIpOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// WorkflowId 200
+	// PUT /v3/{project_id}/instances/{instance_id}/security-group
+	raw, err := c.Put(c.ServiceURL("instances", opts.InstanceId, "security-group"), b, nil,
+		&golangsdk.RequestOpts{OkCodes: []int{200}})
+	return extra(err, raw)
+}
