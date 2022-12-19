@@ -1,5 +1,13 @@
 package security
 
+import (
+	"net/http"
+
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type UpdatePortOpts struct {
 	InstanceId string
 	// Specifies port information for all DB engines.
@@ -13,6 +21,28 @@ type UpdatePortOpts struct {
 	Port int32 `json:"port"`
 }
 
-// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/port
+func UpdatePort(c *golangsdk.ServiceClient, opts SwitchSslOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// workflowId 200
+	// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/port
+	raw, err := c.Put(c.ServiceURL("instances", opts.InstanceId, "port"), b, nil,
+		&golangsdk.RequestOpts{OkCodes: []int{200}})
+	return extra(err, raw)
+}
+
+func extra(err error, raw *http.Response) (*string, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res WorkflowId
+	err = extract.Into(raw.Body, &res)
+	return &res.WorkflowId, err
+}
+
+type WorkflowId struct {
+	WorkflowId string `json:"workflowId"`
+}
