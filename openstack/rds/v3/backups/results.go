@@ -34,16 +34,18 @@ type Backup struct {
 	// fragment: differential full backup
 	// incremental: automated incremental backup
 	Type string `json:"type"`
-	//
+	// Indicates the backup size in kB.
 	Size int `json:"size"`
-	//
 	// Indicates a list of self-built Microsoft SQL Server databases that are partially backed up. (Only Microsoft SQL Server support partial backups.)
 	Databases []BackupDatabase `json:"databases"`
 	// Indicates the backup start time in the "yyyy-mm-ddThh:mm:ssZ" format, where "T" indicates the start time of the time field, and "Z" indicates the time zone offset.
 	BeginTime string `json:"begin_time"`
-	//
+	// Indicates the backup end time.
+	// In a full backup, it indicates the full backup end time.
+	// In a MySQL incremental backup, it indicates the time when the last transaction in the backup file is submitted.
+	// The format is yyyy-mm-ddThh:mm:ssZ. T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
 	EndTime string `json:"end_time"`
-	//
+	// Indicates the database version.
 	Datastore instances.Datastore `json:"datastore"`
 	// Indicates the backup status. Value:
 	//
