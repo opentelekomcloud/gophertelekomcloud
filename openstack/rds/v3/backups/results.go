@@ -91,10 +91,6 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-type RestoreResult struct {
-	instances.CreateResult
-}
-
 func WaitForBackup(c *golangsdk.ServiceClient, instanceID, backupID string, status BackupStatus) error {
 	return golangsdk.WaitFor(1200, func() (bool, error) {
 		pages, err := List(c, ListOpts{InstanceID: instanceID, BackupID: backupID}).AllPages()
