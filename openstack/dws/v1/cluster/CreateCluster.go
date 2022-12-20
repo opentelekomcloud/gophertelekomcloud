@@ -1,6 +1,7 @@
 package cluster
 
 import (
+	"fmt"
 	"net/http"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -11,7 +12,7 @@ import (
 type CreateClusterOpts struct {
 	// Node type
 	NodeType string `json:"node_type"`
-	// Number of nodes in a cluster. The value ranges from 2 to 256.
+	// Number of cluster nodes. For a cluster, the value ranges from 3 to 256. For a hybrid data warehouse (standalone), the value is 1.
 	NumberOfNode int `json:"number_of_node"`
 	// Subnet ID, which is used for configuring cluster network.
 	SubnetId string `json:"subnet_id"`
@@ -88,6 +89,10 @@ func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
 
 		if current.Status == "AVAILABLE" {
 			return true, nil
+		}
+
+		if current.Status == "CREATION FAILED" {
+			return false, fmt.Errorf("cluster creation failed")
 		}
 
 		return false, nil
