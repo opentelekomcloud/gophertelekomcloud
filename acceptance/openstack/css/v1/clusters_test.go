@@ -46,6 +46,10 @@ func TestClusterWorkflow(t *testing.T) {
 		DiskEncryption: &clusters.DiskEncryption{
 			Encrypted: "0",
 		},
+		Datastore: &clusters.Datastore{
+			Version: "7.6.2",
+			Type:    "elasticsearch",
+		},
 	}
 	created, err := clusters.Create(client, opts)
 	th.AssertNoErr(t, err)
@@ -77,6 +81,17 @@ func TestClusterWorkflow(t *testing.T) {
 	if !found {
 		t.Errorf("cluster %s is not found in list", created.ID)
 	}
+
+	_, err = clusters.ExtendCluster(client, created.ID, []clusters.ClusterExtendSpecialOpts{
+		{
+			Type:     "ess",
+			NodeSize: 0,
+			DiskSize: 160,
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	th.AssertNoErr(t, clusters.WaitForClusterToExtend(client, created.ID, timeout))
 
 	_, err = clusters.ExtendCluster(client, created.ID, clusters.ClusterExtendCommonOpts{
 		ModifySize: 1,
