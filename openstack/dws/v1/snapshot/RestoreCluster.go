@@ -3,7 +3,6 @@ package snapshot
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
 )
 
@@ -44,11 +43,5 @@ func RestoreCluster(client *golangsdk.ServiceClient, opts RestoreClusterOpts) (s
 	raw, err := client.Post(client.ServiceURL("snapshots", opts.SnapshotId, "actions"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	if err != nil {
-		return "", err
-	}
-
-	var res cluster.Cluster
-	err = extract.IntoStructPtr(raw.Body, &res, "cluster")
-	return res.Id, err
+	return cluster.ExtraClusterId(err, raw)
 }

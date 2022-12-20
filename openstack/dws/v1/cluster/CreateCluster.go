@@ -1,6 +1,8 @@
 package cluster
 
 import (
+	"net/http"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -50,6 +52,7 @@ type PublicIp struct {
 	EipId string `json:"eip_id,omitempty"`
 }
 
+// CreateCluster is an asynchronous API. It takes 10 to 15 minutes to create a cluster.
 func CreateCluster(client *golangsdk.ServiceClient, opts CreateClusterOpts) (string, error) {
 	b, err := build.RequestBody(opts, "cluster")
 	if err != nil {
@@ -60,16 +63,33 @@ func CreateCluster(client *golangsdk.ServiceClient, opts CreateClusterOpts) (str
 	raw, err := client.Post(client.ServiceURL("clusters"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	return ExtraClusterId(err, raw)
+}
+
+func ExtraClusterId(err error, raw *http.Response) (string, error) {
 	if err != nil {
 		return "", err
 	}
 
-	var res Cluster
+	var res struct {
+		// Cluster ID
+		Id string `json:"id"`
+	}
 	err = extract.IntoStructPtr(raw.Body, &res, "cluster")
 	return res.Id, err
 }
 
-type Cluster struct {
-	// Cluster ID
-	Id string `json:"id"`
+func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		current, err := ListClusterDetails(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if current.Status == "AVAILABLE" {
+			return true, nil
+		}
+
+		return false, nil
+	})
 }
