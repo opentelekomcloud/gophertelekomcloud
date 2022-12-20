@@ -21,7 +21,7 @@ type ListClustersResponse struct {
 	// List of cluster objects
 	Clusters []ClusterInfo `json:"clusters,omitempty"`
 	// Total number of cluster objects
-	Count int32 `json:"count,omitempty"`
+	Count int `json:"count,omitempty"`
 }
 
 type ClusterInfo struct {
@@ -42,7 +42,7 @@ type ClusterInfo struct {
 	// Cluster creation time. Format: ISO8601:YYYY-MM-DDThh:mm:ssZ
 	Created string `json:"created"`
 	// Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-	Port int32 `json:"port"`
+	Port int `json:"port"`
 	// Private network connection information about the cluster.
 	Endpoints []Endpoints `json:"endpoints"`
 	// Unused
@@ -52,9 +52,9 @@ type ClusterInfo struct {
 	// Cluster administrator name
 	UserName string `json:"user_name"`
 	// Number of nodes in a cluster. The value ranges from 2 to 256.
-	NumberOfNode int32 `json:"number_of_node"`
+	NumberOfNode int `json:"number_of_node"`
 	// Number of events
-	RecentEvent int32 `json:"recent_event"`
+	RecentEvent int `json:"recent_event"`
 	// AZ
 	AvailabilityZone string `json:"availability_zone"`
 	// Enterprise project ID. The value 0 indicates the ID of the default enterprise project.

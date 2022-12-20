@@ -27,7 +27,7 @@ type Restore struct {
 	// AZ of a cluster. The default value is the same as that of the original cluster.
 	AvailabilityZone string `json:"availability_zone,omitempty"`
 	// Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-	Port int32 `json:"port,omitempty"`
+	Port int `json:"port,omitempty"`
 	// Public IP address. If the parameter is not specified, public connection is not used by default.
 	PublicIp cluster.PublicIp `json:"public_ip,omitempty"`
 	// Enterprise project. The default enterprise project ID is 0.

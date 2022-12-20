@@ -12,7 +12,7 @@ type ResizeClusterOpts struct {
 
 type ScaleOut struct {
 	// Number of nodes to be added
-	Count int32 `json:"count"`
+	Count int `json:"count"`
 }
 
 func ResizeCluster(client *golangsdk.ServiceClient, clusterId string, opts ResizeClusterOpts) (err error) {

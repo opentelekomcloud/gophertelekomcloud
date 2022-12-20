@@ -4,7 +4,7 @@ import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
 type DeleteClusterOpts struct {
 	// The number of the latest manual snapshots that need to be retained for a cluster.
-	KeepLastManualSnapshot int32 `json:"keep_last_manual_snapshot"`
+	KeepLastManualSnapshot int `json:"keep_last_manual_snapshot"`
 }
 
 func DeleteCluster(client *golangsdk.ServiceClient, clusterId string, opts DeleteClusterOpts) error {

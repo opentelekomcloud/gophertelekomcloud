@@ -41,13 +41,13 @@ type ListResourceReq struct {
 	Action string `json:"action"`
 	// Maximum number of records returned to the query result. This parameter is not displayed when action is set to count.
 	// If action is set to filter, this parameter takes effect. Its value ranges from 1 to 1000 (default).
-	Limit int32 `json:"limit,omitempty"`
+	Limit int `json:"limit,omitempty"`
 	// Start location of pagination query. The query starts from the next resource of the specified location.
 	// When querying the data on the first page, you do not need to specify this parameter.
 	// When querying the data on subsequent pages, set this parameter to the value in the response body returned by querying data of the previous page.
 	// This parameter is not displayed when action is set to count. If action is set to filter, this parameter takes effect.
 	// Its value can be 0 (default) or a positive integer.
-	Offset int32 `json:"offset,omitempty"`
+	Offset int `json:"offset,omitempty"`
 	// Search field. key indicates the field to be matched, for example, resource_name. value indicates the fuzzy match result.
 	Matches []Match `json:"matches,omitempty"`
 }
@@ -80,7 +80,7 @@ type ListClustersByTagsResponse struct {
 	// Resources that meet the search criteria.
 	Resources []MrsResource `json:"resources,omitempty"`
 	// Total number of queried records.
-	TotalCount int32 `json:"total_count,omitempty"`
+	TotalCount int `json:"total_count,omitempty"`
 }
 
 type MrsResource struct {

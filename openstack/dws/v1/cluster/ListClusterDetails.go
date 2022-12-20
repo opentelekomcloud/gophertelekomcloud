@@ -35,7 +35,7 @@ type ClusterDetail struct {
 	// Cluster creation time. Format: ISO8601: YYYY-MM-DDThh:mm:ssZ
 	Created string `json:"created"`
 	// Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-	Port int32 `json:"port"`
+	Port int `json:"port"`
 	// Private network connection information about the cluster.
 	Endpoints []Endpoints `json:"endpoints"`
 	// Unused
@@ -45,9 +45,9 @@ type ClusterDetail struct {
 	// Administrator name
 	UserName string `json:"user_name"`
 	// Number of nodes in a cluster. The value ranges from 2 to 256.
-	NumberOfNode int32 `json:"number_of_node"`
+	NumberOfNode int `json:"number_of_node"`
 	// Number of events
-	RecentEvent int32 `json:"recent_event"`
+	RecentEvent int `json:"recent_event"`
 	// AZ
 	AvailabilityZone string `json:"availability_zone"`
 	// Enterprise project ID. The value 0 indicates the ID of the default enterprise project.
@@ -178,9 +178,9 @@ type MaintainWindow struct {
 
 type ResizeInfo struct {
 	// Number of nodes after the scale-out
-	TargetNodeNum int32 `json:"target_node_num,omitempty"`
+	TargetNodeNum int `json:"target_node_num,omitempty"`
 	// Number of nodes before the scale-out
-	OriginNodeNum int32 `json:"origin_node_num,omitempty"`
+	OriginNodeNum int `json:"origin_node_num,omitempty"`
 	// Scale-out status. The value can be one of the following:
 	// GROWING
 	// RESIZE_FAILURE

@@ -21,7 +21,7 @@ type ListSnapshotsResponse struct {
 	// List of snapshot objects
 	Snapshots []Snapshots `json:"snapshots,omitempty"`
 	// Total number of snapshot objects
-	Count int32 `json:"count,omitempty"`
+	Count int `json:"count,omitempty"`
 }
 
 type Snapshots struct {

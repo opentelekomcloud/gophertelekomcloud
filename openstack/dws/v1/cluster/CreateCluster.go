@@ -10,7 +10,7 @@ type CreateClusterOpts struct {
 	// Node type
 	NodeType string `json:"node_type"`
 	// Number of nodes in a cluster. The value ranges from 2 to 256.
-	NumberOfNode int32 `json:"number_of_node"`
+	NumberOfNode int `json:"number_of_node"`
 	// Subnet ID, which is used for configuring cluster network.
 	SubnetId string `json:"subnet_id"`
 	// ID of a security group, which is used for configuring cluster network.
@@ -20,7 +20,7 @@ type CreateClusterOpts struct {
 	// AZ of a cluster.
 	AvailabilityZone string `json:"availability_zone,omitempty"`
 	// Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-	Port int32 `json:"port,omitempty"`
+	Port int `json:"port,omitempty"`
 	// Cluster name, which must be unique. The cluster name must contain 4 to 64 characters, which must start with a letter.
 	// Only letters, digits, hyphens (-), and underscores (_) are allowed.
 	Name string `json:"name"`
@@ -35,7 +35,7 @@ type CreateClusterOpts struct {
 	// Public IP address. If the parameter is not specified, public connection is not used by default.
 	PublicIp PublicIp `json:"public_ip,omitempty"`
 	// Number of deployed CNs. The value ranges from 2 to the number of cluster nodes minus 1. The maximum value is 20 and the default value is 3.
-	NumberOfCn int32 `json:"number_of_cn,omitempty"`
+	NumberOfCn int `json:"number_of_cn,omitempty"`
 	// Enterprise project. The default enterprise project ID is 0.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
