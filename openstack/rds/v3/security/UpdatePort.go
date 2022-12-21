@@ -21,7 +21,7 @@ type UpdatePortOpts struct {
 	Port int32 `json:"port"`
 }
 
-func UpdatePort(c *golangsdk.ServiceClient, opts SwitchSslOpts) (*string, error) {
+func UpdatePort(c *golangsdk.ServiceClient, opts UpdatePortOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

@@ -8,10 +8,10 @@ import (
 type SetSecurityGroupOpts struct {
 	InstanceId string `json:"-"`
 	// Specifies the security group ID.
-	SecurityGroupId string `json:"security_group_id"`
+	SecurityGroupId string `json:"security_group_id" required:"true"`
 }
 
-func SetSecurityGroup(c *golangsdk.ServiceClient, opts UpdateDataIpOpts) (*string, error) {
+func SetSecurityGroup(c *golangsdk.ServiceClient, opts SetSecurityGroupOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

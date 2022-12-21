@@ -15,8 +15,7 @@ import (
 func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
 	t.Logf("Attempting to create RDSv3")
 
-	prefix := "rds-test-"
-	rdsName := tools.RandomString(prefix, 8)
+	rdsName := tools.RandomString("rds-test-", 8)
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if az == "" {

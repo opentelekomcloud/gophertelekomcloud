@@ -14,7 +14,7 @@ type MigrateFollowerOpts struct {
 	AzCode string `json:"azCode"`
 }
 
-func MigrateFollower(client *golangsdk.ServiceClient, opts ChangeFailoverStrategyOpts) (*string, error) {
+func MigrateFollower(client *golangsdk.ServiceClient, opts MigrateFollowerOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

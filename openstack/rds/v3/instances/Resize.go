@@ -6,18 +6,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ResizeFlavorOpts struct {
-	InstanceId   string
-	ResizeFlavor SpecCode `json:"resize_flavor" required:"true"`
-}
-
-type SpecCode struct {
+type ResizeOpts struct {
+	InstanceId string `json:"-"`
 	// Specifies the resource specification code. Use rds.mysql.m1.xlarge as an example. rds indicates RDS, mysql indicates the DB engine, and m1.xlarge indicates the performance specification (large-memory). The parameter containing rr indicates the read replica specifications. The parameter not containing rr indicates the single or primary/standby DB instance specifications.
 	SpecCode string `json:"spec_code" required:"true"`
 }
 
-func Resize(client *golangsdk.ServiceClient, opts ResizeFlavorOpts) (*string, error) {
-	b, err := build.RequestBody(&opts, "")
+func Resize(client *golangsdk.ServiceClient, opts ResizeOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "resize_flavor")
 	if err != nil {
 		return nil, err
 	}
