@@ -8,7 +8,7 @@ import (
 type RestartOpts struct {
 	InstanceId string
 	// This parameter is left blank.
-	Restart struct{} `json:"restart"`
+	Restart struct{} `json:"restart" required:"true"`
 }
 
 func Restart(client *golangsdk.ServiceClient, opts RestartOpts) (*string, error) {

@@ -13,7 +13,7 @@ func ListDatastores(client *golangsdk.ServiceClient, databaseName string) ([]Dat
 	}
 
 	var res []DataStores
-	err = extract.IntoSlicePtr(raw.Body, &res, "DataStores")
+	err = extract.IntoSlicePtr(raw.Body, &res, "dataStores")
 	return res, err
 }
 

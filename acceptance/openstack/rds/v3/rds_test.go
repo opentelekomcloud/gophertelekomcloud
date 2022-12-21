@@ -35,7 +35,7 @@ func TestRdsLifecycle(t *testing.T) {
 	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
 
-	restart, err := instances.Restart(client, instances.RestartOpts{InstanceId: rds.Id})
+	restart, err := instances.Restart(client, instances.RestartOpts{InstanceId: rds.Id, Restart: struct{}{}})
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 1200, *restart)
 	th.AssertNoErr(t, err)

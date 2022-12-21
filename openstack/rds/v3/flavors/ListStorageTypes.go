@@ -10,14 +10,19 @@ type ListStorageTypesOpts struct {
 	// MySQL
 	// PostgreSQL
 	// SQLServer
-	DatabaseName string `json:"database_name"`
+	DatabaseName string
 	// Specifies the database version.
-	VersionName string `json:"version_name"`
+	VersionName string `q:"version_name" required:"true"`
 }
 
 func ListStorageTypes(client *golangsdk.ServiceClient, opts ListStorageTypesOpts) (*ListStorageTypesResponse, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
 	// GET https://{Endpoint}/v3/{project_id}/storage-type/{database_name}
-	raw, err := client.Get(client.ServiceURL("storage-type", opts.DatabaseName), nil, nil)
+	raw, err := client.Get(client.ServiceURL("storage-type", opts.DatabaseName)+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
