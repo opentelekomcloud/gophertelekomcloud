@@ -35,11 +35,6 @@ func TestRdsLifecycle(t *testing.T) {
 	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
 
-	restart, err := instances.Restart(client, instances.RestartOpts{InstanceId: rds.Id, Restart: struct{}{}})
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 1200, *restart)
-	th.AssertNoErr(t, err)
-
 	tagList := []tags.ResourceTag{
 		{
 			Key:   "muh",
@@ -64,6 +59,14 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertEquals(t, len(newRds.Instances), 1)
 	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
 	th.AssertEquals(t, len(newRds.Instances[0].Tags), 2)
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+	restart, err := instances.Restart(client, instances.RestartOpts{InstanceId: rds.Id, Restart: struct{}{}})
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, *restart)
+	th.AssertNoErr(t, err)
 }
 
 func TestRdsChangeSingleConfigurationValue(t *testing.T) {

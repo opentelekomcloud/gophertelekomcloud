@@ -6,18 +6,13 @@ import (
 )
 
 type EnlargeVolumeRdsOpts struct {
-	InstanceId string
-	// Specifies the target storage space after scaling up.
-	EnlargeVolume EnlargeVolumeSize `json:"enlarge_volume" required:"true"`
-}
-
-type EnlargeVolumeSize struct {
+	InstanceId string `json:"-"`
 	// The minimum start value of each scaling is 10 GB. A DB instance can be scaled up only by a multiple of 10 GB. Value range: 10 GB to 4000 GB
 	Size int `json:"size" required:"true"`
 }
 
 func EnlargeVolume(client *golangsdk.ServiceClient, opts EnlargeVolumeRdsOpts) (*string, error) {
-	b, err := build.RequestBody(&opts, "")
+	b, err := build.RequestBody(&opts, "enlarge_volume")
 	if err != nil {
 		return nil, err
 	}

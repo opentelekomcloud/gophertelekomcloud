@@ -80,9 +80,7 @@ func updateRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) erro
 
 	updateOpts := instances.EnlargeVolumeRdsOpts{
 		InstanceId: rdsID,
-		EnlargeVolume: instances.EnlargeVolumeSize{
-			Size: 200,
-		},
+		Size:       200,
 	}
 
 	updateResult, err := instances.EnlargeVolume(client, updateOpts)

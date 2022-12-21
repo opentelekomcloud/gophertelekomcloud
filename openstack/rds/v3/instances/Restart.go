@@ -6,13 +6,13 @@ import (
 )
 
 type RestartOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// This parameter is left blank.
-	Restart struct{} `json:"restart" required:"true"`
+	Restart struct{} `json:"restart"`
 }
 
 func Restart(client *golangsdk.ServiceClient, opts RestartOpts) (*string, error) {
-	b, err := build.RequestBody(&opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
