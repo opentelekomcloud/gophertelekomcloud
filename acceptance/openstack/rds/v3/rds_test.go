@@ -6,7 +6,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/configurations"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -67,41 +66,6 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 1200, *restart)
 	th.AssertNoErr(t, err)
-}
-
-func TestRdsChangeSingleConfigurationValue(t *testing.T) {
-	client, err := clients.NewRdsV3()
-	th.AssertNoErr(t, err)
-
-	cc, err := clients.CloudAndClient()
-	th.AssertNoErr(t, err)
-
-	// Create RDSv3 instance
-	rds := createRDS(t, client, cc.RegionName)
-	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
-
-	opts := configurations.UpdateInstanceConfigurationOpts{
-		InstanceId: rds.Id,
-		Values: map[string]interface{}{
-			"max_connections": "37",
-			"autocommit":      "OFF",
-		}}
-	result, err := configurations.UpdateInstanceConfiguration(client, opts)
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, true, result.RestartRequired)
-}
-
-func TestRdsReadReplicaLifecycle(t *testing.T) {
-	client, err := clients.NewRdsV3()
-	th.AssertNoErr(t, err)
-
-	cc, err := clients.CloudAndClient()
-	th.AssertNoErr(t, err)
-
-	// Create RDSv3 instance
-	rds := createRDS(t, client, cc.RegionName)
-	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
-	th.AssertEquals(t, rds.Volume.Size, 100)
 
 	t.Logf("Attempting to create RDSv3 Read Replica")
 

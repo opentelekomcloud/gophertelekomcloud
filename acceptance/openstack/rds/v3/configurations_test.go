@@ -38,7 +38,7 @@ func TestConfigurationsLifecycle(t *testing.T) {
 	tools.PrintResource(t, newConfig)
 }
 
-func TestConfigurationsApply(t *testing.T) {
+func TestConfigurations(t *testing.T) {
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
@@ -70,4 +70,14 @@ func TestConfigurationsApply(t *testing.T) {
 	if len(instanceConfig.Parameters) == 0 {
 		t.Errorf("instance config has empty parameter list")
 	}
+
+	opts := configurations.UpdateInstanceConfigurationOpts{
+		InstanceId: rds.Id,
+		Values: map[string]interface{}{
+			"max_connections": "37",
+			"autocommit":      "OFF",
+		}}
+	result, err := configurations.UpdateInstanceConfiguration(client, opts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, result.RestartRequired)
 }
