@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	networking "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
@@ -101,4 +102,17 @@ func TestRdsLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 		t.Logf("RDSv3 Read Replica instance deleted: %s", rdsReadReplica.Instance.Id)
 	})
+
+	elasticIP := networking.CreateEip(t, client, 100)
+	t.Cleanup(func() {
+		networking.DeleteEip(t, client, elasticIP.ID)
+	})
+
+	err = instances.AttachEip(client, instances.AttachEipOpts{
+		InstanceId: rds.Id,
+		PublicIp:   elasticIP.PublicAddress,
+		PublicIpId: elasticIP.ID,
+		IsBind:     true,
+	})
+	th.AssertNoErr(t, err)
 }

@@ -14,8 +14,8 @@ func TestBandwidthsList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// Create eip/bandwidth
-	eip := createEip(t, client, 1)
-	defer deleteEip(t, client, eip.ID)
+	eip := CreateEip(t, client, 1)
+	defer DeleteEip(t, client, eip.ID)
 
 	// Query a bandwidth
 	existingBandwidths, err := bandwidths.List(client, bandwidths.ListOpts{
@@ -38,8 +38,8 @@ func TestBandwidthsLifecycle(t *testing.T) {
 
 	bandwidthSize := 100
 	// Create eip/bandwidth
-	eip := createEip(t, client, bandwidthSize)
-	defer deleteEip(t, client, eip.ID)
+	eip := CreateEip(t, client, bandwidthSize)
+	defer DeleteEip(t, client, eip.ID)
 
 	tools.PrintResource(t, eip)
 
