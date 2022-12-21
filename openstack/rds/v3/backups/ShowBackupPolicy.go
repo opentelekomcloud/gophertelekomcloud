@@ -3,12 +3,11 @@ package backups
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 func ShowBackupPolicy(client *golangsdk.ServiceClient, instanceId string) (*BackupPolicy, error) {
 	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/backups/policy
-	raw, err := client.Get(client.ServiceURL("configurations", instanceId), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL("instances", instanceId, "backups", "policy"), nil, nil)
 	if err != nil {
 		return nil, err
 	}
