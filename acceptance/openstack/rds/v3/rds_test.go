@@ -17,10 +17,11 @@ func TestRdsList(t *testing.T) {
 
 	rdsInstances, err := instances.List(client, instances.ListOpts{})
 	th.AssertNoErr(t, err)
+	tools.PrintResource(t, rdsInstances)
 
-	for _, rds := range rdsInstances.Instances {
-		tools.PrintResource(t, rds)
-	}
+	collations, err := instances.ListCollations(client)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, collations)
 }
 
 func TestRdsLifecycle(t *testing.T) {
@@ -113,6 +114,26 @@ func TestRdsLifecycle(t *testing.T) {
 		PublicIp:   elasticIP.PublicAddress,
 		PublicIpId: elasticIP.ID,
 		IsBind:     true,
+	})
+	th.AssertNoErr(t, err)
+
+	mode, err := instances.ChangeFailoverMode(client, instances.ChangeFailoverModeOpts{
+		InstanceId: rds.Id,
+		Mode:       "async",
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, mode)
+
+	err = instances.ChangeFailoverStrategy(client, instances.ChangeFailoverStrategyOpts{
+		InstanceId:     rds.Id,
+		RepairStrategy: "availability",
+	})
+	th.AssertNoErr(t, err)
+
+	err = instances.ChangeOpsWindow(client, instances.ChangeOpsWindowOpts{
+		InstanceId: rds.Id,
+		StartTime:  "22:00",
+		EndTime:    "02:00",
 	})
 	th.AssertNoErr(t, err)
 }

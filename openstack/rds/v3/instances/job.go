@@ -19,7 +19,7 @@ func WaitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string
 		job := new(golangsdk.RDSJobStatus)
 
 		requestOpts := &golangsdk.RequestOpts{MoreHeaders: map[string]string{"Content-Type": "application/json"}}
-		_, err := jobClient.Get(jobURL(jobClient.ResourceBase, jobID), job, requestOpts)
+		_, err := jobClient.Get(fmt.Sprintf("%sjobs?id=%s", jobClient.ResourceBase, jobID), job, requestOpts)
 		if err != nil {
 			return false, err
 		}
@@ -46,7 +46,7 @@ func WaitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID
 		job := new(golangsdk.JsonRDSInstanceStatus)
 
 		requestOpts := &golangsdk.RequestOpts{MoreHeaders: map[string]string{"Content-Type": "application/json"}}
-		_, err := jobClient.Get(detailsURL(jobClient.ResourceBase, instanceID), job, requestOpts)
+		_, err := jobClient.Get(fmt.Sprintf("%sinstances?id=%s", jobClient.ResourceBase, instanceID), job, requestOpts)
 		if err != nil {
 			return false, err
 		}
@@ -61,12 +61,4 @@ func WaitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID
 
 		return false, nil
 	})
-}
-
-func jobURL(endpoint string, jobID string) string {
-	return fmt.Sprintf("%sjobs?id=%s", endpoint, jobID)
-}
-
-func detailsURL(endpoint string, instanceID string) string {
-	return fmt.Sprintf("%sinstances?id=%s", endpoint, instanceID)
 }
