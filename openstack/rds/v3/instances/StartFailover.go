@@ -7,7 +7,7 @@ import (
 
 func StartFailover(client *golangsdk.ServiceClient, instanceId string) (*StartFailoverResponse, error) {
 	// PUT /v3/{project_id}/instances/{instance_id}/failover
-	raw, err := client.Put(client.ServiceURL("instances", instanceId, "failover"), nil, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("instances", instanceId, "failover"), struct{}{}, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

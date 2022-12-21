@@ -8,7 +8,7 @@ import (
 
 type DbErrorlogOpts struct {
 	// Specifies the ID of the queried DB instance.
-	InstanceID string `json:"-"`
+	InstanceId string `json:"-"`
 	// Specifies the start time in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
 	StartDate string `q:"start_date"`
@@ -40,7 +40,7 @@ func ListErrorLog(client *golangsdk.ServiceClient, opts DbErrorlogOpts) (*ErrorL
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/errorlog
-	url := client.ServiceURL("instances", opts.InstanceID, "errorlog") + query.String()
+	url := client.ServiceURL("instances", opts.InstanceId, "errorlog") + query.String()
 	raw, err := client.Get(url, nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err

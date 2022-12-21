@@ -8,7 +8,7 @@ import (
 
 type DbSlowLogOpts struct {
 	// Specifies the ID of the queried DB instance.
-	InstanceID string `json:"-"`
+	InstanceId string `json:"-"`
 	// Specifies the start date in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
 	StartDate string `q:"start_date"`
@@ -36,7 +36,7 @@ func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogOpts) (*SlowLogR
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/slowlog
-	url := client.ServiceURL("instances", opts.InstanceID, "slowlog") + query.String()
+	url := client.ServiceURL("instances", opts.InstanceId, "slowlog") + query.String()
 	raw, err := client.Get(url, nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err

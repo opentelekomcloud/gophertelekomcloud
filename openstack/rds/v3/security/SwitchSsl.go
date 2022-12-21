@@ -14,6 +14,7 @@ type SwitchSslOpts struct {
 	SslOption bool `json:"ssl_option"`
 }
 
+// SwitchSsl This API is supported for MySQL only.
 func SwitchSsl(c *golangsdk.ServiceClient, opts SwitchSslOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

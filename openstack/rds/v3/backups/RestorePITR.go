@@ -20,9 +20,8 @@ type Source struct {
 	// Specifies the DB instance ID.
 	InstanceID string `json:"instance_id" required:"true"`
 	// Specifies the time point of data restoration in the UNIX timestamp. The unit is millisecond and the time zone is UTC.
-	RestoreTime int64 `json:"restore_time" required:"false"`
+	RestoreTime int64 `json:"restore_time,omitempty"`
 	// Specifies the restoration mode. Enumerated values include:
-	//
 	// backup: indicates using backup files for restoration. In this mode, type is not mandatory and backup_id is mandatory.
 	// timestamp: indicates the point-in-time restoration mode. In this mode, type is mandatory and restore_time is no mandatory.
 	Type string `json:"type" required:"true"`

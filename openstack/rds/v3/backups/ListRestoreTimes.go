@@ -32,7 +32,7 @@ func ListRestoreTimes(client *golangsdk.ServiceClient, opts ListRestoreTimesOpts
 
 type RestoreTime struct {
 	// Indicates the start time of the restoration time range in the UNIX timestamp format. The unit is millisecond and the time zone is UTC.
-	StartTime int32 `json:"start_time"`
+	StartTime int64 `json:"start_time"`
 	// Indicates the end time of the restoration time range in the UNIX timestamp format. The unit is millisecond and the time zone is UTC.
-	EndTime int32 `json:"end_time"`
+	EndTime int64 `json:"end_time"`
 }
