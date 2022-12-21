@@ -54,7 +54,7 @@ type Flavor struct {
 	SpecCode string `json:"spec_code"`
 	// Indicates the database version.
 	// Example value for MySQL: ["5.6","5.7","8.0"]
-	VersionName string `json:"version_name"`
+	VersionName []string `json:"version_name"`
 	// Indicates the DB instance type. Its value can be any of the following:
 	// ha: indicates primary/standby DB instances.
 	// replica: indicates read replicas.
