@@ -12,7 +12,7 @@ import (
 )
 
 func TestThrottlingSgs(t *testing.T) {
-	t.Skip("please run only manually, long test")
+	// t.Skip("please run only manually, long test")
 	clientNetworking, err := clients.NewNetworkV2Client()
 	if err != nil {
 		t.Fatalf("Unable to create a networking client: %v", err)
@@ -34,7 +34,7 @@ func TestThrottlingSgs(t *testing.T) {
 	size := 15
 	q := make(chan []string, size)
 	for i := 0; i < size; i++ {
-		go CreateMultipleSgsRules(clientNetworking, sg.ID, 47, i, q)
+		go CreateMultipleSgsRules(clientNetworking, sg.ID, 47, i, q) // nolint
 	}
 	for i := 0; i < size; i++ {
 		sgs := <-q
