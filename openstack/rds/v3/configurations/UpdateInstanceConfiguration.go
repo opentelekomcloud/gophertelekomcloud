@@ -8,7 +8,7 @@ import (
 
 type UpdateInstanceConfigurationOpts struct {
 	// Specifies the DB instance ID.
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the parameter values defined by users based on the default parameter templates.
 	// For example, "max_connections": "10"
 	Values map[string]interface{} `json:"values"`

@@ -7,7 +7,7 @@ import (
 
 type SwitchSslOpts struct {
 	// Specifies the DB instance ID.
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies whether to enable SSL.
 	// true: SSL is enabled.
 	// false: SSL is disabled.

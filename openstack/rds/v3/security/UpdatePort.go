@@ -9,7 +9,7 @@ import (
 )
 
 type UpdatePortOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies port information for all DB engines.
 	// The MySQL database port ranges from 1024 to 65535 (excluding 12017 and 33071, which are occupied by the RDS system and cannot be used).
 	// The PostgreSQL database port ranges from 2100 to 9500.

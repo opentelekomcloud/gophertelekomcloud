@@ -7,7 +7,7 @@ import (
 )
 
 type ChangeFailoverModeOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the synchronize model.
 	// For MySQL, the value can be any of the following:
 	// async: asynchronous
@@ -15,7 +15,7 @@ type ChangeFailoverModeOpts struct {
 	// For PostgreSQL, the value can be any of the following:
 	// async: asynchronous
 	// sync: synchronous
-	Mode string `json:"mode"`
+	Mode string `json:"mode" required:"true"`
 }
 
 func ChangeFailoverMode(client *golangsdk.ServiceClient, opts ChangeFailoverModeOpts) (*ChangeFailoverModeResponse, error) {

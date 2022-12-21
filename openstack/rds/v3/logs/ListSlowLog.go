@@ -8,7 +8,7 @@ import (
 
 type DbSlowLogOpts struct {
 	// Specifies the ID of the queried DB instance.
-	InstanceID string
+	InstanceID string `json:"-"`
 	// Specifies the start date in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
 	StartDate string `q:"start_date"`

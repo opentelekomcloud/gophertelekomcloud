@@ -7,7 +7,7 @@ import (
 )
 
 type MigrateFollowerOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the ID of the standby DB instance.
 	NodeId string `json:"nodeId"`
 	// Specifies the code of the AZ to which the standby DB instance is to be migrated.

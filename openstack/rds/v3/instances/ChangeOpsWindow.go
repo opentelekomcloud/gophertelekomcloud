@@ -6,7 +6,7 @@ import (
 )
 
 type ChangeOpsWindowOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the start time.
 	// The value must be a valid value in the "HH:MM" format. The current time is in the UTC format.
 	StartTime string `json:"start_time"`

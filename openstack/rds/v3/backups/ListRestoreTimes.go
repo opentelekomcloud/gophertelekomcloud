@@ -8,7 +8,7 @@ import (
 
 type ListRestoreTimesOpts struct {
 	// Specifies the DB instance ID.
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the date to be queried. The value is in the yyyy-mm-dd format, and the time zone is UTC.
 	Date string `json:"date,omitempty"`
 }

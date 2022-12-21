@@ -6,7 +6,7 @@ import (
 )
 
 type SetSecurityGroupOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the security group ID.
 	SecurityGroupId string `json:"security_group_id"`
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type SingleToHaRdsOpts struct {
-	InstanceId string
+	InstanceId string        `json:"-"`
 	SingleToHa SingleToHaRds `json:"single_to_ha" required:"true"`
 }
 

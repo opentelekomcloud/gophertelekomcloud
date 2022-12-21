@@ -5,7 +5,7 @@ import (
 )
 
 type UpdateInstanceNameOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the DB instance name.
 	// DB instances of the same type can have same names under the same tenant.
 	// The parameter must be 4 to 64 characters long, start with a letter, and contain only letters (case-sensitive), digits, hyphens (-), and underscores (_).

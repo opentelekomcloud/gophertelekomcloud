@@ -6,7 +6,7 @@ import (
 )
 
 type UpdateDataIpOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Indicates the private IP address.
 	NewIp string `json:"new_ip"`
 }

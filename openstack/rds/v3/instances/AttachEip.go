@@ -6,7 +6,7 @@ import (
 )
 
 type AttachEipOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// NOTICE
 	// When is_bind is true, public_ip is mandatory.
 	// Specifies the EIP to be bound. The value must be in the standard IP address format.
@@ -17,7 +17,7 @@ type AttachEipOpts struct {
 	PublicIpId string `json:"public_ip_id,omitempty"`
 	// true: Bind an EIP.
 	// false: Unbind an EIP.
-	IsBind bool `json:"is_bind"`
+	IsBind bool `json:"is_bind" required:"true"`
 }
 
 func AttachEip(client *golangsdk.ServiceClient, opts AttachEipOpts) (err error) {

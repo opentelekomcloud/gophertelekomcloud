@@ -8,7 +8,7 @@ import (
 
 // UpdateOpts contains all the values needed to update a Backup.
 type UpdateOpts struct {
-	InstanceId string
+	InstanceId string `json:"-"`
 	// Specifies the number of days to retain the generated backup files.
 	// The value range is from 0 to 732. The value 0 indicates that the automated backup policy is disabled. To extend the retention period, contact customer service. Automated backups can be retained for up to 2562 days.
 	// NOTICE
