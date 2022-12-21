@@ -24,7 +24,7 @@ func TestBackupWorkflow(t *testing.T) {
 
 	b, err := backups.Create(client, backups.CreateOpts{
 		InstanceID: rds.Id,
-		Name:       tools.RandomString("rds-backup-", 5),
+		Name:       tools.RandomString("rds-backup-test-", 5),
 	})
 	th.AssertNoErr(t, err)
 	t.Log("Backup creation started")
