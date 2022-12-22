@@ -182,17 +182,18 @@ func TestRdsLifecycle(t *testing.T) {
 		t.Logf("RDSv3 Read Replica instance deleted: %s", replica.Instance.Id)
 	})
 
+	netClient, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+
 	t.Log("UpdateDataIp")
 
+	// TODO: Randomly assign the new private IP
 	ip, err := security.UpdateDataIp(client, security.UpdateDataIpOpts{
 		InstanceId: rds.Id,
 		NewIp:      "192.168.30.254",
 	})
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, *ip)
-	th.AssertNoErr(t, err)
-
-	netClient, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
 	elasticIP := networking.CreateEip(t, netClient, 100)
