@@ -2,6 +2,7 @@ package v3
 
 import (
 	"testing"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
@@ -15,19 +16,6 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestRdsList(t *testing.T) {
-	client, err := clients.NewRdsV3()
-	th.AssertNoErr(t, err)
-
-	rdsInstances, err := instances.List(client, instances.ListOpts{})
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, rdsInstances)
-
-	collations, err := instances.ListCollations(client)
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, collations)
-}
-
 func TestRdsLifecycle(t *testing.T) {
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
@@ -39,7 +27,7 @@ func TestRdsLifecycle(t *testing.T) {
 	rds := createRDS(t, client, cc.RegionName)
 	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
-	// rds := struct{ Id string }{Id: "f4d563c17b9f4d70815b93a88f13600ain03"}
+	// rds := struct{ Id string }{Id: "490f49d2f8514a6e8378006e6a4f30b8in03"}
 
 	tagList := []tags.ResourceTag{
 		{
@@ -64,6 +52,10 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertEquals(t, len(newRds.Instances), 1)
 	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
 	th.AssertEquals(t, len(newRds.Instances[0].Tags), 2)
+
+	collations, err := instances.ListCollations(client)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, collations)
 
 	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
 		t.Fatalf("Status available wasn't present")
@@ -101,6 +93,22 @@ func TestRdsLifecycle(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 600, *restart)
 	th.AssertNoErr(t, err)
 
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	stop, err := instances.StopInstance(client, rds.Id)
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 600, *stop)
+	th.AssertNoErr(t, err)
+
+	time.Sleep(5 * time.Second)
+
+	start, err := instances.StartupInstance(client, rds.Id)
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 600, *start)
+	th.AssertNoErr(t, err)
+
 	t.Logf("Attempting to create RDSv3 Read Replica")
 
 	rdsReplicaName := tools.RandomString("rds-rr-", 8)
@@ -110,7 +118,7 @@ func TestRdsLifecycle(t *testing.T) {
 		az = "eu-de-01"
 	}
 
-	createOpts := instances.CreateReplicaOpts{
+	replica, err := instances.CreateReplica(client, instances.CreateReplicaOpts{
 		Name:             rdsReplicaName,
 		ReplicaOfId:      rds.Id,
 		DiskEncryptionId: kmsID,
@@ -120,9 +128,7 @@ func TestRdsLifecycle(t *testing.T) {
 			Size: 100,
 		},
 		AvailabilityZone: az,
-	}
-
-	replica, err := instances.CreateReplica(client, createOpts)
+	})
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 1200, replica.JobId)
 	th.AssertNoErr(t, err)
@@ -167,30 +173,11 @@ func TestRdsLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	stop, err := instances.StopInstance(client, rds.Id)
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 600, *stop)
-	th.AssertNoErr(t, err)
-
-	start, err := instances.StartupInstance(client, rds.Id)
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 600, *start)
-	th.AssertNoErr(t, err)
-
 	err = instances.ChangeOpsWindow(client, instances.ChangeOpsWindowOpts{
 		InstanceId: rds.Id,
 		StartTime:  "22:00",
 		EndTime:    "02:00",
 	})
-	th.AssertNoErr(t, err)
-
-	follower, err := instances.MigrateFollower(client, instances.MigrateFollowerOpts{
-		InstanceId: rds.Id,
-		NodeId:     replica.Instance.Id,
-		AzCode:     az,
-	})
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 600, *follower)
 	th.AssertNoErr(t, err)
 
 	resize, err := instances.Resize(client, instances.ResizeOpts{
@@ -219,9 +206,28 @@ func TestRdsLifecycle(t *testing.T) {
 
 	err = instances.ChangeFailoverStrategy(client, instances.ChangeFailoverStrategyOpts{
 		InstanceId:     rds.Id,
-		RepairStrategy: "reliability",
+		RepairStrategy: "availability",
 	})
 	th.AssertNoErr(t, err)
+
+	// haRds, err := instances.List(client, instances.ListOpts{
+	// 	Id: rds.Id,
+	// })
+	// th.AssertNoErr(t, err)
+	//
+	// az2 := clients.EnvOS.GetEnv("AVAILABILITY_ZONE_2")
+	// if az2 == "" {
+	// 	az2 = "eu-de-03"
+	// }
+	// TODO: Action Forbidden
+	// follower, err := instances.MigrateFollower(client, instances.MigrateFollowerOpts{
+	// 	InstanceId: rds.Id,
+	// 	NodeId:     haRds.Instances[0].Nodes[0].Id,
+	// 	AzCode:     az2,
+	// })
+	// th.AssertNoErr(t, err)
+	// err = instances.WaitForJobCompleted(client, 600, *follower)
+	// th.AssertNoErr(t, err)
 
 	failover, err := instances.StartFailover(client, rds.Id)
 	th.AssertNoErr(t, err)
