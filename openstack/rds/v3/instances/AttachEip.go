@@ -17,7 +17,7 @@ type AttachEipOpts struct {
 	PublicIpId string `json:"public_ip_id,omitempty"`
 	// true: Bind an EIP.
 	// false: Unbind an EIP.
-	IsBind bool `json:"is_bind" required:"true"`
+	IsBind *bool `json:"is_bind" required:"true"`
 }
 
 func AttachEip(client *golangsdk.ServiceClient, opts AttachEipOpts) (err error) {

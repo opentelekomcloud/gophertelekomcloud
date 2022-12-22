@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	networking "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/backups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
@@ -109,6 +110,14 @@ func TestRdsLifecycle(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 600, *start)
 	th.AssertNoErr(t, err)
 
+	resize, err := instances.Resize(client, instances.ResizeOpts{
+		InstanceId: rds.Id,
+		SpecCode:   "rds.pg.c2.large",
+	})
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 600, *resize)
+	th.AssertNoErr(t, err)
+
 	t.Logf("Attempting to create RDSv3 Read Replica")
 
 	rdsReplicaName := tools.RandomString("rds-rr-", 8)
@@ -155,20 +164,20 @@ func TestRdsLifecycle(t *testing.T) {
 
 	elasticIP := networking.CreateEip(t, netClient, 100)
 	t.Cleanup(func() {
-		networking.DeleteEip(t, client, elasticIP.ID)
+		networking.DeleteEip(t, netClient, elasticIP.ID)
 	})
 
 	err = instances.AttachEip(client, instances.AttachEipOpts{
 		InstanceId: rds.Id,
 		PublicIp:   elasticIP.PublicAddress,
 		PublicIpId: elasticIP.ID,
-		IsBind:     true,
+		IsBind:     pointerto.Bool(true),
 	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
 		err = instances.AttachEip(client, instances.AttachEipOpts{
 			InstanceId: rds.Id,
-			IsBind:     false,
+			IsBind:     pointerto.Bool(false),
 		})
 		th.AssertNoErr(t, err)
 	})
@@ -178,14 +187,6 @@ func TestRdsLifecycle(t *testing.T) {
 		StartTime:  "22:00",
 		EndTime:    "02:00",
 	})
-	th.AssertNoErr(t, err)
-
-	resize, err := instances.Resize(client, instances.ResizeOpts{
-		InstanceId: rds.Id,
-		SpecCode:   "rds.pg.c2.large",
-	})
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 600, *resize)
 	th.AssertNoErr(t, err)
 
 	ha, err := instances.SingleToHa(client, instances.SingleToHaOpts{
