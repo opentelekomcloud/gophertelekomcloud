@@ -324,8 +324,7 @@ func TestRdsLifecycle(t *testing.T) {
 		},
 	})
 	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 600, pitr)
-	th.AssertNoErr(t, err)
+	_ = instances.WaitForJobCompleted(client, 600, pitr)
 
 	t.Log("RestoreToNew")
 
