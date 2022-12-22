@@ -359,7 +359,7 @@ func TestRdsLifecycle(t *testing.T) {
 
 	err = backups.Update(client, backups.UpdateOpts{
 		InstanceId: rds.Id,
-		KeepDays:   7,
+		KeepDays:   3,
 	})
 	th.AssertNoErr(t, err)
 

@@ -2,6 +2,7 @@ package v3
 
 import (
 	"testing"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -63,6 +64,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) {
 	t.Logf("Attempting to delete RDSv3: %s", rdsID)
 
+	time.Sleep(5 * time.Second)
 	_, err := instances.Delete(client, rdsID)
 	th.AssertNoErr(t, err)
 
