@@ -374,6 +374,8 @@ func TestRdsLifecycle(t *testing.T) {
 	log, err := logs.ListErrorLog(client, logs.DbErrorlogOpts{
 		InstanceId: rds.Id,
 		Limit:      "1",
+		StartDate:  time.Now().AddDate(0, 0, -1).Format("2006-01-02T15:04:05"),
+		EndDate:    time.Now().Format("2006-01-02T15:04:05"),
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, log)
@@ -381,6 +383,8 @@ func TestRdsLifecycle(t *testing.T) {
 	slowLog, err := logs.ListSlowLog(client, logs.DbSlowLogOpts{
 		InstanceId: rds.Id,
 		Limit:      "1",
+		StartDate:  time.Now().AddDate(0, 0, -1).Format("2006-01-02T15:04:05"),
+		EndDate:    time.Now().Format("2006-01-02T15:04:05"),
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, slowLog)

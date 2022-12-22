@@ -11,11 +11,11 @@ type DbErrorlogOpts struct {
 	InstanceId string `json:"-"`
 	// Specifies the start time in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
-	StartDate string `q:"start_date"`
+	StartDate string `q:"start_date" required:"true"`
 	// Specifies the end time in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time. Z indicates the time zone offset.
 	// You can only query error logs generated within a month.
-	EndDate string `q:"end_date"`
+	EndDate string `q:"end_date" required:"true"`
 	// Specifies the page offset, such as 1, 2, 3, or 4. The parameter value is 1 by default if it is not specified.
 	Offset string `q:"offset"`
 	// Specifies the number of records on a page. Its value range is from 1 to 100. The parameter value is 10 by default if it is not specified.
