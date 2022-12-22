@@ -215,6 +215,10 @@ func TestRdsLifecycle(t *testing.T) {
 
 	t.Log("SingleToHa")
 
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
 	ha, err := instances.SingleToHa(client, instances.SingleToHaOpts{
 		InstanceId:    rds.Id,
 		AzCodeNewNode: az,
