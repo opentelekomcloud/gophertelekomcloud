@@ -24,6 +24,8 @@ func TestRdsLifecycle(t *testing.T) {
 	cc, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
+	t.Log("Creating instance")
+
 	// Create RDSv3 instance
 	rds := createRDS(t, client, cc.RegionName)
 	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
@@ -42,6 +44,8 @@ func TestRdsLifecycle(t *testing.T) {
 	}
 	err = tags.Create(client, "instances", rds.Id, tagList).ExtractErr()
 	th.AssertNoErr(t, err)
+
+	t.Log("updateRDS")
 
 	err = updateRDS(t, client, rds.Id)
 	th.AssertNoErr(t, err)
@@ -69,17 +73,23 @@ func TestRdsLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
+	t.Log("SetSecurityGroup")
+
 	_, err = security.SetSecurityGroup(client, security.SetSecurityGroupOpts{
 		InstanceId:      rds.Id,
 		SecurityGroupId: openstack.DefaultSecurityGroup(t),
 	})
 	th.AssertNoErr(t, err)
 
+	t.Log("SwitchSsl")
+
 	err = security.SwitchSsl(client, security.SwitchSslOpts{
 		InstanceId: rds.Id,
 		SslOption:  true,
 	})
 	th.AssertEquals(t, true, err != nil)
+
+	t.Log("UpdatePort")
 
 	port, err := security.UpdatePort(client, security.UpdatePortOpts{
 		InstanceId: rds.Id,
@@ -88,6 +98,8 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, *port)
 	th.AssertNoErr(t, err)
+
+	t.Log("Restart")
 
 	restart, err := instances.Restart(client, instances.RestartOpts{InstanceId: rds.Id, Restart: struct{}{}})
 	th.AssertNoErr(t, err)
@@ -98,6 +110,8 @@ func TestRdsLifecycle(t *testing.T) {
 		t.Fatalf("Status available wasn't present")
 	}
 
+	t.Log("StopInstance")
+
 	stop, err := instances.StopInstance(client, rds.Id)
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, *stop)
@@ -105,10 +119,14 @@ func TestRdsLifecycle(t *testing.T) {
 
 	time.Sleep(5 * time.Second)
 
+	t.Log("StartupInstance")
+
 	start, err := instances.StartupInstance(client, rds.Id)
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, *start)
 	th.AssertNoErr(t, err)
+
+	t.Log("Resize")
 
 	resize, err := instances.Resize(client, instances.ResizeOpts{
 		InstanceId: rds.Id,
@@ -131,7 +149,7 @@ func TestRdsLifecycle(t *testing.T) {
 		Name:             rdsReplicaName,
 		ReplicaOfId:      rds.Id,
 		DiskEncryptionId: kmsID,
-		FlavorRef:        "rds.pg.c2.medium.rr",
+		FlavorRef:        "rds.pg.c2.large.rr",
 		Volume: &instances.Volume{
 			Type: "COMMON",
 			Size: 100,
@@ -151,6 +169,8 @@ func TestRdsLifecycle(t *testing.T) {
 		t.Logf("RDSv3 Read Replica instance deleted: %s", replica.Instance.Id)
 	})
 
+	t.Log("UpdateDataIp")
+
 	ip, err := security.UpdateDataIp(client, security.UpdateDataIpOpts{
 		InstanceId: rds.Id,
 		NewIp:      "192.168.30.254",
@@ -167,6 +187,8 @@ func TestRdsLifecycle(t *testing.T) {
 		networking.DeleteEip(t, netClient, elasticIP.ID)
 	})
 
+	t.Log("AttachEip")
+
 	err = instances.AttachEip(client, instances.AttachEipOpts{
 		InstanceId: rds.Id,
 		PublicIp:   elasticIP.PublicAddress,
@@ -182,12 +204,16 @@ func TestRdsLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
+	t.Log("ChangeOpsWindow")
+
 	err = instances.ChangeOpsWindow(client, instances.ChangeOpsWindowOpts{
 		InstanceId: rds.Id,
 		StartTime:  "22:00",
 		EndTime:    "02:00",
 	})
 	th.AssertNoErr(t, err)
+
+	t.Log("SingleToHa")
 
 	ha, err := instances.SingleToHa(client, instances.SingleToHaOpts{
 		InstanceId:    rds.Id,
@@ -197,6 +223,8 @@ func TestRdsLifecycle(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 600, *ha)
 	th.AssertNoErr(t, err)
 
+	t.Log("ChangeFailoverMode")
+
 	mode, err := instances.ChangeFailoverMode(client, instances.ChangeFailoverModeOpts{
 		InstanceId: rds.Id,
 		Mode:       "sync",
@@ -204,6 +232,8 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, mode.WorkflowId)
 	th.AssertNoErr(t, err)
+
+	t.Log("ChangeFailoverStrategy")
 
 	err = instances.ChangeFailoverStrategy(client, instances.ChangeFailoverStrategyOpts{
 		InstanceId:     rds.Id,
@@ -230,10 +260,14 @@ func TestRdsLifecycle(t *testing.T) {
 	// err = instances.WaitForJobCompleted(client, 600, *follower)
 	// th.AssertNoErr(t, err)
 
+	t.Log("StartFailover")
+
 	failover, err := instances.StartFailover(client, rds.Id)
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, failover.WorkflowId)
 	th.AssertNoErr(t, err)
+
+	t.Log("backups.Create")
 
 	backup, err := backups.Create(client, backups.CreateOpts{
 		InstanceID: rds.Id,
@@ -267,6 +301,8 @@ func TestRdsLifecycle(t *testing.T) {
 		t.Fatalf("Status available wasn't present")
 	}
 
+	t.Log("RestorePITR")
+
 	pitr, err := backups.RestorePITR(client, backups.RestorePITROpts{
 		Source: backups.Source{
 			BackupID:   backupList[0].ID,
@@ -280,6 +316,8 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, pitr)
 	th.AssertNoErr(t, err)
+
+	t.Log("RestoreToNew")
 
 	toNew, err := backups.RestoreToNew(client, backups.RestoreToNewOpts{
 		Name:      rdsName,
