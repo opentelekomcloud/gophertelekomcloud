@@ -128,6 +128,10 @@ func TestRdsLifecycle(t *testing.T) {
 
 	t.Log("Resize")
 
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
 	resize, err := instances.Resize(client, instances.ResizeOpts{
 		InstanceId: rds.Id,
 		SpecCode:   "rds.pg.c2.large",
@@ -143,6 +147,10 @@ func TestRdsLifecycle(t *testing.T) {
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if az == "" {
 		az = "eu-de-01"
+	}
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
 	}
 
 	replica, err := instances.CreateReplica(client, instances.CreateReplicaOpts{
@@ -215,9 +223,7 @@ func TestRdsLifecycle(t *testing.T) {
 
 	t.Log("SingleToHa")
 
-	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
-		t.Fatalf("Status available wasn't present")
-	}
+	time.Sleep(5 * time.Second)
 
 	ha, err := instances.SingleToHa(client, instances.SingleToHaOpts{
 		InstanceId:    rds.Id,
