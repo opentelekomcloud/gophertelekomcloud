@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -18,6 +19,10 @@ import (
 )
 
 func TestRdsLifecycle(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
@@ -260,7 +265,7 @@ func TestRdsLifecycle(t *testing.T) {
 	// if az2 == "" {
 	// 	az2 = "eu-de-03"
 	// }
-	// TODO: Action Forbidden
+	// TODO: Seems Not Working and Return with Action Forbidden
 	// follower, err := instances.MigrateFollower(client, instances.MigrateFollowerOpts{
 	// 	InstanceId: rds.Id,
 	// 	NodeId:     haRds.Instances[0].Nodes[0].Id,
