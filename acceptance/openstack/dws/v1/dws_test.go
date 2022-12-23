@@ -3,6 +3,7 @@ package v1
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
@@ -37,13 +38,19 @@ func TestDWS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
-			ClusterId:              newCluster,
-			KeepLastManualSnapshot: 0,
+		err = golangsdk.WaitFor(1000, func() (bool, error) {
+			err = cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
+				ClusterId:              newCluster,
+				KeepLastManualSnapshot: 0,
+			})
+			if err != nil {
+				return false, nil
+			}
+			return true, nil
 		})
 		th.AssertNoErr(t, err)
 	})
 
-	err = cluster.WaitForCluster(client, newCluster, 600)
+	err = cluster.WaitForCluster(client, newCluster, 1000)
 	th.AssertNoErr(t, err)
 }
