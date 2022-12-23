@@ -7,11 +7,16 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestDWS(t *testing.T) {
+	// if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+	// 	t.Skip("too slow to run in zuul")
+	// }
+
 	client, err := clients.NewDWSV1Client()
 	th.AssertNoErr(t, err)
 
@@ -45,7 +50,7 @@ func TestDWS(t *testing.T) {
 		err = golangsdk.WaitFor(1000, func() (bool, error) {
 			err = cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
 				ClusterId:              clusterId,
-				KeepLastManualSnapshot: 0,
+				KeepLastManualSnapshot: pointerto.Int(0),
 			})
 			if err != nil {
 				return false, nil
