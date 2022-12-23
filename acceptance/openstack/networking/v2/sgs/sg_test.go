@@ -31,17 +31,12 @@ func TestThrottlingSgs(t *testing.T) {
 	sg, err := secgroups.Create(clientCompute, createSGOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	size := 20
+	size := 15
 	q := make(chan []string, size)
-	for i := 0; i < size*2; i++ {
-		go func() {
-			err := CreateMultipleSgsRules(clientNetworking, sg.ID, 400, q)
-			if err != nil {
-				return
-			}
-		}()
+	for i := 0; i < size; i++ {
+		go CreateMultipleSgsRules(clientNetworking, sg.ID, 47, i, q) // nolint
 	}
-	for i := 0; i < size*2; i++ {
+	for i := 0; i < size; i++ {
 		sgs := <-q
 		t.Log(sgs)
 	}
@@ -63,15 +58,15 @@ func TestThrottlingSgs(t *testing.T) {
 	})
 }
 
-func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, count int, output chan<- []string) error {
+func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, count int, startIndex int, output chan<- []string) error {
 	i := 0
 	createdSgs := make([]string, count)
 	for i < count {
 		opts := rules.CreateOpts{
 			Description:  "description",
 			SecGroupID:   sgID,
-			PortRangeMin: 1000 + i,
-			PortRangeMax: 5000 + i,
+			PortRangeMin: startIndex*1000 + i,
+			PortRangeMax: startIndex*5000 + i,
 			Direction:    "ingress",
 			EtherType:    "IPv4",
 			Protocol:     "TCP",
