@@ -3,11 +3,12 @@ package cluster
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 func ListClusterDetails(client *golangsdk.ServiceClient, clusterId string) (*ClusterDetail, error) {
 	// GET /v1.0/{project_id}/clusters/{cluster_id}
-	raw, err := client.Get(client.ServiceURL("clusters", clusterId), nil, nil)
+	raw, err := client.Get(client.ServiceURL("clusters", clusterId), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +70,7 @@ type ClusterDetail struct {
 	// REPAIRING
 	// CREATING
 	// The value indicates the task progress.
-	ActionProgress map[string]string `json:"action_progress"`
+	ActionProgress map[string]interface{} `json:"action_progress"`
 	// Sub-status of clusters in the AVAILABLE state. The value can be one of the following:
 	// NORMAL
 	// READONLY

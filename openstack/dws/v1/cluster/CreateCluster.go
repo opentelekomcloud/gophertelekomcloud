@@ -3,6 +3,7 @@ package cluster
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
@@ -94,6 +95,9 @@ func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
 		if current.Status == "CREATION FAILED" {
 			return false, fmt.Errorf("cluster creation failed")
 		}
+
+		_, _ = fmt.Printf("CREATING: %s.\n", current.ActionProgress["CREATING"])
+		time.Sleep(2 * time.Second)
 
 		return false, nil
 	})

@@ -20,27 +20,31 @@ func TestDWS(t *testing.T) {
 		t.Skip("OS_VPC_ID is missing but DWS test requires using existing network")
 	}
 
-	subnetID := clients.EnvOS.GetEnv("SUBNET_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
 	if subnetID == "" {
 		t.Skip("OS_SUBNET_ID env var is missing but DWS test requires using existing network")
 	}
 
+	// clusterId := "ad240fc2-2691-4eed-b93b-88f05caef634"
+
+	t.Log("Creating cluster")
+
 	name := tools.RandomString("dws-test-", 3)
-	newCluster, err := cluster.CreateCluster(client, cluster.CreateClusterOpts{
+	clusterId, err := cluster.CreateCluster(client, cluster.CreateClusterOpts{
 		NodeType:        "dws.m3.xlarge",
 		NumberOfNode:    3,
 		SubnetId:        subnetID,
 		SecurityGroupId: openstack.DefaultSecurityGroup(t),
 		VpcId:           vpcID,
 		Name:            name,
-		UserName:        "dbAdmin",
-		UserPwd:         "#dbAdmin123",
+		UserName:        "dbadmin",
+		UserPwd:         "#dbadmin123",
 	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
 		err = golangsdk.WaitFor(1000, func() (bool, error) {
 			err = cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
-				ClusterId:              newCluster,
+				ClusterId:              clusterId,
 				KeepLastManualSnapshot: 0,
 			})
 			if err != nil {
@@ -51,6 +55,6 @@ func TestDWS(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	err = cluster.WaitForCluster(client, newCluster, 1000)
+	err = cluster.WaitForCluster(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 }
