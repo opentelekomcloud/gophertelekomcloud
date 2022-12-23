@@ -32,12 +32,12 @@ func TestDWS(t *testing.T) {
 		SecurityGroupId: openstack.DefaultSecurityGroup(t),
 		VpcId:           vpcID,
 		Name:            name,
-		UserName:        "test",
-		UserPwd:         "test",
+		UserName:        "dbAdmin",
+		UserPwd:         "#dbAdmin123",
 	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err := cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
+		err = cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
 			ClusterId:              newCluster,
 			KeepLastManualSnapshot: 0,
 		})
