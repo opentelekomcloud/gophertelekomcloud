@@ -53,6 +53,7 @@ func TestDWS(t *testing.T) {
 				KeepLastManualSnapshot: pointerto.Int(0),
 			})
 			if err != nil {
+				t.Error(err)
 				return false, nil
 			}
 			return true, nil
