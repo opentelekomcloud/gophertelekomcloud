@@ -32,8 +32,7 @@ func WaitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string
 			return false, err
 		}
 
-		_, _ = fmt.Printf("Job Progress: %s.\n", job.Job.Process)
-		time.Sleep(2 * time.Second)
+		time.Sleep(10 * time.Second)
 		return false, nil
 	})
 }
