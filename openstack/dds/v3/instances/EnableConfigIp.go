@@ -21,5 +21,8 @@ func EnableConfigIp(client *golangsdk.ServiceClient, opts EnableConfigIpOpts) er
 	_, err = client.Post(client.ServiceURL("instances", opts.InstanceId, "create-ip"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
+	if err != nil {
+		return err
+	}
 	return nil
 }

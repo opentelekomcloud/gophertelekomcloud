@@ -46,6 +46,24 @@ func TestDdsLifeCycle(t *testing.T) {
 	updateDdsInstance(t, client, newDdsInstance.Instances[0])
 }
 
+func TestDdsReplicaLifeCycle(t *testing.T) {
+	client, err := clients.NewDdsV3Client()
+	th.AssertNoErr(t, err)
+
+	ddsInstance := createDdsReplicaInstance(t, client)
+	defer deleteDdsInstance(t, client, ddsInstance.Id)
+
+	tools.PrintResource(t, ddsInstance)
+	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
+	newDdsInstance, err := instances.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	if newDdsInstance.TotalCount == 0 {
+		t.Fatalf("No DDSv3 instance was found: %s", err)
+	}
+	tools.PrintResource(t, newDdsInstance.Instances[0])
+
+}
+
 func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance instances.InstanceResponse) {
 	t.Log("Update name")
 
@@ -91,6 +109,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 		SSL: "1"})
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
+	th.AssertNoErr(t, err)
 
 	t.Log("Enable config IP")
 	err = instances.EnableConfigIp(client, instances.EnableConfigIpOpts{
@@ -108,6 +127,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	})
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
+	th.AssertNoErr(t, err)
 
 	t.Log("Modify instance port")
 	job, err = instances.ModifyPort(client, instances.ModifyPortOpt{
@@ -116,6 +136,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	})
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
+	th.AssertNoErr(t, err)
 
 	t.Log("Modify instance SG")
 	job, err = instances.ModifySG(client, instances.ModifySGOpt{
@@ -124,6 +145,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	})
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
+	th.AssertNoErr(t, err)
 
 	t.Log("Modify instance specs")
 	job, err = instances.ModifySpec(client, instances.ModifySpecOpt{
@@ -133,12 +155,15 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	})
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
+	th.AssertNoErr(t, err)
+
 	_, err = instances.Restart(client, instances.RestartOpts{
 		InstanceId: instance.Id,
 		TargetId:   instance.Id,
 	})
 	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, instance.Id)
+	th.AssertNoErr(t, err)
 
 	t.Log("Modify instance volume size")
 	job, err = instances.ScaleStorage(client, instances.ScaleStorageOpt{
@@ -148,6 +173,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	})
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
+	th.AssertNoErr(t, err)
 }
 
 func createDdsSingleInstance(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
