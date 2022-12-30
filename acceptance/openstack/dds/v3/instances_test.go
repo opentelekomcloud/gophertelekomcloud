@@ -60,8 +60,24 @@ func TestDdsReplicaLifeCycle(t *testing.T) {
 	if newDdsInstance.TotalCount == 0 {
 		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
+
+	err = instances.ChangePassword(client, instances.ChangePasswordOpt{
+		InstanceId: ddsInstance.Id,
+		UserPwd:    "5ecurePa55w0rd@@",
+	})
+	th.AssertNoErr(t, err)
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
 	tools.PrintResource(t, newDdsInstance.Instances[0])
 
+	t.Log("Enable config IP")
+	err = instances.EnableConfigIp(client, instances.EnableConfigIpOpts{
+		InstanceId: ddsInstance.Id,
+		Type:       "config",
+		Password:   "5ecurePa55w0rd@@",
+	})
+	th.AssertNoErr(t, err)
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
 }
 
 func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance instances.InstanceResponse) {
@@ -111,14 +127,6 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	err = waitForJobCompleted(client, 600, *job)
 	th.AssertNoErr(t, err)
 
-	t.Log("Enable config IP")
-	err = instances.EnableConfigIp(client, instances.EnableConfigIpOpts{
-		InstanceId: instance.Id,
-		Type:       "config",
-		Password:   "5ecurePa55w0rd@",
-	})
-	th.AssertNoErr(t, err)
-
 	t.Log("Modify instance internal IP")
 	job, err = instances.ModifyInternalIp(client, instances.ModifyInternalIpOpts{
 		InstanceId: instance.Id,
@@ -139,7 +147,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	th.AssertNoErr(t, err)
 
 	t.Log("Modify instance SG")
-	job, err = instances.ModifySG(client, instances.ModifySGOpt{
+	_, err = instances.ModifySG(client, instances.ModifySGOpt{
 		InstanceId:      instance.Id,
 		SecurityGroupId: openstack.DefaultSecurityGroup(t),
 	})

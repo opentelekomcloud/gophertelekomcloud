@@ -184,7 +184,7 @@ type Instance struct {
 	// Indicates the security group ID, which is the same as the request parameter.
 	SecurityGroupId string `json:"security_group_id"`
 	// Indicates the database port.
-	Port string `json:"port"`
+	Port int `json:"port"`
 	// Indicates the ID of the disk encryption key, which is the same as the request parameter.
 	DiskEncryptionId string `json:"disk_encryption_id"`
 	// Indicates the instance type, which is the same as the request parameter.
