@@ -6,9 +6,21 @@ import (
 )
 
 type RestartOpts struct {
+	// Specifies the instance ID, which can be obtained by calling the API for querying instances.
 	InstanceId string `json:"-"`
+	// Specifies the type of the object to restart.
+	//
+	// This parameter is mandatory when you restart one or more nodes of a cluster instance.
+	// Set the value to mongos if mongos nodes are restarted.
+	// Set the value to shard if shard nodes are restarted.
+	// Set the value to config if config nodes are restarted.
+	// This parameter is not transferred when the DB instance is restarted.
 	TargetType string `json:"target_type,omitempty"`
-	TargetId   string `json:"target_id" required:"true"`
+	// Specifies the ID of the object to be restarted, which can be obtained by calling the API for querying instances. If you do not have an instance, you can call the API used for creating an instance.
+	//
+	// In a cluster instance, the value is the ID of the node to restart.
+	// When you restart the entire DB instance, the value is the DB instance ID.
+	TargetId string `json:"target_id" required:"true"`
 }
 
 func Restart(client *golangsdk.ServiceClient, opts RestartOpts) (*string, error) {
@@ -17,8 +29,6 @@ func Restart(client *golangsdk.ServiceClient, opts RestartOpts) (*string, error)
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "restart"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202},
-	})
+	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "restart"), b, nil, nil)
 	return extractJob(err, raw)
 }

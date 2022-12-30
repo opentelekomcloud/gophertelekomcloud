@@ -145,9 +145,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Instance, error)
 	}
 
 	// POST https://{Endpoint}/v3/{project_id}/instances
-	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202},
-	})
+	raw, err := client.Post(client.ServiceURL("instances"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}
