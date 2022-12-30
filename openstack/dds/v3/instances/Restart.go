@@ -29,6 +29,7 @@ func Restart(client *golangsdk.ServiceClient, opts RestartOpts) (*string, error)
 		return nil, err
 	}
 
+	// POST https://{Endpoint}/v3/{project_id}/instances/{instance_id}/restart
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "restart"), b, nil, nil)
 	return extractJob(err, raw)
 }
