@@ -20,7 +20,7 @@ func KillSessions(client *golangsdk.ServiceClient, opts KillSessionsOpts) error 
 
 	// POST https://{Endpoint}/v3/{project_id}/nodes/{node_id}/session
 	_, err = client.Post(client.ServiceURL("nodes", opts.NodeId, "session"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202},
+		OkCodes: []int{200},
 	})
 	if err != nil {
 		return err
