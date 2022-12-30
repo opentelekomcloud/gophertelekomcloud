@@ -78,6 +78,7 @@ func TestDdsReplicaLifeCycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
 }
 
 func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance instances.InstanceResponse) {
