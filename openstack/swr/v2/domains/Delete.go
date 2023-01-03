@@ -6,8 +6,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-func Delete(client *golangsdk.ServiceClient, org, repo, domain string) (err error) {
+type GetOpts struct {
+	// Organization name
+	Namespace string `json:"-" required:"true"`
+	// Image repository name
+	Repository string `json:"-" required:"true"`
+	// Name of the account used for image sharing.
+	AccessDomain string `json:"access_domain"`
+}
+
+func Delete(client *golangsdk.ServiceClient, opts GetOpts) (err error) {
 	// DELETE /v2/manage/namespaces/{namespace}/repositories/{repository}/access-domains/{access_domain}
-	_, err = client.Delete(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), nil)
+	url := fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", opts.Namespace, "repos", opts.Repository, "access-domains"), opts.AccessDomain)
+	_, err = client.Delete(url, nil)
 	return
 }
