@@ -3,11 +3,12 @@ package cluster
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 func ListClusters(client *golangsdk.ServiceClient) (*ListClustersResponse, error) {
 	// GET /v1.0/{project_id}/clusters
-	raw, err := client.Get(client.ServiceURL("clusters"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("clusters"), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}
