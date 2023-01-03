@@ -1,15 +1,17 @@
 package organizations
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
-func UpdatePermissions(client *golangsdk.ServiceClient, organization string, opts Auth) (r UpdatePermissionsResult) {
-	b, err := opts.ToPermissionUpdateMap()
+func UpdatePermissions(client *golangsdk.ServiceClient, organization string, opts []Auth) (err error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		r.Err = err
 		return
 	}
-	realBody := []interface{}{b}
-	_, r.Err = client.Patch(client.ServiceURL("manage", "namespaces", organization, "access"), realBody, &r.Body, &golangsdk.RequestOpts{
+
+	_, err = client.Patch(client.ServiceURL("manage", "namespaces", organization, "access"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return
