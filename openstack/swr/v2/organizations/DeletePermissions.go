@@ -2,9 +2,8 @@ package organizations
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
-func DeletePermissions(client *golangsdk.ServiceClient, organization string, userID string) (r DeletePermissionsResult) {
-	_, r.Err = client.Request("DELETE", client.ServiceURL("manage", "namespaces", organization, "access"), &golangsdk.RequestOpts{
-		JSONBody: []interface{}{userID},
-	})
+func DeletePermissions(client *golangsdk.ServiceClient, organization string, userID string) (err error) {
+	// DELETE /v2/manage/namespaces/{namespace}/access
+	_, err = client.DeleteWithBody(client.ServiceURL("manage", "namespaces", organization, "access"), []interface{}{userID}, nil)
 	return
 }
