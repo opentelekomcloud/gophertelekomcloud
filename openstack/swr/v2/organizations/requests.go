@@ -24,12 +24,12 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		return
 	}
 
-	_, r.Err = client.Post(listURL(client), &b, r.Body, nil)
+	_, r.Err = client.Post(client.ServiceURL("manage", "namespaces"), &b, r.Body, nil)
 	return
 }
 
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(organizationURL(client, id), nil)
+	_, r.Err = client.Delete(client.ServiceURL("manage", "namespaces", id), nil)
 	return
 }
 
@@ -50,7 +50,7 @@ func (opts ListOpts) ToNamespaceListQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(client)
+	url := client.ServiceURL("manage", "namespaces")
 	if opts != nil {
 		q, err := opts.ToNamespaceListQuery()
 		if err != nil {
@@ -64,7 +64,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 }
 
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(organizationURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("manage", "namespaces", id), &r.Body, nil)
 	return
 }
 
@@ -85,12 +85,12 @@ func CreatePermissions(client *golangsdk.ServiceClient, organization string, opt
 		return
 	}
 	realBody := []interface{}{b}
-	_, r.Err = client.Post(permissionsURL(client, organization), realBody, &r.Body, nil)
+	_, r.Err = client.Post(client.ServiceURL("manage", "namespaces", organization, "access"), realBody, &r.Body, nil)
 	return
 }
 
 func DeletePermissions(client *golangsdk.ServiceClient, organization string, userID string) (r DeletePermissionsResult) {
-	_, r.Err = client.Request("DELETE", permissionsURL(client, organization), &golangsdk.RequestOpts{
+	_, r.Err = client.Request("DELETE", client.ServiceURL("manage", "namespaces", organization, "access"), &golangsdk.RequestOpts{
 		JSONBody: []interface{}{userID},
 	})
 	return
@@ -113,13 +113,13 @@ func UpdatePermissions(client *golangsdk.ServiceClient, organization string, opt
 		return
 	}
 	realBody := []interface{}{b}
-	_, r.Err = client.Patch(permissionsURL(client, organization), realBody, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(client.ServiceURL("manage", "namespaces", organization, "access"), realBody, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return
 }
 
 func GetPermissions(client *golangsdk.ServiceClient, organization string) (r GetPermissionsResult) {
-	_, r.Err = client.Get(permissionsURL(client, organization), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("manage", "namespaces", organization, "access"), &r.Body, nil)
 	return
 }

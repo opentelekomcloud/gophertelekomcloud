@@ -24,12 +24,13 @@ func TestRepositoryWorkflow(t *testing.T) {
 
 	repoName := "magic-test-repo"
 	createOpts := repositories.CreateOpts{
+		Namespace:   orgName,
 		Repository:  repoName,
 		Category:    "linux",
 		Description: "Test linux repository",
 		IsPublic:    true,
 	}
-	err = repositories.Create(client, orgName, createOpts).ExtractErr()
+	err = repositories.Create(client, createOpts).ExtractErr()
 	th.AssertNoErr(t, err)
 
 	defer func() {

@@ -1,6 +1,8 @@
 package domains
 
 import (
+	"fmt"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -25,7 +27,7 @@ func (opts CreateOpts) ToAccessDomainCreateMap() (map[string]interface{}, error)
 }
 
 func Create(client *golangsdk.ServiceClient, org, repo string, opts CreateOptsBuilder) (r CreateResult) {
-	url := listURL(client, org, repo)
+	url := client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains")
 	b, err := opts.ToAccessDomainCreateMap()
 	if err != nil {
 		r.Err = err
@@ -36,12 +38,12 @@ func Create(client *golangsdk.ServiceClient, org, repo string, opts CreateOptsBu
 }
 
 func Delete(client *golangsdk.ServiceClient, org, repo, domain string) (r DeleteResult) {
-	_, r.Err = client.Delete(singleURL(client, org, repo, domain), nil)
+	_, r.Err = client.Delete(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), nil)
 	return
 }
 
 func Get(client *golangsdk.ServiceClient, org, repo, domain string) (r GetResult) {
-	_, r.Err = client.Get(singleURL(client, org, repo, domain), &r.Body, nil)
+	_, r.Err = client.Get(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), &r.Body, nil)
 	return
 }
 
@@ -68,14 +70,14 @@ func Update(client *golangsdk.ServiceClient, org, repo, domain string, opts Upda
 		return
 	}
 
-	_, r.Err = client.Patch(singleURL(client, org, repo, domain), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return
 }
 
 func List(client *golangsdk.ServiceClient, org, repo string) (p pagination.Pager) {
-	return pagination.NewPager(client, listURL(client, org, repo), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), func(r pagination.PageResult) pagination.Page {
 		return AccessDomainPage{SinglePageBase: pagination.SinglePageBase(r)}
 	})
 }

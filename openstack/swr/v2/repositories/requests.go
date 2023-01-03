@@ -7,36 +7,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type CreateOptsBuilder interface {
-	ToRepositoryCreateMap() (map[string]interface{}, error)
-}
-
-type CreateOpts struct {
-	// Repository - name of the image repository
-	Repository string `json:"repository"`
-	// Category - the value can be `app_server`, `linux`, `framework_app`, `database`, `lang`, `other`, `windows`, `arm`.
-	Category    string `json:"category,omitempty"`
-	Description string `json:"description,omitempty"`
-	IsPublic    bool   `json:"is_public"`
-}
-
-func (opts CreateOpts) ToRepositoryCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create new repository in the organization (namespace)
-func Create(client *golangsdk.ServiceClient, organization string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToRepositoryCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(createURL(client, organization), b, &r.Body, nil)
-	return
-}
-
 func Delete(client *golangsdk.ServiceClient, organization, repository string) (r DeleteResult) {
-	_, r.Err = client.Delete(repoURL(client, organization, repository), nil)
+	_, r.Err = client.Delete(client.ServiceURL("manage", "namespaces", organization, "repos", repository), nil)
 	return
 }
 
@@ -84,7 +56,7 @@ func (opts ListOpts) ToRepositoryListQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) (p pagination.Pager) {
-	url := listURL(client)
+	url := client.ServiceURL("manage", "repos")
 	if opts != nil {
 		q, err := opts.ToRepositoryListQuery()
 		if err != nil {
@@ -99,7 +71,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) (p pagination.P
 }
 
 func Get(client *golangsdk.ServiceClient, organization, repository string) (r GetResult) {
-	_, r.Err = client.Get(repoURL(client, organization, repository), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("manage", "namespaces", organization, "repos", repository), &r.Body, nil)
 	return
 }
 
@@ -123,7 +95,7 @@ func Update(client *golangsdk.ServiceClient, organization, repository string, op
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Patch(repoURL(client, organization, repository), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(client.ServiceURL("manage", "namespaces", organization, "repos", repository), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return

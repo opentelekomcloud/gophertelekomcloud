@@ -23,7 +23,8 @@ func (d dependencies) deleteOrganization(name string) {
 }
 
 func (d dependencies) createRepository(organization, repository string) {
-	th.AssertNoErr(d.t, repositories.Create(d.client, organization, repositories.CreateOpts{
+	th.AssertNoErr(d.t, repositories.Create(d.client, repositories.CreateOpts{
+		Namespace:   organization,
 		Repository:  repository,
 		Category:    "linux",
 		Description: "Used repo",
