@@ -35,7 +35,6 @@ func TestDWS(t *testing.T) {
 	// clusterId := "e3ececc2-e2ae-4f5c-8ab5-fc96f4f20f4f"
 
 	t.Log("Creating cluster")
-
 	name := tools.RandomString("dws-test-", 3)
 	clusterId, err := cluster.CreateCluster(client, cluster.CreateClusterOpts{
 		NodeType:        "dws.m3.xlarge",
@@ -66,6 +65,7 @@ func TestDWS(t *testing.T) {
 	err = cluster.WaitForCluster(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
+	t.Log("ResetPassword")
 	err = cluster.ResetPassword(client, cluster.ResetPasswordOpts{
 		ClusterId:   clusterId,
 		NewPassword: "#SomePassword123",
@@ -75,6 +75,7 @@ func TestDWS(t *testing.T) {
 	err = cluster.WaitForCluster(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
+	t.Log("ResizeCluster")
 	err = cluster.ResizeCluster(client, cluster.ResizeClusterOpts{
 		ClusterId: clusterId,
 		Count:     1,
@@ -83,6 +84,7 @@ func TestDWS(t *testing.T) {
 	err = cluster.WaitForCluster(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
+	t.Log("RestartCluster")
 	err = cluster.RestartCluster(client, cluster.RestartClusterOpts{
 		ClusterId: clusterId,
 		Restart:   struct{}{},
@@ -96,6 +98,7 @@ func TestDWS(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, list)
 
+	t.Log("CreateSnapshot")
 	snapId, err := snapshot.CreateSnapshot(client, snapshot.Snapshot{
 		Name:      name,
 		ClusterId: clusterId,
@@ -109,6 +112,7 @@ func TestDWS(t *testing.T) {
 	err = snapshot.WaitForSnapshot(client, snapId, 1000)
 	th.AssertNoErr(t, err)
 
+	t.Log("RestoreCluster")
 	newName := tools.RandomString("dws-test-", 3)
 	resCId, err := snapshot.RestoreCluster(client, snapshot.RestoreClusterOpts{
 		SnapshotId: snapId,
