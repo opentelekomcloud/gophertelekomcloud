@@ -5,29 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type CreateOptsBuilder interface {
-	ToNamespaceCreateMap() (map[string]interface{}, error)
-}
-
-type CreateOpts struct {
-	Namespace string `json:"namespace"`
-}
-
-func (opts CreateOpts) ToNamespaceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToNamespaceCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Post(client.ServiceURL("manage", "namespaces"), &b, r.Body, nil)
-	return
-}
-
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = client.Delete(client.ServiceURL("manage", "namespaces", id), nil)
 	return
