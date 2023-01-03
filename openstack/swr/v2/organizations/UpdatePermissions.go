@@ -11,6 +11,7 @@ func UpdatePermissions(client *golangsdk.ServiceClient, organization string, opt
 		return
 	}
 
+	// // PATCH /v2/manage/namespaces/{namespace}/access
 	_, err = client.Patch(client.ServiceURL("manage", "namespaces", organization, "access"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})

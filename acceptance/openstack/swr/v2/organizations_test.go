@@ -104,7 +104,7 @@ func TestOrganizationPermissionsWorkflow(t *testing.T) {
 	assertAuthInPermissions(t, newAuth, updatedPerms)
 }
 
-func assertAuthInPermissions(t *testing.T, expected organizations.Auth, actual *organizations.OrganizationPermissions) {
+func assertAuthInPermissions(t *testing.T, expected organizations.Auth, actual *organizations.Permissions) {
 	if actual == nil {
 		t.Fatal("actual organization permissions are nil")
 	}
@@ -126,7 +126,7 @@ func assertAuthInPermissions(t *testing.T, expected organizations.Auth, actual *
 	t.Fatal("expected permission is not found in the `others_auth` list")
 }
 
-func assertAuthNotInPermissions(t *testing.T, expected organizations.Auth, actual *organizations.OrganizationPermissions) {
+func assertAuthNotInPermissions(t *testing.T, expected organizations.Auth, actual *organizations.Permissions) {
 	if actual == nil {
 		t.Fatal("actual organization permissions are nil")
 	}
