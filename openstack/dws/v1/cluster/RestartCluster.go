@@ -6,18 +6,19 @@ import (
 )
 
 type RestartClusterOpts struct {
+	ClusterId string `json:"-"`
 	// Restart flag.
-	Restart interface{} `json:"restart"`
+	Restart interface{} `json:"restart" required:"true"`
 }
 
-func RestartCluster(client *golangsdk.ServiceClient, clusterId string, opts RestartClusterOpts) (err error) {
+func RestartCluster(client *golangsdk.ServiceClient, opts RestartClusterOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}
 
 	// POST /v1.0/{project_id}/clusters/{cluster_id}/restart
-	_, err = client.Post(client.ServiceURL("clusters", clusterId, "restart"), b, nil, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL("clusters", opts.ClusterId, "restart"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

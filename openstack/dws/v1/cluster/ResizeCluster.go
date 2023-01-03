@@ -6,23 +6,19 @@ import (
 )
 
 type ResizeClusterOpts struct {
-	// Scale out an object.
-	ScaleOut ScaleOut `json:"scale_out,omitempty"`
-}
-
-type ScaleOut struct {
+	ClusterId string `json:"-"`
 	// Number of nodes to be added
-	Count int `json:"count"`
+	Count int `json:"count" required:"true"`
 }
 
-func ResizeCluster(client *golangsdk.ServiceClient, clusterId string, opts ResizeClusterOpts) (err error) {
-	b, err := build.RequestBody(opts, "")
+func ResizeCluster(client *golangsdk.ServiceClient, opts ResizeClusterOpts) (err error) {
+	b, err := build.RequestBody(opts, "scale_out")
 	if err != nil {
 		return
 	}
 
 	// POST /v1.0/{project_id}/clusters/{cluster_id}/resize
-	_, err = client.Post(client.ServiceURL("clusters", clusterId, "resize"), b, nil, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL("clusters", opts.ClusterId, "resize"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
