@@ -65,7 +65,7 @@ func TestRepositoryWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, found)
 
-	pages, err := repositories.List(client, nil).AllPages()
+	pages, err := repositories.List(client, repositories.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 	_, err = repositories.ExtractRepositories(pages)
 	th.AssertNoErr(t, err)
