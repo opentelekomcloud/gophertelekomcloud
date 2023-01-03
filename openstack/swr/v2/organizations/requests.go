@@ -5,11 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(client.ServiceURL("manage", "namespaces", id), nil)
-	return
-}
-
 type ListOptsBuilder interface {
 	ToNamespaceListQuery() (string, error)
 }
