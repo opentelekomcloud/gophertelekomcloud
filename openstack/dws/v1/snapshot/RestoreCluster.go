@@ -8,15 +8,10 @@ import (
 
 type RestoreClusterOpts struct {
 	// ID of the snapshot to be restored
-	SnapshotId string
-	// Object to be restored
-	Restore Restore `json:"restore"`
-}
-
-type Restore struct {
+	SnapshotId string `json:"-"`
 	// Cluster name, which must be unique. The cluster name must contain 4 to 64 characters, which must start with a letter.
 	// Only letters, digits, hyphens (-), and underscores (_) are allowed.
-	Name string `json:"name"`
+	Name string `json:"name" required:"true"`
 	// Subnet ID, which is used for configuring cluster network. The default value is the same as that of the original cluster.
 	SubnetId string `json:"subnet_id,omitempty"`
 	// Security group ID, which is used for configuring cluster network. The default value is the same as that of the original cluster.
@@ -34,7 +29,7 @@ type Restore struct {
 }
 
 func RestoreCluster(client *golangsdk.ServiceClient, opts RestoreClusterOpts) (string, error) {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "restore")
 	if err != nil {
 		return "", err
 	}

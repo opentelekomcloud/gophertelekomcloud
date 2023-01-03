@@ -5,6 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// ListNodeTypes Merge to common
 func ListNodeTypes(client *golangsdk.ServiceClient) ([]NodeTypes, error) {
 	// GET /v2/{project_id}/node-types
 	raw, err := client.Get(client.ServiceURL("node-types"), nil, nil)

@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ListClusterDetails(client *golangsdk.ServiceClient, snapshotId string) (*SnapshotDetail, error) {
+func ListSnapshotDetails(client *golangsdk.ServiceClient, snapshotId string) (*SnapshotDetail, error) {
 	// GET /v1.0/{project_id}/snapshots/{snapshot_id}
 	raw, err := client.Get(client.ServiceURL("snapshots", snapshotId), nil, nil)
 	if err != nil {

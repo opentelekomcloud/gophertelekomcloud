@@ -4,6 +4,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type ListResourceReq struct {
@@ -89,12 +90,7 @@ type MrsResource struct {
 	// Resource details. The value is a resource object, used for extension. This value is left empty by default.
 	ResourceDetail string `json:"resource_detail,omitempty"`
 	// List of tags. If no tag is matched, an empty array is returned.
-	Tags []TagPlain `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Resource name. This parameter is an empty string by default if the resource name is not specified.
 	ResourceName string `json:"resource_name,omitempty"`
-}
-
-type TagPlain struct {
-	Key   string `json:"key,omitempty"`
-	Value string `json:"value,omitempty"`
 }

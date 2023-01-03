@@ -3,6 +3,7 @@ package tag
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type BatchCreateClusterTagsOpts struct {
@@ -13,7 +14,7 @@ type BatchCreateClusterTagsOpts struct {
 	// delete: deletes tags in batches.
 	Action string `json:"action"`
 	// Tag list.
-	Tags []Tag `json:"tags"`
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
 func BatchAddDeleteTags(client *golangsdk.ServiceClient, opts BatchCreateClusterTagsOpts) (err error) {
