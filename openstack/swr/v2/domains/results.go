@@ -48,10 +48,6 @@ func (r GetResult) Extract() (*AccessDomain, error) {
 	return domain, nil
 }
 
-type UpdateResult struct {
-	golangsdk.ErrResult
-}
-
 type AccessDomainPage struct {
 	pagination.SinglePageBase
 }
