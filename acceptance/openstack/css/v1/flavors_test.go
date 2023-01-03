@@ -15,10 +15,7 @@ func TestFlavorList(t *testing.T) {
 	client, err := clients.NewCssV1Client()
 	th.AssertNoErr(t, err)
 
-	pages, err := flavors.List(client).AllPages()
-	th.AssertNoErr(t, err)
-
-	versions, err := flavors.ExtractVersions(pages)
+	versions, err := flavors.List(client)
 	th.AssertNoErr(t, err)
 
 	if len(versions) == 0 {

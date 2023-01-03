@@ -46,16 +46,20 @@ func TestClusterWorkflow(t *testing.T) {
 		DiskEncryption: &clusters.DiskEncryption{
 			Encrypted: "0",
 		},
+		Datastore: &clusters.Datastore{
+			Version: "7.6.2",
+			Type:    "elasticsearch",
+		},
 	}
-	created, err := clusters.Create(client, opts).Extract()
+	created, err := clusters.Create(client, opts)
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		err = clusters.Delete(client, created.ID).ExtractErr()
+		err = clusters.Delete(client, created.ID)
 		th.AssertNoErr(t, err)
 	}()
 
-	got, err := clusters.Get(client, created.ID).Extract()
+	got, err := clusters.Get(client, created.ID)
 	th.AssertNoErr(t, err)
 
 	log.Printf("Creating cluster, ID: %s", got.ID)
@@ -64,10 +68,7 @@ func TestClusterWorkflow(t *testing.T) {
 
 	th.CheckNoErr(t, clusters.WaitForClusterOperationSucces(client, created.ID, timeout))
 
-	pages, err := clusters.List(client).AllPages()
-	th.AssertNoErr(t, err)
-
-	list, err := clusters.ExtractClusters(pages)
+	list, err := clusters.List(client)
 	th.AssertNoErr(t, err)
 
 	found := false
@@ -81,9 +82,20 @@ func TestClusterWorkflow(t *testing.T) {
 		t.Errorf("cluster %s is not found in list", created.ID)
 	}
 
+	_, err = clusters.ExtendCluster(client, created.ID, []clusters.ClusterExtendSpecialOpts{
+		{
+			Type:     "ess",
+			NodeSize: 0,
+			DiskSize: 160,
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	th.AssertNoErr(t, clusters.WaitForClusterToExtend(client, created.ID, timeout))
+
 	_, err = clusters.ExtendCluster(client, created.ID, clusters.ClusterExtendCommonOpts{
 		ModifySize: 1,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, clusters.WaitForClusterToExtend(client, created.ID, timeout))

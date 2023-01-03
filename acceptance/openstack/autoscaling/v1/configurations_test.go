@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/configurations"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -16,13 +16,10 @@ func TestConfigurationsList(t *testing.T) {
 
 	listOpts := configurations.ListOpts{}
 
-	allPages, err := configurations.List(client, listOpts).AllPages()
+	configs, err := configurations.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
-	configs, err := configurations.ExtractConfigurations(allPages)
-	th.AssertNoErr(t, err)
-
-	for _, config := range configs {
+	for _, config := range configs.ScalingConfigurations {
 		tools.PrintResource(t, config)
 	}
 }
@@ -38,47 +35,14 @@ func TestConfigurationsLifecycle(t *testing.T) {
 		t.Skip("OS_KEYPAIR_NAME or OS_IMAGE_ID env vars is missing but AS Configuration test requires")
 	}
 
-	secGroupID := openstack.CreateSecurityGroup(t)
-	defer openstack.DeleteSecurityGroup(t, secGroupID)
+	configID := autoscaling.CreateASConfig(t, client, asCreateName, imageID, keyPairName)
 
-	defaultSGID := openstack.DefaultSecurityGroup(t)
+	t.Cleanup(func() {
+		autoscaling.DeleteASConfig(t, client, configID)
+	})
 
-	createOpts := configurations.CreateOpts{
-		Name: asCreateName,
-		InstanceConfig: configurations.InstanceConfigOpts{
-			FlavorRef: "s3.xlarge.4",
-			ImageRef:  imageID,
-			Disk: []configurations.DiskOpts{
-				{
-					Size:       40,
-					VolumeType: "SATA",
-					DiskType:   "SYS",
-				},
-			},
-			SSHKey: keyPairName,
-			SecurityGroups: []configurations.SecurityGroupOpts{
-				{
-					ID: defaultSGID,
-				},
-				{
-					ID: secGroupID,
-				},
-			},
-		},
-	}
-	t.Logf("Attempting to create AutoScaling Configuration")
-	configID, err := configurations.Create(client, createOpts).Extract()
-	th.AssertNoErr(t, err)
-	t.Logf("Created AutoScaling Configuration: %s", configID)
-	defer func() {
-		t.Logf("Attempting to delete AutoScaling Configuration")
-		err := configurations.Delete(client, configID).ExtractErr()
-		th.AssertNoErr(t, err)
-		t.Logf("Deleted AutoScaling Configuration: %s", configID)
-	}()
-
-	config, err := configurations.Get(client, configID).Extract()
+	config, err := configurations.Get(client, configID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, config)
-	th.AssertEquals(t, 2, len(config.InstanceConfig.SecurityGroups))
+	th.AssertEquals(t, 1, len(config.InstanceConfig.SecurityGroups))
 }

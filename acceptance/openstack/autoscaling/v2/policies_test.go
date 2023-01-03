@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/autoscaling"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v2/logs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v2/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -23,12 +24,13 @@ func TestPolicyLifecycle(t *testing.T) {
 	if networkID == "" || vpcID == "" {
 		t.Skip("OS_NETWORK_ID or OS_VPC_ID env vars are missing but AS Policy test requires")
 	}
-	groupID := autoscaling.CreateAutoScalingGroup(t, v1client, networkID, vpcID, asGroupCreateName)
-	defer func() {
-		autoscaling.DeleteAutoScalingGroup(t, v1client, groupID)
-	}()
 
-	createOpts := policies.CreateOpts{
+	groupID := autoscaling.CreateAutoScalingGroup(t, v1client, networkID, vpcID, asGroupCreateName)
+	t.Cleanup(func() {
+		autoscaling.DeleteAutoScalingGroup(t, v1client, groupID)
+	})
+
+	createOpts := policies.PolicyOpts{
 		PolicyName:   asPolicyCreateName,
 		PolicyType:   "RECURRENCE",
 		ResourceID:   groupID,
@@ -46,17 +48,18 @@ func TestPolicyLifecycle(t *testing.T) {
 	}
 
 	t.Logf("Attempting to create AutoScaling Policy")
-	policyID, err := policies.Create(client, createOpts).Extract()
+	policyID, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created AutoScaling Policy: %s", policyID)
-	defer func() {
+
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete AutoScaling Policy")
-		err := policies.Delete(v1client, policyID).ExtractErr()
+		err := policies.Delete(v1client, policyID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted AutoScaling Policy: %s", policyID)
-	}()
+	})
 
-	policy, err := policies.Get(client, policyID).Extract()
+	policy, err := policies.Get(client, policyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, asPolicyCreateName, policy.PolicyName)
 	th.AssertEquals(t, 15, policy.PolicyAction.Percentage)
@@ -65,22 +68,29 @@ func TestPolicyLifecycle(t *testing.T) {
 	t.Logf("Attempting to update AutoScaling policy")
 	asPolicyUpdateName := tools.RandomString("as-policy-update-", 3)
 
-	updateOpts := policies.UpdateOpts{
+	updateOpts := policies.PolicyOpts{
 		PolicyName:     asPolicyUpdateName,
+		PolicyType:     "RECURRENCE",
+		ResourceID:     groupID,
+		ResourceType:   "SCALING_GROUP",
 		SchedulePolicy: createOpts.SchedulePolicy,
-		Action: policies.ActionOpts{
+		PolicyAction: policies.ActionOpts{
 			Percentage: 30,
 		},
 		CoolDownTime: 0,
 	}
 
-	policyID, err = policies.Update(client, policy.PolicyID, updateOpts).Extract()
+	policyID, err = policies.Update(client, policy.PolicyID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated AutoScaling Policy")
 
-	policy, err = policies.Get(client, policyID).Extract()
+	policy, err = policies.Get(client, policyID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, policy)
 	th.AssertEquals(t, asPolicyUpdateName, policy.PolicyName)
 	th.AssertEquals(t, 30, policy.PolicyAction.Percentage)
+
+	activityLogs, err := logs.ListScalingActivityLogs(client, logs.ListScalingActivityLogsOpts{ScalingGroupId: groupID})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, activityLogs)
 }
