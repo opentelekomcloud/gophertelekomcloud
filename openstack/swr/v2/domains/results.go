@@ -5,10 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type CreateResult struct {
-	golangsdk.ErrResult
-}
-
 type GetResult struct {
 	golangsdk.Result
 }

@@ -7,36 +7,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type CreateOptsBuilder interface {
-	ToAccessDomainCreateMap() (map[string]interface{}, error)
-}
-
-type CreateOpts struct {
-	AccessDomain string `json:"access_domain"`
-	// Currently, only the `read` permission is supported.
-	Permit string `json:"permit"`
-	// End date of image sharing (UTC). When the value is set to `forever`,
-	// the image will be permanently available for the domain.
-	// The validity period is calculated by day. The shared images expire at 00:00:00 on the day after the end date.
-	Deadline    string `json:"deadline"`
-	Description string `json:"description"`
-}
-
-func (opts CreateOpts) ToAccessDomainCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-func Create(client *golangsdk.ServiceClient, org, repo string, opts CreateOptsBuilder) (r CreateResult) {
-	url := client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains")
-	b, err := opts.ToAccessDomainCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(url, b, &r.Body, nil)
-	return
-}
-
 func Delete(client *golangsdk.ServiceClient, org, repo, domain string) (r DeleteResult) {
 	_, r.Err = client.Delete(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), nil)
 	return
