@@ -4,22 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type GetResult struct {
-	golangsdk.Result
-}
-
-type CreatePermissionsResult struct {
-	golangsdk.ErrResult
-}
-
-type DeletePermissionsResult struct {
-	golangsdk.ErrResult
-}
-
-type UpdatePermissionsResult struct {
-	golangsdk.ErrResult
-}
-
 type Auth struct {
 	// User ID, which needs to be obtained from the IAM service.
 	UserID string `json:"user_id"`
