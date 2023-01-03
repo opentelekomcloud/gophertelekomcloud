@@ -28,19 +28,17 @@ func TestOrganizationWorkflow(t *testing.T) {
 
 	name := randomRepoName("test-org", 6)
 	opts := organizations.CreateOpts{Namespace: name}
-	err = organizations.Create(client, opts).ExtractErr()
+	err = organizations.Create(client, opts)
 	th.AssertNoErr(t, err)
 	defer func() {
-		th.AssertNoErr(t, organizations.Delete(client, name).ExtractErr())
+		th.AssertNoErr(t, organizations.Delete(client, name))
 	}()
 
 	org, err := organizations.Get(client, name).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name, org.Name)
 
-	pages, err := organizations.List(client, nil).AllPages()
-	th.AssertNoErr(t, err)
-	orgs, err := organizations.ExtractOrganizations(pages)
+	orgs, err := organizations.List(client, organizations.ListOpts{})
 	th.AssertNoErr(t, err)
 	found := false
 	for _, o := range orgs {
