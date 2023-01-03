@@ -30,11 +30,11 @@ func TestOrganizationWorkflow(t *testing.T) {
 	opts := organizations.CreateOpts{Namespace: name}
 	err = organizations.Create(client, opts)
 	th.AssertNoErr(t, err)
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, organizations.Delete(client, name))
-	}()
+	})
 
-	org, err := organizations.Get(client, name).Extract()
+	org, err := organizations.Get(client, name)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name, org.Name)
 
@@ -67,8 +67,7 @@ func TestOrganizationPermissionsWorkflow(t *testing.T) {
 	orgName := fmt.Sprintf("repo-test-%d", tools.RandomInt(0, 0xf))
 	dep := dependencies{t: t, client: client}
 	dep.createOrganization(orgName)
-	defer dep.deleteOrganization(orgName)
-	//
+	t.Cleanup(func() { dep.deleteOrganization(orgName) })
 
 	auth := organizations.Auth{
 		UserID:   userID,
@@ -76,18 +75,18 @@ func TestOrganizationPermissionsWorkflow(t *testing.T) {
 		Auth:     3,
 	}
 
-	err = organizations.CreatePermissions(client, orgName, organizations.CreatePermissionsOpts(auth)).ExtractErr()
+	err = organizations.CreatePermissions(client, orgName, []organizations.Auth{auth})
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		err := organizations.DeletePermissions(client, orgName, auth.UserID).ExtractErr()
+	t.Cleanup(func() {
+		err := organizations.DeletePermissions(client, orgName, auth.UserID)
 		th.AssertNoErr(t, err)
-		perms, err := organizations.GetPermissions(client, orgName).Extract()
+		perms, err := organizations.GetPermissions(client, orgName)
 		th.AssertNoErr(t, err)
 		assertAuthNotInPermissions(t, auth, perms)
-	}()
+	})
 
-	perms, err := organizations.GetPermissions(client, orgName).Extract()
+	perms, err := organizations.GetPermissions(client, orgName)
 	th.AssertNoErr(t, err)
 	assertAuthInPermissions(t, auth, perms)
 
@@ -96,10 +95,10 @@ func TestOrganizationPermissionsWorkflow(t *testing.T) {
 		Username: auth.Username,
 		Auth:     1,
 	}
-	err = organizations.UpdatePermissions(client, orgName, organizations.UpdatePermissionsOpts(newAuth)).ExtractErr()
+	err = organizations.UpdatePermissions(client, orgName, []organizations.Auth{auth})
 	th.AssertNoErr(t, err)
 
-	updatedPerms, err := organizations.GetPermissions(client, orgName).Extract()
+	updatedPerms, err := organizations.GetPermissions(client, orgName)
 	th.AssertNoErr(t, err)
 	assertAuthInPermissions(t, newAuth, updatedPerms)
 }

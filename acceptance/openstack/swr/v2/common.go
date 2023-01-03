@@ -15,11 +15,11 @@ type dependencies struct {
 }
 
 func (d dependencies) createOrganization(name string) {
-	th.AssertNoErr(d.t, organizations.Create(d.client, organizations.CreateOpts{Namespace: name}).ExtractErr())
+	th.AssertNoErr(d.t, organizations.Create(d.client, organizations.CreateOpts{Namespace: name}))
 }
 
 func (d dependencies) deleteOrganization(name string) {
-	th.AssertNoErr(d.t, organizations.Delete(d.client, name).ExtractErr())
+	th.AssertNoErr(d.t, organizations.Delete(d.client, name))
 }
 
 func (d dependencies) createRepository(organization, repository string) {
