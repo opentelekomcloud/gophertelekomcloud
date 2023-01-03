@@ -29,9 +29,9 @@ func (d dependencies) createRepository(organization, repository string) {
 		Category:    "linux",
 		Description: "Used repo",
 		IsPublic:    false,
-	}).ExtractErr())
+	}))
 }
 
 func (d dependencies) deleteRepository(organization, repository string) {
-	th.AssertNoErr(d.t, repositories.Delete(d.client, organization, repository).ExtractErr())
+	th.AssertNoErr(d.t, repositories.Delete(d.client, organization, repository))
 }

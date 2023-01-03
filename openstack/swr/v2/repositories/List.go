@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -62,4 +63,14 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) (p pagination.Pager) {
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return RepositoryPage{pagination.OffsetPageBase{PageResult: r}}
 	})
+}
+
+type RepositoryPage struct {
+	pagination.OffsetPageBase
+}
+
+func ExtractRepositories(p pagination.Page) ([]ImageRepository, error) {
+	var res []ImageRepository
+	err := extract.IntoSlicePtr(p.(RepositoryPage).BodyReader(), &res, "")
+	return res, err
 }

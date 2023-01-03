@@ -21,14 +21,13 @@ type CreateOpts struct {
 }
 
 // Create new repository in the organization (namespace)
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		r.Err = err
 		return
 	}
 
 	// POST /v2/manage/namespaces/{namespace}/repos
-	_, r.Err = client.Post(client.ServiceURL("manage", "namespaces", opts.Namespace, "repos"), b, &r.Body, nil)
+	_, err = client.Post(client.ServiceURL("manage", "namespaces", opts.Namespace, "repos"), b, nil, nil)
 	return
 }
