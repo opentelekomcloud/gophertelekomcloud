@@ -7,11 +7,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-func Delete(client *golangsdk.ServiceClient, org, repo, domain string) (r DeleteResult) {
-	_, r.Err = client.Delete(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), nil)
-	return
-}
-
 func Get(client *golangsdk.ServiceClient, org, repo, domain string) (r GetResult) {
 	_, r.Err = client.Get(fmt.Sprintf("%s/%s", client.ServiceURL("manage", "namespaces", org, "repos", repo, "access-domains"), domain), &r.Body, nil)
 	return

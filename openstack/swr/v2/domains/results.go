@@ -48,10 +48,6 @@ func (r GetResult) Extract() (*AccessDomain, error) {
 	return domain, nil
 }
 
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
 type UpdateResult struct {
 	golangsdk.ErrResult
 }
