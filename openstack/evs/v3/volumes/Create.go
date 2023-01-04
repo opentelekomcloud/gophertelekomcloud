@@ -23,9 +23,9 @@ type CreateOpts struct {
 	//
 	// This parameter is mandatory when you create the disk from an image.
 	// Ensure that the disk size is greater than or equal to the minimum disk capacity required by min_disk in the image attributes.
-	Size int `json:"size,omitempty"`
+	Size int `json:"size" required:"true"`
 	// Specifies the AZ where you want to create the disk. If the AZ does not exist, the disk will fail to create.
-	AvailabilityZone string `json:"availability_zone"`
+	AvailabilityZone string `json:"availability_zone" required:"true"`
 	// ConsistencyGroupID is the ID of a consistency group
 	// Currently, this function is not supported.
 	ConsistencyGroupID string `json:"consistencygroup_id,omitempty"`

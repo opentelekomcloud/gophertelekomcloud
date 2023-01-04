@@ -10,6 +10,8 @@ import (
 )
 
 func TestSchedulerStatsList(t *testing.T) {
+	t.Skip("The API does not exist or has not been published in the environment")
+
 	blockClient, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 

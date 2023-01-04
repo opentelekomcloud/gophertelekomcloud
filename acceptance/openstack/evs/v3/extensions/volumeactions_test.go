@@ -40,7 +40,7 @@ func TestVolumeActionsAttachCreateDestroy(t *testing.T) {
 
 	server, err := compute.CreateServer(t, computeClient)
 	th.AssertNoErr(t, err)
-	defer compute.DeleteServer(t, computeClient, server)
+	t.Cleanup(func() { compute.DeleteServer(t, computeClient, server) })
 
 	volume, err := blockstorageV3.CreateVolume(t, blockClient)
 	th.AssertNoErr(t, err)

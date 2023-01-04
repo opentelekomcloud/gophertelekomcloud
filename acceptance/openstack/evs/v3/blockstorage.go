@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/snapshots"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v3/volumes"
@@ -51,9 +52,10 @@ func CreateVolume(t *testing.T, client *golangsdk.ServiceClient) (*volumes.Volum
 	t.Logf("Attempting to create volume: %s", volumeName)
 
 	createOpts := volumes.CreateOpts{
-		Size:        1,
-		Name:        volumeName,
-		Description: volumeDescription,
+		Size:             1,
+		Name:             volumeName,
+		Description:      volumeDescription,
+		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
 	}
 
 	volume, err := volumes.Create(client, createOpts)

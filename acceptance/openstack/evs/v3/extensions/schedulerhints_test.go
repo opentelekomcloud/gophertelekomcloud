@@ -17,8 +17,9 @@ func TestSchedulerHints(t *testing.T) {
 
 	volumeName := tools.RandomString("ACPTTEST", 16)
 	createOpts := volumes.CreateOpts{
-		Size: 1,
-		Name: volumeName,
+		Size:             1,
+		Name:             volumeName,
+		AvailabilityZone: clients.EnvOS.GetEnv("AVAILABILITY_ZONE"),
 	}
 
 	volume1, err := volumes.Create(client, createOpts)
