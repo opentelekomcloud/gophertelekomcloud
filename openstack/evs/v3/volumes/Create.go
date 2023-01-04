@@ -115,3 +115,20 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (*Volume, e
 	raw, err := client.Post(client.ServiceURL("volumes"), b, nil, nil)
 	return extra(err, raw)
 }
+
+// WaitForStatus will continually poll the resource, checking for a particular
+// status. It will do this for the amount of seconds defined.
+func WaitForStatus(c *golangsdk.ServiceClient, id, status string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		current, err := Get(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if current.Status == status {
+			return true, nil
+		}
+
+		return false, nil
+	})
+}
