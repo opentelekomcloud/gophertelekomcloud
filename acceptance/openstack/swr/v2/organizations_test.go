@@ -95,7 +95,7 @@ func TestOrganizationPermissionsWorkflow(t *testing.T) {
 		Username: auth.Username,
 		Auth:     1,
 	}
-	err = organizations.UpdatePermissions(client, orgName, []organizations.Auth{auth})
+	err = organizations.UpdatePermissions(client, orgName, []organizations.Auth{newAuth})
 	th.AssertNoErr(t, err)
 
 	updatedPerms, err := organizations.GetPermissions(client, orgName)
