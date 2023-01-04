@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -53,7 +52,7 @@ func TestAccessDomainWorkflow(t *testing.T) {
 
 	found := false
 	for _, d := range accessDomains {
-		if d.AccessDomain == strings.ToLower(domainToShare) {
+		if d.AccessDomain == domainToShare {
 			found = true
 			break
 		}
@@ -67,7 +66,7 @@ func TestAccessDomainWorkflow(t *testing.T) {
 		Repository:   repoName,
 		AccessDomain: domainToShare,
 		Permit:       "read", // only read premission is possible
-		Deadline:     "2022-01-01T00:00:00.000Z",
+		Deadline:     "2024-01-01T00:00:00.000Z",
 		Description:  "Updated description",
 	}
 	th.AssertNoErr(t, domains.Update(client, updateOpts))
@@ -78,7 +77,7 @@ func TestAccessDomainWorkflow(t *testing.T) {
 		AccessDomain: domainToShare,
 	})
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, strings.ToLower(domainToShare), domain.AccessDomain)
+	th.CheckEquals(t, domainToShare, domain.AccessDomain)
 	th.CheckEquals(t, updateOpts.Permit, domain.Permit)
 	th.CheckEquals(t, true, domain.Status)
 	th.CheckEquals(t, updateOpts.Description, domain.Description)
