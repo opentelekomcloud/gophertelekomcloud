@@ -32,6 +32,9 @@ func TestVolumeActionsUploadImageDestroy(t *testing.T) {
 }
 
 func TestVolumeActionsAttachCreateDestroy(t *testing.T) {
+	// TODO
+	t.Skip("images.ListDetail discarded and not working.")
+
 	blockClient, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
 

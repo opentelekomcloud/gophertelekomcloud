@@ -82,5 +82,5 @@ func ExtractVolumes(r pagination.Page) ([]Volume, error) {
 
 // ExtractVolumesInto similar to ExtractInto but operates on a `list` of volumes
 func ExtractVolumesInto(r pagination.Page, v interface{}) error {
-	return extract.IntoSlicePtr(r.(VolumePage).Result.BodyReader(), v, "volumes")
+	return extract.IntoSlicePtr(r.(VolumePage).BodyReader(), v, "volumes")
 }

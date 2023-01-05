@@ -28,6 +28,7 @@ func CreateServer(t *testing.T, client *golangsdk.ServiceClient) (*servers.Serve
 		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
 	}
 
+	// TODO: API discarded and not working.
 	imageID, err := images.IDFromName(client, "Standard_Debian_10_latest")
 	th.AssertNoErr(t, err)
 

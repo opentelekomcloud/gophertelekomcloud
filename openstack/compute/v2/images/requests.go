@@ -46,6 +46,7 @@ func (opts ListOpts) ToImageListQuery() (string, error) {
 }
 
 // ListDetail enumerates the available images.
+// TODO: API discarded and not working.
 func ListDetail(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listDetailURL(client)
 	if opts != nil {
