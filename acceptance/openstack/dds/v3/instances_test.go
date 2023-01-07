@@ -64,6 +64,7 @@ func TestDdsClusterLifeCycle(t *testing.T) {
 		SpecCode:   "dds.mongodb.s2.large.4.mongos",
 		Num:        2,
 	})
+	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
 	th.AssertNoErr(t, err)
 
@@ -77,6 +78,7 @@ func TestDdsClusterLifeCycle(t *testing.T) {
 			Size: 70,
 		},
 	})
+	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
 	th.AssertNoErr(t, err)
 
