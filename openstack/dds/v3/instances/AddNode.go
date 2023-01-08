@@ -6,11 +6,11 @@ import (
 )
 
 type AddNodeOpts struct {
-	Type       string     `json:"type" required:"true"`
-	SpecCode   string     `json:"spec_code" required:"true"`
-	Num        int        `json:"num" required:"true"`
-	Volume     VolumeNode `json:"volume,omitempty"`
-	InstanceId string     `json:"-"`
+	Type       string      `json:"type" required:"true"`
+	SpecCode   string      `json:"spec_code" required:"true"`
+	Num        int         `json:"num" required:"true"`
+	Volume     *VolumeNode `json:"volume,omitempty"`
+	InstanceId string      `json:"-"`
 }
 
 type VolumeNode struct {
