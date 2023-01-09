@@ -6,7 +6,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/loggroups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/groups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -15,20 +15,20 @@ func TestLtsGroupsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	name := tools.RandomString("test-group-", 3)
-	createOpts := loggroups.CreateOpts{
+	createOpts := groups.CreateOpts{
 		LogGroupName: name,
 		TTLInDays:    7,
 	}
 
-	created, err := loggroups.Create(client, createOpts)
+	created, err := groups.CreateLogGroup(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = loggroups.Delete(client, created)
+		err = groups.Delete(client, created)
 		th.AssertNoErr(t, err)
 	})
 
-	got, err := loggroups.Get(client, created)
+	got, err := groups.ListLogGroups(client, created)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name, got.LogGroupName)
 

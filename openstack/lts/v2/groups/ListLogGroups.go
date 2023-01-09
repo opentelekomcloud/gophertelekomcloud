@@ -1,12 +1,12 @@
-package loggroups
+package groups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func Get(client *golangsdk.ServiceClient, groupId string) (*GetResponse, error) {
-	// GET /v2.0/{project_id}/log-groups/{group_id}
+func ListLogGroups(client *golangsdk.ServiceClient, groupId string) (*GetResponse, error) {
+	// GET /v2/{project_id}/groups
 	raw, err := client.Get(client.ServiceURL("log-groups", groupId), nil, nil)
 	if err != nil {
 		return nil, err

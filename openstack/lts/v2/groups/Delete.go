@@ -1,4 +1,4 @@
-package loggroups
+package groups
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
