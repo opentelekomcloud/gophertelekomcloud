@@ -1,6 +1,6 @@
 package images
 
-type ListImagesRequest struct {
+type ListImagesOpts struct {
 	// Specifies the image type. The following types are supported:
 	//
 	// Public image: The value is gold.
