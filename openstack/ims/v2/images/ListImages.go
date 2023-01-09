@@ -139,6 +139,8 @@ type ListImagesOpts struct {
 	UpdatedAt string `q:"updated_at,omitempty"`
 }
 
+// This API is used to query images using search criteria and to display the images in a list.
+
 // GET /v2/cloudimages
 
 type ListImagesResponse struct {

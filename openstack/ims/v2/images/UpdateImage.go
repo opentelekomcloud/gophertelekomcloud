@@ -27,6 +27,9 @@ type UpdateImageOpts struct {
 	Value string `json:"value"`
 }
 
+// This API is used to modify image attributes and update image information.
+// Only information of images in active status can be changed.
+
 // PATCH /v2/cloudimages/{image_id}
 
 // 200 ImageInfo
