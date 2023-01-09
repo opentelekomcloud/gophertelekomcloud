@@ -1,4 +1,4 @@
-package dump
+package transfers
 
 import "github.com/opentelekomcloud/gophertelekomcloud"
 

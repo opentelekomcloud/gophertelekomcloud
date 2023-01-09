@@ -1,4 +1,4 @@
-package dump
+package transfers
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
