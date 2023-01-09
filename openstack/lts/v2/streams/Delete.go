@@ -1,4 +1,4 @@
-package logtopics
+package streams
 
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
