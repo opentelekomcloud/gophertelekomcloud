@@ -18,8 +18,8 @@ type CreateOpts struct {
 	TTLInDays int `json:"ttl_in_days"`
 }
 
-func CreateLogGroup(client *golangsdk.ServiceClient, ops CreateOpts) (string, error) {
-	b, err := build.RequestBody(ops, "")
+func CreateLogGroup(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}
