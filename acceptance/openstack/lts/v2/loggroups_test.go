@@ -6,10 +6,11 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/groups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/streams"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestLtsGroupsLifecycle(t *testing.T) {
+func TestLtsLifecycle(t *testing.T) {
 	client, err := clients.NewLtsV2Client()
 	th.AssertNoErr(t, err)
 
@@ -38,4 +39,24 @@ func TestLtsGroupsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, len(got) > 0)
 	tools.PrintResource(t, got)
+
+	sname := tools.RandomString("test-group-", 3)
+	stream, err := streams.CreateLogStream(client, streams.CreateOpts{
+		GroupId:       created,
+		LogStreamName: sname,
+	})
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		err = streams.DeleteLogStream(client, streams.DeleteOpts{
+			GroupId:  created,
+			StreamId: stream,
+		})
+		th.AssertNoErr(t, err)
+	})
+
+	slist, err := streams.ListLogStream(client, created)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, len(slist) > 0)
+	tools.PrintResource(t, slist)
 }

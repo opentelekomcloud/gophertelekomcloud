@@ -6,12 +6,12 @@ type DeleteOpts struct {
 	// ID of a created log group
 	GroupId string
 	// ID of a created log stream
-	TopicId string
+	StreamId string
 }
 
 // DeleteLogStream a log topic by id
 func DeleteLogStream(client *golangsdk.ServiceClient, opts DeleteOpts) (err error) {
 	// DELETE /v2/{project_id}/groups/{log_group_id}/streams/{log_stream_id}
-	_, err = client.Delete(client.ServiceURL("groups", opts.GroupId, "streams", opts.TopicId), nil)
+	_, err = client.Delete(client.ServiceURL("groups", opts.GroupId, "streams", opts.StreamId), nil)
 	return
 }
