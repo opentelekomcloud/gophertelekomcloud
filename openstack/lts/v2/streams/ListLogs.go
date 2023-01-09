@@ -48,7 +48,9 @@ func ListLogs(client *golangsdk.ServiceClient, opts ListLogsOpts) (*ListLogsResp
 	}
 
 	// POST /v2/{project_id}/groups/{log_group_id}/streams/{log_stream_id}/content/query
-	raw, err := client.Post(client.ServiceURL("groups", opts.GroupId, "streams", opts.StreamId, "content", "query"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("groups", opts.GroupId, "streams", opts.StreamId, "content", "query"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return nil, err
 	}

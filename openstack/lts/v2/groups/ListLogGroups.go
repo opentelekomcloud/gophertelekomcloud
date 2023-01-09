@@ -28,7 +28,7 @@ type LogGroup struct {
 	// Value length: 36 characters
 	LogGroupId string `json:"log_group_id"`
 	// Log retention duration, in days (fixed to 7 days).
-	TTLInDays int32 `json:"ttl_in_days"`
+	TTLInDays int `json:"ttl_in_days"`
 	// Log group tag.
 	Tag map[string]string `json:"tag,omitempty"`
 }
