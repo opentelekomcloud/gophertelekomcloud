@@ -69,8 +69,6 @@ type TransferDetail struct {
 	ObsPeriodUnit string `json:"obs_period_unit"`
 	// OBS bucket path, which is the log transfer destination.
 	ObsTransferPath string `json:"obs_transfer_path,omitempty"`
-	// Enterprise project ID of an OBS transfer task.
-	ObsEpsId string `json:"obs_eps_id,omitempty"`
 	// OBS bucket name. This parameter is required to update an OBS transfer task.
 	//
 	// Minimum length: 3 characters
