@@ -5,25 +5,30 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ListLogGroups(client *golangsdk.ServiceClient, groupId string) (*GetResponse, error) {
+func ListLogGroups(client *golangsdk.ServiceClient) ([]LogGroup, error) {
 	// GET /v2/{project_id}/groups
-	raw, err := client.Get(client.ServiceURL("log-groups", groupId), nil, nil)
+	raw, err := client.Get(client.ServiceURL("groups"), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res GetResponse
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	var res []LogGroup
+	err = extract.IntoSlicePtr(raw.Body, &res, "log_groups")
+	return res, err
 }
 
-type GetResponse struct {
-	// Log group ID
-	LogGroupId string `json:"log_group_id"`
-	// Log group name
-	LogGroupName string `json:"log_group_name"`
-	// Log group creation time
+type LogGroup struct {
+	// Time when a log group was created.
 	CreationTime int64 `json:"creation_time"`
-	// Log expiration time
-	TTLInDays int `json:"ttl_in_days"`
+	// Log group name.
+	// Minimum length: 1 character
+	// Maximum length: 64 characters
+	LogGroupName string `json:"log_group_name"`
+	// Log group ID.
+	// Value length: 36 characters
+	LogGroupId string `json:"log_group_id"`
+	// Log retention duration, in days (fixed to 7 days).
+	TtlInDays int32 `json:"ttl_in_days"`
+	// Log group tag.
+	Tag map[string]string `json:"tag,omitempty"`
 }
