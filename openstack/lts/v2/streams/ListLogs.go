@@ -2,20 +2,21 @@ package streams
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type ListLogsOpts struct {
-	GroupId  string `json:"log_group_id"`
-	StreamId string `json:"log_stream_id"`
+	GroupId  string `json:"-" required:"true"`
+	StreamId string `json:"-" required:"true"`
 	// UTC start time of the search window (in milliseconds).
 	// NOTE:
 	// Maximum query time range: 30 days
-	StartTime string `json:"start_time"`
+	StartTime string `json:"start_time" required:"true"`
 	// UTC end time of the search window (in milliseconds).
 	// NOTE:
 	// Maximum query time range: 30 days
-	EndTime string `json:"end_time"`
+	EndTime string `json:"end_time" required:"true"`
 	// Filter criteria, which vary between log sources.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Keyword used for search. A keyword is a word between two adjacent delimiters.
@@ -41,8 +42,13 @@ type ListLogsOpts struct {
 }
 
 func ListLogs(client *golangsdk.ServiceClient, opts ListLogsOpts) (*ListLogsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
 	// POST /v2/{project_id}/groups/{log_group_id}/streams/{log_stream_id}/content/query
-	raw, err := client.Post(client.ServiceURL("groups", opts.GroupId, "streams", opts.StreamId, "content", "query"), nil, nil, nil)
+	raw, err := client.Post(client.ServiceURL("groups", opts.GroupId, "streams", opts.StreamId, "content", "query"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}

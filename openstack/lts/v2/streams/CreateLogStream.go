@@ -8,7 +8,7 @@ import (
 
 type CreateOpts struct {
 	// ID of a created log group
-	GroupId string `json:"-"`
+	GroupId string `json:"-" required:"true"`
 	// Name of the log stream to be created.
 	// Minimum length: 1 character
 	// Maximum length: 64 characters
