@@ -40,7 +40,7 @@ func TestLtsLifecycle(t *testing.T) {
 	th.AssertEquals(t, true, len(got) > 0)
 	tools.PrintResource(t, got)
 
-	sname := tools.RandomString("test-group-", 3)
+	sname := tools.RandomString("test-stream-", 3)
 	stream, err := streams.CreateLogStream(client, streams.CreateOpts{
 		GroupId:       created,
 		LogStreamName: sname,
