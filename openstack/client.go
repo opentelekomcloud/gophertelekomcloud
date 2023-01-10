@@ -866,7 +866,7 @@ func NewSDRSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*go
 
 // NewLTSV2 creates a ServiceClient that may be used to access the LTS service.
 func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initCommonServiceClient(client, eo, "lts", "v2.0")
+	sc, err := initCommonServiceClient(client, eo, "lts", "v2")
 	return sc, err
 }
 
