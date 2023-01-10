@@ -54,7 +54,9 @@ func CreateLogDumpObs(client *golangsdk.ServiceClient, opts CreateLogDumpObsOpts
 	}
 
 	// POST /v2/{project_id}/log-dump/obs
-	raw, err := client.Post(client.ServiceURL("log-dump", "obs"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("log-dump", "obs"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 201},
+	})
 	if err != nil {
 		return "", err
 	}

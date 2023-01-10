@@ -7,7 +7,11 @@ import (
 
 func ListLogStream(client *golangsdk.ServiceClient, groupId string) ([]LogStream, error) {
 	// GET /v2/{project_id}/groups/{log_group_id}/streams
-	raw, err := client.Get(client.ServiceURL("groups", groupId, "streams"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("groups", groupId, "streams"), nil, &golangsdk.RequestOpts{
+		MoreHeaders: map[string]string{
+			"content-type": "application/json",
+		},
+	})
 	if err != nil {
 		return nil, err
 	}

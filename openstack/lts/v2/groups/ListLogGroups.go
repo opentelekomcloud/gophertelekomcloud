@@ -7,7 +7,11 @@ import (
 
 func ListLogGroups(client *golangsdk.ServiceClient) ([]LogGroup, error) {
 	// GET /v2/{project_id}/groups
-	raw, err := client.Get(client.ServiceURL("groups"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("groups"), nil, &golangsdk.RequestOpts{
+		MoreHeaders: map[string]string{
+			"content-type": "application/json",
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
