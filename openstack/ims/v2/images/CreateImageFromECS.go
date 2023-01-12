@@ -55,10 +55,6 @@ type ECSDataImage struct {
 // The API is an asynchronous one. If it is successfully called, the cloud service system receives the request. However, you need to use the asynchronous job query API to query the image creation status. For details, see Asynchronous Job Query.
 //
 // You cannot export public images (such as Windows, SUSE Linux, Red Hat Linux, Oracle Linux, and Ubuntu) or private images created using these public images.
-//
-// Constraints (Creating a System Disk Image Using a Data Disk)
-// Before using a data disk to create a system disk image, ensure that an OS has been installed on the data disk and has been optimized. For details about the optimization, see "Optimizing a Windows Private Image" and "Optimizing a Linux Private Image" in the Image Management Service User Guide.
-// The system cannot verify that an OS has been installed on the data disk. Therefore, ensure that the value of os_version is valid when creating a system disk image from the data disk. For details, see Values of Related Parameters.
 
 // POST /v2/cloudimages/action
 
