@@ -3,25 +3,10 @@ package images
 import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 
 type CreateImageFromECSOpts struct {
-	// Specifies the data disk information to be converted. This parameter is mandatory when the data disk of an ECS is used to create a private data disk image. For details, see Table 1.
-	//
-	// If the ECS data disk is not used to create a data disk image, the parameter is empty by default.
-	//
-	// NOTE:
-	// When you create a data disk image using a data disk, if other parameters (such as name, description, and tags) in this table have values, the system uses the value of data_images. You cannot specify instance_id.
-	DataImages *[]DataImage `json:"data_images,omitempty"`
+	// Specifies the name of the system disk image. For detailed description, see Image Attributes.
+	Name string `json:"name" required:"true"`
 	// Specifies the image description. For detailed description, see Image Attributes. The value contains a maximum of 1024 characters and consists of only letters and digits. Carriage returns and angle brackets (< >) are not allowed. This parameter is left blank by default.
-	Description *string `json:"description,omitempty"`
-	// Specifies the enterprise project that the image belongs to.
-	//
-	// If the value is 0 or left blank, the image belongs to the default enterprise project.
-	// If the value is a UUID, the image belongs to the enterprise project corresponding to the UUID.
-	// For more information about enterprise projects and how to obtain enterprise project IDs, see Enterprise Management User Guide.
-	EnterpriseProjectId *string `json:"enterprise_project_id,omitempty"`
-	// Specifies tags of the image. This parameter is left blank by default.
-	//
-	// Use either tags or image_tags.
-	ImageTags *[]tags.ResourceTag `json:"image_tags,omitempty"`
+	Description string `json:"description,omitempty"`
 	// Specifies the ID of the ECS used to create the image.
 	//
 	// To obtain the ECS ID, perform the following operations:
@@ -29,28 +14,37 @@ type CreateImageFromECSOpts struct {
 	// Log in to management console.
 	// Under Computing, click Elastic Cloud Server.
 	// In the ECS list, click the name of the ECS and view its ID.
-	InstanceId *string `json:"instance_id,omitempty"`
-	// Specifies the name of the system disk image. For detailed description, see Image Attributes.
-	Name string `json:"name"`
+	InstanceId string `json:"instance_id" required:"true"`
+	// Specifies the data disk information to be converted. This parameter is mandatory when the data disk of an ECS is used to create a private data disk image. For details, see Table 1.
+	//
+	// If the ECS data disk is not used to create a data disk image, the parameter is empty by default.
+	//
+	// NOTE:
+	// When you create a data disk image using a data disk, if other parameters (such as name, description, and tags) in this table have values, the system uses the value of data_images. You cannot specify instance_id.
+	DataImages []ECSDataImage `json:"data_images,omitempty"`
 	// Specifies tags of the image. This parameter is left blank by default.
 	//
 	// Use either tags or image_tags.
-	Tags *[]string `json:"tags,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// Specifies tags of the image. This parameter is left blank by default.
+	//
+	// Use either tags or image_tags.
+	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
 	// Specifies the maximum memory of the image in the unit of MB.
-	MaxRam *int32 `json:"max_ram,omitempty"`
+	MaxRam *int `json:"max_ram,omitempty"`
 	// Specifies the minimum memory of the image in the unit of MB. The default value is 0, indicating that the memory is not restricted.
-	MinRam *int32 `json:"min_ram,omitempty"`
+	MinRam *int `json:"min_ram,omitempty"`
 }
 
-type DataImage struct {
+type ECSDataImage struct {
 	// Specifies the name of a data disk image.
-	Name string `json:"name"`
+	Name string `json:"name" required:"true"`
 	// Specifies the data disk ID.
-	VolumeId string `json:"volume_id"`
+	VolumeId string `json:"volume_id" required:"true"`
 	// Specifies the data disk description.
-	Description *string `json:"description,omitempty"`
+	Description string `json:"description,omitempty"`
 	// Specifies the data disk image tag.
-	Tags *[]string `json:"tags,omitempty"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 // This API is used to create a private image. The following methods are supported:
@@ -70,5 +64,5 @@ type DataImage struct {
 
 type JobResponse struct {
 	// Specifies the asynchronous job ID.
-	JobId string `json:"job_id,omitempty"`
+	JobId string `json:"job_id"`
 }
