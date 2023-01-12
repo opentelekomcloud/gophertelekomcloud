@@ -58,6 +58,8 @@ type ECSDataImage struct {
 
 // POST /v2/cloudimages/action
 
+// 200 job_id
+
 type JobResponse struct {
 	// Specifies the asynchronous job ID.
 	JobId string `json:"job_id"`

@@ -53,3 +53,5 @@ type CreateImageFromDiskOpts struct {
 // The system cannot verify that an OS has been installed on the data disk. Therefore, ensure that the value of os_version is valid when creating a system disk image from the data disk. For details, see Values of Related Parameters.
 
 // POST /v2/cloudimages/action
+
+// 200 job_id

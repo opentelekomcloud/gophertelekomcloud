@@ -36,4 +36,4 @@ type ImportImageQuickFromOBSOpts struct {
 
 // POST /v2/cloudimages/quickimport/action
 
-// job_id
+// 200 job_id
