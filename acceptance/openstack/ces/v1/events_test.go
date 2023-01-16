@@ -17,6 +17,14 @@ func TestEvents(t *testing.T) {
 			EventName:   "test",
 			EventSource: "SYS.ECS",
 			Time:        1673874562000,
+			Detail: events.EventItemDetail{
+				Content:      "The financial system was invaded",
+				ResourceId:   "9d3bc7be-5181-4c5a-9d15-26aac9da91b7",
+				ResourceName: "ecs-CES-testing",
+				EventState:   "normal",
+				EventLevel:   "Major",
+				EventUser:    "zuul",
+			},
 		},
 	})
 	th.AssertNoErr(t, err)
