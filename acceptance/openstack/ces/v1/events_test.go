@@ -16,7 +16,7 @@ func TestEvents(t *testing.T) {
 		Limit: 1,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, eventsRes.MetaData.Total, 1)
+	th.AssertEquals(t, len(eventsRes.Events), 1)
 
 	detailRes, err := events.ListEventDetail(client, events.ListEventDetailOpts{
 		EventName: eventsRes.Events[0].EventName,
@@ -24,5 +24,5 @@ func TestEvents(t *testing.T) {
 		Limit:     1,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, detailRes.MetaData.Total, 1)
+	th.AssertEquals(t, len(detailRes.EventInfo), 1)
 }
