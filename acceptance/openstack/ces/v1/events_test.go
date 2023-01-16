@@ -2,6 +2,7 @@ package v1
 
 import (
 	"testing"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ces/v1/events"
@@ -16,7 +17,7 @@ func TestEvents(t *testing.T) {
 		{
 			EventName:   "test",
 			EventSource: "SYS.ECS",
-			Time:        1673874562000,
+			Time:        time.Now().Unix() * 1000,
 			Detail: events.EventItemDetail{
 				Content:      "The financial system was invaded",
 				ResourceId:   "9d3bc7be-5181-4c5a-9d15-26aac9da91b7",
