@@ -16,9 +16,9 @@ type ListEventsOpts struct {
 	// from must be smaller than to. For example, set to 1606557500911.
 	To int64 `q:"to,omitempty"`
 	// Specifies the start value of pagination. The value is an integer. The default value is 0.
-	Start int32 `q:"start,omitempty"`
+	Start int `q:"start,omitempty"`
 	// Specifies the maximum number of events that can be queried at a time. Supported range: 1 to 100 (default)
-	Limit int32 `q:"limit,omitempty"`
+	Limit int `q:"limit,omitempty"`
 }
 
 func ListEvents(client *golangsdk.ServiceClient, opts ListEventsOpts) (*ListEventsResponse, error) {
@@ -51,7 +51,7 @@ type EventInfo struct {
 	// Specifies the event type.
 	EventType string `json:"event_type,omitempty"`
 	// Specifies the number of occurrences of this event within the specified query time range.
-	EventCount int32 `json:"event_count,omitempty"`
+	EventCount int `json:"event_count,omitempty"`
 	// Specifies when the event last occurred.
 	LatestOccurTime int64 `json:"latest_occur_time,omitempty"`
 	// Specifies the event source. If the event is a system event, the value is the namespace of each service.

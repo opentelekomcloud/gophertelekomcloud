@@ -24,9 +24,9 @@ type ListEventDetailOpts struct {
 	// Specifies the end time of the query. The time is a UNIX timestamp and the unit is ms. The from value must be smaller than the to value.
 	To int64 `q:"to,omitempty"`
 	// Specifies the start value of pagination. The value is an integer. The default value is 0.
-	Start int32 `q:"start,omitempty"`
+	Start int `q:"start,omitempty"`
 	// Specifies the maximum number of records that can be queried at a time. Supported range: 1 to 100 (default)
-	Limit int32 `q:"limit,omitempty"`
+	Limit int `q:"limit,omitempty"`
 }
 
 func ListEventDetail(client *golangsdk.ServiceClient, opts ListEventDetailOpts) (*ListEventDetailResponse, error) {
@@ -81,5 +81,5 @@ type EventInfoDetail struct {
 
 type TotalMetaData struct {
 	// Specifies the total number of events.
-	Total int32 `json:"total,omitempty"`
+	Total int `json:"total,omitempty"`
 }
