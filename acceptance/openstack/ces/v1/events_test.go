@@ -12,6 +12,16 @@ func TestEvents(t *testing.T) {
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
 
+	event, err := events.CreateEvents(client, []events.EventItem{
+		{
+			EventName:   "test",
+			EventSource: "SYS.ECS",
+			Time:        1673874562000,
+		},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, event[0].EventName, "test")
+
 	eventsRes, err := events.ListEvents(client, events.ListEventsOpts{
 		Limit: 1,
 	})
