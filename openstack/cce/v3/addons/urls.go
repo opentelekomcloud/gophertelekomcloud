@@ -32,3 +32,8 @@ func templatesURL(client *golangsdk.ServiceClient, clusterID string) string {
 func instanceURL(client *golangsdk.ServiceClient, clusterID string) string {
 	return fmt.Sprintf("%s?cluster_id=%s", CCEServiceURL(client, clusterID, rootPath), clusterID)
 }
+
+// GET /api/v3/addontemplates
+func addonTemplatesURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL(templatesPath)
+}

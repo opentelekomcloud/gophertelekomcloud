@@ -47,7 +47,7 @@ func WaitForClusterToExtend(client *golangsdk.ServiceClient, id string, timeout 
 		if len(cluster.Actions) == 0 {
 			return true, nil
 		}
-		if cluster.Actions[0] == "GROWING" {
+		if cluster.Actions[0] == "GROWING" || cluster.Actions[0] == "RESIZING_VOLUME" {
 			time.Sleep(30 * time.Second) // make a bigger wait if it's not ready
 			return false, nil
 		}

@@ -14,15 +14,22 @@ func TestFlavorsList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := flavors.ListOpts{
-		VersionName: "10",
+		DatabaseName: "PostgreSQL",
+		VersionName:  "10",
 	}
-	allFlavorPages, err := flavors.List(client, listOpts, "PostgreSQL").AllPages()
-	th.AssertNoErr(t, err)
 
-	rdsFlavors, err := flavors.ExtractDbFlavors(allFlavorPages)
+	rdsFlavors, err := flavors.ListFlavors(client, listOpts)
 	th.AssertNoErr(t, err)
+	tools.PrintResource(t, rdsFlavors)
 
-	for _, rds := range rdsFlavors {
-		tools.PrintResource(t, rds)
-	}
+	dataStores, err := flavors.ListDatastores(client, "PostgreSQL")
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, dataStores)
+
+	storageTypes, err := flavors.ListStorageTypes(client, flavors.ListStorageTypesOpts{
+		DatabaseName: "PostgreSQL",
+		VersionName:  "12",
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, storageTypes)
 }

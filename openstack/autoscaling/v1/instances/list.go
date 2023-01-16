@@ -5,29 +5,51 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ListOptsBuilder interface {
-	ToInstancesListQuery() (string, error)
-}
-
 type ListOpts struct {
-	LifeCycleStatus string `q:"life_cycle_state"`
-	HealthStatus    string `q:"health_status"`
+	// Specifies the AS group ID.
+	ScalingGroupId string
+	// Specifies the instance lifecycle status in the AS group.
+	// INSERVICE: The instance is enabled.
+	// PENDING: The instance is being added to the AS group.
+	// REMOVING: The instance is being removed from the AS group.
+	LifeCycleState string `q:"life_cycle_state,omitempty"`
+	// Specifies the instance health status.
+	// INITIALIZING: The instance is initializing.
+	// NORMAL: The instance is normal.
+	// ERROR: The instance is abnormal.
+	HealthStatus string `q:"health_status,omitempty"`
+	// Specifies the instance protection status.
+	// true: Instance protection is enabled.
+	// false: Instance protection is disabled.
+	ProtectFromScalingDown string `q:"protect_from_scaling_down,omitempty"`
+	// Specifies the start line number. The default value is 0. The minimum parameter value is 0.
+	StartNumber int32 `q:"start_number,omitempty"`
+	// Specifies the number of query records. The default value is 20. The value range is 0 to 100.
+	Limit int32 `q:"limit,omitempty"`
 }
 
-func List(client *golangsdk.ServiceClient, groupID string, opts ListOpts) ([]Instance, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingInstancesResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("scaling_group_instance", groupID, "list")+q.String(), nil, nil)
+	// GET /autoscaling-api/v1/{project_id}/scaling_group_instance/{scaling_group_id}/list
+	raw, err := client.Get(client.ServiceURL("scaling_group_instance", opts.ScalingGroupId, "list")+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res []Instance
-	err = extract.IntoSlicePtr(raw.Body, &res, "scaling_group_instances")
-	return res, err
+	var res ListScalingInstancesResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
+
+type ListScalingInstancesResponse struct {
+	TotalNumber           int32      `json:"total_number,omitempty"`
+	StartNumber           int32      `json:"start_number,omitempty"`
+	Limit                 int32      `json:"limit,omitempty"`
+	ScalingGroupInstances []Instance `json:"scaling_group_instances,omitempty"`
 }
 
 type Instance struct {
@@ -58,4 +80,6 @@ type Instance struct {
 	ConfigurationID string `json:"scaling_configuration_id"`
 	// Specifies the time when the instance is added to the AS group. The time format complies with UTC.
 	CreateTime string `json:"create_time"`
+	// Specifies the instance protection status.
+	ProtectFromScalingDown bool `json:"protect_from_scaling_down"`
 }

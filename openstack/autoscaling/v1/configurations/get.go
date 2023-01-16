@@ -28,6 +28,8 @@ type Configuration struct {
 	InstanceConfig InstanceConfig `json:"instance_config"`
 	// Specifies the time when AS configurations are created. The time format complies with UTC.
 	CreateTime string `json:"create_time"`
+	// Specifies the ID of the AS group to which the AS configuration is bound.
+	ScalingGroupId string `json:"scaling_group_id,omitempty"`
 }
 
 type InstanceConfig struct {
@@ -54,7 +56,7 @@ type InstanceConfig struct {
 	// Specifies the Cloud-Init user data, which is encoded using Base64.
 	UserData string `json:"user_data"`
 	// Specifies the ECS metadata.
-	Metadata map[string]interface{} `json:"metadata"`
+	Metadata AdminPassMetadata `json:"metadata"`
 	// Specifies the security group information.
 	SecurityGroups []SecurityGroup `json:"security_groups"`
 	// This parameter is reserved.
@@ -125,7 +127,7 @@ type Personality struct {
 
 type PublicIp struct {
 	// Specifies the EIP automatically assigned to the ECS.
-	Eip Eip `json:"eip"`
+	Eip Eip `json:"eip,omitempty"`
 }
 
 type Eip struct {
