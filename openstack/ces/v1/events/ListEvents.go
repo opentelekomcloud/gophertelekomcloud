@@ -27,8 +27,8 @@ func ListEvents(client *golangsdk.ServiceClient, opts ListEventsOpts) (*ListEven
 		return nil, err
 	}
 
-	// GET /V1.0/{project_id}/event
-	raw, err := client.Get(client.ServiceURL("event")+q.String(), nil, nil)
+	// GET /V1.0/{project_id}/events
+	raw, err := client.Get(client.ServiceURL("events")+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
