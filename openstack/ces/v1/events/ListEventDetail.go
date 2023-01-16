@@ -9,7 +9,7 @@ type ListEventDetailOpts struct {
 	// Specifies the event name.
 	EventName string
 	// Specifies the event type. Possible types are EVENT.SYS (system event) and EVENT.CUSTOM (custom event).
-	EventType string `q:"event_type"`
+	EventType string `q:"event_type" required:"true"`
 	// Specifies the event name. The name can be a system event name or a custom event name.
 	EventSource string `q:"event_source,omitempty"`
 	// Specifies the event severity. Possible severities are Critical, Major, Minor, and Info.

@@ -9,11 +9,11 @@ import (
 type EventItem struct {
 	// Specifies the event name.
 	// Start with a letter. Enter 1 to 64 characters. Only letters, digits, and underscores (_) are allowed.
-	EventName string `json:"event_name"`
+	EventName string `json:"event_name" required:"true"`
 	// Specifies the event source.
 	// The format is service.item. Set this parameter based on the site requirements.
 	// service and item each must be a string that starts with a letter and contains 3 to 32 characters, including only letters, digits, and underscores (_).
-	EventSource string `json:"event_source"`
+	EventSource string `json:"event_source" required:"true"`
 	// Specifies when the event occurred, which is a UNIX timestamp (ms).
 	// NOTE
 	// Since there is a latency between the client and the server, the data timestamp to be inserted should be within
@@ -21,8 +21,8 @@ type EventItem struct {
 	// In this way, the timestamp will be inserted to the database without being affected by the latency.
 	// For example, if the current time is 2020.01.30 12:00:30, the timestamp inserted must be within the range
 	// [2020.01.30 11:00:50, 2020.01.30 12:10:10]. The corresponding UNIX timestamp is [1580353250, 1580357410].
-	Time   int64           `json:"time"`
-	Detail EventItemDetail `json:"detail"`
+	Time   int64           `json:"time" required:"true"`
+	Detail EventItemDetail `json:"detail" required:"true"`
 }
 
 type EventItemDetail struct {
