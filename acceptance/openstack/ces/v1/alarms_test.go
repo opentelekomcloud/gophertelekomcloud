@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ces/v1/alarms"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -20,7 +21,6 @@ func TestAlarms(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, alarmsRes.MetaData.Count <= 10, true)
 
-	f := false
 	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmOpts{
 		AlarmName: "alarm-acc-test",
 		Metric: alarms.MetricForAlarm{
@@ -40,8 +40,8 @@ func TestAlarms(t *testing.T) {
 			Period:             300,
 			Value:              4000000,
 		},
-		AlarmEnabled:       &f,
-		AlarmActionEnabled: &f,
+		AlarmEnabled:       pointerto.Bool(false),
+		AlarmActionEnabled: pointerto.Bool(false),
 	})
 	th.AssertNoErr(t, err)
 
