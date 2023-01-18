@@ -2,6 +2,7 @@ package alarms
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -43,13 +44,13 @@ type MetricForAlarm struct {
 }
 
 func CreateAlarm(client *golangsdk.ServiceClient, opts CreateAlarmOpts) (string, error) {
-	reqBody, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}
 
 	// POST /V1.0/{project_id}/alarms
-	raw, err := client.Post(client.ServiceURL("alarms"), reqBody, nil, nil)
+	raw, err := client.Post(client.ServiceURL("alarms"), b, nil, nil)
 	if err != nil {
 		return "", err
 	}
