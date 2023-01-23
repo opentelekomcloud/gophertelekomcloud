@@ -98,7 +98,7 @@ func WaitForCreate(c *golangsdk.ServiceClient, id string, secs int) error {
 		}
 
 		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
-		_, _ = fmt.Printf(string(b))
+		print(string(b))
 		time.Sleep(10 * time.Second)
 
 		return false, nil
