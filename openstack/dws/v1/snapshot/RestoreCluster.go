@@ -40,7 +40,7 @@ func RestoreCluster(client *golangsdk.ServiceClient, opts RestoreClusterOpts) (s
 	raw, err := client.Post(client.ServiceURL("snapshots", opts.SnapshotId, "actions"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return cluster.ExtraClusterId(err, raw)
+	return cluster.ExtractClusterId(err, raw)
 }
 
 func WaitForRestore(c *golangsdk.ServiceClient, id string, secs int) error {

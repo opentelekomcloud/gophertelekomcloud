@@ -65,10 +65,10 @@ func CreateCluster(client *golangsdk.ServiceClient, opts CreateClusterOpts) (str
 	raw, err := client.Post(client.ServiceURL("clusters"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return ExtraClusterId(err, raw)
+	return ExtractClusterId(err, raw)
 }
 
-func ExtraClusterId(err error, raw *http.Response) (string, error) {
+func ExtractClusterId(err error, raw *http.Response) (string, error) {
 	if err != nil {
 		return "", err
 	}
