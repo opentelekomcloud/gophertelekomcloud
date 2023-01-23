@@ -1,7 +1,6 @@
 package snapshot
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -63,8 +62,6 @@ func WaitForSnapshot(c *golangsdk.ServiceClient, cid, id string, secs int) error
 			return false, fmt.Errorf("snapshot creation failed: " + current.FailedReasons.ErrorMsg)
 		}
 
-		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
-		print(string(b))
 		time.Sleep(10 * time.Second)
 
 		return false, nil

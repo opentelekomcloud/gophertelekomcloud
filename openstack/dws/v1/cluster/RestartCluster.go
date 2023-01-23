@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -43,8 +42,6 @@ func WaitForRestart(c *golangsdk.ServiceClient, id string, secs int) error {
 			return false, fmt.Errorf("cluster Restart failed: " + current.FailedReasons.ErrorMsg)
 		}
 
-		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
-		print(string(b))
 		time.Sleep(10 * time.Second)
 
 		return false, nil

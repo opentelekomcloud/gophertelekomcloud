@@ -1,7 +1,6 @@
 package snapshot
 
 import (
-	"encoding/json"
 	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -55,8 +54,6 @@ func WaitForRestore(c *golangsdk.ServiceClient, id string, secs int) error {
 			return true, nil
 		}
 
-		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
-		print(string(b))
 		time.Sleep(10 * time.Second)
 
 		return false, nil
