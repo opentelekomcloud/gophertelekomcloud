@@ -3,6 +3,7 @@ package instances
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type ListInstanceOpts struct {
@@ -175,6 +176,8 @@ type InstanceResponse struct {
 	Actions []string `json:"actions"`
 	// The value is set to "0".
 	PayMode string `json:"pay_mode"`
+	// Tag list
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
 type Group struct {
