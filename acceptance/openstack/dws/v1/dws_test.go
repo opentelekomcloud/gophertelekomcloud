@@ -17,7 +17,7 @@ import (
 
 func TestDWS(t *testing.T) {
 	if os.Getenv("RUN_DWS_LIFECYCLE") == "" {
-		// t.Skip("too slow to run in zuul")
+		t.Skip("too slow to run in zuul")
 	}
 
 	client, err := clients.NewDWSV1Client()
@@ -120,7 +120,7 @@ func TestDWS(t *testing.T) {
 		Name:       newName,
 	})
 	t.Cleanup(func() {
-		err = golangsdk.WaitFor(1000, func() (bool, error) {
+		err = golangsdk.WaitFor(5000, func() (bool, error) {
 			err = cluster.DeleteCluster(client, cluster.DeleteClusterOpts{
 				ClusterId:              resCId,
 				KeepLastManualSnapshot: pointerto.Int(0),
