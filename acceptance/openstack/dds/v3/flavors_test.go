@@ -13,15 +13,10 @@ func TestDdsFlavorsList(t *testing.T) {
 	client, err := clients.NewDdsV3Client()
 	th.AssertNoErr(t, err)
 
-	cc, err := clients.CloudAndClient()
-	th.AssertNoErr(t, err)
-
-	listFlavorOpts := flavors.ListOpts{
-		Region: cc.RegionName,
+	listFlavorOpts := flavors.ListFlavorOpts{
+		EngineName: "DDS-Community",
 	}
-	allPages, err := flavors.List(client, listFlavorOpts).AllPages()
-	th.AssertNoErr(t, err)
-	flavorsList, err := flavors.ExtractFlavors(allPages)
+	flavorsList, err := flavors.List(client, listFlavorOpts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, flavorsList)
 }

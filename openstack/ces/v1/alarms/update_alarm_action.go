@@ -1,6 +1,9 @@
 package alarms
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type ModifyAlarmActionRequest struct {
 	// Specifies whether the alarm rule is enabled.
@@ -8,13 +11,13 @@ type ModifyAlarmActionRequest struct {
 }
 
 func UpdateAlarmAction(client *golangsdk.ServiceClient, id string, req ModifyAlarmActionRequest) (err error) {
-	reqBody, err := golangsdk.BuildRequestBody(req, "")
+	b, err := build.RequestBody(req, "")
 	if err != nil {
 		return
 	}
 
 	// PUT /V1.0/{project_id}/alarms/{alarm_id}/action
-	_, err = client.Put(client.ServiceURL("alarms", id, "action"), reqBody, nil, &golangsdk.RequestOpts{
+	_, err = client.Put(client.ServiceURL("alarms", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return
