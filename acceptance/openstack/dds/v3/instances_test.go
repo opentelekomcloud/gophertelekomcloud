@@ -10,6 +10,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	networking "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
 	ddsjob "github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/job"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -38,7 +39,7 @@ func TestDdsSingleLifeCycle(t *testing.T) {
 	if newDdsInstance.TotalCount == 0 {
 		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
-
+	t.Log(newDdsInstance.Instances[0])
 	updateDdsInstance(t, client, newDdsInstance.Instances[0])
 }
 
@@ -56,6 +57,7 @@ func TestDdsClusterLifeCycle(t *testing.T) {
 	if newDdsInstance.TotalCount == 0 {
 		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
+	t.Log(newDdsInstance.Instances[0])
 
 	t.Logf("Attempting to add 2 mongo nodes to cluster")
 	_, err = instances.AddNode(client, instances.AddNodeOpts{
@@ -106,6 +108,7 @@ func TestDdsReplicaLifeCycle(t *testing.T) {
 	if newDdsInstance.TotalCount == 0 {
 		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
+	t.Log(newDdsInstance.Instances[0])
 
 	err = instances.ChangePassword(client, instances.ChangePasswordOpt{
 		InstanceId: ddsInstance.Id,
@@ -314,6 +317,16 @@ func createDdsReplicaInstance(t *testing.T, client *golangsdk.ServiceClient) *in
 		BackupStrategy: instances.BackupStrategy{
 			StartTime: "08:15-09:15",
 		},
+		Tags: []tags.ResourceTag{
+			{
+				Key:   "muh",
+				Value: "kuh",
+			},
+			{
+				Key:   "muh2",
+				Value: "kuh2",
+			},
+		},
 	}
 	ddsInstance, err := instances.Create(client, createOpts)
 	th.AssertNoErr(t, err)
@@ -377,6 +390,12 @@ func createDdsClusterInstance(t *testing.T, client *golangsdk.ServiceClient) *in
 		},
 		BackupStrategy: instances.BackupStrategy{
 			StartTime: "08:15-09:15",
+		},
+		Tags: []tags.ResourceTag{
+			{Key: "muh",
+				Value: "kuh"},
+			{Key: "muh2",
+				Value: "kuh2"},
 		},
 	}
 	ddsInstance, err := instances.Create(client, createOpts)

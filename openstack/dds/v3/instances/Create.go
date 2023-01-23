@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type CreateOpts struct {
@@ -59,7 +60,7 @@ type CreateOpts struct {
 	Ssl string `json:"ssl_option,omitempty"`
 	// Tag list
 	// A maximum of 20 tags can be added for each instance.
-	// Tags []tags.ResourceTag `json:"tags,omitempty"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
 type DataStore struct {
@@ -198,7 +199,7 @@ type Instance struct {
 	// Indicates the ID of the workflow for creating a DB instance.
 	JobId string `json:"job_id"`
 	// Tag list, which is the same as the request parameter.
-	// Tags []tags.ResourceTag `json:"tags"`
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
 type FlavorOpt struct {
