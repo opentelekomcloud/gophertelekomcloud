@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"os"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -15,9 +14,9 @@ import (
 )
 
 func TestDWS(t *testing.T) {
-	if os.Getenv("RUN_DWS_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
-	}
+	// if os.Getenv("RUN_DWS_LIFECYCLE") == "" {
+	// 	t.Skip("too slow to run in zuul")
+	// }
 
 	client, err := clients.NewDWSV1Client()
 	th.AssertNoErr(t, err)
@@ -62,7 +61,7 @@ func TestDWS(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	err = cluster.WaitForCluster(client, clusterId, 1000)
+	err = cluster.WaitForCreate(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
 	t.Log("ResetPassword")
@@ -72,7 +71,7 @@ func TestDWS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	err = cluster.WaitForCluster(client, clusterId, 1000)
+	err = cluster.WaitForRestart(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
 	t.Log("ResizeCluster")
@@ -81,7 +80,7 @@ func TestDWS(t *testing.T) {
 		Count:     1,
 	})
 
-	err = cluster.WaitForCluster(client, clusterId, 1000)
+	err = cluster.WaitForResize(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
 	t.Log("RestartCluster")
@@ -91,7 +90,7 @@ func TestDWS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	err = cluster.WaitForCluster(client, clusterId, 1000)
+	err = cluster.WaitForRestart(client, clusterId, 1000)
 	th.AssertNoErr(t, err)
 
 	list, err := cluster.ListClusters(client)
@@ -133,7 +132,7 @@ func TestDWS(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	err = cluster.WaitForCluster(client, resCId, 1000)
+	err = snapshot.WaitForRestore(client, resCId, 1000)
 	th.AssertNoErr(t, err)
 
 	snaps, err := snapshot.ListSnapshot(client)

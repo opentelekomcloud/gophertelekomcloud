@@ -1,6 +1,10 @@
 package snapshot
 
 import (
+	"encoding/json"
+	"fmt"
+	"time"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
@@ -39,4 +43,23 @@ func RestoreCluster(client *golangsdk.ServiceClient, opts RestoreClusterOpts) (s
 		OkCodes: []int{200},
 	})
 	return cluster.ExtraClusterId(err, raw)
+}
+
+func WaitForRestore(c *golangsdk.ServiceClient, id string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		current, err := cluster.ListClusterDetails(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if current.Status == "AVAILABLE" && current.TaskStatus != "RESTORING" {
+			return true, nil
+		}
+
+		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
+		_, _ = fmt.Printf(string(b))
+		time.Sleep(10 * time.Second)
+
+		return false, nil
+	})
 }

@@ -1,6 +1,7 @@
 package cluster
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -81,10 +82,8 @@ func ExtraClusterId(err error, raw *http.Response) (string, error) {
 	return res.Id, err
 }
 
-func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
+func WaitForCreate(c *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		time.Sleep(10 * time.Second)
-
 		current, err := ListClusterDetails(c, id)
 		if err != nil {
 			return false, err
@@ -95,10 +94,13 @@ func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
 		}
 
 		if current.Status == "CREATION FAILED" {
-			return false, fmt.Errorf("cluster creation failed")
+			return false, fmt.Errorf("cluster creation failed: " + current.FailedReasons.ErrorMsg)
 		}
 
-		_, _ = fmt.Printf("CREATING: %s.\n", current.ActionProgress["CREATING"])
+		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
+		_, _ = fmt.Printf(string(b))
+		time.Sleep(10 * time.Second)
+
 		return false, nil
 	})
 }

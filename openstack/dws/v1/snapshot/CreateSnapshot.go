@@ -1,12 +1,14 @@
 package snapshot
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dws/v1/cluster"
 )
 
 type Snapshot struct {
@@ -43,20 +45,28 @@ func CreateSnapshot(client *golangsdk.ServiceClient, opts Snapshot) (string, err
 
 func WaitForSnapshot(c *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		current, err := ListSnapshotDetails(c, id)
+		current, err := cluster.ListClusterDetails(c, id)
 		if err != nil {
 			return false, err
 		}
 
-		if current.Status == "AVAILABLE" {
+		curSnap, err := ListSnapshotDetails(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if curSnap.Status == "AVAILABLE" && current.Status == "AVAILABLE" && current.TaskStatus != "SNAPSHOTTING" {
 			return true, nil
 		}
 
-		if current.Status == "UNAVAILABLE" {
-			return false, fmt.Errorf("Snapshot creation failed")
+		if curSnap.Status == "UNAVAILABLE" {
+			return false, fmt.Errorf("snapshot creation failed: " + current.FailedReasons.ErrorMsg)
 		}
 
-		time.Sleep(5 * time.Second)
+		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
+		_, _ = fmt.Printf(string(b))
+		time.Sleep(10 * time.Second)
+
 		return false, nil
 	})
 }

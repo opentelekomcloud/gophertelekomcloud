@@ -1,6 +1,10 @@
 package cluster
 
 import (
+	"encoding/json"
+	"fmt"
+	"time"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
@@ -22,4 +26,27 @@ func ResizeCluster(client *golangsdk.ServiceClient, opts ResizeClusterOpts) (err
 		OkCodes: []int{200},
 	})
 	return
+}
+
+func WaitForResize(c *golangsdk.ServiceClient, id string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		current, err := ListClusterDetails(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if current.Status == "AVAILABLE" && current.TaskStatus != "GROWING" {
+			return true, nil
+		}
+
+		if current.TaskStatus == "RESIZE_FAILURE" {
+			return false, fmt.Errorf("cluster RESIZE failed: " + current.FailedReasons.ErrorMsg)
+		}
+
+		b, _ := json.MarshalIndent(current.ActionProgress, "", "  ")
+		_, _ = fmt.Printf(string(b))
+		time.Sleep(10 * time.Second)
+
+		return false, nil
+	})
 }
