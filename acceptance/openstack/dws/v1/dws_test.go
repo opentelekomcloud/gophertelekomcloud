@@ -3,6 +3,7 @@ package v1
 import (
 	"os"
 	"testing"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -16,7 +17,7 @@ import (
 
 func TestDWS(t *testing.T) {
 	if os.Getenv("RUN_DWS_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
+		// t.Skip("too slow to run in zuul")
 	}
 
 	client, err := clients.NewDWSV1Client()
@@ -126,6 +127,7 @@ func TestDWS(t *testing.T) {
 			})
 			if err != nil {
 				t.Error(err)
+				time.Sleep(10 * time.Second)
 				return false, nil
 			}
 			return true, nil
@@ -133,7 +135,7 @@ func TestDWS(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	err = snapshot.WaitForRestore(client, resCId, 1000)
+	err = snapshot.WaitForRestore(client, resCId, 2000)
 	th.AssertNoErr(t, err)
 
 	snaps, err := snapshot.ListSnapshot(client)
