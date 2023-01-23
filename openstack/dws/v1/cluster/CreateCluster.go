@@ -83,6 +83,8 @@ func ExtraClusterId(err error, raw *http.Response) (string, error) {
 
 func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
+		time.Sleep(10 * time.Second)
+
 		current, err := ListClusterDetails(c, id)
 		if err != nil {
 			return false, err
@@ -97,8 +99,6 @@ func WaitForCluster(c *golangsdk.ServiceClient, id string, secs int) error {
 		}
 
 		_, _ = fmt.Printf("CREATING: %s.\n", current.ActionProgress["CREATING"])
-		time.Sleep(2 * time.Second)
-
 		return false, nil
 	})
 }
