@@ -43,9 +43,9 @@ func CreateSnapshot(client *golangsdk.ServiceClient, opts Snapshot) (string, err
 	return res.Id, err
 }
 
-func WaitForSnapshot(c *golangsdk.ServiceClient, id string, secs int) error {
+func WaitForSnapshot(c *golangsdk.ServiceClient, cid, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		current, err := cluster.ListClusterDetails(c, id)
+		current, err := cluster.ListClusterDetails(c, cid)
 		if err != nil {
 			return false, err
 		}

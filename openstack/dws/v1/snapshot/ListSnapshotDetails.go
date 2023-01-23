@@ -3,11 +3,12 @@ package snapshot
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 func ListSnapshotDetails(client *golangsdk.ServiceClient, snapshotId string) (*SnapshotDetail, error) {
 	// GET /v1.0/{project_id}/snapshots/{snapshot_id}
-	raw, err := client.Get(client.ServiceURL("snapshots", snapshotId), nil, nil)
+	raw, err := client.Get(client.ServiceURL("snapshots", snapshotId), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

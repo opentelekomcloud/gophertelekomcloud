@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"os"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -14,9 +15,9 @@ import (
 )
 
 func TestDWS(t *testing.T) {
-	// if os.Getenv("RUN_DWS_LIFECYCLE") == "" {
-	// 	t.Skip("too slow to run in zuul")
-	// }
+	if os.Getenv("RUN_DWS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
 
 	client, err := clients.NewDWSV1Client()
 	th.AssertNoErr(t, err)
@@ -31,7 +32,7 @@ func TestDWS(t *testing.T) {
 		t.Skip("OS_SUBNET_ID env var is missing but DWS test requires using existing network")
 	}
 
-	// clusterId := "e3ececc2-e2ae-4f5c-8ab5-fc96f4f20f4f"
+	// clusterId := "57e5b43d-d5a1-47e7-aef1-1f46a9abb3ab"
 
 	t.Log("Creating cluster")
 	name := tools.RandomString("dws-test-", 3)
@@ -108,7 +109,7 @@ func TestDWS(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	err = snapshot.WaitForSnapshot(client, snapId, 1000)
+	err = snapshot.WaitForSnapshot(client, clusterId, snapId, 1000)
 	th.AssertNoErr(t, err)
 
 	t.Log("RestoreCluster")
