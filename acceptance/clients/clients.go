@@ -159,6 +159,17 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewDWSV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDWSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewIdentityV3Client returns a *ServiceClient for making calls
 // to the OpenStack Identity v3 API on a `project` level. An error will be returned
 // if authentication or client creation was not possible.
