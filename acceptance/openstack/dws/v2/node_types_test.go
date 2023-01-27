@@ -10,8 +10,9 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestCloudServerLifecycle(t *testing.T) {
+func TestDWSNodeTypes(t *testing.T) {
 	client, err := clients.NewDWSV1Client()
+	th.AssertNoErr(t, err)
 	client.ResourceBase = strings.Replace(client.ResourceBase, "v1.0/", "v2/", 1)
 
 	nodes, err := cluster.ListNodeTypes(client)
