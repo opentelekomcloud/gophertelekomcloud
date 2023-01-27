@@ -8,7 +8,10 @@ import (
 // ListNodeTypes Merge to common
 func ListNodeTypes(client *golangsdk.ServiceClient) ([]NodeTypes, error) {
 	// GET /v2/{project_id}/node-types
-	raw, err := client.Get(client.ServiceURL("node-types"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("node-types"), nil,
+		&golangsdk.RequestOpts{
+			MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		})
 	if err != nil {
 		return nil, err
 	}
