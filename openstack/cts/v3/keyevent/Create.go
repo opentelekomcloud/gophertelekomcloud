@@ -15,7 +15,7 @@ type CreateNotificationOpts struct {
 	// Enumerated values:
 	// complete
 	// customized
-	OperationType OperationType `json:"operation_type"`
+	OperationType string `json:"operation_type"`
 	// Operation list.
 	Operations []Operations `json:"operations,omitempty"`
 	// List of users whose operations will trigger notifications.
@@ -26,13 +26,6 @@ type CreateNotificationOpts struct {
 	// Example URN: urn:smn:regionId:f96188c7ccaf4ffba0c9aa149ab2bd57:test_topic_v2
 	TopicId string `json:"topic_id,omitempty"`
 }
-
-type OperationType string
-
-const (
-	Complete   OperationType = "complete"
-	Customized OperationType = "customized"
-)
 
 type Operations struct {
 	// Cloud service. The value must be the acronym of a cloud service that has been connected with CTS. It is a word composed of uppercase letters.
@@ -61,16 +54,3 @@ func Create(client *golangsdk.ServiceClient, opts CreateNotificationOpts) (*Noti
 	raw, err := client.Post(client.ServiceURL("notifications"), b, nil, nil)
 	return extra(err, raw)
 }
-
-type NotificationStatus string
-
-const (
-	Enabled  NotificationStatus = "enabled"
-	Disabled NotificationStatus = "disabled"
-)
-
-type NotificationType string
-
-const (
-	Smn NotificationType = "smn"
-)

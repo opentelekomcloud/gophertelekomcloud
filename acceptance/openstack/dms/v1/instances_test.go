@@ -4,11 +4,12 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/others"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/availablezones"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v1/instances"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v1/products"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v1/topics"
@@ -146,7 +147,7 @@ func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient) 
 }
 
 func getDmsInstanceAz(t *testing.T, client *golangsdk.ServiceClient) string {
-	az, err := availablezones.Get(client).Extract()
+	az, err := others.ListAvailableZones(client)
 	th.AssertNoErr(t, err)
 
 	return az.AvailableZones[0].ID

@@ -9,7 +9,7 @@ type ListNotificationsOpts struct {
 	// Notification type.
 	// Enumerated value:
 	// smn
-	NotificationType NotificationType
+	NotificationType string
 	// Notification name. If this parameter is not specified, all key event notifications configured in the current tenant account are returned.
 	NotificationName string `q:"notification_name,omitempty"`
 }
@@ -21,7 +21,7 @@ func List(client *golangsdk.ServiceClient, opts ListNotificationsOpts) ([]Notifi
 	}
 
 	// GET /v3/{project_id}/notifications/{notification_type}
-	url := client.ServiceURL("notifications", string(opts.NotificationType)) + q.String()
+	url := client.ServiceURL("notifications", opts.NotificationType) + q.String()
 	raw, err := client.Get(url, nil, nil)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ type NotificationResponse struct {
 	// Enumerated values:
 	// customized
 	// complete
-	OperationType OperationType `json:"operation_type,omitempty"`
+	OperationType string `json:"operation_type,omitempty"`
 	// Operation list.
 	Operations []Operations `json:"operations,omitempty"`
 	// List of users whose operations will trigger notifications.
@@ -49,7 +49,7 @@ type NotificationResponse struct {
 	// Enumerated values:
 	// enabled
 	// disabled
-	Status NotificationStatus `json:"status,omitempty"`
+	Status string `json:"status,omitempty"`
 	// Unique resource ID of an SMN topic. You can obtain the ID by querying the topic list.
 	TopicId string `json:"topic_id,omitempty"`
 	// Unique notification ID.
@@ -57,7 +57,7 @@ type NotificationResponse struct {
 	// Notification type.
 	// Enumerated value:
 	// smn
-	NotificationType NotificationType `json:"notification_type,omitempty"`
+	NotificationType string `json:"notification_type,omitempty"`
 	// Project ID.
 	ProjectId string `json:"project_id,omitempty"`
 	// Time when a notification rule was created.

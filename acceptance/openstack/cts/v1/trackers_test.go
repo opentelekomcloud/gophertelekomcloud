@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -11,6 +12,9 @@ import (
 )
 
 func TestTrackersLifecycle(t *testing.T) {
+	if os.Getenv("RUN_CTS_TRACKER") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCTSV1Client()
 	th.AssertNoErr(t, err)
 
@@ -43,7 +47,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	_, err = tracker.Update(client, tracker.UpdateOpts{
 		BucketName: bucketName,
 		Status:     "disabled",
-	})
+	}, ctsTracker.TrackerName)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 

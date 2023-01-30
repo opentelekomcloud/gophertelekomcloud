@@ -20,13 +20,13 @@ type UpdateOpts struct {
 	Lts CreateLts `json:"lts,omitempty"`
 }
 
-func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Tracker, error) {
+func Update(client *golangsdk.ServiceClient, opts UpdateOpts, trackerName string) (*Tracker, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Put(client.ServiceURL("tracker", "system"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("tracker", trackerName), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return extra(err, raw)

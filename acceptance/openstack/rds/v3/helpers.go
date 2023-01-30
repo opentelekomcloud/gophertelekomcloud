@@ -15,8 +15,7 @@ import (
 func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
 	t.Logf("Attempting to create RDSv3")
 
-	prefix := "rds-"
-	rdsName := tools.RandomString(prefix, 8)
+	rdsName := tools.RandomString("rds-test-", 8)
 
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if az == "" {
@@ -52,12 +51,9 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		},
 	}
 
-	createResult := instances.Create(client, createRdsOpts)
-	rds, err := createResult.Extract()
+	rds, err := instances.Create(client, createRdsOpts)
 	th.AssertNoErr(t, err)
-	jobResponse, err := createResult.ExtractJobResponse()
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 1200, jobResponse.JobID)
+	err = instances.WaitForJobCompleted(client, 1200, rds.JobId)
 	th.AssertNoErr(t, err)
 	t.Logf("Created RDSv3: %s", rds.Instance.Id)
 
@@ -67,7 +63,13 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) {
 	t.Logf("Attempting to delete RDSv3: %s", rdsID)
 
-	_, err := instances.Delete(client, rdsID).ExtractJobResponse()
+	err := golangsdk.WaitFor(1000, func() (bool, error) {
+		_, err := instances.Delete(client, rdsID)
+		if err != nil {
+			return false, nil
+		}
+		return true, nil
+	})
 	th.AssertNoErr(t, err)
 
 	t.Logf("RDSv3 instance deleted: %s", rdsID)
@@ -82,22 +84,21 @@ func updateRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) erro
 	}
 
 	updateOpts := instances.EnlargeVolumeRdsOpts{
-		EnlargeVolume: &instances.EnlargeVolumeSize{
-			Size: 200,
-		},
+		InstanceId: rdsID,
+		Size:       200,
 	}
 
-	updateResult, err := instances.EnlargeVolume(client, updateOpts, rdsID).ExtractJobResponse()
+	updateResult, err := instances.EnlargeVolume(client, updateOpts)
 	th.AssertNoErr(t, err)
 
-	if err := instances.WaitForJobCompleted(client, 1200, updateResult.JobID); err != nil {
+	if err := instances.WaitForJobCompleted(client, 1200, *updateResult); err != nil {
 		return err
 	}
 	t.Logf("RDSv3 successfully updated: %s", rdsID)
 	return nil
 }
 
-func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *configurations.ConfigurationCreate {
+func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *configurations.Configuration {
 	t.Logf("Attempting to create RDSv3 template configuration")
 	prefix := "rds-config-"
 	configName := tools.RandomString(prefix, 3)
@@ -115,7 +116,7 @@ func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *conf
 		},
 	}
 
-	rdsConfiguration, err := configurations.Create(client, configCreateOpts).Extract()
+	rdsConfiguration, err := configurations.Create(client, configCreateOpts)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Created RDSv3 configuration: %s", rdsConfiguration.ID)
@@ -126,7 +127,7 @@ func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *conf
 func deleteRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient, rdsConfigID string) {
 	t.Logf("Attempting to delete RDSv3 configuration: %s", rdsConfigID)
 
-	err := configurations.Delete(client, rdsConfigID).Err
+	err := configurations.Delete(client, rdsConfigID)
 	th.AssertNoErr(t, err)
 
 	t.Logf("RDSv3 configuration deleted: %s", rdsConfigID)
@@ -139,11 +140,12 @@ func updateRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient, rdsCo
 	configName := tools.RandomString(prefix, 3)
 
 	updateOpts := configurations.UpdateOpts{
+		ConfigId:    rdsConfigID,
 		Name:        configName,
 		Description: "some updated description",
 	}
 
-	err := configurations.Update(client, rdsConfigID, updateOpts).Err
+	err := configurations.Update(client, updateOpts)
 	th.AssertNoErr(t, err)
 
 	t.Logf("RDSv3 configuration updated")
