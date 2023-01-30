@@ -851,7 +851,12 @@ func NewRDSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 }
 
 func NewRMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initClientOpts(client, eo, "rms")
+	sc, err := initClientOpts(client, eo, "rms")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "v1/resource-manager/domains/" + client.DomainID + "/"
+	return sc, err
 }
 
 // NewSDRSV1 creates a ServiceClient that may be used with the v1 SDRS service.
