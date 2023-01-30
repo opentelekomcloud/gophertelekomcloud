@@ -9,12 +9,12 @@ type ListProvidersOpts struct {
 	// Specifies the pagination offset.
 	// Minimum value: 1
 	// Maximum value: 1000
-	Offset *int32 `q:"offset,omitempty"`
+	Offset int `q:"offset,omitempty"`
 	// Specifies the maximum
 	// number of records to return.
 	// Minimum value: 1
 	// Maximum value: 200
-	Limit *int32 `q:"limit,omitempty"`
+	Limit int `q:"limit,omitempty"`
 }
 
 func ListProviders(client *golangsdk.ServiceClient, opts ListProvidersOpts) (*ListProvidersResponse, error) {
@@ -36,12 +36,12 @@ func ListProviders(client *golangsdk.ServiceClient, opts ListProvidersOpts) (*Li
 
 type ListProvidersResponse struct {
 	// Specifies the list of cloud service details.
-	ResourceProviders *[]ResourceProviderResponse `json:"resource_providers,omitempty"`
+	ResourceProviders []ResourceProvider `json:"resource_providers,omitempty"`
 	// Specifies the total number of cloud services supported by RMS.
-	TotalCount *int32 `json:"total_count,omitempty"`
+	TotalCount int `json:"total_count,omitempty"`
 }
 
-type ResourceProviderResponse struct {
+type ResourceProvider struct {
 	// Specifies the cloud service name. For details, see Supported Resource.
 	Provider string `json:"provider,omitempty"`
 	// Specifies the display name of the cloud service.
@@ -52,10 +52,10 @@ type ResourceProviderResponse struct {
 	// Currently supported categories: Computing, Network, Storage, Database, Security, EI Enterprise.
 	CategoryDisplayName string `json:"category_display_name,omitempty"`
 	// Specifies the resource type list.
-	ResourceTypes []ResourceTypeResponse `json:"resource_types,omitempty"`
+	ResourceTypes []ResourceType `json:"resource_types,omitempty"`
 }
 
-type ResourceTypeResponse struct {
+type ResourceType struct {
 	// Specifies the resource type.
 	Name string `json:"name,omitempty"`
 	// Specifies the display name of the resource type.

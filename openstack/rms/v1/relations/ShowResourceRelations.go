@@ -18,7 +18,7 @@ type ShowResourceRelationsOpts struct {
 	// Specifies the maximum number of records to return.
 	// Minimum value: 1
 	// Maximum value: 1000
-	Limit *int32 `q:"limit,omitempty"`
+	Limit int `q:"limit,omitempty"`
 	// Specifies the pagination parameter.
 	// You can use the marker value returned to the previous request as the number of the first page of records to return in this request.
 	// Minimum length: 4

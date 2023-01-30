@@ -15,12 +15,12 @@ type ListAllResourcesOpts struct {
 	// Specifies the maximum number of records to return.
 	// Minimum value: 1
 	// Maximum value: 200
-	Limit int32 `q:"limit,omitempty"`
+	Limit int `q:"limit,omitempty"`
 	// Specifies the pagination parameter.
 	// You can use the marker value returned in the previous request as the number of the first page of records to return in this request.
 	// Minimum length: 4
 	// Maximum length: 400
-	Marker int64 `q:"marker,omitempty"`
+	Marker string `q:"marker,omitempty"`
 }
 
 func ListAllResources(client *golangsdk.ServiceClient, opts ListAllResourcesOpts) (*ListAllResourcesResponse, error) {

@@ -20,12 +20,12 @@ type ListResourcesOpts struct {
 	// Specifies the maximum number of records to return.
 	// Minimum value: 1
 	// Maximum value: 200
-	Limit int32 `q:"limit,omitempty"`
+	Limit int `q:"limit,omitempty"`
 	// Specifies the pagination parameter.
 	// You can use the marker value returned in the previous request as the number of the first page of records to return in this request.
 	// Minimum length: 4
 	// Maximum length: 400
-	Marker int64 `q:"marker,omitempty"`
+	Marker string `q:"marker,omitempty"`
 }
 
 func ListResources(client *golangsdk.ServiceClient, opts ListResourcesOpts) (*ListResourcesResponse, error) {
@@ -85,7 +85,7 @@ type PageInfo struct {
 	// Specifies the resource quantity on the current page.
 	// Minimum value: 0
 	// Maximum value: 200
-	CurrentCount int32 `json:"current_count,omitempty"`
+	CurrentCount int `json:"current_count,omitempty"`
 	// Specifies the marker value of the next page.
 	// Minimum length: 4
 	// Maximum length: 400
