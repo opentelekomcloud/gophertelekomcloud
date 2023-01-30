@@ -173,6 +173,10 @@ type RequestOpts struct {
 	RetryCount *int
 	// RetryTimeout specifies time before next retry
 	RetryTimeout *time.Duration
+	// MaxBackoffRetries set the maximum number of backoffs. When not set, defaults to defaultMaxBackoffRetryLimit
+	MaxBackoffRetries *int
+	// BackoffRetryTimeout specifies time before next retry on 429. When not set, defaults to defaultBackoffTimeout
+	BackoffRetryTimeout *time.Duration
 }
 
 var applicationJSON = "application/json"
@@ -271,6 +275,16 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	if options.RetryTimeout == nil {
 		defaultRetryTimeout := 500 * time.Millisecond
 		options.RetryTimeout = &defaultRetryTimeout
+	}
+
+	if options.MaxBackoffRetries == nil {
+		defaultMaxBackoffRetryLimit := 5
+		options.MaxBackoffRetries = &defaultMaxBackoffRetryLimit
+	}
+
+	if options.BackoffRetryTimeout == nil {
+		defaultBackoffTimeout := 120 * time.Second
+		options.BackoffRetryTimeout = &defaultBackoffTimeout
 	}
 
 	// Validate the HTTP response status.
@@ -372,6 +386,11 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if error429er, ok := errType.(Err429er); ok {
 				err = error429er.Error429(respErr)
 			}
+			if *options.MaxBackoffRetries > 0 {
+				*options.MaxBackoffRetries -= 1
+				time.Sleep(*options.BackoffRetryTimeout)
+				return client.Request(method, url, options)
+			}
 		case http.StatusInternalServerError:
 			err = ErrDefault500{respErr}
 			if error500er, ok := errType.(Err500er); ok {
@@ -406,7 +425,12 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if err != nil {
 				return nil, fmt.Errorf("error reading response body: %w", err)
 			}
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					_ = fmt.Errorf("error in closing : %w", err)
+				}
+			}(resp.Body)
 
 			*r = data
 		default:

@@ -49,7 +49,7 @@ type InstanceConfigOpts struct {
 	// echo 111 > c:\aaa.txt
 	UserData []byte `json:"-"`
 	// Specifies the ECS metadata.
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	Metadata AdminPassMetadata `json:"metadata,omitempty"`
 	// Specifies security groups.
 	// If the security group is specified both in the AS configuration and AS group, scaled ECS instances
 	// will be added to the security group specified in the AS configuration.
@@ -58,6 +58,18 @@ type InstanceConfigOpts struct {
 	SecurityGroups []SecurityGroup `json:"security_groups,omitempty"`
 	// This parameter is reserved.
 	MarketType string `json:"market_type,omitempty"`
+}
+
+type AdminPassMetadata struct {
+	// Specifies the initial login password of the administrator account for logging in to an ECS using password authentication.
+	// The Linux administrator is root, and the Windows administrator is Administrator.
+	//
+	// Password complexity requirements:
+	// Consists of 8 to 26 characters.
+	// Contains at least three of the following character types: uppercase letters, lowercase letters, digits, and special characters !@$%^-_=+[{}]:,./?
+	// The password cannot contain the username or the username in reversed order.
+	// The Windows ECS password cannot contain the username, the username in reversed order, or more than two consecutive characters in the username.
+	AdminPass string `json:"admin_pass,omitempty"`
 }
 
 func (opts CreateOpts) toConfigurationCreateMap() (map[string]interface{}, error) {

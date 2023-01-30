@@ -165,3 +165,16 @@ func (a *testAddons) TestListAddonInstances() {
 	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID).Extract()
 	th.AssertNoErr(t, err)
 }
+
+func (a *testAddons) TestGetAddonTemplates() {
+	t := a.T()
+
+	client, err := clients.NewCceV3AddonClient()
+	th.AssertNoErr(t, err)
+
+	templates, err := addons.GetTemplates(client).Extract()
+	th.AssertNoErr(t, err)
+	if len(templates.Items) == 0 {
+		t.Fatal("empty addon templates list")
+	}
+}

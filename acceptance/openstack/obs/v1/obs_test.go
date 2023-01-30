@@ -16,24 +16,21 @@ func TestObsBucketLifecycle(t *testing.T) {
 
 	bucketName := strings.ToLower(tools.RandomString("obs-sdk-test", 5))
 
-	createOpts := &obs.CreateBucketInput{
+	_, err = client.CreateBucket(&obs.CreateBucketInput{
 		Bucket: bucketName,
-	}
-
-	_, err = client.CreateBucket(createOpts)
-	th.AssertNoErr(t, err)
-
-	bucketEncryption := obs.BucketEncryptionConfiguration{
-		SSEAlgorithm: "kms",
-	}
-
-	_, err = client.SetBucketEncryption(&obs.SetBucketEncryptionInput{
-		Bucket:                        bucketName,
-		BucketEncryptionConfiguration: bucketEncryption,
+	})
+	t.Cleanup(func() {
+		_, err = client.DeleteBucket(bucketName)
+		th.AssertNoErr(t, err)
 	})
 	th.AssertNoErr(t, err)
 
-	_, err = client.DeleteBucket(bucketName)
+	_, err = client.SetBucketEncryption(&obs.SetBucketEncryptionInput{
+		Bucket: bucketName,
+		BucketEncryptionConfiguration: obs.BucketEncryptionConfiguration{
+			SSEAlgorithm: "kms",
+		},
+	})
 	th.AssertNoErr(t, err)
 }
 
@@ -43,33 +40,32 @@ func TestObsObjectLifecycle(t *testing.T) {
 
 	bucketName := strings.ToLower(tools.RandomString("obs-sdk-test", 5))
 
-	createOpts := &obs.CreateBucketInput{
+	_, err = client.CreateBucket(&obs.CreateBucketInput{
 		Bucket: bucketName,
-	}
-
-	_, err = client.CreateBucket(createOpts)
-	th.AssertNoErr(t, err)
-
-	defer func() {
+	})
+	t.Cleanup(func() {
 		_, err = client.DeleteBucket(bucketName)
 		th.AssertNoErr(t, err)
-	}()
+	})
+	th.AssertNoErr(t, err)
 
 	objectName := tools.RandomString("test-obs-", 5)
 
-	objectOpts := &obs.PutObjectInput{
+	_, err = client.PutObject(&obs.PutObjectInput{
 		PutObjectBasicInput: obs.PutObjectBasicInput{
 			ObjectOperationInput: obs.ObjectOperationInput{
 				Bucket: bucketName,
 				Key:    objectName,
 			},
 		},
-	}
-	_, err = client.PutObject(objectOpts)
+	})
 	th.AssertNoErr(t, err)
 
-	_, err = client.DeleteObject(&obs.DeleteObjectInput{
-		Bucket: bucketName,
-		Key:    objectName,
+	t.Cleanup(func() {
+		_, err = client.DeleteObject(&obs.DeleteObjectInput{
+			Bucket: bucketName,
+			Key:    objectName,
+		})
+		th.AssertNoErr(t, err)
 	})
 }

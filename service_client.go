@@ -113,7 +113,6 @@ func (client *ServiceClient) Delete(url string, opts *RequestOpts) (*http.Respon
 }
 
 // DeleteWithBody calls `Request` with the "DELETE" HTTP verb. Def 202, 204
-// Deprecated
 func (client *ServiceClient) DeleteWithBody(url string, JSONBody interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)

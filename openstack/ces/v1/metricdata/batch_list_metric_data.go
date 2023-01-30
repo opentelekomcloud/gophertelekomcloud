@@ -2,6 +2,7 @@ package metricdata
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -59,7 +60,7 @@ type Metric struct {
 }
 
 func BatchListMetricData(client *golangsdk.ServiceClient, opts BatchListMetricDataOpts) ([]BatchMetricData, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}

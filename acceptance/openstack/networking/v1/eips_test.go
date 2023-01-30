@@ -14,17 +14,17 @@ func TestEipList(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	elasticIP := createEip(t, client, 100)
+	elasticIP := CreateEip(t, client, 100)
 	listOpts := eips.ListOpts{
 		BandwidthID: elasticIP.BandwidthID,
 	}
-	defer func() {
-		deleteEip(t, client, elasticIP.ID)
+	t.Cleanup(func() {
+		DeleteEip(t, client, elasticIP.ID)
 
 		elasticIPs, err := eips.List(client, listOpts)
 		th.AssertNoErr(t, err)
 		th.AssertEquals(t, 0, len(elasticIPs))
-	}()
+	})
 
 	elasticIPs, err := eips.List(client, listOpts)
 	th.AssertNoErr(t, err)
@@ -37,8 +37,8 @@ func TestEipLifecycle(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	eip := createEip(t, client, 100)
-	defer deleteEip(t, client, eip.ID)
+	eip := CreateEip(t, client, 100)
+	t.Cleanup(func() { DeleteEip(t, client, eip.ID) })
 
 	tools.PrintResource(t, eip)
 }
@@ -47,8 +47,8 @@ func TestEipTagsLifecycle(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	eip := createEip(t, client, 100)
-	defer deleteEip(t, client, eip.ID)
+	eip := CreateEip(t, client, 100)
+	t.Cleanup(func() { DeleteEip(t, client, eip.ID) })
 
 	networkV2Client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
@@ -68,7 +68,7 @@ func TestEipTagsLifecycle(t *testing.T) {
 		},
 	}
 	createEipTags(t, networkV2Client, eip.ID, eipTags)
-	defer deleteEipTags(t, networkV2Client, eip.ID, eipTags)
+	t.Cleanup(func() { deleteEipTags(t, networkV2Client, eip.ID, eipTags) })
 
 	newTags, err := tags.Get(networkV2Client, "publicips", eip.ID).Extract()
 	th.AssertNoErr(t, err)

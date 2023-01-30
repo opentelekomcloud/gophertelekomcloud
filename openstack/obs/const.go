@@ -1,19 +1,7 @@
-// Copyright 2019 Huawei Technologies Co.,Ltd.
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-// this file except in compliance with the License.  You may obtain a copy of the
-// License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software distributed
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-// CONDITIONS OF ANY KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations under the License.
-
 package obs
 
 const (
-	obs_sdk_version        = "3.19.11"
+	obs_sdk_version        = "3.21.12"
 	USER_AGENT             = "obs-sdk-go/" + obs_sdk_version
 	HEADER_PREFIX          = "x-amz-"
 	HEADER_PREFIX_META     = "x-amz-meta-"
@@ -71,6 +59,7 @@ const (
 	HEADER_CACHE_CONTROL                    = "cache-control"
 	HEADER_CONTENT_DISPOSITION              = "content-disposition"
 	HEADER_CONTENT_ENCODING                 = "content-encoding"
+	HEADER_BUCKET_TYPE                      = "bucket-type"
 
 	HEADER_ETAG         = "etag"
 	HEADER_LASTMODIFIED = "last-modified"
@@ -102,6 +91,8 @@ const (
 	HEADER_SSEKMS_KEY_OBS = "x-obs-server-side-encryption-kms-key-id"
 
 	HEADER_SUCCESS_ACTION_REDIRECT = "success_action_redirect"
+
+	HEADER_FS_FILE_INTERFACE = "fs-file-interface"
 
 	HEADER_DATE_CAMEL                          = "Date"
 	HEADER_HOST_CAMEL                          = "Host"
@@ -174,6 +165,11 @@ const (
 	HTTP_DELETE  = "DELETE"
 	HTTP_HEAD    = "HEAD"
 	HTTP_OPTIONS = "OPTIONS"
+
+	MAX_PART_SIZE     = 5 * 1024 * 1024 * 1024
+	MIN_PART_SIZE     = 100 * 1024
+	DEFAULT_PART_SIZE = 9 * 1024 * 1024
+	MAX_PART_NUM      = 10000
 )
 
 type SignatureType string
@@ -768,4 +764,26 @@ const (
 	ObjectRemovedAll                     EventType = "ObjectRemoved:*"
 	ObjectRemovedDelete                  EventType = "ObjectRemoved:Delete"
 	ObjectRemovedDeleteMarkerCreated     EventType = "ObjectRemoved:DeleteMarkerCreated"
+)
+
+// PayerType defines type of payer
+type PayerType string
+
+const (
+	// BucketOwnerPayer type of payer: BucketOwner
+	BucketOwnerPayer PayerType = "BucketOwner"
+
+	// RequesterPayer type of payer: Requester
+	RequesterPayer PayerType = "Requester"
+
+	// Requester header for requester-Pays
+	Requester PayerType = "requester"
+)
+
+// BucketType defines type of bucket
+type BucketType string
+
+const (
+	OBJECT BucketType = "OBJECT"
+	POSIX  BucketType = "POSIX"
 )

@@ -97,6 +97,8 @@ type UpdateOpts struct {
 	// If instances cannot be added in the target AZ, select another AZ based on the PICK_FIRST policy.
 	// PICK_FIRST: When adjusting the number of instances, target AZs are determined in the order in the available_zones list.
 	MultiAZPriorityPolicy string `json:"multi_az_priority_policy,omitempty"`
+	// Specifies the description of the AS group. The value can contain 1 to 256 characters.
+	Description string `json:"description,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (string, error) {

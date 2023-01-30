@@ -1,15 +1,3 @@
-// Copyright 2019 Huawei Technologies Co.,Ltd.
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-// this file except in compliance with the License.  You may obtain a copy of the
-// License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software distributed
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-// CONDITIONS OF ANY KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations under the License.
-
 package obs
 
 import (
@@ -37,6 +25,7 @@ func cleanHeaderPrefix(header http.Header) map[string][]string {
 	return responseHeaders
 }
 
+// ParseStringToEventType converts string value to EventType value and returns it
 func ParseStringToEventType(value string) (ret EventType) {
 	switch value {
 	case "ObjectCreated:*", "s3:ObjectCreated:*":
@@ -61,6 +50,7 @@ func ParseStringToEventType(value string) (ret EventType) {
 	return
 }
 
+// ParseStringToStorageClassType converts string value to StorageClassType value and returns it
 func ParseStringToStorageClassType(value string) (ret StorageClassType) {
 	switch value {
 	case "STANDARD":
@@ -73,6 +63,16 @@ func ParseStringToStorageClassType(value string) (ret StorageClassType) {
 		ret = ""
 	}
 	return
+}
+
+func prepareGrantURI(grant Grant) string {
+	if grant.Grantee.URI == GroupAllUsers || grant.Grantee.URI == GroupAuthenticatedUsers {
+		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/global/", grant.Grantee.URI)
+	}
+	if grant.Grantee.URI == GroupLogDelivery {
+		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/s3/", grant.Grantee.URI)
+	}
+	return fmt.Sprintf("<URI>%s</URI>", grant.Grantee.URI)
 }
 
 func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
@@ -96,13 +96,8 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 		xml = append(xml, "</Grantee>")
 	} else {
 		if !isObs {
-			if grant.Grantee.URI == GroupAllUsers || grant.Grantee.URI == GroupAuthenticatedUsers {
-				xml = append(xml, fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/global/", grant.Grantee.URI))
-			} else if grant.Grantee.URI == GroupLogDelivery {
-				xml = append(xml, fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/s3/", grant.Grantee.URI))
-			} else {
-				xml = append(xml, fmt.Sprintf("<URI>%s</URI>", grant.Grantee.URI))
-			}
+			xml = append(xml, fmt.Sprintf("<Grant><Grantee xsi:type=\"%s\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">", grant.Grantee.Type))
+			xml = append(xml, prepareGrantURI(grant))
 			xml = append(xml, "</Grantee>")
 		} else if grant.Grantee.URI == GroupAllUsers {
 			xml = append(xml, "<Grant><Grantee>")
@@ -157,6 +152,7 @@ func ConvertLoggingStatusToXml(input BucketLoggingStatus, returnMd5 bool, isObs 
 	return
 }
 
+// ConvertAclToXml converts AccessControlPolicy value to XML data and returns it
 func ConvertAclToXml(input AccessControlPolicy, returnMd5 bool, isObs bool) (data string, md5 string) {
 	xml := make([]string, 0, 4+len(input.Grants))
 	ownerID := XmlTranscoding(input.Owner.ID)
@@ -219,6 +215,40 @@ func convertConditionToXml(condition Condition) string {
 	return ""
 }
 
+func prepareRoutingRule(input BucketWebsiteConfiguration) string {
+	xml := make([]string, 0, len(input.RoutingRules)*10)
+	for _, routingRule := range input.RoutingRules {
+		xml = append(xml, "<RoutingRule>")
+		xml = append(xml, "<Redirect>")
+		if routingRule.Redirect.Protocol != "" {
+			xml = append(xml, fmt.Sprintf("<Protocol>%s</Protocol>", routingRule.Redirect.Protocol))
+		}
+		if routingRule.Redirect.HostName != "" {
+			xml = append(xml, fmt.Sprintf("<HostName>%s</HostName>", routingRule.Redirect.HostName))
+		}
+		if routingRule.Redirect.ReplaceKeyPrefixWith != "" {
+			replaceKeyPrefixWith := XmlTranscoding(routingRule.Redirect.ReplaceKeyPrefixWith)
+			xml = append(xml, fmt.Sprintf("<ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith>", replaceKeyPrefixWith))
+		}
+
+		if routingRule.Redirect.ReplaceKeyWith != "" {
+			replaceKeyWith := XmlTranscoding(routingRule.Redirect.ReplaceKeyWith)
+			xml = append(xml, fmt.Sprintf("<ReplaceKeyWith>%s</ReplaceKeyWith>", replaceKeyWith))
+		}
+		if routingRule.Redirect.HttpRedirectCode != "" {
+			xml = append(xml, fmt.Sprintf("<HttpRedirectCode>%s</HttpRedirectCode>", routingRule.Redirect.HttpRedirectCode))
+		}
+		xml = append(xml, "</Redirect>")
+
+		if ret := convertConditionToXml(routingRule.Condition); ret != "" {
+			xml = append(xml, ret)
+		}
+		xml = append(xml, "</RoutingRule>")
+	}
+	return strings.Join(xml, "")
+}
+
+// ConvertWebsiteConfigurationToXml converts BucketWebsiteConfiguration value to XML data and returns it
 func ConvertWebsiteConfigurationToXml(input BucketWebsiteConfiguration, returnMd5 bool) (data string, md5 string) {
 	routingRuleLength := len(input.RoutingRules)
 	xml := make([]string, 0, 6+routingRuleLength*10)
@@ -241,34 +271,7 @@ func ConvertWebsiteConfigurationToXml(input BucketWebsiteConfiguration, returnMd
 		}
 		if routingRuleLength > 0 {
 			xml = append(xml, "<RoutingRules>")
-			for _, routingRule := range input.RoutingRules {
-				xml = append(xml, "<RoutingRule>")
-				xml = append(xml, "<Redirect>")
-				if routingRule.Redirect.Protocol != "" {
-					xml = append(xml, fmt.Sprintf("<Protocol>%s</Protocol>", routingRule.Redirect.Protocol))
-				}
-				if routingRule.Redirect.HostName != "" {
-					xml = append(xml, fmt.Sprintf("<HostName>%s</HostName>", routingRule.Redirect.HostName))
-				}
-				if routingRule.Redirect.ReplaceKeyPrefixWith != "" {
-					replaceKeyPrefixWith := XmlTranscoding(routingRule.Redirect.ReplaceKeyPrefixWith)
-					xml = append(xml, fmt.Sprintf("<ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith>", replaceKeyPrefixWith))
-				}
-
-				if routingRule.Redirect.ReplaceKeyWith != "" {
-					replaceKeyWith := XmlTranscoding(routingRule.Redirect.ReplaceKeyWith)
-					xml = append(xml, fmt.Sprintf("<ReplaceKeyWith>%s</ReplaceKeyWith>", replaceKeyWith))
-				}
-				if routingRule.Redirect.HttpRedirectCode != "" {
-					xml = append(xml, fmt.Sprintf("<HttpRedirectCode>%s</HttpRedirectCode>", routingRule.Redirect.HttpRedirectCode))
-				}
-				xml = append(xml, "</Redirect>")
-
-				if ret := convertConditionToXml(routingRule.Condition); ret != "" {
-					xml = append(xml, ret)
-				}
-				xml = append(xml, "</RoutingRule>")
-			}
+			xml = append(xml, prepareRoutingRule(input))
 			xml = append(xml, "</RoutingRules>")
 		}
 	}
@@ -311,16 +314,14 @@ func convertTransitionsToXml(transitions []Transition, isObs bool) string {
 }
 
 func convertExpirationToXml(expiration Expiration) string {
-	switch {
-	case expiration.Days > 0:
+	if expiration.Days > 0 {
 		return fmt.Sprintf("<Expiration><Days>%d</Days></Expiration>", expiration.Days)
-	case !expiration.Date.IsZero():
+	} else if !expiration.Date.IsZero() {
 		return fmt.Sprintf("<Expiration><Date>%s</Date></Expiration>", expiration.Date.UTC().Format(ISO8601_MIDNIGHT_DATE_FORMAT))
-	case expiration.ExpiredObjectDeleteMarker:
-		return "<Expiration><ExpiredObjectDeleteMarker>true</ExpiredObjectDeleteMarker></Expiration>"
 	}
 	return ""
 }
+
 func convertNoncurrentVersionTransitionsToXml(noncurrentVersionTransitions []NoncurrentVersionTransition, isObs bool) string {
 	if length := len(noncurrentVersionTransitions); length > 0 {
 		xml := make([]string, 0, length)
@@ -350,7 +351,8 @@ func convertNoncurrentVersionExpirationToXml(noncurrentVersionExpiration Noncurr
 	return ""
 }
 
-func ConvertLifecyleConfigurationToXml(input BucketLifecyleConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
+// ConvertLifecyleConfigurationToXml converts BucketLifecyleConfiguration value to XML data and returns it
+func ConvertLifecyleConfigurationToXml(input BucketLifecycleConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
 	xml := make([]string, 0, 2+len(input.LifecycleRules)*9)
 	xml = append(xml, "<LifecycleConfiguration>")
 	for _, lifecyleRule := range input.LifecycleRules {
@@ -426,9 +428,8 @@ func converntFilterRulesToXml(filterRules []FilterRule, isObs bool) string {
 		}
 		if !isObs {
 			return fmt.Sprintf("<Filter><S3Key>%s</S3Key></Filter>", strings.Join(xml, ""))
-		} else {
-			return fmt.Sprintf("<Filter><Object>%s</Object></Filter>", strings.Join(xml, ""))
 		}
+		return fmt.Sprintf("<Filter><Object>%s</Object></Filter>", strings.Join(xml, ""))
 	}
 	return ""
 }
@@ -471,6 +472,7 @@ func converntConfigureToXml(topicConfiguration TopicConfiguration, xmlElem strin
 	return strings.Join(xml, "")
 }
 
+// ConverntObsRestoreToXml converts RestoreObjectInput value to XML data and returns it
 func ConverntObsRestoreToXml(restoreObjectInput RestoreObjectInput) string {
 	xml := make([]string, 0, 2)
 	xml = append(xml, fmt.Sprintf("<RestoreRequest><Days>%d</Days>", restoreObjectInput.Days))
@@ -482,6 +484,7 @@ func ConverntObsRestoreToXml(restoreObjectInput RestoreObjectInput) string {
 	return data
 }
 
+// ConvertNotificationToXml converts BucketNotification value to XML data and returns it
 func ConvertNotificationToXml(input BucketNotification, returnMd5 bool, isObs bool) (data string, md5 string) {
 	xml := make([]string, 0, 2+len(input.TopicConfigurations)*6)
 	xml = append(xml, "<NotificationConfiguration>")
@@ -497,6 +500,7 @@ func ConvertNotificationToXml(input BucketNotification, returnMd5 bool, isObs bo
 	return
 }
 
+// ConvertCompleteMultipartUploadInputToXml converts CompleteMultipartUploadInput value to XML data and returns it
 func ConvertCompleteMultipartUploadInputToXml(input CompleteMultipartUploadInput, returnMd5 bool) (data string, md5 string) {
 	xml := make([]string, 0, 2+len(input.Parts)*4)
 	xml = append(xml, "<CompleteMultipartUpload>")
@@ -511,6 +515,27 @@ func ConvertCompleteMultipartUploadInputToXml(input CompleteMultipartUploadInput
 	if returnMd5 {
 		md5 = Base64Md5([]byte(data))
 	}
+	return
+}
+
+func convertDeleteObjectsToXML(input DeleteObjectsInput) (data string, md5 string) {
+	xml := make([]string, 0, 4+len(input.Objects)*4)
+	xml = append(xml, "<Delete>")
+	if input.Quiet {
+		xml = append(xml, fmt.Sprintf("<Quiet>%t</Quiet>", input.Quiet))
+	}
+	for _, obj := range input.Objects {
+		xml = append(xml, "<Object>")
+		key := XmlTranscoding(obj.Key)
+		xml = append(xml, fmt.Sprintf("<Key>%s</Key>", key))
+		if obj.VersionId != "" {
+			xml = append(xml, fmt.Sprintf("<VersionId>%s</VersionId>", obj.VersionId))
+		}
+		xml = append(xml, "</Object>")
+	}
+	xml = append(xml, "</Delete>")
+	data = strings.Join(xml, "")
+	md5 = Base64Md5([]byte(data))
 	return
 }
 
@@ -533,7 +558,26 @@ func parseSseHeader(responseHeaders map[string][]string) (sseHeader ISseHeader) 
 	return
 }
 
-func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
+func parseCorsHeader(output BaseModel) (AllowOrigin, AllowHeader, AllowMethod, ExposeHeader string, MaxAgeSeconds int) {
+	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN]; ok {
+		AllowOrigin = ret[0]
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_HEADERS]; ok {
+		AllowHeader = ret[0]
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_MAX_AGE]; ok {
+		MaxAgeSeconds = StringToInt(ret[0], 0)
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_METHODS]; ok {
+		AllowMethod = ret[0]
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS]; ok {
+		ExposeHeader = ret[0]
+	}
+	return
+}
+
+func parseUnCommonHeader(output *GetObjectMetadataOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
 		output.VersionId = ret[0]
 	}
@@ -547,11 +591,17 @@ func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
 		output.Restore = ret[0]
 	}
 	if ret, ok := output.ResponseHeaders[HEADER_OBJECT_TYPE]; ok {
-		output.Restore = ret[0]
+		output.ObjectType = ret[0]
 	}
 	if ret, ok := output.ResponseHeaders[HEADER_NEXT_APPEND_POSITION]; ok {
-		output.Restore = ret[0]
+		output.NextAppendPosition = ret[0]
 	}
+}
+
+// ParseGetObjectMetadataOutput sets GetObjectMetadataOutput field values with response headers
+func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
+	output.AllowOrigin, output.AllowHeader, output.AllowMethod, output.ExposeHeader, output.MaxAgeSeconds = parseCorsHeader(output.BaseModel)
+	parseUnCommonHeader(output)
 	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
 	}
@@ -560,21 +610,6 @@ func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
 	}
 	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_TYPE]; ok {
 		output.ContentType = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN]; ok {
-		output.AllowOrigin = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_HEADERS]; ok {
-		output.AllowHeader = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_MAX_AGE]; ok {
-		output.MaxAgeSeconds = StringToInt(ret[0], 0)
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_METHODS]; ok {
-		output.AllowMethod = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS]; ok {
-		output.ExposeHeader = ret[0]
 	}
 
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
@@ -601,6 +636,7 @@ func ParseGetObjectMetadataOutput(output *GetObjectMetadataOutput) {
 
 }
 
+// ParseCopyObjectOutput sets CopyObjectOutput field values with response headers
 func ParseCopyObjectOutput(output *CopyObjectOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
 		output.VersionId = ret[0]
@@ -611,6 +647,7 @@ func ParseCopyObjectOutput(output *CopyObjectOutput) {
 	}
 }
 
+// ParsePutObjectOutput sets PutObjectOutput field values with response headers
 func ParsePutObjectOutput(output *PutObjectOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
 		output.VersionId = ret[0]
@@ -624,10 +661,12 @@ func ParsePutObjectOutput(output *PutObjectOutput) {
 	}
 }
 
+// ParseInitiateMultipartUploadOutput sets InitiateMultipartUploadOutput field values with response headers
 func ParseInitiateMultipartUploadOutput(output *InitiateMultipartUploadOutput) {
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
 }
 
+// ParseUploadPartOutput sets UploadPartOutput field values with response headers
 func ParseUploadPartOutput(output *UploadPartOutput) {
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
 	if ret, ok := output.ResponseHeaders[HEADER_ETAG]; ok {
@@ -635,6 +674,7 @@ func ParseUploadPartOutput(output *UploadPartOutput) {
 	}
 }
 
+// ParseCompleteMultipartUploadOutput sets CompleteMultipartUploadOutput field values with response headers
 func ParseCompleteMultipartUploadOutput(output *CompleteMultipartUploadOutput) {
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
 	if ret, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
@@ -642,11 +682,14 @@ func ParseCompleteMultipartUploadOutput(output *CompleteMultipartUploadOutput) {
 	}
 }
 
+// ParseCopyPartOutput sets CopyPartOutput field values with response headers
 func ParseCopyPartOutput(output *CopyPartOutput) {
 	output.SseHeader = parseSseHeader(output.ResponseHeaders)
 }
 
+// ParseGetBucketMetadataOutput sets GetBucketMetadataOutput field values with response headers
 func ParseGetBucketMetadataOutput(output *GetBucketMetadataOutput) {
+	output.AllowOrigin, output.AllowHeader, output.AllowMethod, output.ExposeHeader, output.MaxAgeSeconds = parseCorsHeader(output.BaseModel)
 	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS]; ok {
 		output.StorageClass = ParseStringToStorageClassType(ret[0])
 	} else if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
@@ -660,38 +703,12 @@ func ParseGetBucketMetadataOutput(output *GetBucketMetadataOutput) {
 	} else if ret, ok := output.ResponseHeaders[HEADER_BUCKET_LOCATION_OBS]; ok {
 		output.Location = ret[0]
 	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN]; ok {
-		output.AllowOrigin = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_HEADERS]; ok {
-		output.AllowHeader = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_MAX_AGE]; ok {
-		output.MaxAgeSeconds = StringToInt(ret[0], 0)
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_ALLOW_METHODS]; ok {
-		output.AllowMethod = ret[0]
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS]; ok {
-		output.ExposeHeader = ret[0]
-	}
 	if ret, ok := output.ResponseHeaders[HEADER_EPID_HEADERS]; ok {
 		output.Epid = ret[0]
 	}
 }
 
-func ParseSetObjectMetadataOutput(output *SetObjectMetadataOutput) {
-	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS]; ok {
-		output.StorageClass = ParseStringToStorageClassType(ret[0])
-	} else if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
-		output.StorageClass = ParseStringToStorageClassType(ret[0])
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_METADATA_DIRECTIVE]; ok {
-		output.MetadataDirective = MetadataDirectiveType(ret[0])
-	}
-	if ret, ok := output.ResponseHeaders[HEADER_CACHE_CONTROL]; ok {
-		output.CacheControl = ret[0]
-	}
+func parseContentHeader(output *SetObjectMetadataOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_DISPOSITION]; ok {
 		output.ContentDisposition = ret[0]
 	}
@@ -704,6 +721,22 @@ func ParseSetObjectMetadataOutput(output *SetObjectMetadataOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_CONTENT_TYPE]; ok {
 		output.ContentType = ret[0]
 	}
+}
+
+// ParseSetObjectMetadataOutput sets SetObjectMetadataOutput field values with response headers
+func ParseSetObjectMetadataOutput(output *SetObjectMetadataOutput) {
+	if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS]; ok {
+		output.StorageClass = ParseStringToStorageClassType(ret[0])
+	} else if ret, ok := output.ResponseHeaders[HEADER_STORAGE_CLASS2]; ok {
+		output.StorageClass = ParseStringToStorageClassType(ret[0])
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_METADATA_DIRECTIVE]; ok {
+		output.MetadataDirective = MetadataDirectiveType(ret[0])
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_CACHE_CONTROL]; ok {
+		output.CacheControl = ret[0]
+	}
+	parseContentHeader(output)
 	if ret, ok := output.ResponseHeaders[HEADER_EXPIRES]; ok {
 		output.Expires = ret[0]
 	}
@@ -721,6 +754,8 @@ func ParseSetObjectMetadataOutput(output *SetObjectMetadataOutput) {
 		}
 	}
 }
+
+// ParseDeleteObjectOutput sets DeleteObjectOutput field values with response headers
 func ParseDeleteObjectOutput(output *DeleteObjectOutput) {
 	if versionId, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
 		output.VersionId = versionId[0]
@@ -731,6 +766,7 @@ func ParseDeleteObjectOutput(output *DeleteObjectOutput) {
 	}
 }
 
+// ParseGetObjectOutput sets GetObjectOutput field values with response headers
 func ParseGetObjectOutput(output *GetObjectOutput) {
 	ParseGetObjectMetadataOutput(&output.GetObjectMetadataOutput)
 	if ret, ok := output.ResponseHeaders[HEADER_DELETE_MARKER]; ok {
@@ -753,6 +789,7 @@ func ParseGetObjectOutput(output *GetObjectOutput) {
 	}
 }
 
+// ConvertRequestToIoReaderV2 converts req to XML data
 func ConvertRequestToIoReaderV2(req interface{}) (io.Reader, string, error) {
 	data, err := TransToXml(req)
 	if err == nil {
@@ -764,6 +801,7 @@ func ConvertRequestToIoReaderV2(req interface{}) (io.Reader, string, error) {
 	return nil, "", err
 }
 
+// ConvertRequestToIoReader converts req to XML data
 func ConvertRequestToIoReader(req interface{}) (io.Reader, error) {
 	body, err := TransToXml(req)
 	if err == nil {
@@ -775,25 +813,40 @@ func ConvertRequestToIoReader(req interface{}) (io.Reader, error) {
 	return nil, err
 }
 
+func parseBucketPolicyOutput(s reflect.Type, baseModel IBaseModel, body []byte) {
+	for i := 0; i < s.NumField(); i++ {
+		if s.Field(i).Tag == "json:\"body\"" {
+			reflect.ValueOf(baseModel).Elem().FieldByName(s.Field(i).Name).SetString(string(body))
+			break
+		}
+	}
+}
+
+// ParseResponseToBaseModel gets response from OBS
 func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResult bool, _ bool) (err error) {
 	readCloser, ok := baseModel.(IReadCloser)
 	if !ok {
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
+		defer func() {
+			errMsg := resp.Body.Close()
+			if errMsg != nil {
+				doLog(LEVEL_WARN, "Failed to close response body")
+			}
+		}()
+		var body []byte
+		body, err = ioutil.ReadAll(resp.Body)
 		if err == nil && len(body) > 0 {
 			if xmlResult {
 				err = ParseXml(body, baseModel)
-				if err != nil {
-					doLog(LEVEL_ERROR, "Unmarshal error: %v", err)
-				}
 			} else {
 				s := reflect.TypeOf(baseModel).Elem()
-				for i := 0; i < s.NumField(); i++ {
-					if s.Field(i).Tag == "json:\"body\"" {
-						reflect.ValueOf(baseModel).Elem().FieldByName(s.Field(i).Name).SetString(string(body))
-						break
-					}
+				if reflect.TypeOf(baseModel).Elem().Name() == "GetBucketPolicyOutput" {
+					parseBucketPolicyOutput(s, baseModel, body)
+				} else {
+					err = parseJSON(body, baseModel)
 				}
+			}
+			if err != nil {
+				doLog(LEVEL_ERROR, "Unmarshal error: %v", err)
 			}
 		}
 	} else {
@@ -809,6 +862,7 @@ func ParseResponseToBaseModel(resp *http.Response, baseModel IBaseModel, xmlResu
 	return
 }
 
+// ParseResponseToObsError gets obsError from OBS
 func ParseResponseToObsError(resp *http.Response, isObs bool) error {
 	obsError := ObsError{}
 	respError := ParseResponseToBaseModel(resp, &obsError, true, isObs)

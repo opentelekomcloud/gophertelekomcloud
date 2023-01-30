@@ -3,6 +3,7 @@ package tags
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 func List(client *golangsdk.ServiceClient) (*ResourceTags, error) {
@@ -17,6 +18,6 @@ func List(client *golangsdk.ServiceClient) (*ResourceTags, error) {
 }
 
 type ResourceTags struct {
-	Tags    []ResourceTag `json:"tags"`
-	SysTags []ResourceTag `json:"sys_tags"`
+	Tags    []tags.ResourceTag `json:"tags"`
+	SysTags []tags.ResourceTag `json:"sys_tags"`
 }
