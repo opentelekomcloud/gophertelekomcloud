@@ -61,11 +61,8 @@ func CreateASConfig(t *testing.T, client *golangsdk.ServiceClient, asCreateName 
 			Disk: []configurations.Disk{
 				{
 					Size:       40,
-					VolumeType: "SATA",
+					VolumeType: "SSD",
 					DiskType:   "SYS",
-					Metadata: configurations.SystemMetadata{
-						SystemEncrypted: "0",
-					},
 				},
 			},
 			SSHKey: keyPairName,

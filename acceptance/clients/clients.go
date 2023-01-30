@@ -118,7 +118,29 @@ func NewCTSV1Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 
-	return openstack.NewCTSService(cc.ProviderClient, golangsdk.EndpointOpts{
+	return openstack.NewCTSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewCTSV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCTSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewCTSV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCTSV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
@@ -133,6 +155,17 @@ func NewDNSV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewDNSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewDWSV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDWSV1(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }

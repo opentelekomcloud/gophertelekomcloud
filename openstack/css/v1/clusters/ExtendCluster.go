@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -42,19 +43,19 @@ func ExtendCluster(client *golangsdk.ServiceClient, clusterID string, opts Clust
 	switch opts.(type) {
 	case ClusterExtendCommonOpts:
 		url = client.ServiceURL("clusters", clusterID, "extend")
-	case ClusterExtendSpecialOpts:
+	case []ClusterExtendSpecialOpts:
 		url = client.ServiceURL("clusters", clusterID, "role_extend")
 	default:
 		return nil, fmt.Errorf("invalid options type provided: %T", opts)
 	}
 
-	b, err := golangsdk.BuildRequestBody(opts, "grow")
+	b, err := build.RequestBody(opts, "grow")
 	if err != nil {
 		return nil, err
 	}
 
 	raw, err := client.Post(url, b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{200, 202},
 	})
 	if err != nil {
 		return nil, err

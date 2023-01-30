@@ -135,3 +135,24 @@ func TestGatewayRetry(t *testing.T) {
 		})
 	}
 }
+
+func TestTooManyRequestsRetry(t *testing.T) {
+	t.Skip("please run only manually, long test")
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	code := http.StatusTooManyRequests
+
+	failHandler := &failHandler{ExpectedFailures: 5, ErrorCode: code}
+	th.Mux.Handle(fmt.Sprintf("/%d", code), failHandler)
+
+	codeURL := fmt.Sprintf("%d", code)
+	t.Run(codeURL, func(sub *testing.T) {
+		client := fake.ServiceClient()
+		_, err := client.Delete(client.ServiceURL(codeURL), &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+		})
+		th.AssertNoErr(sub, err)
+		th.AssertEquals(sub, failHandler.ExpectedFailures, failHandler.FailCount)
+	})
+}

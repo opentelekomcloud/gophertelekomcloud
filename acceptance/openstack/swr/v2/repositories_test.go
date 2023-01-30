@@ -6,6 +6,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/swr/v2/repositories"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -19,34 +20,34 @@ func TestRepositoryWorkflow(t *testing.T) {
 	orgName := fmt.Sprintf("repo-test-%d", tools.RandomInt(0, 0xf))
 	dep := dependencies{t: t, client: client}
 	dep.createOrganization(orgName)
-	defer dep.deleteOrganization(orgName)
-	//
+	t.Cleanup(func() {
+		dep.deleteOrganization(orgName)
+	})
 
 	repoName := "magic-test-repo"
 	createOpts := repositories.CreateOpts{
+		Namespace:   orgName,
 		Repository:  repoName,
 		Category:    "linux",
 		Description: "Test linux repository",
 		IsPublic:    true,
 	}
-	err = repositories.Create(client, orgName, createOpts).ExtractErr()
+	err = repositories.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		th.AssertNoErr(t, repositories.Delete(client, orgName, repoName).ExtractErr())
-	}()
+	t.Cleanup(func() {
+		th.AssertNoErr(t, repositories.Delete(client, orgName, repoName))
+	})
 
-	repo, err := repositories.Get(client, orgName, repoName).Extract()
+	repo, err := repositories.Get(client, orgName, repoName)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, repoName, repo.Name)
 	th.AssertEquals(t, createOpts.Category, repo.Category)
 	th.AssertEquals(t, createOpts.IsPublic, repo.IsPublic)
 
-	zero := 0
-
 	found := false
 	err = repositories.List(client, repositories.ListOpts{
-		Offset: &zero,
+		Offset: pointerto.Int(0),
 		Limit:  4,
 	}).EachPage(func(p pagination.Page) (bool, error) {
 		rps, err := repositories.ExtractRepositories(p)
@@ -64,19 +65,22 @@ func TestRepositoryWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, found)
 
-	pages, err := repositories.List(client, nil).AllPages()
+	pages, err := repositories.List(client, repositories.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 	_, err = repositories.ExtractRepositories(pages)
 	th.AssertNoErr(t, err)
 
 	updateOpts := repositories.UpdateOpts{
+		Namespace:   orgName,
+		Repository:  repoName,
 		Category:    "other",
 		Description: "Updated description",
 		IsPublic:    false,
 	}
-	err = repositories.Update(client, orgName, repoName, updateOpts).ExtractErr()
+	err = repositories.Update(client, updateOpts)
 	th.AssertNoErr(t, err)
-	updated, err := repositories.Get(client, orgName, repoName).Extract()
+
+	updated, err := repositories.Get(client, orgName, repoName)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Description, updated.Description)
 	th.AssertEquals(t, updateOpts.Category, updated.Category)
