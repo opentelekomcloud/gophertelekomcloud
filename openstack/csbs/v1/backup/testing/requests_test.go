@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/resource"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -24,7 +25,7 @@ func TestGet(t *testing.T) {
 		_, _ = fmt.Fprint(w, getResponse)
 	})
 
-	s, err := backup.Get(fake.ServiceClient(), checkpointItemID).Extract()
+	s, err := backup.Get(fake.ServiceClient(), checkpointItemID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "7b99acfd-18c3-4f26-9d39-b4ebd2ea3e12", s.Id)
 	th.AssertEquals(t, "backup-c2c", s.Name)
@@ -52,10 +53,10 @@ func TestCreate(t *testing.T) {
 			_, _ = fmt.Fprint(w, createResponse)
 		})
 
-	options := &backup.CreateOpts{
+	options := backup.CreateOpts{
 		BackupName:  "c2c-backup",
 		Description: "mybackup"}
-	n, err := backup.Create(fake.ServiceClient(), "f8ddc472-cf00-4384-851e-5f2a68c33762", options).Extract()
+	n, err := backup.Create(fake.ServiceClient(), "f8ddc472-cf00-4384-851e-5f2a68c33762", options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n.Id, "92dba83d-cc6f-4883-a20d-de6934510b7e")
@@ -82,10 +83,10 @@ func TestQueryResourceCapability(t *testing.T) {
 			_, _ = fmt.Fprint(w, queryResponse)
 		})
 
-	options := &backup.ResourceBackupCapOpts{CheckProtectable: []backup.ResourceCapQueryParams{
+	options := resource.ResourceBackupCapOpts{CheckProtectable: []resource.ResourceCapQueryParams{
 		{ResourceId: "069e678a-f1d1-4a38-880b-459bde82fcc6",
 			ResourceType: "OS::Nova::Server"}}}
-	n, err := backup.QueryResourceBackupCapability(fake.ServiceClient(), options).ExtractQueryResponse()
+	n, err := resource.GetResBackupCapabilities(fake.ServiceClient(), options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n[0].ResourceType, "OS::Nova::Server")
@@ -105,7 +106,7 @@ func TestDelete(t *testing.T) {
 		})
 
 	result := backup.Delete(fake.ServiceClient(), "fc4d5750-22e7-4798-8a46-f48f62c4c1da")
-	th.AssertNoErr(t, result.Err)
+	th.AssertNoErr(t, result)
 }
 
 func TestList(t *testing.T) {
