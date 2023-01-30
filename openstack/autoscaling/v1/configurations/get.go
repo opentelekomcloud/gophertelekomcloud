@@ -111,19 +111,7 @@ type Disk struct {
 	// Each disk in an AS configuration must correspond to a disk backup in the full-ECS backup by snapshot_id.
 	SnapshotID string `json:"snapshot_id"`
 	// Specifies the metadata for creating disks.
-	Metadata SystemMetadata `json:"metadata"`
-}
-
-type SystemMetadata struct {
-	// Specifies encryption in metadata. The value can be 0 (encryption disabled) or 1 (encryption enabled).
-	// If this parameter does not exist, the disk will not be encrypted by default.
-	// System disk encryption is not supported.
-	SystemEncrypted string `json:"__system__encrypted"`
-	// Specifies the CMK ID, which indicates encryption in metadata. This parameter is used with __system__encrypted.
-	// NOTE:
-	// For details about how to obtain the CMK ID, see "Querying the List of CMKs" in Key Management Service API Reference.
-	// System disk encryption is not supported.
-	SystemCmkId string `json:"__system__cmkid"`
+	Metadata map[string]interface{} `json:"metadata"`
 }
 
 type Personality struct {
