@@ -1,5 +1,11 @@
 package images
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
+
 type RegisterImageOpts struct {
 	// Specifies the image ID.
 	//
@@ -17,6 +23,15 @@ type RegisterImageOpts struct {
 	ImageUrl string `json:"image_url" required:"true"`
 }
 
-// PUT /v1/cloudimages/{image_id}/upload
+func RegisterImage(client *golangsdk.ServiceClient, opts RegisterImageOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 JobId
+	// PUT /v1/cloudimages/{image_id}/upload
+	raw, err := client.Put(client.ServiceURL("cloudimages", opts.ImageId, "upload"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
