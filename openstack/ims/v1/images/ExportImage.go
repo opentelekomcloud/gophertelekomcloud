@@ -1,5 +1,11 @@
 package images
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
+
 type ExportImageOpts struct {
 	// Specifies the image ID.
 	ImageId string `json:"-" required:"true"`
@@ -19,6 +25,15 @@ type ExportImageOpts struct {
 	IsQuickExport *bool `json:"is_quick_export,omitempty"`
 }
 
-// POST /v1/cloudimages/{image_id}/file
+func ExportImage(client *golangsdk.ServiceClient, opts ExportImageOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 JobId
+	// POST /v1/cloudimages/{image_id}/file
+	raw, err := client.Post(client.ServiceURL("cloudimages", opts.ImageId, "file"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
