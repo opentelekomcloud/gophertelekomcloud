@@ -20,3 +20,5 @@ type ExportImageOpts struct {
 }
 
 // POST /v1/cloudimages/{image_id}/file
+
+// 200 JobId
