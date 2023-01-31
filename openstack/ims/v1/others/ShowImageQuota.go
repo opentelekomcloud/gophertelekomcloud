@@ -1,4 +1,4 @@
-package images
+package others
 
 // GET /v1/cloudimages/quota
 

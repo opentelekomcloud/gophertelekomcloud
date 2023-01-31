@@ -1,4 +1,4 @@
-package images
+package others
 
 type CopyImageInRegionOpts struct {
 	// Specifies the image ID.
