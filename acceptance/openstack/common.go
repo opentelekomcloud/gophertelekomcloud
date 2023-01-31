@@ -129,7 +129,7 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		encryption = "0"
 	}
 
-	imageV2Client, err := clients.NewImageServiceV2Client()
+	imageV2Client, err := clients.NewIMSV2Client()
 	th.AssertNoErr(t, err)
 
 	listOpts := images.ListOpts{
