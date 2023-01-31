@@ -26,7 +26,7 @@ func TestGet(t *testing.T) {
 		_, _ = fmt.Fprint(w, getResponse)
 	})
 
-	s, err := policies.Get(fake.ServiceClient(), policies_id).Extract()
+	s, err := policies.Get(fake.ServiceClient(), policies_id)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "5af626d2-19b9-4dc4-8e95-ddba008318b3", s.ID)
 	th.AssertEquals(t, "c2c-policy", s.Name)
@@ -52,7 +52,7 @@ func TestCreate(t *testing.T) {
 		_, _ = fmt.Fprint(w, createResponse)
 	})
 
-	options := &policies.CreateOpts{
+	options := policies.CreateOpts{
 		Name:        "c2c-policy",
 		Description: "My plan",
 		ProviderId:  "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
@@ -78,7 +78,7 @@ func TestCreate(t *testing.T) {
 			Type: "OS::Nova::Server",
 			Name: "resource1"}},
 	}
-	n, err := policies.Create(fake.ServiceClient(), options).Extract()
+	n, err := policies.Create(fake.ServiceClient(), options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n.ID, "5af626d2-19b9-4dc4-8e95-ddba008318b3")
@@ -100,7 +100,7 @@ func TestDelete(t *testing.T) {
 
 	result := policies.Delete(fake.ServiceClient(), policies_id)
 
-	th.AssertNoErr(t, result.Err)
+	th.AssertNoErr(t, result)
 }
 
 func TestUpdate(t *testing.T) {
@@ -118,11 +118,8 @@ func TestUpdate(t *testing.T) {
 		_, _ = fmt.Fprint(w, updateResponse)
 	})
 
-	options := &policies.UpdateOpts{
+	options := policies.UpdateOpts{
 		Name: "c2c-policy-update",
-		Parameters: policies.PolicyParam{
-			Common: map[string]interface{}{},
-		},
 		ScheduledOperations: []policies.ScheduledOperationToUpdate{{
 			Name:        "my-backup-policy",
 			Description: "My backup policy",
@@ -139,7 +136,7 @@ func TestUpdate(t *testing.T) {
 			},
 		}},
 	}
-	n, err := policies.Update(fake.ServiceClient(), policies_id, options).Extract()
+	n, err := policies.Update(fake.ServiceClient(), policies_id, options)
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n.Name, "c2c-policy-update")
@@ -171,20 +168,20 @@ func TestList(t *testing.T) {
 			Status:      "suspended",
 			ProviderId:  "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
 			Description: "My plann",
-			ScheduledOperations: []policies.ScheduledOperationResp{{
+			ScheduledOperations: []policies.ScheduledOperation{{
 
 				Description: "My backup policy",
 				Enabled:     true,
 				TriggerID:   "831b5e69-0b75-420c-918e-9cbcb32d97f1",
-				Trigger: policies.TriggerResp{
-					Properties: policies.TriggerPropertiesResp{
+				Trigger: policies.Trigger{
+					Properties: policies.TriggerProperties{
 						Pattern: "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
 					},
 					Type: "time",
 					ID:   "831b5e69-0b75-420c-918e-9cbcb32d97f1",
 					Name: "default",
 				},
-				OperationDefinition: policies.OperationDefinitionResp{
+				OperationDefinition: policies.OperationDefinition{
 					MaxBackups: 5,
 					ProviderId: "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
 					PlanId:     "4d1ce19b-d681-4e44-a87e-c44eb9bfc4c7",

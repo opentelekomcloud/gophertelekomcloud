@@ -57,7 +57,7 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	err = updateCSBSPolicy(client, policy.ID)
 	th.AssertNoErr(t, err)
 
-	policyUpdate, err := policies.Get(client, policy.ID).Extract()
+	policyUpdate, err := policies.Get(client, policy.ID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, policyUpdate)
 }
@@ -69,7 +69,7 @@ const (
 	prefix = "csbs-acc-"
 )
 
-func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.CreateBackupPolicy, error) {
+func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.BackupPolicy, error) {
 	if os.Getenv("RUN_CSBS") == "" {
 		t.Skip("unstable test")
 	}
@@ -111,7 +111,7 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 		},
 	}
 
-	policy, err := policies.Create(client, createOpts).Extract()
+	policy, err := policies.Create(client, createOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func deleteCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, policyId st
 	}
 	t.Logf("Attempting to delete CSBSv1: %s", policyId)
 
-	err := policies.Delete(client, policyId).Err
+	err := policies.Delete(client, policyId)
 	if err != nil {
 		t.Fatalf("Unable to delete CSBSv1 policy: %s", err)
 	}
@@ -148,12 +148,9 @@ func updateCSBSPolicy(client *golangsdk.ServiceClient, policyId string) error {
 	updateOpts := policies.UpdateOpts{
 		Description: policyDescriptionUpdate,
 		Name:        policyNameUpdate,
-		Parameters: policies.PolicyParam{
-			Common: map[string]string{},
-		},
 	}
 
-	err := policies.Update(client, policyId, updateOpts).Err
+	_, err := policies.Update(client, policyId, updateOpts)
 	if err != nil {
 		return err
 	}
@@ -162,7 +159,7 @@ func updateCSBSPolicy(client *golangsdk.ServiceClient, policyId string) error {
 
 func waitForCSBSPolicyActive(client *golangsdk.ServiceClient, secs int, policyId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		policy, err := policies.Get(client, policyId).Extract()
+		policy, err := policies.Get(client, policyId)
 		if err != nil {
 			return false, err
 		}
@@ -176,7 +173,7 @@ func waitForCSBSPolicyActive(client *golangsdk.ServiceClient, secs int, policyId
 
 func waitForCSBSPolicyDelete(client *golangsdk.ServiceClient, secs int, policyId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := policies.Get(client, policyId).Extract()
+		_, err := policies.Get(client, policyId)
 		if _, ok := err.(golangsdk.ErrDefault404); ok {
 			return true, nil
 		}
