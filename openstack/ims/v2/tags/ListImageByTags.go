@@ -29,4 +29,24 @@ type ListImageByTagsOpts struct {
 
 // POST /v2/{project_id}/images/resource_instances/action
 
+type ListImageByTagsResponse struct {
+	Resources  []ListImageByTagsResource `json:"resources,omitempty"`
+	TotalCount int                       `json:"total_count,omitempty"`
+}
+
+type ListImageByTagsResource struct {
+	// Specifies the image ID.
+	ResourceId string `json:"resource_id"`
+	// Provides image details.
+	ResourceDetail ListImageByTagsDetail `json:"resource_detail"`
+	// Lists the image tags.
+	Tags []tags.ResourceTag `json:"tags"`
+	// Specifies the image name.
+	ResourceName string `json:"resource_name"`
+}
+
+type ListImageByTagsDetail struct {
+	Status string `json:"status"`
+}
+
 // 200
