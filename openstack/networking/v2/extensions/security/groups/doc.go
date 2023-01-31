@@ -5,7 +5,7 @@ for the OpenStack Networking service.
 Example to List Security Groups
 
 	listOpts := groups.ListOpts{
-		TenantId: "966b3c7d36a24facaf20b7e458bf2192",
+		TenantID: "966b3c7d36a24facaf20b7e458bf2192",
 	}
 
 	allPages, err := groups.List(networkClient, listOpts).AllPages()

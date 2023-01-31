@@ -85,7 +85,7 @@ Example to Create a Member
 
 	createOpts := pools.CreateMemberOpts{
 		Name:         "db",
-		SubnetId:     "1981f108-3c48-48d2-b908-30f7d28532c9",
+		SubnetID:     "1981f108-3c48-48d2-b908-30f7d28532c9",
 		Address:      "10.0.2.11",
 		ProtocolPort: 80,
 		Weight:       10,

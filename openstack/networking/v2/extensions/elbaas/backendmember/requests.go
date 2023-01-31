@@ -34,7 +34,7 @@ func (opts AddOpts) ToBackendAddMap() (map[string]interface{}, error) {
 // AddResult will be returned.
 //
 // Users with an admin role can create Listeners on behalf of other tenants by
-// specifying a TenantId attribute different than their own.
+// specifying a TenantID attribute different than their own.
 func Add(c *golangsdk.ServiceClient, listener_id string, opts AddOptsBuilder) (r AddResult) {
 	b, err := opts.ToBackendAddMap()
 	// API takes an array of these...

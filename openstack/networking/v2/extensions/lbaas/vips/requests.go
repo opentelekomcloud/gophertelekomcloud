@@ -107,7 +107,7 @@ func (opts CreateOpts) ToVIPCreateMap() (map[string]interface{}, error) {
 // then the operation will fail with a 409 Conflict error will be returned.
 //
 // Users with an admin role can create VIPs on behalf of other tenants by
-// specifying a TenantId attribute different than their own.
+// specifying a TenantID attribute different than their own.
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
 	b, err := opts.ToVIPCreateMap()
 	if err != nil {

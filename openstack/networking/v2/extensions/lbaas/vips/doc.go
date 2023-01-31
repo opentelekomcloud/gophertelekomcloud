@@ -5,7 +5,7 @@ Load Balancing as a Service extension for the OpenStack Networking service.
 Example to List Virtual IPs
 
 	listOpts := vips.ListOpts{
-		SubnetId: "d9bd223b-f1a9-4f98-953b-df977b0f902d",
+		SubnetID: "d9bd223b-f1a9-4f98-953b-df977b0f902d",
 	}
 
 	allPages, err := vips.List(networkClient, listOpts).AllPages()
@@ -28,7 +28,7 @@ Example to Create a Virtual IP
 		Protocol:     "HTTP",
 		Name:         "NewVip",
 		AdminStateUp: golangsdk.Enabled,
-		SubnetId:     "8032909d-47a1-4715-90af-5153ffe39861",
+		SubnetID:     "8032909d-47a1-4715-90af-5153ffe39861",
 		PoolID:       "61b1f87a-7a21-4ad3-9dda-7f81d249944f",
 		ProtocolPort: 80,
 		Persistence:  &vips.SessionPersistence{Type: "SOURCE_IP"},

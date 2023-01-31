@@ -15,22 +15,22 @@ before this feature was added.
 
 Example to Create a RBAC Policy
 
-		createOpts := rbacpolicies.CreateOpts{
-			Action:       rbacpolicies.ActionAccessShared,
-			ObjectType:   "network",
-	                TargetTenant: "6e547a3bcfe44702889fdeff3c3520c3",
-	                ObjectID:     "240d22bf-bd17-4238-9758-25f72610ecdc"
-		}
+	createOpts := rbacpolicies.CreateOpts{
+		Action:       rbacpolicies.ActionAccessShared,
+		ObjectType:   "network",
+                TargetTenant: "6e547a3bcfe44702889fdeff3c3520c3",
+                ObjectID:     "240d22bf-bd17-4238-9758-25f72610ecdc"
+	}
 
-		rbacPolicy, err := rbacpolicies.Create(rbacClient, createOpts).Extract()
-		if err != nil {
-			panic(err)
-		}
+	rbacPolicy, err := rbacpolicies.Create(rbacClient, createOpts).Extract()
+	if err != nil {
+		panic(err)
+	}
 
 Example to List RBAC Policies
 
 	listOpts := rbacpolicies.ListOpts{
-		TenantId: "a99e9b4e620e4db09a2dfb6e42a01e66",
+		TenantID: "a99e9b4e620e4db09a2dfb6e42a01e66",
 	}
 
 	allPages, err := rbacpolicies.List(rbacClient, listOpts).AllPages()
@@ -74,5 +74,6 @@ Example to Update a RBAC Policy
 	if err != nil {
 		panic(err)
 	}
+
 */
 package rbacpolicies

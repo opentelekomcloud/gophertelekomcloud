@@ -22,7 +22,7 @@ func Get(client *golangsdk.ServiceClient, id string) (*GetResponse, error) {
 
 type GetResponse struct {
 	// Cluster ID
-	ClusterId string `json:"clusterId"`
+	ClusterID string `json:"clusterId"`
 	// Cluster name
 	ClusterName string `json:"clusterName"`
 	// Number of Master nodes deployed in a cluster
@@ -70,42 +70,42 @@ type GetResponse struct {
 	// Internal IP address
 	InternalIp string `json:"internalIp"`
 	// Cluster deployment ID
-	DeploymentId string `json:"deploymentId"`
+	DeploymentID string `json:"deploymentId"`
 	// Cluster remarks
 	Remark string `json:"remark"`
 	// Cluster creation order ID
-	OrderId string `json:"orderId"`
+	OrderID string `json:"orderId"`
 	// AZ ID
-	AzId string `json:"azId"`
+	AzID string `json:"azId"`
 	// Product ID of a Master node
-	MasterNodeProductId string `json:"masterNodeProductId"`
+	MasterNodeProductID string `json:"masterNodeProductId"`
 	// Specification ID of a Master node
-	MasterNodeSpecId string `json:"masterNodeSpecId"`
+	MasterNodeSpecID string `json:"masterNodeSpecId"`
 	// Product ID of a Core node
-	CoreNodeProductId string `json:"coreNodeProductId"`
+	CoreNodeProductID string `json:"coreNodeProductId"`
 	// Specification ID of a Core node
-	CoreNodeSpecId string `json:"coreNodeSpecId"`
+	CoreNodeSpecID string `json:"coreNodeSpecId"`
 	// AZ name
 	AzName string `json:"azName"`
 	// Instance ID
-	InstanceId string `json:"instanceId"`
+	InstanceID string `json:"instanceId"`
 	// URI for remotely logging in to an ECS
 	Vnc string `json:"vnc"`
 	// Project ID
-	TenantId string `json:"tenantId"`
+	TenantID string `json:"tenantId"`
 	// Disk storage space
 	VolumeSize int `json:"volumeSize"`
 	// Subnet ID
-	SubnetId string `json:"subnetId"`
+	SubnetID string `json:"subnetId"`
 	// Subnet name
 	SubnetName string `json:"subnetName"`
 	// Security group ID
-	SecurityGroupsId string `json:"securityGroupsId"`
+	SecurityGroupsID string `json:"securityGroupsId"`
 	// Security group ID of a non-Master node.
 	// Currently, one MRS cluster uses only one security group.
 	// Therefore, this field has been discarded.
 	// This field returns the same value as securityGroupsId does for compatibility consideration.
-	SlaveSecurityGroupsId string `json:"slaveSecurityGroupsId"`
+	SlaveSecurityGroupsID string `json:"slaveSecurityGroupsId"`
 	// Bootstrap action script information.
 	// MRS 1.7.2 or later supports this parameter.
 	BootstrapScripts []ScriptResult `json:"bootstrap_scripts"`
@@ -280,7 +280,7 @@ type Component struct {
 	//	 – MRS 1.7.2_008: Loader
 	//	 – MRS 1.7.2_009: Flume
 	// For example, the component_id of Hadoop is MRS 2.1.0_001, MRS 1.9.2_001, MRS 1.7.2_001, MRS 1.6.3_001.
-	ComponentId string `json:"componentId"`
+	ComponentID string `json:"componentId"`
 	// Component name
 	ComponentName string `json:"componentName"`
 	// Component version

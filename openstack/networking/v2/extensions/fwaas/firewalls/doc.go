@@ -5,7 +5,7 @@ OpenStack Networking Service.
 Example to List Firewalls
 
 	listOpts := firewalls.ListOpts{
-		TenantId: "tenant-id",
+		TenantID: "tenant-id",
 	}
 
 	allPages, err := firewalls.List(networkClient, listOpts).AllPages()

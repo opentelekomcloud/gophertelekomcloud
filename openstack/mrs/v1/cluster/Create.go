@@ -524,7 +524,7 @@ type BootstrapScript struct {
 
 type CreateResponse struct {
 	// Cluster ID, which is returned by the system after the cluster is created.
-	ClusterId string `json:"cluster_id"`
+	ClusterID string `json:"cluster_id"`
 	// Operation result.
 	// - true: The operation is successful.
 	// - false: The operation failed.

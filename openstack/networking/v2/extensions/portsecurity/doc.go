@@ -104,7 +104,7 @@ Example to Create a Port Without Port Security
 
 	portCreateOpts := ports.CreateOpts{
 		NetworkID: networkID,
-		FixedIPs:  []ports.IP{ports.IP{SubnetId: subnetID}},
+		FixedIPs:  []ports.IP{ports.IP{SubnetID: subnetID}},
 	}
 
 	createOpts := portsecurity.PortCreateOptsExt{
