@@ -2,6 +2,7 @@ package images
 
 import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 
+// CreateWholeImageFromCBRorCSBSOpts Parameters in the request body when a CSBS backup or CBR backup is used to create a full-ECS image
 type CreateWholeImageFromCBRorCSBSOpts struct {
 	// Specifies the image name. For detailed description, see Image Attributes.
 	Name string `json:"name" required:"true"`
