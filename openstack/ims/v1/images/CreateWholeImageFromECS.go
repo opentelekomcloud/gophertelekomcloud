@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 // CreateWholeImageFromECSOpts Parameters for creating a full-ECS image using an ECS
 type CreateWholeImageFromECSOpts struct {
@@ -36,6 +41,15 @@ type CreateWholeImageFromECSOpts struct {
 	VaultId string `json:"vault_id,omitempty"`
 }
 
-// POST /v1/cloudimages/wholeimages/action
+func CreateWholeImageFromECS(client *golangsdk.ServiceClient, opts CreateWholeImageFromECSOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 JobResponse
+	// POST /v1/cloudimages/wholeimages/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "wholeimages", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
