@@ -38,7 +38,7 @@ func (opts CreateOpts) ToHealthCheckCreateMap() (map[string]interface{}, error) 
 // CreateResult will be returned.
 //
 // Users with an admin role can create loadbalancers on behalf of other tenants by
-// specifying a TenantID attribute different than their own.
+// specifying a TenantId attribute different than their own.
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToHealthCheckCreateMap()
 	if err != nil {

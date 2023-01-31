@@ -84,7 +84,7 @@ Example to Add an Interface to a Router
 	routerID := "4e8e5957-649f-477b-9e5b-f1f75b21c03c"
 
 	intOpts := routers.AddInterfaceOpts{
-		SubnetID: "a2f1f29d-571b-4533-907f-5803ab96ead1",
+		SubnetId: "a2f1f29d-571b-4533-907f-5803ab96ead1",
 	}
 
 	interface, err := routers.AddInterface(networkClient, routerID, intOpts).Extract()
@@ -97,7 +97,7 @@ Example to Remove an Interface from a Router
 	routerID := "4e8e5957-649f-477b-9e5b-f1f75b21c03c"
 
 	intOpts := routers.RemoveInterfaceOpts{
-		SubnetID: "a2f1f29d-571b-4533-907f-5803ab96ead1",
+		SubnetId: "a2f1f29d-571b-4533-907f-5803ab96ead1",
 	}
 
 	interface, err := routers.RemoveInterface(networkClient, routerID, intOpts).Extract()

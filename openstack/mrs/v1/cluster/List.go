@@ -57,7 +57,7 @@ type ListResponse struct {
 
 type Cluster struct {
 	// Cluster ID
-	ClusterID string `json:"clusterId"`
+	ClusterId string `json:"clusterId"`
 	// Cluster name
 	ClusterName string `json:"clusterName"`
 	// Number of Master nodes deployed in a cluster
@@ -105,45 +105,45 @@ type Cluster struct {
 	// Internal IP address
 	InternalIp string `json:"internalIp"`
 	// Cluster deployment ID
-	DeploymentID string `json:"deploymentId"`
+	DeploymentId string `json:"deploymentId"`
 	// Cluster remarks
 	Remark string `json:"remark"`
 	// Cluster creation order ID
-	OrderID string `json:"orderId"`
+	OrderId string `json:"orderId"`
 	// AZ ID
-	AzID string `json:"azId"`
+	AzId string `json:"azId"`
 	// Product ID of a Master node
-	MasterNodeProductID string `json:"masterNodeProductId"`
+	MasterNodeProductId string `json:"masterNodeProductId"`
 	// Specification ID of a Master node
-	MasterNodeSpecID string `json:"masterNodeSpecId"`
+	MasterNodeSpecId string `json:"masterNodeSpecId"`
 	// Product ID of a Core node
-	CoreNodeProductID string `json:"coreNodeProductId"`
+	CoreNodeProductId string `json:"coreNodeProductId"`
 	// Specification ID of a Core node
-	CoreNodeSpecID string `json:"coreNodeSpecId"`
+	CoreNodeSpecId string `json:"coreNodeSpecId"`
 	// AZ name
 	AzName string `json:"azName"`
 	// Instance ID
-	InstanceID string `json:"instanceId"`
+	InstanceId string `json:"instanceId"`
 	// URI for remotely logging in to an ECS
 	Vnc string `json:"vnc"`
 	// Project ID
-	TenantID string `json:"tenantId"`
+	TenantId string `json:"tenantId"`
 	// Disk storage space
 	VolumeSize int    `json:"volumeSize"`
 	VolumeType string `json:"volumeType"`
 	// Subnet ID
-	SubnetID string `json:"subnetId"`
+	SubnetId string `json:"subnetId"`
 	// Cluster type
 	ClusterType int `json:"clusterType"`
 	// Subnet name
 	SubnetName string `json:"subnetName"`
 	// Security group ID
-	SecurityGroupsID string `json:"securityGroupsId"`
+	SecurityGroupsId string `json:"securityGroupsId"`
 	// Security group ID of a non-Master node.
 	// Currently, one MRS cluster uses only one security group.
 	// Therefore, this field has been discarded.
 	// This field returns the same value as securityGroupsId does for compatibility consideration.
-	SlaveSecurityGroupsID string `json:"slaveSecurityGroupsId"`
+	SlaveSecurityGroupsId string `json:"slaveSecurityGroupsId"`
 	// Cluster operation progress description.
 	// The cluster installation progress includes:
 	// - Verifying cluster parameters: Cluster parameters are being verified.

@@ -5,7 +5,7 @@ OpenStack Networking Service.
 Example to List Policies
 
 	listOpts := policies.ListOpts{
-		TenantID: "966b3c7d36a24facaf20b7e458bf2192",
+		TenantId: "966b3c7d36a24facaf20b7e458bf2192",
 	}
 
 	allPages, err := policies.List(networkClient, listOpts).AllPages()

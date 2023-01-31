@@ -149,7 +149,7 @@ func TestBuildRequestBody(t *testing.T) {
 	type AuthOptions struct {
 		PasswordCredentials *PasswordCredentials `json:"passwordCredentials,omitempty" xor:"TokenCredentials"`
 
-		// The TenantID and TenantName fields are optional for the Identity V2 API.
+		// The TenantId and TenantName fields are optional for the Identity V2 API.
 		// Some providers allow you to specify a TenantName instead of the TenantId.
 		// Some require both. Your provider's authentication policies will determine
 		// how these fields influence authentication.

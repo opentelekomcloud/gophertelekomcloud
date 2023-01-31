@@ -24,7 +24,7 @@ type CreateOpts struct {
 	// Identical job names are allowed but not recommended.
 	JobName string `json:"job_name" required:"true"`
 	// Cluster ID
-	ClusterID string `json:"cluster_id" required:"true"`
+	ClusterId string `json:"cluster_id" required:"true"`
 	// Path of the JAR or SQL file for program execution
 	// The parameter must meet the following requirements:
 	// Contains a maximum of 1,023 characters, excluding special characters such as ;|&><'$.

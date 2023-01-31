@@ -118,7 +118,7 @@ func (opts CreateOpts) ToListenerCreateMap() (map[string]interface{}, error) {
 // CreateResult will be returned.
 //
 // Users with an admin role can create Listeners on behalf of other tenants by
-// specifying a TenantID attribute different from their own.
+// specifying a TenantId attribute different from their own.
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToListenerCreateMap()
 	if err != nil {

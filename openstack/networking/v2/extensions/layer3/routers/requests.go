@@ -140,7 +140,7 @@ type AddInterfaceOptsBuilder interface {
 // AddInterfaceOpts represents the options for adding an interface to a router.
 type AddInterfaceOpts struct {
 	SubnetID string `json:"subnet_id,omitempty" xor:"PortID"`
-	PortID   string `json:"port_id,omitempty" xor:"SubnetID"`
+	PortID   string `json:"port_id,omitempty" xor:"SubnetId"`
 }
 
 // ToRouterAddInterfaceMap builds a request body from AddInterfaceOpts.
@@ -149,10 +149,10 @@ func (opts AddInterfaceOpts) ToRouterAddInterfaceMap() (map[string]interface{}, 
 }
 
 // AddInterface attaches a subnet to an internal router interface. You must
-// specify either a SubnetID or PortID in the request body. If you specify both,
+// specify either a SubnetId or PortID in the request body. If you specify both,
 // the operation will fail and an error will be returned.
 //
-// If you specify a SubnetID, the gateway IP address for that particular subnet
+// If you specify a SubnetId, the gateway IP address for that particular subnet
 // is used to create the router interface. Alternatively, if you specify a
 // PortID, the IP address associated with the port is used to create the router
 // interface.
@@ -191,7 +191,7 @@ type RemoveInterfaceOptsBuilder interface {
 // a router.
 type RemoveInterfaceOpts struct {
 	SubnetID string `json:"subnet_id,omitempty" or:"PortID"`
-	PortID   string `json:"port_id,omitempty" or:"SubnetID"`
+	PortID   string `json:"port_id,omitempty" or:"SubnetId"`
 }
 
 // ToRouterRemoveInterfaceMap builds a request body based on
@@ -201,10 +201,10 @@ func (opts RemoveInterfaceOpts) ToRouterRemoveInterfaceMap() (map[string]interfa
 }
 
 // RemoveInterface removes an internal router interface, which detaches a
-// subnet from the router. You must specify either a SubnetID or PortID, since
+// subnet from the router. You must specify either a SubnetId or PortID, since
 // these values are used to identify the router interface to remove.
 //
-// Unlike AddInterface, you can also specify both a SubnetID and PortID. If you
+// Unlike AddInterface, you can also specify both a SubnetId and PortID. If you
 // choose to specify both, the subnet ID must correspond to the subnet ID of
 // the first IP address on the port specified by the port ID. Otherwise, the
 // operation will fail and return a 409 Conflict error.

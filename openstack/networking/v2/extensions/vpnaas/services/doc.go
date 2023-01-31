@@ -5,7 +5,7 @@ OpenStack Networking Service.
 Example to List Services
 
 	listOpts := services.ListOpts{
-		TenantID: "966b3c7d36a24facaf20b7e458bf2192",
+		TenantId: "966b3c7d36a24facaf20b7e458bf2192",
 	}
 
 	allPages, err := services.List(networkClient, listOpts).AllPages()
@@ -63,6 +63,5 @@ Example to Show the details of a specific Service by ID
 	if err != nil {
 		panic(err)
 	}
-
 */
 package services

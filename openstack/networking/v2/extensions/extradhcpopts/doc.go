@@ -27,7 +27,7 @@ Example to Create a Port with Extra DHCP Options
 		AdminStateUp: &adminStateUp,
 		NetworkID:    "a87cc70a-3e15-4acf-8205-9b711a3531b7",
 		FixedIPs: []ports.IP{
-			{SubnetID: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.2"},
+			{SubnetId: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.2"},
 		},
 	}
 
@@ -56,7 +56,7 @@ Example to Update a Port with Extra DHCP Options
 	portUpdateOpts := ports.UpdateOpts{
 		Name: "updated-dhcp-conf-port",
 		FixedIPs: []ports.IP{
-			{SubnetID: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.3"},
+			{SubnetId: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.3"},
 		},
 	}
 

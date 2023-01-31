@@ -11,7 +11,7 @@ are always associated with a network.
 Example to List Networks
 
 	listOpts := networks.ListOpts{
-		TenantID: "a99e9b4e620e4db09a2dfb6e42a01e66",
+		TenantId: "a99e9b4e620e4db09a2dfb6e42a01e66",
 	}
 
 	allPages, err := networks.List(networkClient, listOpts).AllPages()

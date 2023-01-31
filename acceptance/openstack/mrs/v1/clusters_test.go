@@ -73,13 +73,13 @@ func TestMrsClusterLifecycle(t *testing.T) {
 	clResponse, err := cluster.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	err = waitForClusterToBeActive(client, clResponse.ClusterID, 3000)
+	err = waitForClusterToBeActive(client, clResponse.ClusterId, 3000)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = cluster.Delete(client, clResponse.ClusterID)
+		err = cluster.Delete(client, clResponse.ClusterId)
 		th.AssertNoErr(t, err)
-		err = waitForClusterToBeDeleted(client, clResponse.ClusterID, 3000)
+		err = waitForClusterToBeDeleted(client, clResponse.ClusterId, 3000)
 		th.AssertNoErr(t, err)
 	})
 
@@ -94,14 +94,14 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		},
 	}
 
-	err = tags.Create(client, "clusters", clResponse.ClusterID, tagOpts).ExtractErr()
+	err = tags.Create(client, "clusters", clResponse.ClusterId, tagOpts).ExtractErr()
 	th.AssertNoErr(t, err)
 
-	newCluster, err := cluster.Get(client, clResponse.ClusterID)
+	newCluster, err := cluster.Get(client, clResponse.ClusterId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(newCluster.ComponentList), 9)
 
-	tagList, err := tags.Get(client, "clusters", clResponse.ClusterID).Extract()
+	tagList, err := tags.Get(client, "clusters", clResponse.ClusterId).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(tagList), len(tagOpts))
 }

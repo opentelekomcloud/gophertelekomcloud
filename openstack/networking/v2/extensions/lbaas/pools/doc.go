@@ -5,7 +5,7 @@ Load Balancing as a Service extension for the OpenStack Networking service.
 Example to List Pools
 
 	listOpts := pools.ListOpts{
-		SubnetID: "d9bd223b-f1a9-4f98-953b-df977b0f902d",
+		SubnetId: "d9bd223b-f1a9-4f98-953b-df977b0f902d",
 	}
 
 	allPages, err := pools.List(networkClient, listOpts).AllPages()
@@ -28,7 +28,7 @@ Example to Create a Pool
 		LBMethod: pools.LBMethodRoundRobin,
 		Protocol: "HTTP",
 		Name:     "Example pool",
-		SubnetID: "1981f108-3c48-48d2-b908-30f7d28532c9",
+		SubnetId: "1981f108-3c48-48d2-b908-30f7d28532c9",
 		Provider: "haproxy",
 	}
 

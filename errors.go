@@ -329,11 +329,11 @@ func (e ErrAPIKeyProvided) Error() string {
 	return unacceptedAttributeErr("APIKey")
 }
 
-// ErrTenantIDProvided indicates that a TenantID was provided but can't be used.
+// ErrTenantIDProvided indicates that a TenantId was provided but can't be used.
 type ErrTenantIDProvided struct{ BaseError }
 
 func (e ErrTenantIDProvided) Error() string {
-	return unacceptedAttributeErr("TenantID")
+	return unacceptedAttributeErr("TenantId")
 }
 
 // ErrTenantNameProvided indicates that a TenantName was provided but can't be used.
