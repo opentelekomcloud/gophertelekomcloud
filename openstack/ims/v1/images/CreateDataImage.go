@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 type CreateDataImageOpts struct {
 	// Specifies the image name.
@@ -35,8 +40,16 @@ type CreateDataImageOpts struct {
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
 }
 
-// This API is used to create a data disk image from a data disk image file uploaded to the OBS bucket. The API is an asynchronous one. If it is successfully called, the cloud service system receives the request. However, you need to use the asynchronous job query API to query the image creation status. For details, see Asynchronous Job Query.
+// CreateDataImage This API is used to create a data disk image from a data disk image file uploaded to the OBS bucket. The API is an asynchronous one. If it is successfully called, the cloud service system receives the request. However, you need to use the asynchronous job query API to query the image creation status. For details, see Asynchronous Job Query.
+func CreateDataImage(client *golangsdk.ServiceClient, opts CreateDataImageOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// POST /v1/cloudimages/dataimages/action
-
-// 200 job_id
+	// POST /v1/cloudimages/dataimages/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "dataimages", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}

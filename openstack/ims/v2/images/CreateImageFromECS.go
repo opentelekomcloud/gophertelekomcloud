@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 type CreateImageFromECSOpts struct {
 	// Specifies the name of the system disk image. For detailed description, see Image Attributes.
@@ -31,9 +36,9 @@ type CreateImageFromECSOpts struct {
 	// Use either tags or image_tags.
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
 	// Specifies the maximum memory of the image in the unit of MB.
-	MaxRam *int `json:"max_ram,omitempty"`
+	MaxRam int `json:"max_ram,omitempty"`
 	// Specifies the minimum memory of the image in the unit of MB. The default value is 0, indicating that the memory is not restricted.
-	MinRam *int `json:"min_ram,omitempty"`
+	MinRam int `json:"min_ram,omitempty"`
 }
 
 type ECSDataImage struct {
@@ -47,7 +52,7 @@ type ECSDataImage struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-// This API is used to create a private image. The following methods are supported:
+// CreateImageFromECS This API is used to create a private image. The following methods are supported:
 //
 // Create a system or data disk image from an ECS.
 // Create a system disk image from an external image file uploaded to an OBS bucket.
@@ -55,12 +60,15 @@ type ECSDataImage struct {
 // The API is an asynchronous one. If it is successfully called, the cloud service system receives the request. However, you need to use the asynchronous job query API to query the image creation status. For details, see Asynchronous Job Query.
 //
 // You cannot export public images (such as Windows, SUSE Linux, Red Hat Linux, Oracle Linux, and Ubuntu) or private images created using these public images.
+func CreateImageFromECS(client *golangsdk.ServiceClient, opts CreateImageFromECSOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// POST /v2/cloudimages/action
-
-// 200 job_id
-
-type JobResponse struct {
-	// Specifies the asynchronous job ID.
-	JobId string `json:"job_id"`
+	// POST /v2/cloudimages/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
 }

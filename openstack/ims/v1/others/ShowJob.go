@@ -1,5 +1,11 @@
 package others
 
+import (
+	"net/http"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 // Job ID
 
 // GET /v1/{project_id}/jobs/{job_id}
@@ -65,4 +71,17 @@ type SubJobResult struct {
 type SubJobEntities struct {
 	ImageId   string `json:"image_id,omitempty"`
 	ImageName string `json:"image_name,omitempty"`
+}
+
+func ExtractJobId(err error, raw *http.Response) (*string, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res struct {
+		// Specifies the asynchronous job ID.
+		JobId string `json:"job_id"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return &res.JobId, err
 }
