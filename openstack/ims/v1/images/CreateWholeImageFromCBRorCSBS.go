@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 // CreateWholeImageFromCBRorCSBSOpts Parameters in the request body when a CSBS backup or CBR backup is used to create a full-ECS image
 type CreateWholeImageFromCBRorCSBSOpts struct {
@@ -48,6 +53,15 @@ type CreateWholeImageFromCBRorCSBSOpts struct {
 	WholeImageType string `json:"whole_image_type,omitempty"`
 }
 
-// POST /v1/cloudimages/wholeimages/action
+func CreateWholeImageFromCBRorCSBS(client *golangsdk.ServiceClient, opts CreateWholeImageFromCBRorCSBSOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 JobResponse
+	// POST /v1/cloudimages/dataimages/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "dataimages", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
