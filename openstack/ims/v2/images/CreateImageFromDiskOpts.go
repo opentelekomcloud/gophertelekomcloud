@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 // CreateImageFromDiskOpts Create a system disk image from a data disk.
 type CreateImageFromDiskOpts struct {
@@ -33,11 +38,11 @@ type CreateImageFromDiskOpts struct {
 	// Specifies the minimum memory size (MB) required for running the image.
 	//
 	// The parameter value depends on the ECS specifications. The default value is 0.
-	MinRam *int `json:"min_ram,omitempty"`
+	MinRam int `json:"min_ram,omitempty"`
 	// Specifies the maximum memory size (MB) required for running the image.
 	//
 	// The parameter value depends on the ECS specifications. The default value is 0.
-	MaxRam *int `json:"max_ram,omitempty"`
+	MaxRam int `json:"max_ram,omitempty"`
 	// Specifies tags of the image. This parameter is left blank by default.
 	//
 	// Use either tags or image_tags.
@@ -48,10 +53,18 @@ type CreateImageFromDiskOpts struct {
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
 }
 
-// Constraints (Creating a System Disk Image Using a Data Disk)
+// CreateImageFromDisk Constraints (Creating a System Disk Image Using a Data Disk)
 // Before using a data disk to create a system disk image, ensure that an OS has been installed on the data disk and has been optimized. For details about the optimization, see "Optimizing a Windows Private Image" and "Optimizing a Linux Private Image" in the Image Management Service User Guide.
 // The system cannot verify that an OS has been installed on the data disk. Therefore, ensure that the value of os_version is valid when creating a system disk image from the data disk. For details, see Values of Related Parameters.
+func CreateImageFromDisk(client *golangsdk.ServiceClient, opts CreateImageFromDiskOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// POST /v2/cloudimages/action
-
-// 200 job_id
+	// POST /v2/cloudimages/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
