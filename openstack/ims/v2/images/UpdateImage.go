@@ -9,7 +9,7 @@ import (
 type UpdateImageOpts struct {
 	ImageId string `json:"-" required:"true"`
 	// Specifies the operation. The value can be add, replace, or remove.
-	Op string `json:"op"`
+	Op string `json:"op" required:"true"`
 	// Specifies the name of the attribute to be modified. / needs to be added in front of it.
 	//
 	// You can modify the following attributes:
@@ -29,9 +29,9 @@ type UpdateImageOpts struct {
 	// hw_vif_multiqueue_enabled: The NIC multi-queue feature is supported.
 	// hw_firmware_type: specifies the boot mode. The value can be bios or uefi.
 	// You can add or delete extension attributes.
-	Path string `json:"path"`
+	Path string `json:"path" required:"true"`
 	// Specifies the new value of the attribute. For detailed description, see Image Attributes.
-	Value string `json:"value"`
+	Value string `json:"value" required:"true"`
 }
 
 // UpdateImage This API is used to modify image attributes and update image information.

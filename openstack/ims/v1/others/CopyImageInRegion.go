@@ -1,5 +1,10 @@
 package others
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
+
 type CopyImageInRegionOpts struct {
 	// Specifies the image ID.
 	ImageId string `json:"-" required:"true"`
@@ -11,6 +16,15 @@ type CopyImageInRegionOpts struct {
 	Description string `json:"description,omitempty"`
 }
 
-// POST /v1/cloudimages/{image_id}/copy
+func CopyImageInRegion(client *golangsdk.ServiceClient, opts CopyImageInRegionOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 job id
+	// POST /v1/cloudimages/{image_id}/copy
+	raw, err := client.Post(client.ServiceURL("cloudimages", opts.ImageId, "copy"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return ExtractJobId(err, raw)
+}
