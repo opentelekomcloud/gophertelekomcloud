@@ -1,5 +1,10 @@
 package images
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type ListImagesOpts struct {
 	// Specifies the image type. The following types are supported:
 	//
@@ -139,12 +144,22 @@ type ListImagesOpts struct {
 	UpdatedAt string `q:"updated_at,omitempty"`
 }
 
-// This API is used to query images using search criteria and to display the images in a list.
+// ListImages This API is used to query images using search criteria and to display the images in a list.
+func ListImages(client *golangsdk.ServiceClient, opts ListImagesOpts) ([]ImageInfo, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
 
-// GET /v2/cloudimages
+	// GET /v2/cloudimages
+	raw, err := client.Get(client.ServiceURL("cloudimages")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type ListImagesResponse struct {
-	Images []ImageInfo `json:"images,omitempty"`
+	var res []ImageInfo
+	err = extract.IntoSlicePtr(raw.Body, &res, "images")
+	return res, err
 }
 
 type ImageInfo struct {
