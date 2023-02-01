@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-func ListImages(client *golangsdk.ServiceClient) ([]tags.ListedTag, error) {
+func ListImagesTags(client *golangsdk.ServiceClient) ([]tags.ListedTag, error) {
 	// GET /v2/{project_id}/images/tags
 	raw, err := client.Get(client.ServiceURL("images", "tags"), nil, nil)
 	if err != nil {

@@ -1,11 +1,19 @@
 package tags
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
-// ImageId
+func ListImageTags(client *golangsdk.ServiceClient, imageId string) ([]tags.ResourceTag, error) {
+	// GET /v2/{project_id}/images/{image_id}/tags
+	raw, err := client.Get(client.ServiceURL("images", imageId, "tags"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-// GET /v2/{project_id}/images/{image_id}/tags
-
-type ListImageTagsResponse struct {
-	Tags []tags.ResourceTag `json:"tags,omitempty"`
+	var res []tags.ResourceTag
+	err = extract.IntoSlicePtr(raw.Body, &res, "tags")
+	return res, err
 }
