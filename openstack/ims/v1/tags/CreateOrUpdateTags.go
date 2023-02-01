@@ -1,6 +1,10 @@
 package tags
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
 type CreateOrUpdateTagsOpts struct {
 	// Specifies the image ID.
@@ -15,6 +19,15 @@ type CreateOrUpdateTagsOpts struct {
 	ImageTag tags.ResourceTag `json:"image_tag,omitempty"`
 }
 
-// PUT /v1/cloudimages/tags
+func CreateOrUpdateTags(client *golangsdk.ServiceClient, opts CreateOrUpdateTagsOpts) (err error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return
+	}
 
-// 204
+	// PUT /v1/cloudimages/tags
+	_, err = client.Put(client.ServiceURL("cloudimages", "tags"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
+	return
+}
