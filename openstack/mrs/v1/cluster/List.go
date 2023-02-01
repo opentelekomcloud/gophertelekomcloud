@@ -143,6 +143,9 @@ type Cluster struct {
 	// Therefore, this field has been discarded.
 	// This field returns the same value as securityGroupsId does for compatibility consideration.
 	SlaveSecurityGroupsId string `json:"slaveSecurityGroupsId"`
+	// Bootstrap action script information.
+	// MRS 1.7.2 or later supports this parameter.
+	BootstrapScripts []ScriptResult `json:"bootstrap_scripts"`
 	// Cluster operation progress description.
 	// The cluster installation progress includes:
 	// - Verifying cluster parameters: Cluster parameters are being verified.
@@ -184,6 +187,8 @@ type Cluster struct {
 	PrivateIpFirst string `json:"privateIpFirst"`
 	// Error message
 	ErrorInfo string `json:"errorInfo"`
+	// Tag information
+	Tags []string `json:"tags"`
 	// Start time of billing
 	ChargingStartTime string `json:"chargingStartTime"`
 	// Whether to collect logs when cluster installation fails
@@ -214,9 +219,6 @@ type Cluster struct {
 	// Number of data disks of the Core node.
 	// Value range: 1 to 10
 	CoreDataVolumeCount int `json:"coreDataVolumeCount"`
-	// Bootstrap action script information.
-	// MRS 1.7.2 or later supports this parameter.
-	BootstrapScripts []ScriptResult `json:"bootstrap_scripts"`
 	// Node change status.
 	// If this parameter is left blank, the cluster nodes are not changed.
 	// Possible values are as follows:
