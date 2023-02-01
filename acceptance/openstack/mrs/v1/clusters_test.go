@@ -2,6 +2,7 @@ package v1
 
 import (
 	"testing"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -116,7 +117,7 @@ func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string,
 		if n.ClusterState == "running" {
 			return true, nil
 		}
-
+		time.Sleep(5 * time.Second)
 		return false, nil
 	})
 }
