@@ -1,6 +1,10 @@
 package tags
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
 type BatchAddOrDeleteTagsOpts struct {
 	// Specifies the image ID.
@@ -11,6 +15,15 @@ type BatchAddOrDeleteTagsOpts struct {
 	Tags []tags.ResourceTag `json:"tags"`
 }
 
-// POST /v2/{project_id}/images/{image_id}/tags/action
+func BatchAddOrDeleteTags(client *golangsdk.ServiceClient, opts BatchAddOrDeleteTagsOpts) (err error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return
+	}
 
-// 204
+	// POST /v2/{project_id}/images/{image_id}/tags/action
+	_, err = client.Post(client.ServiceURL("images", opts.ImageId, "tags", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
+	return
+}
