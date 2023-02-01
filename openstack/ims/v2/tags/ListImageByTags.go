@@ -1,6 +1,11 @@
 package tags
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+)
 
 type ListImageByTagsOpts struct {
 	// Identifies the operation. This parameter is case sensitive and its value can be filter or count.
@@ -27,7 +32,24 @@ type ListImageByTagsOpts struct {
 	Matches []tags.ResourceTag `json:"matches,omitempty"`
 }
 
-// POST /v2/{project_id}/images/resource_instances/action
+func ListImageByTags(client *golangsdk.ServiceClient, opts ListImageByTagsOpts) (*ListImageByTagsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v2/{project_id}/images/resource_instances/action
+	raw, err := client.Post(client.ServiceURL("images", "resource_instances", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListImageByTagsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ListImageByTagsResponse struct {
 	Resources  []ListImageByTagsResource `json:"resources,omitempty"`
@@ -48,5 +70,3 @@ type ListImageByTagsResource struct {
 type ListImageByTagsDetail struct {
 	Status string `json:"status"`
 }
-
-// 200
