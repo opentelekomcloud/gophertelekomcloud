@@ -1,5 +1,10 @@
 package tags
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type ListTagsOpts struct {
 	// Specifies whether the image is available. The value can be true. The value is true for all extension APIs by default. Common users can query only the images for which the value of this parameter is true.
 	IsRegistered string `q:"__isregistered,omitempty"`
@@ -161,8 +166,19 @@ type ListTagsOpts struct {
 	UpdatedAt string `q:"updated_at,omitempty"`
 }
 
-// GET /v1/cloudimages/tags
+func ListTags(client *golangsdk.ServiceClient, opts ListTagsOpts) ([]string, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
 
-type ListTagsResponse struct {
-	Tags []string `json:"tags,omitempty"`
+	// GET /v1/cloudimages/tags
+	raw, err := client.Get(client.ServiceURL("cloudimages", "tags")+q.String(), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []string
+	err = extract.IntoSlicePtr(raw.Body, &res, "tags")
+	return res, err
 }
