@@ -215,4 +215,19 @@ type Cluster struct {
 	// Number of data disks of the Core node.
 	// Value range: 1 to 10
 	CoreDataVolumeCount int `json:"coreDataVolumeCount"`
+	// Bootstrap action script information.
+	// MRS 1.7.2 or later supports this parameter.
+	BootstrapScripts []ScriptResult `json:"bootstrap_scripts"`
+	// Node change status.
+	// If this parameter is left blank, the cluster nodes are not changed.
+	// Possible values are as follows:
+	// - scaling-out: The cluster is being scaled out.
+	// - scaling-in: The cluster is being scaled in.
+	// - scaling-error: The cluster is in the running state
+	//   and fails to be scaled in or out or the specifications fail to be scaled up for the last time.
+	// - scaling-up: The Master node specifications are being scaled up.
+	// - scaling_up_first: The standby Master node specifications are being scaled up.
+	// - scaled_up_first: The standby Master node specifications have been scaled up successfully.
+	// - scaled-up-success: The Master node specifications have been scaled up successfully.
+	Scale string `json:"scale"`
 }
