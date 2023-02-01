@@ -6,14 +6,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 )
 
-type BatchAddMembersOpts struct {
+type BatchMembersOpts struct {
 	// Specifies the image IDs.
 	Images []string `json:"images"`
 	// Specifies the project IDs.
 	Projects []string `json:"projects"`
 }
 
-func BatchAddMembers(client *golangsdk.ServiceClient, opts BatchAddMembersOpts) (*string, error) {
+func BatchAddMembers(client *golangsdk.ServiceClient, opts BatchMembersOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
