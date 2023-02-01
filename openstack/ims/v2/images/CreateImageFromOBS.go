@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 // CreateImageFromOBSOpts Create a system disk image from an external image file uploaded to an OBS bucket.
 type CreateImageFromOBSOpts struct {
@@ -39,7 +44,7 @@ type CreateImageFromOBSOpts struct {
 	// Specifies the minimum size of the system disk in the unit of GB.
 	//
 	// This parameter is mandatory if an external image file in the OBS bucket is used to create an image. The value ranges from 1 GB to 1024 GB.
-	MinDisk *int `json:"min_disk" required:"true"`
+	MinDisk int `json:"min_disk" required:"true"`
 	// Specifies whether automatic configuration is enabled.
 	//
 	// The value can be true or false.
@@ -47,7 +52,7 @@ type CreateImageFromOBSOpts struct {
 	// If automatic configuration is required, set the value to true. Otherwise, set the value to false The default value is false.
 	//
 	// For details about automatic configuration, see Creating a Linux System Disk Image from an External Image File > Registering an External Image File as a Private Image (Linux) in Image Management Service User Guide.
-	IsConfig *bool `json:"is_config,omitempty"`
+	IsConfig bool `json:"is_config,omitempty"`
 	// Specifies the master key used for encrypting an image. For its value, see the Key Management Service User Guide.
 	CmkId string `json:"cmk_id,omitempty"`
 	// Specifies tags of the image. This parameter is left blank by default.
@@ -57,9 +62,9 @@ type CreateImageFromOBSOpts struct {
 	// Use either tags or image_tags.
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
 	// Specifies the maximum memory of the image in the unit of MB.
-	MaxRam *int `json:"max_ram,omitempty"`
+	MaxRam int `json:"max_ram,omitempty"`
 	// Specifies the minimum memory of the image in the unit of MB. The default value is 0, indicating that the memory is not restricted.
-	MinRam *int `json:"min_ram,omitempty"`
+	MinRam int `json:"min_ram,omitempty"`
 	// Specifies the data disk information to be imported.
 	//
 	// An external image file can contain a maximum of three data disks. In this case, one system disk and three data disks will be created.
@@ -72,7 +77,7 @@ type CreateImageFromOBSOpts struct {
 	DataImages []OBSDataImage `json:"data_images,omitempty"`
 	// Specifies whether to use the quick import method to import a system disk image.
 	// For details about the restrictions on quick import of image files, see Importing an Image File Quickly.
-	IsQuickImport *bool `json:"is_quick_import,omitempty"`
+	IsQuickImport bool `json:"is_quick_import,omitempty"`
 }
 
 type OBSDataImage struct {
@@ -108,7 +113,7 @@ type OBSDataImage struct {
 	// Value range: 1–2048
 	MinDisk int `json:"min_disk" required:"true"`
 	// Specifies whether an image file is imported quickly to create a data disk image.
-	IsQuickImport *bool `json:"is_quick_import,omitempty"`
+	IsQuickImport bool `json:"is_quick_import,omitempty"`
 	// Specifies tags of the image. This parameter is left blank by default.
 	// Use either tags or image_tags.
 	Tags []string `json:"tags,omitempty"`
@@ -117,6 +122,15 @@ type OBSDataImage struct {
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
 }
 
-// POST /v2/cloudimages/action
+func CreateImageFromOBS(client *golangsdk.ServiceClient, opts CreateImageFromOBSOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 job_id
+	// POST /v2/cloudimages/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
