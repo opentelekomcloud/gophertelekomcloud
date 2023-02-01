@@ -14,11 +14,11 @@ type QuotaInfo struct {
 	// Specifies the type of the resource to be queried.
 	Type string `json:"type"`
 	// Specifies the used quota.
-	Used int32 `json:"used"`
+	Used int `json:"used"`
 	// Specifies the total quota.
-	Quota int32 `json:"quota"`
+	Quota int `json:"quota"`
 	// Specifies the minimum quota.
-	Min int32 `json:"min"`
+	Min int `json:"min"`
 	// Specifies the maximum quota.
-	Max int32 `json:"max"`
+	Max int `json:"max"`
 }

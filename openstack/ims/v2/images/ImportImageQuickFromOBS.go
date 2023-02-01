@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 type ImportImageQuickFromOBSOpts struct {
 	// Specifies the image name.
@@ -21,7 +26,7 @@ type ImportImageQuickFromOBSOpts struct {
 	// Specifies the minimum size of the system disk in the unit of GB.
 	//
 	// This parameter is mandatory if an external image file in the OBS bucket is used to create an image. The value ranges from 1 to 1024.
-	MinDisk int32 `json:"min_disk" required:"true"`
+	MinDisk int `json:"min_disk" required:"true"`
 	// Lists the image tags. This parameter is left blank by default.
 	//
 	// Set either tags or image_tags.
@@ -34,6 +39,15 @@ type ImportImageQuickFromOBSOpts struct {
 	Type string `json:"type" required:"true"`
 }
 
-// POST /v2/cloudimages/quickimport/action
+func ImportImageQuickFromOBS(client *golangsdk.ServiceClient, opts ImportImageQuickFromOBSOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 job_id
+	// POST /v2/cloudimages/quickimport/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "quickimport", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
