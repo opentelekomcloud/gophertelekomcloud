@@ -1,6 +1,13 @@
 package images
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
 type UpdateImageOpts struct {
+	ImageId string `json:"-" required:"true"`
 	// Specifies the operation. The value can be add, replace, or remove.
 	Op string `json:"op"`
 	// Specifies the name of the attribute to be modified. / needs to be added in front of it.
@@ -27,9 +34,23 @@ type UpdateImageOpts struct {
 	Value string `json:"value"`
 }
 
-// This API is used to modify image attributes and update image information.
+// UpdateImage This API is used to modify image attributes and update image information.
 // Only information of images in active status can be changed.
+func UpdateImage(client *golangsdk.ServiceClient, opts UpdateImageOpts) (*ImageInfo, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// PATCH /v2/cloudimages/{image_id}
+	// PATCH /v2/cloudimages/{image_id}
+	raw, err := client.Patch(client.ServiceURL("cloudimages", opts.ImageId), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
 
-// 200 ImageInfo
+	var res ImageInfo
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
