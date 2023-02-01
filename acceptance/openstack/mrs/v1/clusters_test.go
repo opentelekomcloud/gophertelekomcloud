@@ -61,7 +61,7 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		VolumeType:         "SATA",
 		VolumeSize:         100,
 		SafeMode:           1,
-		ClusterAdminSecret: "Qwerty123!",
+		ClusterAdminSecret: "SuperQwerty123!",
 		LoginMode:          pointerto.Int(1),
 		NodePublicCertName: keyPairName,
 		LogCollection:      pointerto.Int(1),
