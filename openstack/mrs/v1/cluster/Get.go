@@ -3,20 +3,19 @@ package cluster
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 func Get(client *golangsdk.ServiceClient, id string) (*GetResponse, error) {
 	// GET /v1.1/{project_id}/cluster_infos/{cluster_id}
-	raw, err := client.Get(client.ServiceURL("cluster_infos", id), nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+	raw, err := client.Get(client.ServiceURL("cluster_infos", id), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}
 
 	var res GetResponse
-	err = extract.Into(raw.Body, &res)
+	err = extract.IntoStructPtr(raw.Body, &res, "cluster")
 	return &res, err
 }
 
