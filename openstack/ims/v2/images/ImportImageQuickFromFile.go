@@ -1,6 +1,11 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
 
 type ImportImageQuickFromFileOpts struct {
 	// Specifies the image name.
@@ -26,7 +31,7 @@ type ImportImageQuickFromFileOpts struct {
 	//
 	// This parameter is mandatory if an external image file in the OBS bucket is used to create an image.
 	// The value ranges from 1 to 1024 and must be greater than the size of the selected image file.
-	MinDisk int32 `json:"min_disk" required:"true"`
+	MinDisk int `json:"min_disk" required:"true"`
 	// Lists the image tags. This parameter is left blank by default.
 	//
 	// Set either tags or image_tags.
@@ -48,7 +53,7 @@ type ImportImageQuickFromFileOpts struct {
 	Architecture string `json:"architecture,omitempty"`
 }
 
-// This API is used to quickly create a private image from an oversized external image file that has uploaded to the OBS bucket. Currently, only ZVHD2 and RAW image files are supported, and the size of an image file cannot exceed 1 TB.
+// ImportImageQuickFromFile This API is used to quickly create a private image from an oversized external image file that has uploaded to the OBS bucket. Currently, only ZVHD2 and RAW image files are supported, and the size of an image file cannot exceed 1 TB.
 //
 // The fast image creation function is only available for image files in RAW or ZVHD2 format. For other formats of image files that are smaller than 128 GB, you are advised to import these files with the common method.
 //
@@ -60,7 +65,15 @@ type ImportImageQuickFromFileOpts struct {
 // ZVHD2 image files have been optimized as required.
 //
 // For how to convert image file formats and generate a bitmap file, see section "Quickly Importing an Image File" in the Image Management Service User Guide.
+func ImportImageQuickFromFile(client *golangsdk.ServiceClient, opts ImportImageQuickFromFileOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// POST /v2/cloudimages/quickimport/action
-
-// 200 job_id
+	// POST /v2/cloudimages/quickimport/action
+	raw, err := client.Post(client.ServiceURL("cloudimages", "quickimport", "action"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
