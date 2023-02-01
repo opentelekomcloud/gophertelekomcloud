@@ -1,5 +1,11 @@
 package members
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+)
+
 type BatchUpdateMembersOpts struct {
 	// Specifies the image IDs.
 	Images []string `json:"images" required:"true"`
@@ -21,6 +27,15 @@ type BatchUpdateMembersOpts struct {
 	VaultId string `json:"vault_id,omitempty"`
 }
 
-// PUT /v1/cloudimages/members
+func BatchUpdateMembers(client *golangsdk.ServiceClient, opts BatchUpdateMembersOpts) (*string, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 200 Job ID
+	// PUT /v1/cloudimages/members
+	raw, err := client.Put(client.ServiceURL("cloudimages", "members"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return others.ExtractJobId(err, raw)
+}
