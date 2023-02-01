@@ -1,13 +1,22 @@
 package others
 
-// GET /v1/cloudimages/quota
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-type ShowImageQuotaResponse struct {
-	Quotas Quota `json:"quotas,omitempty"`
-}
+func ShowImageQuota(client *golangsdk.ServiceClient) ([]QuotaInfo, error) {
+	// GET /v1/cloudimages/quota
+	raw, err := client.Get(client.ServiceURL("cloudimages", "quota"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-type Quota struct {
-	Resources []QuotaInfo `json:"resources"`
+	var res struct {
+		Resources []QuotaInfo `json:"resources"`
+	}
+	err = extract.IntoStructPtr(raw.Body, &res, "quotas")
+	return res.Resources, err
 }
 
 type QuotaInfo struct {
