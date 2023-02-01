@@ -3,6 +3,7 @@ package cluster
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 type ListHostsOpts struct {
@@ -24,9 +25,7 @@ func ListHosts(client *golangsdk.ServiceClient, opts ListHostsOpts) (*ListHostsR
 	}
 
 	// GET /v1.1/{project_id}/clusters/{cluster_id}/hosts
-	raw, err := client.Get(client.ServiceURL("clusters", opts.ClusterId, "hosts")+q.String(), nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+	raw, err := client.Get(client.ServiceURL("clusters", opts.ClusterId, "hosts")+q.String(), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}
