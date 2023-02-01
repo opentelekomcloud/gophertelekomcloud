@@ -3,12 +3,21 @@ package others
 import (
 	"net/http"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// Job ID
+func ShowJob(client *golangsdk.ServiceClient, jobId string) (*ShowJobResponse, error) {
+	// GET /v1/{project_id}/jobs/{job_id}
+	raw, err := client.Get(client.ServiceURL("jobs", jobId), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-// GET /v1/{project_id}/jobs/{job_id}
+	var res ShowJobResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 
 type ShowJobResponse struct {
 	// Specifies the job status. The value can be:
@@ -43,35 +52,35 @@ type JobEntities struct {
 	// Specifies the image ID.
 	ImageId string `json:"image_id,omitempty"`
 
-	CurrentTask    string              `json:"current_task,omitempty"`
-	ImageName      string              `json:"image_name,omitempty"`
-	ProcessPercent float64             `json:"process_percent,omitempty"`
-	Results        []JobEntitiesResult `json:"results,omitempty"`
-	SubJobsResult  []SubJobResult      `json:"sub_jobs_result,omitempty"`
-	SubJobsList    []string            `json:"sub_jobs_list,omitempty"`
+	// CurrentTask    string              `json:"current_task,omitempty"`
+	// ImageName      string              `json:"image_name,omitempty"`
+	// ProcessPercent float64             `json:"process_percent,omitempty"`
+	// Results        []JobEntitiesResult `json:"results,omitempty"`
+	// SubJobsResult  []SubJobResult      `json:"sub_jobs_result,omitempty"`
+	// SubJobsList    []string            `json:"sub_jobs_list,omitempty"`
 }
 
-type JobEntitiesResult struct {
-	ImageId   string `json:"image_id,omitempty"`
-	ProjectId string `json:"project_id,omitempty"`
-	Status    string `json:"status,omitempty"`
-}
+// type JobEntitiesResult struct {
+// 	ImageId   string `json:"image_id,omitempty"`
+// 	ProjectId string `json:"project_id,omitempty"`
+// 	Status    string `json:"status,omitempty"`
+// }
 
-type SubJobResult struct {
-	Status     string         `json:"status,omitempty"`
-	JobId      string         `json:"job_id,omitempty"`
-	JobType    string         `json:"job_type,omitempty"`
-	BeginTime  string         `json:"begin_time,omitempty"`
-	EndTime    string         `json:"end_time,omitempty"`
-	ErrorCode  string         `json:"error_code,omitempty"`
-	FailReason string         `json:"fail_reason,omitempty"`
-	Entities   SubJobEntities `json:"entities,omitempty"`
-}
+// type SubJobResult struct {
+// 	Status     string         `json:"status,omitempty"`
+// 	JobId      string         `json:"job_id,omitempty"`
+// 	JobType    string         `json:"job_type,omitempty"`
+// 	BeginTime  string         `json:"begin_time,omitempty"`
+// 	EndTime    string         `json:"end_time,omitempty"`
+// 	ErrorCode  string         `json:"error_code,omitempty"`
+// 	FailReason string         `json:"fail_reason,omitempty"`
+// 	Entities   SubJobEntities `json:"entities,omitempty"`
+// }
 
-type SubJobEntities struct {
-	ImageId   string `json:"image_id,omitempty"`
-	ImageName string `json:"image_name,omitempty"`
-}
+// type SubJobEntities struct {
+// 	ImageId   string `json:"image_id,omitempty"`
+// 	ImageName string `json:"image_name,omitempty"`
+// }
 
 func ExtractJobId(err error, raw *http.Response) (*string, error) {
 	if err != nil {
