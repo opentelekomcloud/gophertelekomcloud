@@ -50,7 +50,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListResponse, error)
 
 type ListResponse struct {
 	// Total number of clusters in a list
-	ClusterTotal *int32 `json:"clusterTotal,omitempty"`
+	ClusterTotal int `json:"clusterTotal,omitempty"`
 	// Cluster parameters.
 	Clusters []Cluster `json:"clusters,omitempty"`
 }

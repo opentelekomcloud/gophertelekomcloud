@@ -74,7 +74,7 @@ type Parameters struct {
 	//   For example,
 	//   if there are 5 Core nodes and 5 Task nodes in a cluster,
 	//   only 2 (5 minus 3) Core nodes are available for deletion and 5 or fewer than 5 Task nodes can be deleted.
-	Instances int32 `json:"instances"`
+	Instances int `json:"instances"`
 	// This parameter is valid only when a bootstrap action is configured during cluster creation and takes effect during scale-out.
 	// It indicates whether the bootstrap action specified during cluster creation is performed on nodes added during scale-out.
 	// The default value is false, indicating that the bootstrap  action is performed.
@@ -104,8 +104,8 @@ type TaskNodeInfo struct {
 	DataVolumeType string `json:"data_volume_type,omitempty"`
 	// Number of data disks of a Task node
 	// Value range: 1 to 10
-	DataVolumeCount *int32 `json:"data_volume_count,omitempty"`
+	DataVolumeCount int `json:"data_volume_count,omitempty"`
 	// Data disk storage space of a Task node
 	// Value range: 100 GB to 32,000 GB
-	DataVolumeSize *int32 `json:"data_volume_size,omitempty"`
+	DataVolumeSize int `json:"data_volume_size,omitempty"`
 }

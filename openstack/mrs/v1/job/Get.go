@@ -10,11 +10,7 @@ import (
 
 func Get(c *golangsdk.ServiceClient, id string) (*JobExecution, error) {
 	// GET /v1.1/{project_id}/job-exes/{job_exe_id}
-	raw, err := c.Get(c.ServiceURL("job-exes", id), nil, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: openstack.StdRequestOpts().MoreHeaders,
-	})
-
+	raw, err := c.Get(c.ServiceURL("job-exes", id), nil, openstack.StdRequestOpts())
 	return extra(err, raw)
 }
 
@@ -81,7 +77,7 @@ type JobExecution struct {
 	// 5: DistCp
 	// 6: Spark Script
 	// 7: Spark SQL (not supported in this API currently)
-	JobType int32 `json:"job_type,omitempty"`
+	JobType int `json:"job_type,omitempty"`
 	// Data import and export
 	FileAction string `json:"file_action,omitempty"`
 	// Key parameter for program execution. The parameter is specified by the function of the user's internal program.
@@ -94,13 +90,13 @@ type JobExecution struct {
 	// 3: Completed
 	// 4: Abnormal
 	// 5: Error
-	JobState int32 `json:"job_state,omitempty"`
+	JobState int `json:"job_state,omitempty"`
 	// Final job status
 	// 0: unfinished
 	// 1: terminated due to an execution error
 	// 2: executed successfully
 	// 3: canceled
-	JobFinalStatus int32 `json:"job_final_status,omitempty"`
+	JobFinalStatus int `json:"job_final_status,omitempty"`
 	// Address of the Hive script
 	HiveScriptPath string `json:"hive_script_path,omitempty"`
 	// User ID for creating jobs
@@ -108,7 +104,7 @@ type JobExecution struct {
 	CreateBy string `json:"create_by,omitempty"`
 	// Number of completed steps
 	// This parameter is not used in the current version, but is retained for compatibility with earlier versions.
-	FinishedStep int32 `json:"finished_step,omitempty"`
+	FinishedStep int `json:"finished_step,omitempty"`
 	// Main ID of a job
 	// This parameter is not used in the current version, but is retained for compatibility with earlier versions.
 	JobMainId string `json:"job_main_id,omitempty"`
@@ -123,10 +119,10 @@ type JobExecution struct {
 	StepName string `json:"step_name,omitempty"`
 	// Number of steps
 	// This parameter is not used in the current version, but is retained for compatibility with earlier versions.
-	StepNum int32 `json:"step_num,omitempty"`
+	StepNum int `json:"step_num,omitempty"`
 	// Number of tasks
 	// This parameter is not used in the current version, but is retained for compatibility with earlier versions.
-	TaskNum int32 `json:"task_num,omitempty"`
+	TaskNum int `json:"task_num,omitempty"`
 	// User ID for updating jobs
 	UpdateBy string `json:"update_by,omitempty"`
 	// Token

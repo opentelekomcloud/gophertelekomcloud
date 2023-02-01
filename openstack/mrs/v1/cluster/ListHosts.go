@@ -38,7 +38,7 @@ func ListHosts(client *golangsdk.ServiceClient, opts ListHostsOpts) (*ListHostsR
 
 type ListHostsResponse struct {
 	// Total number of hosts in a list
-	Total *int32 `json:"total,omitempty"`
+	Total int `json:"total,omitempty"`
 	// Host parameters
 	Hosts []Hosts `json:"hosts,omitempty"`
 }
@@ -66,7 +66,7 @@ type Hosts struct {
 	// Data disk type
 	DataVolumeType string `json:"data_volume_type,omitempty"`
 	// Data disk capacity
-	DataVolumeSize *int32 `json:"data_volume_size,omitempty"`
+	DataVolumeSize int `json:"data_volume_size,omitempty"`
 	// Number of data disks
-	DataVolumeCount *int32 `json:"data_volume_count,omitempty"`
+	DataVolumeCount int `json:"data_volume_count,omitempty"`
 }

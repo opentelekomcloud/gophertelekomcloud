@@ -115,7 +115,7 @@ type NodeGroupV10 struct {
 	// Number of nodes.
 	// The value ranges from 0 to 500.
 	// The minimum number of Master and Core nodes is 1 and the total number of Core and Task nodes cannot exceed 500.
-	NodeNum *int32 `json:"nodeNum,omitempty"`
+	NodeNum int `json:"nodeNum,omitempty"`
 	// Instance specifications of a node
 	NodeSize string `json:"nodeSize,omitempty"`
 	// Instance specification ID of a node
@@ -128,7 +128,7 @@ type NodeGroupV10 struct {
 	VmSpecCode string `json:"vmSpecCode,omitempty"`
 	// System disk size of a node.
 	// This parameter is not configurable and its default value is 40 GB.
-	RootVolumeSize *int32 `json:"rootVolumeSize,omitempty"`
+	RootVolumeSize int `json:"rootVolumeSize,omitempty"`
 	// System disk product ID of a node
 	RootVolumeProductId string `json:"rootVolumeProductId,omitempty"`
 	// System disk type of a node
@@ -144,9 +144,9 @@ type NodeGroupV10 struct {
 	// - SSD: Ultra-high I/O
 	DataVolumeType string `json:"dataVolumeType,omitempty"`
 	// Number of data disks of a node
-	DataVolumeCount *int32 `json:"dataVolumeCount,omitempty"`
+	DataVolumeCount int `json:"dataVolumeCount,omitempty"`
 	// Data disk storage space of a node
-	DataVolumeSize *int32 `json:"dataVolumeSize,omitempty"`
+	DataVolumeSize int `json:"dataVolumeSize,omitempty"`
 	// Data disk product ID of a node
 	DataVolumeProductId string `json:"dataVolumeProductId,omitempty"`
 	// Data disk product specifications of a node
