@@ -8,25 +8,19 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestPoliciesList(t *testing.T) {
-	if os.Getenv("RUN_CSBS") == "" {
-		t.Skip("unstable test")
-	}
 	client, err := clients.NewCsbsV1Client()
-	if err != nil {
-		t.Fatalf("Unable to create a CSBSv1 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	listOpts := policies.ListOpts{}
 	backupPolicies, err := policies.List(client, listOpts)
-	if err != nil {
-		t.Fatalf("Unable fetch CSBSv1 policies pages: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	for _, policy := range backupPolicies {
 		tools.PrintResource(t, policy)
@@ -34,24 +28,17 @@ func TestPoliciesList(t *testing.T) {
 }
 
 func TestPoliciesLifeCycle(t *testing.T) {
-	if os.Getenv("RUN_CSBS") == "" {
-		t.Skip("unstable test")
-	}
 	client, err := clients.NewCsbsV1Client()
-	if err != nil {
-		t.Fatalf("Unable to create CSBSv1 client: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
-	subnet := nwv1.CreateNetwork(t, prefix, az)
-	defer nwv1.DeleteNetwork(t, subnet)
+	subnet := nwv1.CreateNetwork(t, "csbs-acc-", "eu-de-01")
+	t.Cleanup(func() { nwv1.DeleteNetwork(t, subnet) })
+
 	server := createComputeInstance(t, subnet.ID)
-
-	defer deleteComputeInstance(t, server.ID)
+	t.Cleanup(func() { deleteComputeInstance(t, server.ID) })
 
 	// Create CSBSv1 policy
-	policy, err := createCSBSPolicy(t, client, server.ID)
-	th.AssertNoErr(t, err)
-	defer deleteCSBSPolicy(t, client, policy.ID)
+	policy := createCSBSPolicy(t, client, server.ID)
 	tools.PrintResource(t, policy)
 
 	err = updateCSBSPolicy(client, policy.ID)
@@ -62,30 +49,12 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	tools.PrintResource(t, policyUpdate)
 }
 
-const (
-	image  = "Standard_Debian_10_latest"
-	flavor = "s2.large.2"
-	az     = "eu-de-01"
-	prefix = "csbs-acc-"
-)
-
-func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) (*policies.BackupPolicy, error) {
-	if os.Getenv("RUN_CSBS") == "" {
-		t.Skip("unstable test")
-	}
+func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) *policies.BackupPolicy {
 	t.Logf("Attempting to create CSBSv1 policy")
 
-	// These values were got from HelpCenter request example
-	triggerPattern := "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n"
-
-	providerId := "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
-
-	policyName := tools.RandomString("policy-init-", 5)
-	policyDescription := tools.RandomString("description-init-", 10)
-
 	createOpts := policies.CreateOpts{
-		Description: policyDescription,
-		Name:        policyName,
+		Description: tools.RandomString("description-init-", 10),
+		Name:        tools.RandomString("policy-init-", 5),
 		Parameters: policies.PolicyParam{
 			Common: map[string]string{},
 		},
@@ -96,15 +65,17 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 				Name: "resource1",
 			},
 		},
-		ProviderId: providerId,
+		ProviderId: "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
 		ScheduledOperations: []policies.ScheduledOperation{
 			{
-				Enabled:             false,
-				OperationType:       "backup",
-				OperationDefinition: policies.OperationDefinition{},
+				Enabled:       false,
+				OperationType: "backup",
+				OperationDefinition: policies.OperationDefinition{
+					MaxBackups: pointerto.Int(2),
+				},
 				Trigger: policies.Trigger{
 					Properties: policies.TriggerProperties{
-						Pattern: triggerPattern,
+						Pattern: "BEGIN:VCALENDAR\\r\\nBEGIN:VEVENT\\r\\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\\r\\nEND:VEVENT\\r\\nEND:VCALENDAR\\r\\n",
 					},
 				},
 			},
@@ -112,32 +83,24 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 	}
 
 	policy, err := policies.Create(client, createOpts)
-	if err != nil {
-		return nil, err
-	}
-	err = waitForCSBSPolicyActive(client, 600, policy.ID)
-	if err != nil {
-		return nil, err
-	}
-	t.Logf("Created CSBSv1 Policy: %s", policy.ID)
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() { deleteCSBSPolicy(t, client, policy.ID) })
 
-	return policy, nil
+	err = waitForCSBSPolicyActive(client, 600, policy.ID)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Created CSBSv1 Policy: %s", policy.ID)
+	return policy
 }
 
 func deleteCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, policyId string) {
-	if os.Getenv("RUN_CSBS") == "" {
-		t.Skip("unstable test")
-	}
 	t.Logf("Attempting to delete CSBSv1: %s", policyId)
 
 	err := policies.Delete(client, policyId)
-	if err != nil {
-		t.Fatalf("Unable to delete CSBSv1 policy: %s", err)
-	}
+	th.AssertNoErr(t, err)
+
 	err = waitForCSBSPolicyDelete(client, 600, policyId)
-	if err != nil {
-		t.Fatalf("Wait for CSBSv1 policy delete fails: %s", err)
-	}
+	th.AssertNoErr(t, err)
 
 	t.Logf("Deleted CSBSv1 Policy: %s", policyId)
 }
@@ -182,19 +145,16 @@ func waitForCSBSPolicyDelete(client *golangsdk.ServiceClient, secs int, policyId
 }
 
 func createComputeInstance(t *testing.T, subnetID string) *servers.Server {
-	if os.Getenv("RUN_CSBS") == "" {
-		t.Skip("unstable test")
-	}
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	serverName := tools.RandomString(prefix, 5)
+	serverName := tools.RandomString("csbs-acc-", 5)
 	opts := servers.CreateOpts{
 		Name:             serverName,
 		SecurityGroups:   []string{"default"},
-		FlavorName:       flavor,
-		ImageName:        image,
-		AvailabilityZone: az,
+		FlavorName:       "s2.large.2",
+		ImageName:        "Standard_Debian_10_latest",
+		AvailabilityZone: "eu-de-01",
 		ServiceClient:    client,
 		Networks: []servers.Network{
 			{
