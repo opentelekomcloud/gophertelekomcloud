@@ -164,7 +164,7 @@ func TestList(t *testing.T) {
 	}
 
 	var CreatedAt, _ = time.Parse(golangsdk.RFC3339MilliNoZ, "2018-08-20T10:43:56.246383")
-	expected := []policies.BackupPolicyResponse{
+	expected := []policies.BackupPolicyString{
 		{
 			Status:      "suspended",
 			ProviderId:  "fc4d5750-22e7-4798-8a46-f48f62c4c1da",

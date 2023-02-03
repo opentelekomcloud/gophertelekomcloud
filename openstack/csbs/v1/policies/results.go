@@ -10,7 +10,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-type BackupPolicyResponse struct {
+type BackupPolicyString struct {
 	// Creation time, for example, 2017-04-18T01:21:52.701973
 	CreatedAt time.Time `json:"-"`
 	// Backup policy description
@@ -31,7 +31,7 @@ type BackupPolicyResponse struct {
 	// Backup object list
 	Resources []Resource `json:"resources"`
 	// Scheduling period list
-	ScheduledOperations []ScheduledOperationResponse `json:"scheduled_operations"`
+	ScheduledOperations []ScheduledOperationString `json:"scheduled_operations"`
 	// Backup policy status
 	// disabled: indicates that the backup policy is unavailable.
 	// enabled: indicates that the backup policy is available.
@@ -41,17 +41,17 @@ type BackupPolicyResponse struct {
 	Tags []tags.ResourceTag `json:"tags"`
 }
 
-func extra(err error, raw *http.Response) (*BackupPolicyResponse, error) {
+func extra(err error, raw *http.Response) (*BackupPolicyString, error) {
 	if err != nil {
 		return nil, err
 	}
 
-	var res BackupPolicyResponse
+	var res BackupPolicyString
 	err = extract.IntoStructPtr(raw.Body, &res, "policy")
 	return &res, err
 }
 
-type ScheduledOperationResponse struct {
+type ScheduledOperationString struct {
 	// Scheduling period description
 	// The value consists of 0 to 255 characters and must not contain a greater-than sign (>) or less-than sign (<).
 	Description string `json:"description"`
@@ -65,7 +65,7 @@ type ScheduledOperationResponse struct {
 	// Enumeration values: backup
 	OperationType string `json:"operation_type"`
 	// Scheduling period parameters
-	OperationDefinition OperationDefinitionResponse `json:"operation_definition"`
+	OperationDefinition OperationDefinitionString `json:"operation_definition"`
 	// Scheduling policy
 	Trigger Trigger `json:"trigger" `
 	// Response: Scheduling period ID
@@ -74,7 +74,7 @@ type ScheduledOperationResponse struct {
 	TriggerID string `json:"trigger_id"`
 }
 
-type OperationDefinitionResponse struct {
+type OperationDefinitionString struct {
 	// Maximum number of backups that can be automatically created for a backup object.
 	// The value can be -1 or ranges from 0 to 99999. If the value is set to -1,
 	// the backups will not be cleared even though the configured retained backup quantity limit is exceeded.
@@ -110,9 +110,9 @@ type OperationDefinitionResponse struct {
 	TimeZone string `json:"timezone"`
 }
 
-// UnmarshalJSON helps to unmarshal BackupPolicyResponse fields into needed values.
-func (r *BackupPolicyResponse) UnmarshalJSON(b []byte) error {
-	type tmp BackupPolicyResponse
+// UnmarshalJSON helps to unmarshal BackupPolicyString fields into needed values.
+func (r *BackupPolicyString) UnmarshalJSON(b []byte) error {
+	type tmp BackupPolicyString
 	var s struct {
 		tmp
 		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
@@ -121,7 +121,7 @@ func (r *BackupPolicyResponse) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	*r = BackupPolicyResponse(s.tmp)
+	*r = BackupPolicyString(s.tmp)
 
 	r.CreatedAt = time.Time(s.CreatedAt)
 

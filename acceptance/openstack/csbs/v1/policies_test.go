@@ -47,7 +47,7 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	tools.PrintResource(t, policyUpdate)
 }
 
-func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) *policies.BackupPolicyResponse {
+func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) *policies.BackupPolicyString {
 	t.Logf("Attempting to create CSBSv1 policy")
 
 	createOpts := policies.CreateOpts{
