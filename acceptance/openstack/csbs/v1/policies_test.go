@@ -17,8 +17,7 @@ func TestPoliciesList(t *testing.T) {
 	client, err := clients.NewCsbsV1Client()
 	th.AssertNoErr(t, err)
 
-	listOpts := policies.ListOpts{}
-	backupPolicies, err := policies.List(client, listOpts)
+	backupPolicies, err := policies.List(client, policies.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	for _, policy := range backupPolicies {
