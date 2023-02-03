@@ -7,8 +7,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
 )
 
-// GetResBackupOpts contains the options for querying whether resources can be backed up.
-type GetResBackupOpts struct {
+// ResourceBackupCapOpts contains the options for querying whether resources can be backed up.
+type ResourceBackupCapOpts struct {
 	// ID of the resource (server, or EVS disk) to be checked
 	// For details about how to obtain the server ID, see the Elastic Cloud Server API Reference.
 	// For details about how to obtain the disk ID, see the Elastic Volume Service API Reference.
@@ -17,9 +17,9 @@ type GetResBackupOpts struct {
 	ResourceType string `json:"resource_type" required:"true"`
 }
 
-// GetResBackupCapabilities will query whether resources can be backed up based on the values in GetResBackupOpts. To extract
+// GetResBackupCapabilities will query whether resources can be backed up based on the values in ResourceBackupCapOpts. To extract
 // the ResourceCap object from the response, call the ExtractQueryResponse method on the QueryResult.
-func GetResBackupCapabilities(client *golangsdk.ServiceClient, opts []GetResBackupOpts) ([]ResourceCapability, error) {
+func GetResBackupCapabilities(client *golangsdk.ServiceClient, opts []ResourceBackupCapOpts) ([]ResourceCapability, error) {
 	return doAction(client, opts, "check_protectable", "protectable")
 }
 

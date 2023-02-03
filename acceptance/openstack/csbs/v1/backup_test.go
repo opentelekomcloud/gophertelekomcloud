@@ -35,7 +35,7 @@ func TestBackupLifeCycle(t *testing.T) {
 	t.Cleanup(func() { openstack.DeleteCloudServer(t, computeClient, ecs.ID) })
 
 	t.Logf("Check if resource is protectable")
-	query, err := resource.GetResBackupCapabilities(client, []resource.GetResBackupOpts{
+	query, err := resource.GetResBackupCapabilities(client, []resource.ResourceBackupCapOpts{
 		{
 			ResourceId:   ecs.ID,
 			ResourceType: "OS::Nova::Server",
