@@ -47,7 +47,7 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	tools.PrintResource(t, policyUpdate)
 }
 
-func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) *policies.BackupPolicy {
+func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId string) *policies.BackupPolicyResponse {
 	t.Logf("Attempting to create CSBSv1 policy")
 
 	createOpts := policies.CreateOpts{
@@ -69,8 +69,13 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 				Enabled:       false,
 				OperationType: "backup",
 				OperationDefinition: policies.OperationDefinition{
-					MaxBackups: pointerto.Int(2),
-					Permanent:  false,
+					MaxBackups:   pointerto.Int(2),
+					YearBackups:  2,
+					MonthBackups: 2,
+					WeekBackups:  2,
+					DayBackups:   2,
+					TimeZone:     "UTC+01:00",
+					Permanent:    false,
 				},
 				Trigger: policies.Trigger{
 					Properties: policies.TriggerProperties{

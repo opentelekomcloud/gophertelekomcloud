@@ -64,14 +64,12 @@ type OperationDefinition struct {
 	// Maximum number of backups that can be automatically created for a backup object.
 	// The value can be -1 or ranges from 0 to 99999. If the value is set to -1,
 	// the backups will not be cleared even though the configured retained backup quantity limit is exceeded.
-	// Request with int, Response with string.
-	MaxBackups interface{} `json:"max_backups,omitempty"`
+	MaxBackups *int `json:"max_backups,omitempty"`
 	// Duration of retaining a backup, in days. The value can be -1 or ranges from 0 to 99999.
 	// If the value is set to -1, backups will not be cleared even though the configured retention duration is exceeded.
 	RetentionDurationDays int `json:"retention_duration_days,omitempty"`
 	// Whether backups are permanently retained. false: no. true: yes
-	// Request with bool, Response with string.
-	Permanent interface{} `json:"permanent" required:"true"`
+	Permanent bool `json:"permanent" required:"true"`
 	// Backup policy ID
 	PlanId string `json:"plan_id,omitempty"`
 	// Backup provider ID, which specifies whether the backup object is a server or disk.
@@ -125,7 +123,7 @@ type TriggerProperties struct {
 
 // Create will create a new backup policy based on the values in CreateOpts. To extract
 // the Backup object from the response, call the Extract method on the CreateResult.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*BackupPolicy, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*BackupPolicyResponse, error) {
 	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err
