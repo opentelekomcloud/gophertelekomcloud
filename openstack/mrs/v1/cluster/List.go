@@ -188,7 +188,7 @@ type Cluster struct {
 	// Error message
 	ErrorInfo string `json:"errorInfo"`
 	// Tag information
-	Tags []string `json:"tags"`
+	Tags string `json:"tags"`
 	// Start time of billing
 	ChargingStartTime string `json:"chargingStartTime"`
 	// Whether to collect logs when cluster installation fails
