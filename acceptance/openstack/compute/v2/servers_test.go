@@ -68,29 +68,29 @@ func TestServerLifecycle(t *testing.T) {
 		},
 	}
 
-	ecs, err := servers.Create(client, createOpts).Extract()
+	ecs, err := servers.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	err = servers.WaitForStatus(client, ecs.ID, "ACTIVE", 1200)
 	th.AssertNoErr(t, err)
 	t.Logf("Created ECSv2: %s", ecs.ID)
 
-	ecs, err = servers.Get(client, ecs.ID).Extract()
+	ecs, err = servers.Get(client, ecs.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, ecsName, ecs.Name)
 
-	nicInfo, err := servers.GetNICs(client, ecs.ID).Extract()
+	nicInfo, err := servers.GetNICs(client, ecs.ID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, nicInfo)
 
 	defer func() {
 		t.Logf("Attempting to delete ECSv2: %s", ecs.ID)
 
-		_, err := servers.Delete(client, ecs.ID).ExtractJobResponse()
+		err := servers.Delete(client, ecs.ID)
 		th.AssertNoErr(t, err)
 
 		err = golangsdk.WaitFor(1200, func() (bool, error) {
-			_, err := servers.Get(client, ecs.ID).Extract()
+			_, err := servers.Get(client, ecs.ID)
 			if err != nil {
 				if _, ok := err.(golangsdk.ErrDefault400); ok {
 					time.Sleep(10 * time.Second)
@@ -112,13 +112,13 @@ func TestServerLifecycle(t *testing.T) {
 		Name: ecsName,
 	}
 
-	_, err = servers.Update(client, ecs.ID, updateOpts).Extract()
+	_, err = servers.Update(client, ecs.ID, updateOpts)
 	th.AssertNoErr(t, err)
 
 	t.Logf("ECSv2 successfully updated: %s", ecs.ID)
 	th.AssertNoErr(t, err)
 
-	newECS, err := servers.Get(client, ecs.ID).Extract()
+	newECS, err := servers.Get(client, ecs.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, ecsName, newECS.Name)
 }

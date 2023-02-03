@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -610,10 +609,6 @@ type CreateOptsWithCustomField struct {
 	Foo string `json:"foo,omitempty"`
 }
 
-func (opts CreateOptsWithCustomField) ToServerCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server")
-}
-
 // HandleServerCreationSuccessfully sets up the test server to respond to a server creation request
 // with a given response.
 func HandleServerCreationSuccessfully(t *testing.T, response string) {
@@ -732,8 +727,7 @@ func HandleServerCreationWithCustomFieldSuccessfully(t *testing.T, response stri
 			"server": {
 				"name": "derp",
 				"imageRef": "f90f6034-2570-4974-8351-6b49732ef2eb",
-				"flavorRef": "1",
-				"foo": "bar"
+				"flavorRef": "1"
 			}
 		}`)
 

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -21,33 +20,20 @@ func TestList(t *testing.T) {
 
 	mockListGroupsResponse(t)
 
-	count := 0
-
-	err := secgroups.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := secgroups.ExtractSecurityGroups(page)
-		if err != nil {
-			t.Errorf("Failed to extract users: %v", err)
-			return false, err
-		}
-
-		expected := []secgroups.SecurityGroup{
-			{
-				ID:          groupID,
-				Description: "default",
-				Name:        "default",
-				Rules:       []secgroups.Rule{},
-				TenantID:    "openstack",
-			},
-		}
-
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
-
+	actual, err := secgroups.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, 1, count)
+
+	expected := []secgroups.SecurityGroup{
+		{
+			ID:          groupID,
+			Description: "default",
+			Name:        "default",
+			Rules:       []secgroups.Rule{},
+			TenantID:    "openstack",
+		},
+	}
+
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestListByServer(t *testing.T) {
@@ -56,33 +42,20 @@ func TestListByServer(t *testing.T) {
 
 	mockListGroupsByServerResponse(t, serverID)
 
-	count := 0
-
-	err := secgroups.ListByServer(client.ServiceClient(), serverID).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := secgroups.ExtractSecurityGroups(page)
-		if err != nil {
-			t.Errorf("Failed to extract users: %v", err)
-			return false, err
-		}
-
-		expected := []secgroups.SecurityGroup{
-			{
-				ID:          groupID,
-				Description: "default",
-				Name:        "default",
-				Rules:       []secgroups.Rule{},
-				TenantID:    "openstack",
-			},
-		}
-
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
-
+	actual, err := secgroups.ListByServer(client.ServiceClient(), serverID)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, 1, count)
+
+	expected := []secgroups.SecurityGroup{
+		{
+			ID:          groupID,
+			Description: "default",
+			Name:        "default",
+			Rules:       []secgroups.Rule{},
+			TenantID:    "openstack",
+		},
+	}
+
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestCreate(t *testing.T) {
@@ -91,12 +64,12 @@ func TestCreate(t *testing.T) {
 
 	mockCreateGroupResponse(t)
 
-	opts := secgroups.CreateOpts{
+	opts := secgroups.GroupOpts{
 		Name:        "test",
 		Description: "something",
 	}
 
-	group, err := secgroups.Create(client.ServiceClient(), opts).Extract()
+	group, err := secgroups.Create(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
@@ -115,12 +88,12 @@ func TestUpdate(t *testing.T) {
 
 	mockUpdateGroupResponse(t, groupID)
 
-	opts := secgroups.UpdateOpts{
+	opts := secgroups.GroupOpts{
 		Name:        "new_name",
 		Description: "new_desc",
 	}
 
-	group, err := secgroups.Update(client.ServiceClient(), groupID, opts).Extract()
+	group, err := secgroups.Update(client.ServiceClient(), groupID, opts)
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
@@ -139,7 +112,7 @@ func TestGet(t *testing.T) {
 
 	mockGetGroupsResponse(t, groupID)
 
-	group, err := secgroups.Get(client.ServiceClient(), groupID).Extract()
+	group, err := secgroups.Get(client.ServiceClient(), groupID)
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
@@ -171,7 +144,7 @@ func TestGetNumericID(t *testing.T) {
 
 	mockGetNumericIDGroupResponse(t, numericGroupID)
 
-	group, err := secgroups.Get(client.ServiceClient(), "12345").Extract()
+	group, err := secgroups.Get(client.ServiceClient(), "12345")
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{ID: "12345"}
@@ -186,7 +159,7 @@ func TestGetNumericRuleID(t *testing.T) {
 
 	mockGetNumericIDGroupRuleResponse(t, numericGroupID)
 
-	group, err := secgroups.Get(client.ServiceClient(), "12345").Extract()
+	group, err := secgroups.Get(client.ServiceClient(), "12345")
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
@@ -207,7 +180,7 @@ func TestDelete(t *testing.T) {
 
 	mockDeleteGroupResponse(t, groupID)
 
-	err := secgroups.Delete(client.ServiceClient(), groupID).ExtractErr()
+	err := secgroups.Delete(client.ServiceClient(), groupID)
 	th.AssertNoErr(t, err)
 }
 
@@ -225,7 +198,7 @@ func TestAddRule(t *testing.T) {
 		CIDR:          "0.0.0.0/0",
 	}
 
-	rule, err := secgroups.CreateRule(client.ServiceClient(), opts).Extract()
+	rule, err := secgroups.CreateRule(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.Rule{
@@ -255,7 +228,7 @@ func TestAddRuleICMPZero(t *testing.T) {
 		CIDR:          "0.0.0.0/0",
 	}
 
-	rule, err := secgroups.CreateRule(client.ServiceClient(), opts).Extract()
+	rule, err := secgroups.CreateRule(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.Rule{
@@ -277,7 +250,7 @@ func TestDeleteRule(t *testing.T) {
 
 	mockDeleteRuleResponse(t, ruleID)
 
-	err := secgroups.DeleteRule(client.ServiceClient(), ruleID).ExtractErr()
+	err := secgroups.DeleteRule(client.ServiceClient(), ruleID)
 	th.AssertNoErr(t, err)
 }
 
@@ -287,7 +260,7 @@ func TestAddServer(t *testing.T) {
 
 	mockAddServerToGroupResponse(t, serverID)
 
-	err := secgroups.AddServer(client.ServiceClient(), serverID, "test").ExtractErr()
+	err := secgroups.AddServer(client.ServiceClient(), serverID, "test")
 	th.AssertNoErr(t, err)
 }
 
@@ -297,6 +270,6 @@ func TestRemoveServer(t *testing.T) {
 
 	mockRemoveServerFromGroupResponse(t, serverID)
 
-	err := secgroups.RemoveServer(client.ServiceClient(), serverID, "test").ExtractErr()
+	err := secgroups.RemoveServer(client.ServiceClient(), serverID, "test")
 	th.AssertNoErr(t, err)
 }

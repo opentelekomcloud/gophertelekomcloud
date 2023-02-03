@@ -16,6 +16,6 @@ func TestResetState(t *testing.T) {
 
 	mockResetStateResponse(t, serverID, "active")
 
-	err := resetstate.ResetState(client.ServiceClient(), serverID, "active").ExtractErr()
+	err := resetstate.ResetState(client.ServiceClient(), serverID, "active")
 	th.AssertNoErr(t, err)
 }

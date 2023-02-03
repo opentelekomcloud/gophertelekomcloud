@@ -94,10 +94,9 @@ func TestCreateServer(t *testing.T) {
 		Name:      "derp",
 		ImageRef:  "f90f6034-2570-4974-8351-6b49732ef2eb",
 		FlavorRef: "1",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-
-	th.CheckDeepEquals(t, ServerDerp, *actual)
+	th.CheckDeepEquals(t, &ServerDerp, actual)
 }
 
 func TestCreateServerWithCustomField(t *testing.T) {
@@ -112,7 +111,7 @@ func TestCreateServerWithCustomField(t *testing.T) {
 			FlavorRef: "1",
 		},
 		Foo: "bar",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, ServerDerp, *actual)
@@ -130,7 +129,7 @@ func TestCreateServerWithMetadata(t *testing.T) {
 		Metadata: map[string]string{
 			"abc": "def",
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, ServerDerp, *actual)
@@ -146,7 +145,7 @@ func TestCreateServerWithUserdataString(t *testing.T) {
 		ImageRef:  "f90f6034-2570-4974-8351-6b49732ef2eb",
 		FlavorRef: "1",
 		UserData:  []byte("userdata string"),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, ServerDerp, *actual)
@@ -164,7 +163,7 @@ func TestCreateServerWithUserdataEncoded(t *testing.T) {
 		ImageRef:  "f90f6034-2570-4974-8351-6b49732ef2eb",
 		FlavorRef: "1",
 		UserData:  []byte(encoded),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, ServerDerp, *actual)
@@ -180,7 +179,7 @@ func TestCreateServerWithImageNameAndFlavorName(t *testing.T) {
 		ImageName:     "cirros-0.3.2-x86_64-disk",
 		FlavorName:    "m1.tiny",
 		ServiceClient: client.ServiceClient(),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, ServerDerp, *actual)
@@ -192,7 +191,7 @@ func TestDeleteServer(t *testing.T) {
 	HandleServerDeletionSuccessfully(t)
 
 	res := servers.Delete(client.ServiceClient(), "asdfasdfasdf")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestForceDeleteServer(t *testing.T) {
@@ -201,7 +200,7 @@ func TestForceDeleteServer(t *testing.T) {
 	HandleServerForceDeletionSuccessfully(t)
 
 	res := servers.ForceDelete(client.ServiceClient(), "asdfasdfasdf")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestGetServer(t *testing.T) {
@@ -210,7 +209,7 @@ func TestGetServer(t *testing.T) {
 	HandleServerGetSuccessfully(t)
 
 	serviceClient := client.ServiceClient()
-	actual, err := servers.Get(serviceClient, "1234asdf").Extract()
+	actual, err := servers.Get(serviceClient, "1234asdf")
 	if err != nil {
 		t.Fatalf("Unexpected Get error: %v", err)
 	}
@@ -224,7 +223,7 @@ func TestGetFaultyServer(t *testing.T) {
 	HandleServerGetFaultSuccessfully(t)
 
 	serviceClient := client.ServiceClient()
-	actual, err := servers.Get(serviceClient, "1234asdf").Extract()
+	actual, err := servers.Get(serviceClient, "1234asdf")
 	if err != nil {
 		t.Fatalf("Unexpected Get error: %v", err)
 	}
@@ -246,7 +245,7 @@ func TestGetServerWithExtensions(t *testing.T) {
 		diskconfig.ServerDiskConfigExt
 	}
 
-	err := servers.Get(client.ServiceClient(), "1234asdf").ExtractInto(&s)
+	err := servers.GetInto(client.ServiceClient(), "1234asdf", &s)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "nova", s.AvailabilityZone)
 	th.AssertEquals(t, "RUNNING", s.PowerState.String())
@@ -254,7 +253,7 @@ func TestGetServerWithExtensions(t *testing.T) {
 	th.AssertEquals(t, "active", s.VmState)
 	th.AssertEquals(t, diskconfig.Manual, s.DiskConfig)
 
-	err = servers.Get(client.ServiceClient(), "1234asdf").ExtractInto(s)
+	err = servers.GetInto(client.ServiceClient(), "1234asdf", s)
 	if err == nil {
 		t.Errorf("Expected error when providing non-pointer struct")
 	}
@@ -266,7 +265,7 @@ func TestUpdateServer(t *testing.T) {
 	HandleServerUpdateSuccessfully(t)
 
 	serviceClient := client.ServiceClient()
-	actual, err := servers.Update(serviceClient, "1234asdf", servers.UpdateOpts{Name: "new-name"}).Extract()
+	actual, err := servers.Update(serviceClient, "1234asdf", servers.UpdateOpts{Name: "new-name"})
 	if err != nil {
 		t.Fatalf("Unexpected Update error: %v", err)
 	}
@@ -280,7 +279,7 @@ func TestChangeServerAdminPassword(t *testing.T) {
 	HandleAdminPasswordChangeSuccessfully(t)
 
 	res := servers.ChangeAdminPassword(client.ServiceClient(), "1234asdf", "new-password")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestShowConsoleOutput(t *testing.T) {
@@ -288,10 +287,10 @@ func TestShowConsoleOutput(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleShowConsoleOutputSuccessfully(t, ConsoleOutputBody)
 
-	outputOpts := &servers.ShowConsoleOutputOpts{
+	outputOpts := servers.ShowConsoleOutputOpts{
 		Length: 50,
 	}
-	actual, err := servers.ShowConsoleOutput(client.ServiceClient(), "1234asdf", outputOpts).Extract()
+	actual, err := servers.ShowConsoleOutput(client.ServiceClient(), "1234asdf", outputOpts)
 
 	th.AssertNoErr(t, err)
 	th.AssertByteArrayEquals(t, []byte(ConsoleOutput), []byte(actual))
@@ -302,8 +301,8 @@ func TestGetPassword(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandlePasswordGetSuccessfully(t)
 
-	res := servers.GetPassword(client.ServiceClient(), "1234asdf")
-	th.AssertNoErr(t, res.Err)
+	_, err := servers.GetPassword(client.ServiceClient(), "1234asdf", nil)
+	th.AssertNoErr(t, err)
 }
 
 func TestRebootServer(t *testing.T) {
@@ -314,7 +313,7 @@ func TestRebootServer(t *testing.T) {
 	res := servers.Reboot(client.ServiceClient(), "1234asdf", servers.RebootOpts{
 		Type: servers.SoftReboot,
 	})
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestRebuildServer(t *testing.T) {
@@ -329,7 +328,7 @@ func TestRebuildServer(t *testing.T) {
 		AccessIPv4: "1.2.3.4",
 	}
 
-	actual, err := servers.Rebuild(client.ServiceClient(), "1234asdf", opts).Extract()
+	actual, err := servers.Rebuild(client.ServiceClient(), "1234asdf", opts)
 	th.AssertNoErr(t, err)
 
 	th.CheckDeepEquals(t, ServerDerp, *actual)
@@ -348,7 +347,7 @@ func TestResizeServer(t *testing.T) {
 	})
 
 	res := servers.Resize(client.ServiceClient(), "1234asdf", servers.ResizeOpts{FlavorRef: "2"})
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestConfirmResize(t *testing.T) {
@@ -364,7 +363,7 @@ func TestConfirmResize(t *testing.T) {
 	})
 
 	res := servers.ConfirmResize(client.ServiceClient(), "1234asdf")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestRevertResize(t *testing.T) {
@@ -380,7 +379,7 @@ func TestRevertResize(t *testing.T) {
 	})
 
 	res := servers.RevertResize(client.ServiceClient(), "1234asdf")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }
 
 func TestGetMetadatum(t *testing.T) {
@@ -390,7 +389,7 @@ func TestGetMetadatum(t *testing.T) {
 	HandleMetadatumGetSuccessfully(t)
 
 	expected := map[string]string{"foo": "bar"}
-	actual, err := servers.Metadatum(client.ServiceClient(), "1234asdf", "foo").Extract()
+	actual, err := servers.Metadatum(client.ServiceClient(), "1234asdf", "foo")
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -402,7 +401,7 @@ func TestCreateMetadatum(t *testing.T) {
 	HandleMetadatumCreateSuccessfully(t)
 
 	expected := map[string]string{"foo": "bar"}
-	actual, err := servers.CreateMetadatum(client.ServiceClient(), "1234asdf", servers.MetadatumOpts{"foo": "bar"}).Extract()
+	actual, err := servers.CreateMetadatum(client.ServiceClient(), "1234asdf", servers.MetadatumOpts{"foo": "bar"})
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -413,7 +412,7 @@ func TestDeleteMetadatum(t *testing.T) {
 
 	HandleMetadatumDeleteSuccessfully(t)
 
-	err := servers.DeleteMetadatum(client.ServiceClient(), "1234asdf", "foo").ExtractErr()
+	err := servers.DeleteMetadatum(client.ServiceClient(), "1234asdf", "foo")
 	th.AssertNoErr(t, err)
 }
 
@@ -424,7 +423,7 @@ func TestGetMetadata(t *testing.T) {
 	HandleMetadataGetSuccessfully(t)
 
 	expected := map[string]string{"foo": "bar", "this": "that"}
-	actual, err := servers.Metadata(client.ServiceClient(), "1234asdf").Extract()
+	actual, err := servers.Metadata(client.ServiceClient(), "1234asdf")
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -439,7 +438,7 @@ func TestResetMetadata(t *testing.T) {
 	actual, err := servers.ResetMetadata(client.ServiceClient(), "1234asdf", servers.MetadataOpts{
 		"foo":  "bar",
 		"this": "that",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -454,7 +453,7 @@ func TestUpdateMetadata(t *testing.T) {
 	actual, err := servers.UpdateMetadata(client.ServiceClient(), "1234asdf", servers.MetadataOpts{
 		"foo":  "baz",
 		"this": "those",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, actual)
 }
@@ -465,22 +464,13 @@ func TestListAddresses(t *testing.T) {
 	HandleAddressListSuccessfully(t)
 
 	expected := ListAddressesExpected
-	pages := 0
-	err := servers.ListAddresses(client.ServiceClient(), "asdfasdfasdf").EachPage(func(page pagination.Page) (bool, error) {
-		pages++
-
-		actual, err := servers.ExtractAddresses(page)
-		th.AssertNoErr(t, err)
-
-		if len(actual) != 2 {
-			t.Fatalf("Expected 2 networks, got %d", len(actual))
-		}
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
+	actual, err := servers.ListAddresses(client.ServiceClient(), "asdfasdfasdf")
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, 1, pages)
+
+	if len(actual) != 2 {
+		t.Fatalf("Expected 2 networks, got %d", len(actual))
+	}
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestListAddressesByNetwork(t *testing.T) {
@@ -489,22 +479,13 @@ func TestListAddressesByNetwork(t *testing.T) {
 	HandleNetworkAddressListSuccessfully(t)
 
 	expected := ListNetworkAddressesExpected
-	pages := 0
-	err := servers.ListAddressesByNetwork(client.ServiceClient(), "asdfasdfasdf", "public").EachPage(func(page pagination.Page) (bool, error) {
-		pages++
-
-		actual, err := servers.ExtractNetworkAddresses(page)
-		th.AssertNoErr(t, err)
-
-		if len(actual) != 2 {
-			t.Fatalf("Expected 2 addresses, got %d", len(actual))
-		}
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
+	actual, err := servers.ListAddressesByNetwork(client.ServiceClient(), "asdfasdfasdf", "public")
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, 1, pages)
+
+	if len(actual) != 2 {
+		t.Fatalf("Expected 2 addresses, got %d", len(actual))
+	}
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestCreateServerImage(t *testing.T) {
@@ -512,7 +493,7 @@ func TestCreateServerImage(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleCreateServerImageSuccessfully(t)
 
-	_, err := servers.CreateImage(client.ServiceClient(), "serverimage", servers.CreateImageOpts{Name: "test"}).ExtractImageID()
+	_, err := servers.CreateImage(client.ServiceClient(), "serverimage", servers.CreateImageOpts{Name: "test"})
 	th.AssertNoErr(t, err)
 }
 
@@ -520,8 +501,8 @@ func TestMarshalPersonality(t *testing.T) {
 	name := "/etc/test"
 	contents := []byte("asdfasdf")
 
-	personality := servers.Personality{
-		&servers.File{
+	personality := []servers.File{
+		{
 			Path:     name,
 			Contents: contents,
 		},

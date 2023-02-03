@@ -16,7 +16,7 @@ func TestStart(t *testing.T) {
 
 	mockStartServerResponse(t, serverID)
 
-	err := startstop.Start(client.ServiceClient(), serverID).ExtractErr()
+	err := startstop.Start(client.ServiceClient(), serverID)
 	th.AssertNoErr(t, err)
 }
 
@@ -26,6 +26,6 @@ func TestStop(t *testing.T) {
 
 	mockStopServerResponse(t, serverID)
 
-	err := startstop.Stop(client.ServiceClient(), serverID).ExtractErr()
+	err := startstop.Stop(client.ServiceClient(), serverID)
 	th.AssertNoErr(t, err)
 }

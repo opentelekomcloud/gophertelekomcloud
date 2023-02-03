@@ -126,7 +126,7 @@ func CreateKeypair(t *testing.T) string {
 	opts := keypairs.CreateOpts{
 		Name: tools.RandomString("cce-nodes-", 4),
 	}
-	_, err = keypairs.Create(client, opts).Extract()
+	_, err = keypairs.Create(client, opts)
 	th.AssertNoErr(t, err)
 	return opts.Name
 }
@@ -135,5 +135,5 @@ func DeleteKeypair(t *testing.T, kp string) {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	th.AssertNoErr(t, keypairs.Delete(client, kp).ExtractErr())
+	th.AssertNoErr(t, keypairs.Delete(client, kp))
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dns/v2/zones"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/objectstorage/v1/accounts"
 	"github.com/stretchr/testify/require"
@@ -17,24 +16,6 @@ import (
 // Compare results of old methods with results of currently used methods.
 //
 // Those tests can be used as an example of replacing deprecated methods.
-
-func TestCompareQueryOpts(t *testing.T) {
-	listOpts := &servers.ListOpts{
-		ChangesSince: "2012-06-12",
-		Image:        "some-random-image",
-		Flavor:       "top-flavor",
-		Limit:        64,
-		AllTenants:   true,
-	}
-
-	expected, err := listOpts.ToServerListQuery()
-	require.NoError(t, err)
-
-	actual, err := QueryString(listOpts)
-	require.NoError(t, err)
-
-	require.EqualValues(t, expected, actual.String()) // inside ToServerListQuery `.String()` for URL is called
-}
 
 func TestCompareHeaderOpts(t *testing.T) {
 	headerOpts := &accounts.UpdateOpts{

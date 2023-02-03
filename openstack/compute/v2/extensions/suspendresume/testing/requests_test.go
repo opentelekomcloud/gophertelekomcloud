@@ -16,7 +16,7 @@ func TestSuspend(t *testing.T) {
 
 	mockSuspendServerResponse(t, serverID)
 
-	err := suspendresume.Suspend(client.ServiceClient(), serverID).ExtractErr()
+	err := suspendresume.Suspend(client.ServiceClient(), serverID)
 	th.AssertNoErr(t, err)
 }
 
@@ -26,6 +26,6 @@ func TestResume(t *testing.T) {
 
 	mockResumeServerResponse(t, serverID)
 
-	err := suspendresume.Resume(client.ServiceClient(), serverID).ExtractErr()
+	err := suspendresume.Resume(client.ServiceClient(), serverID)
 	th.AssertNoErr(t, err)
 }

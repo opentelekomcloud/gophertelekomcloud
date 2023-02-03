@@ -15,7 +15,7 @@ func TestGetTenant(t *testing.T) {
 	HandleGetSingleTenantSuccessfully(t)
 
 	count := 0
-	err := usage.SingleTenant(client.ServiceClient(), FirstTenantID, nil).EachPage(func(page pagination.Page) (bool, error) {
+	err := usage.SingleTenant(client.ServiceClient(), FirstTenantID, usage.SingleTenantOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
 
 		actual, err := usage.ExtractSingleTenant(page)

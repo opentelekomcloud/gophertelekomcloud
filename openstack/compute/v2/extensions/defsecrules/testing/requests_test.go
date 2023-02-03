@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/defsecrules"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -15,33 +14,22 @@ const ruleID = "{ruleID}"
 func TestList(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
-
 	mockListRulesResponse(t)
 
-	count := 0
-
-	err := defsecrules.List(client.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
-		count++
-		actual, err := defsecrules.ExtractDefaultRules(page)
-		th.AssertNoErr(t, err)
-
-		expected := []defsecrules.DefaultRule{
-			{
-				FromPort:   80,
-				ID:         ruleID,
-				IPProtocol: "TCP",
-				IPRange:    secgroups.IPRange{CIDR: "10.10.10.0/24"},
-				ToPort:     80,
-			},
-		}
-
-		th.CheckDeepEquals(t, expected, actual)
-
-		return true, nil
-	})
-
+	actual, err := defsecrules.List(client.ServiceClient())
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, 1, count)
+
+	expected := []defsecrules.DefaultRule{
+		{
+			FromPort:   80,
+			ID:         ruleID,
+			IPProtocol: "TCP",
+			IPRange:    secgroups.IPRange{CIDR: "10.10.10.0/24"},
+			ToPort:     80,
+		},
+	}
+
+	th.CheckDeepEquals(t, expected, actual)
 }
 
 func TestCreate(t *testing.T) {
@@ -57,7 +45,7 @@ func TestCreate(t *testing.T) {
 		CIDR:       "10.10.12.0/24",
 	}
 
-	group, err := defsecrules.Create(client.ServiceClient(), opts).Extract()
+	group, err := defsecrules.Create(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	expected := &defsecrules.DefaultRule{
@@ -83,7 +71,7 @@ func TestCreateICMPZero(t *testing.T) {
 		CIDR:       "10.10.12.0/24",
 	}
 
-	group, err := defsecrules.Create(client.ServiceClient(), opts).Extract()
+	group, err := defsecrules.Create(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	expected := &defsecrules.DefaultRule{
@@ -102,7 +90,7 @@ func TestGet(t *testing.T) {
 
 	mockGetRuleResponse(t, ruleID)
 
-	group, err := defsecrules.Get(client.ServiceClient(), ruleID).Extract()
+	group, err := defsecrules.Get(client.ServiceClient(), ruleID)
 	th.AssertNoErr(t, err)
 
 	expected := &defsecrules.DefaultRule{
@@ -122,6 +110,6 @@ func TestDelete(t *testing.T) {
 
 	mockDeleteRuleResponse(t, ruleID)
 
-	err := defsecrules.Delete(client.ServiceClient(), ruleID).ExtractErr()
+	err := defsecrules.Delete(client.ServiceClient(), ruleID)
 	th.AssertNoErr(t, err)
 }

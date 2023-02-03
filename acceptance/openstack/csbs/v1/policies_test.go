@@ -203,7 +203,7 @@ func createComputeInstance(t *testing.T, subnetID string) *servers.Server {
 		},
 	}
 
-	server, err := servers.Create(client, opts).Extract()
+	server, err := servers.Create(client, opts)
 	th.AssertNoErr(t, err)
 	err = waitForComputeInstanceAvailable(client, 600, server.ID)
 	th.AssertNoErr(t, err)
@@ -218,7 +218,7 @@ func deleteComputeInstance(t *testing.T, instanceId string) {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	err = servers.Delete(client, instanceId).ExtractErr()
+	err = servers.Delete(client, instanceId)
 	th.AssertNoErr(t, err)
 	err = waitForComputeInstanceDelete(client, 600, instanceId)
 	th.AssertNoErr(t, err)
@@ -226,7 +226,7 @@ func deleteComputeInstance(t *testing.T, instanceId string) {
 
 func waitForComputeInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		server, err := servers.Get(client, instanceId).Extract()
+		server, err := servers.Get(client, instanceId)
 		if err != nil {
 			return false, err
 		}
@@ -239,7 +239,7 @@ func waitForComputeInstanceAvailable(client *golangsdk.ServiceClient, secs int, 
 
 func waitForComputeInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		server, err := servers.Get(client, instanceId).Extract()
+		server, err := servers.Get(client, instanceId)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

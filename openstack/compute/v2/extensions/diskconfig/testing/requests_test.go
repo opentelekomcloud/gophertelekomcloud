@@ -16,8 +16,8 @@ func TestCreateOpts(t *testing.T) {
 	}
 
 	ext := diskconfig.CreateOptsExt{
-		CreateOptsBuilder: base,
-		DiskConfig:        diskconfig.Manual,
+		CreateOpts: base,
+		DiskConfig: diskconfig.Manual,
 	}
 
 	expected := `
@@ -43,8 +43,8 @@ func TestRebuildOpts(t *testing.T) {
 	}
 
 	ext := diskconfig.RebuildOptsExt{
-		RebuildOptsBuilder: base,
-		DiskConfig:         diskconfig.Auto,
+		RebuildOpts: base,
+		DiskConfig:  diskconfig.Auto,
 	}
 
 	actual, err := ext.ToServerRebuildMap()
@@ -69,8 +69,8 @@ func TestResizeOpts(t *testing.T) {
 	}
 
 	ext := diskconfig.ResizeOptsExt{
-		ResizeOptsBuilder: base,
-		DiskConfig:        diskconfig.Auto,
+		ResizeOpts: base,
+		DiskConfig: diskconfig.Auto,
 	}
 
 	actual, err := ext.ToServerResizeMap()

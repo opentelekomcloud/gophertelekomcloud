@@ -1,52 +1,47 @@
 package tags
 
 import (
+	"net/http"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// CreateOptsBuilder describes struct types that can be accepted by the Create call.
-// The CreateOpts struct in this package does.
-type CreateOptsBuilder interface {
-	// Returns value that can be passed to json.Marshal
-	ToTagsCreateMap() (map[string]interface{}, error)
+type Tags struct {
+	// Tags is a list of any tags. Tags are arbitrarily defined strings attached to a resource.
+	Tags []string `json:"tags"`
 }
 
-// CreateOpts implements CreateOptsBuilder
-type CreateOpts struct {
-	// Tags is a set of tags.
-	Tags []string `json:"tags" required:"true"`
-}
-
-// ToImageCreateMap assembles a request body based on the contents of
-// a CreateOpts.
-func (opts CreateOpts) ToTagsCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+// Create implements create tags request
+func Create(client *golangsdk.ServiceClient, serverId string, opts Tags) (*Tags, error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	return b, nil
-}
-
-// Create implements create tags request
-func Create(client *golangsdk.ServiceClient, server_id string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToTagsCreateMap()
-	if err != nil {
-		r.Err = err
-		return r
-	}
-	_, r.Err = client.Put(createURL(client, server_id), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
-	return
+	raw, err := client.Put(client.ServiceURL("servers", serverId, "tags"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	return extra(err, raw)
 }
 
 // Get implements tags get request
-func Get(client *golangsdk.ServiceClient, server_id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, server_id), &r.Body, nil)
-	return
+func Get(client *golangsdk.ServiceClient, serverId string) (*Tags, error) {
+	raw, err := client.Get(client.ServiceURL("servers", serverId, "tags"), nil, nil)
+	return extra(err, raw)
 }
 
 // Delete implements image delete request
-func Delete(client *golangsdk.ServiceClient, server_id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, server_id), nil)
+func Delete(client *golangsdk.ServiceClient, serverId string) (err error) {
+	_, err = client.Delete(client.ServiceURL("servers", serverId, "tags"), nil)
 	return
+}
+
+func extra(err error, raw *http.Response) (*Tags, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res Tags
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }

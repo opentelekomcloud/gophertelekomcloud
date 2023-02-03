@@ -2,10 +2,10 @@ package secgroups
 
 import (
 	"encoding/json"
+	"net/http"
 	"strconv"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // SecurityGroup represents a security group.
@@ -14,16 +14,12 @@ type SecurityGroup struct {
 	// represented as a string UUID; if Neutron is not installed, it will be a
 	// numeric ID. For the sake of consistency, we always cast it to a string.
 	ID string `json:"-"`
-
 	// The human-readable name of the group, which needs to be unique.
 	Name string `json:"name"`
-
 	// The human-readable description of the group.
 	Description string `json:"description"`
-
 	// The rules which determine how this security group operates.
 	Rules []Rule `json:"rules"`
-
 	// The ID of the tenant to which this security group belongs.
 	TenantID string `json:"tenant_id"`
 }
@@ -51,6 +47,16 @@ func (r *SecurityGroup) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+func extra(err error, raw *http.Response) (*SecurityGroup, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res SecurityGroup
+	err = extract.IntoStructPtr(raw.Body, &res, "security_group")
+	return &res, err
+}
+
 // Rule represents a security group rule, a policy which determines how a
 // security group operates and what inbound traffic it allows in.
 type Rule struct {
@@ -58,22 +64,16 @@ type Rule struct {
 	// represented as a string UUID; if Neutron is not installed, it will be a
 	// numeric ID. For the sake of consistency, we always cast it to a string.
 	ID string `json:"-"`
-
 	// The lower bound of the port range which this security group should open up.
 	FromPort int `json:"from_port"`
-
 	// The upper bound of the port range which this security group should open up.
 	ToPort int `json:"to_port"`
-
 	// The IP protocol (e.g. TCP) which the security group accepts.
 	IPProtocol string `json:"ip_protocol"`
-
 	// The CIDR IP range whose traffic can be received.
 	IPRange IPRange `json:"ip_range"`
-
 	// The security group ID to which this rule belongs.
 	ParentGroupID string `json:"-"`
-
 	// Not documented.
 	Group Group
 }
@@ -119,96 +119,4 @@ type IPRange struct {
 type Group struct {
 	TenantID string `json:"tenant_id"`
 	Name     string
-}
-
-// SecurityGroupPage is a single page of a SecurityGroup collection.
-type SecurityGroupPage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty determines whether or not a page of Security Groups contains any
-// results.
-func (page SecurityGroupPage) IsEmpty() (bool, error) {
-	users, err := ExtractSecurityGroups(page)
-	return len(users) == 0, err
-}
-
-// ExtractSecurityGroups returns a slice of SecurityGroups contained in a
-// single page of results.
-func ExtractSecurityGroups(r pagination.Page) ([]SecurityGroup, error) {
-	var s struct {
-		SecurityGroups []SecurityGroup `json:"security_groups"`
-	}
-	err := (r.(SecurityGroupPage)).ExtractInto(&s)
-	return s.SecurityGroups, err
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret the result as a SecurityGroup.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret the result as a SecurityGroup.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret the result as a SecurityGroup.
-type UpdateResult struct {
-	commonResult
-}
-
-// Extract will extract a SecurityGroup struct from most responses.
-func (r commonResult) Extract() (*SecurityGroup, error) {
-	var s struct {
-		SecurityGroup *SecurityGroup `json:"security_group"`
-	}
-	err := r.ExtractInto(&s)
-	return s.SecurityGroup, err
-}
-
-// CreateRuleResult represents the result when adding rules to a security group.
-// Call its Extract method to interpret the result as a Rule.
-type CreateRuleResult struct {
-	golangsdk.Result
-}
-
-// Extract will extract a Rule struct from a CreateRuleResult.
-func (r CreateRuleResult) Extract() (*Rule, error) {
-	var s struct {
-		Rule *Rule `json:"security_group_rule"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Rule, err
-}
-
-// DeleteResult is the response from delete operation. Call its ExtractErr
-// method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// DeleteRuleResult is the response from a DeleteRule operation. Call its
-// ExtractErr method to determine if the request succeeded or failed.
-type DeleteRuleResult struct {
-	golangsdk.ErrResult
-}
-
-// AddServerResult is the response from an AddServer operation. Call its
-// ExtractErr method to determine if the request succeeded or failed.
-type AddServerResult struct {
-	golangsdk.ErrResult
-}
-
-// RemoveServerResult is the response from a RemoveServer operation. Call its
-// ExtractErr method to determine if the request succeeded or failed.
-type RemoveServerResult struct {
-	golangsdk.ErrResult
 }

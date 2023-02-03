@@ -69,7 +69,7 @@ func TestListImages(t *testing.T) {
 	})
 
 	pages := 0
-	options := &images.ListOpts{Limit: 2}
+	options := images.ListOpts{Limit: 2}
 	err := images.ListDetail(fake.ServiceClient(), options).EachPage(func(page pagination.Page) (bool, error) {
 		pages++
 
@@ -154,7 +154,7 @@ func TestGetImage(t *testing.T) {
 		`)
 	})
 
-	actual, err := images.Get(fake.ServiceClient(), "12345678").Extract()
+	actual, err := images.Get(fake.ServiceClient(), "12345678")
 	th.AssertNoErr(t, err)
 
 	expected := &images.Image{
@@ -204,5 +204,5 @@ func TestDeleteImage(t *testing.T) {
 	})
 
 	res := images.Delete(fake.ServiceClient(), "12345678")
-	th.AssertNoErr(t, res.Err)
+	th.AssertNoErr(t, res)
 }

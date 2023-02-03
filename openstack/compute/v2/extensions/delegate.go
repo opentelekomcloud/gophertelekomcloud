@@ -12,12 +12,12 @@ func ExtractExtensions(page pagination.Page) ([]common.Extension, error) {
 }
 
 // Get retrieves information for a specific extension using its alias.
-func Get(c *golangsdk.ServiceClient, alias string) common.GetResult {
-	return common.Get(c, alias)
+func Get(client *golangsdk.ServiceClient, alias string) common.GetResult {
+	return common.Get(client, alias)
 }
 
 // List returns a Pager which allows you to iterate over the full collection of extensions.
 // It does not accept query parameters.
-func List(c *golangsdk.ServiceClient) pagination.Pager {
-	return common.List(c)
+func List(client *golangsdk.ServiceClient) pagination.Pager {
+	return common.List(client)
 }

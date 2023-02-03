@@ -2,40 +2,33 @@ package aggregates
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // Aggregate represents a host aggregate in the OpenStack cloud.
 type Aggregate struct {
 	// The availability zone of the host aggregate.
 	AvailabilityZone string `json:"availability_zone"`
-
 	// A list of host ids in this aggregate.
 	Hosts []string `json:"hosts"`
-
 	// The ID of the host aggregate.
 	ID int `json:"id"`
-
 	// Metadata key and value pairs associate with the aggregate.
 	Metadata map[string]string `json:"metadata"`
-
 	// Name of the aggregate.
 	Name string `json:"name"`
-
 	// The date and time when the resource was created.
 	CreatedAt time.Time `json:"-"`
-
 	// The date and time when the resource was updated,
 	// if the resource has not been updated, this field will show as null.
 	UpdatedAt time.Time `json:"-"`
-
 	// The date and time when the resource was deleted,
 	// if the resource has not been deleted yet, this field will be null.
 	DeletedAt time.Time `json:"-"`
-
 	// A boolean indicates whether this aggregate is deleted or not,
 	// if it has not been deleted, false will appear.
 	Deleted bool `json:"deleted"`
@@ -63,55 +56,12 @@ func (r *Aggregate) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// AggregatesPage represents a single page of all Aggregates from a List
-// request.
-type AggregatesPage struct {
-	pagination.SinglePageBase
-}
-
-// IsEmpty determines whether or not a page of Aggregates contains any results.
-func (page AggregatesPage) IsEmpty() (bool, error) {
-	aggregates, err := ExtractAggregates(page)
-	return len(aggregates) == 0, err
-}
-
-// ExtractAggregates interprets a page of results as a slice of Aggregates.
-func ExtractAggregates(p pagination.Page) ([]Aggregate, error) {
-	var a struct {
-		Aggregates []Aggregate `json:"aggregates"`
+func extra(err error, raw *http.Response) (*Aggregate, error) {
+	if err != nil {
+		return nil, err
 	}
-	err := (p.(AggregatesPage)).ExtractInto(&a)
-	return a.Aggregates, err
-}
 
-type aggregatesResult struct {
-	golangsdk.Result
-}
-
-func (r aggregatesResult) Extract() (*Aggregate, error) {
-	var s struct {
-		Aggregate *Aggregate `json:"aggregate"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Aggregate, err
-}
-
-type CreateResult struct {
-	aggregatesResult
-}
-
-type GetResult struct {
-	aggregatesResult
-}
-
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type UpdateResult struct {
-	aggregatesResult
-}
-
-type ActionResult struct {
-	aggregatesResult
+	var res Aggregate
+	err = extract.IntoStructPtr(raw.Body, &res, "aggregate")
+	return &res, err
 }

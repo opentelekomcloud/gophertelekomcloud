@@ -15,7 +15,6 @@ const (
 	// Auto may only be used with images and servers that use a single EXT3
 	// partition.
 	Auto DiskConfig = "AUTO"
-
 	// Manual builds a server using whatever partition scheme and filesystem are
 	// present in the source image. If the target flavor disk is larger, the
 	// remaining space is left unpartitioned. This enables images to have non-EXT3
@@ -26,15 +25,14 @@ const (
 
 // CreateOptsExt adds a DiskConfig option to the base CreateOpts.
 type CreateOptsExt struct {
-	servers.CreateOptsBuilder
-
+	servers.CreateOpts
 	// DiskConfig [optional] controls how the created server's disk is partitioned.
 	DiskConfig DiskConfig `json:"OS-DCF:diskConfig,omitempty"`
 }
 
 // ToServerCreateMap adds the diskconfig option to the base server creation options.
 func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
-	base, err := opts.CreateOptsBuilder.ToServerCreateMap()
+	base, err := opts.CreateOpts.ToServerCreateMap()
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +49,7 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 
 // RebuildOptsExt adds a DiskConfig option to the base RebuildOpts.
 type RebuildOptsExt struct {
-	servers.RebuildOptsBuilder
-
+	servers.RebuildOpts
 	// DiskConfig controls how the rebuilt server's disk is partitioned.
 	DiskConfig DiskConfig `json:"OS-DCF:diskConfig,omitempty"`
 }
@@ -66,7 +63,7 @@ func (opts RebuildOptsExt) ToServerRebuildMap() (map[string]interface{}, error) 
 		return nil, err
 	}
 
-	base, err := opts.RebuildOptsBuilder.ToServerRebuildMap()
+	base, err := opts.RebuildOpts.ToServerRebuildMap()
 	if err != nil {
 		return nil, err
 	}
@@ -79,8 +76,7 @@ func (opts RebuildOptsExt) ToServerRebuildMap() (map[string]interface{}, error) 
 
 // ResizeOptsExt adds a DiskConfig option to the base server resize options.
 type ResizeOptsExt struct {
-	servers.ResizeOptsBuilder
-
+	servers.ResizeOpts
 	// DiskConfig [optional] controls how the resized server's disk is partitioned.
 	DiskConfig DiskConfig
 }
@@ -94,7 +90,7 @@ func (opts ResizeOptsExt) ToServerResizeMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	base, err := opts.ResizeOptsBuilder.ToServerResizeMap()
+	base, err := golangsdk.BuildRequestBody(opts.ResizeOpts, "resize")
 	if err != nil {
 		return nil, err
 	}

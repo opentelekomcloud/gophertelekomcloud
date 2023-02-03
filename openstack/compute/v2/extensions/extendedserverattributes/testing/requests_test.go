@@ -23,12 +23,12 @@ func TestServerWithUsageExt(t *testing.T) {
 		_, _ = fmt.Fprint(w, ServerWithAttributesExtResult)
 	})
 
-	type serverAttributesExt struct {
+	var serverWithAttributesExt struct {
 		servers.Server
 		extendedserverattributes.ServerAttributesExt
 	}
-	var serverWithAttributesExt serverAttributesExt
-	err := servers.Get(fake.ServiceClient(), "d650a0ce-17c3-497d-961a-43c4af80998a").ExtractInto(&serverWithAttributesExt)
+
+	err := servers.GetInto(fake.ServiceClient(), "d650a0ce-17c3-497d-961a-43c4af80998a", &serverWithAttributesExt)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, serverWithAttributesExt.Host, "compute01")
