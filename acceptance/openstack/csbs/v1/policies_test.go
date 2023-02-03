@@ -73,7 +73,7 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 				},
 				Trigger: policies.Trigger{
 					Properties: policies.TriggerProperties{
-						Pattern: "BEGIN:VCALENDAR\\r\\nBEGIN:VEVENT\\r\\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\\r\\nEND:VEVENT\\r\\nEND:VCALENDAR\\r\\n",
+						Pattern: "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
 					},
 				},
 			},
@@ -81,8 +81,8 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 	}
 
 	policy, err := policies.Create(client, createOpts)
-	th.AssertNoErr(t, err)
 	t.Cleanup(func() { deleteCSBSPolicy(t, client, policy.ID) })
+	th.AssertNoErr(t, err)
 
 	err = waitForCSBSPolicyActive(client, 600, policy.ID)
 	th.AssertNoErr(t, err)

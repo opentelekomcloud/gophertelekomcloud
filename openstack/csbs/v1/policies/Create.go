@@ -64,7 +64,8 @@ type OperationDefinition struct {
 	// Maximum number of backups that can be automatically created for a backup object.
 	// The value can be -1 or ranges from 0 to 99999. If the value is set to -1,
 	// the backups will not be cleared even though the configured retained backup quantity limit is exceeded.
-	MaxBackups *int `json:"max_backups,omitempty"`
+	// Request with int, Response with string.
+	MaxBackups interface{} `json:"max_backups,omitempty"`
 	// Duration of retaining a backup, in days. The value can be -1 or ranges from 0 to 99999.
 	// If the value is set to -1, backups will not be cleared even though the configured retention duration is exceeded.
 	RetentionDurationDays *int `json:"retention_duration_days,omitempty"`
