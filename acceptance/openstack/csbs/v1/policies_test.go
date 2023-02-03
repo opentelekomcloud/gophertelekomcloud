@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -63,7 +64,7 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 				Name: "resource1",
 			},
 		},
-		ProviderId: "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
+		ProviderId: backup.ProviderID,
 		ScheduledOperations: []policies.ScheduledOperation{
 			{
 				Enabled:       false,

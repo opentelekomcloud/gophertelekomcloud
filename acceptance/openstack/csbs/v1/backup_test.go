@@ -58,7 +58,7 @@ func TestBackupLifeCycle(t *testing.T) {
 		t.Logf("Attempting to create CSBS backup")
 		checkpoint, err := backup.Create(client, ecs.ID, createOpts)
 		th.AssertNoErr(t, err)
-		
+
 		t.Cleanup(func() {
 			t.Logf("Attempting to delete CSBS backup: %s", checkpoint.Id)
 			err = backup.Delete(client, checkpoint.Id)
