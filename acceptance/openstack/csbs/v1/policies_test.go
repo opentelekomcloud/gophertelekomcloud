@@ -70,6 +70,7 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 				OperationType: "backup",
 				OperationDefinition: policies.OperationDefinition{
 					MaxBackups: pointerto.Int(2),
+					Permanent:  false,
 				},
 				Trigger: policies.Trigger{
 					Properties: policies.TriggerProperties{
@@ -81,8 +82,8 @@ func createCSBSPolicy(t *testing.T, client *golangsdk.ServiceClient, serverId st
 	}
 
 	policy, err := policies.Create(client, createOpts)
-	t.Cleanup(func() { deleteCSBSPolicy(t, client, policy.ID) })
 	th.AssertNoErr(t, err)
+	t.Cleanup(func() { deleteCSBSPolicy(t, client, policy.ID) })
 
 	err = waitForCSBSPolicyActive(client, 600, policy.ID)
 	th.AssertNoErr(t, err)

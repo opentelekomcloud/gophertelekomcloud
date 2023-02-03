@@ -70,7 +70,8 @@ type OperationDefinition struct {
 	// If the value is set to -1, backups will not be cleared even though the configured retention duration is exceeded.
 	RetentionDurationDays *int `json:"retention_duration_days,omitempty"`
 	// Whether backups are permanently retained. false: no. true: yes
-	Permanent bool `json:"permanent"`
+	// Request with bool, Response with string.
+	Permanent interface{} `json:"permanent" required:"true"`
 	// Backup policy ID
 	PlanId string `json:"plan_id,omitempty"`
 	// Backup provider ID, which specifies whether the backup object is a server or disk.
