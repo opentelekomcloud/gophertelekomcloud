@@ -32,9 +32,7 @@ func TestBackupLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	ecs := openstack.CreateCloudServer(t, computeClient, openstack.GetCloudServerCreateOpts(t))
-	defer func() {
-		openstack.DeleteCloudServer(t, computeClient, ecs.ID)
-	}()
+	t.Cleanup(func() { openstack.DeleteCloudServer(t, computeClient, ecs.ID) })
 
 	t.Logf("Check if resource is protectable")
 	queryOpts := resource.ResourceBackupCapOpts{
@@ -47,6 +45,7 @@ func TestBackupLifeCycle(t *testing.T) {
 	}
 	query, err := resource.GetResBackupCapabilities(client, queryOpts)
 	th.AssertNoErr(t, err)
+
 	if query[0].Result {
 		t.Logf("Resource is protectable")
 		backupName := tools.RandomString("backup-", 3)
@@ -59,7 +58,8 @@ func TestBackupLifeCycle(t *testing.T) {
 		t.Logf("Attempting to create CSBS backup")
 		checkpoint, err := backup.Create(client, ecs.ID, createOpts)
 		th.AssertNoErr(t, err)
-		defer func() {
+		
+		t.Cleanup(func() {
 			t.Logf("Attempting to delete CSBS backup: %s", checkpoint.Id)
 			err = backup.Delete(client, checkpoint.Id)
 			th.AssertNoErr(t, err)
@@ -67,7 +67,7 @@ func TestBackupLifeCycle(t *testing.T) {
 			err = waitForBackupDeleted(client, 600, checkpoint.Id)
 			th.AssertNoErr(t, err)
 			t.Logf("Deleted CSBS backup: %s", checkpoint.Id)
-		}()
+		})
 
 		listOpts := backup.ListOpts{
 			CheckpointId: checkpoint.Id,

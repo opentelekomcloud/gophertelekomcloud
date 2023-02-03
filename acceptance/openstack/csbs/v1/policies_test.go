@@ -1,15 +1,13 @@
 package v1
 
 import (
-	"os"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	nwv1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -31,14 +29,14 @@ func TestPoliciesLifeCycle(t *testing.T) {
 	client, err := clients.NewCsbsV1Client()
 	th.AssertNoErr(t, err)
 
-	subnet := nwv1.CreateNetwork(t, "csbs-acc-", "eu-de-01")
-	t.Cleanup(func() { nwv1.DeleteNetwork(t, subnet) })
+	computeClient, err := clients.NewComputeV1Client()
+	th.AssertNoErr(t, err)
 
-	server := createComputeInstance(t, subnet.ID)
-	t.Cleanup(func() { deleteComputeInstance(t, server.ID) })
+	ecs := openstack.CreateCloudServer(t, computeClient, openstack.GetCloudServerCreateOpts(t))
+	t.Cleanup(func() { openstack.DeleteCloudServer(t, computeClient, ecs.ID) })
 
 	// Create CSBSv1 policy
-	policy := createCSBSPolicy(t, client, server.ID)
+	policy := createCSBSPolicy(t, client, ecs.ID)
 	tools.PrintResource(t, policy)
 
 	err = updateCSBSPolicy(client, policy.ID)
@@ -139,75 +137,6 @@ func waitForCSBSPolicyDelete(client *golangsdk.ServiceClient, secs int, policyId
 		_, err := policies.Get(client, policyId)
 		if _, ok := err.(golangsdk.ErrDefault404); ok {
 			return true, nil
-		}
-		return false, nil
-	})
-}
-
-func createComputeInstance(t *testing.T, subnetID string) *servers.Server {
-	client, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
-	serverName := tools.RandomString("csbs-acc-", 5)
-	opts := servers.CreateOpts{
-		Name:             serverName,
-		SecurityGroups:   []string{"default"},
-		FlavorName:       "s2.large.2",
-		ImageName:        "Standard_Debian_10_latest",
-		AvailabilityZone: "eu-de-01",
-		ServiceClient:    client,
-		Networks: []servers.Network{
-			{
-				UUID: subnetID,
-			},
-		},
-	}
-
-	server, err := servers.Create(client, opts).Extract()
-	th.AssertNoErr(t, err)
-	err = waitForComputeInstanceAvailable(client, 600, server.ID)
-	th.AssertNoErr(t, err)
-
-	return server
-}
-
-func deleteComputeInstance(t *testing.T, instanceId string) {
-	if os.Getenv("RUN_CSBS") == "" {
-		t.Skip("unstable test")
-	}
-	client, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
-	err = servers.Delete(client, instanceId).ExtractErr()
-	th.AssertNoErr(t, err)
-	err = waitForComputeInstanceDelete(client, 600, instanceId)
-	th.AssertNoErr(t, err)
-}
-
-func waitForComputeInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceId string) error {
-	return golangsdk.WaitFor(secs, func() (bool, error) {
-		server, err := servers.Get(client, instanceId).Extract()
-		if err != nil {
-			return false, err
-		}
-		if server.Status == "ACTIVE" {
-			return true, nil
-		}
-		return false, nil
-	})
-}
-
-func waitForComputeInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceId string) error {
-	return golangsdk.WaitFor(secs, func() (bool, error) {
-		server, err := servers.Get(client, instanceId).Extract()
-		if err != nil {
-			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				return true, nil
-			}
-			return false, err
-		}
-		if server.Status == "ERROR" {
-			return false, err
 		}
 		return false, nil
 	})
