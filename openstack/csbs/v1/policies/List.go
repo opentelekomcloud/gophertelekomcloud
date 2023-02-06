@@ -28,7 +28,7 @@ type ListOpts struct {
 // List returns a Pager which allows you to iterate over a collection of
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicyString, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
 	query, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return nil, err
@@ -74,8 +74,8 @@ func (r BackupPolicyPage) IsEmpty() (bool, error) {
 // ExtractBackupPolicies accepts a Page struct, specifically a BackupPolicyPage struct,
 // and extracts the elements into a slice of Policy structs. In other words,
 // a generic collection is mapped into a relevant slice.
-func ExtractBackupPolicies(r pagination.Page) ([]BackupPolicyString, error) {
-	var res []BackupPolicyString
+func ExtractBackupPolicies(r pagination.Page) ([]BackupPolicy, error) {
+	var res []BackupPolicy
 	err := extract.IntoSlicePtr(r.(BackupPolicyPage).BodyReader(), &res, "policies")
 	return res, err
 }

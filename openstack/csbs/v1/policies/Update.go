@@ -50,7 +50,7 @@ type ScheduledOperationToUpdate struct {
 }
 
 // Update allows backup policies to be updated. call the Extract method on the UpdateResult.
-func Update(c *golangsdk.ServiceClient, policyId string, opts UpdateOpts) (*BackupPolicyString, error) {
+func Update(c *golangsdk.ServiceClient, policyId string, opts UpdateOpts) (*BackupPolicy, error) {
 	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err

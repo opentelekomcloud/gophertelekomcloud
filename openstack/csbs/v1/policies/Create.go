@@ -123,7 +123,7 @@ type TriggerProperties struct {
 
 // Create will create a new backup policy based on the values in CreateOpts. To extract
 // the Backup object from the response, call the Extract method on the CreateResult.
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*BackupPolicyString, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*BackupPolicy, error) {
 	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err
