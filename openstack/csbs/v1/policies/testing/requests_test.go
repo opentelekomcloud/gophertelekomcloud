@@ -127,7 +127,7 @@ func TestUpdate(t *testing.T) {
 			Enabled:     true,
 			Id:          "b70c712d-f48b-43f7-9a0f-3bab86d59149",
 			OperationDefinition: policies.OperationDefinition{
-				RetentionDurationDays: pointerto.Int(-1),
+				RetentionDurationDays: -1,
 				MaxBackups:            pointerto.Int(20),
 			},
 			Trigger: policies.Trigger{
