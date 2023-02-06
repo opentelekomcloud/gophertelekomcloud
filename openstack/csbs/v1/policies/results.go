@@ -110,9 +110,12 @@ func (r *BackupPolicy) UnmarshalJSON(b []byte) error {
 	for _, v := range tmp.ScheduledOperations {
 		def := v.OperationDefinition
 
-		switch def.Permanent.(type) {
+		var pt bool
+		switch p := def.Permanent.(type) {
 		case string:
-			def.Permanent, _ = strconv.ParseBool(def.Permanent.(string))
+			pt, _ = strconv.ParseBool(p)
+		case bool:
+			pt = p
 		}
 
 		r.ScheduledOperations = append(r.ScheduledOperations, ScheduledOperation{
@@ -123,7 +126,7 @@ func (r *BackupPolicy) UnmarshalJSON(b []byte) error {
 			OperationDefinition: OperationDefinition{
 				MaxBackups:            pointerto.Int(toInt(def.MaxBackups)),
 				RetentionDurationDays: toInt(def.RetentionDurationDays),
-				Permanent:             def.Permanent.(bool),
+				Permanent:             pt,
 				PlanId:                v.OperationDefinition.PlanId,
 				ProviderId:            v.OperationDefinition.ProviderId,
 				DayBackups:            toInt(def.DayBackups),
