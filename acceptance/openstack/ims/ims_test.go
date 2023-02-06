@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -13,4 +14,6 @@ func TestIMS(t *testing.T) {
 
 	clientV2, err := clients.NewIMSV2Client()
 	th.AssertNoErr(t, err)
+
+	opts := openstack.GetCloudServerCreateOpts(t)
 }
