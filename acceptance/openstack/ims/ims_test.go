@@ -16,4 +16,8 @@ func TestIMS(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	opts := openstack.GetCloudServerCreateOpts(t)
+
+	th.AssertEquals(t, clientV1, clientV1)
+	th.AssertEquals(t, clientV2, clientV2)
+	th.AssertEquals(t, opts, opts)
 }
