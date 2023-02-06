@@ -179,8 +179,6 @@ func TestList(t *testing.T) {
 						Pattern: "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:FREQ=WEEKLY;BYDAY=TH;BYHOUR=12;BYMINUTE=27\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
 					},
 					Type: "time",
-					ID:   "831b5e69-0b75-420c-918e-9cbcb32d97f1",
-					Name: "default",
 				},
 				OperationDefinition: policies.OperationDefinition{
 					MaxBackups: pointerto.Int(5),
