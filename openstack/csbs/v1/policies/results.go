@@ -80,11 +80,11 @@ type operationDefinitionString struct {
 func toInt(v interface{}) int {
 	var i int
 
-	switch v.(type) {
+	switch v := v.(type) {
 	case string:
-		i, _ = strconv.Atoi(v.(string))
+		i, _ = strconv.Atoi(v)
 	case float64:
-		i = int(v.(float64))
+		i = int(v)
 	}
 
 	return i
