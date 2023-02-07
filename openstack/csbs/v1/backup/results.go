@@ -35,6 +35,10 @@ type Backup struct {
 	ResourceType string `json:"resource_type"`
 }
 
+type ImagesData struct {
+	ImageId string `json:"image_id"`
+}
+
 type ExtendInfo struct {
 	// Whether automatic trigger is enabled
 	AutoTrigger bool `json:"auto_trigger"`
@@ -73,7 +77,7 @@ type ExtendInfo struct {
 	// Backup completion time, for example, 2017-04-18T01:21:52.701973
 	FinishedAt string `json:"finished_at"`
 	// Image data. This parameter has a value if an image has been created for the VM.
-	OsImagesData string `json:"os_images_data"`
+	OsImagesData []ImagesData `json:"os_images_data"`
 	// Job ID
 	TaskId string `json:"taskid"`
 	// Virtualization type

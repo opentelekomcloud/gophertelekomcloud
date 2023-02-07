@@ -145,7 +145,7 @@ type Cluster struct {
 	SlaveSecurityGroupsId string `json:"slaveSecurityGroupsId"`
 	// Bootstrap action script information.
 	// MRS 1.7.2 or later supports this parameter.
-	BootstrapScripts []ScriptResult `json:"bootstrap_scripts"`
+	BootstrapScripts []ScriptResult `json:"bootstrapScripts"`
 	// Cluster operation progress description.
 	// The cluster installation progress includes:
 	// - Verifying cluster parameters: Cluster parameters are being verified.
@@ -188,7 +188,7 @@ type Cluster struct {
 	// Error message
 	ErrorInfo string `json:"errorInfo"`
 	// Tag information
-	Tags []string `json:"tags"`
+	Tags string `json:"tags"`
 	// Start time of billing
 	ChargingStartTime string `json:"chargingStartTime"`
 	// Whether to collect logs when cluster installation fails

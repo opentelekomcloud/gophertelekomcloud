@@ -3,10 +3,12 @@ package policies
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
@@ -31,7 +33,7 @@ type BackupPolicy struct {
 	// Backup object list
 	Resources []Resource `json:"resources"`
 	// Scheduling period list
-	ScheduledOperations []ScheduledOperation `json:"scheduled_operations"`
+	ScheduledOperations []ScheduledOperation `json:"-"`
 	// Backup policy status
 	// disabled: indicates that the backup policy is unavailable.
 	// enabled: indicates that the backup policy is available.
@@ -51,20 +53,96 @@ func extra(err error, raw *http.Response) (*BackupPolicy, error) {
 	return &res, err
 }
 
+type scheduledOperationString struct {
+	Description         string                    `json:"description"`
+	Enabled             bool                      `json:"enabled"`
+	Name                string                    `json:"name"`
+	OperationType       string                    `json:"operation_type"`
+	OperationDefinition operationDefinitionString `json:"operation_definition"`
+	Trigger             Trigger                   `json:"trigger" `
+	ID                  string                    `json:"id"`
+	TriggerID           string                    `json:"trigger_id"`
+}
+
+type operationDefinitionString struct {
+	MaxBackups            interface{} `json:"max_backups"`
+	RetentionDurationDays interface{} `json:"retention_duration_days"`
+	Permanent             interface{} `json:"permanent"`
+	PlanId                string      `json:"plan_id"`
+	ProviderId            string      `json:"provider_id"`
+	DayBackups            interface{} `json:"day_backups"`
+	WeekBackups           interface{} `json:"week_backups"`
+	MonthBackups          interface{} `json:"month_backups"`
+	YearBackups           interface{} `json:"year_backups"`
+	TimeZone              string      `json:"timezone"`
+}
+
+func toInt(v interface{}) int {
+	var i int
+
+	switch v := v.(type) {
+	case string:
+		i, _ = strconv.Atoi(v)
+	case float64:
+		i = int(v)
+	}
+
+	return i
+}
+
 // UnmarshalJSON helps to unmarshal BackupPolicy fields into needed values.
 func (r *BackupPolicy) UnmarshalJSON(b []byte) error {
-	type tmp BackupPolicy
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
+	type policy BackupPolicy
+	var tmp struct {
+		policy
+		CreatedAt           golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
+		ScheduledOperations []scheduledOperationString    `json:"scheduled_operations"`
 	}
-	err := json.Unmarshal(b, &s)
+
+	err := json.Unmarshal(b, &tmp)
 	if err != nil {
 		return err
 	}
-	*r = BackupPolicy(s.tmp)
 
-	r.CreatedAt = time.Time(s.CreatedAt)
+	*r = BackupPolicy(tmp.policy)
+	r.CreatedAt = time.Time(tmp.CreatedAt)
+
+	for _, v := range tmp.ScheduledOperations {
+		def := v.OperationDefinition
+
+		var pt bool
+		switch p := def.Permanent.(type) {
+		case string:
+			pt, _ = strconv.ParseBool(p)
+		case bool:
+			pt = p
+		}
+
+		r.ScheduledOperations = append(r.ScheduledOperations, ScheduledOperation{
+			Description:   v.Description,
+			Enabled:       v.Enabled,
+			Name:          v.Name,
+			OperationType: v.OperationType,
+			OperationDefinition: OperationDefinition{
+				MaxBackups:            pointerto.Int(toInt(def.MaxBackups)),
+				RetentionDurationDays: toInt(def.RetentionDurationDays),
+				Permanent:             pt,
+				PlanId:                v.OperationDefinition.PlanId,
+				ProviderId:            v.OperationDefinition.ProviderId,
+				DayBackups:            toInt(def.DayBackups),
+				WeekBackups:           toInt(def.WeekBackups),
+				MonthBackups:          toInt(def.MonthBackups),
+				YearBackups:           toInt(def.YearBackups),
+				TimeZone:              v.OperationDefinition.TimeZone,
+			},
+			Trigger: Trigger{
+				Properties: v.Trigger.Properties,
+				Type:       v.Trigger.Type,
+			},
+			ID:        v.ID,
+			TriggerID: v.TriggerID,
+		})
+	}
 
 	return err
 }

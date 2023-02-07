@@ -9,10 +9,6 @@ import (
 
 // ResourceBackupCapOpts contains the options for querying whether resources can be backed up.
 type ResourceBackupCapOpts struct {
-	CheckProtectable []ResourceCapQueryParams `json:"check_protectable" required:"true"`
-}
-
-type ResourceCapQueryParams struct {
 	// ID of the resource (server, or EVS disk) to be checked
 	// For details about how to obtain the server ID, see the Elastic Cloud Server API Reference.
 	// For details about how to obtain the disk ID, see the Elastic Volume Service API Reference.
@@ -23,12 +19,12 @@ type ResourceCapQueryParams struct {
 
 // GetResBackupCapabilities will query whether resources can be backed up based on the values in ResourceBackupCapOpts. To extract
 // the ResourceCap object from the response, call the ExtractQueryResponse method on the QueryResult.
-func GetResBackupCapabilities(client *golangsdk.ServiceClient, opts ResourceBackupCapOpts) ([]ResourceCapability, error) {
-	return doAction(client, opts, "protectable")
+func GetResBackupCapabilities(client *golangsdk.ServiceClient, opts []ResourceBackupCapOpts) ([]ResourceCapability, error) {
+	return doAction(client, opts, "check_protectable", "protectable")
 }
 
-func doAction(client *golangsdk.ServiceClient, opts interface{}, label string) ([]ResourceCapability, error) {
-	b, err := build.RequestBody(opts, "")
+func doAction(client *golangsdk.ServiceClient, opts interface{}, parent, label string) ([]ResourceCapability, error) {
+	b, err := build.RequestBody(opts, parent)
 	if err != nil {
 		return nil, err
 	}
