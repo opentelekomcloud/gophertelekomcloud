@@ -64,12 +64,12 @@ type OperationDefinition struct {
 	// Maximum number of backups that can be automatically created for a backup object.
 	// The value can be -1 or ranges from 0 to 99999. If the value is set to -1,
 	// the backups will not be cleared even though the configured retained backup quantity limit is exceeded.
-	MaxBackups int `json:"max_backups,omitempty"`
+	MaxBackups *int `json:"max_backups,omitempty"`
 	// Duration of retaining a backup, in days. The value can be -1 or ranges from 0 to 99999.
 	// If the value is set to -1, backups will not be cleared even though the configured retention duration is exceeded.
 	RetentionDurationDays int `json:"retention_duration_days,omitempty"`
 	// Whether backups are permanently retained. false: no. true: yes
-	Permanent bool `json:"permanent"`
+	Permanent bool `json:"permanent" required:"true"`
 	// Backup policy ID
 	PlanId string `json:"plan_id,omitempty"`
 	// Backup provider ID, which specifies whether the backup object is a server or disk.

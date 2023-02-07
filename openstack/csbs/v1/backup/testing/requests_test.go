@@ -83,10 +83,10 @@ func TestQueryResourceCapability(t *testing.T) {
 			_, _ = fmt.Fprint(w, queryResponse)
 		})
 
-	options := resource.ResourceBackupCapOpts{CheckProtectable: []resource.ResourceCapQueryParams{
-		{ResourceId: "069e678a-f1d1-4a38-880b-459bde82fcc6",
-			ResourceType: "OS::Nova::Server"}}}
-	n, err := resource.GetResBackupCapabilities(fake.ServiceClient(), options)
+	n, err := resource.GetResBackupCapabilities(fake.ServiceClient(), []resource.ResourceBackupCapOpts{{
+		ResourceId:   "069e678a-f1d1-4a38-880b-459bde82fcc6",
+		ResourceType: "OS::Nova::Server",
+	}})
 
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, n[0].ResourceType, "OS::Nova::Server")
