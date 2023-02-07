@@ -141,5 +141,5 @@ type JobExecution struct {
 	// Key-value pair set, containing job running information returned by Oozie
 	Info map[string]interface{} `json:"info,omitempty"`
 	// Encrypt Type
-	EncryptType int `json:"encrypt_type"`
+	EncryptType int `json:"encrypt_type,omitempty"`
 }
