@@ -151,7 +151,7 @@ type NodeGroupV10 struct {
 	DataVolumeProductId string `json:"dataVolumeProductId,omitempty"`
 	// Data disk product specifications of a node
 	DataVolumeResourceSpecCode string `json:"dataVolumeResourceSpecCode,omitempty"`
-	// Data disk product type of a node
+	// Data disk product type of node
 	DataVolumeResourceType string `json:"dataVolumeResourceType,omitempty"`
 }
 

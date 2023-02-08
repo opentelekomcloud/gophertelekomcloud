@@ -69,6 +69,14 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		ComponentList: cluster.ExpandComponent(
 			[]string{"Presto", "Hadoop", "Spark", "HBase", "Hive", "Hue", "Loader", "Tez", "Flink"},
 		),
+		BootstrapScripts: []cluster.BootstrapScript{{
+			Name:         "BootstrapScript",
+			Uri:          "s3a://bootstrap/presto/presto-install.sh",
+			Parameters:   "--presto_version 0.227",
+			Nodes:        []string{"master"},
+			ActiveMaster: pointerto.Bool(true),
+			FailAction:   "continue",
+		}},
 	}
 
 	clResponse, err := cluster.Create(client, createOpts)

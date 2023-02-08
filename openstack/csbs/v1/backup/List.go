@@ -49,6 +49,8 @@ type ListOpts struct {
 	CheckpointId string `q:"checkpoint_id"`
 	// Type of the backup object. For example, OS::Nova::Server
 	ResourceType string `q:"resource_type"`
+	// IP address of the server.
+	VmIp string `q:"ip"`
 }
 
 // List returns collection of
