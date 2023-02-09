@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	images1 "github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/images"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -24,15 +23,7 @@ func TestCreateImageFromOBS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	err = others.WaitForJob(client1, *fromOBS, 1000)
-	th.AssertNoErr(t, err)
-
-	job, err := others.ShowJob(client1, *fromOBS)
-	th.AssertNoErr(t, err)
-	t.Cleanup(func() {
-		err = images.DeleteImage(client2, images.DeleteImageOpts{ImageId: job.Entities.ImageId})
-		th.AssertNoErr(t, err)
-	})
+	jobEntities(t, client1, client2, fromOBS)
 }
 
 func TestCreateDataImage(t *testing.T) {
@@ -47,17 +38,9 @@ func TestCreateDataImage(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	err = others.WaitForJob(client1, *fromOBS, 1000)
-	th.AssertNoErr(t, err)
+	image := jobEntities(t, client1, client2, fromOBS)
 
-	image, err := others.ShowJob(client1, *fromOBS)
-	th.AssertNoErr(t, err)
-	t.Cleanup(func() {
-		err = images.DeleteImage(client2, images.DeleteImageOpts{ImageId: image.Entities.ImageId})
-		th.AssertNoErr(t, err)
-	})
-
-	updated, err := images.UpdateImage(client2, image.Entities.ImageId, []images.UpdateImageOpts{{
+	updated, err := images.UpdateImage(client2, image.ImageId, []images.UpdateImageOpts{{
 		Op:    "replace",
 		Path:  "/name",
 		Value: tools.RandomString("DataImage-test-", 5),

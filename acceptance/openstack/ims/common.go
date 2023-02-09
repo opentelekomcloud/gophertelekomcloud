@@ -10,6 +10,8 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -48,19 +50,7 @@ func downloadIMG(t *testing.T) (*os.File, error) {
 }
 
 func makeOBS(t *testing.T) (string, string) {
-	obsClient, err := clients.NewOBSClient()
-	th.AssertNoErr(t, err)
-
-	bucketName := strings.ToLower(tools.RandomString("ims-sdk-test", 5))
-
-	_, err = obsClient.CreateBucket(&obs.CreateBucketInput{
-		Bucket: bucketName,
-	})
-	t.Cleanup(func() {
-		_, err = obsClient.DeleteBucket(bucketName)
-		th.AssertNoErr(t, err)
-	})
-	th.AssertNoErr(t, err)
+	obsClient, bucketName := newBucket(t)
 
 	img, err := downloadIMG(t)
 
@@ -85,4 +75,36 @@ func makeOBS(t *testing.T) (string, string) {
 	th.AssertNoErr(t, err)
 
 	return bucketName, objectName
+}
+
+func newBucket(t *testing.T) (*obs.ObsClient, string) {
+	obsClient, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	bucketName := strings.ToLower(tools.RandomString("ims-sdk-test", 5))
+
+	_, err = obsClient.CreateBucket(&obs.CreateBucketInput{
+		Bucket: bucketName,
+	})
+	t.Cleanup(func() {
+		_, err = obsClient.DeleteBucket(bucketName)
+		th.AssertNoErr(t, err)
+	})
+	th.AssertNoErr(t, err)
+
+	return obsClient, bucketName
+}
+
+func jobEntities(t *testing.T, client1 *golangsdk.ServiceClient, client2 *golangsdk.ServiceClient, jobId *string) *others.JobEntities {
+	err := others.WaitForJob(client1, *jobId, 1000)
+	th.AssertNoErr(t, err)
+
+	job, err := others.ShowJob(client1, *jobId)
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		err = images.DeleteImage(client2, images.DeleteImageOpts{ImageId: job.Entities.ImageId})
+		th.AssertNoErr(t, err)
+	})
+
+	return &job.Entities
 }
