@@ -8,7 +8,7 @@ import (
 
 func ListImagesTags(client *golangsdk.ServiceClient) ([]tags.ListedTag, error) {
 	// GET /v2/{project_id}/images/tags
-	raw, err := client.Get(client.ServiceURL("images", "tags"), nil, nil)
+	raw, err := client.Get(client.ServiceURL(client.ProjectID, "images", "tags"), nil, nil)
 	if err != nil {
 		return nil, err
 	}

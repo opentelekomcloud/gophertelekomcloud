@@ -46,6 +46,8 @@ func TestCreateImageFromOBS(t *testing.T) {
 	img, err := os.CreateTemp("", "ims-rancher.img")
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
+		err = img.Close()
+		th.AssertNoErr(t, err)
 		err = os.Remove(img.Name())
 		th.AssertNoErr(t, err)
 	})
@@ -86,9 +88,8 @@ func TestCreateImageFromOBS(t *testing.T) {
 		Name:     imgName,
 		OsType:   "Linux",
 		ImageUrl: bucketName + ":" + objectName,
-		MinDisk:  4,
+		MinDisk:  1,
 		Tags:     []string{"rancher"},
-		MinRam:   4,
 	})
 	th.AssertNoErr(t, err)
 

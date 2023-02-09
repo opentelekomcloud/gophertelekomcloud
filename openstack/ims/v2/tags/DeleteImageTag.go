@@ -14,6 +14,6 @@ type DeleteImageTagOpts struct {
 
 func DeleteImageTag(client *golangsdk.ServiceClient, opts DeleteImageTagOpts) (err error) {
 	// DELETE /v2/{project_id}/images/{image_id}/tags/{key}
-	_, err = client.Delete(client.ServiceURL("images", opts.ImageId, "tags", opts.Key), openstack.StdRequestOpts())
+	_, err = client.Delete(client.ServiceURL(client.ProjectID, "images", opts.ImageId, "tags", opts.Key), openstack.StdRequestOpts())
 	return
 }

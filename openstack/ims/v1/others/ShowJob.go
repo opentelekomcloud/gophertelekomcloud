@@ -10,7 +10,7 @@ import (
 
 func ShowJob(client *golangsdk.ServiceClient, jobId string) (*ShowJobResponse, error) {
 	// GET /v1/{project_id}/jobs/{job_id}
-	raw, err := client.Get(client.ServiceURL("jobs", jobId), nil, nil)
+	raw, err := client.Get(client.ServiceURL(client.ProjectID, "jobs", jobId), nil, nil)
 	if err != nil {
 		return nil, err
 	}

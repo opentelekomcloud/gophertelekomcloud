@@ -20,7 +20,7 @@ func AddImageTag(client *golangsdk.ServiceClient, opts AddImageTagOpts) (err err
 	}
 
 	// POST /v2/{project_id}/images/{image_id}/tags
-	_, err = client.Post(client.ServiceURL("images", opts.ImageId, "tags"), b, nil, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL(client.ProjectID, "images", opts.ImageId, "tags"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return

@@ -39,7 +39,7 @@ func ListImageByTags(client *golangsdk.ServiceClient, opts ListImageByTagsOpts) 
 	}
 
 	// POST /v2/{project_id}/images/resource_instances/action
-	raw, err := client.Post(client.ServiceURL("images", "resource_instances", "action"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL(client.ProjectID, "images", "resource_instances", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
