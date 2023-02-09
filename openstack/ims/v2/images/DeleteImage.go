@@ -15,6 +15,9 @@ type DeleteImageOpts struct {
 
 func DeleteImage(client *golangsdk.ServiceClient, opts DeleteImageOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return
+	}
 
 	// DELETE /v2/images/{image_id}
 	_, err = client.DeleteWithBody(client.ServiceURL("images", opts.ImageId), b, nil)

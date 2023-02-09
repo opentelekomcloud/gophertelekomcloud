@@ -53,6 +53,7 @@ func makeOBS(t *testing.T) (string, string) {
 	obsClient, bucketName := newBucket(t)
 
 	img, err := downloadIMG(t)
+	th.AssertNoErr(t, err)
 
 	objectName := tools.RandomString("ims-test-", 5)
 
