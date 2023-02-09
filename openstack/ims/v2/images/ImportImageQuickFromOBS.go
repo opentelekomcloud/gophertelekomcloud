@@ -45,13 +45,9 @@ func ImportImageQuickFromOBS(client *golangsdk.ServiceClient, opts ImportImageQu
 		return nil, err
 	}
 
-	return quickImport(client, b)
-}
-
-func quickImport(client *golangsdk.ServiceClient, b *build.Body) (*string, error) {
 	// POST /v2/cloudimages/quickimport/action
-	raw, err := client.Post(client.ServiceURL("cloudimages", "quickimport", "action"), b, nil, &golangsdk.RequestOpts{
+	raw, err2 := client.Post(client.ServiceURL("cloudimages", "quickimport", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return others.ExtractJobId(err, raw)
+	return others.ExtractJobId(err2, raw)
 }
