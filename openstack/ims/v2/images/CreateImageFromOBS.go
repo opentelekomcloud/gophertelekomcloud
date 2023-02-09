@@ -127,5 +127,5 @@ func CreateImageFromOBS(client *golangsdk.ServiceClient, opts CreateImageFromOBS
 		return nil, err
 	}
 
-	return cloudImages(client, err, b)
+	return cloudImages(client, b)
 }

@@ -70,5 +70,5 @@ func ImportImageQuickFromFile(client *golangsdk.ServiceClient, opts ImportImageQ
 		return nil, err
 	}
 
-	return quickImport(client, err, b)
+	return quickImport(client, b)
 }

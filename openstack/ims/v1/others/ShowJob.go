@@ -1,6 +1,7 @@
 package others
 
 import (
+	"fmt"
 	"net/http"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -51,36 +52,66 @@ type ShowJobResponse struct {
 type JobEntities struct {
 	// Specifies the image ID.
 	ImageId string `json:"image_id,omitempty"`
-
-	// CurrentTask    string              `json:"current_task,omitempty"`
-	// ImageName      string              `json:"image_name,omitempty"`
-	// ProcessPercent float64             `json:"process_percent,omitempty"`
-	// Results        []JobEntitiesResult `json:"results,omitempty"`
-	// SubJobsResult  []SubJobResult      `json:"sub_jobs_result,omitempty"`
-	// SubJobsList    []string            `json:"sub_jobs_list,omitempty"`
+	// Specifies the job name.
+	CurrentTask string `json:"current_task,omitempty"`
+	// Specifies the image name.
+	ImageName string `json:"image_name,omitempty"`
+	// Specifies the job progress.
+	ProcessPercent float64 `json:"process_percent,omitempty"`
+	// Specifies job execution results.
+	Results []JobEntitiesResult `json:"results,omitempty"`
+	// Specifies sub-job execution results.
+	SubJobsResult []SubJobResult `json:"sub_jobs_result,omitempty"`
+	// Specifies the sub-job IDs.
+	SubJobsList []string `json:"sub_jobs_list,omitempty"`
 }
 
-// type JobEntitiesResult struct {
-// 	ImageId   string `json:"image_id,omitempty"`
-// 	ProjectId string `json:"project_id,omitempty"`
-// 	Status    string `json:"status,omitempty"`
-// }
+type JobEntitiesResult struct {
+	// Specifies the image ID.
+	ImageId string `json:"image_id,omitempty"`
+	// Specifies the project ID.
+	ProjectId string `json:"project_id,omitempty"`
+	// Specifies the job status.
+	Status string `json:"status,omitempty"`
+}
 
-// type SubJobResult struct {
-// 	Status     string         `json:"status,omitempty"`
-// 	JobId      string         `json:"job_id,omitempty"`
-// 	JobType    string         `json:"job_type,omitempty"`
-// 	BeginTime  string         `json:"begin_time,omitempty"`
-// 	EndTime    string         `json:"end_time,omitempty"`
-// 	ErrorCode  string         `json:"error_code,omitempty"`
-// 	FailReason string         `json:"fail_reason,omitempty"`
-// 	Entities   SubJobEntities `json:"entities,omitempty"`
-// }
+type SubJobResult struct {
+	// Specifies the sub-job status. The value can be:
+	//
+	// SUCCESS: The sub-job is successfully executed.
+	//
+	// FAIL: The sub-job failed to be executed.
+	//
+	// RUNNING: The sub-job is in progress.
+	//
+	// INIT: The sub-job is being initialized.
+	Status string `json:"status,omitempty"`
+	// Specifies a sub-job ID.
+	JobId string `json:"job_id,omitempty"`
+	// Specifies the sub-job type.
+	JobType string `json:"job_type,omitempty"`
+	// Specifies the start time of the sub-job. The value is in UTC format.
+	BeginTime string `json:"begin_time,omitempty"`
+	// Specifies the end time of the sub-job. The value is in UTC format.
+	EndTime string `json:"end_time,omitempty"`
+	// Specifies the error code.
+	ErrorCode string `json:"error_code,omitempty"`
+	// Specifies the failure cause.
+	FailReason string `json:"fail_reason,omitempty"`
+	// Specifies the custom attributes of the sub-job. For details, see Table 5.
+	//
+	// If a sub-job is properly executed, an image ID is returned.
+	//
+	// If an exception occurs on the sub-job, an error code and associated information are returned.
+	Entities SubJobEntities `json:"entities,omitempty"`
+}
 
-// type SubJobEntities struct {
-// 	ImageId   string `json:"image_id,omitempty"`
-// 	ImageName string `json:"image_name,omitempty"`
-// }
+type SubJobEntities struct {
+	// Specifies the image ID.
+	ImageId string `json:"image_id,omitempty"`
+	// Specifies the image name.
+	ImageName string `json:"image_name,omitempty"`
+}
 
 func ExtractJobId(err error, raw *http.Response) (*string, error) {
 	if err != nil {
@@ -93,4 +124,23 @@ func ExtractJobId(err error, raw *http.Response) (*string, error) {
 	}
 	err = extract.Into(raw.Body, &res)
 	return &res.JobId, err
+}
+
+func WaitForJob(c *golangsdk.ServiceClient, id string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		current, err := ShowJob(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if current.Status == "SUCCESS" {
+			return true, nil
+		}
+
+		if current.Status == "FAIL" {
+			return false, fmt.Errorf("job failed: %s", current.FailReason)
+		}
+
+		return false, nil
+	})
 }

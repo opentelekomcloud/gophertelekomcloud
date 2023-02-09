@@ -61,5 +61,5 @@ func CreateImageFromDisk(client *golangsdk.ServiceClient, opts CreateImageFromDi
 		return nil, err
 	}
 
-	return cloudImages(client, err, b)
+	return cloudImages(client, b)
 }
