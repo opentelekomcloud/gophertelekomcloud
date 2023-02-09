@@ -6,9 +6,10 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	tag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	image1 "github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/images"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -37,53 +38,31 @@ func TestCreateImageFromECS(t *testing.T) {
 
 	image := jobEntities(t, client1, client2, fromECS)
 
-	err = tags.AddImageTag(client2, tags.AddImageTagOpts{
-		ImageId: image.ImageId,
-		Tag: tag.ResourceTag{
-			Key:   "test",
-			Value: "testValue",
-		},
+	obsClient, bucketName := newBucket(t)
+
+	export, err := image1.ExportImage(client1, image1.ExportImageOpts{
+		ImageId:    image.ImageId,
+		BucketUrl:  bucketName + ":" + image.ImageName,
+		FileFormat: "zvhd",
+	})
+	t.Cleanup(func() {
+		_, err = obsClient.DeleteObject(&obs.DeleteObjectInput{
+			Bucket: bucketName,
+			Key:    image.ImageName,
+		})
+		th.AssertNoErr(t, err)
 	})
 	th.AssertNoErr(t, err)
 
-	imagesTags, err := tags.ListImagesTags(client2)
+	err = others.WaitForJob(client1, *export, 1000)
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, imagesTags)
 
-	err = tags.DeleteImageTag(client2, tags.DeleteImageTagOpts{
-		ImageId: image.ImageId,
-		Key:     "test",
+	quick, err := images.ImportImageQuick(client2, images.ImportImageQuickOpts{
+		Name:      tools.RandomString("ims-test-", 3),
+		OsVersion: "Debian GNU/Linux 10.0.0 64bit",
+		ImageUrl:  bucketName + ":" + image.ImageName,
+		MinDisk:   100,
 	})
 	th.AssertNoErr(t, err)
-
-	err = tags.BatchAddOrDeleteTags(client2, tags.BatchAddOrDeleteTagsOpts{
-		ImageId: image.ImageId,
-		Action:  "create",
-		Tags: []tag.ResourceTag{
-			{
-				Key:   "test1",
-				Value: "testValue1",
-			},
-			{
-				Key:   "test2",
-				Value: "testValue2",
-			},
-		},
-	})
-	th.AssertNoErr(t, err)
-
-	imageTags, err := tags.ListImageTags(client2, image.ImageId)
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, imageTags)
-
-	byTags, err := tags.ListImageByTags(client2, tags.ListImageByTagsOpts{
-		Action: "count",
-		Tags: []tag.ListedTag{{
-			Key:    "test1",
-			Values: []string{"testValue1"},
-		}},
-		Limit: "1",
-	})
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, byTags)
+	jobEntities(t, client1, client2, quick)
 }
