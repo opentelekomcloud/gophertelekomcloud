@@ -66,6 +66,10 @@ func CreateImageFromECS(client *golangsdk.ServiceClient, opts CreateImageFromECS
 		return nil, err
 	}
 
+	return cloudImages(client, err, b)
+}
+
+func cloudImages(client *golangsdk.ServiceClient, err error, b *build.Body) (*string, error) {
 	// POST /v2/cloudimages/action
 	raw, err := client.Post(client.ServiceURL("cloudimages", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},

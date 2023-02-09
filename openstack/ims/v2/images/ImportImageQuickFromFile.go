@@ -4,7 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 )
 
 type ImportImageQuickFromFileOpts struct {
@@ -71,9 +70,5 @@ func ImportImageQuickFromFile(client *golangsdk.ServiceClient, opts ImportImageQ
 		return nil, err
 	}
 
-	// POST /v2/cloudimages/quickimport/action
-	raw, err := client.Post(client.ServiceURL("cloudimages", "quickimport", "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return others.ExtractJobId(err, raw)
+	return quickImport(client, err, b)
 }

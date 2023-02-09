@@ -47,6 +47,10 @@ func CreateWholeImageFromECS(client *golangsdk.ServiceClient, opts CreateWholeIm
 		return nil, err
 	}
 
+	return wholeImages(client, err, b)
+}
+
+func wholeImages(client *golangsdk.ServiceClient, err error, b *build.Body) (*string, error) {
 	// POST /v1/cloudimages/wholeimages/action
 	raw, err := client.Post(client.ServiceURL("cloudimages", "wholeimages", "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},

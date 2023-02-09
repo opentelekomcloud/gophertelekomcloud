@@ -4,7 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 )
 
 // CreateImageFromDiskOpts Create a system disk image from a data disk.
@@ -62,9 +61,5 @@ func CreateImageFromDisk(client *golangsdk.ServiceClient, opts CreateImageFromDi
 		return nil, err
 	}
 
-	// POST /v2/cloudimages/action
-	raw, err := client.Post(client.ServiceURL("cloudimages", "action"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return others.ExtractJobId(err, raw)
+	return cloudImages(client, err, b)
 }
