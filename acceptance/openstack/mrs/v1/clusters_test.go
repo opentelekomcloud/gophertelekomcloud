@@ -2,10 +2,12 @@ package v1
 
 import (
 	"testing"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/mrs/v1/cluster"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
@@ -49,38 +51,46 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		MasterNodeSize:     "c3.xlarge.4.linux.mrs",
 		CoreNodeNum:        3,
 		CoreNodeSize:       "c3.xlarge.4.linux.mrs",
-		AvailableZoneID:    az,
+		AvailableZoneId:    az,
 		ClusterName:        name,
 		Vpc:                vpc.Name,
-		VpcID:              vpc.ID,
-		SubnetID:           subnet.NetworkID,
+		VpcId:              vpc.ID,
+		SubnetId:           subnet.NetworkID,
 		SubnetName:         subnet.Name,
 		ClusterVersion:     "MRS 2.1.0",
-		ClusterType:        0,
+		ClusterType:        pointerto.Int(0),
 		VolumeType:         "SATA",
 		VolumeSize:         100,
 		SafeMode:           1,
-		ClusterAdminSecret: "Qwerty123!",
-		LoginMode:          1,
+		ClusterAdminSecret: "SuperQwerty123!",
+		LoginMode:          pointerto.Int(1),
 		NodePublicCertName: keyPairName,
-		LogCollection:      1,
+		LogCollection:      pointerto.Int(1),
 		ComponentList: cluster.ExpandComponent(
 			[]string{"Presto", "Hadoop", "Spark", "HBase", "Hive", "Hue", "Loader", "Tez", "Flink"},
 		),
+		BootstrapScripts: []cluster.BootstrapScript{{
+			Name:         "BootstrapScript",
+			Uri:          "s3a://bootstrap/presto/presto-install.sh",
+			Parameters:   "--presto_version 0.227",
+			Nodes:        []string{"master"},
+			ActiveMaster: pointerto.Bool(true),
+			FailAction:   "continue",
+		}},
 	}
 
-	clResponse, err := cluster.Create(client, createOpts).Extract()
+	clResponse, err := cluster.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	err = waitForClusterToBeActive(client, clResponse.ClusterID, 3000)
+	err = waitForClusterToBeActive(client, clResponse.ClusterId, 3000)
 	th.AssertNoErr(t, err)
 
-	defer func() {
-		err = cluster.Delete(client, clResponse.ClusterID).ExtractErr()
+	t.Cleanup(func() {
+		err = cluster.Delete(client, clResponse.ClusterId)
 		th.AssertNoErr(t, err)
-		err = waitForClusterToBeDeleted(client, clResponse.ClusterID, 3000)
+		err = waitForClusterToBeDeleted(client, clResponse.ClusterId, 3000)
 		th.AssertNoErr(t, err)
-	}()
+	})
 
 	tagOpts := []tags.ResourceTag{
 		{
@@ -93,21 +103,21 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		},
 	}
 
-	err = tags.Create(client, "clusters", clResponse.ClusterID, tagOpts).ExtractErr()
+	err = tags.Create(client, "clusters", clResponse.ClusterId, tagOpts).ExtractErr()
 	th.AssertNoErr(t, err)
 
-	newCluster, err := cluster.Get(client, clResponse.ClusterID).Extract()
+	newCluster, err := cluster.Get(client, clResponse.ClusterId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(newCluster.ComponentList), 9)
 
-	tagList, err := tags.Get(client, "clusters", clResponse.ClusterID).Extract()
+	tagList, err := tags.Get(client, "clusters", clResponse.ClusterId).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(tagList), len(tagOpts))
 }
 
 func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		n, err := cluster.Get(client, clusterID).Extract()
+		n, err := cluster.Get(client, clusterID)
 		if err != nil {
 			return false, err
 		}
@@ -115,14 +125,14 @@ func waitForClusterToBeActive(client *golangsdk.ServiceClient, clusterID string,
 		if n.ClusterState == "running" {
 			return true, nil
 		}
-
+		time.Sleep(5 * time.Second)
 		return false, nil
 	})
 }
 
 func waitForClusterToBeDeleted(client *golangsdk.ServiceClient, clusterID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		n, err := cluster.Get(client, clusterID).Extract()
+		n, err := cluster.Get(client, clusterID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

@@ -10,6 +10,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	networking "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/networking/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
 	ddsjob "github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/job"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -20,30 +21,78 @@ func TestDdsList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := instances.ListInstanceOpts{}
-	ddsInstances, err := instances.List(client, listOpts)
+	_, err = instances.List(client, listOpts)
 	th.AssertNoErr(t, err)
-	for _, val := range ddsInstances.Instances {
-		tools.PrintResource(t, val)
-	}
 }
 
-func TestDdsLifeCycle(t *testing.T) {
+func TestDdsSingleLifeCycle(t *testing.T) {
 	client, err := clients.NewDdsV3Client()
 	th.AssertNoErr(t, err)
 
+	t.Logf("Attempting to create DDSv3 single instance")
 	ddsInstance := createDdsSingleInstance(t, client)
 	defer deleteDdsInstance(t, client, ddsInstance.Id)
 
-	tools.PrintResource(t, ddsInstance)
 	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
 	newDdsInstance, err := instances.List(client, listOpts)
 	th.AssertNoErr(t, err)
 	if newDdsInstance.TotalCount == 0 {
 		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
-	tools.PrintResource(t, newDdsInstance.Instances[0])
-
+	t.Log(newDdsInstance.Instances[0])
 	updateDdsInstance(t, client, newDdsInstance.Instances[0])
+}
+
+func TestDdsClusterLifeCycle(t *testing.T) {
+	client, err := clients.NewDdsV3Client()
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to create DDSv3 cluster instance")
+	ddsInstance := createDdsClusterInstance(t, client)
+	defer deleteDdsInstance(t, client, ddsInstance.Id)
+
+	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
+	newDdsInstance, err := instances.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	if newDdsInstance.TotalCount == 0 {
+		t.Fatalf("No DDSv3 instance was found: %s", err)
+	}
+	t.Log(newDdsInstance.Instances[0])
+
+	t.Logf("Attempting to add 2 mongo nodes to cluster")
+	_, err = instances.AddNode(client, instances.AddNodeOpts{
+		InstanceId: newDdsInstance.Instances[0].Id,
+		Type:       "mongos",
+		SpecCode:   "dds.mongodb.s2.large.4.mongos",
+		Num:        2,
+	})
+	th.AssertNoErr(t, err)
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to add 2 shard nodes to cluster")
+	_, err = instances.AddNode(client, instances.AddNodeOpts{
+		InstanceId: newDdsInstance.Instances[0].Id,
+		Type:       "shard",
+		SpecCode:   "dds.mongodb.s2.large.4.shard",
+		Num:        2,
+		Volume: &instances.VolumeNode{
+			Size: 70,
+		},
+	})
+	th.AssertNoErr(t, err)
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
+
+	t.Log("Enable config IP")
+	err = instances.EnableConfigIp(client, instances.EnableConfigIpOpts{
+		InstanceId: ddsInstance.Id,
+		Type:       "config",
+		Password:   "5ecurePa55w0rd@@",
+	})
+	th.AssertNoErr(t, err)
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
 }
 
 func TestDdsReplicaLifeCycle(t *testing.T) {
@@ -53,28 +102,17 @@ func TestDdsReplicaLifeCycle(t *testing.T) {
 	ddsInstance := createDdsReplicaInstance(t, client)
 	defer deleteDdsInstance(t, client, ddsInstance.Id)
 
-	tools.PrintResource(t, ddsInstance)
 	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
 	newDdsInstance, err := instances.List(client, listOpts)
 	th.AssertNoErr(t, err)
 	if newDdsInstance.TotalCount == 0 {
 		t.Fatalf("No DDSv3 instance was found: %s", err)
 	}
+	t.Log(newDdsInstance.Instances[0])
 
 	err = instances.ChangePassword(client, instances.ChangePasswordOpt{
 		InstanceId: ddsInstance.Id,
 		UserPwd:    "5ecurePa55w0rd@@",
-	})
-	th.AssertNoErr(t, err)
-	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, newDdsInstance.Instances[0])
-
-	t.Log("Enable config IP")
-	err = instances.EnableConfigIp(client, instances.EnableConfigIpOpts{
-		InstanceId: ddsInstance.Id,
-		Type:       "config",
-		Password:   "5ecurePa55w0rd@@",
 	})
 	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
@@ -186,7 +224,6 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 }
 
 func createDdsSingleInstance(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
-	t.Logf("Attempting to create DDSv3 replica set instance")
 	prefix := "dds-acc-"
 	ddsName := tools.RandomString(prefix, 8)
 	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
@@ -233,7 +270,7 @@ func createDdsSingleInstance(t *testing.T, client *golangsdk.ServiceClient) *ins
 	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
 	th.AssertNoErr(t, err)
-	t.Logf("DDSv3 replica set instance successfully created: %s", ddsInstance.Id)
+	t.Logf("DDSv3 replica set instance successfully created")
 	return ddsInstance
 }
 
@@ -279,6 +316,86 @@ func createDdsReplicaInstance(t *testing.T, client *golangsdk.ServiceClient) *in
 		},
 		BackupStrategy: instances.BackupStrategy{
 			StartTime: "08:15-09:15",
+		},
+		Tags: []tags.ResourceTag{
+			{
+				Key:   "muh",
+				Value: "kuh",
+			},
+			{
+				Key:   "muh2",
+				Value: "kuh2",
+			},
+		},
+	}
+	ddsInstance, err := instances.Create(client, createOpts)
+	th.AssertNoErr(t, err)
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
+	t.Logf("DDSv3 replica set instance successfully created")
+	return ddsInstance
+}
+
+func createDdsClusterInstance(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
+	prefix := "dds-acc-"
+	ddsName := tools.RandomString(prefix, 8)
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+	cloud, err := clients.EnvOS.Cloud()
+	th.AssertNoErr(t, err)
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	}
+
+	createOpts := instances.CreateOpts{
+		Name: ddsName,
+		DataStore: instances.DataStore{
+			Type:          "DDS-Community",
+			Version:       "3.4",
+			StorageEngine: "wiredTiger",
+		},
+		Region:           cloud.RegionName,
+		AvailabilityZone: az,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
+		Password:         "5ecurePa55w0rd@",
+		Mode:             "Sharding",
+		Flavor: []instances.Flavor{
+			{
+				Type:     "mongos",
+				Num:      2,
+				Storage:  "ULTRAHIGH",
+				SpecCode: "dds.mongodb.s2.medium.4.mongos",
+			},
+			{
+				Type:     "shard",
+				Num:      2,
+				Storage:  "ULTRAHIGH",
+				Size:     20,
+				SpecCode: "dds.mongodb.s2.medium.4.shard",
+			},
+			{
+				Type:     "config",
+				Num:      1,
+				Storage:  "ULTRAHIGH",
+				Size:     20,
+				SpecCode: "dds.mongodb.s2.large.2.config",
+			},
+		},
+		BackupStrategy: instances.BackupStrategy{
+			StartTime: "08:15-09:15",
+		},
+		Tags: []tags.ResourceTag{
+			{Key: "muh",
+				Value: "kuh"},
+			{Key: "muh2",
+				Value: "kuh2"},
 		},
 	}
 	ddsInstance, err := instances.Create(client, createOpts)
@@ -337,7 +454,7 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 		}
 		if ddsInstances.TotalCount == 1 {
 			dds := ddsInstances.Instances
-			if len(dds) == 1 && len(dds[0].Actions) == 0 {
+			if len(dds) == 1 && len(dds[0].Actions) == 0 && dds[0].Status == "normal" {
 				return true, nil
 			}
 			return false, nil
