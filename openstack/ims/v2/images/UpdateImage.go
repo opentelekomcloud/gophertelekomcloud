@@ -7,7 +7,6 @@ import (
 )
 
 type UpdateImageOpts struct {
-	ImageId string `json:"-" required:"true"`
 	// Specifies the operation. The value can be add, replace, or remove.
 	Op string `json:"op" required:"true"`
 	// Specifies the name of the attribute to be modified. / needs to be added in front of it.
@@ -36,14 +35,14 @@ type UpdateImageOpts struct {
 
 // UpdateImage This API is used to modify image attributes and update image information.
 // Only information of images in active status can be changed.
-func UpdateImage(client *golangsdk.ServiceClient, opts UpdateImageOpts) (*ImageInfo, error) {
+func UpdateImage(client *golangsdk.ServiceClient, imageId string, opts []UpdateImageOpts) (*ImageInfo, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// PATCH /v2/cloudimages/{image_id}
-	raw, err := client.Patch(client.ServiceURL("cloudimages", opts.ImageId), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Patch(client.ServiceURL("cloudimages", imageId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

@@ -58,5 +58,5 @@ func CreateWholeImageFromCBRorCSBS(client *golangsdk.ServiceClient, opts CreateW
 		return nil, err
 	}
 
-	return wholeImages(client, err, b)
+	return wholeImages(client, b)
 }

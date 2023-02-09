@@ -7,13 +7,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 )
 
-type ImportImageQuickFromOBSOpts struct {
+type ImportImageQuickOpts struct {
 	// Specifies the image name.
 	Name string `json:"name" required:"true"`
 	// Provides supplementary information about the image. For detailed description, see Image Attributes. The value contains a maximum of 1024 characters and consists of only letters and digits. Carriage returns and angle brackets (< >) are not allowed. This parameter is left blank by default.
 	Description string `json:"description,omitempty"`
 	// Specifies the OS version.
-	//
+	// This parameter is valid if an external image file uploaded to the OBS bucket is used to create an image. For its value, see Values of Related Parameters.
 	// When a data disk image created, the value can be Linux or Windows. The default is Linux.
 	OsVersion string `json:"os_version,omitempty"`
 	// Specifies the URL of the external image file in the OBS bucket.
@@ -35,11 +35,13 @@ type ImportImageQuickFromOBSOpts struct {
 	//
 	// Set either tags or image_tags.
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
-	// Specifies the image type. The parameter value is DataImage for data disk images.
-	Type string `json:"type" required:"true"`
+	// Specifies the image type.
+	// The parameter value is ECS/BMS for system disk images. The default value is ECS.
+	// The parameter value is DataImage for data disk images.
+	Type string `json:"type,omitempty"`
 }
 
-func ImportImageQuickFromOBS(client *golangsdk.ServiceClient, opts ImportImageQuickFromOBSOpts) (*string, error) {
+func ImportImageQuick(client *golangsdk.ServiceClient, opts ImportImageQuickOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

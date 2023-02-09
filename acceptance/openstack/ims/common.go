@@ -43,6 +43,7 @@ func downloadIMG(t *testing.T) (*os.File, error) {
 
 	_, err = io.Copy(img, resp.Body)
 	th.AssertNoErr(t, err)
+
 	return img, err
 }
 
