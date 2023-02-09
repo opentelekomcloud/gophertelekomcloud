@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	images1 "github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/images"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -23,7 +24,18 @@ func TestCreateImageFromOBS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	jobEntities(t, client1, client2, fromOBS)
+	image := jobEntities(t, client1, client2, fromOBS)
+
+	copied, err := others.CopyImageInRegion(client1, others.CopyImageInRegionOpts{
+		ImageId: image.ImageId,
+		Name:    tools.RandomString("ims-test-", 5),
+	})
+	th.AssertNoErr(t, err)
+	jobEntities(t, client1, client2, copied)
+
+	quota, err := others.ShowImageQuota(client1)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, quota)
 }
 
 func TestCreateDataImage(t *testing.T) {

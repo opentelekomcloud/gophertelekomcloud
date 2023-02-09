@@ -69,7 +69,7 @@ func TestCreateImageFromECS(t *testing.T) {
 	tools.PrintResource(t, imageTags)
 
 	byTags, err := tags.ListImageByTags(client2, tags.ListImageByTagsOpts{
-		Action: "",
+		Action: "count",
 		Tags: []tag.ListedTag{{
 			Key:    "test1",
 			Values: []string{"testValue1"},
