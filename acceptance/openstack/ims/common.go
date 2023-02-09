@@ -4,10 +4,13 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -41,4 +44,44 @@ func downloadIMG(t *testing.T) (*os.File, error) {
 	_, err = io.Copy(img, resp.Body)
 	th.AssertNoErr(t, err)
 	return img, err
+}
+
+func makeOBS(t *testing.T) (string, string) {
+	obsClient, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	bucketName := strings.ToLower(tools.RandomString("ims-sdk-test", 5))
+
+	_, err = obsClient.CreateBucket(&obs.CreateBucketInput{
+		Bucket: bucketName,
+	})
+	t.Cleanup(func() {
+		_, err = obsClient.DeleteBucket(bucketName)
+		th.AssertNoErr(t, err)
+	})
+	th.AssertNoErr(t, err)
+
+	img, err := downloadIMG(t)
+
+	objectName := tools.RandomString("ims-test-", 5)
+
+	_, err = obsClient.PutFile(&obs.PutFileInput{
+		PutObjectBasicInput: obs.PutObjectBasicInput{
+			ObjectOperationInput: obs.ObjectOperationInput{
+				Bucket: bucketName,
+				Key:    objectName,
+			},
+		},
+		SourceFile: img.Name(),
+	})
+	t.Cleanup(func() {
+		_, err = obsClient.DeleteObject(&obs.DeleteObjectInput{
+			Bucket: bucketName,
+			Key:    objectName,
+		})
+		th.AssertNoErr(t, err)
+	})
+	th.AssertNoErr(t, err)
+
+	return bucketName, objectName
 }
