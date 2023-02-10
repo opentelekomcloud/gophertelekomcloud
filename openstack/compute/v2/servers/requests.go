@@ -6,7 +6,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -248,11 +248,13 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 				err.Argument = "ServiceClient"
 				return nil, err
 			}
-			imageID, err := images.IDFromName(sc, opts.ImageName)
+			image, err := images.ListImages(sc, images.ListImagesOpts{
+				Name: opts.ImageName,
+			})
 			if err != nil {
 				return nil, err
 			}
-			b["imageRef"] = imageID
+			b["imageRef"] = image[0].Id
 		}
 	}
 
@@ -398,19 +400,19 @@ func (opts RebootOpts) ToServerRebootMap() (map[string]interface{}, error) {
 }
 
 /*
-	Reboot requests that a given server reboot.
+Reboot requests that a given server reboot.
 
-	Two methods exist for rebooting a server:
+Two methods exist for rebooting a server:
 
-	HardReboot (aka PowerCycle) starts the server instance by physically cutting
-	power to the machine, or if a VM, terminating it at the hypervisor level.
-	It's done. Caput. Full stop.
-	Then, after a brief while, power is rtored or the VM instance restarted.
+HardReboot (aka PowerCycle) starts the server instance by physically cutting
+power to the machine, or if a VM, terminating it at the hypervisor level.
+It's done. Caput. Full stop.
+Then, after a brief while, power is rtored or the VM instance restarted.
 
-	SoftReboot (aka OSReboot) simply tells the OS to restart under its own
-	procedure.
-	E.g., in Linux, asking it to enter runlevel 6, or executing
-	"sudo shutdown -r now", or by asking Windows to rtart the machine.
+SoftReboot (aka OSReboot) simply tells the OS to restart under its own
+procedure.
+E.g., in Linux, asking it to enter runlevel 6, or executing
+"sudo shutdown -r now", or by asking Windows to rtart the machine.
 */
 func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOptsBuilder) (r ActionResult) {
 	b, err := opts.ToServerRebootMap()
@@ -478,11 +480,13 @@ func (opts RebuildOpts) ToServerRebuildMap() (map[string]interface{}, error) {
 				err.Argument = "ServiceClient"
 				return nil, err
 			}
-			imageID, err := images.IDFromName(opts.ServiceClient, opts.ImageName)
+			image, err := images.ListImages(opts.ServiceClient, images.ListImagesOpts{
+				Name: opts.ImageName,
+			})
 			if err != nil {
 				return nil, err
 			}
-			b["imageRef"] = imageID
+			b["imageRef"] = image[0].Id
 		}
 	}
 
