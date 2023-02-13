@@ -12,19 +12,19 @@ type GetMemberOpts struct {
 	MemberId string `json:"-" required:"true"`
 }
 
-func GetMember(client *golangsdk.ServiceClient, opts GetMemberOpts) (*GetMemberResponse, error) {
+func GetMember(client *golangsdk.ServiceClient, opts GetMemberOpts) (*Member, error) {
 	// GET /v2/images/{image_id}/members/{member_id}
 	raw, err := client.Get(client.ServiceURL("images", opts.ImageId, "members", opts.MemberId), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res GetMemberResponse
+	var res Member
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type GetMemberResponse struct {
+type Member struct {
 	// Specifies the image sharing status.
 	Status string `json:"status"`
 	// Specifies the time when a shared image was created. The value is in UTC format.
