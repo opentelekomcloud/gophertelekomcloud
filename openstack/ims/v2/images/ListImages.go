@@ -13,13 +13,13 @@ type ListImagesOpts struct {
 	// Shared image: The value is shared.
 	// NOTE:
 	// The __imagetype of images you share with other tenants or those other tenants share with you and you have accepted is shared. You can use field owner to distinguish the two types of shared images. You can use member_status to filter out shared images you have accepted.
-	Imagetype string `q:"__imagetype,omitempty"`
+	ImageType string `q:"__imagetype,omitempty"`
 	// Specifies whether the image is available. The value can be true. The value is true for all extension APIs by default. Common users can query only the images for which the value of this parameter is true.
-	Isregistered string `q:"__isregistered,omitempty"`
+	IsRegistered string `q:"__isregistered,omitempty"`
 	// Specifies whether the image is a full-ECS image. The value can be true or false.
 	WholeImage *bool `q:"__whole_image,omitempty"`
 	// Specifies the ID of the key used to encrypt the image. You can obtain the ID from the IMS console or by calling the Querying Image Details (Native OpenStack API) API.
-	SystemCmkid string `q:"__system__cmkid,omitempty"`
+	SystemCmkId string `q:"__system__cmkid,omitempty"`
 	// Specifies the OS architecture, 32 bit or 64 bit.
 	OsBit string `q:"__os_bit,omitempty"`
 	// Specifies the image OS type. Available values include:
@@ -31,9 +31,9 @@ type ListImagesOpts struct {
 	// Specifies the image platform type. The value can be Windows, Ubuntu, RedHat, SUSE, CentOS, Debian, OpenSUSE, Oracle Linux, Fedora, Other, CoreOS, or EulerOS.
 	Platform string `q:"__platform,omitempty"`
 	// Specifies whether the image supports disk-intensive ECSs. If the image supports disk-intensive ECSs, the value is true. Otherwise, this parameter is not required.
-	SupportDiskintensive string `q:"__support_diskintensive,omitempty"`
+	SupportDiskIntensive string `q:"__support_diskintensive,omitempty"`
 	// Specifies whether the image supports high-performance ECSs. If the image supports high-performance ECSs, the value is true. Otherwise, this parameter is not required.
-	SupportHighperformance string `q:"__support_highperformance,omitempty"`
+	SupportHighPerformance string `q:"__support_highperformance,omitempty"`
 	// Specifies whether the image supports KVM. If yes, the value is true. Otherwise, this parameter is not required.
 	SupportKvm string `q:"__support_kvm,omitempty"`
 	// Specifies whether the image supports GPU-accelerated ECSs on the KVM platform. See Table 3 for its value. If the image does not support GPU-accelerated ECSs on the KVM platform, this parameter is not required. This attribute cannot co-exist with __support_xen and __support_kvm.
@@ -43,7 +43,7 @@ type ListImagesOpts struct {
 	// This attribute cannot co-exist with __support_xen.
 	SupportKvmInfiniband string `q:"__support_kvm_infiniband,omitempty"`
 	// Specifies whether the image supports large-memory ECSs. If the image supports large-memory ECSs, the value is true. Otherwise, this parameter is not required.
-	SupportLargememory string `q:"__support_largememory,omitempty"`
+	SupportLargeMemory string `q:"__support_largememory,omitempty"`
 	// Specifies whether the image supports Xen. If yes, the value is true. Otherwise, this parameter is not required.
 	SupportXen string `q:"__support_xen,omitempty"`
 	// Specifies whether the image supports GPU-accelerated ECSs on the Xen platform. See Table 2 for its value. If the image does not support GPU-accelerated ECSs on the Xen platform, this parameter is not required. This attribute cannot co-exist with __support_xen and __support_kvm.
