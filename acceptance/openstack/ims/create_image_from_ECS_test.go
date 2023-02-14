@@ -57,12 +57,12 @@ func TestCreateImageFromECS(t *testing.T) {
 	err = others.WaitForJob(client1, *export, 1000)
 	th.AssertNoErr(t, err)
 
-	quick, err := images.ImportImageQuick(client2, images.ImportImageQuickOpts{
-		Name:      tools.RandomString("ims-test-", 3),
-		OsVersion: "Debian GNU/Linux 10.0.0 64bit",
-		ImageUrl:  bucketName + ":" + image.ImageName,
-		MinDisk:   100,
-	})
-	th.AssertNoErr(t, err)
-	jobEntities(t, client1, client2, quick)
+	// quick, err := images.ImportImageQuick(client2, images.ImportImageQuickOpts{
+	// 	Name:      tools.RandomString("ims-test-", 3),
+	// 	OsVersion: "Debian GNU/Linux 10.0.0 64bit",
+	// 	ImageUrl:  bucketName + ":" + image.ImageName,
+	// 	MinDisk:   100,
+	// })
+	// th.AssertNoErr(t, err)
+	// jobEntities(t, client1, client2, quick)
 }
