@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/backups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/checkpoint"
@@ -66,4 +70,55 @@ func waitForBackupDelete(client *golangsdk.ServiceClient, secs int, id string) e
 
 		return false, nil
 	})
+}
+
+func CreateCBR(t *testing.T, client *golangsdk.ServiceClient) (*vaults.Vault, vaults.AssociateResourcesOpts, checkpoint.CreateOpts, *checkpoint.Checkpoint) {
+	// Create Vault for further backup
+	opts := vaults.CreateOpts{
+		Billing: &vaults.BillingCreate{
+			ConsistentLevel: "crash_consistent",
+			ObjectType:      "disk",
+			ProtectType:     "backup",
+			Size:            100,
+		},
+		Description: "gophertelemocloud testing vault",
+		Name:        tools.RandomString("cbr-test-", 5),
+		Resources:   []vaults.ResourceCreate{},
+	}
+	vault, err := vaults.Create(client, opts)
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
+
+	// Create Volume
+	volume := openstack.CreateVolume(t)
+	t.Cleanup(func() {
+		openstack.DeleteVolume(t, volume.ID)
+	})
+
+	// Associate server to the vault
+	aOpts := vaults.AssociateResourcesOpts{
+		Resources: []vaults.ResourceCreate{
+			{
+				ID:   volume.ID,
+				Type: "OS::Cinder::Volume",
+			},
+		},
+	}
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(associated))
+
+	// Create vault checkpoint
+	optsVault := checkpoint.CreateOpts{
+		VaultID: vault.ID,
+		Parameters: checkpoint.CheckpointParam{
+			Description: "go created backup",
+			Incremental: true,
+			Name:        tools.RandomString("go-checkpoint", 5),
+		},
+	}
+	checkp := CreateCheckpoint(t, client, optsVault)
+	return vault, aOpts, optsVault, checkp
 }

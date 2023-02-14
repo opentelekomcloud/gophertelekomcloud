@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/csbs/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/backups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/checkpoint"
@@ -21,7 +20,7 @@ func TestBackupLifecycle(t *testing.T) {
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
-	vault, aOpts, optsVault, checkp := v1.CreateCBR(t, client)
+	vault, aOpts, optsVault, checkp := CreateCBR(t, client)
 	th.AssertEquals(t, vault.ID, checkp.Vault.ID)
 	th.AssertEquals(t, optsVault.Parameters.Description, checkp.ExtraInfo.Description)
 	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)

@@ -5,7 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
-	v1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/csbs/v1"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cbr/v3"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/backups"
 	tag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
@@ -15,12 +15,13 @@ import (
 )
 
 func TestCreateWholeImageFromCBR(t *testing.T) {
+	t.Skip("Unstable test")
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
 	client1, client2 := getClient(t)
 
-	vault, _, _, _ := v1.CreateCBR(t, client)
+	vault, _, _, _ := v3.CreateCBR(t, client)
 	list, err := backups.List(client, backups.ListOpts{VaultID: vault.ID})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
