@@ -695,8 +695,14 @@ func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 }
 
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
+// Deprecated
 func NewDMSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "dmsv1")
+}
+
+// NewDMSServiceV2 creates a ServiceClient that may be used to access the v2 Distributed Message Service.
+func NewDMSServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "dmsv2")
 }
 
 // NewDCSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Cache Service.
