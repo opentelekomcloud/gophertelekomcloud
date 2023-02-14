@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/csbs/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	tag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
@@ -36,13 +37,8 @@ func TestCreateWholeImageFromECS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	fromECS, err := images.CreateWholeImageFromECS(client1, images.CreateWholeImageFromECSOpts{
-		Name:       tools.RandomString("ims-test-", 3),
-		InstanceId: ecs.ID,
-	})
+	v1.CreateCSBS(t, clientCSBS, ecs.ID)
 	th.AssertNoErr(t, err)
-
-	image := jobEntities(t, client1, client2, fromECS)
 
 	fromCSBS, err := images.CreateWholeImageFromCBRorCSBS(client1, images.CreateWholeImageFromCBRorCSBSOpts{
 		Name:     tools.RandomString("ims-test-", 3),
@@ -50,6 +46,14 @@ func TestCreateWholeImageFromECS(t *testing.T) {
 	})
 
 	jobEntities(t, client1, client2, fromCSBS)
+
+	fromECS, err := images.CreateWholeImageFromECS(client1, images.CreateWholeImageFromECSOpts{
+		Name:       tools.RandomString("ims-test-", 3),
+		InstanceId: ecs.ID,
+	})
+	th.AssertNoErr(t, err)
+
+	image := jobEntities(t, client1, client2, fromECS)
 
 	err = tags.AddImageTag(client2, tags.AddImageTagOpts{
 		ImageId: image.ImageId,
