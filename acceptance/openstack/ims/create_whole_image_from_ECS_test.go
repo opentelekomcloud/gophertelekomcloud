@@ -5,19 +5,33 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/csbs/v1"
+	v1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/csbs/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	tag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/csbs/v1/backup"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/tags"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestCreateWholeImageFromECS(t *testing.T) {
-	clientCSBS, err := clients.NewCsbsV1Client()
+func TestCreateWholeImageFromCBR(t *testing.T) {
+	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
+	client1, client2 := getClient(t)
+
+	_, _, _, checkp := v1.CreateCBR(t, client)
+
+	fromCBR, err := images.CreateWholeImageFromCBRorCSBS(client1, images.CreateWholeImageFromCBRorCSBSOpts{
+		Name:           tools.RandomString("ims-test-", 3),
+		BackupId:       checkp.ID,
+		WholeImageType: "CBR",
+	})
+	th.AssertNoErr(t, err)
+
+	jobEntities(t, client1, client2, fromCBR)
+}
+
+func TestCreateWholeImageFromECS(t *testing.T) {
 	client1, client2 := getClient(t)
 
 	computeClient, err := clients.NewComputeV1Client()
@@ -25,27 +39,6 @@ func TestCreateWholeImageFromECS(t *testing.T) {
 
 	ecs := openstack.CreateCloudServer(t, computeClient, openstack.GetCloudServerCreateOpts(t))
 	t.Cleanup(func() { openstack.DeleteCloudServer(t, computeClient, ecs.ID) })
-
-	checkpoint, err := backup.Create(clientCSBS, ecs.ID, backup.CreateOpts{
-		BackupName:   tools.RandomString("backup-", 3),
-		Description:  "bla-bla",
-		ResourceType: "OS::Nova::Server",
-	})
-	t.Cleanup(func() {
-		err = backup.Delete(clientCSBS, checkpoint.Id)
-		th.AssertNoErr(t, err)
-	})
-	th.AssertNoErr(t, err)
-
-	v1.CreateCSBS(t, clientCSBS, ecs.ID)
-	th.AssertNoErr(t, err)
-
-	fromCSBS, err := images.CreateWholeImageFromCBRorCSBS(client1, images.CreateWholeImageFromCBRorCSBSOpts{
-		Name:     tools.RandomString("ims-test-", 3),
-		BackupId: checkpoint.Id,
-	})
-
-	jobEntities(t, client1, client2, fromCSBS)
 
 	fromECS, err := images.CreateWholeImageFromECS(client1, images.CreateWholeImageFromECSOpts{
 		Name:       tools.RandomString("ims-test-", 3),

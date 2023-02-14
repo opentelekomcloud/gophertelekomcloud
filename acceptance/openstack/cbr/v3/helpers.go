@@ -13,6 +13,11 @@ import (
 func CreateCheckpoint(t *testing.T, client *golangsdk.ServiceClient, createOpts checkpoint.CreateOpts) *checkpoint.Checkpoint {
 	backup, err := checkpoint.Create(client, createOpts)
 	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		errBack := backups.Delete(client, backup.ID)
+		th.AssertNoErr(t, errBack)
+		th.AssertNoErr(t, waitForBackupDelete(client, 600, backup.ID))
+	})
 
 	err = golangsdk.WaitFor(600, func() (bool, error) {
 		checkp, err := checkpoint.Get(client, backup.ID)
