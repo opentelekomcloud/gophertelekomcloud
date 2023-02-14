@@ -170,23 +170,6 @@ func TestCreateServerWithUserdataEncoded(t *testing.T) {
 	th.CheckDeepEquals(t, ServerDerp, *actual)
 }
 
-func TestCreateServerWithImageNameAndFlavorName(t *testing.T) {
-	t.Skip("IMS endpoint changed")
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	HandleServerCreationSuccessfully(t, SingleServerBody)
-
-	actual, err := servers.Create(client.ServiceClient(), servers.CreateOpts{
-		Name:          "derp",
-		ImageName:     "cirros-0.3.2-x86_64-disk",
-		FlavorName:    "m1.tiny",
-		ServiceClient: client.ServiceClient(),
-	}).Extract()
-	th.AssertNoErr(t, err)
-
-	th.CheckDeepEquals(t, ServerDerp, *actual)
-}
-
 func TestDeleteServer(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
