@@ -7,6 +7,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	v1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/csbs/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/backups"
 	tag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/tags"
@@ -19,11 +20,17 @@ func TestCreateWholeImageFromCBR(t *testing.T) {
 
 	client1, client2 := getClient(t)
 
-	_, _, _, checkp := v1.CreateCBR(t, client)
+	vault, _, _, _ := v1.CreateCBR(t, client)
+	list, err := backups.List(client, backups.ListOpts{VaultID: vault.ID})
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		err = backups.Delete(client, list[0].ID)
+		th.AssertNoErr(t, err)
+	})
 
 	fromCBR, err := images.CreateWholeImageFromCBRorCSBS(client1, images.CreateWholeImageFromCBRorCSBSOpts{
 		Name:           tools.RandomString("ims-test-", 3),
-		BackupId:       checkp.ID,
+		BackupId:       list[0].ID,
 		WholeImageType: "CBR",
 	})
 	th.AssertNoErr(t, err)
