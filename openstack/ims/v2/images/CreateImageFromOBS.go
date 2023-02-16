@@ -45,11 +45,9 @@ type CreateImageFromOBSOpts struct {
 	// This parameter is mandatory if an external image file in the OBS bucket is used to create an image. The value ranges from 1 GB to 1024 GB.
 	MinDisk int `json:"min_disk" required:"true"`
 	// Specifies whether automatic configuration is enabled.
-	//
 	// The value can be true or false.
-	//
+
 	// If automatic configuration is required, set the value to true. Otherwise, set the value to false The default value is false.
-	//
 	// For details about automatic configuration, see Creating a Linux System Disk Image from an External Image File > Registering an External Image File as a Private Image (Linux) in Image Management Service User Guide.
 	IsConfig bool `json:"is_config,omitempty"`
 	// Specifies the master key used for encrypting an image. For its value, see the Key Management Service User Guide.
@@ -65,11 +63,7 @@ type CreateImageFromOBSOpts struct {
 	// Specifies the minimum memory of the image in the unit of MB. The default value is 0, indicating that the memory is not restricted.
 	MinRam int `json:"min_ram,omitempty"`
 	// Specifies the data disk information to be imported.
-	//
 	// An external image file can contain a maximum of three data disks. In this case, one system disk and three data disks will be created.
-	//
-	// For details, see Table 2.
-	//
 	// NOTE:
 	// If a data disk image file is used to create a data disk image, the OS type of the data disk image must be the same as that of the system disk image.
 	// If other parameters (such as name, description, and tags) in Table 2 are set, the system uses the values in data_images.
@@ -77,6 +71,11 @@ type CreateImageFromOBSOpts struct {
 	// Specifies whether to use the quick import method to import a system disk image.
 	// For details about the restrictions on quick import of image files, see Importing an Image File Quickly.
 	IsQuickImport bool `json:"is_quick_import,omitempty"`
+	// Specifies the image type.
+	// The value can be ECS, BMS, FusionCompute, or Ironic. The default value is ECS.
+	// ECS and FusionCompute: indicate an ECS image.
+	// BMS and Ironic: indicate a BMS image.the image type, the value can be ECS,BMS,FusionCompute, or Ironic
+	Type string `json:"type,omitempty"`
 }
 
 type OBSDataImage struct {
