@@ -632,7 +632,7 @@ func NewDmsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
-// NewDmsV1Client returns authenticated DMS v1 client
+// NewDmsV2Client returns authenticated DMS v2 client
 func NewDmsV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
