@@ -3,11 +3,14 @@ package images
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -189,6 +192,30 @@ func (r ImagePage) NextPageURL() (string, error) {
 	}
 
 	return nextPageURL(r.serviceURL, s.Next)
+}
+
+func nextPageURL(serviceURL, requestedNext string) (string, error) {
+	base, err := utils.BaseEndpoint(serviceURL)
+	if err != nil {
+		return "", err
+	}
+
+	requestedNextURL, err := url.Parse(requestedNext)
+	if err != nil {
+		return "", err
+	}
+
+	base = golangsdk.NormalizeURL(base)
+	nextPath := base + strings.TrimPrefix(requestedNextURL.Path, "/")
+
+	nextURL, err := url.Parse(nextPath)
+	if err != nil {
+		return "", err
+	}
+
+	nextURL.RawQuery = requestedNextURL.RawQuery
+
+	return nextURL.String(), nil
 }
 
 // ExtractImages interprets the results of a single page from a List() call,

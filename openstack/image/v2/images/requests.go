@@ -123,7 +123,7 @@ func (opts ListOpts) ToImageListQuery() (string, error) {
 
 // List implements image list request.
 func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	u := listURL(c)
+	u := c.ServiceURL("images")
 	if opts != nil {
 		query, err := opts.ToImageListQuery()
 		if err != nil {
@@ -209,19 +209,19 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return r
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{201}})
+	_, r.Err = client.Post(client.ServiceURL("images"), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{201}})
 	return
 }
 
 // Delete implements image delete request.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, id), nil)
+	_, r.Err = client.Delete(client.ServiceURL("images", id), nil)
 	return
 }
 
 // Get implements image get request.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("images", id), &r.Body, nil)
 	return
 }
 
@@ -232,7 +232,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return r
 	}
-	_, r.Err = client.Patch(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(client.ServiceURL("images", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/openstack-images-v2.1-json-patch"},
 	})

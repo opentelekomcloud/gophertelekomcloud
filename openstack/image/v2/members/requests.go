@@ -42,7 +42,7 @@ func Create(client *golangsdk.ServiceClient, imageID string, opts CreateOptsBuil
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createMemberURL(client, imageID), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("images", imageID, "members"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -50,14 +50,14 @@ func Create(client *golangsdk.ServiceClient, imageID string, opts CreateOptsBuil
 
 // List members returns list of members for specified image id.
 func List(client *golangsdk.ServiceClient, imageID string) pagination.Pager {
-	return pagination.NewPager(client, listMembersURL(client, imageID), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(client, client.ServiceURL("images", imageID, "members"), func(r pagination.PageResult) pagination.Page {
 		return MemberPage{pagination.SinglePageBase(r)}
 	})
 }
 
 // Get image member details.
 func Get(client *golangsdk.ServiceClient, imageID string, memberID string) (r DetailsResult) {
-	_, r.Err = client.Get(getMemberURL(client, imageID, memberID), &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Get(client.ServiceURL("images", imageID, "members", memberID), &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return
@@ -65,7 +65,7 @@ func Get(client *golangsdk.ServiceClient, imageID string, memberID string) (r De
 
 // Delete membership for given image. Callee should be image owner.
 func Delete(client *golangsdk.ServiceClient, imageID string, memberID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteMemberURL(client, imageID, memberID), &golangsdk.RequestOpts{
+	_, r.Err = client.Delete(client.ServiceURL("images", imageID, "members", memberID), &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return
@@ -95,7 +95,7 @@ func Update(client *golangsdk.ServiceClient, imageID string, memberID string, op
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(updateMemberURL(client, imageID, memberID), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("images", imageID, "members", memberID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

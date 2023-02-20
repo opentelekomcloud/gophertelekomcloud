@@ -1,9 +1,12 @@
 package tasks
 
 import (
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -101,6 +104,30 @@ func (r TaskPage) NextPageURL() (string, error) {
 	}
 
 	return nextPageURL(r.serviceURL, s.Next)
+}
+
+func nextPageURL(serviceURL, requestedNext string) (string, error) {
+	base, err := utils.BaseEndpoint(serviceURL)
+	if err != nil {
+		return "", err
+	}
+
+	requestedNextURL, err := url.Parse(requestedNext)
+	if err != nil {
+		return "", err
+	}
+
+	base = golangsdk.NormalizeURL(base)
+	nextPath := base + strings.TrimPrefix(requestedNextURL.Path, "/")
+
+	nextURL, err := url.Parse(nextPath)
+	if err != nil {
+		return "", err
+	}
+
+	nextURL.RawQuery = requestedNextURL.RawQuery
+
+	return nextURL.String(), nil
 }
 
 // ExtractTasks interprets the results of a single page from a List() call,

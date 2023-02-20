@@ -73,7 +73,7 @@ func (opts ListOpts) ToTaskListQuery() (string, error) {
 
 // List returns a Pager which allows you to iterate over a collection of the tasks.
 func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(c)
+	url := c.ServiceURL("tasks")
 	if opts != nil {
 		query, err := opts.ToTaskListQuery()
 		if err != nil {
@@ -93,7 +93,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 
 // Get retrieves a specific Imageservice task based on its ID.
 func Get(c *golangsdk.ServiceClient, taskID string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, taskID), &r.Body, nil)
+	_, r.Err = c.Get(c.ServiceURL("tasks", taskID), &r.Body, nil)
 	return
 }
 
@@ -124,7 +124,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("tasks"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return

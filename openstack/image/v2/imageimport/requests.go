@@ -15,6 +15,6 @@ const (
 
 // Get retrieves Import API information data.
 func Get(c *golangsdk.ServiceClient) (r GetResult) {
-	_, r.Err = c.Get(infoURL(c), &r.Body, nil)
+	_, r.Err = c.Get(c.ServiceURL("info", "import"), &r.Body, nil)
 	return
 }
