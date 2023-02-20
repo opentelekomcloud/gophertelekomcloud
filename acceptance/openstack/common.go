@@ -14,7 +14,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/imageservice/v2/images"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/image/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )

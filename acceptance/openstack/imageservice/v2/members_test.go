@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/imageservice/v2/members"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/image/v2/members"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
