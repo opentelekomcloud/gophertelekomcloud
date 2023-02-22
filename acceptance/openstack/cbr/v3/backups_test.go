@@ -20,53 +20,7 @@ func TestBackupLifecycle(t *testing.T) {
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
-	// Create Vault for further backup
-	opts := vaults.CreateOpts{
-		Billing: &vaults.BillingCreate{
-			ConsistentLevel: "crash_consistent",
-			ObjectType:      "disk",
-			ProtectType:     "backup",
-			Size:            100,
-		},
-		Description: "gophertelemocloud testing vault",
-		Name:        tools.RandomString("cbr-test-", 5),
-		Resources:   []vaults.ResourceCreate{},
-	}
-	vault, err := vaults.Create(client, opts)
-	th.AssertNoErr(t, err)
-	t.Cleanup(func() {
-		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
-	})
-
-	// Create Volume
-	volume := openstack.CreateVolume(t)
-	t.Cleanup(func() {
-		openstack.DeleteVolume(t, volume.ID)
-	})
-
-	// Associate server to the vault
-	aOpts := vaults.AssociateResourcesOpts{
-		Resources: []vaults.ResourceCreate{
-			{
-				ID:   volume.ID,
-				Type: "OS::Cinder::Volume",
-			},
-		},
-	}
-	associated, err := vaults.AssociateResources(client, vault.ID, aOpts)
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, 1, len(associated))
-
-	// Create vault checkpoint
-	optsVault := checkpoint.CreateOpts{
-		VaultID: vault.ID,
-		Parameters: checkpoint.CheckpointParam{
-			Description: "go created backup",
-			Incremental: true,
-			Name:        tools.RandomString("go-checkpoint", 5),
-		},
-	}
-	checkp := CreateCheckpoint(t, client, optsVault)
+	vault, aOpts, optsVault, checkp := CreateCBR(t, client)
 	th.AssertEquals(t, vault.ID, checkp.Vault.ID)
 	th.AssertEquals(t, optsVault.Parameters.Description, checkp.ExtraInfo.Description)
 	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)
@@ -81,19 +35,19 @@ func TestBackupLifecycle(t *testing.T) {
 	th.AssertEquals(t, vault.ID, checkpointGet.Vault.ID)
 	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
 
-	listOpts := backups.ListOpts{VaultID: vault.ID}
+	allBackups, err := backups.List(client, backups.ListOpts{VaultID: vault.ID})
 	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		err = backups.Delete(client, allBackups[0].ID)
+		th.AssertNoErr(t, err)
+		th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
+	})
 
-	allBackups, err := backups.List(client, listOpts)
-	th.AssertNoErr(t, err)
 	bOpts := backups.RestoreBackupOpts{
 		VolumeID: allBackups[0].ResourceID,
 	}
 	restoreErr := RestoreBackup(t, client, allBackups[0].ID, bOpts)
 	th.AssertNoErr(t, restoreErr)
-	errBack := backups.Delete(client, allBackups[0].ID)
-	th.AssertNoErr(t, errBack)
-	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
 }
 
 func TestBackupListing(t *testing.T) {

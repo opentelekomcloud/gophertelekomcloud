@@ -574,9 +574,7 @@ func NewDWSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
-// NewImageServiceV1 creates a ServiceClient that may be used to access the v1
-// image service.
-func NewImageServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+func NewIMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "image")
 	if err != nil {
 		return nil, err
@@ -585,9 +583,7 @@ func NewImageServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOp
 	return sc, err
 }
 
-// NewImageServiceV2 creates a ServiceClient that may be used to access the v2
-// image service.
-func NewImageServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+func NewIMSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "image")
 	if err != nil {
 		return nil, err

@@ -9,8 +9,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -47,7 +47,12 @@ func TestServerLifecycle(t *testing.T) {
 		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
 	}
 
-	imageID, err := images.IDFromName(client, "Standard_Debian_10_latest")
+	imageV2Client, err := clients.NewIMSV2Client()
+	th.AssertNoErr(t, err)
+
+	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
+		Name: "Standard_Debian_10_latest",
+	})
 	th.AssertNoErr(t, err)
 
 	flavorID, err := flavors.IDFromName(client, "s2.large.2")
@@ -55,7 +60,7 @@ func TestServerLifecycle(t *testing.T) {
 
 	createOpts := servers.CreateOpts{
 		Name:      ecsName,
-		ImageRef:  imageID,
+		ImageRef:  image[0].Id,
 		FlavorRef: flavorID,
 		SecurityGroups: []string{
 			openstack.DefaultSecurityGroup(t),

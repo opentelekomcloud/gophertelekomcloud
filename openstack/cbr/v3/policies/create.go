@@ -2,6 +2,7 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -29,7 +30,7 @@ type TriggerProperties struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Policy, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "policy")
+	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err
 	}
