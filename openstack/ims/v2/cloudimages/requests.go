@@ -157,7 +157,7 @@ type CreateByVolumeOpts struct {
 	// Specifies the OS version
 	OsVersion string `json:"os_version" required:"true"`
 	// Specifies the image type. The value can be ECS, BMS, FusionCompute, or Ironic.
-	Type string `json:"type" required:"true"`
+	Type string `json:"type,omitempty"`
 	// image label "key.value"
 	Tags []string `json:"tags,omitempty"`
 	// One or more tag key and value pairs to associate with the image
