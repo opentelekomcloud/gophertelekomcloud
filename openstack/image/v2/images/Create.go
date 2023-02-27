@@ -1,66 +1,48 @@
 package images
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
+)
 
-// CreateOpts represents options used to create an image.
 type CreateOpts struct {
-	// Name is the name of the new image.
-	Name string `json:"name" required:"true"`
-	// Id is the the image ID.
-	ID string `json:"id,omitempty"`
-	// Visibility defines who can see/use the image.
-	Visibility *ImageVisibility `json:"visibility,omitempty"`
-	// Tags is a set of image tags.
-	Tags []string `json:"tags,omitempty"`
-	// ContainerFormat is the format of the
-	// container. Valid values are ami, ari, aki, bare, and ovf.
-	ContainerFormat string `json:"container_format,omitempty"`
-	// DiskFormat is the format of the disk. If set,
-	// valid values are ami, ari, aki, vhd, vmdk, raw, qcow2, vdi,
-	// and iso.
-	DiskFormat string `json:"disk_format,omitempty"`
-	// MinDisk is the amount of disk space in
-	// GB that is required to boot the image.
-	MinDisk int `json:"min_disk,omitempty"`
-	// MinRAM is the amount of RAM in MB that
-	// is required to boot the image.
-	MinRAM int `json:"min_ram,omitempty"`
-	// protected is whether the image is not deletable.
-	Protected *bool `json:"protected,omitempty"`
-	// properties is a set of properties, if any, that
-	// are associated with the image.
-	Properties map[string]string `json:"-"`
+	// Specifies the image OS version. For the value range, see Values of Related Parameters.
+	//
+	// If this parameter is not specified, the value Other Linux(64 bit) will be used. In that case, the ECS creation using this image may fail, and the ECS created using this image may fail to run properly.
+	OsVersion string `json:"__os_version"`
+	// Specifies the container format.
+	//
+	// The default value is bare.
+	ContainerFormat string `json:"container_format"`
+	// Specifies the image format. The value can be zvhd2, vhd, zvhd, raw, or qcow2. The default value is zvhd2.
+	DiskFormat string `json:"disk_format"`
+	// Specifies the minimum disk space (GB) required for running the image. The value ranges from 1 GB to 1024 GB.
+	//
+	// The value of this parameter must be greater than the image system disk capacity. Otherwise, the ECS creation may fail.
+	MinDisk int `json:"min_disk"`
+	// Specifies the minimum memory size (MB) required for running the image. The parameter value depends on ECS specifications. The default value is 0.
+	MinRam int `json:"min_ram"`
+	// Specifies the image name. If this parameter is not specified, its value is empty by default. In that case, ECS creation using this image will fail. The name contains 1 to 255 characters. For detailed description, see Image Attributes. This parameter is left blank by default.
+	Name string `json:"name"`
+	// Lists the image tags. The tag contains 1 to 255 characters. The value is left blank by default.
+	Tags []string `json:"tags"`
+	// Specifies whether the image is available to other tenants.
+	//
+	// The default value is private. When creating image metadata, the value of visibility can be set to private only.
+	Visibility string `json:"visibility"`
+	// Specifies whether the image is protected. A protected image cannot be deleted. The default value is false.
+	Protected bool `json:"protected"`
 }
 
-// ToImageCreateMap assembles a request body based on the contents of
-// a CreateOpts.
-func (opts CreateOpts) ToImageCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+// Create implements create image request.
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*images.ImageInfo, error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	if opts.Properties != nil {
-		for k, v := range opts.Properties {
-			b[k] = v
-		}
-	}
-	return b, nil
-}
-
-// Create implements create image request.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToImageCreateMap()
-	if err != nil {
-		r.Err = err
-		return r
-	}
-	_, r.Err = client.Post(client.ServiceURL("images"), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{201}})
-	return
-}
-
-// CreateOptsBuilder allows extensions to add parameters to the Create request.
-type CreateOptsBuilder interface {
-	// Returns value that can be passed to json.Marshal
-	ToImageCreateMap() (map[string]interface{}, error)
+	// POST /v2/images
+	raw, err := client.Post(client.ServiceURL("images"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
+	return extractImage(err, raw)
 }
