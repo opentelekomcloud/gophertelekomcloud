@@ -3,15 +3,11 @@ package images
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"reflect"
-	"strings"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Image represents an image found in the OpenStack Image service.
@@ -162,68 +158,4 @@ type GetResult struct {
 // ExtractErr method to interpret it as an Image.
 type DeleteResult struct {
 	golangsdk.ErrResult
-}
-
-// ImagePage represents the results of a List request.
-type ImagePage struct {
-	serviceURL string
-	pagination.LinkedPageBase
-}
-
-// IsEmpty returns true if an ImagePage contains no Images results.
-func (r ImagePage) IsEmpty() (bool, error) {
-	images, err := ExtractImages(r)
-	return len(images) == 0, err
-}
-
-// NextPageURL uses the response's embedded link reference to navigate to
-// the next page of results.
-func (r ImagePage) NextPageURL() (string, error) {
-	var s struct {
-		Next string `json:"next"`
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-
-	if s.Next == "" {
-		return "", nil
-	}
-
-	return nextPageURL(r.serviceURL, s.Next)
-}
-
-func nextPageURL(serviceURL, requestedNext string) (string, error) {
-	base, err := utils.BaseEndpoint(serviceURL)
-	if err != nil {
-		return "", err
-	}
-
-	requestedNextURL, err := url.Parse(requestedNext)
-	if err != nil {
-		return "", err
-	}
-
-	base = golangsdk.NormalizeURL(base)
-	nextPath := base + strings.TrimPrefix(requestedNextURL.Path, "/")
-
-	nextURL, err := url.Parse(nextPath)
-	if err != nil {
-		return "", err
-	}
-
-	nextURL.RawQuery = requestedNextURL.RawQuery
-
-	return nextURL.String(), nil
-}
-
-// ExtractImages interprets the results of a single page from a List() call,
-// producing a slice of Image entities.
-func ExtractImages(r pagination.Page) ([]Image, error) {
-	var s struct {
-		Images []Image `json:"images"`
-	}
-	err := (r.(ImagePage)).ExtractInto(&s)
-	return s.Images, err
 }

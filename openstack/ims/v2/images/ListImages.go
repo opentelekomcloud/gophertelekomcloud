@@ -312,4 +312,6 @@ type ImageInfo struct {
 	ActiveAt string `json:"active_at"`
 	// Specifies whether the image uses AMD's x86 architecture. The value can be true or false.
 	SupportAmd string `json:"__support_amd,omitempty"`
+	// Specifies the location where the image is stored.
+	ImageLocation string `json:"__image_location"`
 }

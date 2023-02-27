@@ -14,7 +14,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/image/v2/images"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -129,16 +129,12 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		encryption = "0"
 	}
 
-	imageV2Client, err := clients.NewImageServiceV2Client()
+	imageV2Client, err := clients.NewIMSV2Client()
 	th.AssertNoErr(t, err)
 
-	listOpts := images.ListOpts{
+	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
 		Name: imageName,
-	}
-
-	pages, err := images.List(imageV2Client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-	image, err := images.ExtractImages(pages)
+	})
 	th.AssertNoErr(t, err)
 
 	if vpcID == "" || subnetID == "" || az == "" {
@@ -146,7 +142,7 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 	}
 
 	createOpts := cloudservers.CreateOpts{
-		ImageRef:  image[0].ID,
+		ImageRef:  image[0].Id,
 		FlavorRef: flavorID,
 		Name:      ecsName,
 		VpcId:     vpcID,
