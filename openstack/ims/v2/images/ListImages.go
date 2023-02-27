@@ -314,4 +314,6 @@ type ImageInfo struct {
 	SupportAmd string `json:"__support_amd,omitempty"`
 	// Specifies the location where the image is stored.
 	ImageLocation string `json:"__image_location"`
+	// Specifies the charging identifier for the image.
+	AccountCode string `json:"__account_code"`
 }
