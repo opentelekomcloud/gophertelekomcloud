@@ -10,8 +10,8 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/image/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v1/others"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -103,7 +103,7 @@ func jobEntities(t *testing.T, client1 *golangsdk.ServiceClient, client2 *golang
 	job, err := others.ShowJob(client1, *jobId)
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = images.DeleteImage(client2, images.DeleteImageOpts{ImageId: job.Entities.ImageId})
+		err = images.Delete(client2, images.DeleteImageOpts{ImageId: job.Entities.ImageId})
 		th.AssertNoErr(t, err)
 	})
 
