@@ -7,15 +7,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-// Upload uploads an image file.
-func Upload(client *golangsdk.ServiceClient, id string, data io.Reader) (r UploadResult) {
-	_, r.Err = client.Put(client.ServiceURL("images", id, "file"), data, nil, &golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{"Content-Type": "application/octet-stream"},
-		OkCodes:     []int{204},
-	})
-	return
-}
-
 // Stage performs PUT call on the existing image object in the Imageservice with
 // the provided file.
 // Existing image object must be in the "queued" status.
