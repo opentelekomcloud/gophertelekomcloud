@@ -10,7 +10,7 @@ import (
 )
 
 func TestImageServiceV2MemberLifecycle(t *testing.T) {
-	client, err := clients.NewImageServiceV2Client()
+	client, err := clients.NewIMSV2Client()
 	th.AssertNoErr(t, err)
 
 	shareProjectID := clients.EnvOS.GetEnv("PROJECT_ID_2")
@@ -36,7 +36,7 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 		_, err := clients.EnvOS.Cloud(newCloud)
 		th.AssertNoErr(t, err)
-		newClient, err := clients.NewImageServiceV2Client()
+		newClient, err := clients.NewIMSV2Client()
 		th.AssertNoErr(t, err)
 		updateOpts := members.UpdateOpts{
 			Status: "accepted",
