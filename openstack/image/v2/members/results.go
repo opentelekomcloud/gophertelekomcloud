@@ -6,14 +6,6 @@ import (
 )
 
 // Member represents a member of an Image.
-type Member struct {
-	CreatedAt string `json:"created_at"`
-	ImageID   string `json:"image_id"`
-	MemberID  string `json:"member_id"`
-	Schema    string `json:"schema"`
-	Status    string `json:"status"`
-	UpdatedAt string `json:"updated_at"`
-}
 
 // Extract Member model from a request.
 func (r commonResult) Extract() (*Member, error) {
