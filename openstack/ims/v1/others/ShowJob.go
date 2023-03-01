@@ -8,19 +8,19 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ShowJob(client *golangsdk.ServiceClient, jobId string) (*ShowJobResponse, error) {
+func ShowJob(client *golangsdk.ServiceClient, jobId string) (*JobResponse, error) {
 	// GET /v1/{project_id}/jobs/{job_id}
 	raw, err := client.Get(client.ServiceURL(client.ProjectID, "jobs", jobId), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res ShowJobResponse
+	var res JobResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type ShowJobResponse struct {
+type JobResponse struct {
 	// Specifies the job status. The value can be:
 	//
 	// SUCCESS: The job is successfully executed.
