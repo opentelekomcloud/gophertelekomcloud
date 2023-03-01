@@ -3,6 +3,7 @@ package members
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/members"
 )
 
 // UpdateOpts represents options to an Update request.
@@ -25,7 +26,7 @@ type UpdateOpts struct {
 }
 
 // Update function updates member.
-func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Member, error) {
+func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*members.Member, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

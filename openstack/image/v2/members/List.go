@@ -3,6 +3,7 @@ package members
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/members"
 )
 
 // List members returns list of members for specified image id.
@@ -19,7 +20,7 @@ func List(client *golangsdk.ServiceClient, imageId string) (*ListResponse, error
 }
 
 type ListResponse struct {
-	Members []Member `json:"members"`
+	Members []members.Member `json:"members"`
 	// Specifies the sharing schema.
 	Schema string `json:"schema"`
 }

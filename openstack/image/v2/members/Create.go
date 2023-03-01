@@ -1,13 +1,12 @@
 package members
 
 import (
-	"time"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/members"
 )
 
-func Create(client *golangsdk.ServiceClient, opts MemberOpts) (*Member, error) {
+func Create(client *golangsdk.ServiceClient, opts MemberOpts) (*members.Member, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -18,19 +17,4 @@ func Create(client *golangsdk.ServiceClient, opts MemberOpts) (*Member, error) {
 		OkCodes: []int{200},
 	})
 	return extra(err, raw)
-}
-
-type Member struct {
-	// Specifies the image sharing status.
-	Status string `json:"status"`
-	// Specifies the time when a shared image was created. The value is in UTC format.
-	CreatedAt time.Time `json:"created_at"`
-	// Specifies the time when a shared image was updated. The value is in UTC format.
-	UpdatedAt time.Time `json:"updated_at"`
-	// Specifies the image ID.
-	ImageId string `json:"image_id"`
-	// Specifies the member ID, that is, the project ID of the tenant who is to accept the shared image.
-	MemberId string `json:"member_id"`
-	// Specifies the sharing schema.
-	Schema string `json:"schema"`
 }
