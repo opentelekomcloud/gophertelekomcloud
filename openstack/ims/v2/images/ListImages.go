@@ -1,6 +1,8 @@
 package images
 
 import (
+	"time"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -224,7 +226,7 @@ type ImageInfo struct {
 	// Specifies the container type.
 	ContainerFormat string `json:"container_format"`
 	// Specifies the time when the image was created. The value is in UTC format.
-	CreatedAt string `json:"created_at"`
+	CreatedAt time.Time `json:"created_at"`
 	// Specifies the image format. The value can be vhd, raw, zvhd, or qcow2. The default value is vhd.
 	DiskFormat string `json:"disk_format,omitempty"`
 	// Specifies the enterprise project that the image belongs to.
@@ -264,7 +266,7 @@ type ImageInfo struct {
 	// Specifies tags of the image, through which you can manage private images in your own way. You can use the image tag API to add different tags to each image and filter images by tag.
 	Tags []string `json:"tags"`
 	// Specifies the time when the image was updated. The value is in UTC format.
-	UpdatedAt string `json:"updated_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 	// Specifies the environment where the image is used. The value can be FusionCompute, Ironic, DataImage, or IsoImage.
 	//
 	// For an ECS image, the value is FusionCompute.
@@ -316,4 +318,8 @@ type ImageInfo struct {
 	ImageLocation string `json:"__image_location"`
 	// Specifies the charging identifier for the image.
 	AccountCode string `json:"__account_code"`
+
+	SupportKvmNvmeSpdk    string `json:"__support_kvm_nvme_spdk"`
+	ImageLoginUser        string `json:"__image_login_user"`
+	SupportKvmHi1822Hiovs string `json:"__support_kvm_hi1822_hiovs"`
 }
