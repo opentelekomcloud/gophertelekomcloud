@@ -19,15 +19,20 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 		t.Skipf("OS_PROJECT_ID_2 or OS_PRIVATE_IMAGE_ID env vars are missing but IMS member test requires it")
 	}
 	createOpts := members.CreateOpts{
-		Member: shareProjectID,
+		ImageId: privateImageID,
+		Member:  shareProjectID,
 	}
 
-	share, err := members.Create(client, privateImageID, createOpts).Extract()
-	defer func() {
-		th.AssertNoErr(t, members.Delete(client, privateImageID, shareProjectID).ExtractErr())
-	}()
+	share, err := members.Create(client, createOpts)
+	t.Cleanup(func() {
+		th.AssertNoErr(t, members.Delete(client, members.MemberOpts{
+			ImageId:  privateImageID,
+			MemberId: shareProjectID,
+		}))
+	})
+
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, createOpts.Member, share.MemberID)
+	th.AssertEquals(t, createOpts.Member, share.MemberId)
 	th.AssertEquals(t, "pending", share.Status)
 
 	newCloud := clients.EnvOS.GetEnv("CLOUD_2")
@@ -41,7 +46,7 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 		updateOpts := members.UpdateOpts{
 			Status: "accepted",
 		}
-		_, err = members.Update(newClient, privateImageID, shareProjectID, updateOpts).Extract()
+		_, err = members.Update(newClient, privateImageID, shareProjectID, updateOpts)
 		th.AssertNoErr(t, err)
 
 		newShare, err := members.Get(client, privateImageID, shareProjectID).Extract()

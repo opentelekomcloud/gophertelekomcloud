@@ -2,34 +2,38 @@ package members
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
-
-// UpdateOptsBuilder allows extensions to add additional attributes to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToImageMemberUpdateMap() (map[string]interface{}, error)
-}
 
 // UpdateOpts represents options to an Update request.
 type UpdateOpts struct {
-	Status  string `json:"status" required:"true"`
+	MemberOpts
+	// Specifies whether a shared image will be accepted or declined.
+	//
+	// Available values include:
+	//
+	// accepted: indicates that a shared image is accepted. After an image is accepted, the image is displayed in the image list. You can use the image to create ECSs.
+	//
+	// rejected: indicates that a shared image is declined. After an image is rejected, the image is not displayed in the image list. However, you can still use the image to create ECSs.
+	Status string `json:"status" required:"true"`
+	// Specifies the ID of a vault.
+	//
+	// This parameter is mandatory if you want to accept a shared full-ECS image created from a CBR backup.
+	//
+	// You can obtain the vault ID from the CBR console or section "Querying the Vault List" in Cloud Backup and Recovery API Reference.
 	VaultID string `json:"vault_id,omitempty"`
 }
 
-// ToImageMemberUpdateMap formats an UpdateOpts structure into a request body.
-func (opts UpdateOpts) ToImageMemberUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
 // Update function updates member.
-func Update(client *golangsdk.ServiceClient, imageID string, memberID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToImageMemberUpdateMap()
+func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Member, error) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Put(client.ServiceURL("images", imageID, "members", memberID), b, &r.Body, &golangsdk.RequestOpts{
+
+	// PUT /v2/images/{image_id}/members/{member_id}
+	raw, err := client.Put(client.ServiceURL("images", opts.ImageId, "members", opts.MemberId), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	return extra(err, raw)
 }
