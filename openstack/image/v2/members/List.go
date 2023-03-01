@@ -2,12 +2,24 @@ package members
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // List members returns list of members for specified image id.
-func List(client *golangsdk.ServiceClient, imageID string) pagination.Pager {
-	return pagination.NewPager(client, client.ServiceURL("images", imageID, "members"), func(r pagination.PageResult) pagination.Page {
-		return MemberPage{pagination.SinglePageBase(r)}
-	})
+func List(client *golangsdk.ServiceClient, imageId string) (*ListResponse, error) {
+	// GET /v2/images/{image_id}/members
+	raw, err := client.Get(client.ServiceURL("images", imageId, "members"), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListResponse
+	err = extract.Into(raw.Body, res)
+	return &res, err
+}
+
+type ListResponse struct {
+	Members []Member `json:"members"`
+	// Specifies the sharing schema.
+	Schema string `json:"schema"`
 }
