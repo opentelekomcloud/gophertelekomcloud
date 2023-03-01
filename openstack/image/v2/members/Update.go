@@ -8,7 +8,8 @@ import (
 
 // UpdateOpts represents options to an Update request.
 type UpdateOpts struct {
-	MemberOpts
+	ImageId  string `json:"-" required:"true"`
+	MemberId string `json:"-" required:"true"`
 	// Specifies whether a shared image will be accepted or declined.
 	//
 	// Available values include:

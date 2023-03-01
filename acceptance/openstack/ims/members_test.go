@@ -44,9 +44,10 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 		newClient, err := clients.NewIMSV2Client()
 		th.AssertNoErr(t, err)
 		updateOpts := members.UpdateOpts{
-			MemberOpts: createOpts,
-			Status:     "accepted",
-			VaultID:    "",
+			ImageId:  privateImageID,
+			MemberId: shareProjectID,
+			Status:   "accepted",
+			VaultID:  "",
 		}
 		_, err = members.Update(newClient, updateOpts)
 		th.AssertNoErr(t, err)
