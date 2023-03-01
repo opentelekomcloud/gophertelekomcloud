@@ -5,7 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type CreateOpts struct {
@@ -25,13 +24,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Member, error) {
 	raw, err := client.Post(client.ServiceURL("images", opts.ImageId, "members"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	var res Member
-	err = extract.Into(raw.Body, res)
-	return &res, err
+	return extra(err, raw)
 }
 
 type Member struct {
