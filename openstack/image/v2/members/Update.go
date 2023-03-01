@@ -32,7 +32,7 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Member, error) {
 	}
 
 	// PUT /v2/images/{image_id}/members/{member_id}
-	raw, err := client.Put(client.ServiceURL("images", opts.ImageId, "members", opts.MemberId), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("images", opts.ImageId, "members", opts.MemberId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return extra(err, raw)

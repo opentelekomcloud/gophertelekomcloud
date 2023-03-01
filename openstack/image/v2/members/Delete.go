@@ -3,8 +3,10 @@ package members
 import "github.com/opentelekomcloud/gophertelekomcloud"
 
 type MemberOpts struct {
-	ImageId  string `json:"-" required:"true"`
-	MemberId string `json:"-" required:"true"`
+	ImageId string `json:"-" required:"true"`
+	// Specifies the image member.
+	// The value is the project ID of a tenant.
+	MemberId string `json:"member" required:"true"`
 }
 
 // Delete membership for given image. Callee should be image owner.

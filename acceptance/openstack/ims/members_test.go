@@ -1,4 +1,4 @@
-package v2
+package ims
 
 import (
 	"os"
@@ -18,9 +18,9 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 	if shareProjectID == "" || privateImageID == "" {
 		t.Skipf("OS_PROJECT_ID_2 or OS_PRIVATE_IMAGE_ID env vars are missing but IMS member test requires it")
 	}
-	createOpts := members.CreateOpts{
-		ImageId: privateImageID,
-		Member:  shareProjectID,
+	createOpts := members.MemberOpts{
+		ImageId:  privateImageID,
+		MemberId: shareProjectID,
 	}
 
 	share, err := members.Create(client, createOpts)
@@ -32,7 +32,7 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 	})
 
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, createOpts.Member, share.MemberId)
+	th.AssertEquals(t, createOpts.MemberId, share.MemberId)
 	th.AssertEquals(t, "pending", share.Status)
 
 	newCloud := clients.EnvOS.GetEnv("CLOUD_2")
@@ -44,12 +44,14 @@ func TestImageServiceV2MemberLifecycle(t *testing.T) {
 		newClient, err := clients.NewIMSV2Client()
 		th.AssertNoErr(t, err)
 		updateOpts := members.UpdateOpts{
-			Status: "accepted",
+			MemberOpts: createOpts,
+			Status:     "accepted",
+			VaultID:    "",
 		}
-		_, err = members.Update(newClient, privateImageID, shareProjectID, updateOpts)
+		_, err = members.Update(newClient, updateOpts)
 		th.AssertNoErr(t, err)
 
-		newShare, err := members.Get(client, privateImageID, shareProjectID).Extract()
+		newShare, err := members.Get(client, createOpts)
 		th.AssertNoErr(t, err)
 		th.AssertEquals(t, updateOpts.Status, newShare.Status)
 	}

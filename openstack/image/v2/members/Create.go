@@ -7,14 +7,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-type CreateOpts struct {
-	ImageId string `json:"-" required:"true"`
-	// Specifies the image member.
-	// The value is the project ID of a tenant.
-	Member string `json:"member" required:"true"`
-}
-
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Member, error) {
+func Create(client *golangsdk.ServiceClient, opts MemberOpts) (*Member, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
