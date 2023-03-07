@@ -38,7 +38,7 @@ type Rule struct {
 	Value string `json:"value" required:"true"`
 }
 
-type RedirectPoolConfig struct {
+type RedirectPoolOptions struct {
 	// Specifies the ID of the backend server group.
 	PoolId string `json:"pool_id" required:"true"`
 
@@ -46,7 +46,7 @@ type RedirectPoolConfig struct {
 	Weight string `json:"weight" required:"true"`
 }
 
-type FixedResponseCfg struct {
+type FixedResponseOptions struct {
 	// Specifies the fixed HTTP status code configured in the forwarding rule.
 	// The value can be any integer in the range of 200-299, 400-499, or 500-599.
 	StatusCode string `json:"status_code" required:"true"`
@@ -112,7 +112,7 @@ type CreateOpts struct {
 
 	// Specifies the configuration of the page that will be returned.
 	// This parameter will take effect when
-	FixedResponseConfig FixedResponseCfg `json:"fixed_response_config,omitempty"`
+	FixedResponseConfig FixedResponseOptions `json:"fixed_response_config,omitempty"`
 
 	// Specifies the ID of the listener to which the forwarding policy is added.
 	ListenerID string `json:"listener_id" required:"true"`
@@ -155,7 +155,7 @@ type CreateOpts struct {
 	Rules []Rule `json:"rules,omitempty"`
 
 	// Specifies the configuration of the backend server group that the requests are forwarded to. This parameter is valid only when action is set to REDIRECT_TO_POOL.
-	RedirectPoolsConfig []RedirectPoolConfig `json:"redirect_pools_config,omitempty"`
+	RedirectPoolsConfig []RedirectPoolOptions `json:"redirect_pools_config,omitempty"`
 }
 
 type CreateOptsBuilder interface {
@@ -224,15 +224,15 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 }
 
 type UpdateOpts struct {
-	Name                *string              `json:"name,omitempty"`
-	Description         *string              `json:"description,omitempty"`
-	RedirectListenerID  string               `json:"redirect_listener_id,omitempty"`
-	RedirectPoolID      string               `json:"redirect_pool_id,omitempty"`
-	Rules               []Rule               `json:"rules,omitempty"`
-	RedirectUrlConfig   RedirectUrlOptions   `json:"redirect_url_config,omitempty"`
-	FixedResponseConfig FixedResponseCfg     `json:"fixed_response_config,omitempty"`
-	Priority            int                  `json:"priority,omitempty"`
-	RedirectPoolsConfig []RedirectPoolConfig `json:"redirect_pools_config,omitempty"`
+	Name                *string               `json:"name,omitempty"`
+	Description         *string               `json:"description,omitempty"`
+	RedirectListenerID  string                `json:"redirect_listener_id,omitempty"`
+	RedirectPoolID      string                `json:"redirect_pool_id,omitempty"`
+	Rules               []Rule                `json:"rules,omitempty"`
+	RedirectUrlConfig   RedirectUrlOptions    `json:"redirect_url_config,omitempty"`
+	FixedResponseConfig FixedResponseOptions  `json:"fixed_response_config,omitempty"`
+	Priority            int                   `json:"priority,omitempty"`
+	RedirectPoolsConfig []RedirectPoolOptions `json:"redirect_pools_config,omitempty"`
 }
 
 type UpdateOptsBuilder interface {
