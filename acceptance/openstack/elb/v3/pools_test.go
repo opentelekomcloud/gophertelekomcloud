@@ -36,12 +36,6 @@ func TestPoolLifecycle(t *testing.T) {
 	poolID := createPool(t, client, loadbalancerID)
 	defer deletePool(t, client, poolID)
 
-	// Delete protection not working for now https://jira.tsi-dev.otc-service.com/browse/BM-1627
-	// err = pools.Delete(client, poolID).ExtractErr()
-	// if err != nil {
-	// 	t.Logf("Cannot delete, Deletion Protection enabled for ELBv3 Pool: %s", poolID)
-	// }
-
 	t.Logf("Attempting to update ELBv3 Pool: %s", poolID)
 	poolName := tools.RandomString("update-pool-", 3)
 	emptyDescription := ""
