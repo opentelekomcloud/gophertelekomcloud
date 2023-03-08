@@ -14,7 +14,7 @@ fmt:
 
 lint:
 	@echo Running go lint
-	@golangci-lint run
+	@golangci-lint run --timeout=300s
 
 vet:
 	@echo "go vet ."
