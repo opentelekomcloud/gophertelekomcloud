@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/pools"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -35,13 +36,20 @@ func TestPoolLifecycle(t *testing.T) {
 	poolID := createPool(t, client, loadbalancerID)
 	defer deletePool(t, client, poolID)
 
+	// Delete protection not working for now https://jira.tsi-dev.otc-service.com/browse/BM-1627
+	// err = pools.Delete(client, poolID).ExtractErr()
+	// if err != nil {
+	// 	t.Logf("Cannot delete, Deletion Protection enabled for ELBv3 Pool: %s", poolID)
+	// }
+
 	t.Logf("Attempting to update ELBv3 Pool: %s", poolID)
 	poolName := tools.RandomString("update-pool-", 3)
 	emptyDescription := ""
 	updateOpts := pools.UpdateOpts{
-		Name:        &poolName,
-		Description: &emptyDescription,
-		LBMethod:    "ROUND_ROBIN",
+		Name:                     &poolName,
+		Description:              &emptyDescription,
+		LBMethod:                 "ROUND_ROBIN",
+		DeletionProtectionEnable: pointerto.Bool(false),
 	}
 	_, err = pools.Update(client, poolID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -52,4 +60,5 @@ func TestPoolLifecycle(t *testing.T) {
 	th.AssertEquals(t, *updateOpts.Name, newPool.Name)
 	th.AssertEquals(t, emptyDescription, newPool.Description)
 	th.AssertEquals(t, updateOpts.LBMethod, newPool.LBMethod)
+	th.AssertEquals(t, false, newPool.DeletionProtectionEnable)
 }

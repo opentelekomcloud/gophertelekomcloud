@@ -79,7 +79,7 @@ type CreateOpts struct {
 	// This parameter is available only for HTTPS listeners added to a dedicated load balancer.
 	// If both security_policy_id and tls_ciphers_policy are specified, only security_policy_id will take effect.
 	// The priority of the encryption suite from high to low is: ecc suite: ecc suite, rsa suite, tls 1.3 suite (supporting both ecc and rsa).
-	SecurityPolicyId string `json:"security_policy_id,omitempty"`
+	SecurityPolicy string `json:"security_policy_id,omitempty"`
 
 	// Whether enable member retry
 	EnableMemberRetry *bool `json:"enable_member_retry,omitempty"`
@@ -198,7 +198,7 @@ type UpdateOpts struct {
 	// This parameter is available only for HTTPS listeners added to a dedicated load balancer.
 	// If both security_policy_id and tls_ciphers_policy are specified, only security_policy_id will take effect.
 	// The priority of the encryption suite from high to low is: ecc suite: ecc suite, rsa suite, tls 1.3 suite (supporting both ecc and rsa).
-	SecurityPolicyId string `json:"security_policy_id,omitempty"`
+	SecurityPolicy string `json:"security_policy_id,omitempty"`
 
 	// Whether enable member retry
 	EnableMemberRetry *bool `json:"enable_member_retry,omitempty"`

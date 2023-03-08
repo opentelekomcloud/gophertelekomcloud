@@ -11,6 +11,7 @@ type Action string
 const (
 	ActionRedirectToPool     Action = "REDIRECT_TO_POOL"
 	ActionRedirectToListener Action = "REDIRECT_TO_LISTENER"
+	ActionFixedResponse      Action = "FIXED_RESPONSE"
 )
 
 type Rule struct {
@@ -112,7 +113,7 @@ type CreateOpts struct {
 
 	// Specifies the configuration of the page that will be returned.
 	// This parameter will take effect when
-	FixedResponseConfig FixedResponseOptions `json:"fixed_response_config,omitempty"`
+	FixedResponseConfig *FixedResponseOptions `json:"fixed_response_config,omitempty"`
 
 	// Specifies the ID of the listener to which the forwarding policy is added.
 	ListenerID string `json:"listener_id" required:"true"`
@@ -148,7 +149,7 @@ type CreateOpts struct {
 	// Specifies the URL to which requests are forwarded.
 	// This parameter is mandatory when action is set to REDIRECT_TO_URL.
 	// It cannot be specified if the value of action is not REDIRECT_TO_URL.
-	RedirectUrlConfig RedirectUrlOptions `json:"redirect_url_config,omitempty"`
+	RedirectUrlConfig *RedirectUrlOptions `json:"redirect_url_config,omitempty"`
 
 	// Lists the forwarding rules in the forwarding policy.
 	// The list can contain a maximum of 10 forwarding rules (if conditions is specified, a condition is considered as a rule).
@@ -229,8 +230,8 @@ type UpdateOpts struct {
 	RedirectListenerID  string                `json:"redirect_listener_id,omitempty"`
 	RedirectPoolID      string                `json:"redirect_pool_id,omitempty"`
 	Rules               []Rule                `json:"rules,omitempty"`
-	RedirectUrlConfig   RedirectUrlOptions    `json:"redirect_url_config,omitempty"`
-	FixedResponseConfig FixedResponseOptions  `json:"fixed_response_config,omitempty"`
+	RedirectUrlConfig   *RedirectUrlOptions   `json:"redirect_url_config,omitempty"`
+	FixedResponseConfig *FixedResponseOptions `json:"fixed_response_config,omitempty"`
 	Priority            int                   `json:"priority,omitempty"`
 	RedirectPoolsConfig []RedirectPoolOptions `json:"redirect_pools_config,omitempty"`
 }

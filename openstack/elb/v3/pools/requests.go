@@ -104,7 +104,7 @@ type CreateOpts struct {
 	// or false (DOWN).
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 
-	// Specifies whether to enable deletion protection for the load balancer.
+	// Specifies whether to enable deletion protection for the pool.
 	DeletionProtectionEnable *bool `json:"member_deletion_protection_enable,omitempty"`
 
 	// Specifies the ID of the VPC where the backend server group works.
