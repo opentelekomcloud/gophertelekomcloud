@@ -12,6 +12,7 @@ const (
 	ActionRedirectToPool     Action = "REDIRECT_TO_POOL"
 	ActionRedirectToListener Action = "REDIRECT_TO_LISTENER"
 	ActionFixedResponse      Action = "FIXED_RESPONSE"
+	ActionUrlRedirect        Action = "REDIRECT_TO_URL"
 )
 
 type Rule struct {
@@ -73,7 +74,7 @@ type RedirectUrlOptions struct {
 
 	// Specifies the port that requests are redirected to.
 	// The default value is ${port}, indicating that the port of the request will be used.
-	Port int `json:"port"`
+	Port string `json:"port"`
 
 	// Specifies the path that requests are redirected to. The default value is ${path}, indicating that the path of the request will be used.
 	//
