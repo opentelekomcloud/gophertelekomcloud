@@ -17,7 +17,21 @@ const (
 	StartsWith CompareType = "STARTS_WITH"
 )
 
+type Condition struct {
+	// Specifies the key of match item.
+	Key string `json:"key"`
+
+	// Specifies the value of the match item.
+	Value string `json:"value" required:"true"`
+}
+
 type CreateOpts struct {
+	// Specifies the conditions contained in a forwarding rule.
+	// This parameter will take effect when enhance_l7policy_enable is set to true.
+	// If conditions is specified, key and value will not take effect,
+	// and the value of this parameter will contain all conditions configured for the forwarding rule.
+	// The keys in the list must be the same, whereas each value must be unique.
+	Conditions []Condition `json:"conditions,omitempty"`
 	// Specifies the match content. The value can be one of the following:
 	//
 	//    HOST_NAME: A domain name will be used for matching.
@@ -75,6 +89,7 @@ type UpdateOptsBuilder interface {
 type UpdateOpts struct {
 	CompareType CompareType `json:"compare_type,omitempty"`
 	Value       string      `json:"value,omitempty"`
+	Conditions  []Condition `json:"conditions,omitempty"`
 }
 
 func (opts UpdateOpts) ToUpdateRuleMap() (map[string]interface{}, error) {

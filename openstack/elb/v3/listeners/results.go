@@ -61,11 +61,16 @@ type Listener struct {
 	// The list of references to TLS secrets.
 	SniContainerRefs []string `json:"sni_container_refs"`
 
+	// SNI certificates wildcard.
+	SniMatchAlgo string `json:"sni_match_algo"`
+
 	// Lists the Tags.
 	Tags []tags.ResourceTag `json:"tags"`
 
 	// Specifies the security policy used by the listener.
 	TlsCiphersPolicy string `json:"tls_ciphers_policy"`
+
+	SecurityPolicy string `json:"security_policy_id"`
 
 	// Whether enable member retry
 	EnableMemberRetry bool `json:"enable_member_retry"`

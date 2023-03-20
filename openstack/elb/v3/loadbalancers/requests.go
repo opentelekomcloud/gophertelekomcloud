@@ -111,6 +111,9 @@ type CreateOpts struct {
 
 	// IP Target Enable.
 	IpTargetEnable *bool `json:"ip_target_enable,omitempty"`
+
+	// Specifies whether to enable deletion protection for the load balancer.
+	DeletionProtectionEnable *bool `json:"deletion_protection_enable,omitempty"`
 }
 
 type BandwidthRef struct {
@@ -216,6 +219,9 @@ type UpdateOpts struct {
 
 	// IP Target Enable.
 	IpTargetEnable *bool `json:"ip_target_enable,omitempty"`
+
+	// Specifies whether to enable deletion protection for the load balancer.
+	DeletionProtectionEnable *bool `json:"deletion_protection_enable,omitempty"`
 }
 
 // ToLoadBalancerUpdateMap builds a request body from UpdateOpts.
