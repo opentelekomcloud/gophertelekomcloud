@@ -9,7 +9,7 @@ import (
 
 type CreateImageFromECSOpts struct {
 	// Specifies the name of the system disk image. For detailed description, see Image Attributes.
-	Name string `json:"name" required:"true"`
+	Name string `json:"name,omitempty"`
 	// Specifies the image description. For detailed description, see Image Attributes. The value contains a maximum of 1024 characters and consists of only letters and digits. Carriage returns and angle brackets (< >) are not allowed. This parameter is left blank by default.
 	Description string `json:"description,omitempty"`
 	// Specifies the ID of the ECS used to create the image.
