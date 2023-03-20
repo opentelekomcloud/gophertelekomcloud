@@ -19,7 +19,7 @@ type CreateImageFromECSOpts struct {
 	// Log in to management console.
 	// Under Computing, click Elastic Cloud Server.
 	// In the ECS list, click the name of the ECS and view its ID.
-	InstanceId string `json:"instance_id" required:"true"`
+	InstanceId string `json:"instance_id,omitempty"`
 	// Specifies the data disk information to be converted. This parameter is mandatory when the data disk of an ECS is used to create a private data disk image. For details, see Table 1.
 	//
 	// If the ECS data disk is not used to create a data disk image, the parameter is empty by default.
