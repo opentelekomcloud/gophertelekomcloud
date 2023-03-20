@@ -1,10 +1,40 @@
 package ipgroups
 
 import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
+
+type ListOpts struct {
+	Limit       int    `q:"limit"`
+	Marker      string `q:"marker"`
+	PageReverse bool   `q:"page_reverse"`
+
+	ID          []string `q:"id"`
+	Name        []string `q:"name"`
+	Description []string `q:"description"`
+	IpList      []string `q:"ip_list"`
+}
+
+// List is used to obtain the parameter ipGroup list
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]IpGroup, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// GET https://{Endpoint}/v3/{project_id}/backups
+	raw, err := client.Get(client.ServiceURL("ipgroups")+q.String(), nil, openstack.StdRequestOpts())
+	if err != nil {
+		return nil, err
+	}
+
+	var res []IpGroup
+	err = extract.IntoSlicePtr(raw.Body, &res, "ipgroups")
+	return res, err
+}
 
 // IpGroup The IP address can contain IP addresses or CIDR blocks.
 // 0.0.0.0 will be considered the same as 0.0.0.0/32. If you enter both 0.0.0.0 and 0.0.0.0/32,
@@ -33,57 +63,4 @@ type IpInfo struct {
 	Ip string `json:"ip"`
 	// Provides remarks about the IP address group.
 	Description string `json:"description"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a IpGroup.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a IpGroup.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Listener.
-type UpdateResult struct {
-	commonResult
-}
-
-type BatchResult struct {
-	commonResult
-}
-
-// DeleteResult represents the result of a delete operation. Call its
-// ExtractErr method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type IpGroupPage struct {
-	pagination.PageWithInfo
-}
-
-func (p IpGroupPage) IsEmpty() (bool, error) {
-	l, err := ExtractIpGroups(p)
-	if err != nil {
-		return false, err
-	}
-	return len(l) == 0, nil
-}
-
-func ExtractIpGroups(r pagination.Page) ([]IpGroup, error) {
-	var s []IpGroup
-	err := (r.(IpGroupPage)).ExtractIntoSlicePtr(&s, "ipgroups")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
 }
