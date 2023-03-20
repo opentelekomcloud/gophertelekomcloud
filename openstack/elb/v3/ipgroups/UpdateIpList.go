@@ -16,6 +16,9 @@ func UpdateIpList(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (*IpGr
 	raw, err := c.Post(url, b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res IpGroup
 	err = extract.IntoStructPtr(raw.Body, &res, "ipgroup")
