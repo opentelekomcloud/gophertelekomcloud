@@ -109,6 +109,9 @@ type LoadBalancer struct {
 
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+
+	// Ip Target Enable.
+	DeletionProtectionEnable bool `json:"deletion_protection_enable"`
 }
 
 type EipInfo struct {

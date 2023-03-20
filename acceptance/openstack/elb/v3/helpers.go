@@ -6,6 +6,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/certificates"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/listeners"
@@ -147,13 +148,17 @@ func deleteCertificate(t *testing.T, client *golangsdk.ServiceClient, certificat
 
 func createPool(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) string {
 	t.Logf("Attempting to create ELBv3 Pool")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	poolName := tools.RandomString("create-pool-", 3)
 	createOpts := pools.CreateOpts{
-		LBMethod:       "LEAST_CONNECTIONS",
-		Protocol:       "HTTP",
-		LoadbalancerID: loadbalancerID,
-		Name:           poolName,
-		Description:    "some interesting description",
+		LBMethod:                 "LEAST_CONNECTIONS",
+		Protocol:                 "HTTP",
+		LoadbalancerID:           loadbalancerID,
+		Name:                     poolName,
+		Description:              "some interesting description",
+		VpcId:                    vpcID,
+		Type:                     "instance",
+		DeletionProtectionEnable: pointerto.Bool(true),
 	}
 
 	pool, err := pools.Create(client, createOpts).Extract()
@@ -161,6 +166,9 @@ func createPool(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID st
 	th.AssertEquals(t, createOpts.Name, pool.Name)
 	th.AssertEquals(t, createOpts.Description, pool.Description)
 	th.AssertEquals(t, createOpts.LBMethod, pool.LBMethod)
+	th.AssertEquals(t, true, pool.DeletionProtectionEnable)
+	th.AssertEquals(t, createOpts.Type, pool.Type)
+	th.AssertEquals(t, createOpts.VpcId, pool.VpcId)
 	t.Logf("Created ELBv3 Pool: %s", pool.ID)
 
 	return pool.ID
