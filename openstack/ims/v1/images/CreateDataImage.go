@@ -9,7 +9,7 @@ import (
 
 type CreateDataImageOpts struct {
 	// Specifies the image name.
-	Name string `json:"name" required:"true"`
+	Name string `json:"name,omitempty"`
 	// Provides supplementary information about the image. For detailed description, see Image Attributes. The value contains a maximum of 1024 characters and consists of only letters and digits. Carriage returns and angle brackets (< >) are not allowed. This parameter is left blank by default.
 	Description string `json:"description,omitempty"`
 	// Specifies the OS type.
@@ -22,7 +22,7 @@ type CreateDataImageOpts struct {
 	//
 	// NOTE:
 	// The storage class of the OBS bucket must be Standard.
-	ImageUrl string `json:"image_url" required:"true"`
+	ImageUrl string `json:"image_url,omitempty"`
 	// Specifies the minimum size of the data disk.
 	// Value range: 40 GB to 2048 GB
 	MinDisk int `json:"min_disk" required:"true"`
