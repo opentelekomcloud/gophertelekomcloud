@@ -125,6 +125,7 @@ func TestPolicyAssignment(t *testing.T) {
 		}
 
 		listener, err := listeners.Create(client, createOpts).Extract()
+		th.AssertNoErr(t, err)
 		defer func() {
 			t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
 			err := listeners.Delete(client, listener.ID).ExtractErr()
