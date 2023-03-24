@@ -21,6 +21,6 @@ func extra(err error, raw *http.Response) (*members.Member, error) {
 	}
 
 	var res members.Member
-	err = extract.Into(raw.Body, res)
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
