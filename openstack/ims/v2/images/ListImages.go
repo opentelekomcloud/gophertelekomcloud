@@ -144,6 +144,11 @@ type ListImagesOpts struct {
 	//
 	// updated_at=lt:2018-10-28T10:00:00Z
 	UpdatedAt string `q:"updated_at,omitempty"`
+
+	// SizeMin filters on the size_min image property.
+	SizeMin int64 `q:"size_min"`
+	// SizeMax filters on the size_max image property.
+	SizeMax int64 `q:"size_max"`
 }
 
 // ListImages This API is used to query images using search criteria and to display the images in a list.
