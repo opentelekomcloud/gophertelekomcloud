@@ -15,7 +15,7 @@ import (
 )
 
 func TestCreateWholeImageFromCBR(t *testing.T) {
-	t.Skip("Unstable test")
+	t.Skip("long run test only for manual purpose")
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 

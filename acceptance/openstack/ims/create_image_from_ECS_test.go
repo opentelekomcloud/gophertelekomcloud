@@ -14,6 +14,7 @@ import (
 )
 
 func TestCreateImageFromECS(t *testing.T) {
+	t.Skip("long run test only for manual purpose")
 	client1, client2 := getClient(t)
 
 	computeClient, err := clients.NewComputeV1Client()

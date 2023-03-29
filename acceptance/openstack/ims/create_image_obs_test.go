@@ -11,6 +11,7 @@ import (
 )
 
 func TestCreateImageFromOBS(t *testing.T) {
+	t.Skip("long run test only for manual purpose")
 	client1, client2 := getClient(t)
 
 	bucketName, objectName := makeOBS(t)
