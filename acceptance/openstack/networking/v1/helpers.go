@@ -73,7 +73,7 @@ func CreateEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int)
 
 	// wait to be DOWN
 	t.Logf("Waiting for eip %s to be active", eip.ID)
-	err = waitForEipToActive(client, eip.ID, 600)
+	err = waitForEipToActive(client, eip.ID, 1200)
 	th.AssertNoErr(t, err)
 
 	newEip, err := eips.Get(client, eip.ID).Extract()
@@ -93,7 +93,7 @@ func DeleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {
 	// wait to be deleted
 	t.Logf("Waitting for eip %s to be deleted", eipID)
 
-	err = waitForEipToDelete(client, eipID, 900)
+	err = waitForEipToDelete(client, eipID, 1200)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Deleted eip/bandwidth: %s", eipID)
