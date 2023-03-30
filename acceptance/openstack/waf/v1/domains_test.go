@@ -76,7 +76,7 @@ func TestDomainLifecycle(t *testing.T) {
 
 	iTrue := true
 	createOpts := domains.CreateOpts{
-		HostName:      "a.com",
+		HostName:      tools.RandomString("", 3) + ".com",
 		CertificateId: cert.Id,
 		Server: []domains.ServerOpts{
 			{
