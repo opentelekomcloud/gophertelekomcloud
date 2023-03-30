@@ -93,7 +93,7 @@ func DeleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {
 	// wait to be deleted
 	t.Logf("Waitting for eip %s to be deleted", eipID)
 
-	err = waitForEipToDelete(client, eipID, 600)
+	err = waitForEipToDelete(client, eipID, 900)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Deleted eip/bandwidth: %s", eipID)
