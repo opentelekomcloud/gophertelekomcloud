@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"strings"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -76,7 +77,7 @@ func TestDomainLifecycle(t *testing.T) {
 
 	iTrue := true
 	createOpts := domains.CreateOpts{
-		HostName:      "a.com",
+		HostName:      strings.ToLower(tools.RandomString("", 3)) + ".com",
 		CertificateId: cert.Id,
 		Server: []domains.ServerOpts{
 			{
