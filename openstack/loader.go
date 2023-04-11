@@ -117,7 +117,7 @@ func (e *Env) cloudFromEnv() *Cloud {
 	}
 	security := aws.GetEnv("SECURITY_TOKEN")
 	if security == "" {
-		security = e.GetEnv("SECURITY_TOKEN", "AKSKS_SECURITY_TOKEN", "ST")
+		security = e.GetEnv("SECURITY_TOKEN", "AKSK_SECURITY_TOKEN", "ST")
 	}
 	region := e.GetEnv("REGION_NAME", "REGION_ID")
 	if region == "" {
