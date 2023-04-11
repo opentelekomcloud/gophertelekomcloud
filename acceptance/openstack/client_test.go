@@ -46,6 +46,10 @@ func TestAuthenticatedClient(t *testing.T) {
 }
 
 func TestAuthTempAKSK(t *testing.T) {
+	securityToken := os.Getenv("OS_SECURITY_TOKEN")
+	if securityToken == "" {
+		t.Skip("OS_SECURITY_TOKEN env var is missing but client_test requires")
+	}
 	cc, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
