@@ -115,6 +115,10 @@ func (e *Env) cloudFromEnv() *Cloud {
 	if secret == "" {
 		secret = e.GetEnv("SECRET_KEY", "ACCESS_KEY_SECRET", "SK")
 	}
+	security := aws.GetEnv("SECURITY_TOKEN")
+	if security == "" {
+		security = e.GetEnv("SECURITY_TOKEN", "AKSK_SECURITY_TOKEN", "ST")
+	}
 	region := e.GetEnv("REGION_NAME", "REGION_ID")
 	if region == "" {
 		region = utils.GetRegion(authOpts)
@@ -141,6 +145,7 @@ func (e *Env) cloudFromEnv() *Cloud {
 			DefaultDomain:     e.GetEnv("DEFAULT_DOMAIN"),
 			AccessKey:         access,
 			SecretKey:         secret,
+			SecurityToken:     security,
 			AgencyName:        authOpts.AgencyName,
 			AgencyDomainName:  authOpts.AgencyDomainName,
 			DelegatedProject:  authOpts.DelegatedProject,
@@ -263,8 +268,9 @@ type AuthInfo struct {
 	DefaultDomain string `yaml:"default_domain,omitempty" json:"default_domain,omitempty"`
 
 	// AK/SK auth means
-	AccessKey string `yaml:"ak,omitempty" json:"ak,omitempty"`
-	SecretKey string `yaml:"sk,omitempty" json:"sk,omitempty"`
+	AccessKey     string `yaml:"ak,omitempty" json:"ak,omitempty"`
+	SecretKey     string `yaml:"sk,omitempty" json:"sk,omitempty"`
+	SecurityToken string `yaml:"security_token,omitempty" json:"security_token,omitempty"`
 
 	// OTC Agency config
 	AgencyName string `yaml:"target_agency_name,omitempty" json:"agency_name,omitempty"`
@@ -659,6 +665,7 @@ func AuthOptionsFromInfo(authInfo *AuthInfo, authType AuthType) (golangsdk.AuthO
 			DomainID:         ao.DomainID,
 			AccessKey:        authInfo.AccessKey,
 			SecretKey:        authInfo.SecretKey,
+			SecurityToken:    authInfo.SecurityToken,
 			AgencyName:       ao.AgencyName,
 			AgencyDomainName: ao.AgencyDomainName,
 			DelegatedProject: ao.DelegatedProject,
