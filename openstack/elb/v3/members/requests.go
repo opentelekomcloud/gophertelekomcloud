@@ -47,7 +47,7 @@ func (opts ListOpts) ToMembersListQuery() (string, error) {
 // Default policy settings return only those members that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(client *golangsdk.ServiceClient, poolID string, opts ListOptsBuilder) pagination.Pager {
-	url := rootURL(client, poolID)
+	url := client.ServiceURL("pools", poolID, "members")
 	if opts != nil {
 		query, err := opts.ToMembersListQuery()
 		if err != nil {
@@ -112,7 +112,7 @@ func Create(client *golangsdk.ServiceClient, poolID string, opts CreateOptsBuild
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(rootURL(client, poolID), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(client.ServiceURL("pools", poolID, "members"), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return
@@ -120,7 +120,7 @@ func Create(client *golangsdk.ServiceClient, poolID string, opts CreateOptsBuild
 
 // Get retrieves a particular Pool Member based on its unique ID.
 func Get(client *golangsdk.ServiceClient, poolID string, memberID string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, poolID, memberID), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("pools", poolID, "members", memberID), &r.Body, nil)
 	return
 }
 
@@ -159,7 +159,7 @@ func Update(client *golangsdk.ServiceClient, poolID string, memberID string, opt
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(resourceURL(client, poolID, memberID), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("pools", poolID, "members", memberID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 	return
@@ -168,6 +168,6 @@ func Update(client *golangsdk.ServiceClient, poolID string, memberID string, opt
 // Delete will remove and disassociate a Member from a particular
 // Pool.
 func Delete(client *golangsdk.ServiceClient, poolID string, memberID string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, poolID, memberID), nil)
+	_, r.Err = client.Delete(client.ServiceURL("pools", poolID, "members", memberID), nil)
 	return
 }

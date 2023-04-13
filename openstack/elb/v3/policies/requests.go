@@ -174,7 +174,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(baseURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(client.ServiceURL("l7policies"), b, &r.Body, nil)
 	return
 }
 
@@ -206,7 +206,7 @@ func (opts ListOpts) ToPolicyListQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := baseURL(client)
+	url := client.ServiceURL("l7policies")
 	if opts != nil {
 		q, err := opts.ToPolicyListQuery()
 		if err != nil {
@@ -221,7 +221,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 }
 
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("l7policies", id), &r.Body, nil)
 	return
 }
 
@@ -251,13 +251,13 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("l7policies", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
 	return
 }
 
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	_, r.Err = client.Delete(client.ServiceURL("l7policies", id), nil)
 	return
 }

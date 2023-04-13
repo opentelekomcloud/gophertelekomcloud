@@ -53,7 +53,7 @@ func (opts ListOpts) ToMonitorListQuery() (string, error) {
 // Default policy settings return only those health monitors that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := rootURL(client)
+	url := client.ServiceURL("healthmonitors")
 	if opts != nil {
 		query, err := opts.ToMonitorListQuery()
 		if err != nil {
@@ -158,13 +158,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(client.ServiceURL("healthmonitors"), b, &r.Body, nil)
 	return
 }
 
 // Get retrieves a particular Health Monitor based on its unique ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("healthmonitors", id), &r.Body, nil)
 	return
 }
 
@@ -235,7 +235,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		return
 	}
 
-	_, r.Err = client.Put(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("healthmonitors", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return
@@ -243,6 +243,6 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 
 // Delete will permanently delete a particular Monitor based on its unique ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	_, r.Err = client.Delete(client.ServiceURL("healthmonitors", id), nil)
 	return
 }

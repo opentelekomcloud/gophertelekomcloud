@@ -137,13 +137,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(client.ServiceURL("listeners"), b, &r.Body, nil)
 	return
 }
 
 // Get retrieves a particular Listeners based on its unique ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("listeners", id), &r.Body, nil)
 	return
 }
 
@@ -238,7 +238,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("listeners", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return
@@ -246,7 +246,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 
 // Delete will permanently delete a particular Listeners based on its unique ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	_, r.Err = client.Delete(client.ServiceURL("listeners", id), nil)
 	return
 }
 
@@ -285,7 +285,7 @@ func (opts ListOpts) ToListenerListQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := rootURL(client)
+	url := client.ServiceURL("listeners")
 	if opts != nil {
 		q, err := opts.ToListenerListQuery()
 		if err != nil {

@@ -38,7 +38,7 @@ func (opts ListOpts) ToLoadbalancerListQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
-	url := rootURL(client)
+	url := client.ServiceURL("loadbalancers")
 	if opts != nil {
 		query, err := opts.ToLoadbalancerListQuery()
 		if err != nil {
@@ -167,13 +167,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(rootURL(client), b, &r.Body, nil)
+	_, r.Err = client.Post(client.ServiceURL("loadbalancers"), b, &r.Body, nil)
 	return
 }
 
 // Get retrieves a particular Loadbalancer based on its unique ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("loadbalancers", id), &r.Body, nil)
 	return
 }
 
@@ -237,7 +237,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r Upda
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(client.ServiceURL("loadbalancers", id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return
@@ -246,12 +246,12 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (r Upda
 // Delete will permanently delete a particular LoadBalancer based on its
 // unique ID.
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	_, r.Err = client.Delete(client.ServiceURL("loadbalancers", id), nil)
 	return
 }
 
 // GetStatuses will return the status of a particular LoadBalancer.
 func GetStatuses(client *golangsdk.ServiceClient, id string) (r GetStatusesResult) {
-	_, r.Err = client.Get(statusURL(client, id), &r.Body, nil)
+	_, r.Err = client.Get(client.ServiceURL("loadbalancers", id, "statuses"), &r.Body, nil)
 	return
 }
