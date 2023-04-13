@@ -248,7 +248,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			AccessKey: client.AKSKAuthOptions.AccessKey,
 			SecretKey: client.AKSKAuthOptions.SecretKey,
 		})
-		if client.AKSKAuthOptions.ProjectId != "" {
+		if client.AKSKAuthOptions.ProjectId != "" && client.AKSKAuthOptions.DomainID == "" {
 			req.Header.Set("X-Project-Id", client.AKSKAuthOptions.ProjectId)
 		}
 		if client.AKSKAuthOptions.DomainID != "" {
