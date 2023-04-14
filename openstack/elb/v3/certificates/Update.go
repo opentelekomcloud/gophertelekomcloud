@@ -54,7 +54,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Certi
 	if err != nil {
 		return nil, err
 	}
-
+	// PUT /v3/{project_id}/elb/loadbalancers/{loadbalancer_id}
 	raw, err := client.Put(client.ServiceURL("certificates", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
