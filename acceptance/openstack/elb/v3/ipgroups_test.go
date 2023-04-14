@@ -50,7 +50,7 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	})
 
 	t.Logf("Attempting to update ELBv3 IpGroup: %s", ipGroup.ID)
-	err = ipgroups.Update(client, ipGroup.ID, ipgroups.UpdateOpts{
+	_, err = ipgroups.Update(client, ipGroup.ID, ipgroups.UpdateOpts{
 		Name: tools.RandomString("update-ip-group-", 3),
 		IpList: []ipgroups.IpGroupOption{
 			{

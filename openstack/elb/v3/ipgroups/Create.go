@@ -1,6 +1,8 @@
 package ipgroups
 
 import (
+	"net/http"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -49,7 +51,12 @@ func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*IpGroup, error) {
 		return nil, err
 	}
 
+	// POST /v3/{project_id}/elb/ipgroups
 	raw, err := c.Post(c.ServiceURL("ipgroups"), b, nil, nil)
+	return extra(err, raw)
+}
+
+func extra(err error, raw *http.Response) (*IpGroup, error) {
 	if err != nil {
 		return nil, err
 	}

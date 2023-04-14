@@ -16,16 +16,16 @@ type UpdateOpts struct {
 }
 
 // Update is an operation which modifies the attributes of the specified IpGroup.
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (err error) {
+func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (*IpGroup, error) {
 	b, err := build.RequestBody(opts, "ipgroup")
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	// PUT /v3/{project_id}/elb/ipgroups/{ipgroup_id}
-	_, err = c.Put(c.ServiceURL("ipgroups", id), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Put(c.ServiceURL("ipgroups", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 
-	return
+	return extra(err, raw)
 }

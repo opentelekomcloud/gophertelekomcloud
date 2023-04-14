@@ -2,20 +2,14 @@ package ipgroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 )
 
 // Get retrieves a particular Configuration based on its unique ID.
 func Get(client *golangsdk.ServiceClient, id string) (*IpGroup, error) {
+	// GET /v3/{project_id}/elb/ipgroups/{ipgroup_id}
 	raw, err := client.Get(client.ServiceURL("ipgroups", id), nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var res IpGroup
-	err = extract.IntoStructPtr(raw.Body, &res, "ipgroup")
-	return &res, err
+	return extra(err, raw)
 }
 
 // IpGroup The IP address can contain IP addresses or CIDR blocks.
