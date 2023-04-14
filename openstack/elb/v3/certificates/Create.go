@@ -1,14 +1,12 @@
 package certificates
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"net/http"
 
-// CreateOptsBuilder is the interface options structs have to satisfy in order
-// to be used in the main Create operation in this package. Since many
-// extensions decorate or modify the common logic, it is useful for them to
-// satisfy a basic interface in order for them to be used.
-type CreateOptsBuilder interface {
-	ToCertificateCreateMap() (map[string]interface{}, error)
-}
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type CreateOpts struct {
 	// Specifies the certificate name. Only letters, digits, underscores, and hyphens are allowed.
@@ -62,11 +60,6 @@ type CreateOpts struct {
 	ProjectId string `json:"project_id,omitempty"`
 }
 
-// ToCertificateCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToCertificateCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "certificate")
-}
-
 // Create is an operation which provisions a new loadbalancer based on the
 // configuration defined in the CreateOpts struct. Once the request is
 // validated and progress has started on the provisioning process, a
@@ -74,16 +67,25 @@ func (opts CreateOpts) ToCertificateCreateMap() (map[string]interface{}, error) 
 //
 // Users with an admin role can create loadbalancers on behalf of other tenants by
 // specifying a TenantID attribute different from their own.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToCertificateCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Certificate, error) {
+	b, err := build.RequestBody(opts, "certificate")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
 
 	// POST /v3/{project_id}/elb/certificates
-	_, r.Err = client.Post(client.ServiceURL("certificates"), b, &r.Body, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("certificates"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 	})
-	return
+	return extra(err, raw)
+}
+
+func extra(err error, raw *http.Response) (*Certificate, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	var res Certificate
+	err = extract.IntoStructPtr(raw.Body, &res, "certificate")
+	return &res, nil
 }
