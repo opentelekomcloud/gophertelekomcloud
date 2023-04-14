@@ -156,3 +156,41 @@ func TestTooManyRequestsRetry(t *testing.T) {
 		th.AssertEquals(sub, failHandler.ExpectedFailures, failHandler.FailCount)
 	})
 }
+
+func TestAuthTempAKSK(t *testing.T) {
+	securityToken := os.Getenv("OS_SECURITY_TOKEN")
+	if securityToken == "" {
+		t.Skip("OS_SECURITY_TOKEN env var is missing but client_test requires")
+	}
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	if cc.ProjectID == "" {
+		t.Errorf("Project ID is not set for the client")
+	}
+	if cc.AuthInfo.AuthURL == "" {
+		t.Errorf("Auth URL is not set for the client")
+	}
+	if cc.AKSKAuthOptions.AccessKey == "" {
+		t.Errorf("Access Key is not set for the client")
+	}
+	if cc.AKSKAuthOptions.SecretKey == "" {
+		t.Errorf("Secret Key is not set for the client")
+	}
+	if cc.AKSKAuthOptions.SecurityToken == "" {
+		t.Errorf("Security Token is not set for the client")
+	}
+
+	// Find several services in the service catalog.
+	storage, err := openstack.NewObjectStorageV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	th.AssertNoErr(t, err)
+	t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
+
+	compute, err := openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	th.AssertNoErr(t, err)
+	t.Logf("Located a compute service at endpoint: [%s]", compute.Endpoint)
+}
