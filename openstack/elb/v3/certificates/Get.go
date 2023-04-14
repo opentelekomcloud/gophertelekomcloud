@@ -6,6 +6,7 @@ import (
 
 // Get retrieves a particular Load balancer based on its unique ID.
 func Get(client *golangsdk.ServiceClient, id string) (*Certificate, error) {
+	// GET /v3/{project_id}/elb/certificates/{certificate_id}
 	raw, err := client.Get(client.ServiceURL("certificates", id), nil, nil)
 	return extra(err, raw)
 }
