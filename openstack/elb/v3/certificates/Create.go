@@ -87,5 +87,5 @@ func extra(err error, raw *http.Response) (*Certificate, error) {
 
 	var res Certificate
 	err = extract.IntoStructPtr(raw.Body, &res, "certificate")
-	return &res, nil
+	return &res, err
 }

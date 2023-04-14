@@ -56,14 +56,14 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 	}
 	// GET /v3/{project_id}/elb/certificates
 	return pagination.NewPager(client, client.ServiceURL("certificates")+query.String(), func(r pagination.PageResult) pagination.Page {
-		return CertificatePage{pagination.LinkedPageBase{PageResult: r}}
+		return CertificatePage{PageWithInfo: pagination.NewPageWithInfo(r)}
 	})
 }
 
 // CertificatePage is the page returned by a pager when traversing over a
 // collection of certificates.
 type CertificatePage struct {
-	pagination.LinkedPageBase
+	pagination.PageWithInfo
 }
 
 // ExtractCertificates accepts a Page struct, specifically a CertificatePage struct,
@@ -72,8 +72,5 @@ type CertificatePage struct {
 func ExtractCertificates(r pagination.Page) ([]Certificate, error) {
 	var res []Certificate
 	err := extract.IntoSlicePtr(r.(CertificatePage).BodyReader(), &res, "certificates")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
+	return res, err
 }
