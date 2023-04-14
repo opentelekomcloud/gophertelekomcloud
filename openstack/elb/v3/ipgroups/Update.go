@@ -15,14 +15,14 @@ type UpdateOpts struct {
 	IpList []IpGroupOption `json:"ip_list,omitempty"`
 }
 
-// Update is an operation which modifies the attributes of the specified
-// IpGroup.
+// Update is an operation which modifies the attributes of the specified IpGroup.
 func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (err error) {
 	b, err := build.RequestBody(opts, "ipgroup")
 	if err != nil {
 		return
 	}
 
+	// PUT /v3/{project_id}/elb/ipgroups/{ipgroup_id}
 	_, err = c.Put(c.ServiceURL("ipgroups", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
