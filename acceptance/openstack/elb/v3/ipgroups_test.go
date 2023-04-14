@@ -15,8 +15,9 @@ func TestIpGroupList(t *testing.T) {
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
-	listOpts := ipgroups.ListOpts{}
-	ipgroupsList, err := ipgroups.List(client, listOpts)
+	ipgroupsLists, err := ipgroups.List(client, ipgroups.ListOpts{}).AllPages()
+	th.AssertNoErr(t, err)
+	ipgroupsList, err := ipgroups.ExtractIpGroups(ipgroupsLists)
 	th.AssertNoErr(t, err)
 
 	for _, gr := range ipgroupsList {
@@ -31,18 +32,15 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	loadbalancerID := createLoadBalancer(t, client)
 	defer deleteLoadbalancer(t, client, loadbalancerID)
 
-	ipGroupOpts := ipgroups.IpGroupOption{
-		Ip:          "192.168.10.10",
-		Description: "first",
-	}
-	ipGroupName := tools.RandomString("create-ip-group-", 3)
-	createOpts := ipgroups.CreateOpts{
-		Description: "some interesting description",
-		Name:        ipGroupName,
-		IpList:      []ipgroups.IpGroupOption{ipGroupOpts},
-	}
 	t.Logf("Attempting to create ELBv3 IpGroup")
-	ipGroup, err := ipgroups.Create(client, createOpts)
+	ipGroup, err := ipgroups.Create(client, ipgroups.CreateOpts{
+		Description: "some interesting description",
+		Name:        tools.RandomString("create-ip-group-", 3),
+		IpList: []ipgroups.IpGroupOption{ipgroups.IpGroupOption{
+			Ip:          "192.168.10.10",
+			Description: "first",
+		}},
+	})
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
@@ -52,9 +50,8 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	})
 
 	t.Logf("Attempting to update ELBv3 IpGroup: %s", ipGroup.ID)
-	ipGroupNameUpdate := tools.RandomString("update-ip-group-", 3)
-	updateOpts := ipgroups.UpdateOpts{
-		Name: ipGroupNameUpdate,
+	err = ipgroups.Update(client, ipGroup.ID, ipgroups.UpdateOpts{
+		Name: tools.RandomString("update-ip-group-", 3),
 		IpList: []ipgroups.IpGroupOption{
 			{
 				Ip:          "192.168.10.12",
@@ -65,18 +62,19 @@ func TestIpGroupsLifecycle(t *testing.T) {
 				Description: "fourth",
 			},
 		},
-	}
-	err = ipgroups.Update(client, ipGroup.ID, updateOpts)
+	})
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 ipGroup: %s", ipGroup.ID)
 
 	updatedIpGroup, err := ipgroups.Get(client, ipGroup.ID)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, ipGroupNameUpdate, updatedIpGroup.Name)
+	th.AssertEquals(t, tools.RandomString("update-ip-group-", 3), updatedIpGroup.Name)
 
-	listOpts := ipgroups.ListOpts{}
-	ipGroupsSlice, err := ipgroups.List(client, listOpts)
+	ipGroupsSlices, err := ipgroups.List(client, ipgroups.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
+	ipGroupsSlice, err := ipgroups.ExtractIpGroups(ipGroupsSlices)
+	th.AssertNoErr(t, err)
+
 	th.AssertEquals(t, 1, len(ipGroupsSlice))
 	th.AssertDeepEquals(t, *updatedIpGroup, ipGroupsSlice[0])
 

@@ -52,6 +52,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 	if err != nil {
 		return pagination.Pager{Err: err}
 	}
+
 	// GET /v3/{project_id}/elb/flavors
 	return pagination.NewPager(client, client.ServiceURL("flavors")+queryString.String(), func(r pagination.PageResult) pagination.Page {
 		return FlavorPage{PageWithInfo: pagination.NewPageWithInfo(r)}
