@@ -29,6 +29,7 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 				VpcId:    vpcID,
 				SubnetId: subnetID,
 			},
+			Version: "v1.25",
 			ContainerNetwork: clusters.ContainerNetworkSpec{
 				Mode: "overlay_l2",
 			},

@@ -50,6 +50,9 @@ func TestListNode(t *testing.T) {
                         "size": 100
                     }
                 ],
+		        "runtime": {
+                  "name": "containerd"
+                },
                 "publicIP": {
                     "eip": {
                         "bandwidth": {}
@@ -75,7 +78,7 @@ func TestListNode(t *testing.T) {
 		t.Errorf("Failed to extract nodes: %v", err)
 	}
 
-	expected := []nodes.Nodes{
+	var expected = []nodes.Nodes{
 		{
 			Kind:       "Host",
 			Apiversion: "v3",
@@ -91,11 +94,13 @@ func TestListNode(t *testing.T) {
 						Size:       100,
 					}},
 				Flavor: "s1.medium",
+				Runtime: nodes.RuntimeSpec{
+					Name: "containerd",
+				},
 			},
 			Status: nodes.Status{Phase: "Active", ServerID: "41748e56-33d4-46a1-aa57-2c8c29907995", PrivateIP: "192.168.0.3"},
 		},
 	}
-
 	th.AssertDeepEquals(t, expected, actual)
 }
 
@@ -165,7 +170,10 @@ func TestCreateV3Node(t *testing.T) {
 	    "rootVolume": {
 	      "size": 40,
 	      "volumetype": "SATA"
-	    }
+	    },
+		"runtime": {
+          "name": "containerd"
+        }
 	  }
 	}
 `)
@@ -193,6 +201,9 @@ func TestCreateV3Node(t *testing.T) {
 				},
 			},
 			Count: 1,
+			Runtime: nodes.RuntimeSpec{
+				Name: "containerd",
+			},
 		},
 	}
 	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options).Extract()

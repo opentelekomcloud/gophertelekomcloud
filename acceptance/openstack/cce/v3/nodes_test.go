@@ -50,7 +50,7 @@ func (s *testNodes) TestNodeLifecycle() {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
-	privateIP := "192.168.1.12" // suppose used subnet is 192.168.0.0/16
+	privateIP := "192.168.0.12" // suppose used subnet is 192.168.0.0/16
 
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)
@@ -71,7 +71,7 @@ func (s *testNodes) TestNodeLifecycle() {
 		Spec: nodes.Spec{
 			Flavor: "s2.xlarge.2",
 			Az:     "eu-de-01",
-			Os:     "EulerOS 2.5",
+			Os:     "EulerOS 2.9",
 			Login: nodes.LoginSpec{
 				SshKey: kp,
 			},
@@ -95,6 +95,9 @@ func (s *testNodes) TestNodeLifecycle() {
 					SubnetId: s.subnetID,
 					FixedIPs: []string{privateIP},
 				},
+			},
+			Runtime: nodes.RuntimeSpec{
+				Name: "containerd",
 			},
 			ExtendParam: nodes.ExtendParam{
 				MaxPods:        16,
