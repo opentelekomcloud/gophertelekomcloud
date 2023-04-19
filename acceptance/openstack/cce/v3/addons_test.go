@@ -160,7 +160,7 @@ func (a *testAddons) TestListAddonInstances() {
 	list, err := addons.ListAddonInstances(client, a.clusterID).Extract()
 	th.AssertNoErr(t, err)
 
-	th.AssertEquals(t, len(list.Items), 2)
+	th.AssertEquals(t, len(list.Items), 3)
 	// check if listed addon exists
 	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID).Extract()
 	th.AssertNoErr(t, err)
