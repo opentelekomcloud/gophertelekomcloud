@@ -145,11 +145,13 @@ func TestCreate(t *testing.T) {
     `)
 	})
 
+	portRangeMin := 80
+	portRangeMax := 80
 	opts := rules.CreateOpts{
 		Direction:     "ingress",
-		PortRangeMin:  80,
+		PortRangeMin:  &portRangeMin,
 		EtherType:     rules.EtherType4,
-		PortRangeMax:  80,
+		PortRangeMax:  &portRangeMax,
 		Protocol:      "tcp",
 		RemoteGroupID: "85cc3048-abc3-43cc-89b3-377341426ac5",
 		SecGroupID:    "a7734e61-b545-452d-a3cd-0189cbd9747a",
