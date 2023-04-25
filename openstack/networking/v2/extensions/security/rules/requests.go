@@ -2,6 +2,7 @@ package rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -135,7 +136,7 @@ func (opts CreateOpts) ToSecGroupRuleCreateMap() (map[string]interface{}, error)
 // Create is an operation which adds a new security group rule and associates it
 // with an existing security group (whose ID is specified in CreateOpts).
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToSecGroupRuleCreateMap()
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		r.Err = err
 		return
