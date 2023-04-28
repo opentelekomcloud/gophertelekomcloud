@@ -554,7 +554,7 @@ func (e *Env) loadOpenstackConfig() (*Config, error) {
 		if err != nil {
 			log.Printf("Failed to load %s as cloud config", securePath)
 		}
-		if c != nil {
+		if c.Clouds != nil {
 			cloudConfig = c
 		}
 	}
