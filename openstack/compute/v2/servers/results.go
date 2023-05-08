@@ -105,7 +105,8 @@ type GetPasswordResult struct {
 // If privateKey != nil the password is decrypted with the private key.
 // If privateKey == nil the encrypted password is returned and can be decrypted
 // with:
-//   echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
+//
+//	echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
 func (r GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string, error) {
 	var s struct {
 		Password string `json:"password"`
@@ -160,6 +161,9 @@ type Server struct {
 
 	// UserID uniquely identifies the user account owning the tenant.
 	UserID string `json:"user_id"`
+
+	// UserID uniquely identifies the user account owning the tenant.
+	AvailabilityZone string `json:"OS-EXT-AZ:availability_zone"`
 
 	// Name contains the human-readable name for the server.
 	Name string `json:"name"`

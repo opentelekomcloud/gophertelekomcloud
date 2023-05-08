@@ -9,8 +9,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/cloudimages"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -34,6 +34,9 @@ func TestServerLifecycle(t *testing.T) {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
+	imsClient, err := clients.NewImageServiceV2Client()
+	th.AssertNoErr(t, err)
+
 	t.Logf("Attempting to create ECSv2")
 	ecsName := tools.RandomString("create-ecs-", 3)
 
@@ -46,16 +49,26 @@ func TestServerLifecycle(t *testing.T) {
 	if networkID == "" {
 		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
 	}
-
-	imageID, err := images.IDFromName(client, "Standard_Debian_10_latest")
+	imageName := "Standard_Debian_10_latest"
+	listOpts := &cloudimages.ListOpts{
+		Name: imageName,
+	}
+	allPages, err := cloudimages.List(imsClient, listOpts).AllPages()
 	th.AssertNoErr(t, err)
+
+	extractImages, err := cloudimages.ExtractImages(allPages)
+	th.AssertNoErr(t, err)
+
+	if len(extractImages) < 1 {
+		t.Fatal("[ERROR] cannot find the image")
+	}
 
 	flavorID, err := flavors.IDFromName(client, "s2.large.2")
 	th.AssertNoErr(t, err)
 
 	createOpts := servers.CreateOpts{
 		Name:      ecsName,
-		ImageRef:  imageID,
+		ImageRef:  extractImages[0].ID,
 		FlavorRef: flavorID,
 		SecurityGroups: []string{
 			openstack.DefaultSecurityGroup(t),
@@ -74,6 +87,20 @@ func TestServerLifecycle(t *testing.T) {
 	err = servers.WaitForStatus(client, ecs.ID, "ACTIVE", 1200)
 	th.AssertNoErr(t, err)
 	t.Logf("Created ECSv2: %s", ecs.ID)
+
+	opts := servers.ListOpts{
+		Name: ecsName,
+	}
+	var allServers []servers.Server
+	allServerPages, err := servers.List(client, opts).AllPages()
+	th.AssertNoErr(t, err)
+	allServers, err = servers.ExtractServers(allServerPages)
+	th.AssertNoErr(t, err)
+
+	if len(allServers) < 1 {
+		t.Fatal("[ERROR] cannot find the server")
+	}
+	th.AssertEquals(t, ecsName, allServers[0].Name)
 
 	ecs, err = servers.Get(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
