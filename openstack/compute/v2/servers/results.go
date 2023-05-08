@@ -162,9 +162,6 @@ type Server struct {
 	// UserID uniquely identifies the user account owning the tenant.
 	UserID string `json:"user_id"`
 
-	// AvailabilityZone Specifies the AZ ID. This is an extended attribute.
-	AvailabilityZone string `json:"OS-EXT-AZ:availability_zone"`
-
 	// Name contains the human-readable name for the server.
 	Name string `json:"name"`
 

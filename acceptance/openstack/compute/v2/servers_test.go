@@ -8,6 +8,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/availabilityzones"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/diskconfig"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/extendedstatus"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/cloudimages"
@@ -91,21 +94,27 @@ func TestServerLifecycle(t *testing.T) {
 	opts := servers.ListOpts{
 		Name: ecsName,
 	}
-	var allServers []servers.Server
 	allServerPages, err := servers.List(client, opts).AllPages()
 	th.AssertNoErr(t, err)
-	allServers, err = servers.ExtractServers(allServerPages)
+	type ServerWithExt struct {
+		servers.Server
+		availabilityzones.ServerAvailabilityZoneExt
+		extendedstatus.ServerExtendedStatusExt
+		diskconfig.ServerDiskConfigExt
+	}
+	var allServers []ServerWithExt
+	err = servers.ExtractServersInto(allServerPages, &allServers)
 	th.AssertNoErr(t, err)
 
 	if len(allServers) < 1 {
 		t.Fatal("[ERROR] cannot find the server")
 	}
 	th.AssertEquals(t, ecsName, allServers[0].Name)
+	th.AssertEquals(t, az, allServers[0].AvailabilityZone)
 
 	ecs, err = servers.Get(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, ecsName, ecs.Name)
-	th.AssertEquals(t, az, ecs.AvailabilityZone)
 
 	nicInfo, err := servers.GetNICs(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
