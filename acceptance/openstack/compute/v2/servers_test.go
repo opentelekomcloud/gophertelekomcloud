@@ -105,6 +105,7 @@ func TestServerLifecycle(t *testing.T) {
 	ecs, err = servers.Get(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, ecsName, ecs.Name)
+	th.AssertEquals(t, az, ecs.AvailabilityZone)
 
 	nicInfo, err := servers.GetNICs(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
