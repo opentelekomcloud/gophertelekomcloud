@@ -11,6 +11,10 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/availabilityzones"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/diskconfig"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/extendedstatus"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingips"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/networks"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/volumeattach"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/cloudimages"
@@ -101,6 +105,10 @@ func TestServerLifecycle(t *testing.T) {
 		availabilityzones.ServerAvailabilityZoneExt
 		extendedstatus.ServerExtendedStatusExt
 		diskconfig.ServerDiskConfigExt
+		floatingips.FloatingIP
+		networks.Network
+		secgroups.SecurityGroup
+		volumeattach.VolumeAttachment
 	}
 	var allServers []ServerWithExt
 	err = servers.ExtractServersInto(allServerPages, &allServers)

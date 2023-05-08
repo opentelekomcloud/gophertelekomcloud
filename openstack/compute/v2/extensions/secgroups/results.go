@@ -13,10 +13,10 @@ type SecurityGroup struct {
 	// The unique ID of the group. If Neutron is installed, this ID will be
 	// represented as a string UUID; if Neutron is not installed, it will be a
 	// numeric ID. For the sake of consistency, we always cast it to a string.
-	ID string `json:"-"`
+	SecurityGroupID string `json:"-"`
 
 	// The human-readable name of the group, which needs to be unique.
-	Name string `json:"name"`
+	SecurityGroupName string `json:"name"`
 
 	// The human-readable description of the group.
 	Description string `json:"description"`
@@ -43,9 +43,9 @@ func (r *SecurityGroup) UnmarshalJSON(b []byte) error {
 
 	switch t := s.ID.(type) {
 	case float64:
-		r.ID = strconv.FormatFloat(t, 'f', -1, 64)
+		r.SecurityGroupID = strconv.FormatFloat(t, 'f', -1, 64)
 	case string:
-		r.ID = t
+		r.SecurityGroupID = t
 	}
 
 	return err

@@ -33,11 +33,11 @@ func TestList(t *testing.T) {
 
 		expected := []secgroups.SecurityGroup{
 			{
-				ID:          groupID,
-				Description: "default",
-				Name:        "default",
-				Rules:       []secgroups.Rule{},
-				TenantID:    "openstack",
+				SecurityGroupID:   groupID,
+				Description:       "default",
+				SecurityGroupName: "default",
+				Rules:             []secgroups.Rule{},
+				TenantID:          "openstack",
 			},
 		}
 
@@ -68,11 +68,11 @@ func TestListByServer(t *testing.T) {
 
 		expected := []secgroups.SecurityGroup{
 			{
-				ID:          groupID,
-				Description: "default",
-				Name:        "default",
-				Rules:       []secgroups.Rule{},
-				TenantID:    "openstack",
+				SecurityGroupID:   groupID,
+				Description:       "default",
+				SecurityGroupName: "default",
+				Rules:             []secgroups.Rule{},
+				TenantID:          "openstack",
 			},
 		}
 
@@ -100,11 +100,11 @@ func TestCreate(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
-		ID:          groupID,
-		Name:        "test",
-		Description: "something",
-		TenantID:    "openstack",
-		Rules:       []secgroups.Rule{},
+		SecurityGroupID:   groupID,
+		SecurityGroupName: "test",
+		Description:       "something",
+		TenantID:          "openstack",
+		Rules:             []secgroups.Rule{},
 	}
 	th.AssertDeepEquals(t, expected, group)
 }
@@ -124,11 +124,11 @@ func TestUpdate(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
-		ID:          groupID,
-		Name:        "new_name",
-		Description: "something",
-		TenantID:    "openstack",
-		Rules:       []secgroups.Rule{},
+		SecurityGroupID:   groupID,
+		SecurityGroupName: "new_name",
+		Description:       "something",
+		TenantID:          "openstack",
+		Rules:             []secgroups.Rule{},
 	}
 	th.AssertDeepEquals(t, expected, group)
 }
@@ -143,10 +143,10 @@ func TestGet(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
-		ID:          groupID,
-		Description: "default",
-		Name:        "default",
-		TenantID:    "openstack",
+		SecurityGroupID:   groupID,
+		Description:       "default",
+		SecurityGroupName: "default",
+		TenantID:          "openstack",
 		Rules: []secgroups.Rule{
 			{
 				FromPort:      80,
@@ -174,7 +174,7 @@ func TestGetNumericID(t *testing.T) {
 	group, err := secgroups.Get(client.ServiceClient(), "12345").Extract()
 	th.AssertNoErr(t, err)
 
-	expected := &secgroups.SecurityGroup{ID: "12345"}
+	expected := &secgroups.SecurityGroup{SecurityGroupID: "12345"}
 	th.AssertDeepEquals(t, expected, group)
 }
 
@@ -190,7 +190,7 @@ func TestGetNumericRuleID(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	expected := &secgroups.SecurityGroup{
-		ID: "12345",
+		SecurityGroupID: "12345",
 		Rules: []secgroups.Rule{
 			{
 				ParentGroupID: "12345",

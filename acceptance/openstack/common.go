@@ -39,8 +39,8 @@ func DefaultSecurityGroup(t *testing.T) string {
 	th.AssertNoErr(t, err)
 	var sgId string
 	for _, val := range securityGroups {
-		if val.Name == "default" {
-			sgId = val.ID
+		if val.SecurityGroupName == "default" {
+			sgId = val.SecurityGroupID
 			break
 		}
 	}
@@ -61,8 +61,8 @@ func CreateSecurityGroup(t *testing.T) string {
 	secGroup, err := secgroups.Create(client, createSGOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	t.Logf("Security group %s was created", secGroup.ID)
-	return secGroup.ID
+	t.Logf("Security group %s was created", secGroup.SecurityGroupID)
+	return secGroup.SecurityGroupName
 }
 
 func DeleteSecurityGroup(t *testing.T, secGroupID string) {
