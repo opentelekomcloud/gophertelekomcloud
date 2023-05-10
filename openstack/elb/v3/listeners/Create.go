@@ -278,10 +278,7 @@ type QuicConfigOption struct {
 }
 
 // Create is an operation which provisions a new Listeners based on the
-// configuration defined in the CreateOpts struct. Once the request is
-// validated and progress has started on the provisioning process, a
-// CreateResult will be returned.
-//
+// configuration defined in the CreateOpts struct.
 // Users with an admin role can create Listeners on behalf of other tenants by
 // specifying a TenantID attribute different from their own.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Listener, error) {
