@@ -37,14 +37,14 @@ func TestCertificateLifecycle(t *testing.T) {
 	emptyDescription := ""
 	updateOpts := certificates.UpdateOpts{
 		Name:        certName,
-		Description: &emptyDescription,
+		Description: emptyDescription,
 	}
 
-	_, err = certificates.Update(client, certificateID, updateOpts).Extract()
+	_, err = certificates.Update(client, certificateID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 certificate: %s", certificateID)
 
-	newCertificate, err := certificates.Get(client, certificateID).Extract()
+	newCertificate, err := certificates.Get(client, certificateID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newCertificate.Name)
 	th.AssertEquals(t, emptyDescription, newCertificate.Description)

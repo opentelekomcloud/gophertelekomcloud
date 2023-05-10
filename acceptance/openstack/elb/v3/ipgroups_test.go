@@ -81,16 +81,18 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	t.Logf("Attempting to create ELBv3 Listener with ipGroup association")
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  loadbalancerID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
 		IpGroup: &listeners.IpGroup{
 			IpGroupID: ipGroup.ID,
 			Enable:    pointerto.Bool(true),
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() {
+		deleteListener(t, client, listener.ID)
+	})
 
 	updatedIpList, err := ipgroups.UpdateIpList(client, ipGroup.ID, ipgroups.UpdateOpts{
 		IpList: []ipgroups.IpGroupOption{

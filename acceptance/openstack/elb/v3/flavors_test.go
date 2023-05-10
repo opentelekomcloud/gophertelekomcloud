@@ -19,7 +19,7 @@ func TestFlavorsList(t *testing.T) {
 	flavorsList, err := flavors.ExtractFlavors(flavorsPages)
 	th.AssertNoErr(t, err)
 
-	zeroFlavor, err := flavors.Get(client, flavorsList[0].ID).Extract()
+	zeroFlavor, err := flavors.Get(client, flavorsList[0].ID)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, zeroFlavor, &flavorsList[0])
 }

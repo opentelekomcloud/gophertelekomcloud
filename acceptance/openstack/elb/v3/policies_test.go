@@ -18,13 +18,13 @@ func TestPolicyWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listenerID := createListener(t, client, lbID)
-	defer deleteListener(t, client, listenerID)
+	t.Cleanup(func() { deleteListener(t, client, listenerID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
 		Action:         policies.ActionRedirectToPool,
@@ -39,10 +39,10 @@ func TestPolicyWorkflow(t *testing.T) {
 	t.Logf("Created L7 Policy")
 	id := created.ID
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
 		t.Log("Deleted L7 Policy")
-	}()
+	})
 
 	got, err := policies.Get(client, id).Extract()
 	th.AssertNoErr(t, err)
@@ -79,19 +79,19 @@ func TestPolicyWorkflowFixedResponse(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  lbID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() { deleteListener(t, client, listener.ID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
 		Action:     policies.ActionFixedResponse,
@@ -110,10 +110,10 @@ func TestPolicyWorkflowFixedResponse(t *testing.T) {
 	t.Logf("Created L7 Policy")
 	id := created.ID
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
 		t.Log("Deleted L7 Policy")
-	}()
+	})
 
 	got, err := policies.Get(client, id).Extract()
 	th.AssertNoErr(t, err)
@@ -155,19 +155,19 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  lbID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() { deleteListener(t, client, listener.ID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
 		Action:      policies.ActionUrlRedirect,
@@ -190,10 +190,10 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 	t.Logf("Created L7 Policy")
 	id := created.ID
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
 		t.Log("Deleted L7 Policy")
-	}()
+	})
 
 	got, err := policies.Get(client, id).Extract()
 	th.AssertNoErr(t, err)

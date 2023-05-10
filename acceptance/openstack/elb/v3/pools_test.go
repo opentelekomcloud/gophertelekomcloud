@@ -31,10 +31,12 @@ func TestPoolLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, loadbalancerID) })
 
 	poolID := createPool(t, client, loadbalancerID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() {
+		deletePool(t, client, poolID)
+	})
 
 	t.Logf("Attempting to update ELBv3 Pool: %s", poolID)
 	poolName := tools.RandomString("update-pool-", 3)

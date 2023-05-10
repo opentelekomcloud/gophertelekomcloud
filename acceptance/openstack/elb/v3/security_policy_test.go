@@ -40,7 +40,7 @@ func TestSecurityPolicyLifecycle(t *testing.T) {
 	secPolicy := createSecurityPolicy(t, client, policyName)
 	tools.PrintResource(t, secPolicy)
 
-	defer deleteSecurityPolicy(t, client, secPolicy.SecurityPolicy.ID)
+	t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicy.SecurityPolicy.ID) })
 
 	updatedName := tools.RandomString("update-policy-", 3)
 
@@ -78,14 +78,14 @@ func TestPolicyAssignment(t *testing.T) {
 	policyName := tools.RandomString("create-policy-", 3)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, loadbalancerID) })
 
 	certificateID := createCertificate(t, client)
-	defer deleteCertificate(t, client, certificateID)
+	t.Cleanup(func() { deleteCertificate(t, client, certificateID) })
 
 	t.Run("AssignSecurityPolicyListenerCreation", func(t *testing.T) {
 		secPolicyID := createSecurityPolicy(t, client, policyName).SecurityPolicy.ID
-		defer deleteSecurityPolicy(t, client, secPolicyID)
+		t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicyID) })
 
 		listenerName := tools.RandomString("create-listener-", 3)
 
@@ -99,20 +99,20 @@ func TestPolicyAssignment(t *testing.T) {
 			SecurityPolicy:         secPolicyID,
 		}
 
-		listener, err := listeners.Create(client, createOpts).Extract()
-		defer func() {
+		listener, err := listeners.Create(client, createOpts)
+		t.Cleanup(func() {
 			t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
-			err := listeners.Delete(client, listener.ID).ExtractErr()
+			err := listeners.Delete(client, listener.ID)
 			th.AssertNoErr(t, err)
 			t.Logf("Deleted ELBv3 Listener: %s", listener.ID)
-		}()
+		})
 		th.AssertNoErr(t, err)
 		th.AssertEquals(t, listener.SecurityPolicy, secPolicyID)
 	})
 
 	t.Run("AssignSecurityPolicyListenerUpdate", func(t *testing.T) {
 		secPolicyUpdatedID := createSecurityPolicy(t, client, policyName).SecurityPolicy.ID
-		defer deleteSecurityPolicy(t, client, secPolicyUpdatedID)
+		t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicyUpdatedID) })
 		listenerName := tools.RandomString("create-listener-", 3)
 
 		createOpts := listeners.CreateOpts{
@@ -124,22 +124,22 @@ func TestPolicyAssignment(t *testing.T) {
 			ProtocolPort:           443,
 		}
 
-		listener, err := listeners.Create(client, createOpts).Extract()
+		listener, err := listeners.Create(client, createOpts)
 		th.AssertNoErr(t, err)
-		defer func() {
+		t.Cleanup(func() {
 			t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
-			err := listeners.Delete(client, listener.ID).ExtractErr()
+			err := listeners.Delete(client, listener.ID)
 			th.AssertNoErr(t, err)
 			t.Logf("Deleted ELBv3 Listener: %s", listener.ID)
-		}()
+		})
 
 		updateOpts := listeners.UpdateOpts{
 			SecurityPolicy: secPolicyUpdatedID,
 		}
 
-		_ = listeners.Update(client, listener.ID, updateOpts)
+		_, _ = listeners.Update(client, listener.ID, updateOpts)
 
-		updatedListener, err := listeners.Get(client, listener.ID).Extract()
+		updatedListener, err := listeners.Get(client, listener.ID)
 		th.AssertNoErr(t, err)
 		th.AssertEquals(t, updatedListener.SecurityPolicy, secPolicyUpdatedID)
 	})

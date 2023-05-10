@@ -21,10 +21,12 @@ func TestMemberLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
+	t.Cleanup(func() {
+		deleteLoadbalancer(t, client, loadbalancerID)
+	})
 
 	poolID := createPool(t, client, loadbalancerID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	t.Logf("Attempting to create ELBv3 Member")
 	memberName := tools.RandomString("create-member-", 3)
@@ -38,12 +40,12 @@ func TestMemberLifecycle(t *testing.T) {
 
 	member, err := members.Create(client, poolID, createOpts).Extract()
 	th.AssertNoErr(t, err)
-	defer func() {
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete ELBv3 Member: %s", member.ID)
 		err := members.Delete(client, poolID, member.ID).ExtractErr()
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Member: %s", member.ID)
-	}()
+	})
 	th.AssertEquals(t, createOpts.Name, member.Name)
 	th.AssertEquals(t, createOpts.ProtocolPort, member.ProtocolPort)
 	th.AssertEquals(t, createOpts.Address, member.Address)

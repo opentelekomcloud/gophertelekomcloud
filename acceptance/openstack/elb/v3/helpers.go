@@ -130,7 +130,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 		Certificate: cert,
 	}
 
-	certificate, err := certificates.Create(client, createOpts).Extract()
+	certificate, err := certificates.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, certificate.Name)
 	th.AssertEquals(t, createOpts.Description, certificate.Description)
@@ -141,7 +141,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 
 func deleteCertificate(t *testing.T, client *golangsdk.ServiceClient, certificateID string) {
 	t.Logf("Attempting to delete ELBv3 certificate: %s", certificateID)
-	err := certificates.Delete(client, certificateID).ExtractErr()
+	err := certificates.Delete(client, certificateID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 certificate: %s", certificateID)
 }
@@ -184,13 +184,13 @@ func deletePool(t *testing.T, client *golangsdk.ServiceClient, poolID string) {
 func createListener(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) string {
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID: loadbalancerID,
-		Protocol:       listeners.ProtocolHTTP,
+		Protocol:       "HTTP",
 		ProtocolPort:   80,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	return listener.ID
 }
 
 func deleteListener(t *testing.T, client *golangsdk.ServiceClient, listenerID string) {
-	th.AssertNoErr(t, listeners.Delete(client, listenerID).ExtractErr())
+	th.AssertNoErr(t, listeners.Delete(client, listenerID))
 }

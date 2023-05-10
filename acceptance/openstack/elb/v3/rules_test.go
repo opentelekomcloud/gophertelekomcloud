@@ -20,16 +20,16 @@ func TestRuleWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listenerID := createListener(t, client, lbID)
-	defer deleteListener(t, client, listenerID)
+	t.Cleanup(func() { deleteListener(t, client, listenerID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	policyID := createPolicy(t, client, listenerID, poolID)
-	defer deletePolicy(t, client, policyID)
+	t.Cleanup(func() { deletePolicy(t, client, policyID) })
 
 	opts := rules.CreateOpts{
 		Type:        rules.Path,
@@ -42,10 +42,10 @@ func TestRuleWorkflow(t *testing.T) {
 	t.Logf("Rule %s added to the policy %s", id, policyID)
 	th.CheckEquals(t, opts.Type, created.Type)
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, rules.Delete(client, policyID, id).ExtractErr())
 		t.Log("Rule removed from policy")
-	}()
+	})
 
 	got, err := rules.Get(client, policyID, id).Extract()
 	th.AssertNoErr(t, err)
@@ -78,22 +78,24 @@ func TestRuleWorkflowConditions(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() {
+		deleteLoadbalancer(t, client, lbID)
+	})
 
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  lbID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() { deleteListener(t, client, listener.ID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	policyID := createPolicy(t, client, listener.ID, poolID)
-	defer deletePolicy(t, client, policyID)
+	t.Cleanup(func() { deletePolicy(t, client, policyID) })
 	condition := rules.Condition{
 		Key:   "",
 		Value: "/",
@@ -110,10 +112,10 @@ func TestRuleWorkflowConditions(t *testing.T) {
 	t.Logf("Rule %s added to the policy %s", id, policyID)
 	th.CheckEquals(t, opts.Type, created.Type)
 
-	defer func() {
+	t.Cleanup(func() {
 		th.AssertNoErr(t, rules.Delete(client, policyID, id).ExtractErr())
 		t.Log("Rule removed from policy")
-	}()
+	})
 
 	got, err := rules.Get(client, policyID, id).Extract()
 	th.AssertNoErr(t, err)
