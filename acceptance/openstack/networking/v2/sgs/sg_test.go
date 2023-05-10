@@ -62,11 +62,13 @@ func CreateMultipleSgsRules(clientV2 *golangsdk.ServiceClient, sgID string, coun
 	i := 0
 	createdSgs := make([]string, count)
 	for i < count {
+		portRangeMin := startIndex*1000 + i
+		portRangeMax := startIndex*5000 + i
 		opts := rules.CreateOpts{
 			Description:  "description",
 			SecGroupID:   sgID,
-			PortRangeMin: startIndex*1000 + i,
-			PortRangeMax: startIndex*5000 + i,
+			PortRangeMin: &portRangeMin,
+			PortRangeMax: &portRangeMax,
 			Direction:    "ingress",
 			EtherType:    "IPv4",
 			Protocol:     "TCP",
