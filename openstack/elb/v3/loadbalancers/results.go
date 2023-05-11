@@ -23,11 +23,6 @@ type PublicIpInfo struct {
 	IpVersion int `json:"ip_version"`
 }
 
-// StatusTree represents the status of a loadbalancer.
-type StatusTree struct {
-	Loadbalancer *LoadBalancer `json:"loadbalancer"`
-}
-
 type commonResult struct {
 	golangsdk.Result
 }
@@ -36,23 +31,6 @@ type commonResult struct {
 func (r commonResult) Extract() (*LoadBalancer, error) {
 	s := new(LoadBalancer)
 	err := r.ExtractIntoStructPtr(s, "loadbalancer")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// GetStatusesResult represents the result of a GetStatuses operation.
-// Call its Extract method to interpret it as a StatusTree.
-type GetStatusesResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts the status of
-// a Loadbalancer.
-func (r GetStatusesResult) Extract() (*StatusTree, error) {
-	s := new(StatusTree)
-	err := r.ExtractIntoStructPtr(s, "statuses")
 	if err != nil {
 		return nil, err
 	}
