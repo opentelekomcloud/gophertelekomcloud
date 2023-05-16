@@ -2,7 +2,6 @@ package loadbalancers
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type EipInfo struct {
@@ -31,30 +30,6 @@ type commonResult struct {
 func (r commonResult) Extract() (*LoadBalancer, error) {
 	s := new(LoadBalancer)
 	err := r.ExtractIntoStructPtr(s, "loadbalancer")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// LoadbalancerPage is the page returned by a pager when traversing over a
-// collection of loadbalancer.
-type LoadbalancerPage struct {
-	pagination.PageWithInfo
-}
-
-// IsEmpty checks whether a FlavorsPage struct is empty.
-func (r LoadbalancerPage) IsEmpty() (bool, error) {
-	is, err := ExtractLoadbalancers(r)
-	return len(is) == 0, err
-}
-
-// ExtractLoadbalancers accepts a Page struct, specifically a LoadbalancerPage struct,
-// and extracts the elements into a slice of loadbalancer structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractLoadbalancers(r pagination.Page) ([]LoadBalancer, error) {
-	var s []LoadBalancer
-	err := (r.(LoadbalancerPage)).ExtractIntoSlicePtr(&s, "loadbalancers")
 	if err != nil {
 		return nil, err
 	}
