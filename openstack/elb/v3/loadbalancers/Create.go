@@ -108,11 +108,11 @@ type CreateOpts struct {
 	// Specifies the ID of the bandwidth used by an IPv6 address. This parameter is available only when you create or update a load balancer with a public IPv6 address. If you use a new IPv6 address and specify a shared bandwidth, the IPv6 address will be added to the shared bandwidth.
 	//
 	// IPv6 is unsupported. Please do not use this parameter.
-	IPV6Bandwidth *BandwidthRef `json:"ipv6_bandwidth,omitempty"`
+	IPV6Bandwidth BandwidthRef `json:"ipv6_bandwidth,omitempty"`
 	// Specifies the ID of the EIP the system will automatically assign and bind to the load balancer during load balancer creation. Only the first EIP will be bound to the load balancer although multiple EIP IDs can be set.
 	PublicIpIDs []string `json:"publicip_ids,omitempty"`
 	// Specifies the new EIP that will be bound to the load balancer.
-	PublicIp *PublicIp `json:"publicip,omitempty"`
+	PublicIp PublicIp `json:"publicip,omitempty"`
 	//
 	// Specifies the IDs of subnets on the downstream plane. You can query parameter neutron_network_id in the response by calling the API (GET https://{VPC_Endpoint}/v1/{project_id}/subnets).
 	//
@@ -152,6 +152,122 @@ type CreateOpts struct {
 	//
 	// This parameter is not available in eu-nl region. Please do not use it.
 	DeletionProtectionEnable *bool `json:"deletion_protection_enable,omitempty"`
+}
+
+type PublicIp struct {
+	// Specifies the IP address version. The value can be 4 (IPv4) or 6 (IPv6).
+	//
+	// IPv6 is unsupported, and the value cannot be 6.
+	//
+	// Default: 4
+	IpVersion *int `json:"ip_version,omitempty"`
+	// Specifies the EIP type. The default value is 5_bgp. For more information, see the API for assigning an EIP in the Virtual Private Cloud API Reference.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 36
+	NetworkType string `json:"network_type" required:"true"`
+	// Provides billing information about the EIP.
+	//
+	// If the value is left blank, the EIP is billed in pay-per-use mode.
+	//
+	// If the value is not left blank, the EIP is billed on a yearly/monthly basis.
+	//
+	// This parameter is unsupported. Please do not use it.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 1024
+	BillingInfo string `json:"billing_info,omitempty"`
+	// Provides supplementary information about the EIP.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 255
+	Description string `json:"description,omitempty"`
+	// bandwidth
+	Bandwidth Bandwidth `json:"bandwidth" required:"true"`
+}
+
+type Bandwidth struct {
+	// Specifies the bandwidth name.
+	//
+	// The value can contain 1 to 64 characters, including letters, digits, underscores (_), hyphens (-), and periods.
+	//
+	// Note:
+	//
+	// This parameter is mandatory if share_type is set to PER.
+	//
+	// This parameter will be ignored if the bandwidth reference has a specific ID.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 64
+	Name string `json:"name,omitempty"`
+	// Specifies the bandwidth range.
+	//
+	// The default range is 1 Mbit/s to 2,000 Mbit/s. (The specific range may vary depending on the configuration in each region. You can see the available bandwidth range on the management console.)
+	//
+	// Note:
+	//
+	// The minimum increment for bandwidth adjustment varies depending on the bandwidth range. The following are the details:
+	//
+	// The minimum increment is 1 Mbit/s if the bandwidth range is from 0 Mbit/s to 300 Mbit/s.
+	//
+	// The minimum increment is 50 Mbit/s if the bandwidth range is from 301 Mbit/s to 1,000 Mbit/s.
+	//
+	// The minimum increment is 500 Mbit/s if the bandwidth is greater than 1,000 Mbit/s.
+	//
+	// This parameter is mandatory if id is set to null.
+	//
+	// Minimum: 0
+	//
+	// Maximum: 99999
+	Size *int `json:"size,omitempty"`
+	// Specifies how the bandwidth used by the EIP is billed.
+	//
+	// Currently, the bandwidth can be billed only by traffic.
+	//
+	// This parameter is mandatory if id is set to null.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 36
+	ChargeMode string `json:"charge_mode,omitempty"`
+	// Specifies the bandwidth type.
+	//
+	// PER: indicates dedicated bandwidth.
+	//
+	// WHOLE: indicates shared bandwidth.
+	//
+	// Note:
+	//
+	// This parameter is mandatory when id is set to null. It will be ignored if the value of id is not null.
+	//
+	// The bandwidth ID must be specified if the bandwidth type is set to WHOLE.
+	//
+	// The bandwidth type cannot be WHOLE for IPv6 EIPs.
+	ShareType string `json:"share_type,omitempty"`
+	// Specifies bandwidth billing information.
+	//
+	// This parameter is unsupported. Please do not use it.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 1024
+	BillingInfo string `json:"billing_info,omitempty"`
+	// Specifies the ID of the shared bandwidth to which the IP address bound to the load balancer is added.
+	//
+	// Note:
+	//
+	// The value is the bandwidth ID when share_type is set to WHOLE.
+	//
+	// There is no need to specify this parameter if the billing mode is yearly/monthly. This parameter will be ignored if it is left blank.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 36
+	Id string `json:"id,omitempty"`
 }
 
 // Create is an operation which provisions a new loadbalancer based on the

@@ -172,3 +172,8 @@ type LoadBalancer struct {
 	// Specifies the AZ group to which the load balancer belongs.
 	PublicBorderGroup string `json:"public_border_group"`
 }
+
+type BandwidthRef struct {
+	// Share Bandwidth ID
+	ID string `json:"id" required:"true"`
+}
