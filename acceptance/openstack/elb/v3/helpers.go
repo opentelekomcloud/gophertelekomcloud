@@ -50,7 +50,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 		IpTargetEnable: &ipTargetEnable,
 	}
 
-	loadbalancer, err := loadbalancers.Create(client, createOpts).Extract()
+	loadbalancer, err := loadbalancers.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, loadbalancer.Name)
 	th.AssertEquals(t, createOpts.Description, loadbalancer.Description)
@@ -61,7 +61,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func deleteLoadbalancer(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) {
 	t.Logf("Attempting to delete ELBv3 LoadBalancer: %s", loadbalancerID)
-	err := loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err := loadbalancers.Delete(client, loadbalancerID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 LoadBalancer: %s", loadbalancerID)
 }
