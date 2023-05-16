@@ -2,34 +2,7 @@ package members
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// MemberPage is the page returned by a pager when traversing over a
-// collection of Members in a Pool.
-type MemberPage struct {
-	pagination.PageWithInfo
-}
-
-func (p MemberPage) IsEmpty() (bool, error) {
-	l, err := ExtractMembers(p)
-	if err != nil {
-		return false, err
-	}
-	return len(l) == 0, nil
-}
-
-// ExtractMembers accepts a Page struct, specifically a MemberPage struct,
-// and extracts the elements into a slice of Members structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractMembers(r pagination.Page) ([]Member, error) {
-	var s []Member
-	err := (r.(MemberPage)).ExtractIntoSlicePtr(&s, "members")
-	if err != nil {
-		return nil, err
-	}
-	return s, err
-}
 
 type commonResult struct {
 	golangsdk.Result

@@ -10,6 +10,7 @@ import (
 
 // Get retrieves a particular Pool Member based on its unique ID.
 func Get(client *golangsdk.ServiceClient, poolID string, memberID string) (*Member, error) {
+	// GET /v3/{project_id}/elb/pools/{pool_id}/members/{member_id}
 	raw, err := client.Get(client.ServiceURL("pools", poolID, "members", memberID), nil, nil)
 	return extra(err, raw)
 }
