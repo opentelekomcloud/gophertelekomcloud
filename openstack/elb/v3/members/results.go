@@ -5,41 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// Member represents the application running on a backend server.
-type Member struct {
-	// Name of the Member.
-	Name string `json:"name"`
-
-	// Weight of Member.
-	Weight int `json:"weight"`
-
-	// The administrative state of the member, which is up (true) or down (false).
-	AdminStateUp bool `json:"admin_state_up"`
-
-	// Owner of the Member.
-	ProjectID string `json:"project_id"`
-
-	// Parameter value for the subnet UUID.
-	SubnetID string `json:"subnet_cidr_id"`
-
-	// The Pool to which the Member belongs.
-	PoolID string `json:"pool_id"`
-
-	// The IP address of the Member.
-	Address string `json:"address"`
-
-	// The port on which the application is hosted.
-	ProtocolPort int `json:"protocol_port"`
-
-	// The unique ID for the Member.
-	ID string `json:"id"`
-
-	IpVersion string `json:"ip_version"`
-
-	// The operating status of the member.
-	OperatingStatus string `json:"operating_status"`
-}
-
 // MemberPage is the page returned by a pager when traversing over a
 // collection of Members in a Pool.
 type MemberPage struct {
