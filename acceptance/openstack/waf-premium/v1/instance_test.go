@@ -39,6 +39,7 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 	instanceUpdated, err := instances.Update(client, instanceId, instances.UpdateOpts{
 		Name: updatedName,
 	})
+	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instanceUpdated.Name, updatedName)
 }
 
@@ -52,6 +53,11 @@ func createInstance(t *testing.T, client *golangsdk.ServiceClient) string {
 	if vpcID == "" && subnetID == "" && region == "" && az == "" {
 		t.Skip("OS_REGION_NAME, OS_AVAILABILITY_ZONE, OS_VPC_ID and OS_NETWORK_ID env vars is required for this test")
 	}
+	// to be deleted
+	if region != "eu-ch2" {
+		t.Skip("this service deployed only in SWISS region for now")
+	}
+	//
 
 	opts := instances.CreateOpts{
 		Count:            1,
