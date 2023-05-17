@@ -526,6 +526,15 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 	return openstack.NewWAFV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
 }
 
+// NewWafPremiumV1Client returns authenticated WAF premium v1 client
+func NewWafPremiumV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewWAFPremiumV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+}
+
 // NewCsbsV1Client returns authenticated CSBS v1 client
 func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
