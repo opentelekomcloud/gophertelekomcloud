@@ -643,6 +643,16 @@ func NewDmsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewDmsV11Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDMSServiceV11(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDmsV2Client returns authenticated DMS v2 client
 func NewDmsV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
