@@ -48,7 +48,9 @@ func ListTransfers(client *golangsdk.ServiceClient, opts ListTransfersOpts) ([]T
 	}
 
 	// GET /v2/{project_id}/transfers
-	raw, err := client.Get(client.ServiceURL("transfers")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL("transfers")+q.String(), nil, &golangsdk.RequestOpts{
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+	})
 	if err != nil {
 		return nil, err
 	}
