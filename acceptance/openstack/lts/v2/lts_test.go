@@ -65,7 +65,6 @@ func TestLtsLifecycle(t *testing.T) {
 }
 
 func TestLtsTransferLifecycle(t *testing.T) {
-	t.Skipf("Released API are not working properly")
 	client, err := clients.NewLtsV2Client()
 	th.AssertNoErr(t, err)
 
@@ -135,6 +134,7 @@ func TestLtsTransferLifecycle(t *testing.T) {
 
 	listLogs, err := transfers.ListTransfers(client, transfers.ListTransfersOpts{})
 	th.AssertNoErr(t, err)
+	tools.PrintResource(t, listLogs)
 	if len(listLogs) < 1 {
 		t.Error("Log dump wasn't found")
 	}
