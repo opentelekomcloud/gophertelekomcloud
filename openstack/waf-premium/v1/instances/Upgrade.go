@@ -12,8 +12,7 @@ type UpgradeOpts struct {
 	Action string `json:"action"`
 }
 
-// Upgrade will create a new instance on the values in CreateOpts. To extract
-// the instance object from the response, call the Extract method on the CreateResult.
+// Upgrade will upgrade instance software.
 func Upgrade(client *golangsdk.ServiceClient, id string) (*Instance, error) {
 	b, err := build.RequestBody(UpgradeOpts{
 		Action: "upgrade",
