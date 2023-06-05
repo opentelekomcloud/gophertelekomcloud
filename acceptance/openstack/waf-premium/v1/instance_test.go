@@ -22,6 +22,7 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete WAF Premium instance: %s", instanceId)
 		th.AssertNoErr(t, instances.Delete(client, instanceId))
+		th.AssertNoErr(t, waitForInstanceToBeDeleted(client, 600, instanceId))
 		t.Logf("Deleted WAF Premium instance: %s", instanceId)
 	})
 

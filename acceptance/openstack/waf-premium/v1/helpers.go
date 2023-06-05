@@ -23,3 +23,16 @@ func waitForInstanceToBeCreated(client *golangsdk.ServiceClient, secs int, id st
 		return false, nil
 	})
 }
+
+func waitForInstanceToBeDeleted(client *golangsdk.ServiceClient, secs int, id string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		_, err := instances.Get(client, id)
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, fmt.Errorf("error retriving WAF instance status: %w", err)
+		}
+		return false, nil
+	})
+}
