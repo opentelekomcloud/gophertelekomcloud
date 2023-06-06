@@ -16,6 +16,8 @@ type MetricAlarms struct {
 	AlarmName string `json:"alarm_name"`
 	// Provides supplementary information about the alarm rule.
 	AlarmDescription string `json:"alarm_description,omitempty"`
+	// Specifies the alarm rule type.
+	AlarmType string `json:"alarm_type"`
 	// Specifies the alarm metric.
 	Metric MetricForAlarm `json:"metric"`
 	// Specifies the alarm triggering condition.
@@ -72,6 +74,8 @@ type Condition struct {
 	// For detailed thresholds, see the value range of each metric in the appendix.
 	// For example, you can set ECS cpu_util in Services Interconnected with Cloud Eye to 80.
 	Value float64 `json:"value"`
+	// Specifies the interval for triggering an alarm if the alarm persists.
+	SuppressDuration int `json:"suppress_duration"`
 }
 
 type AlarmActions struct {
