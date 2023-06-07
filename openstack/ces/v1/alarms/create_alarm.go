@@ -24,6 +24,8 @@ type CreateAlarmOpts struct {
 	// indicating critical, major, minor, and informational, respectively.
 	AlarmLevel int `json:"alarm_level,omitempty"`
 	// Specifies the action to be triggered by an alarm.
+	AlarmType string `json:"alarm_type,omitempty"`
+	// Specifies the action to be triggered by an alarm.
 	AlarmActions []AlarmActions `json:"alarm_actions,omitempty"`
 	// Specifies the action to be triggered after the alarm is cleared.
 	OkActions []AlarmActions `json:"ok_actions,omitempty"`
