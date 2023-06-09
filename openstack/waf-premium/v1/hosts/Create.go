@@ -152,11 +152,11 @@ type ServerResponse struct {
 type FlagResponse struct {
 	// Whether PCI 3DS certification check is enabled for the domain name. Currently, this function is not supported. The default value is false. You can ignore this parameter.
 	// true: PCI 3DS check is enabled.
-	// false: PCI 3DS check is disenabled.
+	// false: PCI 3DS check is disabled.
 	Pci3ds string `json:"pci_3ds"`
 	// Whether PCI DDS certification check is enabled for the domain name.
 	// true: PCI DDS check is enabled.
-	// false: PCI DDS check is disenabled.
+	// false: PCI DDS check is disabled.
 	PciDss string `json:"pci_dss"`
 }
 type BlockPageResponse struct {

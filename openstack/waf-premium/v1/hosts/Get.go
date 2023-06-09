@@ -72,4 +72,7 @@ type Host struct {
 	BlockPage *BlockPageResponse `json:"block_page"`
 	// Extended attribute
 	Extend map[string]string `json:"extend"`
+	// WAF mode. The value is premium, indicating
+	// the dedicated WAF engine
+	WafType string `json:"waf_type"`
 }
