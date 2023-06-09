@@ -48,8 +48,7 @@ type CreateOpts struct {
 	Count int `json:"count" required:"true"`
 }
 
-// Create will create a new instance on the values in CreateOpts. To extract
-// the instance object from the response, call the Extract method on the CreateResult.
+// Create will create a new instance on the values in CreateOpts.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*InstanceResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
