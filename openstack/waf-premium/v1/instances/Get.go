@@ -72,7 +72,7 @@ type Instance struct {
 	// ID of the ECS hosting the dedicated engine.
 	ServerId string `json:"server_id"`
 	// Timestamp when the dedicated WAF engine was created.
-	CreatedAt int64 `json:"create_time"`
+	CreatedAt int `json:"create_time"`
 }
 
 type HostEntry struct {

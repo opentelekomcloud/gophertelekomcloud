@@ -120,7 +120,7 @@ type HostResponse struct {
 	// Not described
 	Extend map[string]string `json:"extend"`
 	// Creation time.
-	CreatedAt int64 `json:"timestamp"`
+	CreatedAt int `json:"timestamp"`
 }
 
 type ServerResponse struct {

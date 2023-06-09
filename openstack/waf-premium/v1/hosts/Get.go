@@ -65,7 +65,7 @@ type Host struct {
 	// 1: The domain name is connected to the engine instance.
 	AccessStatus int `json:"access_status"`
 	// Time a domain name is added to WAF
-	CreatedAt int64 `json:"timestamp"`
+	CreatedAt int `json:"timestamp"`
 	// Special domain name identifier, which is used to store additional domain name configurations
 	Flag *FlagResponse `json:"flag"`
 	// Alarm configuration page
