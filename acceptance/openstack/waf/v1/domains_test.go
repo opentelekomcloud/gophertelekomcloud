@@ -14,6 +14,12 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
+var contentText = `"<!DOCTYPE html>\n<html>\n<head>\n\t<meta charset=\"UTF-8\">\n\t<title>Error</title>\n</head>\n
+<body>\n\t<style>\n\t\t.center {\n\t\t  margin: 0;\n\t\t  position: absolute;\n\t\t  top: 50%;\n\t\t  left: 50%;\n\t\t
+-ms-transform: translate(-50%, -50%);\n\t\t  transform: translate(-50%, -50%);\n\t\t}\n\t</style>\n\t<div class=\"center\
+">\n\t\t<center>\n\t\t\t<h1>Your request is suspected to be an attack.</h1><br>\n\t\t\t<p>Event ID: ${waf_event_id}</p>\n
+\t\t</center>\n\t</div>\n</body>\n</html>"`
+
 func prepareIp(t *testing.T) *floatingips.FloatingIP {
 	client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
@@ -104,17 +110,32 @@ func TestDomainLifecycle(t *testing.T) {
 	th.AssertEquals(t, cert.Id, domain.CertificateId)
 	th.AssertEquals(t, len(createOpts.Server), len(domain.Server))
 	th.AssertEquals(t, createOpts.Cipher, domain.Cipher)
+	th.AssertEquals(t, domain.BlockPage.Template, "default")
 
 	updateOpts := domains.UpdateOpts{
 		TLS:           "TLS v1.1",
 		Cipher:        "cipher_1",
 		CertificateId: cert2.Id,
+		BlockPage: &domains.BlockPage{
+			Template: "custom",
+			CustomPage: &domains.CustomPage{
+				StatusCode:  "400",
+				ContentType: "text/html",
+				Content:     contentText,
+			},
+		},
 	}
 	domain, err = domains.Update(client, domain.Id, updateOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Cipher, domain.Cipher)
+	th.AssertEquals(t, domain.BlockPage.Template, "custom")
+	th.AssertEquals(t, domain.BlockPage.CustomPage.StatusCode, updateOpts.BlockPage.CustomPage.StatusCode)
+	th.AssertEquals(t, domain.BlockPage.CustomPage.ContentType, updateOpts.BlockPage.CustomPage.ContentType)
 
 	domain, err = domains.Get(client, domain.Id).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, cert2.Id, domain.CertificateId)
+	th.AssertEquals(t, domain.BlockPage.Template, "custom")
+	th.AssertEquals(t, domain.BlockPage.CustomPage.StatusCode, updateOpts.BlockPage.CustomPage.StatusCode)
+	th.AssertEquals(t, domain.BlockPage.CustomPage.ContentType, updateOpts.BlockPage.CustomPage.ContentType)
 }
