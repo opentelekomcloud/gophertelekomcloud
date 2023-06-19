@@ -4,58 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/snapshots"
+	snapshots2 "github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/snapshots"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
-
-func TestCreate(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	MockCreateResponse(t)
-
-	options := snapshots.CreateOpts{VolumeID: "1234", Name: "snapshot-001"}
-	n, err := snapshots.Create(client.ServiceClient(), options).Extract()
-	th.AssertNoErr(t, err)
-
-	th.AssertEquals(t, n.VolumeID, "1234")
-	th.AssertEquals(t, n.Name, "snapshot-001")
-	th.AssertEquals(t, n.ID, "d32019d3-bc6e-4319-9c1d-6722fc136a22")
-}
-
-func TestGet(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	MockGetResponse(t)
-
-	v, err := snapshots.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").Extract()
-	th.AssertNoErr(t, err)
-
-	th.AssertEquals(t, v.Name, "snapshot-001")
-	th.AssertEquals(t, v.ID, "d32019d3-bc6e-4319-9c1d-6722fc136a22")
-}
-
-func TestUpdate(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	MockUpdateResponse(t)
-
-	options := snapshots.UpdateOpts{
-		Name:        "snapshot-001-update",
-		Description: "Weekly backup",
-	}
-
-	v, err := snapshots.Update(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22", options).Extract()
-
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, v.Name, "snapshot-001-update")
-	th.AssertEquals(t, v.Description, "Weekly backup")
-	th.AssertEquals(t, v.UpdatedAt, time.Date(2020, 3, 27, 15, 55, 3, 0, time.UTC))
-}
 
 func TestList(t *testing.T) {
 	th.SetupHTTP()
@@ -65,22 +19,22 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	_ = snapshots.List(client.ServiceClient(), &snapshots.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	_ = snapshots2.List(client.ServiceClient(), &snapshots2.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		count++
-		actual, err := snapshots.ExtractSnapshots(page)
+		actual, err := snapshots2.ExtractSnapshots(page)
 		if err != nil {
 			t.Errorf("Failed to extract snapshots: %v", err)
 			return false, err
 		}
 
-		expected := []snapshots.Snapshot{
+		expected := []snapshots2.Snapshot{
 			{
 				ID:          "289da7f8-6440-407c-9fb4-7db01ec49164",
 				Name:        "snapshot-001",
 				VolumeID:    "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
 				Status:      "available",
 				Size:        30,
-				CreatedAt:   time.Date(2020, 3, 27, 15, 35, 3, 0, time.UTC),
+				CreatedAt:   time.Date(2017, 5, 30, 3, 35, 3, 0, time.UTC),
 				Description: "Daily Backup",
 			},
 			{
@@ -89,7 +43,7 @@ func TestList(t *testing.T) {
 				VolumeID:    "76b8950a-8594-4e5b-8dce-0dfa9c696358",
 				Status:      "available",
 				Size:        25,
-				CreatedAt:   time.Date(2020, 3, 27, 15, 35, 3, 0, time.UTC),
+				CreatedAt:   time.Date(2017, 5, 30, 3, 35, 3, 0, time.UTC),
 				Description: "Weekly Backup",
 			},
 		}
@@ -104,12 +58,60 @@ func TestList(t *testing.T) {
 	}
 }
 
+func TestGet(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockGetResponse(t)
+
+	v, err := snapshots2.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22").Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, v.Name, "snapshot-001")
+	th.AssertEquals(t, v.ID, "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+}
+
+func TestCreate(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockCreateResponse(t)
+
+	options := snapshots2.CreateOpts{VolumeID: "1234", Name: "snapshot-001"}
+	n, err := snapshots2.Create(client.ServiceClient(), options).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, n.VolumeID, "1234")
+	th.AssertEquals(t, n.Name, "snapshot-001")
+	th.AssertEquals(t, n.ID, "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+}
+
+func TestUpdateMetadata(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockUpdateMetadataResponse(t)
+
+	expected := map[string]interface{}{"key": "v1"}
+
+	options := &snapshots2.UpdateMetadataOpts{
+		Metadata: map[string]interface{}{
+			"key": "v1",
+		},
+	}
+
+	actual, err := snapshots2.UpdateMetadata(client.ServiceClient(), "123", options).ExtractMetadata()
+
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, actual, expected)
+}
+
 func TestDelete(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
 	MockDeleteResponse(t)
 
-	res := snapshots.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
+	res := snapshots2.Delete(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, res.Err)
 }

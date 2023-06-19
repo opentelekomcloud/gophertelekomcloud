@@ -1,6 +1,9 @@
 package volumeactions
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type AttachMode string
 
@@ -21,7 +24,7 @@ type AttachOpts struct {
 }
 
 func Attach(client *golangsdk.ServiceClient, id string, opts AttachOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "os-attach")
+	b, err := build.RequestBody(opts, "os-attach")
 	if err != nil {
 		return
 	}

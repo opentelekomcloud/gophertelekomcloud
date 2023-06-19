@@ -5,22 +5,36 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type UploadImageOpts struct {
-	// Container format, may be bare, ofv, ova, etc.
+	// Specifies the container type of the exported image.
+	// The value can be ami, ari, aki, ovf, or bare. The default value is bare.
 	ContainerFormat string `json:"container_format,omitempty"`
-	// Disk format, may be raw, qcow2, vhd, vdi, vmdk, etc.
+	// Specifies the format of the exported image.
+	// The value can be vhd, zvhd, zvhd2, raw, or qcow2. The default value is zvhd2.
 	DiskFormat string `json:"disk_format,omitempty"`
-	// The name of image that will be stored in glance.
+	// Specifies the name of the exported image.
+	// The name cannot start or end with space.
+	// The name contains 1 to 128 characters.
+	// The name contains the following characters: uppercase letters, lowercase letters, digits,
+	// and special characters, such as hyphens (-), periods (.), underscores (_), and spaces.
 	ImageName string `json:"image_name,omitempty"`
-	// Force image creation, usable if volume attached to instance.
+	// Specifies whether to forcibly export the image. The default value is false.
+	// If force is set to false and the disk is in the in-use state, the image cannot be forcibly exported.
+	// If force is set to true and the disk is in the in-use state, the image can be forcibly exported.
 	Force bool `json:"force,omitempty"`
+	// Specifies the OS type of the exported image. Currently, only windows and linux are supported. The default value is linux.
+	// There are two underscores (_) in front of os and one underscore (_) after os.
+	// This parameter setting takes effect only when the __os_type field is not included in volume_image_metadata and the disk status is available.
+	// If this parameter is not specified, default value linux is used as the OS type of the image.
+	OSType string `json:"__os_type,omitempty"`
 }
 
 func UploadImage(client *golangsdk.ServiceClient, id string, opts UploadImageOpts) (*VolumeImage, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "os-volume_upload_image")
+	b, err := build.RequestBody(opts, "os-volume_upload_image")
 	if err != nil {
 		return nil, err
 	}
@@ -32,29 +46,29 @@ func UploadImage(client *golangsdk.ServiceClient, id string, opts UploadImageOpt
 		return nil, err
 	}
 
-	var res struct {
-		VolumeImage VolumeImage `json:"os-volume_upload_image"`
-	}
-	err = extract.Into(raw.Body, &res)
-	return &res.VolumeImage, err
+	var res VolumeImage
+	err = extract.IntoStructPtr(raw.Body, &res, "os-volume_upload_image")
+	return &res, err
 }
 
 type VolumeImage struct {
 	// The ID of a volume an image is created from.
 	VolumeID string `json:"id"`
-	// Container format, may be bare, ofv, ova, etc.
+	// Specifies the container type of the exported image.
+	// The value can be ami, ari, aki, ovf, or bare. The default value is bare.
 	ContainerFormat string `json:"container_format"`
-	// Disk format, may be raw, qcow2, vhd, vdi, vmdk, etc.
+	// Specifies the format of the exported image.
+	// The value can be vhd, zvhd, zvhd2, raw, or qcow2. The default value is vhd.
 	DiskFormat string `json:"disk_format"`
 	// Human-readable description for the volume.
 	Description string `json:"display_description"`
-	// The ID of the created image.
+	// Specifies the ID of the exported image.
 	ImageID string `json:"image_id"`
-	// Human-readable display name for the image.
+	// Specifies the name of the exported image.
 	ImageName string `json:"image_name"`
 	// Size of the volume in GB.
 	Size int `json:"size"`
-	// Current status of the volume.
+	// Specifies the disk status after the image is exported. The correct value is uploading.
 	Status string `json:"status"`
 	// The date when this volume was last updated.
 	UpdatedAt time.Time `json:"-"`
@@ -88,6 +102,7 @@ type ImageVolumeType struct {
 	// Flag for public access.
 	IsPublic bool `json:"is_public"`
 	// Extra specifications for volume type.
+	// volumetypes.ExtraSpecs
 	ExtraSpecs map[string]interface{} `json:"extra_specs"`
 	// ID of quality of service specs.
 	QosSpecsID string `json:"qos_specs_id"`
