@@ -1,58 +1,73 @@
 package v3
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cts/v3/keyevent"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cts"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cts/v3/tracker"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestKeyEventLifecycle(t *testing.T) {
+func TestTrackersLifecycle(t *testing.T) {
+	if os.Getenv("RUN_CTS_TRACKER") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCTSV3Client()
 	th.AssertNoErr(t, err)
 
-	event, err := keyevent.Create(client, keyevent.CreateNotificationOpts{
-		NotificationName: tools.RandomString("keyevent_test_", 3),
-		OperationType:    "customized",
-		Operations: []keyevent.Operations{
-			{
-				ServiceType:  "OBS",
-				ResourceType: "bucket",
-				TraceNames:   []string{"createBucket"},
-			},
+	bucketName := cts.CreateOBSBucket(t)
+	t.Cleanup(func() {
+		cts.DeleteOBSBucket(t, bucketName)
+	})
+
+	t.Logf("Attempting to create CTSv3 Tracker")
+	ctsTracker, err := tracker.Create(client, tracker.CreateOpts{
+		TrackerType:  "system",
+		TrackerName:  "system",
+		IsLtsEnabled: true,
+		ObsInfo: tracker.ObsInfo{
+			BucketName:     bucketName,
+			FilePrefixName: "test-prefix",
 		},
 	})
-	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = keyevent.Delete(client, keyevent.DeleteOpts{
-			NotificationId: []string{event.NotificationId},
-		})
+		t.Logf("Attempting to delete CTSv3 Tracker: %s", ctsTracker.TrackerName)
+		err := tracker.Delete(client, ctsTracker.TrackerName)
 		th.AssertNoErr(t, err)
+		t.Logf("Deleted CTSv3 Tracker: %s", ctsTracker.TrackerName)
 	})
 
-	list, err := keyevent.List(client, keyevent.ListNotificationsOpts{
-		NotificationType: "smn",
-		NotificationName: event.NotificationName,
-	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, list)
+	t.Logf("Created CTSv3 Tracker: %s", ctsTracker.TrackerName)
+	th.AssertEquals(t, true, ctsTracker.Lts.IsLtsEnabled)
+	th.AssertEquals(t, "enabled", ctsTracker.Status)
+	th.AssertEquals(t, false, *ctsTracker.ObsInfo.IsObsCreated)
+	th.AssertEquals(t, bucketName, ctsTracker.ObsInfo.BucketName)
 
-	update, err := keyevent.Update(client, keyevent.UpdateNotificationOpts{
-		NotificationName: "keyevent_test_update",
-		Status:           "disabled",
-		OperationType:    "customized",
-		NotificationId:   event.NotificationId,
-		Operations: []keyevent.Operations{
-			{
-				ServiceType:  "OBS",
-				ResourceType: "bucket",
-				TraceNames:   []string{"deleteBucket"},
-			},
+	t.Logf("Attempting to update CTSv3 Tracker: %s", ctsTracker.TrackerName)
+	ltsEnable := false
+	_, err = tracker.Update(client, tracker.UpdateOpts{
+		TrackerName:  "system",
+		TrackerType:  "system",
+		Status:       "enabled",
+		IsLtsEnabled: &ltsEnable,
+		ObsInfo: tracker.ObsInfo{
+			FilePrefixName: "test-2-",
 		},
 	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, update)
+	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
+
+	trackerList, err := tracker.List(client, ctsTracker.TrackerName)
+	trackerGet := trackerList[0]
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, trackerGet.TrackerType, "system")
+	th.AssertEquals(t, trackerGet.TrackerName, "system")
+	th.AssertEquals(t, trackerGet.Status, "enabled")
+	// if tracker is disabled LTS status can't be changed
+	th.AssertEquals(t, trackerGet.Lts.IsLtsEnabled, false)
+	th.AssertEquals(t, trackerGet.ObsInfo.FilePrefixName, "test-2-")
 }
