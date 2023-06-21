@@ -64,7 +64,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 
 	getAll, err := rules.Get(clientNetworking, all.ID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, getAll.PortRangeMin, (*int)(nil))
+	th.AssertEquals(t, getAll.PortRangeMin)
 	th.AssertEquals(t, getAll.PortRangeMax, (*int)(nil))
 
 	optsEcho := rules.CreateOpts{
