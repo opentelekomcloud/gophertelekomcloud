@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/rules"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -29,8 +30,8 @@ func TestList(t *testing.T) {
             "direction": "egress",
             "ethertype": "IPv6",
             "id": "3c0e45ff-adaf-4124-b083-bf390e5482ff",
-            "port_range_max": null,
-            "port_range_min": null,
+            "port_range_max": 0,
+            "port_range_min": 0,
             "protocol": null,
             "remote_group_id": null,
             "remote_ip_prefix": null,
@@ -69,8 +70,8 @@ func TestList(t *testing.T) {
 				Direction:      "egress",
 				EtherType:      "IPv6",
 				ID:             "3c0e45ff-adaf-4124-b083-bf390e5482ff",
-				PortRangeMax:   0,
-				PortRangeMin:   0,
+				PortRangeMax:   pointerto.Int(0),
+				PortRangeMin:   pointerto.Int(0),
 				Protocol:       "",
 				RemoteGroupID:  "",
 				RemoteIPPrefix: "",
@@ -81,8 +82,8 @@ func TestList(t *testing.T) {
 				Direction:      "egress",
 				EtherType:      "IPv4",
 				ID:             "93aa42e5-80db-4581-9391-3a608bd0e448",
-				PortRangeMax:   0,
-				PortRangeMin:   0,
+				PortRangeMax:   (*int)(nil),
+				PortRangeMin:   (*int)(nil),
 				Protocol:       "",
 				RemoteGroupID:  "",
 				RemoteIPPrefix: "",
@@ -214,8 +215,8 @@ func TestGet(t *testing.T) {
 	th.AssertEquals(t, "egress", sr.Direction)
 	th.AssertEquals(t, "IPv6", sr.EtherType)
 	th.AssertEquals(t, "3c0e45ff-adaf-4124-b083-bf390e5482ff", sr.ID)
-	th.AssertEquals(t, 0, sr.PortRangeMax)
-	th.AssertEquals(t, 0, sr.PortRangeMin)
+	th.AssertEquals(t, (*int)(nil), sr.PortRangeMax)
+	th.AssertEquals(t, (*int)(nil), sr.PortRangeMin)
 	th.AssertEquals(t, "", sr.Protocol)
 	th.AssertEquals(t, "", sr.RemoteGroupID)
 	th.AssertEquals(t, "", sr.RemoteIPPrefix)
