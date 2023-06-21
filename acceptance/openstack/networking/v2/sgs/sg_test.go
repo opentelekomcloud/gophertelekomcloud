@@ -42,6 +42,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 	}
 	log.Print("[DEBUG] Create OpenTelekomCloud Neutron ICMP echo reply Security Group Rule")
 	echoReply, err := rules.Create(clientNetworking, optsEchoReply).Extract()
+	th.AssertNoErr(t, err)
 
 	getEchoReply, err := rules.Get(clientNetworking, echoReply.ID).Extract()
 	th.AssertNoErr(t, err)
@@ -59,6 +60,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 	}
 	log.Print("[DEBUG] Create OpenTelekomCloud Neutron ICMP All Security Group Rule")
 	all, err := rules.Create(clientNetworking, optsAll).Extract()
+	th.AssertNoErr(t, err)
 
 	getAll, err := rules.Get(clientNetworking, all.ID).Extract()
 	th.AssertNoErr(t, err)
@@ -76,6 +78,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 	}
 	log.Print("[DEBUG] Create OpenTelekomCloud Neutron ICMP Echo Security Group Rule")
 	echo, err := rules.Create(clientNetworking, optsEcho).Extract()
+	th.AssertNoErr(t, err)
 
 	getEcho, err := rules.Get(clientNetworking, echo.ID).Extract()
 	th.AssertNoErr(t, err)
