@@ -64,7 +64,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 
 	getAll, err := rules.Get(clientNetworking, all.ID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, getAll.PortRangeMin)
+	th.AssertEquals(t, getAll.PortRangeMin, (*int)(nil))
 	th.AssertEquals(t, getAll.PortRangeMax, (*int)(nil))
 
 	optsEcho := rules.CreateOpts{
@@ -96,6 +96,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 	}
 	log.Print("[DEBUG] Create OpenTelekomCloud Neutron ICMP Fragment need DF set Security Group Rule")
 	fragment, err := rules.Create(clientNetworking, optsFragment).Extract()
+	th.AssertNoErr(t, err)
 
 	getFragment, err := rules.Get(clientNetworking, fragment.ID).Extract()
 	th.AssertNoErr(t, err)
