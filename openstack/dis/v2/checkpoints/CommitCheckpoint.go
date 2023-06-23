@@ -37,7 +37,7 @@ func CommitCheckpoint(client *golangsdk.ServiceClient, opts CommitCheckpointOpts
 
 	// POST /v2/{project_id}/checkpoints
 	_, err = client.Post(client.ServiceURL("checkpoints"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{201},
 	})
 	return err
 }
