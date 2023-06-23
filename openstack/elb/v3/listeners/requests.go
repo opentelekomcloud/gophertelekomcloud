@@ -63,11 +63,23 @@ type CreateOpts struct {
 	// A list of references to TLS secrets.
 	SniContainerRefs []string `json:"sni_container_refs,omitempty"`
 
+	// Specifies how wildcard domain name matches with the SNI certificates used by the listener.
+	// longest_suffix indicates longest suffix match. wildcard indicates wildcard match.
+	// The default value is wildcard.
+	SniMatchAlgo string `json:"sni_match_algo,omitempty"`
+
 	// A list of Tags.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
 
 	// Specifies the security policy used by the listener.
 	TlsCiphersPolicy string `json:"tls_ciphers_policy,omitempty"`
+
+	// Specifies the ID of the custom security policy.
+	// Note:
+	// This parameter is available only for HTTPS listeners added to a dedicated load balancer.
+	// If both security_policy_id and tls_ciphers_policy are specified, only security_policy_id will take effect.
+	// The priority of the encryption suite from high to low is: ecc suite: ecc suite, rsa suite, tls 1.3 suite (supporting both ecc and rsa).
+	SecurityPolicy string `json:"security_policy_id,omitempty"`
 
 	// Whether enable member retry
 	EnableMemberRetry *bool `json:"enable_member_retry,omitempty"`
@@ -173,8 +185,20 @@ type UpdateOpts struct {
 	// A list of references to TLS secrets.
 	SniContainerRefs *[]string `json:"sni_container_refs,omitempty"`
 
+	// Specifies how wildcard domain name matches with the SNI certificates used by the listener.
+	// longest_suffix indicates longest suffix match. wildcard indicates wildcard match.
+	// The default value is wildcard.
+	SniMatchAlgo string `json:"sni_match_algo,omitempty"`
+
 	// Specifies the security policy used by the listener.
 	TlsCiphersPolicy *string `json:"tls_ciphers_policy,omitempty"`
+
+	// Specifies the ID of the custom security policy.
+	// Note:
+	// This parameter is available only for HTTPS listeners added to a dedicated load balancer.
+	// If both security_policy_id and tls_ciphers_policy are specified, only security_policy_id will take effect.
+	// The priority of the encryption suite from high to low is: ecc suite: ecc suite, rsa suite, tls 1.3 suite (supporting both ecc and rsa).
+	SecurityPolicy string `json:"security_policy_id,omitempty"`
 
 	// Whether enable member retry
 	EnableMemberRetry *bool `json:"enable_member_retry,omitempty"`

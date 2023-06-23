@@ -6,7 +6,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/members"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/pools"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -62,4 +64,11 @@ func TestMemberLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, *updateOpts.Name, newMember.Name)
 	th.AssertEquals(t, *updateOpts.Weight, newMember.Weight)
+
+	updateOptsPool := pools.UpdateOpts{
+		DeletionProtectionEnable: pointerto.Bool(false),
+	}
+	_, err = pools.Update(client, poolID, updateOptsPool).Extract()
+	th.AssertNoErr(t, err)
+	t.Logf("Updated ELBv3 Pool: %s", poolID)
 }

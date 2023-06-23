@@ -1,90 +1,118 @@
 package backup
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type Checkpoint struct {
-	Status         string         `json:"status"`
-	CreatedAt      string         `json:"created_at"`
-	Id             string         `json:"id"`
-	ResourceGraph  string         `json:"resource_graph"`
-	ProjectId      string         `json:"project_id"`
-	ProtectionPlan ProtectionPlan `json:"protection_plan"`
-	ExtraInfo      interface{}    `json:"extra_info"`
-}
-
-type ProtectionPlan struct {
-	Id              string               `json:"id"`
-	Name            string               `json:"name"`
-	BackupResources []СsbsBackupResource `json:"resources"`
-}
-
-type СsbsBackupResource struct {
-	ID        string      `json:"id"`
-	Type      string      `json:"type"`
-	Name      string      `json:"name"`
-	ExtraInfo interface{} `json:"extra_info"`
-}
-
-type ResourceCapability struct {
-	Result       bool   `json:"result"`
-	ResourceType string `json:"resource_type"`
-	ErrorCode    string `json:"error_code"`
-	ErrorMsg     string `json:"error_msg"`
-	ResourceId   string `json:"resource_id"`
-}
+const ProviderID = "fc4d5750-22e7-4798-8a46-f48f62c4c1da"
 
 type Backup struct {
-	CheckpointId string             `json:"checkpoint_id"`
-	CreatedAt    string             `json:"created_at"`
-	ExtendInfo   ExtendInfo         `json:"extend_info"`
-	Id           string             `json:"id"`
-	Name         string             `json:"name"`
-	ResourceId   string             `json:"resource_id"`
-	Status       string             `json:"status"`
-	UpdatedAt    string             `json:"updated_at"`
-	VMMetadata   VMMetadata         `json:"backup_data"`
-	Description  string             `json:"description"`
-	Tags         []tags.ResourceTag `json:"tags"`
-	ResourceType string             `json:"resource_type"`
+	// Backup record ID
+	CheckpointId string `json:"checkpoint_id"`
+	// Creation time, for example, 2017-04-18T01:21:52.701973
+	CreatedAt string `json:"created_at"`
+	// Extension information
+	ExtendInfo ExtendInfo `json:"extend_info"`
+	// Backup ID
+	Id string `json:"id"`
+	// Backup name
+	Name string `json:"name"`
+	// ID of the object to be backed up
+	ResourceId string `json:"resource_id"`
+	// Backup status. Possible values are waiting_protect, protecting, available, waiting_restore, restoring, error, waiting_delete, deleting, and deleted.
+	// Enum:[ waiting_protect, protecting, available, waiting_restore, restoring, error, waiting_delete, deleting,deleted]
+	Status string `json:"status"`
+	// Modification time, for example, 2017-04-18T01:21:52.701973
+	UpdatedAt string `json:"updated_at"`
+	// VM metadata
+	VMMetadata VMMetadata `json:"backup_data"`
+	// Backup description
+	Description string `json:"description"`
+	// List of backup tags
+	// Keys in the tag list must be unique.
+	Tags []tags.ResourceTag `json:"tags"`
+	// Type of the backup object
+	ResourceType string `json:"resource_type"`
+}
+
+type ImagesData struct {
+	ImageId string `json:"image_id"`
 }
 
 type ExtendInfo struct {
-	AutoTrigger          bool           `json:"auto_trigger"`
-	AverageSpeed         float32        `json:"average_speed"`
-	CopyFrom             string         `json:"copy_from"`
-	CopyStatus           string         `json:"copy_status"`
-	FailCode             FailCode       `json:"fail_code"`
-	FailOp               string         `json:"fail_op"`
-	FailReason           string         `json:"fail_reason"`
-	ImageType            string         `json:"image_type"`
-	Incremental          bool           `json:"incremental"`
-	Progress             int            `json:"progress"`
-	ResourceAz           string         `json:"resource_az"`
-	ResourceName         string         `json:"resource_name"`
-	ResourceType         string         `json:"resource_type"`
-	Size                 int            `json:"size"`
-	SpaceSavingRatio     float32        `json:"space_saving_ratio"`
-	VolumeBackups        []VolumeBackup `json:"volume_backups"`
-	FinishedAt           string         `json:"finished_at"`
-	TaskId               string         `json:"taskid"`
-	HypervisorType       string         `json:"hypervisor_type"`
-	SupportedRestoreMode string         `json:"supported_restore_mode"`
-	Supportlld           bool           `json:"support_lld"`
+	// Whether automatic trigger is enabled
+	AutoTrigger bool `json:"auto_trigger"`
+	// Average rate. The unit is kb/s
+	AverageSpeed float32 `json:"average_speed"`
+	// The destination region of a backup replication. The default value is empty.
+	CopyFrom string `json:"copy_from"`
+	// Backup replication status. The default value is na.
+	// Possible values are na, waiting_copy, copying, success, and fail.
+	CopyStatus string `json:"copy_status"`
+	// Error code
+	FailCode FailCode `json:"fail_code"`
+	// Type of the failed operation
+	// Enum: [backup, restore, delete]
+	FailOp string `json:"fail_op"`
+	// Description of the failure cause
+	FailReason string `json:"fail_reason"`
+	// Backup type. For example, backup
+	ImageType string `json:"image_type"`
+	// Whether the backup is an enhanced backup
+	Incremental bool `json:"incremental"`
+	// Backup progress. The value is an integer ranging from 0 to 100.
+	Progress int `json:"progress"`
+	// AZ to which the backup resource belongs
+	ResourceAz string `json:"resource_az"`
+	// Backup object name
+	ResourceName string `json:"resource_name"`
+	// Type of the backup object. For example, OS::Nova::Server
+	ResourceType string `json:"resource_type"`
+	// Backup capacity. The unit is MB.
+	Size int `json:"size"`
+	// Space saving rate
+	SpaceSavingRatio float32 `json:"space_saving_ratio"`
+	// Volume backup list
+	VolumeBackups []VolumeBackup `json:"volume_backups"`
+	// Backup completion time, for example, 2017-04-18T01:21:52.701973
+	FinishedAt string `json:"finished_at"`
+	// Image data. This parameter has a value if an image has been created for the VM.
+	OsImagesData []ImagesData `json:"os_images_data"`
+	// Job ID
+	TaskId string `json:"taskid"`
+	// Virtualization type
+	// The value is fixed at QEMU.
+	HypervisorType string `json:"hypervisor_type"`
+	// Restoration mode. Possible values are na, snapshot, and backup.
+	// backup: Data is restored from backups of the EVS disks of the server.
+	// na: Restoration is not supported.
+	SupportedRestoreMode string `json:"supported_restore_mode"`
+	// Whether to allow lazyloading for fast restoration
+	Supportlld bool `json:"support_lld"`
 }
 
 type VMMetadata struct {
-	RegionName       string `json:"__openstack_region_name"`
+	// Name of the AZ where the server is located. If this parameter is left blank, such information about the server has not been obtained.
+	RegionName string `json:"__openstack_region_name"`
+	// Server type
+	// The value is fixed at server (ECSs).
 	CloudServiceType string `json:"cloudservicetype"`
-	Disk             int    `json:"disk"`
-	ImageType        string `json:"imagetype"`
-	Ram              int    `json:"ram"`
-	Vcpus            int    `json:"vcpus"`
-	Eip              string `json:"eip"`
-	PrivateIp        string `json:"private_ip"`
+	// System disk size corresponding to the server specifications
+	Disk int `json:"disk"`
+	// Image type
+	// The value can be:
+	// gold: public image
+	// private: private image
+	// market: market image
+	ImageType string `json:"imagetype"`
+	// Memory size of the server, in MB
+	Ram int `json:"ram"`
+	// CPU cores corresponding to the server
+	Vcpus int `json:"vcpus"`
+	// Elastic IP address of the server. If this parameter is left blank, such information about the server has not been obtained.
+	Eip string `json:"eip"`
+	// Internal IP address of the server. If this parameter is left blank, such information about the server has not been obtained.
+	PrivateIp string `json:"private_ip"`
 }
 
 type FailCode struct {
@@ -93,100 +121,32 @@ type FailCode struct {
 }
 
 type VolumeBackup struct {
-	AverageSpeed     int    `json:"average_speed"`
-	Bootable         bool   `json:"bootable"`
-	Id               string `json:"id"`
-	ImageType        string `json:"image_type"`
-	Incremental      bool   `json:"incremental"`
-	SnapshotID       string `json:"snapshot_id"`
-	Name             string `json:"name"`
-	Size             int    `json:"size"`
-	SourceVolumeId   string `json:"source_volume_id"`
-	SourceVolumeSize int    `json:"source_volume_size"`
-	SpaceSavingRatio int    `json:"space_saving_ratio"`
-	Status           string `json:"status"`
+	// Average rate, in MB/s
+	AverageSpeed int `json:"average_speed"`
+	// Whether the disk is bootable
+	// The value can be true or false.
+	Bootable bool `json:"bootable"`
+	// Cinder backup ID
+	Id string `json:"id"`
+	// Backup set type: backup
+	// Enum:[ backup]
+	ImageType string `json:"image_type"`
+	// Whether incremental backup is used
+	Incremental bool `json:"incremental"`
+	// ID of the snapshot from which the backup is generated
+	SnapshotID string `json:"snapshot_id"`
+	// EVS disk backup name
+	Name string `json:"name"`
+	// Accumulated size (MB) of backups
+	Size int `json:"size"`
+	// Source disk ID
+	SourceVolumeId string `json:"source_volume_id"`
+	// Source volume size in GB
+	SourceVolumeSize int `json:"source_volume_size"`
+	// Space saving rate
+	SpaceSavingRatio int `json:"space_saving_ratio"`
+	// Status
+	Status string `json:"status"`
+	// Source volume name
 	SourceVolumeName string `json:"source_volume_name"`
-}
-
-func (r QueryResult) ExtractQueryResponse() ([]ResourceCapability, error) {
-	var s []ResourceCapability
-	err := r.ExtractIntoSlicePtr(&s, "protectable")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// Extract will get the checkpoint object from the golangsdk.Result
-func (r CreateResult) Extract() (*Checkpoint, error) {
-	s := new(Checkpoint)
-	err := r.ExtractIntoStructPtr(s, "checkpoint")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// Extract will get the backup object from the golangsdk.Result
-func (r GetResult) Extract() (*Backup, error) {
-	s := new(Backup)
-	err := r.ExtractIntoStructPtr(s, "checkpoint_item")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// СsbsBackupPage is the page returned by a pager when traversing over a
-// collection of backups.
-type СsbsBackupPage struct {
-	pagination.LinkedPageBase
-}
-
-// NextPageURL is invoked when a paginated collection of backups has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
-func (r СsbsBackupPage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:"checkpoint_items_links"`
-	}
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(s.Links)
-}
-
-// IsEmpty checks whether a СsbsBackupPage struct is empty.
-func (r СsbsBackupPage) IsEmpty() (bool, error) {
-	is, err := ExtractBackups(r)
-	return len(is) == 0, err
-}
-
-// ExtractBackups accepts a Page struct, specifically a СsbsBackupPage struct,
-// and extracts the elements into a slice of Backup structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractBackups(r pagination.Page) ([]Backup, error) {
-	var s []Backup
-	err := (r.(СsbsBackupPage)).ExtractIntoSlicePtr(&s, "checkpoint_items")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-type CreateResult struct {
-	golangsdk.Result
-}
-
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type GetResult struct {
-	golangsdk.Result
-}
-
-type QueryResult struct {
-	golangsdk.Result
 }

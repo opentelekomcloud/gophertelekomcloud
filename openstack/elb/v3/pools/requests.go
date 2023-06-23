@@ -103,6 +103,19 @@ type CreateOpts struct {
 	// The administrative state of the Pool. A valid value is true (UP)
 	// or false (DOWN).
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
+
+	// Specifies whether to enable deletion protection for the pool.
+	DeletionProtectionEnable *bool `json:"member_deletion_protection_enable,omitempty"`
+
+	// Specifies the ID of the VPC where the backend server group works.
+	VpcId string `json:"vpc_id,omitempty"`
+
+	// Specifies the type of the backend server group.
+	// Values:
+	// instance: Any type of backend servers can be added. vpc_id is mandatory.
+	// ip: Only cross-VPC backend servers can be added. vpc_id cannot be specified.
+	// "": Any type of backend servers can be added.
+	Type string `json:"type,omitempty"`
 }
 
 // SessionPersistence represents the session persistence feature of the load
@@ -181,6 +194,19 @@ type UpdateOpts struct {
 	// Specifies whether to enable slow start.
 	// This parameter is unsupported. Please do not use it.
 	SlowStart *SlowStart `json:"slow_start,omitempty"`
+
+	// Specifies whether to enable deletion protection for the load balancer.
+	DeletionProtectionEnable *bool `json:"member_deletion_protection_enable,omitempty"`
+
+	// Specifies the ID of the VPC where the backend server group works.
+	VpcId string `json:"vpc_id,omitempty"`
+
+	// Specifies the type of the backend server group.
+	// Values:
+	// instance: Any type of backend servers can be added. vpc_id is mandatory.
+	// ip: Only cross-VPC backend servers can be added. vpc_id cannot be specified.
+	// "": Any type of backend servers can be added.
+	Type string `json:"type,omitempty"`
 }
 
 // ToPoolUpdateMap builds a request body from UpdateOpts.

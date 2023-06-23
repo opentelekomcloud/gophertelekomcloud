@@ -2,6 +2,7 @@ package rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -75,12 +76,6 @@ const (
 	ProtocolVRRP      RuleProtocol  = "vrrp"
 )
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToSecGroupRuleCreateMap() (map[string]interface{}, error)
-}
-
 // CreateOpts contains all the values needed to create a new security group
 // rule.
 type CreateOpts struct {
@@ -101,13 +96,13 @@ type CreateOpts struct {
 	// The maximum port number in the range that is matched by the security group
 	// rule. The PortRangeMin attribute constrains the PortRangeMax attribute. If
 	// the protocol is ICMP, this value must be an ICMP type.
-	PortRangeMax int `json:"port_range_max,omitempty"`
+	PortRangeMax *int `json:"port_range_max,omitempty"`
 
 	// The minimum port number in the range that is matched by the security group
 	// rule. If the protocol is TCP or UDP, this value must be less than or equal
 	// to the value of the PortRangeMax attribute. If the protocol is ICMP, this
 	// value must be an ICMP type.
-	PortRangeMin int `json:"port_range_min,omitempty"`
+	PortRangeMin *int `json:"port_range_min,omitempty"`
 
 	// The protocol that is matched by the security group rule. Valid values are
 	// "tcp", "udp", "icmp" or an empty string.
@@ -127,15 +122,10 @@ type CreateOpts struct {
 	TenantID string `json:"tenant_id,omitempty"`
 }
 
-// ToSecGroupRuleCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToSecGroupRuleCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "security_group_rule")
-}
-
 // Create is an operation which adds a new security group rule and associates it
 // with an existing security group (whose ID is specified in CreateOpts).
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToSecGroupRuleCreateMap()
+func Create(c *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
+	b, err := build.RequestBody(opts, "security_group_rule")
 	if err != nil {
 		r.Err = err
 		return

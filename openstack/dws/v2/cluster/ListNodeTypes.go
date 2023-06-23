@@ -3,12 +3,13 @@ package cluster
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
 // ListNodeTypes Merge to common
 func ListNodeTypes(client *golangsdk.ServiceClient) ([]NodeTypes, error) {
 	// GET /v2/{project_id}/node-types
-	raw, err := client.Get(client.ServiceURL("node-types"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("node-types"), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

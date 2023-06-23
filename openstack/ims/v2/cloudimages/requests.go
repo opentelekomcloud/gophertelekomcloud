@@ -126,7 +126,7 @@ type CreateOptsBuilder interface {
 	ToImageCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOpts represents options used to create an image.
+// CreateByServerOpts represents options used to create an image.
 type CreateByServerOpts struct {
 	// the name of the system disk image
 	Name string `json:"name" required:"true"`
@@ -146,7 +146,29 @@ type CreateByServerOpts struct {
 	MinRam int `json:"min_ram,omitempty"`
 }
 
-// CreateOpts represents options used to create an image.
+// CreateByVolumeOpts represents options used to create an image.
+type CreateByVolumeOpts struct {
+	// the name of the system disk image
+	Name string `json:"name" required:"true"`
+	// Description of the image
+	Description string `json:"description,omitempty"`
+	// Specifies the data disk ID
+	VolumeId string `json:"volume_id" required:"true"`
+	// Specifies the OS version
+	OsVersion string `json:"os_version" required:"true"`
+	// Specifies the image type. The value can be ECS, BMS, FusionCompute, or Ironic.
+	Type string `json:"type,omitempty"`
+	// image label "key.value"
+	Tags []string `json:"tags,omitempty"`
+	// One or more tag key and value pairs to associate with the image
+	ImageTags []ImageTag `json:"image_tags,omitempty"`
+	// the maximum memory of the image in the unit of MB
+	MaxRam int `json:"max_ram,omitempty"`
+	// the minimum memory of the image in the unit of MB
+	MinRam int `json:"min_ram,omitempty"`
+}
+
+// CreateByOBSOpts represents options used to create an image.
 type CreateByOBSOpts struct {
 	// the name of the system disk image
 	Name string `json:"name" required:"true"`
@@ -174,13 +196,13 @@ type CreateByOBSOpts struct {
 	MinRam int `json:"min_ram,omitempty"`
 }
 
-// CreateOpts represents options used to create an image.
+// CreateDataImageByServerOpts represents options used to create an image.
 type CreateDataImageByServerOpts struct {
 	// the data disks to be converted
 	DataImages []DataImage `json:"data_images" required:"true"`
 }
 
-// CreateOpts represents options used to create an image.
+// CreateDataImageByOBSOpts represents options used to create an image.
 type CreateDataImageByOBSOpts struct {
 	// the name of the data disk image
 	Name string `json:"name" required:"true"`
@@ -222,6 +244,10 @@ func (opts CreateByOBSOpts) ToImageCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
+func (opts CreateByVolumeOpts) ToImageCreateMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
 func (opts CreateDataImageByServerOpts) ToImageCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
@@ -230,7 +256,7 @@ func (opts CreateDataImageByOBSOpts) ToImageCreateMap() (map[string]interface{},
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// Create implements create image request.
+// CreateImageByServer implements create image request.
 func CreateImageByServer(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 	b, err := opts.ToImageCreateMap()
 	if err != nil {
@@ -242,7 +268,7 @@ func CreateImageByServer(client *golangsdk.ServiceClient, opts CreateOptsBuilder
 	return
 }
 
-// Create implements create image request.
+// CreateImageByOBS implements create image request.
 func CreateImageByOBS(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 	b, err := opts.ToImageCreateMap()
 	if err != nil {
@@ -254,7 +280,19 @@ func CreateImageByOBS(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (
 	return
 }
 
-// Create implements create image request.
+// CreateImageByVolume implements create image request.
+func CreateImageByVolume(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
+	b, err := opts.ToImageCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Post(createURL(client), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	return
+}
+
+// CreateDataImageByServer implements create image request.
 func CreateDataImageByServer(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 	b, err := opts.ToImageCreateMap()
 	if err != nil {
@@ -266,7 +304,7 @@ func CreateDataImageByServer(client *golangsdk.ServiceClient, opts CreateOptsBui
 	return
 }
 
-// Create implements create image request.
+// CreateDataImageByOBS implements create image request.
 func CreateDataImageByOBS(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 	b, err := opts.ToImageCreateMap()
 	if err != nil {
