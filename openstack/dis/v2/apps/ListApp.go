@@ -17,7 +17,7 @@ type ListAppOpts struct {
 	StreamName string `q:"stream_name,omitempty"`
 }
 
-func ListApp(client *golangsdk.ServiceClient, opts ListAppOpts) (*ListAppResponse, error) {
+func ListApps(client *golangsdk.ServiceClient, opts ListAppOpts) (*ListAppResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err

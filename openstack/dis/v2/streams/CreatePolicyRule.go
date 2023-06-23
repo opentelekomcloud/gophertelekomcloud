@@ -8,7 +8,7 @@ import (
 type CreatePolicyRuleOpts struct {
 	// Name of the stream for which you want to add an authorization policy.
 	// Maximum: 64
-	StreamName string
+	StreamName string `json:"stream_name" required:"true"`
 	// Unique ID of the stream.
 	StreamId string `json:"stream_id"`
 	// Authorized users.

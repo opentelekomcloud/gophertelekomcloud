@@ -28,7 +28,7 @@ type GetAppStatusOpts struct {
 	CheckpointType string `q:"checkpoint_type"`
 }
 
-func GetAppStatus(client *golangsdk.ServiceClient, opts GetAppStatusOpts) (*DescribeAppResponse, error) {
+func GetAppStatus(client *golangsdk.ServiceClient, opts GetAppStatusOpts) (*GetAppStatusResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,41 @@ func GetAppStatus(client *golangsdk.ServiceClient, opts GetAppStatusOpts) (*Desc
 		return nil, err
 	}
 
-	var res DescribeAppResponse
+	var res GetAppStatusResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
+}
+
+type GetAppStatusResponse struct {
+	// Specify whether there are more matching DIS streams to list. Possible values:
+	// true: yes
+	// false: no
+	// Default: false.
+	HasMore bool `json:"has_more"`
+	// Stream Name
+	StreamName string `json:"stream_name"`
+	// App name
+	AppName string `json:"app_name"`
+	// Partition consuming state list
+	PartitionConsumingStates []struct {
+		// Partition Id
+		PartitionId string `json:"partition_id"`
+		// Partition Sequence Number
+		SequenceNumber string `json:"sequence_number"`
+		// Partition data latest offset
+		LatestOffset int `json:"latest_offset"`
+		// Partition data earliest offset
+		EarliestOffset int `json:"earliest_offset"`
+		// Type of the checkpoint.
+		// LAST_READ: Only sequence numbers are recorded in databases.
+		// Enumeration values:
+		// LAST_READ
+		CheckpointType string `json:"checkpoint_type"`
+		// Partition Status:
+		// CREATING
+		// ACTIVE
+		// DELETED
+		// EXPIRED
+		Status string `json:"status"`
+	} `json:"partition_consuming_states"`
 }

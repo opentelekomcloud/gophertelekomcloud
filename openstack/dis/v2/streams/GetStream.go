@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
-type DescribeStreamOpts struct {
+type GetStreamOpts struct {
 	// Stream to be queried.
 	// Maximum: 60
 	StreamName string
@@ -16,17 +16,20 @@ type DescribeStreamOpts struct {
 	// Minimum: 1
 	// Maximum: 1000
 	// Default: 100
-	LimitPartitions *int32 `q:"limit_partitions,omitempty"`
+	LimitPartitions *int `q:"limit_partitions,omitempty"`
 }
 
-func DescribeStream(client *golangsdk.ServiceClient, opts DescribeStreamOpts) (*DescribeStreamResponse, error) {
+func GetStream(client *golangsdk.ServiceClient, opts GetStreamOpts) (*DescribeStreamResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/streams/{stream_name}
-	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName)+q.String(), nil,
+		&golangsdk.RequestOpts{
+			MoreHeaders: map[string]string{"Content-Type": "application/json"}, JSONBody: nil,
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -68,16 +71,19 @@ type DescribeStreamResponse struct {
 	// false: no
 	HasMorePartitions *bool `json:"has_more_partitions,omitempty"`
 	// Period for storing data in units of hours.
-	RetentionPeriod *int32 `json:"retention_period,omitempty"`
+	RetentionPeriod *int `json:"retention_period,omitempty"`
 	// Unique identifier of the stream.
 	StreamId string `json:"stream_id,omitempty"`
-	// Source data type.
+	// Source data type
 	// BLOB: a set of binary data stored in a database management system.
 	// Default value: BLOB
 	// Enumeration values:
 	// BLOB
 	DataType string `json:"data_type,omitempty"`
-
+	// Source data structure that defines JSON and CSV formats.
+	// It is described in the syntax of the Avro schema.
+	// For details about Avro,
+	// go to http://avro.apache.org/docs/current/
 	DataSchema string `json:"data_schema,omitempty"`
 	// Compression type of data. Currently, the value can be:
 	// snappy
@@ -92,24 +98,22 @@ type DescribeStreamResponse struct {
 	// Attributes of data in CSV format, such as delimiter.
 	CsvProperties CsvProperties `json:"csv_properties,omitempty"`
 	// Total number of writable partitions (including partitions in ACTIVE state only).
-	WritablePartitionCount *int32 `json:"writable_partition_count,omitempty"`
+	WritablePartitionCount *int `json:"writable_partition_count,omitempty"`
 	// Total number of readable partitions (including partitions in ACTIVE and DELETED state).
-	ReadablePartitionCount *int32 `json:"readable_partition_count,omitempty"`
+	ReadablePartitionCount *int `json:"readable_partition_count,omitempty"`
 	// List of scaling operation records.
 	UpdatePartitionCounts []UpdatePartitionCountResponse `json:"update_partition_counts,omitempty"`
 	// List of stream tags.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
-	// Enterprise project of a stream.
-	SysTags []tags.ResourceTag `json:"sys_tags,omitempty"`
 	// Specifies whether to enable auto-scaling.
 	// true: auto-scaling is enabled.
 	// false: auto-scaling is disabled.
 	// This function is disabled by default.
 	AutoScaleEnabled *bool `json:"auto_scale_enabled,omitempty"`
-	// Minimum number of partitions for automatic scale-down when auto scaling is enabled.
-	AutoScaleMinPartitionCount *int32 `json:"auto_scale_min_partition_count,omitempty"`
-	// Maximum number of partitions for automatic scale-up when auto scaling is enabled.
-	AutoScaleMaxPartitionCount *int32 `json:"auto_scale_max_partition_count,omitempty"`
+	// Minimum number of partitions for automatic scale-down when auto-scaling is enabled.
+	AutoScaleMinPartitionCount *int `json:"auto_scale_min_partition_count,omitempty"`
+	// Maximum number of partitions for automatic scale-up when auto-scaling is enabled.
+	AutoScaleMaxPartitionCount *int `json:"auto_scale_max_partition_count,omitempty"`
 }
 
 type PartitionResult struct {
@@ -138,13 +142,13 @@ type UpdatePartitionCountResponse struct {
 	// Scaling execution timestamp, which is a 13-digit timestamp.
 	CreateTimestamp *int64 `json:"create_timestamp,omitempty"`
 	// Number of partitions before scaling.
-	SrcPartitionCount *int32 `json:"src_partition_count,omitempty"`
+	SrcPartitionCount *int `json:"src_partition_count,omitempty"`
 	// Number of partitions after scaling.
-	TargetPartitionCount *int32 `json:"target_partition_count,omitempty"`
+	TargetPartitionCount *int `json:"target_partition_count,omitempty"`
 	// Response code of the scaling operation.
-	ResultCode *int32 `json:"result_code,omitempty"`
+	ResultCode *int `json:"result_code,omitempty"`
 	// Response to the scaling operation.
-	ResultMsg *int32 `json:"result_msg,omitempty"`
+	ResultMsg *int `json:"result_msg,omitempty"`
 	// Specifies whether the scaling operation is automatic.
 	// true: Auto scaling is enabled.
 	// false: Manual scaling is enabled.

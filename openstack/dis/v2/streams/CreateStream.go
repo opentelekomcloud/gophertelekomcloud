@@ -33,7 +33,7 @@ type CreateStreamOpts struct {
 	// If this parameter is left blank, the default value is used.
 	// Maximum: 7
 	// Default: 24
-	DataDuration *int32 `json:"data_duration,omitempty"`
+	DataDuration *int `json:"data_duration,omitempty"`
 	// Specifies whether to enable auto-scaling.
 	// true: Auto scaling is enabled.
 	// false: Auto scaling is disabled.
@@ -44,7 +44,7 @@ type CreateStreamOpts struct {
 	// Minimum: 1
 	AutoScaleMinPartitionCount *int64 `json:"auto_scale_min_partition_count,omitempty"`
 	// Maximum number of partitions for automatic scale-up when auto-scaling is enabled.
-	AutoScaleMaxPartitionCount *int32 `json:"auto_scale_max_partition_count,omitempty"`
+	AutoScaleMaxPartitionCount *int `json:"auto_scale_max_partition_count,omitempty"`
 	// Source data structure that defines JSON and CSV formats.
 	// It is described in the syntax of the Avro schema.
 	DataSchema string `json:"data_schema,omitempty"`
@@ -62,8 +62,6 @@ type CreateStreamOpts struct {
 	CompressionFormat string `json:"compression_format,omitempty"`
 	// List of stream tags.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
-	// Stream enterprise projects.
-	SysTags []tags.ResourceTag `json:"sys_tags,omitempty"`
 }
 
 type CsvProperties struct {
@@ -79,7 +77,7 @@ func CreateStream(client *golangsdk.ServiceClient, opts CreateStreamOpts) error 
 
 	// POST /v2/{project_id}/streams
 	_, err = client.Post(client.ServiceURL("streams"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{201},
 	})
 	return err
 }

@@ -21,7 +21,7 @@ func CreateApp(client *golangsdk.ServiceClient, opts CreateAppOpts) error {
 
 	// POST /v2/{project_id}/apps
 	_, err = client.Post(client.ServiceURL("apps"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{201},
 	})
 	return err
 }
