@@ -2,21 +2,27 @@ package v2
 
 import (
 	"log"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dis/v2/apps"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dis/v2/checkpoints"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dis/v2/data"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dis/v2/dump"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dis/v2/monitors"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dis/v2/streams"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestDIS(t *testing.T) {
+func TestDISWorkflow(t *testing.T) {
 	client, err := clients.NewDisV2Client()
 	th.AssertNoErr(t, err)
-
+	now := time.Now()
 	appName := tools.RandomString("app-create-test-", 3)
 	log.Printf("Create DIS App, Name: %s", appName)
 	err = apps.CreateApp(client, apps.CreateAppOpts{
@@ -32,12 +38,12 @@ func TestDIS(t *testing.T) {
 	log.Printf("Get DIS App, Name: %s", appName)
 	app, err := apps.GetApp(client, appName)
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, app)
+	th.AssertEquals(t, app.AppName, appName)
 
 	log.Print("List DIS Apps")
-	listApps, err := apps.ListApps(client, apps.ListAppOpts{})
+	listApps, err := apps.ListApps(client, apps.ListAppOpts{Limit: pointerto.Int(10)})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, listApps)
+	th.AssertEquals(t, *listApps.TotalNumber, 1)
 
 	streamName := tools.RandomString("stream-create-test-", 3)
 	log.Printf("Create DIS Stream, Name: %s", streamName)
@@ -59,7 +65,7 @@ func TestDIS(t *testing.T) {
 		CheckpointType: "LAST_READ",
 	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, appStatus)
+	th.AssertEquals(t, len(appStatus.PartitionConsumingStates), 3)
 
 	log.Printf("Get DIS Stream, Name: %s", streamName)
 	getStream, err := streams.GetStream(client, streams.GetStreamOpts{
@@ -110,7 +116,7 @@ func TestDIS(t *testing.T) {
 	log.Print("List DIS Streams")
 	listStreams, err := streams.ListStreams(client, streams.ListStreamsOpts{})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, listStreams)
+	th.AssertEquals(t, listStreams.StreamInfoList[0].DataType, "BLOB")
 
 	log.Printf("Commit DIS App Checkpoint, Name: %s", appName)
 	err = checkpoints.CommitCheckpoint(client, checkpoints.CommitCheckpointOpts{
@@ -140,7 +146,7 @@ func TestDIS(t *testing.T) {
 		CheckpointType: "LAST_READ",
 	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, checkpoint)
+	th.AssertEquals(t, checkpoint.SequenceNumber, "0")
 
 	log.Printf("Create DIS Stream Data records, Name: %s", streamName)
 	_, err = data.PutRecords(client, data.PutRecordsOpts{
@@ -148,7 +154,7 @@ func TestDIS(t *testing.T) {
 		StreamId:   getStream.StreamId,
 		Records: []data.PutRecordsRequestEntry{
 			{
-				Data: "ZGF0YQ==",
+				Data: "dGVzdCBzdHJpbmc=",
 			},
 		},
 	})
@@ -168,4 +174,149 @@ func TestDIS(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, records)
+
+	log.Print("Querying Stream Monitoring Data")
+	streamMon, err := monitors.GetStreamMonitor(client, monitors.GetStreamMonitorOpts{
+		StreamName: streamName,
+		Label:      "total_put_bytes_per_stream",
+		StartTime:  now.Unix(),
+		EndTime:    now.Unix() + 50,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, streamMon.Metrics.Label, "total_put_bytes_per_stream")
+
+	log.Print("Querying Partition Monitoring Data")
+	streamPartMon, err := monitors.GetPartitionMonitor(client, monitors.GetPartitionMonitorOpts{
+		PartitionId: "0",
+		StreamName:  streamName,
+		Label:       "total_put_bytes_per_partition",
+		StartTime:   now.Unix(),
+		EndTime:     now.Unix() + 50,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, streamPartMon.Metrics.Label, "total_put_bytes_per_partition")
+}
+
+func TestDISDumpWorkflow(t *testing.T) {
+	t.Skip("Need to create dis_admin_agency first")
+	client, err := clients.NewDisV2Client()
+	th.AssertNoErr(t, err)
+
+	clientObs, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	bucketName := strings.ToLower(tools.RandomString("obs-dis-test", 5))
+
+	_, err = clientObs.CreateBucket(&obs.CreateBucketInput{
+		Bucket: bucketName,
+	})
+	t.Cleanup(func() {
+		_, err = clientObs.DeleteBucket(bucketName)
+		th.AssertNoErr(t, err)
+	})
+	th.AssertNoErr(t, err)
+
+	appName := tools.RandomString("app-create-test-", 3)
+	log.Printf("Create DIS App, Name: %s", appName)
+	err = apps.CreateApp(client, apps.CreateAppOpts{
+		AppName: appName,
+	})
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		log.Printf("Delete DIS App, Name: %s", appName)
+		err = apps.DeleteApp(client, appName)
+		th.AssertNoErr(t, err)
+	})
+
+	streamName := tools.RandomString("stream-create-test-", 3)
+	log.Printf("Create DIS Stream, Name: %s", streamName)
+	err = streams.CreateStream(client, streams.CreateStreamOpts{
+		StreamName:     streamName,
+		PartitionCount: 3,
+	})
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		log.Printf("Delete DIS Stream, Name: %s", streamName)
+		err = streams.DeleteStream(client, streamName)
+		th.AssertNoErr(t, err)
+	})
+
+	taskName := tools.RandomString("task-create-test-", 3)
+	log.Printf("Delete DIS Dump task, Name: %s", taskName)
+	err = dump.CreateOBSDumpTask(client, dump.CreateOBSDumpTaskOpts{
+		StreamName:      streamName,
+		DestinationType: "OBS",
+		OBSDestinationDescriptor: dump.OBSDestinationDescriptorOpts{
+			TaskName:            taskName,
+			AgencyName:          "dis_admin_agency",
+			ConsumerStrategy:    "LATEST",
+			DestinationFileType: "text",
+			OBSBucketPath:       bucketName,
+			FilePrefix:          "",
+			PartitionFormat:     "yyyy/MM/dd/HH/mm",
+			RecordDelimiter:     "|",
+			DeliverTimeInterval: pointerto.Int(30),
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		log.Printf("Delete DIS Dump task, Name: %s", taskName)
+		err = dump.DeleteTransferTask(client, dump.DeleteTransferTaskOpts{
+			StreamName: streamName,
+			TaskName:   taskName,
+		})
+		th.AssertNoErr(t, err)
+	})
+
+	log.Printf("Get DIS Dump task, Name: %s", taskName)
+	getDump, err := dump.GetTransferTask(client, dump.GetTransferTaskOpts{
+		StreamName: streamName,
+		TaskName:   taskName,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, getDump.TaskName, taskName)
+
+	err = dump.TransferTaskAction(client, dump.TransferTaskActionOpts{
+		StreamName: streamName,
+		Action:     "stop",
+		Tasks: []dump.BatchTransferTask{
+			{
+				Id: getDump.TaskId,
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	log.Printf("Check DIS Dump task state is paused, Name: %s", taskName)
+	stateDumpStopped, err := dump.GetTransferTask(client, dump.GetTransferTaskOpts{
+		StreamName: streamName,
+		TaskName:   taskName,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, stateDumpStopped.State, "PAUSED")
+
+	log.Print("List DIS Dump tasks")
+	listTasks, err := dump.ListTransferTasks(client, streamName)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, *listTasks.TotalNumber, 1)
+
+	err = dump.TransferTaskAction(client, dump.TransferTaskActionOpts{
+		StreamName: streamName,
+		Action:     "start",
+		Tasks: []dump.BatchTransferTask{
+			{
+				Id: getDump.TaskId,
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	log.Printf("Check DIS Dump task state is running, Name: %s", taskName)
+	stateDumpStarted, err := dump.GetTransferTask(client, dump.GetTransferTaskOpts{
+		StreamName: streamName,
+		TaskName:   taskName,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, stateDumpStarted.State, "RUNNING")
 }

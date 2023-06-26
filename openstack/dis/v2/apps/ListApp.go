@@ -10,7 +10,7 @@ type ListAppOpts struct {
 	// Minimum: 1
 	// Maximum: 1000
 	// Default: 10
-	Limit *int32 `q:"limit,omitempty"`
+	Limit *int `q:"limit,omitempty"`
 	// Name of the app to start the list with. The returned app list does not contain this app name.
 	StartAppName string `q:"start_app_name,omitempty"`
 	// Name of the stream whose apps will be returned.
@@ -42,7 +42,7 @@ type ListAppResponse struct {
 	// AppEntry list that meets the current request.
 	Apps []DescribeAppResult `json:"apps,omitempty"`
 	// Total number of apps that meet criteria.
-	TotalNumber *int32 `json:"total_number,omitempty"`
+	TotalNumber *int `json:"total_number,omitempty"`
 }
 
 type DescribeAppResult struct {

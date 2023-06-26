@@ -41,7 +41,7 @@ func ListStreams(client *golangsdk.ServiceClient, opts ListStreamsOpts) (*ListSt
 
 type ListStreamsResponse struct {
 	// Total number of all the DIS streams created by the current tenant.
-	TotalNumber *int64 `json:"total_number,omitempty"`
+	TotalNumber *int `json:"total_number,omitempty"`
 	// List of the streams meeting the current requests.
 	StreamNames []string `json:"stream_names,omitempty"`
 	// Specify whether there are more matching DIS streams to list. Possible values:

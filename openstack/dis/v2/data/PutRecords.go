@@ -9,14 +9,14 @@ import (
 type PutRecordsOpts struct {
 	// Name of the stream.
 	// Maximum: 64
-	StreamName string `q:"stream_name"`
+	StreamName string `json:"stream_name" required:"true"`
 	// Unique ID of the stream.
 	// If no stream is found by stream_name and stream_id is not empty, stream_id is used to search for the stream.
 	// Note:
 	// This parameter is mandatory when data is uploaded to the authorized stream.
-	StreamId string `q:"stream_id,omitempty"`
+	StreamId string `json:"stream_id,omitempty"`
 	// List of records to be uploaded.
-	Records []PutRecordsRequestEntry `q:"records"`
+	Records []PutRecordsRequestEntry `json:"records" required:"true"`
 }
 
 func PutRecords(client *golangsdk.ServiceClient, opts PutRecordsOpts) (*PutRecordsResponse, error) {
@@ -57,7 +57,7 @@ type PutRecordsRequestEntry struct {
 
 type PutRecordsResponse struct {
 	// Number of data records that fail to be uploaded.
-	FailedRecordCount *int32 `json:"failed_record_count,omitempty"`
+	FailedRecordCount *int `json:"failed_record_count,omitempty"`
 
 	Records []PutRecordsResultEntry `json:"records,omitempty"`
 }

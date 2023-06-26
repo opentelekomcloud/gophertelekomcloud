@@ -45,6 +45,8 @@ type GetCursorOpts struct {
 	// Note:
 	// The timestamp is accurate to milliseconds.
 	Timestamp *int64 `q:"timestamp,omitempty"`
+	// Unique ID of the stream. This parameter is mandatory for obtaining the iterator of an authorized stream.
+	StreamId string `q:"stream-id,omitempty"`
 }
 
 func GetCursor(client *golangsdk.ServiceClient, opts GetCursorOpts) (*GetCursorResponse, error) {

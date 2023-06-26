@@ -12,10 +12,6 @@ type CreateOBSDumpTaskOpts struct {
 	// Dump destination.
 	// Possible values:
 	// - OBS: Data is dumped to OBS.
-	// - MRS: Data is dumped to MRS.
-	// - DLI: Data is dumped to DLI.
-	// - CLOUDTABLE: Data is dumped to CloudTable.
-	// - DWS: Data is dumped to DWS.
 	// Default: NOWHERE
 	// Enumeration values:
 	// OBS
@@ -32,7 +28,7 @@ func CreateOBSDumpTask(client *golangsdk.ServiceClient, opts CreateOBSDumpTaskOp
 
 	// POST /v2/{project_id}/streams/{stream_name}/transfer-tasks
 	_, err = client.Post(client.ServiceURL("streams", opts.StreamName, "transfer-tasks"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{201},
 	})
 	return err
 }
@@ -64,7 +60,7 @@ type OBSDestinationDescriptorOpts struct {
 	// Minimum: 30
 	// Maximum: 900
 	// Default: 300
-	DeliverTimeInterval *int32 `json:"deliver_time_interval"`
+	DeliverTimeInterval *int `json:"deliver_time_interval"`
 	// Offset.
 	// LATEST: Maximum offset indicating that the latest data will be extracted.
 	// TRIM_HORIZON: Minimum offset indicating that the earliest data will be extracted.

@@ -19,7 +19,7 @@ func ListTransferTasks(client *golangsdk.ServiceClient, streamName string) (*Lis
 
 type ListTransferTasksResponse struct {
 	// Total number of dump tasks.
-	TotalNumber *int32 `json:"total_number,omitempty"`
+	TotalNumber *int `json:"total_number,omitempty"`
 	// List of dump tasks.
 	Tasks []TransferTask `json:"tasks,omitempty"`
 }
@@ -27,6 +27,8 @@ type ListTransferTasksResponse struct {
 type TransferTask struct {
 	// Name of the dump task.
 	TaskName string `json:"task_name,omitempty"`
+	// Id of the dump task
+	TaskId string `json:"task_id,omitempty"`
 	// Dump task status. Possible values:
 	// ERROR: An error occurs.
 	// STARTING: The dump task is being started.

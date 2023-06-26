@@ -5,14 +5,14 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type DescribeTransferTaskOpts struct {
+type GetTransferTaskOpts struct {
 	// Name of the stream.
 	StreamName string
 	// Name of the dump task to be deleted.
 	TaskName string
 }
 
-func GetTransferTask(client *golangsdk.ServiceClient, opts DescribeTransferTaskOpts) (*GetTransferTaskResponse, error) {
+func GetTransferTask(client *golangsdk.ServiceClient, opts GetTransferTaskOpts) (*GetTransferTaskResponse, error) {
 	// GET /v2/{project_id}/streams/{stream_name}/transfer-tasks/{task_name}
 	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName, "transfer-tasks", opts.TaskName), nil, nil)
 	if err != nil {
@@ -29,6 +29,8 @@ type GetTransferTaskResponse struct {
 	StreamName string `json:"stream_name,omitempty"`
 	// Name of the dump task.
 	TaskName string `json:"task_name,omitempty"`
+	// Id of the dump task
+	TaskId string `json:"task_id,omitempty"`
 	// Dump task status.
 	// Possible values:
 	// - ERROR: An error occurs.

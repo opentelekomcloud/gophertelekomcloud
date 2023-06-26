@@ -17,7 +17,7 @@ type GetAppStatusOpts struct {
 	// Minimum: 1
 	// Maximum: 1000
 	// Default: 100
-	Limit *int32 `q:"limit,omitempty"`
+	Limit *int `q:"limit,omitempty"`
 	// Name of the partition to start the partition list with.
 	// The returned partition list does not contain this partition.
 	StartPartitionId string `q:"start_partition_id,omitempty"`

@@ -14,7 +14,7 @@ type GetRecordsOpts struct {
 	// Maximum number of bytes that can be obtained for each request.
 	// Note:
 	// If the value is less than the size of a single record in the partition, the record cannot be obtained.
-	MaxFetchBytes *int32 `q:"max_fetch_bytes,omitempty"`
+	MaxFetchBytes *int `q:"max_fetch_bytes,omitempty"`
 }
 
 func GetRecords(client *golangsdk.ServiceClient, opts GetRecordsOpts) (*GetRecordsResponse, error) {
@@ -24,7 +24,9 @@ func GetRecords(client *golangsdk.ServiceClient, opts GetRecordsOpts) (*GetRecor
 	}
 
 	// GET /v2/{project_id}/records
-	raw, err := client.Get(client.ServiceURL("checkpoints")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL("records")+q.String(), nil, &golangsdk.RequestOpts{
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+	})
 	if err != nil {
 		return nil, err
 	}
