@@ -335,6 +335,8 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 						params.Add(tags[0], v.String())
 					case reflect.Int:
 						params.Add(tags[0], strconv.FormatInt(v.Int(), 10))
+					case reflect.Int64:
+						params.Add(tags[0], strconv.FormatInt(v.Int(), 10))
 					case reflect.Bool:
 						params.Add(tags[0], strconv.FormatBool(v.Bool()))
 					case reflect.Slice:
