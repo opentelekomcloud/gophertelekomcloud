@@ -57,7 +57,7 @@ type StreamInfo struct {
 	// Name of the stream.
 	StreamName string `json:"stream_name,omitempty"`
 	// Time when the stream is created. The value is a 13-bit timestamp.
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *int64 `json:"create_time,omitempty"`
 	// Period for storing data in units of hours.
 	RetentionPeriod *int `json:"retention_period,omitempty"`
 	// Current status of the stream. Possible values:

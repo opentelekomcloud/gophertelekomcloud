@@ -33,9 +33,9 @@ type UpdateStreamOpts struct {
 	AutoScaleEnabled *bool `json:"auto_scale_enabled,omitempty"`
 	// Minimum number of partitions for automatic scale-down when auto-scaling is enabled.
 	// Minimum: 1
-	AutoScaleMinPartitionCount *int64 `json:"auto_scale_min_partition_count,omitempty"`
+	AutoScaleMinPartitionCount *int `json:"auto_scale_min_partition_count,omitempty"`
 	// Maximum number of partitions for automatic scale-up when auto-scaling is enabled.
-	AutoScaleMaxPartitionCount *int64 `json:"auto_scale_max_partition_count,omitempty"`
+	AutoScaleMaxPartitionCount *int `json:"auto_scale_max_partition_count,omitempty"`
 }
 
 func UpdateStream(client *golangsdk.ServiceClient, opts UpdateStreamOpts) error {

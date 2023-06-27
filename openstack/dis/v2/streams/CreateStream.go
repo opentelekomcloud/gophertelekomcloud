@@ -12,7 +12,7 @@ type CreateStreamOpts struct {
 	// Maximum: 64
 	StreamName string `json:"stream_name"`
 	// Number of partitions. Partitions are the base throughput unit of a DIS stream.
-	PartitionCount int32 `json:"partition_count"`
+	PartitionCount int `json:"partition_count"`
 	// Stream type.
 	// COMMON: a common stream. The bandwidth is 1 MB/s.
 	// ADVANCED: an advanced stream. The bandwidth is 5 MB/s.
@@ -42,7 +42,7 @@ type CreateStreamOpts struct {
 	AutoScaleEnabled *bool `json:"auto_scale_enabled,omitempty"`
 	// Minimum number of partitions for automatic scale-down when auto-scaling is enabled.
 	// Minimum: 1
-	AutoScaleMinPartitionCount *int64 `json:"auto_scale_min_partition_count,omitempty"`
+	AutoScaleMinPartitionCount *int `json:"auto_scale_min_partition_count,omitempty"`
 	// Maximum number of partitions for automatic scale-up when auto-scaling is enabled.
 	AutoScaleMaxPartitionCount *int `json:"auto_scale_max_partition_count,omitempty"`
 	// Source data structure that defines JSON and CSV formats.
