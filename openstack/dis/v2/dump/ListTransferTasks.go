@@ -50,7 +50,7 @@ type TransferTask struct {
 	// OBS
 	DestinationType string `json:"destination_type,omitempty"`
 	// Time when the dump task is created.
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *int64 `json:"create_time,omitempty"`
 	// Latest dump time of the dump task.
 	LastTransferTimestamp *int64 `json:"last_transfer_timestamp,omitempty"`
 }

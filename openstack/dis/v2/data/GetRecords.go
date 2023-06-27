@@ -57,7 +57,7 @@ type Record struct {
 	// For example, the data returned by the data download API is "ZGF0YQ==", which is "data" after Base64 decoding.
 	Data string `json:"data,omitempty"`
 	// Timestamp when the record is written to DIS.
-	Timestamp *int64 `json:"timestamp,omitempty"`
+	CreatedAt *int64 `json:"timestamp,omitempty"`
 	// Timestamp data type.
 	// CreateTime: creation time.
 	// Default: CreateTime

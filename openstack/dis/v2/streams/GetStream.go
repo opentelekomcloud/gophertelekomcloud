@@ -43,7 +43,7 @@ type DescribeStreamResponse struct {
 	// Name of the stream.
 	StreamName string `json:"stream_name,omitempty"`
 	// Time when a stream is created. The value is a 13-bit timestamp.
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *int64 `json:"create_time,omitempty"`
 	// Time when a stream is the most recently modified. The value is a 13-bit timestamp.
 	LastModifiedTime *int64 `json:"last_modified_time,omitempty"`
 	// Current status of the stream. Possible values:
@@ -140,7 +140,7 @@ type PartitionResult struct {
 
 type UpdatePartitionCountResponse struct {
 	// Scaling execution timestamp, which is a 13-digit timestamp.
-	CreateTimestamp *int64 `json:"create_timestamp,omitempty"`
+	CreatedAt *int64 `json:"create_timestamp,omitempty"`
 	// Number of partitions before scaling.
 	SrcPartitionCount *int `json:"src_partition_count,omitempty"`
 	// Number of partitions after scaling.
