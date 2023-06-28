@@ -1,89 +1,144 @@
 package monitors
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// List request.
-type CreateOptsBuilder interface {
-	ToMonitorCreateMap() (map[string]interface{}, error)
-}
-
-// CreateOpts is the common options' struct used in this package's Create
-// operation.
+// CreateOpts is the common options' struct used in this package's Create operation.
 type CreateOpts struct {
-	// The Pool to Monitor.
-	PoolID string `json:"pool_id" required:"true"`
-
-	// Specifies the health check protocol.
+	// Specifies the administrative status of the health check.
 	//
-	// The value can be TCP, UDP_CONNECT, HTTP, HTTPS, or PING.
-	Type Type `json:"type" required:"true"`
-
-	// The time, in seconds, between sending probes to members.
-	Delay int `json:"delay" required:"true"`
-
-	// Specifies the maximum time required for waiting for a response from the health check, in seconds.
-	// It is recommended that you set the value less than that of parameter delay.
-	Timeout int `json:"timeout" required:"true"`
-
-	// Specifies the number of consecutive health checks when the health check result of a backend server changes
-	// from OFFLINE to ONLINE. The value ranges from 1 to 10.
-	MaxRetries int `json:"max_retries" required:"true"`
-
-	// Specifies the number of consecutive health checks when the health check result of a backend server changes
-	// from ONLINE to OFFLINE.
-	MaxRetriesDown int `json:"max_retries_down,omitempty"`
-
-	// Specifies the HTTP request path for the health check.
-	// The value must start with a slash (/), and the default value is /. This parameter is available only when type is set to HTTP.
-	URLPath string `json:"url_path,omitempty"`
-
-	// Specifies the domain name that HTTP requests are sent to during the health check.
-	// This parameter is available only when type is set to HTTP.
-	DomainName string `json:"domain_name,omitempty"`
-
-	// The HTTP method used for requests by the Monitor. If this attribute
-	// is not specified, it defaults to "GET".
-	HTTPMethod string `json:"http_method,omitempty"`
-
-	// Expected HTTP codes for a passing HTTP(S) Monitor. You can either specify
-	// a single status like "200", or a range like "200-202".
-	ExpectedCodes string `json:"expected_codes,omitempty"`
-
-	// ProjectID is the UUID of the project who owns the Monitor.
-	// Only administrative users can specify a project UUID other than their own.
-	ProjectID string `json:"project_id,omitempty"`
-
-	// The Name of the Monitor.
-	Name string `json:"name,omitempty"`
-
-	// The administrative state of the Monitor. A valid value is true (UP)
-	// or false (DOWN).
+	// true (default): Health check is enabled.
+	//
+	// false: Health check is disabled.
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
-
-	// The Port of the Monitor.
-	MonitorPort int `json:"monitor_port,omitempty"`
-}
-
-// ToMonitorCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToMonitorCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "healthmonitor")
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
+	// Specifies the interval between health checks, in seconds. The value ranges from 1 to 50.
+	Delay *int `json:"delay" required:"true"`
+	// Specifies the domain name that HTTP requests are sent to during the health check.
+	//
+	// The value can contain only digits, letters, hyphens (-), and periods (.) and must start with a digit or letter.
+	//
+	// The value is left blank by default, indicating that the virtual IP address of the load balancer is used as the destination address of HTTP requests.
+	//
+	// This parameter is available only when type is set to HTTP.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 100
+	DomainName string `json:"domain_name,omitempty"`
+	// Specifies the expected HTTP status code. This parameter will take effect only when type is set to HTTP or HTTPS.
+	//
+	// The value options are as follows:
+	//
+	// A specific value, for example, 200
+	//
+	// A list of values that are separated with commas (,), for example, 200, 202
+	//
+	// A value range, for example, 200-204
+	//
+	// The default value is 200. Multiple status codes can be queried in the format of expected_codes=xxx&expected_codes=xxx.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 64
+	ExpectedCodes string `json:"expected_codes,omitempty"`
+	// Specifies the HTTP method. The value can be GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, or PATCH. The default value is GET.
+	//
+	// This parameter is available when type is set to HTTP or HTTPS.
+	//
+	// This parameter is unsupported. Please do not use it.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 16
+	HttpMethod string `json:"http_method,omitempty"`
+	// Specifies the number of consecutive health checks when the health check result of a backend server changes from OFFLINE to ONLINE.
+	//
+	// The value ranges from 1 to 10.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 10
+	MaxRetries *int `json:"max_retries" required:"true"`
+	// Specifies the number of consecutive health checks when the health check result of a backend server changes from ONLINE to OFFLINE.
+	//
+	// The value ranges from 1 to 10, and the default value is 3.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 10
+	//
+	// Default: 3
+	MaxRetriesDown *int `json:"max_retries_down,omitempty"`
+	// Specifies the port used for the health check. If this parameter is left blank, a port of the backend server will be used by default. The port number ranges from 1 to 65535.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 65535
+	MonitorPort *int `json:"monitor_port,omitempty"`
+	// Specifies the health check name.
+	//
+	// Minimum: 0
+	//
+	// Maximum: 255
+	Name string `json:"name,omitempty"`
+	// Specifies the ID of the backend server group for which the health check is configured.
+	PoolId string `json:"pool_id" required:"true"`
+	// Specifies the project ID.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 32
+	ProjectId string `json:"project_id,omitempty"`
+	// Specifies the maximum time required for waiting for a response from the health check, in seconds. It is recommended that you set the value less than that of parameter delay.
+	//
+	// Minimum: 1
+	//
+	// Maximum: 50
+	Timeout *int `json:"timeout" required:"true"`
+	// Specifies the health check protocol. The value can be TCP, UDP_CONNECT, HTTP, or HTTPS.
+	//
+	// Note:
+	//
+	// If the protocol of the backend server is QUIC, the value can only be UDP_CONNECT.
+	//
+	// If the protocol of the backend server is UDP, the value can only be UDP_CONNECT.
+	//
+	// If the protocol of the backend server is TCP, the value can only be TCP, HTTP, or HTTPS.
+	//
+	// If the protocol of the backend server is HTTP, the value can only be TCP, HTTP, or HTTPS.
+	//
+	// If the protocol of the backend server is HTTPS, the value can only be TCP, HTTP, or HTTPS.
+	//
+	// QUIC protocol is not supported in eu-nl region.
+	Type string `json:"type" required:"true"`
+	// Specifies the HTTP request path for the health check. The value must start with a slash (/), and the default value is /. Note: This parameter is available only when type is set to HTTP.
+	//
+	// Default: /
+	//
+	// Minimum: 1
+	//
+	// Maximum: 80
+	UrlPath string `json:"url_path,omitempty"`
 }
 
 // Create is an operation which provisions a new Health Monitor. There are
 // different types of Monitor you can provision: PING, TCP or HTTP(S). Below
 // are examples of how to create each one.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToMonitorCreateMap()
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Monitor, error) {
+	b, err := build.RequestBody(opts, "healthmonitor")
 	if err != nil {
-		r.Err = err
-		return
+		return nil, err
 	}
-	_, r.Err = client.Post(client.ServiceURL("healthmonitors"), b, &r.Body, nil)
-	return
+
+	raw, err := client.Post(client.ServiceURL("healthmonitors"), b, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res Monitor
+	err = extract.IntoStructPtr(raw.Body, res, "healthmonitor")
+	return &res, err
 }

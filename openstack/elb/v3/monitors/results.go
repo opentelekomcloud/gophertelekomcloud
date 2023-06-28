@@ -2,6 +2,7 @@ package monitors
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -105,12 +106,9 @@ type commonResult struct {
 
 // Extract is a function that accepts a result and extracts a Monitor.
 func (r commonResult) Extract() (*Monitor, error) {
-	s := new(Monitor)
-	err := r.ExtractIntoStructPtr(s, "healthmonitor")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
+	var res Monitor
+	err := extract.IntoStructPtr(res, "healthmonitor")
+	return &res, err
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
