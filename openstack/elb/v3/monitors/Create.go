@@ -3,7 +3,6 @@ package monitors
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // CreateOpts is the common options' struct used in this package's Create operation.
@@ -134,11 +133,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Monitor, error) 
 	}
 
 	raw, err := client.Post(client.ServiceURL("healthmonitors"), b, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var res Monitor
-	err = extract.IntoStructPtr(raw.Body, res, "healthmonitor")
-	return &res, err
+	return extra(err, raw)
 }
