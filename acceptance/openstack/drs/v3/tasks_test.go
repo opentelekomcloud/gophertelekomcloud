@@ -16,9 +16,9 @@ import (
 )
 
 func TestDrsTaskLifecycle(t *testing.T) {
-	if os.Getenv("RUN_DRS_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
-	}
+	// if os.Getenv("RUN_DRS_LIFECYCLE") == "" {
+	// 	t.Skip("too slow to run in zuul")
+	// }
 	subnetId := os.Getenv("OS_SUBNET_ID")
 
 	client, err := clients.NewDrsV3Client()
