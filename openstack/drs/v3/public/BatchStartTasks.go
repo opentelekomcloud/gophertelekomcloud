@@ -19,26 +19,27 @@ type StartInfo struct {
 	StartTime string `json:"start_time,omitempty"`
 }
 
-func BatchStartJobs(client *golangsdk.ServiceClient, opts BatchStartJobOpts) (*BatchJobsResponse, error) {
+func BatchStartTasks(client *golangsdk.ServiceClient, opts BatchStartJobOpts) (*BatchTasksResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v3/{project_id}/jobs/batch-starting
-	raw, err := client.Post(client.ServiceURL("jobs", "batch-starting"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-starting"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{202}})
 	if err != nil {
 		return nil, err
 	}
 
-	var res BatchJobsResponse
+	var res BatchTasksResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type BatchJobsResponse struct {
+type BatchTasksResponse struct {
 	Results []IdJobResp `json:"results,omitempty"`
-	Count   int32       `json:"count,omitempty"`
+	Count   int         `json:"count,omitempty"`
 }
 
 type IdJobResp struct {

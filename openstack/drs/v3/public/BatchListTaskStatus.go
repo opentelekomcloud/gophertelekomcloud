@@ -6,26 +6,27 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func BatchListJobStatus(client *golangsdk.ServiceClient, opts BatchQueryJobOpts) (*BatchListJobStatusResponse, error) {
+func BatchListTaskStatus(client *golangsdk.ServiceClient, opts BatchQueryTaskOpts) (*BatchListTaskStatusResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v3/{project_id}/jobs/batch-status
-	raw, err := client.Post(client.ServiceURL("jobs", "batch-status"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-status"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200}})
 	if err != nil {
 		return nil, err
 	}
 
-	var res BatchListJobStatusResponse
+	var res BatchListTaskStatusResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type BatchListJobStatusResponse struct {
+type BatchListTaskStatusResponse struct {
 	Results []QueryJobStatusResp `json:"results,omitempty"`
-	Count   int32                `json:"count,omitempty"`
+	Count   int                  `json:"count,omitempty"`
 }
 
 type QueryJobStatusResp struct {

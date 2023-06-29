@@ -12,7 +12,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
+func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
 	t.Logf("Attempting to create RDSv3")
 
 	rdsName := tools.RandomString("rds-test-", 8)
@@ -60,7 +60,7 @@ func createRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 	return &rds.Instance
 }
 
-func deleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) {
+func DeleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) {
 	t.Logf("Attempting to delete RDSv3: %s", rdsID)
 
 	err := golangsdk.WaitFor(1000, func() (bool, error) {

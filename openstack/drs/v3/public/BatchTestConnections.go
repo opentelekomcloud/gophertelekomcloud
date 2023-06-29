@@ -12,25 +12,25 @@ type BatchTestConnectionOpts struct {
 
 type TestEndPoint struct {
 	// Task ID.
-	Id string `json:"id"`
+	Id string `json:"id" required:"true"`
 	// Network type.
 	// Value: vpn vpc eip
-	NetType string `json:"net_type"`
+	NetType string `json:"net_type" required:"true"`
 	// Database type.
 	// Value: mysql mongodb taurus postgresql
-	DbType string `json:"db_type"`
+	DbType string `json:"db_type" required:"true"`
 	// Database IP address.
-	Ip string `json:"ip"`
+	Ip string `json:"ip" required:"true"`
 	// Database port number. This parameter must be set to 0 for the Mongo and DDS databases.
-	DbPort int32 `json:"db_port,omitempty"`
+	DbPort int `json:"db_port,omitempty"`
 	// The RDS or GaussDB(for MySQL) instance ID. This parameter is mandatory for RDS or GaussDB(for MySQL) instances.
 	InstId string `json:"inst_id,omitempty"`
 	// Database account.
-	DbUser string `json:"db_user"`
+	DbUser string `json:"db_user" required:"true"`
 	// Database password.
 	DbPassword string `json:"db_password"`
 	// Whether SSL is enabled.
-	SslLink bool `json:"ssl_link,omitempty"`
+	SslLink *bool `json:"ssl_link,omitempty"`
 	// The SSL certificate content, which is encrypted using Base64.
 	// This parameter is mandatory for secure connection to the source database.
 	SslCertKey string `json:"ssl_cert_key,omitempty"`
@@ -47,7 +47,7 @@ type TestEndPoint struct {
 	SubnetId string `json:"subnet_id,omitempty"`
 	// Source database: so. Destination database: ta. Default value: so
 	// Values: so ta
-	EndPointType string `json:"end_point_type"`
+	EndPointType string `json:"end_point_type" required:"true"`
 	// Region of the RDS DB instance. This parameter is mandatory when the RDS DB instance is used.
 	Region string `json:"region,omitempty"`
 	// Project ID of the region where the user is located. This parameter is mandatory when the RDS DB instance is used.
@@ -56,14 +56,17 @@ type TestEndPoint struct {
 	DbName string `json:"db_name,omitempty"`
 }
 
-func BatchValidateConnections(client *golangsdk.ServiceClient, opts BatchTestConnectionOpts) (*BatchValidateConnectionsResponse, error) {
+func BatchTestConnections(client *golangsdk.ServiceClient, opts BatchTestConnectionOpts) (*BatchValidateConnectionsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v3/{project_id}/jobs/batch-connection
-	raw, err := client.Post(client.ServiceURL("jobs", "batch-connection"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-connection"), b, nil, &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +78,7 @@ func BatchValidateConnections(client *golangsdk.ServiceClient, opts BatchTestCon
 
 type BatchValidateConnectionsResponse struct {
 	Results []CheckJobResp `json:"results,omitempty"`
-	Count   int32          `json:"count,omitempty"`
+	Count   int            `json:"count,omitempty"`
 }
 
 type CheckJobResp struct {

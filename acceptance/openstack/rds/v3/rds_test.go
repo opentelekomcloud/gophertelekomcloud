@@ -32,8 +32,8 @@ func TestRdsLifecycle(t *testing.T) {
 	t.Log("Creating instance")
 
 	// Create RDSv3 instance
-	rds := createRDS(t, client, cc.RegionName)
-	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
+	rds := CreateRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
 	// rds := struct{ Id string }{Id: "490f49d2f8514a6e8378006e6a4f30b8in03"}
 
@@ -356,7 +356,7 @@ func TestRdsLifecycle(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 600, toNew.JobId)
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		deleteRDS(t, client, toNew.Instance.Id)
+		DeleteRDS(t, client, toNew.Instance.Id)
 	})
 
 	policy, err := backups.ShowBackupPolicy(client, rds.Id)

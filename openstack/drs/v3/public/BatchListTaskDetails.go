@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type BatchQueryJobOpts struct {
+type BatchQueryTaskOpts struct {
 	Jobs    []string `json:"jobs"`
 	PageReq PageReq  `json:"page_req,omitempty"`
 }
@@ -16,33 +16,34 @@ type PageReq struct {
 	// (Number of pages = Number of transferred job IDs/Number of tasks on each page)
 	// Minimum value: 1.
 	// Default value: 1
-	CurPage int32 `json:"cur_page,omitempty"`
+	CurPage int `json:"cur_page,omitempty"`
 	// Number of items on each page. If this parameter is set to 0, all items are obtained.
 	// Minimum value: 0
 	// Maximum value: 100
 	// Default value: 5
-	PerPage int32 `json:"per_page,omitempty"`
+	PerPage int `json:"per_page,omitempty"`
 }
 
-func BatchListJobDetails(client *golangsdk.ServiceClient, opts BatchQueryJobOpts) (*BatchListJobDetailsResponse, error) {
+func BatchListTaskDetails(client *golangsdk.ServiceClient, opts BatchQueryTaskOpts) (*BatchListTaskDetailsResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v3/{project_id}/jobs/batch-detail
-	raw, err := client.Post(client.ServiceURL("jobs", "batch-detail"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("jobs", "batch-detail"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200}})
 	if err != nil {
 		return nil, err
 	}
 
-	var res BatchListJobDetailsResponse
+	var res BatchListTaskDetailsResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type BatchListJobDetailsResponse struct {
-	Count   int32          `json:"count,omitempty"`
+type BatchListTaskDetailsResponse struct {
+	Count   int            `json:"count,omitempty"`
 	Results []QueryJobResp `json:"results,omitempty"`
 }
 
@@ -120,9 +121,9 @@ type QueryJobResp struct {
 	// cloudDataGuard: real-time disaster recovery.
 	DbUseType string `json:"db_use_type,omitempty"`
 	// Whether the instance needs to be restarted.
-	NeedRestart bool `json:"need_restart,omitempty"`
+	NeedRestart *bool `json:"need_restart,omitempty"`
 	// Whether the destination instance is restricted to read-only.
-	IsTargetReadonly bool `json:"is_target_readonly,omitempty"`
+	IsTargetReadonly *bool `json:"is_target_readonly,omitempty"`
 	// Conflict policy. Values:
 	// stop: The conflict fails.
 	// overwrite: Conflicting data is overwritten.
@@ -149,21 +150,21 @@ type QueryJobResp struct {
 	// Full snapshot mode.
 	FullMode string `json:"full_mode,omitempty"`
 	// Whether to migrate the structure.
-	StructTrans bool `json:"struct_trans,omitempty"`
+	StructTrans *bool `json:"struct_trans,omitempty"`
 	// Whether to migrate indexes.
-	IndexTrans bool `json:"index_trans,omitempty"`
+	IndexTrans *bool `json:"index_trans,omitempty"`
 	// Whether to replace the definer with the user of the destination database.
-	ReplaceDefiner bool `json:"replace_definer,omitempty"`
+	ReplaceDefiner *bool `json:"replace_definer,omitempty"`
 	// Whether to migrate users.
-	MigrateUser bool `json:"migrate_user,omitempty"`
+	MigrateUser *bool `json:"migrate_user,omitempty"`
 	// Whether to perform database-level synchronization.
-	SyncDatabase bool `json:"sync_database,omitempty"`
+	SyncDatabase *bool `json:"sync_database,omitempty"`
 
 	ErrorCode    string `json:"error_code,omitempty"`
 	ErrorMessage string `json:"error_message,omitempty"`
 
 	// Information about the root node database of the destination instance.
-	TargetRootDb DefaultRootDb `json:"target_root_db,omitempty"`
+	TargetRootDb *DefaultRootDb `json:"target_root_db,omitempty"`
 	// AZ where the node is located.
 	AzCode string `json:"az_code,omitempty"`
 	// VPC to which the node belongs.
@@ -173,17 +174,17 @@ type QueryJobResp struct {
 	// Security group to which the node belongs.
 	SecurityGroupId string `json:"security_group_id,omitempty"`
 	// Whether the task is a multi-active DR task. The value is true when the task is a dual-active DR task.
-	MultiWrite bool `json:"multi_write,omitempty"`
+	MultiWrite *bool `json:"multi_write,omitempty"`
 	// Whether IPv6 is supported
-	SupportIpV6 bool `json:"support_ip_v6,omitempty"`
+	SupportIpV6 *bool `json:"support_ip_v6,omitempty"`
 	// Inherited task ID, which is used for the Oracle_Mrskafka link.
 	InheritId string `json:"inherit_id,omitempty"`
 	// GTID set of breakpoints.
 	Gtid string `json:"gtid,omitempty"`
 	// Exception notification settings.
-	AlarmNotify string `json:"alarm_notify,omitempty"`
+	AlarmNotify *QuerySmnInfoResp `json:"alarm_notify,omitempty"`
 	// Whether the task is a cross-AZ synchronization task.
-	IsMultiAz bool `json:"is_multi_az"`
+	IsMultiAz *bool `json:"is_multi_az"`
 	// AZ name of the node.
 	AzName string `json:"az_name"`
 	// Primary AZ of the cross-AZ task.
@@ -218,7 +219,7 @@ type InstInfo struct {
 	// deleted
 	Status string `json:"status,omitempty"`
 	// Storage space of a replication instance.
-	VolumeSize int32 `json:"volume_size,omitempty"`
+	VolumeSize int `json:"volume_size,omitempty"`
 }
 
 type DefaultRootDb struct {
@@ -226,4 +227,18 @@ type DefaultRootDb struct {
 	DbName string `json:"db_name,omitempty"`
 	// Encoding format
 	DbEncoding string `json:"db_encoding,omitempty"`
+}
+
+type QuerySmnInfoResp struct {
+	TopicName     string          `json:"topic_name"`
+	DelayTime     int             `json:"delay_time"`
+	RtoDisplay    int             `json:"rto_delay"`
+	RpoDisplay    int             `json:"rpo_delay"`
+	AlarmToUser   *bool           `json:"alarm_to_user"`
+	Subscriptions []Subscriptions `json:"subscriptions"`
+}
+
+type Subscriptions struct {
+	Endpoints []string `json:"endpoints"`
+	Protocol  string   `json:"protocol"`
 }
