@@ -5,12 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToPoolUpdateMap() (map[string]interface{}, error)
-}
-
 // UpdateOpts is the common options' struct used in this package's Update
 // operation.
 type UpdateOpts struct {
@@ -91,7 +85,7 @@ type UpdateOpts struct {
 }
 
 // Update allows pools to be updated.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (*Pool, error) {
+func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Pool, error) {
 	b, err := build.RequestBody(opts, "pool")
 	if err != nil {
 		return nil, err
