@@ -124,15 +124,6 @@ type ListOpts struct {
 	EnterpriseProjectId []string `q:"enterprise_project_id"`
 }
 
-// ToMonitorListQuery formats a ListOpts into a query string.
-func (opts ListOpts) ToMonitorListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return "", err
-	}
-	return q.String(), nil
-}
-
 // List returns a Pager which allows you to iterate over a collection of
 // health monitors. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
