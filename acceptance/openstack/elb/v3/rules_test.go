@@ -32,8 +32,8 @@ func TestRuleWorkflow(t *testing.T) {
 	t.Cleanup(func() { deletePolicy(t, client, policyID) })
 
 	opts := rules.CreateOpts{
-		Type:        rules.Path,
-		CompareType: rules.Regex,
+		Type:        "PATH",
+		CompareType: "REGEX",
 		Value:       "^.+$",
 	}
 	created, err := rules.Create(client, policyID, opts).Extract()
@@ -101,8 +101,8 @@ func TestRuleWorkflowConditions(t *testing.T) {
 		Value: "/",
 	}
 	opts := rules.CreateOpts{
-		Type:        rules.Path,
-		CompareType: rules.StartsWith,
+		Type:        "PATH",
+		CompareType: "STARTS_WITH",
 		Value:       "/bbb.html",
 		Conditions:  []rules.Condition{condition},
 	}
@@ -134,7 +134,7 @@ func TestRuleWorkflowConditions(t *testing.T) {
 		Value: "/home",
 	}
 	updateOpts := rules.UpdateOpts{
-		CompareType: rules.EqualTo,
+		CompareType: "EQUAL_TO",
 		Conditions:  []rules.Condition{conditionUpdate},
 	}
 	updated, err := rules.Update(client, policyID, id, updateOpts).Extract()
@@ -147,7 +147,7 @@ func TestRuleWorkflowConditions(t *testing.T) {
 
 func createPolicy(t *testing.T, client *golangsdk.ServiceClient, listenerID, poolID string) string {
 	createOpts := policies.CreateOpts{
-		Action:         policies.ActionRedirectToPool,
+		Action:         "REDIRECT_TO_POOL",
 		ListenerID:     listenerID,
 		RedirectPoolID: poolID,
 		Description:    "Go SDK test policy",

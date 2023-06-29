@@ -20,7 +20,7 @@ func extra(err error, raw *http.Response) (*Monitor, error) {
 	}
 
 	var res Monitor
-	err = extract.IntoStructPtr(raw.Body, res, "healthmonitor")
+	err = extract.IntoStructPtr(raw.Body, &res, "healthmonitor")
 	return &res, err
 }
 

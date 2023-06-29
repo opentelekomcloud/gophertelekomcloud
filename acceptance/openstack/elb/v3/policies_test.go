@@ -27,7 +27,7 @@ func TestPolicyWorkflow(t *testing.T) {
 	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
-		Action:         policies.ActionRedirectToPool,
+		Action:         "REDIRECT_TO_POOL",
 		ListenerID:     listenerID,
 		RedirectPoolID: poolID,
 		Description:    "Go SDK test policy",
@@ -94,7 +94,7 @@ func TestPolicyWorkflowFixedResponse(t *testing.T) {
 	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
-		Action:     policies.ActionFixedResponse,
+		Action:     "FIXED_RESPONSE",
 		ListenerID: listener.ID,
 		FixedResponseConfig: &policies.FixedResponseOptions{
 			StatusCode:  "200",
@@ -170,7 +170,7 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
-		Action:      policies.ActionUrlRedirect,
+		Action:      "REDIRECT_TO_URL",
 		ListenerID:  listener.ID,
 		RedirectUrl: "https://www.bing.com:443",
 		RedirectUrlConfig: &policies.RedirectUrlOptions{
