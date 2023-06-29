@@ -5,15 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-type ForwardingRule struct {
-	ID          string      `json:"id"`
-	Type        RuleType    `json:"type"`
-	CompareType CompareType `json:"compare_type"`
-	Value       string      `json:"value"`
-	ProjectID   string      `json:"project_id"`
-	Conditions  []Condition `json:"conditions"`
-}
-
 type commonResult struct {
 	golangsdk.Result
 }
