@@ -75,11 +75,11 @@ type SecurityPage struct {
 }
 
 func (p SecurityPage) IsEmpty() (bool, error) {
-	rules, err := ExtractSecurity(p)
+	rules, err := ExtractSecurities(p)
 	return len(rules) == 0, err
 }
 
-func ExtractSecurity(p pagination.Page) ([]SecurityPolicy, error) {
+func ExtractSecurities(p pagination.Page) ([]SecurityPolicy, error) {
 	var res []SecurityPolicy
 	err := extract.IntoSlicePtr(p.(SecurityPage).BodyReader(), &res, "security_policies")
 	return res, err

@@ -6,12 +6,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the
-// List request.
-type ListOptsBuilder interface {
-	ToMonitorListQuery() (string, error)
-}
-
 // ListOpts allows the filtering and sorting of paginated collections through
 // the API. Filtering is achieved by passing in struct field values that map to
 // the Monitor attributes you want to see returned. SortKey allows you to
@@ -130,7 +124,7 @@ type ListOpts struct {
 //
 // Default policy settings return only those health monitors that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
-func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return pagination.Pager{Err: err}

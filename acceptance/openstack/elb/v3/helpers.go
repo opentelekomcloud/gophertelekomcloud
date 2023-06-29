@@ -151,32 +151,32 @@ func createPool(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID st
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	poolName := tools.RandomString("create-pool-", 3)
 	createOpts := pools.CreateOpts{
-		LBMethod:                 "LEAST_CONNECTIONS",
-		Protocol:                 "HTTP",
-		LoadbalancerID:           loadbalancerID,
-		Name:                     poolName,
-		Description:              "some interesting description",
-		VpcId:                    vpcID,
-		Type:                     "instance",
-		DeletionProtectionEnable: pointerto.Bool(true),
+		LbAlgorithm:                    "LEAST_CONNECTIONS",
+		Protocol:                       "HTTP",
+		LoadbalancerId:                 loadbalancerID,
+		Name:                           poolName,
+		Description:                    "some interesting description",
+		VpcId:                          vpcID,
+		Type:                           "instance",
+		MemberDeletionProtectionEnable: pointerto.Bool(true),
 	}
 
-	pool, err := pools.Create(client, createOpts).Extract()
+	pool, err := pools.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, pool.Name)
 	th.AssertEquals(t, createOpts.Description, pool.Description)
-	th.AssertEquals(t, createOpts.LBMethod, pool.LBMethod)
-	th.AssertEquals(t, true, pool.DeletionProtectionEnable)
+	th.AssertEquals(t, createOpts.LbAlgorithm, pool.LbAlgorithm)
+	th.AssertEquals(t, true, pool.MemberDeletionProtectionEnable)
 	th.AssertEquals(t, createOpts.Type, pool.Type)
 	th.AssertEquals(t, createOpts.VpcId, pool.VpcId)
-	t.Logf("Created ELBv3 Pool: %s", pool.ID)
+	t.Logf("Created ELBv3 Pool: %s", pool.Id)
 
-	return pool.ID
+	return pool.Id
 }
 
 func deletePool(t *testing.T, client *golangsdk.ServiceClient, poolID string) {
 	t.Logf("Attempting to delete ELBv3 Pool: %s", poolID)
-	err := pools.Delete(client, poolID).ExtractErr()
+	err := pools.Delete(client, poolID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 Pool: %s", poolID)
 }

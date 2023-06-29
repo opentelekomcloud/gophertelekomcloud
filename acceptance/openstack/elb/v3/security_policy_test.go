@@ -21,16 +21,6 @@ func TestSystemSecurityPolicy(t *testing.T) {
 	tools.PrintResource(t, systemPolicies)
 }
 
-func TestSecurityPolicyList(t *testing.T) {
-	client, err := clients.NewElbV3Client()
-	th.AssertNoErr(t, err)
-
-	allPolicies, err := security_policy.List(client, security_policy.ListOpts{})
-	th.AssertNoErr(t, err)
-
-	tools.PrintResource(t, allPolicies)
-}
-
 func TestSecurityPolicyLifecycle(t *testing.T) {
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
@@ -40,7 +30,7 @@ func TestSecurityPolicyLifecycle(t *testing.T) {
 	secPolicy := createSecurityPolicy(t, client, policyName)
 	tools.PrintResource(t, secPolicy)
 
-	t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicy.SecurityPolicy.ID) })
+	t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicy.Id) })
 
 	updatedName := tools.RandomString("update-policy-", 3)
 
@@ -48,27 +38,31 @@ func TestSecurityPolicyLifecycle(t *testing.T) {
 		Name: updatedName,
 	}
 
-	putPolicy, err := security_policy.Update(client, updateOpts, secPolicy.SecurityPolicy.ID)
+	putPolicy, err := security_policy.Update(client, updateOpts, secPolicy.Id)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, putPolicy.SecurityPolicy.Name, updatedName)
+	th.AssertEquals(t, putPolicy.Name, updatedName)
 
-	getPolicy, err := security_policy.Get(client, secPolicy.SecurityPolicy.ID)
+	getPolicy, err := security_policy.Get(client, secPolicy.Id)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, getPolicy)
-	th.AssertEquals(t, getPolicy.SecurityPolicy.ID, secPolicy.SecurityPolicy.ID)
-	th.AssertEquals(t, getPolicy.SecurityPolicy.Name, putPolicy.SecurityPolicy.Name)
-	th.AssertEquals(t, getPolicy.SecurityPolicy.ProjectId, secPolicy.SecurityPolicy.ProjectId)
+	th.AssertEquals(t, getPolicy.Id, secPolicy.Id)
+	th.AssertEquals(t, getPolicy.Name, putPolicy.Name)
+	th.AssertEquals(t, getPolicy.ProjectId, secPolicy.ProjectId)
 
-	listOpts := security_policy.ListOpts{
+	allPages, err := security_policy.List(client, security_policy.ListOpts{
 		Name: []string{
 			updatedName,
 		},
-	}
-
-	listPolicy, err := security_policy.List(client, listOpts)
+	}).AllPages()
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, listPolicy)
+
+	allPolicies, err := security_policy.ExtractSecurities(allPages)
+	th.AssertNoErr(t, err)
+
+	for _, pool := range allPolicies {
+		tools.PrintResource(t, pool)
+	}
 }
 
 func TestPolicyAssignment(t *testing.T) {
@@ -84,7 +78,7 @@ func TestPolicyAssignment(t *testing.T) {
 	t.Cleanup(func() { deleteCertificate(t, client, certificateID) })
 
 	t.Run("AssignSecurityPolicyListenerCreation", func(t *testing.T) {
-		secPolicyID := createSecurityPolicy(t, client, policyName).SecurityPolicy.ID
+		secPolicyID := createSecurityPolicy(t, client, policyName).Id
 		t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicyID) })
 
 		listenerName := tools.RandomString("create-listener-", 3)
@@ -111,7 +105,7 @@ func TestPolicyAssignment(t *testing.T) {
 	})
 
 	t.Run("AssignSecurityPolicyListenerUpdate", func(t *testing.T) {
-		secPolicyUpdatedID := createSecurityPolicy(t, client, policyName).SecurityPolicy.ID
+		secPolicyUpdatedID := createSecurityPolicy(t, client, policyName).Id
 		t.Cleanup(func() { deleteSecurityPolicy(t, client, secPolicyUpdatedID) })
 		listenerName := tools.RandomString("create-listener-", 3)
 
@@ -167,7 +161,7 @@ func createSecurityPolicy(t *testing.T, client *golangsdk.ServiceClient, policyN
 
 	secPolicy, err := security_policy.Create(client, secOpts)
 	th.AssertNoErr(t, err)
-	t.Logf("Created  ELBv3 security policy: %s", secPolicy.SecurityPolicy.ID)
+	t.Logf("Created  ELBv3 security policy: %s", secPolicy.Id)
 
 	return secPolicy
 }
