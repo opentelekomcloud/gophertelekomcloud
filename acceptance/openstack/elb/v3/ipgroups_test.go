@@ -30,7 +30,9 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
+	t.Cleanup(func() {
+		deleteLoadbalancer(t, client, loadbalancerID)
+	})
 
 	t.Logf("Attempting to create ELBv3 IpGroup")
 	ipGroup, err := ipgroups.Create(client, ipgroups.CreateOpts{
