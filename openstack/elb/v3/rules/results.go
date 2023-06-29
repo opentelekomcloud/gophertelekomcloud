@@ -2,7 +2,6 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type commonResult struct {
@@ -32,22 +31,4 @@ type UpdateResult struct {
 
 type DeleteResult struct {
 	golangsdk.ErrResult
-}
-
-type RulePage struct {
-	pagination.PageWithInfo
-}
-
-func (p RulePage) IsEmpty() (bool, error) {
-	rules, err := ExtractRules(p)
-	return len(rules) == 0, err
-}
-
-func ExtractRules(p pagination.Page) ([]ForwardingRule, error) {
-	var policies []ForwardingRule
-	err := p.(RulePage).ExtractIntoSlicePtr(&policies, "rules")
-	if err != nil {
-		return nil, err
-	}
-	return policies, nil
 }
