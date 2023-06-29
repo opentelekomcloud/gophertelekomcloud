@@ -148,20 +148,20 @@ func TestRuleWorkflowConditions(t *testing.T) {
 func createPolicy(t *testing.T, client *golangsdk.ServiceClient, listenerID, poolID string) string {
 	createOpts := policies.CreateOpts{
 		Action:         "REDIRECT_TO_POOL",
-		ListenerID:     listenerID,
-		RedirectPoolID: poolID,
+		ListenerId:     listenerID,
+		RedirectPoolId: poolID,
 		Description:    "Go SDK test policy",
 		Name:           tools.RandomString("sdk-pol-", 5),
-		Position:       37,
+		Position:       pointerto.Int(37),
 	}
-	created, err := policies.Create(client, createOpts).Extract()
+	created, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
-	id := created.ID
+	id := created.Id
 	t.Logf("Policy created: %s", id)
 	return id
 }
 
 func deletePolicy(t *testing.T, client *golangsdk.ServiceClient, policyID string) {
-	th.AssertNoErr(t, policies.Delete(client, policyID).ExtractErr())
+	th.AssertNoErr(t, policies.Delete(client, policyID))
 	t.Logf("Policy %s deleted", policyID)
 }
