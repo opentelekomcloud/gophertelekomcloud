@@ -35,7 +35,9 @@ func MergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 		if !ok {
 			return overriding
 		}
-		overriding = append(overriding, list...)
+		for i := range list {
+			overriding = append(overriding, list[i])
+		}
 		return overriding
 	case nil:
 		// mergeClouds(nil, map[string]interface{...}) -> map[string]interface{...}
