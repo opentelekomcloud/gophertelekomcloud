@@ -3,7 +3,6 @@ package security_policy
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type UpdateOpts struct {
@@ -20,11 +19,5 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts, id string) (*Secur
 	}
 
 	raw, err := client.Put(client.ServiceURL("security-policies", id), b, nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
-	if err != nil {
-		return nil, err
-	}
-
-	var res SecurityPolicy
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	return extra(err, raw)
 }
