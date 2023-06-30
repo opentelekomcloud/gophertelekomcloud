@@ -113,10 +113,6 @@ func Into(body io.Reader, to interface{}) error {
 		defer closer.Close()
 	}
 
-	// json.NewDecoder(..).Decode() replaced with reading whole body for better
-	// error tracing and debug simplicity
-	// TODO: compare this solution to original one in terms of performance
-
 	byteBody, err := io.ReadAll(body)
 	if err != nil {
 		return fmt.Errorf("error reading from stream: %w", err)

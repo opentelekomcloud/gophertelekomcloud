@@ -262,18 +262,22 @@ func NewIdentityV3UnauthenticatedClient() (*golangsdk.ServiceClient, error) {
 	return openstack.NewIdentityV3(client, golangsdk.EndpointOpts{})
 }
 
-// NewImageServiceV2Client returns a *ServiceClient for making calls to the
-// OpenStack Image v2 API. An error will be returned if authentication or
-// client creation was not possible.
-func NewImageServiceV2Client() (*golangsdk.ServiceClient, error) {
+func NewIMSV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
 
-	return openstack.NewImageServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
-		Region: cc.RegionName,
-	})
+	return openstack.NewIMSV1(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
+func NewIMSV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewIMSV2(cc.ProviderClient, golangsdk.EndpointOpts{})
 }
 
 // NewNetworkV1Client returns a *ServiceClient for making calls to the
