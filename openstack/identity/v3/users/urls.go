@@ -32,12 +32,12 @@ func updateURL(client *golangsdk.ServiceClient, userID string) string {
 
 func updateExtendedURL(client *golangsdk.ServiceClient, userID string) string {
 	url := client.ServiceURL(openstackUserPath, rootPath, userID)
-	return strings.Replace(url, "/v3/", "/v3.0/", 1)
+	return v30(url)
 }
 
 func welcomeExtendedURL(client *golangsdk.ServiceClient, userID string) string {
 	url := client.ServiceURL(openstackUserPath, rootPath, userID, welcomePath)
-	return strings.Replace(url, "/v3/", "/v3.0/", 1)
+	return v30(url)
 }
 
 func deleteURL(client *golangsdk.ServiceClient, userID string) string {
@@ -58,4 +58,8 @@ func listInGroupURL(client *golangsdk.ServiceClient, groupID string) string {
 
 func membershipURL(client *golangsdk.ServiceClient, groupID string, userID string) string {
 	return client.ServiceURL(groupsPath, groupID, rootPath, userID)
+}
+
+func v30(url string) string {
+	return strings.Replace(url, "/v3/", "/v3.0/", 1)
 }

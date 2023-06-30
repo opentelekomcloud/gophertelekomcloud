@@ -6,6 +6,29 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+type UpdateOpts struct {
+	// Specifies the AS policy name. The name contains only letters, digits, underscores (_), and hyphens (-), and cannot exceed 64 characters.
+	Name string `json:"scaling_policy_name,omitempty"`
+	// Specifies the AS policy type.
+	// ALARM (corresponding to alarm_id): indicates that the scaling action is triggered by an alarm.
+	// SCHEDULED (corresponding to scheduled_policy): indicates that the scaling action is triggered as scheduled.
+	// RECURRENCE (corresponding to scheduled_policy): indicates that the scaling action is triggered periodically.
+	Type string `json:"scaling_policy_type,omitempty"`
+	// Specifies the alarm rule ID. This parameter is mandatory when scaling_policy_type is set to ALARM.
+	// After this parameter is specified, the value of scheduled_policy does not take effect.
+	// After you modify an alarm policy, the system automatically adds an alarm triggering activity of the autoscaling
+	// type to the alarm_actions field in the alarm rule specified by the parameter value.
+	// You can obtain the parameter value by querying Cloud Eye alarm rules.
+	AlarmID string `json:"alarm_id,omitempty"`
+	// Specifies the periodic or scheduled AS policy. This parameter is mandatory when scaling_policy_type is set to SCHEDULED or RECURRENCE.
+	// After this parameter is specified, the value of alarm_id does not take effect.
+	SchedulePolicy SchedulePolicyOpts `json:"scheduled_policy,omitempty"`
+	// Specifies the scaling action of the AS policy.
+	Action Action `json:"scaling_policy_action,omitempty"`
+	// Specifies the cooldown period (in seconds). The value ranges from 0 to 86400.
+	CoolDownTime int `json:"cool_down_time,omitempty"`
+}
+
 type SchedulePolicyOpts struct {
 	// Specifies the time when the scaling action is triggered. The time format complies with UTC.
 	// If scaling_policy_type is set to SCHEDULED, the time format is YYYY-MM-DDThh:mmZ.
@@ -31,29 +54,6 @@ type SchedulePolicyOpts struct {
 	// When the scaling action is triggered periodically, the end time cannot be earlier than the current and start time.
 	// The time format is YYYY-MM-DDThh:mmZ.
 	EndTime string `json:"end_time,omitempty"`
-}
-
-type UpdateOpts struct {
-	// Specifies the AS policy name. The name contains only letters, digits, underscores (_), and hyphens (-), and cannot exceed 64 characters.
-	Name string `json:"scaling_policy_name,omitempty"`
-	// Specifies the AS policy type.
-	// ALARM (corresponding to alarm_id): indicates that the scaling action is triggered by an alarm.
-	// SCHEDULED (corresponding to scheduled_policy): indicates that the scaling action is triggered as scheduled.
-	// RECURRENCE (corresponding to scheduled_policy): indicates that the scaling action is triggered periodically.
-	Type string `json:"scaling_policy_type,omitempty"`
-	// Specifies the alarm rule ID. This parameter is mandatory when scaling_policy_type is set to ALARM.
-	// After this parameter is specified, the value of scheduled_policy does not take effect.
-	// After you modify an alarm policy, the system automatically adds an alarm triggering activity of the autoscaling
-	// type to the alarm_actions field in the alarm rule specified by the parameter value.
-	// You can obtain the parameter value by querying Cloud Eye alarm rules.
-	AlarmID string `json:"alarm_id,omitempty"`
-	// Specifies the periodic or scheduled AS policy. This parameter is mandatory when scaling_policy_type is set to SCHEDULED or RECURRENCE.
-	// After this parameter is specified, the value of alarm_id does not take effect.
-	SchedulePolicy SchedulePolicyOpts `json:"scheduled_policy,omitempty"`
-	// Specifies the scaling action of the AS policy.
-	Action Action `json:"scaling_policy_action,omitempty"`
-	// Specifies the cooldown period (in seconds). The value ranges from 0 to 86400.
-	CoolDownTime int `json:"cool_down_time,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (string, error) {

@@ -135,3 +135,62 @@ func TestGatewayRetry(t *testing.T) {
 		})
 	}
 }
+
+func TestTooManyRequestsRetry(t *testing.T) {
+	t.Skip("please run only manually, long test")
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	code := http.StatusTooManyRequests
+
+	failHandler := &failHandler{ExpectedFailures: 5, ErrorCode: code}
+	th.Mux.Handle(fmt.Sprintf("/%d", code), failHandler)
+
+	codeURL := fmt.Sprintf("%d", code)
+	t.Run(codeURL, func(sub *testing.T) {
+		client := fake.ServiceClient()
+		_, err := client.Delete(client.ServiceURL(codeURL), &golangsdk.RequestOpts{
+			OkCodes: []int{200},
+		})
+		th.AssertNoErr(sub, err)
+		th.AssertEquals(sub, failHandler.ExpectedFailures, failHandler.FailCount)
+	})
+}
+
+func TestAuthTempAKSK(t *testing.T) {
+	securityToken := os.Getenv("OS_SECURITY_TOKEN")
+	if securityToken == "" {
+		t.Skip("OS_SECURITY_TOKEN env var is missing but client_test requires")
+	}
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	if cc.ProjectID == "" {
+		t.Errorf("Project ID is not set for the client")
+	}
+	if cc.AuthInfo.AuthURL == "" {
+		t.Errorf("Auth URL is not set for the client")
+	}
+	if cc.AKSKAuthOptions.AccessKey == "" {
+		t.Errorf("Access Key is not set for the client")
+	}
+	if cc.AKSKAuthOptions.SecretKey == "" {
+		t.Errorf("Secret Key is not set for the client")
+	}
+	if cc.AKSKAuthOptions.SecurityToken == "" {
+		t.Errorf("Security Token is not set for the client")
+	}
+
+	// Find several services in the service catalog.
+	storage, err := openstack.NewObjectStorageV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	th.AssertNoErr(t, err)
+	t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
+
+	compute, err := openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	th.AssertNoErr(t, err)
+	t.Logf("Located a compute service at endpoint: [%s]", compute.Endpoint)
+}

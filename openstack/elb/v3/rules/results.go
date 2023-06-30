@@ -11,6 +11,7 @@ type ForwardingRule struct {
 	CompareType CompareType `json:"compare_type"`
 	Value       string      `json:"value"`
 	ProjectID   string      `json:"project_id"`
+	Conditions  []Condition `json:"conditions"`
 }
 
 type commonResult struct {

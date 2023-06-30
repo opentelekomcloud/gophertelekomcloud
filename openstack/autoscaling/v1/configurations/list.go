@@ -17,7 +17,7 @@ type ListOpts struct {
 	Limit int `q:"limit"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Configuration, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingConfigsResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,14 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Configuration, erro
 		return nil, err
 	}
 
-	var res []Configuration
-	err = extract.IntoSlicePtr(raw.Body, &res, "scaling_configurations")
-	return res, err
+	var res ListScalingConfigsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
+
+type ListScalingConfigsResponse struct {
+	TotalNumber           int32           `json:"total_number,omitempty"`
+	StartNumber           int32           `json:"start_number,omitempty"`
+	Limit                 int32           `json:"limit,omitempty"`
+	ScalingConfigurations []Configuration `json:"scaling_configurations,omitempty"`
 }

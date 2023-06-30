@@ -26,7 +26,7 @@ type ListOpts struct {
 	EnterpriseProjectID string `q:"enterprise_project_id"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Group, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingGroupsResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,14 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Group, error) {
 		return nil, err
 	}
 
-	var res []Group
-	err = extract.IntoSlicePtr(raw.Body, &res, "scaling_groups")
-	return res, err
+	var res ListScalingGroupsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
+
+type ListScalingGroupsResponse struct {
+	TotalNumber   int32   `json:"total_number,omitempty"`
+	StartNumber   int32   `json:"start_number,omitempty"`
+	Limit         int32   `json:"limit,omitempty"`
+	ScalingGroups []Group `json:"scaling_groups,omitempty"`
 }

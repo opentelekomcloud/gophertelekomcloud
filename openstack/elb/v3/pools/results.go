@@ -52,6 +52,15 @@ type Pool struct {
 	IpVersion string `json:"ip_version"`
 
 	SlowStart *SlowStart `json:"slow_start"`
+
+	// Deletion protection for the pool.
+	DeletionProtectionEnable bool `json:"member_deletion_protection_enable"`
+
+	// ID of the VPC where the backend server group works.
+	VpcId string `json:"vpc_id"`
+
+	// Type of the backend server group.
+	Type string `json:"type"`
 }
 
 // PoolPage is the page returned by a pager when traversing over a

@@ -81,6 +81,20 @@ type UpdateOpts struct {
 	SipHeaderName string `json:"sip_header_name,omitempty"`
 	// The HTTP request header for identifying the real source IP.
 	SipHeaderList []string `json:"sip_header_list,omitempty"`
+	// Alarm page configuration
+	BlockPage *BlockPage `json:"block_page,omitempty"`
+}
+
+type BlockPage struct {
+	Template    string      `json:"template" required:"true"`
+	CustomPage  *CustomPage `json:"custom_page,omitempty"`
+	RedirectUrl string      `json:"redirect_url,omitempty"`
+}
+
+type CustomPage struct {
+	StatusCode  string `json:"status_code" required:"true"`
+	ContentType string `json:"content_type" required:"true"`
+	Content     string `json:"content" required:"true"`
 }
 
 // ToDomainUpdateMap builds a update request body from UpdateOpts.

@@ -11,6 +11,8 @@ type Action string
 const (
 	ActionRedirectToPool     Action = "REDIRECT_TO_POOL"
 	ActionRedirectToListener Action = "REDIRECT_TO_LISTENER"
+	ActionFixedResponse      Action = "FIXED_RESPONSE"
+	ActionUrlRedirect        Action = "REDIRECT_TO_URL"
 )
 
 type Rule struct {
@@ -38,6 +40,61 @@ type Rule struct {
 	Value string `json:"value" required:"true"`
 }
 
+type RedirectPoolOptions struct {
+	// Specifies the ID of the backend server group.
+	PoolId string `json:"pool_id" required:"true"`
+
+	// Specifies the weight of the backend server group. The value ranges from 0 to 100.
+	Weight string `json:"weight" required:"true"`
+}
+
+type FixedResponseOptions struct {
+	// Specifies the fixed HTTP status code configured in the forwarding rule.
+	// The value can be any integer in the range of 200-299, 400-499, or 500-599.
+	StatusCode string `json:"status_code" required:"true"`
+
+	// Specifies the format of the response body.
+	//
+	// The value can be text/plain, text/css, text/html, application/javascript, or application/json.
+	ContentType string `json:"content_type"`
+
+	// Specifies the content of the response message body.
+	MessageBody string `json:"message_body"`
+}
+
+type RedirectUrlOptions struct {
+	// Specifies the protocol for redirection.
+	// The value can be HTTP, HTTPS, or ${protocol}. The default value is ${protocol}, indicating that the protocol of the request will be used.
+	Protocol string `json:"protocol"`
+
+	// Specifies the host name that requests are redirected to.
+	// The value can contain only letters, digits, hyphens (-), and periods (.) and must start with a letter or digit.
+	// The default value is ${host}, indicating that the host of the request will be used.
+	Host string `json:"host"`
+
+	// Specifies the port that requests are redirected to.
+	// The default value is ${port}, indicating that the port of the request will be used.
+	Port string `json:"port"`
+
+	// Specifies the path that requests are redirected to. The default value is ${path}, indicating that the path of the request will be used.
+	//
+	// The value can contain only letters, digits, and special characters _~';@^- %#&$.*+?,=!:|/()[]{} and must start with a slash (/).
+	Path string `json:"path"`
+
+	// Specifies the query string set in the URL for redirection. The default value is ${query}, indicating that the query string of the request will be used.
+	//
+	// For example, in the URL https://www.xxx.com:8080/elb?type=loadbalancer, ${query} indicates type=loadbalancer.
+	// If this parameter is set to ${query}&name=my_name, the URL will be redirected to https://www.xxx.com:8080/elb?type=loadbalancer&name=my_name.
+	//
+	// The value is case-sensitive and can contain only letters, digits, and special characters !$&'()*+,-./:;=?@^_`
+	Query string `json:"query"`
+
+	// Specifies the status code returned after the requests are redirected.
+	//
+	// The value can be 301, 302, 303, 307, or 308.
+	StatusCode string `json:"status_code" required:"true"`
+}
+
 type CreateOpts struct {
 	// Specifies where requests will be forwarded. The value can be one of the following:
 	//
@@ -45,8 +102,19 @@ type CreateOpts struct {
 	//    REDIRECT_TO_LISTENER: Requests will be redirected to an HTTPS listener.
 	Action Action `json:"action" required:"true"`
 
+	// Specifies the conditions contained in a forwarding rule.
+	// This parameter will take effect when enhance_l7policy_enable is set to true.
+	// If conditions is specified, key and value will not take effect,
+	// and the value of this parameter will contain all conditions configured for the forwarding rule.
+	// The keys in the list must be the same, whereas each value must be unique.
+	Conditions []rules.Condition `json:"conditions,omitempty"`
+
 	// Provides supplementary information about the forwarding policy.
 	Description string `json:"description,omitempty"`
+
+	// Specifies the configuration of the page that will be returned.
+	// This parameter will take effect when
+	FixedResponseConfig *FixedResponseOptions `json:"fixed_response_config,omitempty"`
 
 	// Specifies the ID of the listener to which the forwarding policy is added.
 	ListenerID string `json:"listener_id" required:"true"`
@@ -56,6 +124,9 @@ type CreateOpts struct {
 
 	// Specifies the forwarding policy priority. The value cannot be updated.
 	Position int `json:"position,omitempty"`
+
+	// Specifies the forwarding policy priority. The value cannot be updated.
+	Priority int `json:"priority,omitempty"`
 
 	// Specifies the ID of the project where the forwarding policy is used.
 	ProjectID string `json:"project_id,omitempty"`
@@ -71,9 +142,22 @@ type CreateOpts struct {
 	// or any backend server group associated with the forwarding policies of other listeners.
 	RedirectPoolID string `json:"redirect_pool_id,omitempty"`
 
+	// Specifies the URL to which requests are forwarded.
+	//
+	// Format: protocol://host:port/path?query
+	RedirectUrl string `json:"redirect_url,omitempty"`
+
+	// Specifies the URL to which requests are forwarded.
+	// This parameter is mandatory when action is set to REDIRECT_TO_URL.
+	// It cannot be specified if the value of action is not REDIRECT_TO_URL.
+	RedirectUrlConfig *RedirectUrlOptions `json:"redirect_url_config,omitempty"`
+
 	// Lists the forwarding rules in the forwarding policy.
 	// The list can contain a maximum of 10 forwarding rules (if conditions is specified, a condition is considered as a rule).
 	Rules []Rule `json:"rules,omitempty"`
+
+	// Specifies the configuration of the backend server group that the requests are forwarded to. This parameter is valid only when action is set to REDIRECT_TO_POOL.
+	RedirectPoolsConfig []RedirectPoolOptions `json:"redirect_pools_config,omitempty"`
 }
 
 type CreateOptsBuilder interface {
@@ -142,11 +226,15 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 }
 
 type UpdateOpts struct {
-	Name               *string `json:"name,omitempty"`
-	Description        *string `json:"description,omitempty"`
-	RedirectListenerID string  `json:"redirect_listener_id,omitempty"`
-	RedirectPoolID     string  `json:"redirect_pool_id,omitempty"`
-	Rules              []Rule  `json:"rules,omitempty"`
+	Name                *string               `json:"name,omitempty"`
+	Description         *string               `json:"description,omitempty"`
+	RedirectListenerID  string                `json:"redirect_listener_id,omitempty"`
+	RedirectPoolID      string                `json:"redirect_pool_id,omitempty"`
+	Rules               []Rule                `json:"rules,omitempty"`
+	RedirectUrlConfig   *RedirectUrlOptions   `json:"redirect_url_config,omitempty"`
+	FixedResponseConfig *FixedResponseOptions `json:"fixed_response_config,omitempty"`
+	Priority            int                   `json:"priority,omitempty"`
+	RedirectPoolsConfig []RedirectPoolOptions `json:"redirect_pools_config,omitempty"`
 }
 
 type UpdateOptsBuilder interface {

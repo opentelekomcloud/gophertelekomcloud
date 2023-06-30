@@ -51,6 +51,7 @@ type RequestSpec struct {
 type Values struct {
 	Basic    map[string]interface{} `json:"basic" required:"true"`
 	Advanced map[string]interface{} `json:"custom,omitempty"`
+	Flavor   map[string]interface{} `json:"flavor,omitempty"`
 }
 
 // ToAddonCreateMap builds a create request body from CreateOpts.
@@ -160,6 +161,13 @@ func ListTemplates(c *golangsdk.ServiceClient, clusterID string, opts ListOptsBu
 		url += q
 	}
 	_, r.Err = c.Get(url, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
+func GetTemplates(c *golangsdk.ServiceClient) (r ListTemplateResult) {
+	_, r.Err = c.Get(addonTemplatesURL(c), &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

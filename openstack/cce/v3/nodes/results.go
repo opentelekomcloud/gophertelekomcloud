@@ -75,6 +75,14 @@ type Spec struct {
 	K8sTags map[string]string `json:"k8sTags,omitempty"`
 	// taints to created nodes to configure anti-affinity
 	Taints []TaintSpec `json:"taints,omitempty"`
+	// Container runtime. The default value is docker.
+	Runtime RuntimeSpec `json:"runtime,omitempty"`
+}
+
+type RuntimeSpec struct {
+	// Container runtime. The default value is docker.
+	// Enumeration values: docker, containerd
+	Name string `json:"name,omitempty"`
 }
 
 // NodeNicSpec spec of the node
@@ -140,7 +148,7 @@ type VolumeSpec struct {
 	// Metadata contains data disk encryption information
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// Disk extension parameter
-	ExtendParam string `json:"extendParam,omitempty"`
+	ExtendParam map[string]interface{} `json:"extendParam,omitempty"`
 }
 
 type ExtendParam struct {

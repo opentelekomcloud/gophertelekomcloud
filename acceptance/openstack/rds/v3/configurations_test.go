@@ -13,7 +13,7 @@ func TestConfigurationsList(t *testing.T) {
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
-	allConfigurations, err := configurations.List(client).Extract()
+	allConfigurations, err := configurations.List(client)
 	th.AssertNoErr(t, err)
 
 	for _, configuration := range allConfigurations {
@@ -26,19 +26,19 @@ func TestConfigurationsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	config := createRDSConfiguration(t, client)
-	defer deleteRDSConfiguration(t, client, config.ID)
+	t.Cleanup(func() { deleteRDSConfiguration(t, client, config.ID) })
 
 	tools.PrintResource(t, config)
 
 	updateRDSConfiguration(t, client, config.ID)
 
-	newConfig, err := configurations.Get(client, config.ID).Extract()
+	newConfig, err := configurations.Get(client, config.ID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, newConfig)
 }
 
-func TestConfigurationsApply(t *testing.T) {
+func TestConfigurations(t *testing.T) {
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
@@ -46,27 +46,38 @@ func TestConfigurationsApply(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	config := createRDSConfiguration(t, client)
-	defer deleteRDSConfiguration(t, client, config.ID)
+	t.Cleanup(func() { deleteRDSConfiguration(t, client, config.ID) })
 
 	// Create RDSv3 instance
-	rds := createRDS(t, client, cc.RegionName)
-	defer deleteRDS(t, client, rds.Id)
+	rds := CreateRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
 
 	t.Logf("Attempting to apply template config %s to instance %s", config.ID, rds.Id)
 	configApplyOpts := configurations.ApplyOpts{
+		ConfigId:    config.ID,
 		InstanceIDs: []string{rds.Id},
 	}
-	applyResult, err := configurations.Apply(client, config.ID, configApplyOpts).Extract()
+	applyResult, err := configurations.Apply(client, configApplyOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Template config applied")
 
 	tools.PrintResource(t, applyResult)
 
-	instanceConfig, err := configurations.GetForInstance(client, rds.Id).Extract()
+	instanceConfig, err := configurations.GetForInstance(client, rds.Id)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, config.DatastoreName, instanceConfig.DatastoreName)
 	th.CheckEquals(t, config.DatastoreVersionName, instanceConfig.DatastoreVersionName)
 	if len(instanceConfig.Parameters) == 0 {
 		t.Errorf("instance config has empty parameter list")
 	}
+
+	opts := configurations.UpdateInstanceConfigurationOpts{
+		InstanceId: rds.Id,
+		Values: map[string]interface{}{
+			"max_connections": "37",
+			"autocommit":      "OFF",
+		}}
+	result, err := configurations.UpdateInstanceConfiguration(client, opts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, result.RestartRequired)
 }

@@ -2,6 +2,7 @@ package alarms
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -23,6 +24,8 @@ type CreateAlarmOpts struct {
 	// indicating critical, major, minor, and informational, respectively.
 	AlarmLevel int `json:"alarm_level,omitempty"`
 	// Specifies the action to be triggered by an alarm.
+	AlarmType string `json:"alarm_type,omitempty"`
+	// Specifies the action to be triggered by an alarm.
 	AlarmActions []AlarmActions `json:"alarm_actions,omitempty"`
 	// Specifies the action to be triggered after the alarm is cleared.
 	OkActions []AlarmActions `json:"ok_actions,omitempty"`
@@ -43,13 +46,13 @@ type MetricForAlarm struct {
 }
 
 func CreateAlarm(client *golangsdk.ServiceClient, opts CreateAlarmOpts) (string, error) {
-	reqBody, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err
 	}
 
 	// POST /V1.0/{project_id}/alarms
-	raw, err := client.Post(client.ServiceURL("alarms"), reqBody, nil, nil)
+	raw, err := client.Post(client.ServiceURL("alarms"), b, nil, nil)
 	if err != nil {
 		return "", err
 	}

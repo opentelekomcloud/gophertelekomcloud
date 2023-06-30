@@ -565,9 +565,16 @@ func NewDNSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
-// NewImageServiceV1 creates a ServiceClient that may be used to access the v1
-// image service.
-func NewImageServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+func NewDWSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "dws")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "v1.0/" + client.ProjectID + "/"
+	return sc, err
+}
+
+func NewIMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "image")
 	if err != nil {
 		return nil, err
@@ -576,9 +583,7 @@ func NewImageServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOp
 	return sc, err
 }
 
-// NewImageServiceV2 creates a ServiceClient that may be used to access the v2
-// image service.
-func NewImageServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+func NewIMSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "image")
 	if err != nil {
 		return nil, err
@@ -690,6 +695,20 @@ func NewDMSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	return initClientOpts(client, eo, "dmsv1")
 }
 
+func NewDMSServiceV11(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "dmsv1")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1.0", "v1", 1)
+	return sc, err
+}
+
+// NewDMSServiceV2 creates a ServiceClient that may be used to access the v2 Distributed Message Service.
+func NewDMSServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "dmsv2")
+}
+
 // NewDCSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Cache Service.
 func NewDCSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "network")
@@ -704,6 +723,21 @@ func NewDCSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 // NewDDSServiceV3 creates a ServiceClient that may be used to access the Document Database Service.
 func NewDDSServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "ddsv3")
+	return sc, err
+}
+
+func NewDISServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "dis")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "v2/" + client.ProjectID + "/"
+	return sc, err
+}
+
+// NewDRSServiceV3 creates a ServiceClient that may be used to access the Document Database Service.
+func NewDRSServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "drs", "v3")
 	if err != nil {
 		return nil, err
 	}
@@ -753,9 +787,23 @@ func NewVBSServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	return initClientOpts(client, eo, "vbsv2")
 }
 
-// NewCTSService creates a ServiceClient that can be used to access the Cloud Trace service.
-func NewCTSService(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+// NewCTSV1 creates a ServiceClient that can be used to access the Cloud Trace service.
+func NewCTSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "cts")
+	return sc, err
+}
+
+// NewCTSV2 creates a ServiceClient that can be used to access the Cloud Trace service.
+func NewCTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "cts")
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "v2", 1)
+	return sc, err
+}
+
+// NewCTSV3 creates a ServiceClient that can be used to access the Cloud Trace service.
+func NewCTSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "cts")
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1.0", "v3", 1)
 	return sc, err
 }
 
@@ -843,7 +891,7 @@ func NewSDRSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*go
 
 // NewLTSV2 creates a ServiceClient that may be used to access the LTS service.
 func NewLTSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initCommonServiceClient(client, eo, "lts", "v2.0")
+	sc, err := initCommonServiceClient(client, eo, "lts", "v2")
 	return sc, err
 }
 

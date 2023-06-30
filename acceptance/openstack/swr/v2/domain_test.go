@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -17,37 +16,43 @@ func TestAccessDomainWorkflow(t *testing.T) {
 	orgName := "domaintest"
 	dep := dependencies{t: t, client: client}
 	dep.createOrganization(orgName)
-	defer dep.deleteOrganization(orgName)
+	t.Cleanup(func() { dep.deleteOrganization(orgName) })
 
 	repoName := "repodomain"
 	dep.createRepository(orgName, repoName)
-	defer dep.deleteRepository(orgName, repoName)
+	t.Cleanup(func() { dep.deleteRepository(orgName, repoName) })
 
 	domainToShare := clients.EnvOS.GetEnv("DOMAIN_NAME_2")
 	if domainToShare == "" {
 		t.Skipf("OS_DOMAIN_NAME_2 env var is missing but SWR domain test requires it")
 	}
 	opts := domains.CreateOpts{
+		Namespace:    orgName,
+		Repository:   repoName,
 		AccessDomain: domainToShare,
 		Permit:       "read",
 		Deadline:     "forever",
 	}
-	th.AssertNoErr(t, domains.Create(client, orgName, repoName, opts).ExtractErr())
+	th.AssertNoErr(t, domains.Create(client, opts))
 
-	defer func() {
-		err = domains.Delete(client, orgName, repoName, domainToShare).ExtractErr()
+	t.Cleanup(func() {
+		err = domains.Delete(client, domains.GetOpts{
+			Namespace:    orgName,
+			Repository:   repoName,
+			AccessDomain: domainToShare,
+		})
 		th.AssertNoErr(t, err)
-	}()
+	})
 
-	pages, err := domains.List(client, orgName, repoName).AllPages()
-	th.AssertNoErr(t, err)
-
-	accessDomains, err := domains.ExtractAccessDomains(pages)
+	accessDomains, err := domains.List(client, domains.ListOpts{
+		Namespace:  orgName,
+		Repository: repoName,
+	})
 	th.AssertNoErr(t, err)
 
 	found := false
 	for _, d := range accessDomains {
-		if d.AccessDomain == strings.ToLower(domainToShare) {
+		if d.AccessDomain == domainToShare {
 			found = true
 			break
 		}
@@ -57,15 +62,22 @@ func TestAccessDomainWorkflow(t *testing.T) {
 	}
 
 	updateOpts := domains.UpdateOpts{
-		Permit:      "read", // only read premission is possible
-		Deadline:    "2022-01-01T00:00:00.000Z",
-		Description: "Updated description",
+		Namespace:    orgName,
+		Repository:   repoName,
+		AccessDomain: domainToShare,
+		Permit:       "read", // only read premission is possible
+		Deadline:     "2024-01-01T00:00:00.000Z",
+		Description:  "Updated description",
 	}
-	th.AssertNoErr(t, domains.Update(client, orgName, repoName, domainToShare, updateOpts).ExtractErr())
+	th.AssertNoErr(t, domains.Update(client, updateOpts))
 
-	domain, err := domains.Get(client, orgName, repoName, domainToShare).Extract()
+	domain, err := domains.Get(client, domains.GetOpts{
+		Namespace:    orgName,
+		Repository:   repoName,
+		AccessDomain: domainToShare,
+	})
 	th.AssertNoErr(t, err)
-	th.CheckEquals(t, strings.ToLower(domainToShare), domain.AccessDomain)
+	th.CheckEquals(t, domainToShare, domain.AccessDomain)
 	th.CheckEquals(t, updateOpts.Permit, domain.Permit)
 	th.CheckEquals(t, true, domain.Status)
 	th.CheckEquals(t, updateOpts.Description, domain.Description)

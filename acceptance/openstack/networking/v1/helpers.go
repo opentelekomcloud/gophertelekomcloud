@@ -55,7 +55,7 @@ func DeleteNetwork(t *testing.T, subnet *subnets.Subnet) {
 	th.AssertNoErr(t, err)
 }
 
-func createEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int) *eips.PublicIp {
+func CreateEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int) *eips.PublicIp {
 	t.Logf("Attempting to create eip/bandwidth")
 	eipCreateOpts := eips.ApplyOpts{
 		IP: eips.PublicIpOpts{
@@ -73,7 +73,7 @@ func createEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int)
 
 	// wait to be DOWN
 	t.Logf("Waiting for eip %s to be active", eip.ID)
-	err = waitForEipToActive(client, eip.ID, 600)
+	err = waitForEipToActive(client, eip.ID, 1200)
 	th.AssertNoErr(t, err)
 
 	newEip, err := eips.Get(client, eip.ID).Extract()
@@ -84,7 +84,7 @@ func createEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int)
 	return newEip
 }
 
-func deleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {
+func DeleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {
 	t.Logf("Attempting to delete eip/bandwidth: %s", eipID)
 
 	err := eips.Delete(client, eipID).ExtractErr()
@@ -93,7 +93,7 @@ func deleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {
 	// wait to be deleted
 	t.Logf("Waitting for eip %s to be deleted", eipID)
 
-	err = waitForEipToDelete(client, eipID, 600)
+	err = waitForEipToDelete(client, eipID, 1200)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Deleted eip/bandwidth: %s", eipID)
