@@ -38,9 +38,6 @@ var getResponse = `
         ],
         "id": "5af626d2-19b9-4dc4-8e95-ddba008318b3",
         "name": "c2c-policy",
-        "parameters": {
-            "common": {}
-        },
         "created_at": "2018-08-20T07:31:32.718435",
         "project_id": "91d687759aed45d28b5f6084bc2fa8ad",
         "resources": [
@@ -59,9 +56,9 @@ var createRequest = `
     "name" : "c2c-policy",
     "description" : "My plan",
     "provider_id" : "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
-   "parameters": {
-            "common": {}
-        },
+    "parameters": {
+		"common": {}
+	},
     "scheduled_operations" : [ {
       "name" : "my-backup-policy",
       "description" : "My backup policy",
@@ -78,10 +75,10 @@ var createRequest = `
       "operation_type" : "backup"
     }],
     "resources" : [ {
-      "id" : "cd5955b4-44c0-4f0a-ac57-2401b89cb347",			
+      "id" : "cd5955b4-44c0-4f0a-ac57-2401b89cb347",
       "type" : "OS::Nova::Server",
       "name" : "resource1"
-     
+
     }]
   }
 }
@@ -110,7 +107,7 @@ var createResponse = `
                     "name": "default"
                 },
                 "operation_definition": {
-                    "max_backups": "20",
+                    "max_backups": 20,
                     "provider_id": "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
                     "plan_id": "5af626d2-19b9-4dc4-8e95-ddba008318b3"
                 },
@@ -141,10 +138,6 @@ var updateRequest = `
 {
   "policy" : {
     "name" : "c2c-policy-update",
-    "parameters" : {
-      "common" : {
-      }
-    },
     "scheduled_operations" : [ {
       "id" : "b70c712d-f48b-43f7-9a0f-3bab86d59149",
       "name" : "my-backup-policy",
@@ -184,10 +177,10 @@ var updateResponse = `
                     }
                 },
                 "operation_definition": {
-                    "max_backups": "20",
+                    "max_backups": 20,
                     "provider_id": "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
                     "plan_id": "5af626d2-19b9-4dc4-8e95-ddba008318b3",
-                    "retention_duration_days": "-1"
+                    "retention_duration_days": -1
                 },
                 "operation_type": "backup",
                 "id": "b70c712d-f48b-43f7-9a0f-3bab86d59149",

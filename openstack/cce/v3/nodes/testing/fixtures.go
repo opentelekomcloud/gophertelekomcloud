@@ -28,7 +28,10 @@ const Output = `{
                 "volumetype": "SATA",
                 "size": 100
             }
-        ]
+        ],
+		"runtime": {
+          "name": "containerd"
+        }
 }
 }`
 
@@ -54,13 +57,16 @@ var Expected = &nodes.Nodes{
 				Size:       100,
 			},
 		},
+		Runtime: nodes.RuntimeSpec{
+			Name: "containerd",
+		},
 	},
 }
 
 const JobOutput = `{
     "kind": "Job",
     "metadata": {
-        "uid": "73ce052c-8b1b-11e8-8f9d-0255ac10193f"    
+        "uid": "73ce052c-8b1b-11e8-8f9d-0255ac10193f"
     },
     "spec": {
         "type": "ScaleupCluster",
@@ -80,7 +86,7 @@ const JobOutput = `{
                         {
                             "kind": "Job",
                             "metadata": {
-                                "uid": "73ce03fd-8b1b-11e8-8f9d-0255ac10193f" 
+                                "uid": "73ce03fd-8b1b-11e8-8f9d-0255ac10193f"
                             },
                             "spec": {
                                 "type": "GetPSMCert",

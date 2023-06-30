@@ -54,8 +54,9 @@ func TestListenerLifecycle(t *testing.T) {
 	listenerName = tools.RandomString("update-listener-", 3)
 	emptyDescription := ""
 	updateOpts := listeners.UpdateOpts{
-		Description: &emptyDescription,
-		Name:        &listenerName,
+		Description:  &emptyDescription,
+		Name:         &listenerName,
+		SniMatchAlgo: "longest_suffix",
 	}
 	_, err = listeners.Update(client, listener.ID, updateOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -65,6 +66,7 @@ func TestListenerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, listenerName, newListener.Name)
 	th.AssertEquals(t, emptyDescription, newListener.Description)
+	th.AssertEquals(t, "longest_suffix", newListener.SniMatchAlgo)
 
 	listOpts := listeners.ListOpts{LoadBalancerID: []string{loadbalancerID}}
 	pages, err := listeners.List(client, listOpts).AllPages()

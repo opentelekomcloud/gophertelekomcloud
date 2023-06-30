@@ -262,18 +262,22 @@ func NewIdentityV3UnauthenticatedClient() (*golangsdk.ServiceClient, error) {
 	return openstack.NewIdentityV3(client, golangsdk.EndpointOpts{})
 }
 
-// NewImageServiceV2Client returns a *ServiceClient for making calls to the
-// OpenStack Image v2 API. An error will be returned if authentication or
-// client creation was not possible.
-func NewImageServiceV2Client() (*golangsdk.ServiceClient, error) {
+func NewIMSV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
 
-	return openstack.NewImageServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
-		Region: cc.RegionName,
-	})
+	return openstack.NewIMSV1(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
+func NewIMSV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewIMSV2(cc.ProviderClient, golangsdk.EndpointOpts{})
 }
 
 // NewNetworkV1Client returns a *ServiceClient for making calls to the
@@ -610,6 +614,17 @@ func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDrsV3Client returns authenticated DDS v3 client
+func NewDrsV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDRSServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDcsV1Client returns authenticated DCS v1 client
 func NewDcsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -628,6 +643,37 @@ func NewDmsV1Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 	return openstack.NewDMSServiceV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewDisV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDISServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewDmsV11Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDMSServiceV11(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDmsV2Client returns authenticated DMS v2 client
+func NewDmsV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDMSServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }

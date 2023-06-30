@@ -49,8 +49,8 @@ func TestConfigurations(t *testing.T) {
 	t.Cleanup(func() { deleteRDSConfiguration(t, client, config.ID) })
 
 	// Create RDSv3 instance
-	rds := createRDS(t, client, cc.RegionName)
-	t.Cleanup(func() { deleteRDS(t, client, rds.Id) })
+	rds := CreateRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
 
 	t.Logf("Attempting to apply template config %s to instance %s", config.ID, rds.Id)
 	configApplyOpts := configurations.ApplyOpts{

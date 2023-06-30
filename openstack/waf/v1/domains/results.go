@@ -39,6 +39,8 @@ type Domain struct {
 	SipHeaderName string `json:"sip_header_name"`
 	// The HTTP request header for identifying the real source IP.
 	SipHeaderList []string `json:"sip_header_list"`
+	// Alarm page configuration
+	BlockPage BlockPage `json:"block_page"`
 }
 
 type Server struct {
