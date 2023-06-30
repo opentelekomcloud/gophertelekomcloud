@@ -14,7 +14,7 @@ func DeleteNotPassParams(params *map[string]interface{}, notPassParams []string)
 	}
 }
 
-// MergeInterfaces merges two interfaces. In cases where a value is defined for both 'overridingInterface' and
+// merges two interfaces. In cases where a value is defined for both 'overridingInterface' and
 // 'inferiorInterface' the value in 'overridingInterface' will take precedence.
 func MergeInterfaces(overridingInterface, inferiorInterface interface{}) interface{} {
 	switch overriding := overridingInterface.(type) {
@@ -35,7 +35,7 @@ func MergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 		if !ok {
 			return overriding
 		}
-		overriding = append(overriding, list)
+		overriding = append(overriding, list...)
 		return overriding
 	case nil:
 		// mergeClouds(nil, map[string]interface{...}) -> map[string]interface{...}
@@ -61,14 +61,14 @@ func PrependString(item string, slice []string) []string {
 	return result
 }
 
-// func In(item interface{}, slice interface{}) bool {
-// 	for _, it := range slice.([]interface{}) {
-// 		if reflect.DeepEqual(item, it) {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+func In(item interface{}, slice interface{}) bool {
+	for _, it := range slice.([]interface{}) {
+		if reflect.DeepEqual(item, it) {
+			return true
+		}
+	}
+	return false
+}
 
 // GetRegion returns the region that was specified in the auth options. If a
 // region was not set it returns value from env OS_REGION_NAME

@@ -610,6 +610,17 @@ func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDrsV3Client returns authenticated DDS v3 client
+func NewDrsV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDRSServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDcsV1Client returns authenticated DCS v1 client
 func NewDcsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
