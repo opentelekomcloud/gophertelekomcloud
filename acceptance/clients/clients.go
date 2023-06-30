@@ -614,6 +614,17 @@ func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDrsV3Client returns authenticated DDS v3 client
+func NewDrsV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDRSServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDcsV1Client returns authenticated DCS v1 client
 func NewDcsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -632,6 +643,26 @@ func NewDmsV1Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 	return openstack.NewDMSServiceV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewDisV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDISServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewDmsV11Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDMSServiceV11(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }

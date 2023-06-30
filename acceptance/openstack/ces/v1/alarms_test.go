@@ -23,6 +23,7 @@ func TestAlarms(t *testing.T) {
 
 	newAlarm, err := alarms.CreateAlarm(client, alarms.CreateAlarmOpts{
 		AlarmName: "alarm-acc-test",
+		AlarmType: "EVENT.CUSTOM",
 		Metric: alarms.MetricForAlarm{
 			Namespace:  "SYS.VPC",
 			MetricName: "upstream_bandwidth",
@@ -39,6 +40,7 @@ func TestAlarms(t *testing.T) {
 			Filter:             "average",
 			Period:             300,
 			Value:              4000000,
+			SuppressDuration:   300,
 		},
 		AlarmEnabled:       pointerto.Bool(false),
 		AlarmActionEnabled: pointerto.Bool(false),
@@ -58,4 +60,7 @@ func TestAlarms(t *testing.T) {
 	showAlarm, err := alarms.ShowAlarm(client, newAlarm)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, showAlarm[0].AlarmEnabled, true)
+
+	_, err = alarms.ListAlarms(client, alarms.ListAlarmsOpts{})
+	th.AssertNoErr(t, err)
 }
