@@ -787,3 +787,10 @@ const (
 	OBJECT BucketType = "OBJECT"
 	POSIX  BucketType = "POSIX"
 )
+
+const (
+	FSStatusEnabled  FSStatusType = "Enabled"
+	FSStatusDisabled FSStatusType = "Disabled"
+)
+
+type FSStatusType string

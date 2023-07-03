@@ -204,6 +204,7 @@ type GetBucketMetadataOutput struct {
 	MaxAgeSeconds int
 	ExposeHeader  string
 	Epid          string
+	FSStatus      FSStatusType
 }
 
 // SetBucketLoggingConfigurationInput is the input parameter of SetBucketLoggingConfiguration function

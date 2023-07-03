@@ -32,6 +32,13 @@ func TestObsBucketLifecycle(t *testing.T) {
 		},
 	})
 	th.AssertNoErr(t, err)
+
+	bucketHead, err := client.GetBucketMetadata(&obs.GetBucketMetadataInput{
+		Bucket: bucketName,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, bucketHead.FSStatus, obs.FSStatusDisabled)
+	th.AssertEquals(t, bucketHead.Version, "3.0")
 }
 
 func TestObsObjectLifecycle(t *testing.T) {

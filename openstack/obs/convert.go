@@ -706,6 +706,11 @@ func ParseGetBucketMetadataOutput(output *GetBucketMetadataOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_EPID_HEADERS]; ok {
 		output.Epid = ret[0]
 	}
+	if ret, ok := output.ResponseHeaders[HEADER_FS_FILE_INTERFACE]; ok {
+		output.FSStatus = parseStringToFSStatusType(ret[0])
+	} else {
+		output.FSStatus = FSStatusDisabled
+	}
 }
 
 func parseContentHeader(output *SetObjectMetadataOutput) {
@@ -871,4 +876,16 @@ func ParseResponseToObsError(resp *http.Response, isObs bool) error {
 	}
 	obsError.Status = resp.Status
 	return obsError
+}
+
+func parseStringToFSStatusType(value string) (ret FSStatusType) {
+	switch value {
+	case "Enabled":
+		ret = FSStatusEnabled
+	case "Disabled":
+		ret = FSStatusDisabled
+	default:
+		ret = ""
+	}
+	return
 }
