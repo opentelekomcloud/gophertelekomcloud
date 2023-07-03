@@ -143,6 +143,17 @@ func TestDrsTaskLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, taskStatus)
 
+	preCheck, err := public.BatchCheckTasks(client, public.BatchPreCheckReq{
+		Jobs: []public.PreCheckInfo{
+			{
+				JobId:        task.Results[0].Id,
+				PreCheckMode: "forStartJob",
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, preCheck.Results[0].Status, "success")
+
 	testConnection, err := public.BatchTestConnections(client, public.BatchTestConnectionOpts{
 		Jobs: []public.TestEndPoint{
 			{
