@@ -157,8 +157,8 @@ type UpdateOpts struct {
 	IPVersion            *golangsdk.IPVersion `json:"ip_version,omitempty"`
 	SourceIPAddress      *string              `json:"source_ip_address,omitempty"`
 	DestinationIPAddress *string              `json:"destination_ip_address,omitempty"`
-	SourcePort           *string              `json:"source_port,omitempty"`
-	DestinationPort      *string              `json:"destination_port,omitempty"`
+	SourcePort           *string              `json:"source_port"`
+	DestinationPort      *string              `json:"destination_port"`
 	Shared               *bool                `json:"shared,omitempty"`
 	Enabled              *bool                `json:"enabled,omitempty"`
 }
