@@ -34,8 +34,8 @@ type ListMetricItemsOpts struct {
 }
 
 type Dimension struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name  string `json:"name" required:"true"`
+	Value string `json:"value" required:"true"`
 }
 
 func ListMetricItems(client *golangsdk.ServiceClient, opts ListMetricItemsOpts) {
