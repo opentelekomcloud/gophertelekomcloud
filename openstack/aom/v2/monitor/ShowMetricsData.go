@@ -83,7 +83,7 @@ func ShowMetricsData(client *golangsdk.ServiceClient) {
 	// POST /v2/{project_id}/ams/metricdata
 }
 
-type ResponseParameters struct {
+type ShowMetricsDataResponse struct {
 	// Response code.
 	ErrorCode string `json:"errorCode"`
 	// Response message.
