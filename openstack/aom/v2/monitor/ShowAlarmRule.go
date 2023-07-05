@@ -1,5 +1,7 @@
 package monitor
 
-ShowAlarmRule
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// GET /v2/{project_id}/ams/alarms/{alarm_id}
+func ShowAlarmRule(client *golangsdk.ServiceClient) {
+	// GET /v2/{project_id}/ams/alarms/{alarm_id}
+}

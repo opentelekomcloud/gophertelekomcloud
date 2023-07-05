@@ -68,16 +68,16 @@ func ListLogItems(client *golangsdk.ServiceClient, opts ListLogItemsOpts) {
 	// POST /v2/{project_id}/als/action
 }
 
-type LogItemResponse struct {
+type ListLogItemsResponse struct {
 	// Response code. Example: AOM.0200, which indicates a success response.
 	ErrorCode string `json:"errorCode"`
 	// Response message.
 	ErrorMessage string `json:"errorMessage"`
 	// Metadata, including total number of returned records and results.
-	Result LogResult `json:"result"`
+	Result ItemsResult `json:"result"`
 }
 
-type LogResult struct {
+type ItemsResult struct {
 	// Number of returned records.
 	Total *int `json:"total"`
 	// Data array.

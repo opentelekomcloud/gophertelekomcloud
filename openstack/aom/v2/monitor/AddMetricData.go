@@ -1,5 +1,7 @@
 package monitor
 
-AddMetricData
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// POST /v2/{project_id}/ams/report/metricdata
+func AddMetricData(client *golangsdk.ServiceClient) {
+	// POST /v2/{project_id}/ams/report/metricdata
+}

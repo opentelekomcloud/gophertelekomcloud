@@ -1,5 +1,7 @@
 package monitor
 
-DeleteAlarmRule
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// DELETE /v2/{project_id}/ams/alarms/{alarm_id}
+func DeleteAlarmRule(client *golangsdk.ServiceClient) {
+	// DELETE /v2/{project_id}/ams/alarms/{alarm_id}
+}

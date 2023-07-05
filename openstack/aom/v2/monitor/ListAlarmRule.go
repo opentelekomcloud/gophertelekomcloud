@@ -1,5 +1,7 @@
 package monitor
 
-ListAlarmRule
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// GET /v2/{project_id}/ams/alarms
+func ListAlarmRule(client *golangsdk.ServiceClient) {
+	// GET /v2/{project_id}/ams/alarms
+}

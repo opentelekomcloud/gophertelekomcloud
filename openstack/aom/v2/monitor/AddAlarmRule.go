@@ -1,5 +1,7 @@
 package monitor
 
-AddAlarmRule
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// POST /v2/{project_id}/ams/alarms
+func AddAlarmRule(client *golangsdk.ServiceClient) {
+	// POST /v2/{project_id}/ams/alarms
+}

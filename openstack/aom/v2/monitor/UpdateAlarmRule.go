@@ -1,5 +1,7 @@
 package monitor
 
-UpdateAlarmRule
+import "github.com/opentelekomcloud/gophertelekomcloud"
 
-// PUT /v2/{project_id}/ams/alarms
+func UpdateAlarmRule(client *golangsdk.ServiceClient) {
+	// PUT /v2/{project_id}/ams/alarms
+}
