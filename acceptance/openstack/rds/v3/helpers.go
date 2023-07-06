@@ -49,6 +49,9 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 			Type:    "PostgreSQL",
 			Version: "11",
 		},
+		UnchangeableParam: &instances.Param{
+			LowerCaseTableNames: "0",
+		},
 	}
 
 	rds, err := instances.Create(client, createRdsOpts)
