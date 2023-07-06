@@ -64,7 +64,8 @@ type CreateRdsOpts struct {
 	// Specifies the billing information, which is pay-per-use. By default, pay-per-use is used.
 	ChargeInfo *ChargeInfo `json:"charge_info,omitempty"`
 	// This parameter applies only to Microsoft SQL Server DB instances.
-	Collation string `json:"collation,omitempty"`
+	Collation         string `json:"collation,omitempty"`
+	UnchangeableParam *Param `json:"unchangeable_param,omitempty"`
 }
 
 type Datastore struct {
@@ -112,6 +113,10 @@ type BackupStrategy struct {
 	// NOTICE
 	// Primary/standby DB instances and Cluster DB instances of Microsoft SQL Server do not support disabling the automated backup policy.
 	KeepDays int `json:"keep_days,omitempty"`
+}
+
+type Param struct {
+	LowerCaseTableNames string `json:"lower_case_table_names"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateRdsOpts) (*CreateRds, error) {
