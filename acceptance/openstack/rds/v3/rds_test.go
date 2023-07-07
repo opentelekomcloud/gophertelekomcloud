@@ -351,6 +351,9 @@ func TestRdsLifecycle(t *testing.T) {
 			Type:       "backup",
 			BackupID:   backupList[0].ID,
 		},
+		UnchangeableParam: &instances.Param{
+			LowerCaseTableNames: "0",
+		},
 	})
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, toNew.JobId)
