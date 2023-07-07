@@ -35,7 +35,6 @@ func TestRdsLifecycle(t *testing.T) {
 	rds := CreateRDS(t, client, cc.RegionName)
 	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
 	th.AssertEquals(t, rds.Volume.Size, 100)
-	// rds := struct{ Id string }{Id: "490f49d2f8514a6e8378006e6a4f30b8in03"}
 
 	tagList := []tags.ResourceTag{
 		{
@@ -145,56 +144,21 @@ func TestRdsLifecycle(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 600, *resize)
 	th.AssertNoErr(t, err)
 
-	t.Logf("Attempting to create RDSv3 Read Replica")
-
-	rdsReplicaName := tools.RandomString("rds-rr-", 8)
-	kmsID := clients.EnvOS.GetEnv("KMS_ID")
-	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
-	if az == "" {
-		az = "eu-de-01"
-	}
-
-	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
-		t.Fatalf("Status available wasn't present")
-	}
-
-	replica, err := instances.CreateReplica(client, instances.CreateReplicaOpts{
-		Name:             rdsReplicaName,
-		ReplicaOfId:      rds.Id,
-		DiskEncryptionId: kmsID,
-		FlavorRef:        "rds.pg.c2.large.rr",
-		Volume: &instances.Volume{
-			Type: "COMMON",
-			Size: 100,
-		},
-		AvailabilityZone: az,
-	})
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 1200, replica.JobId)
-	th.AssertNoErr(t, err)
-
-	t.Logf("Created RDSv3 Read Replica: %s", replica.Instance.Id)
-
-	t.Cleanup(func() {
-		t.Logf("Attempting to delete RDSv3 Read Replica: %s", replica.Instance.Id)
-		_, err := instances.Delete(client, replica.Instance.Id)
-		th.AssertNoErr(t, err)
-		t.Logf("RDSv3 Read Replica instance deleted: %s", replica.Instance.Id)
-	})
-
 	netClient, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
 	t.Log("UpdateDataIp")
 
 	// TODO: Randomly assign the new private IP
-	ip, err := security.UpdateDataIp(client, security.UpdateDataIpOpts{
-		InstanceId: rds.Id,
-		NewIp:      "192.168.30.254",
-	})
-	th.AssertNoErr(t, err)
-	err = instances.WaitForJobCompleted(client, 600, *ip)
-	th.AssertNoErr(t, err)
+	// Fails if new IP is not in the subnet range
+	// Ip can't be queried automatically from RDS therefore test is disabled
+	// ip, err := security.UpdateDataIp(client, security.UpdateDataIpOpts{
+	// 	InstanceId: rds.Id,
+	// 	NewIp:      "192.168.30.254",
+	// })
+	// th.AssertNoErr(t, err)
+	// err = instances.WaitForJobCompleted(client, 600, *ip)
+	// th.AssertNoErr(t, err)
 
 	elasticIP := networking.CreateEip(t, netClient, 100)
 	t.Cleanup(func() {
@@ -233,7 +197,7 @@ func TestRdsLifecycle(t *testing.T) {
 
 	ha, err := instances.SingleToHa(client, instances.SingleToHaOpts{
 		InstanceId:    rds.Id,
-		AzCodeNewNode: az,
+		AzCodeNewNode: rds.AvailabilityZone,
 	})
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, *ha)
@@ -285,13 +249,53 @@ func TestRdsLifecycle(t *testing.T) {
 
 	t.Log("backups.Create")
 
+	log, err := logs.ListErrorLog(client, logs.DbErrorlogOpts{
+		InstanceId: rds.Id,
+		Limit:      "1",
+		StartDate:  time.Now().AddDate(0, 0, -1).Format("2006-01-02T15:04:05"),
+		EndDate:    time.Now().Format("2006-01-02T15:04:05"),
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, log)
+
+	slowLog, err := logs.ListSlowLog(client, logs.DbSlowLogOpts{
+		InstanceId: rds.Id,
+		Limit:      "1",
+		StartDate:  time.Now().AddDate(0, 0, -1).Format("2006-01-02T15:04:05"),
+		EndDate:    time.Now().Format("2006-01-02T15:04:05"),
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, slowLog)
+}
+
+func TestRdsBackupLifecycle(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance")
+
+	// Create RDSv3 instance
+	rds := CreateRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+	th.AssertEquals(t, rds.Volume.Size, 100)
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
 	backup, err := backups.Create(client, backups.CreateOpts{
 		InstanceID: rds.Id,
 		Name:       tools.RandomString("rds-backup-test-", 5),
 	})
 	th.AssertNoErr(t, err)
 	t.Log("Backup creation started")
-	// backup := struct{ ID string }{ID: "6d85318246d644af95c0666e2a6ae1debr03"}
 
 	t.Cleanup(func() {
 		th.AssertNoErr(t, backups.Delete(client, backup.ID))
@@ -335,14 +339,14 @@ func TestRdsLifecycle(t *testing.T) {
 	t.Log("RestoreToNew")
 
 	toNew, err := backups.RestoreToNew(client, backups.RestoreToNewOpts{
-		Name:      rdsName,
+		Name:      rds.Name,
 		Password:  "acc-test-password1!",
 		FlavorRef: "rds.pg.c2.large",
 		Volume: &instances.Volume{
 			Type: "COMMON",
 			Size: 200,
 		},
-		AvailabilityZone: az,
+		AvailabilityZone: rds.AvailabilityZone,
 		VpcId:            clients.EnvOS.GetEnv("VPC_ID"),
 		SubnetId:         clients.EnvOS.GetEnv("NETWORK_ID"),
 		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
@@ -350,6 +354,9 @@ func TestRdsLifecycle(t *testing.T) {
 			InstanceID: rds.Id,
 			Type:       "backup",
 			BackupID:   backupList[0].ID,
+		},
+		UnchangeableParam: &instances.Param{
+			LowerCaseTableNames: "0",
 		},
 	})
 	th.AssertNoErr(t, err)
@@ -371,21 +378,40 @@ func TestRdsLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	log, err := logs.ListErrorLog(client, logs.DbErrorlogOpts{
-		InstanceId: rds.Id,
-		Limit:      "1",
-		StartDate:  time.Now().AddDate(0, 0, -1).Format("2006-01-02T15:04:05"),
-		EndDate:    time.Now().Format("2006-01-02T15:04:05"),
-	})
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, log)
+	t.Logf("Attempting to create RDSv3 Read Replica")
 
-	slowLog, err := logs.ListSlowLog(client, logs.DbSlowLogOpts{
-		InstanceId: rds.Id,
-		Limit:      "1",
-		StartDate:  time.Now().AddDate(0, 0, -1).Format("2006-01-02T15:04:05"),
-		EndDate:    time.Now().Format("2006-01-02T15:04:05"),
+	rdsReplicaName := tools.RandomString("rds-rr-", 8)
+	kmsID := clients.EnvOS.GetEnv("KMS_ID")
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	replica, err := instances.CreateReplica(client, instances.CreateReplicaOpts{
+		Name:             rdsReplicaName,
+		ReplicaOfId:      rds.Id,
+		DiskEncryptionId: kmsID,
+		FlavorRef:        "rds.pg.c2.large.rr",
+		Volume: &instances.Volume{
+			Type: "COMMON",
+			Size: 100,
+		},
+		AvailabilityZone: az,
 	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, slowLog)
+	err = instances.WaitForJobCompleted(client, 1200, replica.JobId)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Created RDSv3 Read Replica: %s", replica.Instance.Id)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete RDSv3 Read Replica: %s", replica.Instance.Id)
+		_, err := instances.Delete(client, replica.Instance.Id)
+		th.AssertNoErr(t, err)
+		t.Logf("RDSv3 Read Replica instance deleted: %s", replica.Instance.Id)
+	})
 }
