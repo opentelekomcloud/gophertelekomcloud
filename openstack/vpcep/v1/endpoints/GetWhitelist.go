@@ -6,7 +6,7 @@ import (
 )
 
 func GetWhitelist(client *golangsdk.ServiceClient, id string) (*GetWhitelistResponse, error) {
-	// POST /v1/{project_id}/vpc-endpoint-services/{vpc_endpoint_service_id}/permissions
+	// GET /v1/{project_id}/vpc-endpoint-services/{vpc_endpoint_service_id}/permissions
 	raw, err := client.Get(client.ServiceURL("vpc-endpoint-services", id, "permissions"), nil, nil)
 	if err != nil {
 		return nil, err
