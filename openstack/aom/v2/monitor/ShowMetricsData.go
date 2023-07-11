@@ -79,7 +79,7 @@ type MetricQuery struct {
 	Dimensions []Dimension `json:"dimensions" required:"true"`
 }
 
-func ShowMetricsData(client *golangsdk.ServiceClient) {
+func ShowMetricsData(client *golangsdk.ServiceClient, opts ShowMetricsDataOpts, q ShowMetricsDataQuery) (*ShowMetricsDataResponse, error) {
 	// POST /v2/{project_id}/ams/metricdata
 }
 

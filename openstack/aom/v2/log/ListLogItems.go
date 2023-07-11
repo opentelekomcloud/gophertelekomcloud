@@ -64,7 +64,7 @@ type SearchKey struct {
 	HostIP string `json:"hostIP,omitempty"`
 }
 
-func ListLogItems(client *golangsdk.ServiceClient, opts ListLogItemsOpts) {
+func ListLogItems(client *golangsdk.ServiceClient, opts ListLogItemsOpts) (*ListLogItemsResponse, error) {
 	// POST /v2/{project_id}/als/action
 }
 

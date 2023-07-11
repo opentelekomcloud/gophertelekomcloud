@@ -5,7 +5,8 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 type AddMetricDataOpts struct {
 	// Metric data.
 	Metric MetricAdd `json:"metric" required:"true"`
-	Values []Value   `json:"values" required:"true"`
+	//
+	Values []Value `json:"values" required:"true"`
 	// Data collection time, which must meet the following requirement:
 	//
 	// Current UTC time - Data collection time <= 24 hours, or Data collection time - Current UTC time <= 30 minutes
@@ -54,7 +55,7 @@ type Value struct {
 	Value *float32 `json:"value" required:"true"`
 }
 
-func AddMetricData(client *golangsdk.ServiceClient) {
+func AddMetricData(client *golangsdk.ServiceClient) (*AddMetricDataResponse, error) {
 	// POST /v2/{project_id}/ams/report/metricdata
 }
 

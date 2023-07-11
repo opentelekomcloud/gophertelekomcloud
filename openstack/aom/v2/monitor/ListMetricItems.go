@@ -38,7 +38,7 @@ type Dimension struct {
 	Value string `json:"value" required:"true"`
 }
 
-func ListMetricItems(client *golangsdk.ServiceClient, opts ListMetricItemsOpts) {
+func ListMetricItems(client *golangsdk.ServiceClient, opts ListMetricItemsOpts) (*ListMetricItemsResponse, error) {
 	// POST /v2/{project_id}/ams/metrics
 	type RequestParameter struct {
 		// If type (a URI parameter) is not inventory, the information carried by the array is used to query metrics.
