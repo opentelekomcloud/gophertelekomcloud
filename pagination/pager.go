@@ -34,11 +34,11 @@ type Page interface {
 
 // Pager knows how to advance through a specific resource collection, one page at a time.
 type Pager struct {
-	client *golangsdk.ServiceClient
+	Client *golangsdk.ServiceClient
 
-	initialURL string
+	InitialURL string
 
-	createPage func(r PageResult) Page
+	CreatePage func(r PageResult) Page
 
 	Err error
 
@@ -50,24 +50,14 @@ type Pager struct {
 // Supply the URL for the first page, a function that requests a specific page given a URL, and a function that counts a page.
 func NewPager(client *golangsdk.ServiceClient, initialURL string, createPage func(r PageResult) Page) Pager {
 	return Pager{
-		client:     client,
-		initialURL: initialURL,
-		createPage: createPage,
-	}
-}
-
-// WithPageCreator returns a new Pager that substitutes a different page creation function. This is
-// useful for overriding List functions in delegation.
-func (p Pager) WithPageCreator(createPage func(r PageResult) Page) Pager {
-	return Pager{
-		client:     p.client,
-		initialURL: p.initialURL,
-		createPage: createPage,
+		Client:     client,
+		InitialURL: initialURL,
+		CreatePage: createPage,
 	}
 }
 
 func (p Pager) fetchNextPage(url string) (Page, error) {
-	resp, err := Request(p.client, p.Headers, url)
+	resp, err := Request(p.Client, p.Headers, url)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +67,7 @@ func (p Pager) fetchNextPage(url string) (Page, error) {
 		return nil, err
 	}
 
-	return p.createPage(remembered), nil
+	return p.CreatePage(remembered), nil
 }
 
 // EachPage iterates over each page returned by a Pager, yielding one at a time to a handler function.
@@ -86,7 +76,7 @@ func (p Pager) EachPage(handler func(Page) (bool, error)) error {
 	if p.Err != nil {
 		return p.Err
 	}
-	currentURL := p.initialURL
+	currentURL := p.InitialURL
 	for {
 		currentPage, err := p.fetchNextPage(currentURL)
 		if err != nil {
@@ -126,7 +116,7 @@ func (p Pager) AllPages() (Page, error) {
 	var body []byte
 
 	// Grab a test page to ascertain the page body type.
-	testPage, err := p.fetchNextPage(p.initialURL)
+	testPage, err := p.fetchNextPage(p.InitialURL)
 	if err != nil {
 		return nil, err
 	}
