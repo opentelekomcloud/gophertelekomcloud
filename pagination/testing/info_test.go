@@ -3,7 +3,6 @@ package testing
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"net/http"
 	"testing"
 

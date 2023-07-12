@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )

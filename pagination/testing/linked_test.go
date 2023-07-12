@@ -2,7 +2,6 @@ package testing
 
 import (
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"net/http"
 	"testing"
 
