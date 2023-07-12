@@ -29,7 +29,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]VirtualGateway, err
 		return nil, err
 	}
 
-	// GET https://{Endpoint}/v1/{project_id}/virtual_gateways
+	// GET https://{Endpoint}/v2.0/{project_id}/virtual_gateways
 	raw, err := client.Get(client.ServiceURL("virtual-gateways")+q.String(), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err

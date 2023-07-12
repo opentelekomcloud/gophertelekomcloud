@@ -690,6 +690,11 @@ func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 	return initClientOpts(client, eo, "antiddos")
 }
 
+// NewDCaaSV2 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
+func NewDCaaSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "dcaasv2")
+}
+
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
 func NewDMSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "dmsv1")

@@ -145,6 +145,20 @@ func NewCTSV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDCaaSV2Client returns a *ServiceClient for making calls
+// to the OpenStack v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDCaaSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
