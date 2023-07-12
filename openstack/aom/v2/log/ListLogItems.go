@@ -1,6 +1,10 @@
 package log
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type ListLogItemsOpts struct {
 	// Log type:
@@ -65,7 +69,22 @@ type SearchKey struct {
 }
 
 func ListLogItems(client *golangsdk.ServiceClient, opts ListLogItemsOpts) (*ListLogItemsResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
 	// POST /v2/{project_id}/als/action
+	raw, err := client.Post(client.ServiceURL("als", "action")+"?type=querylogs", b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListLogItemsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type ListLogItemsResponse struct {
