@@ -1,6 +1,7 @@
 package pagination
 
 import (
+	"bytes"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -19,7 +20,7 @@ type PageResult struct {
 func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
 	result := make([]interface{}, 0)
 
-	if err := extract.Into(r.BodyReader(), &result); err != nil {
+	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
 		return nil, err
 	}
 
@@ -30,7 +31,7 @@ func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
 func (r PageResult) GetBodyAsMap() (map[string]interface{}, error) {
 	result := make(map[string]interface{}, 0)
 
-	if err := extract.Into(r.BodyReader(), &result); err != nil {
+	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
 		return nil, err
 	}
 

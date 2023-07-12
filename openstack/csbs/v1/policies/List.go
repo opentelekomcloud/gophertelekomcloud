@@ -1,6 +1,8 @@
 package policies
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -61,7 +63,7 @@ type BackupPolicyPage struct {
 // to do this, it needs to construct the next page's URL.
 func (r BackupPolicyPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(r.BodyReader(), &res, "policies_links")
+	err := extract.IntoSlicePtr(bytes.NewReader(r.Body), &res, "policies_links")
 	if err != nil {
 		return "", err
 	}
@@ -79,6 +81,6 @@ func (r BackupPolicyPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractBackupPolicies(r pagination.Page) ([]BackupPolicy, error) {
 	var res []BackupPolicy
-	err := extract.IntoSlicePtr(r.(BackupPolicyPage).BodyReader(), &res, "policies")
+	err := extract.IntoSlicePtr(bytes.NewReader(r.(BackupPolicyPage).Body), &res, "policies")
 	return res, err
 }

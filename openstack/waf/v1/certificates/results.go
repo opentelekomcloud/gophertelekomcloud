@@ -1,6 +1,7 @@
 package certificates
 
 import (
+	"bytes"
 	"fmt"
 	"strconv"
 
@@ -99,7 +100,6 @@ func (p CertificatePage) NextPageURL() (string, error) {
 
 func ExtractCertificates(p pagination.Page) ([]Certificate, error) {
 	var certs []Certificate
-	body := p.(CertificatePage).BodyReader()
-	err := extract.IntoSlicePtr(body, &certs, "items")
+	err := extract.IntoSlicePtr(bytes.NewReader(p.(CertificatePage).Body), &certs, "items")
 	return certs, err
 }

@@ -1,6 +1,7 @@
 package images
 
 import (
+	"bytes"
 	"net/url"
 	"strings"
 
@@ -49,7 +50,8 @@ func ExtractImages(r pagination.Page) ([]images.ImageInfo, error) {
 	var s struct {
 		Images []images.ImageInfo `json:"images"`
 	}
-	err := extract.Into(r.(ImagePage).BodyReader(), &s)
+
+	err := extract.Into(bytes.NewReader(r.(ImagePage).Body), &s)
 	return s.Images, err
 }
 
@@ -59,7 +61,8 @@ func (r ImagePage) NextPageURL() (string, error) {
 	var s struct {
 		Next string `json:"next"`
 	}
-	err := extract.Into(r.BodyReader(), &s)
+
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}

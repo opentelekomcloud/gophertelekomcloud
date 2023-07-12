@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -38,11 +37,6 @@ type Result struct {
 	// Err is an error that occurred during the operation. It's deferred until
 	// extraction to make it easier to chain the Extract call.
 	Err error
-}
-
-// BodyReader returns cached body as *bytes.Reader
-func (r Result) BodyReader() io.Reader {
-	return bytes.NewReader(r.Body)
 }
 
 type JsonRDSInstanceStatus struct {
