@@ -2,7 +2,6 @@ package openstack
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -32,9 +31,9 @@ func copyFile(t *testing.T, src, dest string) {
 		return
 	}
 
-	data, err := ioutil.ReadFile(src)
+	data, err := os.ReadFile(src)
 	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, ioutil.WriteFile(dest, data, fileStat.Mode()))
+	th.AssertNoErr(t, os.WriteFile(dest, data, fileStat.Mode()))
 }
 
 // backupFile creates copy of the file and return path to the copy
@@ -124,7 +123,7 @@ func TestCloudYamlPaths(t *testing.T) {
 				th.AssertNoErr(t, err)
 			}
 
-			th.AssertNoErr(subT, ioutil.WriteFile(fileName, tmpl, 0644))
+			th.AssertNoErr(subT, os.WriteFile(fileName, tmpl, 0644))
 			cloud, err := NewEnv("OS_").Cloud()
 			th.AssertNoErr(subT, err)
 			th.AssertEquals(subT, "http://localhost/", cloud.AuthInfo.AuthURL)
@@ -145,7 +144,7 @@ func TestEmptyClouds(t *testing.T) {
 	backupFiles(t, currentConfigDir)
 	defer restoreBackup(t, files...)
 
-	th.AssertNoErr(t, ioutil.WriteFile(fileName, []byte{}, 0644))
+	th.AssertNoErr(t, os.WriteFile(fileName, []byte{}, 0644))
 	_, err := NewEnv("OS_").Cloud()
 	th.AssertNoErr(t, err)
 }
@@ -177,7 +176,7 @@ clouds:
       project_name: eu-nl_test
 `, cloudName)
 
-	th.AssertNoErr(t, ioutil.WriteFile(clientConfigPath, []byte(configTemplate), 0644))
+	th.AssertNoErr(t, os.WriteFile(clientConfigPath, []byte(configTemplate), 0644))
 
 	cld, err := NewEnv("OS_").Cloud()
 	th.AssertNoErr(t, err)

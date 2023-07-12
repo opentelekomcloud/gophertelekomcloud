@@ -2,7 +2,7 @@ package testing
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"sync"
 	"testing"
@@ -106,7 +106,7 @@ func TestConcurrentReauth(t *testing.T) {
 				return
 			}
 			defer resp.Body.Close()
-			actual, err := ioutil.ReadAll(resp.Body)
+			actual, err := io.ReadAll(resp.Body)
 			if err != nil {
 				t.Errorf("error reading response body: %s", err)
 				return

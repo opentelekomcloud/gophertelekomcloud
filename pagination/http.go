@@ -2,7 +2,7 @@ package pagination
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -42,7 +42,7 @@ func (r PageResult) GetBodyAsMap() (map[string]interface{}, error) {
 // results, interpreting it as JSON if the content type indicates.
 func PageResultFrom(resp *http.Response) (PageResult, error) {
 	defer resp.Body.Close()
-	rawBody, err := ioutil.ReadAll(resp.Body)
+	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return PageResult{}, err
 	}

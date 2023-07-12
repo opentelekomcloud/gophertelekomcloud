@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"sync"
@@ -300,7 +299,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	}
 
 	if !ok {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		_ = resp.Body.Close()
 		respErr := ErrUnexpectedResponseCode{
 			URL:      url,

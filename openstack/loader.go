@@ -3,7 +3,7 @@ package openstack
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -343,7 +343,7 @@ func loadFile(path string) ([]byte, error) {
 		return nil, err
 	}
 	defer func() { _ = file.Close() }()
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}

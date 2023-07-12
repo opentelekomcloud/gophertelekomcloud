@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -107,7 +106,7 @@ func (task *uploadPartTask) Run() interface{} {
 }
 
 func loadCheckpointFile(checkpointFile string, result interface{}) error {
-	ret, err := ioutil.ReadFile(checkpointFile)
+	ret, err := os.ReadFile(checkpointFile)
 	if err != nil {
 		return err
 	}
@@ -122,7 +121,7 @@ func updateCheckpointFile(fc interface{}, checkpointFilePath string) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(checkpointFilePath, result, 0666)
+	err = os.WriteFile(checkpointFilePath, result, 0666)
 	return err
 }
 

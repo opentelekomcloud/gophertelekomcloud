@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/textproto"
@@ -383,8 +383,8 @@ func calculateContentHash(req *http.Request) string {
 		if req.Body == nil {
 			encodeParas = ""
 		} else {
-			readBody, _ := ioutil.ReadAll(req.Body)
-			req.Body = ioutil.NopCloser(bytes.NewBuffer(readBody))
+			readBody, _ := io.ReadAll(req.Body)
+			req.Body = io.NopCloser(bytes.NewBuffer(readBody))
 			encodeParas = string(readBody)
 		}
 	}
