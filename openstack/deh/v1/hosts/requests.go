@@ -128,9 +128,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return HostPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return HostPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 
 }
 
@@ -171,9 +175,13 @@ func ListServer(c *golangsdk.ServiceClient, id string, opts ListServerOpts) ([]S
 		return nil, err
 	}
 	u := listServerURL(c, id) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     c,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ServerPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

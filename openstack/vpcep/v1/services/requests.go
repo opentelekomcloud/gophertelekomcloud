@@ -132,9 +132,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += q
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ServicePage{pagination.OffsetPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ServicePage{pagination.OffsetPageBase{PageResult: r}}
+		},
+	}
 }
 
 func ListPublic(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
@@ -146,9 +150,13 @@ func ListPublic(client *golangsdk.ServiceClient, opts ListOptsBuilder) paginatio
 		}
 		url += q
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ServicePage{pagination.OffsetPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ServicePage{pagination.OffsetPageBase{PageResult: r}}
+		},
+	}
 }
 
 type UpdateOptsBuilder interface {

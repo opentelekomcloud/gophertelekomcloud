@@ -76,9 +76,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ServerPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ServerPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -681,17 +685,25 @@ func DeleteMetadatum(client *golangsdk.ServiceClient, id, key string) (r DeleteM
 // ListAddresses makes a request against the API to list the servers IP
 // addresses.
 func ListAddresses(client *golangsdk.ServiceClient, id string) pagination.Pager {
-	return pagination.NewPager(client, listAddressesURL(client, id), func(r pagination.PageResult) pagination.Page {
-		return AddressPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: listAddressesURL(client, id),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return AddressPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // ListAddressesByNetwork makes a request against the API to list the servers IP
 // addresses for the given network.
 func ListAddressesByNetwork(client *golangsdk.ServiceClient, id, network string) pagination.Pager {
-	return pagination.NewPager(client, listAddressesByNetworkURL(client, id, network), func(r pagination.PageResult) pagination.Page {
-		return NetworkAddressPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: listAddressesByNetworkURL(client, id, network),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return NetworkAddressPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // CreateImageOptsBuilder allows extensions to add additional parameters to the

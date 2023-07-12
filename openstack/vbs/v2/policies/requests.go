@@ -145,9 +145,13 @@ type ListOpts struct {
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Policy, error) {
 
-	pages, err := pagination.NewPager(c, commonURL(c), func(r pagination.PageResult) pagination.Page {
-		return PolicyPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     c,
+		InitialURL: commonURL(c),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return PolicyPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

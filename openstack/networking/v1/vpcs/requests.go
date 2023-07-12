@@ -36,9 +36,13 @@ type ListOpts struct {
 // tenant who submits the request, unless an admin user submits the request.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Vpc, error) {
 	u := rootURL(c)
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return VpcPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     c,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return VpcPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 
 	if err != nil {
 		return nil, err

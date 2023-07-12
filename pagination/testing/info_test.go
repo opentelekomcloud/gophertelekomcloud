@@ -3,6 +3,7 @@ package testing
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 	"net/http"
 	"testing"
 
@@ -87,9 +88,13 @@ func createInfoPager(t *testing.T) pagination.Pager {
 	})
 
 	client := createClient()
-	return pagination.NewPager(client, th.Server.URL+"/page", func(r pagination.PageResult) pagination.Page {
-		return InfoPageResult{PageWithInfo: pagination.NewPageWithInfo(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: th.Server.URL + "/page",
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return InfoPageResult{PageWithInfo: pagination.NewPageWithInfo(r)}
+		},
+	}
 }
 
 func TestInfoPageResult(t *testing.T) {

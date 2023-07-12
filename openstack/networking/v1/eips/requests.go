@@ -47,11 +47,15 @@ func (opts ListOpts) ToEipListQuery() (string, error) {
 // List instructs OpenStack to provide a list of flavors.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]PublicIp, error) {
 	url := rootURL(client)
-	pages, err := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		p := EipPage{pagination.MarkerPageBase{PageResult: r}}
-		p.MarkerPageBase.Owner = p
-		return p
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			p := EipPage{pagination.MarkerPageBase{PageResult: r}}
+			p.MarkerPageBase.Owner = p
+			return p
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

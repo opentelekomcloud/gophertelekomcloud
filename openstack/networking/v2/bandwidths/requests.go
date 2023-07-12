@@ -63,9 +63,13 @@ func Get(client *golangsdk.ServiceClient, bandwidthID string) (r GetResult) {
 }
 
 func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, rootURL(client), func(r pagination.PageResult) pagination.Page {
-		return BandwidthPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: rootURL(client),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return BandwidthPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 func Delete(client *golangsdk.ServiceClient, bandwidthID string) (r DeleteResult) {

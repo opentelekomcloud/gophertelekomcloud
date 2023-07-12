@@ -104,9 +104,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return EndpointGroupPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return EndpointGroupPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Delete will permanently delete a particular endpoint group based on its

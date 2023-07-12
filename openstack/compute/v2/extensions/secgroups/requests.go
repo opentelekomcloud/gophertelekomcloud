@@ -8,9 +8,13 @@ import (
 )
 
 func commonList(client *golangsdk.ServiceClient, url string) pagination.Pager {
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return SecurityGroupPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return SecurityGroupPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // List will return a collection of all the security groups for a particular

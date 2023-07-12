@@ -2,6 +2,7 @@ package testing
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud"
 	"net/http"
 	"testing"
 
@@ -52,7 +53,11 @@ func createLinked() pagination.Pager {
 		return LinkedPageResult{pagination.LinkedPageBase{PageResult: r}}
 	}
 
-	return pagination.NewPager(client, th.Server.URL+"/page1", createPage)
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: th.Server.URL + "/page1",
+		CreatePage: createPage,
+	}
 }
 
 func TestEnumerateLinked(t *testing.T) {

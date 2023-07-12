@@ -105,9 +105,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += q
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return EndpointPage{OffsetPageBase: pagination.OffsetPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return EndpointPage{OffsetPageBase: pagination.OffsetPageBase{PageResult: r}}
+		},
+	}
 }
 
 func WaitForEndpointStatus(client *golangsdk.ServiceClient, id string, status Status, timeout int) error {

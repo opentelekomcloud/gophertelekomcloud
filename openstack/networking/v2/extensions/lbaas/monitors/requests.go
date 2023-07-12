@@ -42,9 +42,13 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 		return pagination.Pager{Err: err}
 	}
 	u := rootURL(c) + q.String()
-	return pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return MonitorPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return MonitorPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // MonitorType is the type for all the types of LB monitors.
@@ -138,8 +142,8 @@ func (opts CreateOpts) ToLBMonitorCreateMap() (map[string]interface{}, error) {
 // Here is an example config struct to use when creating a HTTP(S) monitor:
 //
 // CreateOpts{Type: TypeHTTP, Delay: 20, Timeout: 10, MaxRetries: 3,
-//  HttpMethod: "HEAD", ExpectedCodes: "200"}
 //
+//	HttpMethod: "HEAD", ExpectedCodes: "200"}
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToLBMonitorCreateMap()
 	if err != nil {

@@ -48,10 +48,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		url += query
 	}
 
-	return pagination.NewPager(client, url,
-		func(r pagination.PageResult) pagination.Page {
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
 			return BandWidthPage{pagination.LinkedPageBase{PageResult: r}}
-		})
+		},
+	}
 }
 
 type UpdateOpts struct {

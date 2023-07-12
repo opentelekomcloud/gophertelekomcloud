@@ -54,9 +54,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		url += query
 	}
 
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return RoutePage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RoutePage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -83,7 +87,6 @@ func (opts CreateOpts) ToRouteCreateMap() (map[string]interface{}, error) {
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical routes. When it is created, the routes does not have an internal
 // interface - it is not associated to any routes.
-//
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToRouteCreateMap()
 	if err != nil {

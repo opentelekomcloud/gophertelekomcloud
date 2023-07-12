@@ -55,9 +55,13 @@ func List(client *golangsdk.ServiceClient, poolID string, opts ListOptsBuilder) 
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return MemberPage{PageWithInfo: pagination.NewPageWithInfo(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return MemberPage{PageWithInfo: pagination.NewPageWithInfo(r)}
+		},
+	}
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

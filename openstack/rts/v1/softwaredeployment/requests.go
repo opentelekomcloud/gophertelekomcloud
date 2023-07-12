@@ -34,9 +34,13 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Deployment, error) 
 		return nil, err
 	}
 	u := rootURL(client) + q.String()
-	pages, err := pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
-		return DeploymentPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     client,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return DeploymentPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

@@ -48,9 +48,13 @@ func SingleTenant(client *golangsdk.ServiceClient, tenantID string, opts SingleT
 		}
 		u += query
 	}
-	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
-		return SingleTenantPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return SingleTenantPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // AllTenantsOpts are options for fetching usage of all tenants.
@@ -100,7 +104,11 @@ func AllTenants(client *golangsdk.ServiceClient, opts AllTenantsOptsBuilder) pag
 		}
 		u += query
 	}
-	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
-		return AllTenantsPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return AllTenantsPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }

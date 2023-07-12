@@ -91,10 +91,13 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 		return nil, err
 	}
 
-	pages, err := pagination.NewPager(c, c.ServiceURL("servers", "detail")+q.String(),
-		func(r pagination.PageResult) pagination.Page {
+	pages, err := pagination.Pager{
+		Client:     c,
+		InitialURL: c.ServiceURL("servers", "detail") + q.String(),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
 			return ServerPage{pagination.LinkedPageBase{PageResult: r}}
-		}).AllPages()
+		},
+	}.AllPages()
 
 	if err != nil {
 		return nil, err

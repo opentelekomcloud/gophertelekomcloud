@@ -47,9 +47,13 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 		return nil, err
 	}
 
-	pages, err := pagination.NewPager(client, client.ServiceURL("flavors", "detail")+q.String(), func(r pagination.PageResult) pagination.Page {
-		return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     client,
+		InitialURL: client.ServiceURL("flavors", "detail") + q.String(),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

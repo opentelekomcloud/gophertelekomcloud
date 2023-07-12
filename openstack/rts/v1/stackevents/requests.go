@@ -108,9 +108,13 @@ func List(client *golangsdk.ServiceClient, stackName, stackID string, opts ListO
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		p := EventPage{pagination.MarkerPageBase{PageResult: r}}
-		p.MarkerPageBase.Owner = p
-		return p
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			p := EventPage{pagination.MarkerPageBase{PageResult: r}}
+			p.MarkerPageBase.Owner = p
+			return p
+		},
+	}
 }

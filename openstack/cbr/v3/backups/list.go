@@ -34,10 +34,13 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 		return nil, err
 	}
 
-	pages, err := pagination.NewPager(client, client.ServiceURL("backups")+q.String(),
-		func(r pagination.PageResult) pagination.Page {
+	pages, err := pagination.Pager{
+		Client:     client,
+		InitialURL: client.ServiceURL("backups") + q.String(),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
 			return BackupPage{pagination.LinkedPageBase{PageResult: r}}
-		}).AllPages()
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

@@ -213,9 +213,13 @@ func List(client *golangsdk.ServiceClient, opts ListDmsBuilder) pagination.Pager
 		url += query
 	}
 
-	pageDmsList := pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return DmsPage{pagination.SinglePageBase(r)}
-	})
+	pageDmsList := pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return DmsPage{pagination.SinglePageBase(r)}
+		},
+	}
 
 	pageDmsList.Headers = map[string]string{"Content-Type": "application/json"}
 	return pageDmsList

@@ -60,9 +60,13 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) (p pagination.Pager) {
 
 	// GET /v2/manage/repos
 	url := client.ServiceURL("manage", "repos") + q
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return RepositoryPage{pagination.OffsetPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RepositoryPage{pagination.OffsetPageBase{PageResult: r}}
+		},
+	}
 }
 
 type RepositoryPage struct {

@@ -7,9 +7,13 @@ import (
 
 // List returns a Pager that allows you to iterate over a collection of FloatingIPs.
 func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, listURL(client), func(r pagination.PageResult) pagination.Page {
-		return FloatingIPPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: listURL(client),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return FloatingIPPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

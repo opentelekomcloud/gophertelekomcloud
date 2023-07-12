@@ -88,9 +88,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		u += q.String()
 	}
-	return pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
-		return EndpointPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return EndpointPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // UpdateOptsBuilder allows extensions to add parameters to the Update request.

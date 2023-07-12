@@ -40,9 +40,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		url += query
 	}
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return RolePage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RolePage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get retrieves details on a single role, by ID.
@@ -207,9 +211,13 @@ func ListAssignments(client *golangsdk.ServiceClient, opts ListAssignmentsOptsBu
 	targetType, targetID, actorType, actorID, _ := opts.extractAssignment()
 
 	url := listAssignmentsURL(client, targetType, targetID, actorType, actorID)
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return RoleAssignmentPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RoleAssignmentPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // AssignOpts provides options to assign a role

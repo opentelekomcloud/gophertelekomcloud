@@ -141,9 +141,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return ServicePage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ServicePage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get retrieves a particular VPN service based on its unique ID.

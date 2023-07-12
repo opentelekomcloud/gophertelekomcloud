@@ -48,14 +48,6 @@ type Pager struct {
 
 // NewPager constructs a manually-configured pager.
 // Supply the URL for the first page, a function that requests a specific page given a URL, and a function that counts a page.
-func NewPager(client *golangsdk.ServiceClient, initialURL string, createPage func(r PageResult) Page) Pager {
-	return Pager{
-		Client:     client,
-		InitialURL: initialURL,
-		CreatePage: createPage,
-	}
-}
-
 func (p Pager) fetchNextPage(url string) (Page, error) {
 	resp, err := Request(p.Client, p.Headers, url)
 	if err != nil {

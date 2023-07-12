@@ -51,9 +51,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return NetworkPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return NetworkPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get retrieves a specific network based on its unique ID.

@@ -7,9 +7,13 @@ import (
 
 // List makes a request against the nova API to list the server's interfaces.
 func List(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
-	return pagination.NewPager(client, listInterfaceURL(client, serverID), func(r pagination.PageResult) pagination.Page {
-		return InterfacePage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: listInterfaceURL(client, serverID),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return InterfacePage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // Get requests details on a single interface attachment by the server and port IDs.

@@ -56,9 +56,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return PoolPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return PoolPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 type LBMethod string
@@ -245,9 +249,13 @@ func ListMembers(c *golangsdk.ServiceClient, poolID string, opts ListMembersOpts
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return MemberPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return MemberPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // CreateMemberOptsBuilder allows extensions to add additional parameters to the

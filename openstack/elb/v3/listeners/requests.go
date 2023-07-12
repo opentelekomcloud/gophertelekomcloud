@@ -293,7 +293,11 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += q
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return ListenerPage{PageWithInfo: pagination.NewPageWithInfo(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ListenerPage{PageWithInfo: pagination.NewPageWithInfo(r)}
+		},
+	}
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -63,7 +64,11 @@ func createMarkerPaged(t *testing.T) pagination.Pager {
 		return p
 	}
 
-	return pagination.NewPager(client, testhelper.Server.URL+"/page", createPage)
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: testhelper.Server.URL + "/page",
+		CreatePage: createPage,
+	}
 }
 
 func ExtractMarkerStrings(page pagination.Page) ([]string, error) {

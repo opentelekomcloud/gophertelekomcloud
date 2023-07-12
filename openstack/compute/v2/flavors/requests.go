@@ -12,12 +12,12 @@ type ListOptsBuilder interface {
 }
 
 /*
-	AccessType maps to OpenStack's Flavor.is_public field. Although the is_public
-	field is boolean, the request options are ternary, which is why AccessType is
-	a string. The following values are allowed:
+AccessType maps to OpenStack's Flavor.is_public field. Although the is_public
+field is boolean, the request options are ternary, which is why AccessType is
+a string. The following values are allowed:
 
-	The AccessType arguement is optional, and if it is not supplied, OpenStack
-	returns the PublicAccess flavors.
+The AccessType arguement is optional, and if it is not supplied, OpenStack
+returns the PublicAccess flavors.
 */
 type AccessType string
 
@@ -35,12 +35,12 @@ const (
 )
 
 /*
-	ListOpts filters the results returned by the List() function.
-	For example, a flavor with a minDisk field of 10 will not be returned if you
-	specify MinDisk set to 20.
+ListOpts filters the results returned by the List() function.
+For example, a flavor with a minDisk field of 10 will not be returned if you
+specify MinDisk set to 20.
 
-	Typically, software will use the last ID of the previous call to List to set
-	the Marker for the current call.
+Typically, software will use the last ID of the previous call to List to set
+the Marker for the current call.
 */
 type ListOpts struct {
 	// ChangesSince, if provided, instructs List to return only those things which
@@ -94,9 +94,13 @@ func ListDetail(client *golangsdk.ServiceClient, opts ListOptsBuilder) paginatio
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 type CreateOptsBuilder interface {
@@ -168,9 +172,13 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 func ListAccesses(client *golangsdk.ServiceClient, id string) pagination.Pager {
 	url := accessURL(client, id)
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return AccessPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return AccessPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // AddAccessOptsBuilder allows extensions to add additional parameters to the

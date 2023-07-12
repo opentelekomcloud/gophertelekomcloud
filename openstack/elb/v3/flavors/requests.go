@@ -43,9 +43,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += queryString
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return FlavorPage{PageWithInfo: pagination.NewPageWithInfo(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return FlavorPage{PageWithInfo: pagination.NewPageWithInfo(r)}
+		},
+	}
 }
 
 // Get returns additional information about a Flavor, given its ID.

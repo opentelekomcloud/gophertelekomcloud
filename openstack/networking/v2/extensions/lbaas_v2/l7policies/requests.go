@@ -133,9 +133,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return L7PolicyPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return L7PolicyPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get retrieves a particular l7policy based on its unique ID.
@@ -308,9 +312,13 @@ func ListRules(c *golangsdk.ServiceClient, policyID string, opts ListRulesOptsBu
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return RulePage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RulePage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // GetRule retrieves a particular L7Policy Rule based on its unique ID.

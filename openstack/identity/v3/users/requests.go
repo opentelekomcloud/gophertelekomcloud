@@ -56,9 +56,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return UserPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return UserPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get retrieves details on a single user, by ID.
@@ -248,17 +252,25 @@ func Delete(client *golangsdk.ServiceClient, userID string) (r DeleteResult) {
 // ListGroups enumerates groups user belongs to.
 func ListGroups(client *golangsdk.ServiceClient, userID string) pagination.Pager {
 	url := listGroupsURL(client, userID)
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return groups.GroupPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return groups.GroupPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // ListProjects enumerates groups user belongs to.
 func ListProjects(client *golangsdk.ServiceClient, userID string) pagination.Pager {
 	url := listProjectsURL(client, userID)
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return projects.ProjectPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return projects.ProjectPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // ListInGroup enumerates users that belong to a group.
@@ -271,9 +283,13 @@ func ListInGroup(client *golangsdk.ServiceClient, groupID string, opts ListOptsB
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return UserPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return UserPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // AddToGroup add a user into one group

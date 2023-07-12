@@ -53,9 +53,13 @@ func ListByZone(client *golangsdk.ServiceClient, zoneID string, opts ListOptsBui
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return RecordSetPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RecordSetPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get implements the recordset Get request.

@@ -9,9 +9,13 @@ import (
 
 // List will return a collection of default rules.
 func List(client *golangsdk.ServiceClient) pagination.Pager {
-	return pagination.NewPager(client, rootURL(client), func(r pagination.PageResult) pagination.Page {
-		return DefaultRulePage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: rootURL(client),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return DefaultRulePage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // CreateOpts represents the configuration for adding a new default rule.

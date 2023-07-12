@@ -53,7 +53,11 @@ func ListMetrics(client *golangsdk.ServiceClient, opts ListMetricsBuilder) pagin
 		url += query
 	}
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return MetricsPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return MetricsPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }

@@ -51,11 +51,15 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 	}
 
-	pager := pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		p := ContainerPage{pagination.MarkerPageBase{PageResult: r}}
-		p.MarkerPageBase.Owner = p
-		return p
-	})
+	pager := pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			p := ContainerPage{pagination.MarkerPageBase{PageResult: r}}
+			p.MarkerPageBase.Owner = p
+			return p
+		},
+	}
 	pager.Headers = headers
 	return pager
 }

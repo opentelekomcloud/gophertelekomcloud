@@ -9,9 +9,13 @@ import (
 func List(client *golangsdk.ServiceClient) pagination.Pager {
 	url := listURL(client)
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return MappingPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return MappingPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 // Get retrieves details on a single Mapping, by ID.

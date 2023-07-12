@@ -6,9 +6,13 @@ import (
 )
 
 func List(client *golangsdk.ServiceClient, provider string) pagination.Pager {
-	pager := pagination.NewPager(client, listURL(client, provider), func(r pagination.PageResult) pagination.Page {
-		return ProtocolPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
-	})
+	pager := pagination.Pager{
+		Client:     client,
+		InitialURL: listURL(client, provider),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ProtocolPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 	pager.Headers = map[string]string{
 		"Content-Type": "application/json",
 	}

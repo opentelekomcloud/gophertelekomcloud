@@ -63,10 +63,13 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 	}
 
 	// GET https://{endpoint}/v1/{project_id}/checkpoint_items
-	pages, err := pagination.NewPager(c, c.ServiceURL("checkpoint_items")+q.String(),
-		func(r pagination.PageResult) pagination.Page {
+	pages, err := pagination.Pager{
+		Client:     c,
+		InitialURL: c.ServiceURL("checkpoint_items") + q.String(),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
 			return СsbsBackupPage{pagination.LinkedPageBase{PageResult: r}}
-		}).AllPages()
+		},
+	}.AllPages()
 	if err != nil {
 		return nil, err
 	}

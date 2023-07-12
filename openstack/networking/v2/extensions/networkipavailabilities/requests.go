@@ -52,9 +52,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return NetworkIPAvailabilityPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return NetworkIPAvailabilityPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // Get retrieves a specific NetworkIPAvailability based on its ID.

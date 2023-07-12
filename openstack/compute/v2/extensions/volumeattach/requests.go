@@ -8,9 +8,13 @@ import (
 // List returns a Pager that allows you to iterate over a collection of
 // VolumeAttachments.
 func List(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
-	return pagination.NewPager(client, listURL(client, serverID), func(r pagination.PageResult) pagination.Page {
-		return VolumeAttachmentPage{pagination.SinglePageBase(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: listURL(client, serverID),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return VolumeAttachmentPage{pagination.SinglePageBase(r)}
+		},
+	}
 }
 
 // CreateOptsBuilder allows extensions to add parameters to the Create request.

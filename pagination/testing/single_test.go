@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -44,7 +45,11 @@ func setupSinglePaged() pagination.Pager {
 		return SinglePageResult{pagination.SinglePageBase(r)}
 	}
 
-	return pagination.NewPager(client, testhelper.Server.URL+"/only", createPage)
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: testhelper.Server.URL + "/only",
+		CreatePage: createPage,
+	}
 }
 
 func TestEnumerateSinglePaged(t *testing.T) {

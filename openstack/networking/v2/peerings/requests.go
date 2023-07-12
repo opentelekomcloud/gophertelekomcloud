@@ -57,9 +57,13 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Peering, error) {
 		return nil, err
 	}
 	u := rootURL(c) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return PeeringConnectionPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     c,
+		InitialURL: u,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return PeeringConnectionPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 
 	if err != nil {
 		return nil, err

@@ -14,9 +14,13 @@ type ListOpts struct {
 
 // List returns a Pager that allows you to iterate over a collection of KeyPairs.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
-	pages, err := pagination.NewPager(client, client.ServiceURL("os-keypairs"), func(r pagination.PageResult) pagination.Page {
-		return KeyPairPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
+	pages, err := pagination.Pager{
+		Client:     client,
+		InitialURL: client.ServiceURL("os-keypairs"),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return KeyPairPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}.AllPages()
 
 	if err != nil {
 		return nil, err

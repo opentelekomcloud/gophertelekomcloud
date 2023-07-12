@@ -19,12 +19,16 @@ func List(c *golangsdk.ServiceClient, opts images.ListImagesOpts) pagination.Pag
 	}
 
 	// GET /v2/images
-	return pagination.NewPager(c, c.ServiceURL("images")+q.String(), func(r pagination.PageResult) pagination.Page {
-		return ImagePage{
-			serviceURL:     c.ServiceURL(),
-			LinkedPageBase: pagination.LinkedPageBase{PageResult: r},
-		}
-	})
+	return pagination.Pager{
+		Client:     c,
+		InitialURL: c.ServiceURL("images") + q.String(),
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return ImagePage{
+				serviceURL:     c.ServiceURL(),
+				LinkedPageBase: pagination.LinkedPageBase{PageResult: r},
+			}
+		},
+	}
 }
 
 // ImagePage represents the results of a List request.

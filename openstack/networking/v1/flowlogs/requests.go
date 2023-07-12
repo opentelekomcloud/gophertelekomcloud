@@ -59,7 +59,8 @@ func (opts ListOpts) ToFlowLogsListQuery() (string, error) {
 
 // List returns a Pager which allows you to iterate over a collection of
 // VPC flow logs. It accepts a ListOpts struct, which allows you to filter
-//  and sort the returned collection for greater efficiency.
+//
+//	and sort the returned collection for greater efficiency.
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(client)
 	if opts != nil {
@@ -69,9 +70,13 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		}
 		url += query
 	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return FlowLogPage{pagination.LinkedPageBase{PageResult: r}}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return FlowLogPage{pagination.LinkedPageBase{PageResult: r}}
+		},
+	}
 }
 
 type CreateOpts struct {

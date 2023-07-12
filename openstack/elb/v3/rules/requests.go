@@ -134,9 +134,13 @@ func List(client *golangsdk.ServiceClient, policyID string, opts ListOptsBuilder
 		url += q
 	}
 
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return RulePage{PageWithInfo: pagination.NewPageWithInfo(r)}
-	})
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: url,
+		CreatePage: func(r pagination.PageResult) pagination.Page {
+			return RulePage{PageWithInfo: pagination.NewPageWithInfo(r)}
+		},
+	}
 }
 
 func Delete(client *golangsdk.ServiceClient, policyID, id string) (r DeleteResult) {
