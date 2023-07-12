@@ -1,6 +1,10 @@
 package monitor
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type AddMetricDataOpts struct {
 	// Metric data.
@@ -55,8 +59,23 @@ type Value struct {
 	Value *float32 `json:"value" required:"true"`
 }
 
-func AddMetricData(client *golangsdk.ServiceClient) (*AddMetricDataResponse, error) {
+func AddMetricData(client *golangsdk.ServiceClient, opts AddMetricDataOpts) (*AddMetricDataResponse, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
 	// POST /v2/{project_id}/ams/report/metricdata
+	raw, err := client.Post(client.ServiceURL("ams", "report", "metricdata"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var res AddMetricDataResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type AddMetricDataResponse struct {
