@@ -1,6 +1,19 @@
 package monitor
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+type ListMetricItemsQuery struct {
+	// Metric query mode. The information carried by metricItems in the request body is used to query metrics.
+	Type string `q:"type"`
+	// Maximum number of returned records. Value range: 1-1000. Default value: 1000.
+	Limit int `q:"limit"`
+	// Start position of a pagination query. The value is a non-negative integer.
+	Start int `q:"start"`
+}
 
 type ListMetricItemsOpts struct {
 	// Metric namespace.
@@ -38,12 +51,28 @@ type Dimension struct {
 	Value string `json:"value" required:"true"`
 }
 
-func ListMetricItems(client *golangsdk.ServiceClient, opts ListMetricItemsOpts) (*ListMetricItemsResponse, error) {
-	// POST /v2/{project_id}/ams/metrics
-	type RequestParameter struct {
-		// If type (a URI parameter) is not inventory, the information carried by the array is used to query metrics.
-		MetricItems []ListMetricItemsOpts `json:"metricItems,omitempty"`
+func ListMetricItems(client *golangsdk.ServiceClient, opts []ListMetricItemsOpts, query ListMetricItemsQuery) (*ListMetricItemsResponse, error) {
+	q, err := golangsdk.BuildQueryString(query)
+	if err != nil {
+		return nil, err
 	}
+
+	b, err := build.RequestBody(opts, "metricItems")
+	if err != nil {
+		return nil, err
+	}
+
+	// POST /v2/{project_id}/ams/metrics
+	raw, err := client.Post(client.ServiceURL("ams", "metrics")+q.String(), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var res ListMetricItemsResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type ListMetricItemsResponse struct {

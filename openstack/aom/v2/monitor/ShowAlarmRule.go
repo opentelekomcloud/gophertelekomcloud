@@ -1,9 +1,22 @@
 package monitor
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"strconv"
+
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 func ShowAlarmRule(client *golangsdk.ServiceClient, alarmId int64) (*ShowAlarmRuleResponse, error) {
 	// GET /v2/{project_id}/ams/alarms/{alarm_id}
+	raw, err := client.Get(client.ServiceURL("ams", "alarms", strconv.FormatInt(alarmId, 10)), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ShowAlarmRuleResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type ShowAlarmRuleResponse struct {

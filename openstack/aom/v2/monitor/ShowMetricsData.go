@@ -1,6 +1,10 @@
 package monitor
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 type ShowMetricsDataQuery struct {
 	// Filled value for breakpoints in monitoring data. Default value: -1.
@@ -79,8 +83,28 @@ type MetricQuery struct {
 	Dimensions []Dimension `json:"dimensions" required:"true"`
 }
 
-func ShowMetricsData(client *golangsdk.ServiceClient, opts ShowMetricsDataOpts, q ShowMetricsDataQuery) (*ShowMetricsDataResponse, error) {
+func ShowMetricsData(client *golangsdk.ServiceClient, opts ShowMetricsDataOpts, query ShowMetricsDataQuery) (*ShowMetricsDataResponse, error) {
+	q, err := golangsdk.BuildQueryString(query)
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
 	// POST /v2/{project_id}/ams/metricdata
+	raw, err := client.Post(client.ServiceURL("ams", "metricdata")+q.String(), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var res ShowMetricsDataResponse
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type ShowMetricsDataResponse struct {
