@@ -23,7 +23,7 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (err error) 
 		return
 	}
 
-	_, err = c.Put(c.ServiceURL("virtual-gateways", id), b, nil, &golangsdk.RequestOpts{
+	_, err = c.Put(c.ServiceURL("dcaas", "virtual-gateways", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 

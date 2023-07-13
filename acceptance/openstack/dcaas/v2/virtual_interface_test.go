@@ -15,7 +15,7 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 	// Create a virtual interface
 	createOpts := virtual_interface.CreateOpts{
 		Name:              "test-virtual-interface",
-		DirectConnectID:   "test-direct-connect-id",
+		DirectConnectID:   "test-direct-connect-uuid",
 		VgwID:             "test-vgw-id",
 		Type:              "private",
 		ServiceType:       "vpc",
@@ -29,7 +29,7 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 
 	created, err := virtual_interface.Create(client, createOpts)
 	th.AssertNoErr(t, err)
-	
+
 	t.Cleanup(func() {
 		err = virtual_interface.Delete(client, created.ID)
 		th.AssertNoErr(t, err)

@@ -6,6 +6,6 @@ import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 // unique ID.
 
 func Delete(c *golangsdk.ServiceClient, id string) (err error) {
-	_, err = c.Delete(c.ServiceURL("virtual-virtual-interfaces", id), nil)
+	_, err = c.Delete(c.ServiceURL("dcaas", "virtual-interfaces", id), nil)
 	return
 }

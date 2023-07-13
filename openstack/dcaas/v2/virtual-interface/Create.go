@@ -29,7 +29,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*VirtualInterface, err
 	if err != nil {
 		return nil, err
 	}
-	raw, err := c.Post(c.ServiceURL("virtual-interfaces"), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Post(c.ServiceURL("dcaas", "virtual-interfaces"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	if err != nil {

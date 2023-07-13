@@ -7,7 +7,7 @@ import (
 
 // Get retrieves a particular virtual gateway based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (*VirtualGateway, error) {
-	raw, err := c.Get(c.ServiceURL("virtual-gateways", id), nil, nil)
+	raw, err := c.Get(c.ServiceURL("dcaas", "virtual-gateways", id), nil, nil)
 	if err != nil {
 		return nil, err
 	}

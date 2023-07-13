@@ -28,11 +28,11 @@ type CreateOpts struct {
 }
 
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*VirtualGateway, error) {
-	b, err := build.RequestBody(opts, "virtual-gateways")
+	b, err := build.RequestBody(opts, "virtual_gateway")
 	if err != nil {
 		return nil, err
 	}
-	raw, err := c.Post(c.ServiceURL("virtual-gateways"), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Post(c.ServiceURL("dcaas", "virtual-gateways"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	if err != nil {

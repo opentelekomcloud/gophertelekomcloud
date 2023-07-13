@@ -692,7 +692,7 @@ func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 
 // NewDCaaSV2 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
 func NewDCaaSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initClientOpts(client, eo, "dcaasv2")
+	return initClientOpts(client, eo, "dcaas")
 }
 
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
