@@ -2,7 +2,6 @@ package pagination
 
 import (
 	"bytes"
-	"io"
 	"net/http"
 	"net/url"
 
@@ -36,24 +35,6 @@ func (r PageResult) GetBodyAsMap() (map[string]interface{}, error) {
 	}
 
 	return result, nil
-}
-
-// PageResultFrom parses an HTTP response as JSON and returns a PageResult containing the
-// results, interpreting it as JSON if the content type indicates.
-func PageResultFrom(resp *http.Response) (PageResult, error) {
-	defer resp.Body.Close()
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return PageResult{}, err
-	}
-
-	return PageResult{
-		Result: golangsdk.Result{
-			Body:   rawBody,
-			Header: resp.Header,
-		},
-		URL: *resp.Request.URL,
-	}, nil
 }
 
 // Request performs an HTTP request and extracts the http.Response from the result.

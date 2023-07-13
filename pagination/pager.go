@@ -3,6 +3,7 @@ package pagination
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"reflect"
 	"strings"
@@ -54,12 +55,19 @@ func (p Pager) fetchNextPage(url string) (Page, error) {
 		return nil, err
 	}
 
-	remembered, err := PageResultFrom(resp)
+	defer resp.Body.Close()
+	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return p.CreatePage(remembered), nil
+	return p.CreatePage(PageResult{
+		Result: golangsdk.Result{
+			Body:   rawBody,
+			Header: resp.Header,
+		},
+		URL: *resp.Request.URL,
+	}), nil
 }
 
 // EachPage iterates over each page returned by a Pager, yielding one at a time to a handler function.
