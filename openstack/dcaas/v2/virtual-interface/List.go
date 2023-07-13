@@ -1,5 +1,15 @@
 package virtual_interface
 
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+)
+
+type ListOpts struct {
+	ID string `q:"id"`
+}
+
 type VirtualInterface struct {
 	ID                  string `json:"id"`
 	TenantID            string `json:"tenant_id"`
@@ -34,4 +44,21 @@ type VirtualInterface struct {
 	LocalGRETunnelIP    string `json:"local_gre_tunnel_ip"`
 	RemoteGRETunnelIP   string `json:"remote_gre_tunnel_ip"`
 	LagID               string `json:"lag_id"`
+}
+
+func List(c *golangsdk.ServiceClient, opts ListOpts) ([]VirtualInterface, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// GET https://{Endpoint}/v2.0/{project_id}/virtual-interfaces
+	raw, err := c.Get(c.ServiceURL("dcaas", "virtual-interfaces")+q.String(), nil, openstack.StdRequestOpts())
+	if err != nil {
+		return nil, err
+	}
+
+	var res []VirtualInterface
+	err = extract.IntoSlicePtr(raw.Body, &res, "virtual_interfaces")
+	return res, err
 }

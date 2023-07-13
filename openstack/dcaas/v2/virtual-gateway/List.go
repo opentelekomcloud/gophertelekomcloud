@@ -7,19 +7,7 @@ import (
 )
 
 type ListOpts struct {
-	Limit        int      `q:"limit"`
-	Marker       string   `q:"marker"`
-	PageReverse  bool     `q:"page_reverse"`
-	ID           []string `q:"id"`
-	TenantID     []string `q:"tenant_id"`
-	Name         []string `q:"name"`
-	Description  []string `q:"description"`
-	VPCID        []string `q:"vpc_id"`
-	LocalEPGroup []string `q:"local_ep_group_id"`
-	DeviceID     []string `q:"device_id"`
-	Type         []string `q:"type"`
-	Status       []string `q:"status"`
-	AdminStateUp []string `q:"admin_state_up"`
+	ID string `q:"id"`
 }
 
 // List is used to obtain the virtual gateway list
@@ -29,7 +17,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]VirtualGateway, error) {
 		return nil, err
 	}
 
-	// GET https://{Endpoint}/v2.0/{project_id}/virtual_gateways
+	// GET https://{Endpoint}/v2.0/{project_id}/virtual-gateways
 	raw, err := c.Get(c.ServiceURL("dcaas", "virtual-gateways")+q.String(), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
