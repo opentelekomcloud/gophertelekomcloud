@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -25,19 +24,15 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	created, err := virtual_gateway.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	get, err := virtual_gateway.Get(client, created.ID)
+	_, err = virtual_gateway.Get(client, created.ID)
 	th.AssertNoErr(t, err)
-
-	fmt.Print(get)
 
 	updateOpts := virtual_gateway.UpdateOpts{
 		Name:        "test-virtual-interface-updated",
 		Description: "test-virtual-interface-updated",
 	}
-	updated := virtual_gateway.Update(client, created.ID, updateOpts)
+	_ = virtual_gateway.Update(client, created.ID, updateOpts)
 	th.AssertNoErr(t, err)
-
-	fmt.Print(updated)
 
 	t.Cleanup(func() {
 		err = virtual_gateway.Delete(client, created.ID)
