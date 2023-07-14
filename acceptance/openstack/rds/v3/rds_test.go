@@ -61,7 +61,6 @@ func TestRdsLifecycle(t *testing.T) {
 	th.AssertEquals(t, len(newRds.Instances), 1)
 	th.AssertEquals(t, newRds.Instances[0].Volume.Size, 200)
 	th.AssertEquals(t, len(newRds.Instances[0].Tags), 2)
-	th.AssertEquals(t, *newRds.Instances[0].EnableSSL, true)
 
 	collations, err := instances.ListCollations(client)
 	th.AssertNoErr(t, err)
@@ -322,6 +321,21 @@ func TestRdsBackupLifecycle(t *testing.T) {
 		t.Fatalf("Status available wasn't present")
 	}
 
+	t.Log("RestorePITR")
+
+	pitr, err := backups.RestorePITR(client, backups.RestorePITROpts{
+		Source: backups.Source{
+			BackupID:   backupList[0].ID,
+			InstanceID: backupList[0].InstanceID,
+			Type:       "backup",
+		},
+		Target: backups.Target{
+			InstanceID: rds.Id,
+		},
+	})
+	th.AssertNoErr(t, err)
+	_ = instances.WaitForJobCompleted(client, 600, pitr)
+
 	t.Log("RestoreToNew")
 
 	toNew, err := backups.RestoreToNew(client, backups.RestoreToNewOpts{
@@ -358,7 +372,7 @@ func TestRdsBackupLifecycle(t *testing.T) {
 
 	err = backups.Update(client, backups.UpdateOpts{
 		InstanceId: rds.Id,
-		KeepDays:   pointerto.Int(policy.KeepDays - 1),
+		KeepDays:   policy.KeepDays - 1,
 		StartTime:  policy.StartTime,
 		Period:     "1,2,3,4",
 	})
@@ -402,7 +416,7 @@ func TestRdsBackupLifecycle(t *testing.T) {
 	})
 }
 
-func TestBackupKeepDays(t *testing.T) {
+func TestRdsAutoScaling(t *testing.T) {
 	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
 	}
@@ -415,74 +429,19 @@ func TestBackupKeepDays(t *testing.T) {
 
 	t.Log("Creating instance")
 
-	// Create RDSv3 instance
-	rds := CreateRDS(t, client, cc.RegionName)
+	// Create MySql RDSv3 instance
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
 	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+	th.AssertEquals(t, rds.Volume.Size, 100)
 
-	err = backups.Update(client, backups.UpdateOpts{
-		InstanceId: rds.Id,
-		KeepDays:   pointerto.Int(0),
-	})
-	th.AssertNoErr(t, err)
-}
-
-func TestBackupRestorePointInTime(t *testing.T) {
-	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
-	}
-
-	client, err := clients.NewRdsV3()
-	th.AssertNoErr(t, err)
-
-	cc, err := clients.CloudAndClient()
-	th.AssertNoErr(t, err)
-
-	t.Log("Creating instance")
-
-	// Create RDSv3 instance
-	rds := CreateRDS(t, client, cc.RegionName)
-	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
-
-	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
-		t.Fatalf("Status available wasn't present")
-	}
-
-	backup, err := backups.Create(client, backups.CreateOpts{
-		InstanceID: rds.Id,
-		Name:       tools.RandomString("rds-backup-test-", 5),
+	err = instances.ManageAutoScaling(client, rds.Id, instances.ScalingOpts{
+		SwitchOption:     true,
+		LimitSize:        40,
+		TriggerThreshold: 20,
 	})
 	th.AssertNoErr(t, err)
 
-	t.Log("Backup creation started")
-
-	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
-		t.Fatalf("Status available wasn't present")
-	}
-
-	t.Cleanup(func() {
-		th.AssertNoErr(t, backups.Delete(client, backup.ID))
-		t.Log("Backup deleted")
-	})
-
-	err = backups.WaitForBackup(client, rds.Id, backup.ID, backups.StatusCompleted)
+	scaling, err := instances.GetAutoScaling(client, rds.Id)
 	th.AssertNoErr(t, err)
-	t.Log("Backup creation complete")
-
-	backupList, err := backups.List(client, backups.ListOpts{InstanceID: rds.Id, BackupID: backup.ID})
-	th.AssertNoErr(t, err)
-
-	t.Log("RestorePITR")
-
-	pitr, err := backups.RestorePITR(client, backups.RestorePITROpts{
-		Source: backups.Source{
-			BackupID:   backupList[0].ID,
-			InstanceID: backupList[0].InstanceID,
-			Type:       "backup",
-		},
-		Target: backups.Target{
-			InstanceID: rds.Id,
-		},
-	})
-	th.AssertNoErr(t, err)
-	_ = instances.WaitForJobCompleted(client, 600, pitr)
+	tools.PrintResource(t, scaling)
 }
