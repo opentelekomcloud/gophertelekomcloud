@@ -40,7 +40,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]DirectConnect, error) {
 		return nil, err
 	}
 
-	// GET https://{Endpoint}/v2.0/{project_id}/virtual-gateways
+	// GET https://{Endpoint}/v2.0/dcaas/direct-connects?id={id}
 	raw, err := c.Get(c.ServiceURL("dcaas", "direct-connects")+q.String(), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err

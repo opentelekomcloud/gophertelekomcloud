@@ -24,9 +24,18 @@ func TestDirectConnectLifecycle(t *testing.T) {
 	created, err := direct_connect.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
+	// Get a direct connect
 	_, err = direct_connect.Get(client, created.ID)
 	th.AssertNoErr(t, err)
 
+	// List direct connects
+	listOpts := direct_connect.ListOpts{
+		ID: created.ID,
+	}
+	_, err = direct_connect.List(client, listOpts)
+	th.AssertNoErr(t, err)
+
+	// Cleanup
 	t.Cleanup(func() {
 		err = direct_connect.Delete(client, created.ID)
 		th.AssertNoErr(t, err)
