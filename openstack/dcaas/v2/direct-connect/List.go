@@ -8,6 +8,7 @@ import (
 
 type DirectConnect struct {
 	TenantID       string `json:"tenant_id,omitempty"`
+	ID             string `json:"id,omitempty"`
 	Name           string `json:"name,omitempty"`
 	Description    string `json:"description,omitempty"`
 	PortType       string `json:"port_type" required:"true"`
