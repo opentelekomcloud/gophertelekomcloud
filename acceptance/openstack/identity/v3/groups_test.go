@@ -1,3 +1,4 @@
+//go:build acceptance
 // +build acceptance
 
 package v3
@@ -8,13 +9,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/groups"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestGroupCRUD(t *testing.T) {
 	client, err := clients.NewIdentityV3Client()
-	if err != nil {
-		t.Fatalf("Unable to obtain an identity client: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	createOpts := groups.CreateOpts{
 		Name:     "testgroup",
@@ -26,10 +26,10 @@ func TestGroupCRUD(t *testing.T) {
 
 	// Create Group in the default domain
 	group, err := CreateGroup(t, client, &createOpts)
-	if err != nil {
-		t.Fatalf("Unable to create group: %v", err)
-	}
-	defer DeleteGroup(t, client, group.ID)
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		DeleteGroup(t, client, group.ID)
+	})
 
 	tools.PrintResource(t, group)
 	tools.PrintResource(t, group.Extra)
@@ -42,9 +42,7 @@ func TestGroupCRUD(t *testing.T) {
 	}
 
 	newGroup, err := groups.Update(client, group.ID, updateOpts).Extract()
-	if err != nil {
-		t.Fatalf("Unable to update group: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, newGroup)
 	tools.PrintResource(t, newGroup.Extra)
@@ -55,14 +53,10 @@ func TestGroupCRUD(t *testing.T) {
 
 	// List all Groups in default domain
 	allPages, err := groups.List(client, listOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to list groups: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	allGroups, err := groups.ExtractGroups(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract groups: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	for _, g := range allGroups {
 		tools.PrintResource(t, g)
@@ -71,9 +65,7 @@ func TestGroupCRUD(t *testing.T) {
 
 	// Get the recently created group by ID
 	p, err := groups.Get(client, group.ID).Extract()
-	if err != nil {
-		t.Fatalf("Unable to get group: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, p)
 }
