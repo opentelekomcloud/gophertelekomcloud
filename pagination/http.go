@@ -11,7 +11,12 @@ import (
 
 // PageResult stores the HTTP response that returned the current page of results.
 type PageResult struct {
-	golangsdk.Result
+	// Body is the payload of the HTTP response from the server.
+	Body []byte
+
+	// Header contains the HTTP header structure from the original response.
+	Header http.Header
+
 	URL url.URL
 }
 
