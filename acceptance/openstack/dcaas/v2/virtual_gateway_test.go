@@ -19,9 +19,9 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	createOpts := virtual_gateway.CreateOpts{
 		Name:                 name,
 		Type:                 "default",
-		VpcId:                "0bd45fdf-bf78-41e5-bd08-99f1c65e0147",
+		VpcId:                clients.EnvOS.GetEnv("VPC_ID"),
 		Description:          "test-virtual-interface",
-		LocalEndpointGroupId: "719dd2a3-34a7-401b-935f-16d9a217ff8b",
+		LocalEndpointGroupId: clients.EnvOS.GetEnv("LOCAL_ENDPOINT_GROUP_ID"),
 	}
 
 	created, err := virtual_gateway.Create(client, createOpts)

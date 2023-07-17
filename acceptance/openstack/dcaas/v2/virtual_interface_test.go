@@ -17,8 +17,8 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 	name := tools.RandomString("test-virtual-interface", 5)
 	createOpts := virtual_interface.CreateOpts{
 		Name:              name,
-		DirectConnectID:   "b07d42dc-6137-4af3-a93b-853d879ae268",
-		VgwID:             "d27d5bd2-97b3-4bd8-b7e5-189a71c14846",
+		DirectConnectID:   clients.EnvOS.GetEnv("DIRECT_CONNECT_ID"),
+		VgwID:             clients.EnvOS.GetEnv("VIRTUAL_GATEWAY_ID"),
 		Type:              "private",
 		ServiceType:       "vpc",
 		VLAN:              100,
@@ -26,7 +26,7 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 		LocalGatewayV4IP:  "16.16.16.1/30",
 		RemoteGatewayV4IP: "16.16.16.2/30",
 		RouteMode:         "static",
-		RemoteEPGroupID:   "31dd8536-1ac7-4a38-b2fc-178a69f11b11",
+		RemoteEPGroupID:   clients.EnvOS.GetEnv("REMOTE_ENDPOINT_GROUP_ID"),
 	}
 
 	created, err := virtual_interface.Create(client, createOpts)
