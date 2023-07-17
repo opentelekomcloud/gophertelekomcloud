@@ -7,10 +7,16 @@ import (
 )
 
 type CreateOpts struct {
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description,omitempty"`
-	Endpoints   []string `json:"endpoints" required:"true"`
-	Type        string   `json:"type" required:"true"`
+	// Specifies the project ID.
+	TenantId string `json:"tenant_id" required:"true"`
+	// Specifies the name of the Direct Connect endpoint group.
+	Name string `json:"name,omitempty"`
+	// Provides supplementary information about the Direct Connect endpoint group.
+	Description string `json:"description,omitempty"`
+	// Specifies the list of the endpoints in a Direct Connect endpoint group.
+	Endpoints []string `json:"endpoints" required:"true"`
+	// Specifies the type of the Direct Connect endpoints. The value can only be cidr.
+	Type string `json:"type,omitempty"`
 }
 
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*DCEndpointGroup, error) {

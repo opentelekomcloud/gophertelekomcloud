@@ -14,6 +14,7 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	createOpts := dc_endpoint_group.CreateOpts{
+		TenantId:  "6fbe9263116a4b68818cf1edce16bc4f",
 		Name:      "test-direct-connect-endpoint-group",
 		Endpoints: []string{"10.2.0.0/24", "10.3.0.0/24"},
 		Type:      "cidr",
@@ -25,6 +26,13 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 	// Get a direct connect endpoint group
 	_, err = dc_endpoint_group.Get(client, created.ID)
 	th.AssertNoErr(t, err)
+
+	// Update a direct connect endpoint group
+	updateOpts := dc_endpoint_group.UpdateOpts{
+		Name:        "test-direct-connect-endpoint-group-updated",
+		Description: "test-direct-connect-endpoint-group-updated",
+	}
+	_ = dc_endpoint_group.Update(client, created.ID, updateOpts)
 
 	// List direct connect endpoint groups
 	listOpts := dc_endpoint_group.ListOpts{
