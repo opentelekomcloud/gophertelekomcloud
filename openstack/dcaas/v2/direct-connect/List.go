@@ -9,26 +9,47 @@ import (
 )
 
 type DirectConnect struct {
-	TenantID       string `json:"tenant_id,omitempty"`
-	ID             string `json:"id,omitempty"`
-	Name           string `json:"name,omitempty"`
-	Description    string `json:"description,omitempty"`
-	PortType       string `json:"port_type" required:"true"`
-	Bandwidth      int    `json:"bandwidth" required:"true"`
-	Location       string `json:"location" required:"true"`
-	PeerLocation   string `json:"peer_location,omitempty"`
-	DeviceID       string `json:"device_id,omitempty"`
-	InterfaceName  string `json:"interface_name,omitempty"`
-	RedundantID    string `json:"redundant_id,omitempty"`
-	Provider       string `json:"provider" required:"true"`
-	ProviderStatus string `json:"provider_status,omitempty"`
-	Type           string `json:"type,omitempty"`
-	HostingID      string `json:"hosting_id,omitempty"`
-	ChargeMode     string `json:"charge_mode,omitempty"`
-	OrderID        string `json:"order_id,omitempty"`
-	ProductID      string `json:"product_id,omitempty"`
-	Status         string `json:"status,omitempty"`
-	AdminStateUp   bool   `json:"admin_state_up,omitempty"`
+	ID                    string `json:"id"`
+	TenantID              string `json:"tenant_id"`
+	Name                  string `json:"name"`
+	Description           string `json:"description"`
+	PortType              string `json:"port_type"`
+	Bandwidth             int    `json:"bandwidth"`
+	Location              string `json:"location"`
+	PeerLocation          string `json:"peer_location"`
+	DeviceID              string `json:"device_id"`
+	InterfaceName         string `json:"interface_name"`
+	RedundantID           string `json:"redundant_id"`
+	Provider              string `json:"provider"`
+	ProviderStatus        string `json:"provider_status"`
+	Type                  string `json:"type"`
+	HostingID             string `json:"hosting_id"`
+	VLAN                  int    `json:"vlan"`
+	ChargeMode            string `json:"charge_mode"`
+	ApplyTime             string `json:"apply_time"`
+	CreateTime            string `json:"create_time"`
+	DeleteTime            string `json:"delete_time"`
+	OrderID               string `json:"order_id"`
+	ProductID             string `json:"product_id"`
+	Status                string `json:"status"`
+	AdminStateUp          bool   `json:"admin_state_up"`
+	SpecCode              string `json:"spec_code"`
+	Applicant             string `json:"applicant"`
+	Mobile                string `json:"mobile"`
+	Email                 string `json:"email"`
+	RegionID              string `json:"region_id"`
+	ServiceKey            string `json:"service_key"`
+	CableLabel            string `json:"cable_label"`
+	PeerPortType          string `json:"peer_port_type"`
+	PeerProvider          string `json:"peer_provider"`
+	OnestopProductID      string `json:"onestop_product_id"`
+	BuildingLineProductID string `json:"building_line_product_id"`
+	LastOnestopProductID  string `json:"last_onestop_product_id"`
+	PeriodType            int    `json:"period_type"`
+	PeriodNum             int    `json:"period_num"`
+	Reason                string `json:"reason"`
+	VGWType               string `json:"vgw_type"`
+	LagID                 string `json:"lag_id"`
 }
 
 // List is used to obtain the DirectConnects list

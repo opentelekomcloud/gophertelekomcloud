@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -19,7 +20,7 @@ func TestDirectConnectLifecycle(t *testing.T) {
 	createOpts := direct_connect.CreateOpts{
 		Name:      name,
 		PortType:  "1G",
-		Bandwidth: 1000,
+		Bandwidth: 100,
 		Location:  "Biere",
 		Provider:  "OTC",
 	}
@@ -28,20 +29,25 @@ func TestDirectConnectLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// Get a direct connect
-	_, err = direct_connect.Get(client, created.ID)
+	get, err := direct_connect.Get(client, created.ID)
+	fmt.Println(get)
 	th.AssertNoErr(t, err)
 
 	// List direct connects
-	_, err = direct_connect.List(client, created.ID)
+	listed, err := direct_connect.List(client, created.ID)
+	fmt.Println(listed)
+
 	th.AssertNoErr(t, err)
 
 	// Update a direct connect
 	updateOpts := direct_connect.UpdateOpts{
 		Name:        tools.RandomString(name, 3),
 		Description: "Updated description",
+		Bandwidth:   200,
 	}
 
-	_ = direct_connect.Update(client, created.ID, updateOpts)
+	updated := direct_connect.Update(client, created.ID, updateOpts)
+	fmt.Println(updated)
 
 	// Cleanup
 	t.Cleanup(func() {
