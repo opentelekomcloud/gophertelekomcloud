@@ -1,9 +1,11 @@
 package v2
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	dc_endpoint_group "github.com/opentelekomcloud/gophertelekomcloud/openstack/dcaas/v2/dc-endpoint-group"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -13,9 +15,11 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 
+	name := strings.ToLower(tools.RandomString("test-direct-connect-endpoint-group", 5))
+
 	createOpts := dc_endpoint_group.CreateOpts{
 		TenantId:  "6fbe9263116a4b68818cf1edce16bc4f",
-		Name:      "test-direct-connect-endpoint-group",
+		Name:      name,
 		Endpoints: []string{"10.2.0.0/24", "10.3.0.0/24"},
 		Type:      "cidr",
 	}
@@ -29,7 +33,7 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 
 	// Update a direct connect endpoint group
 	updateOpts := dc_endpoint_group.UpdateOpts{
-		Name:        "test-direct-connect-endpoint-group-updated",
+		Name:        tools.RandomString(name, 3),
 		Description: "test-direct-connect-endpoint-group-updated",
 	}
 	_ = dc_endpoint_group.Update(client, created.ID, updateOpts)

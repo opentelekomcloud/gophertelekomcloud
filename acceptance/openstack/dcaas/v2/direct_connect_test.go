@@ -1,9 +1,11 @@
 package v2
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	direct_connect "github.com/opentelekomcloud/gophertelekomcloud/openstack/dcaas/v2/direct-connect"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -13,8 +15,9 @@ func TestDirectConnectLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// Create a direct connect
+	name := strings.ToLower(tools.RandomString("test-direct-connect", 5))
 	createOpts := direct_connect.CreateOpts{
-		Name:      "test-direct-connect",
+		Name:      name,
 		PortType:  "1G",
 		Bandwidth: 1000,
 		Location:  "Biere",
@@ -34,6 +37,14 @@ func TestDirectConnectLifecycle(t *testing.T) {
 	}
 	_, err = direct_connect.List(client, listOpts)
 	th.AssertNoErr(t, err)
+
+	// Update a direct connect
+	updateOpts := direct_connect.UpdateOpts{
+		Name:        tools.RandomString(name, 3),
+		Description: "Updated description",
+	}
+
+	_ = direct_connect.Update(client, created.ID, updateOpts)
 
 	// Cleanup
 	t.Cleanup(func() {
