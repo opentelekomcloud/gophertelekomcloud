@@ -7,6 +7,8 @@ import (
 )
 
 type DCEndpointGroup struct {
+	// Specifies the project ID.
+	TenantId string `json:"tenant_id"`
 	// Specifies the ID of the Direct Connect endpoint group.
 	ID string `json:"id"`
 	// Specifies the name of the Direct Connect endpoint group.
