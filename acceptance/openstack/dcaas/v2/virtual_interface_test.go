@@ -41,6 +41,11 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
+	// List virtual interfaces
+	_, err = virtual_interface.List(client, created.ID)
+	th.AssertNoErr(t, err)
+
+	// Cleanup
 	t.Cleanup(func() {
 		err = virtual_interface.Delete(client, created.ID)
 		th.AssertNoErr(t, err)

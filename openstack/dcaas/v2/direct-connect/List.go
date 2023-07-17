@@ -1,6 +1,8 @@
 package direct_connect
 
 import (
+	"fmt"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
@@ -29,19 +31,11 @@ type DirectConnect struct {
 	AdminStateUp   bool   `json:"admin_state_up,omitempty"`
 }
 
-type ListOpts struct {
-	ID string `q:"id"`
-}
-
 // List is used to obtain the DirectConnects list
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]DirectConnect, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return nil, err
-	}
+func List(c *golangsdk.ServiceClient, id string) ([]DirectConnect, error) {
 
 	// GET https://{Endpoint}/v2.0/dcaas/direct-connects?id={id}
-	raw, err := c.Get(c.ServiceURL("dcaas", "direct-connects")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := c.Get(c.ServiceURL(fmt.Sprintf("dcaas/direct-connects?id=%s", id)), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

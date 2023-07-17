@@ -1,6 +1,8 @@
 package virtual_interface
 
 import (
+	"fmt"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
@@ -46,14 +48,9 @@ type VirtualInterface struct {
 	LagID               string `json:"lag_id"`
 }
 
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]VirtualInterface, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	// GET https://{Endpoint}/v2.0/{project_id}/virtual-interfaces
-	raw, err := c.Get(c.ServiceURL("dcaas", "virtual-interfaces")+q.String(), nil, openstack.StdRequestOpts())
+func List(c *golangsdk.ServiceClient, id string) ([]VirtualInterface, error) {
+	// GET https://{Endpoint}/v2.0/{project_id}/virtual-interfaces?id={id}
+	raw, err := c.Get(c.ServiceURL(fmt.Sprintf("dcaas/virtual-gateways?id=%s", id)), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

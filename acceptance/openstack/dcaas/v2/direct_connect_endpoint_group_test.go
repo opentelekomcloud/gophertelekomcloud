@@ -39,10 +39,7 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 	_ = dc_endpoint_group.Update(client, created.ID, updateOpts)
 
 	// List direct connect endpoint groups
-	listOpts := dc_endpoint_group.ListOpts{
-		ID: created.ID,
-	}
-	_, err = dc_endpoint_group.List(client, listOpts)
+	_, err = dc_endpoint_group.List(client, created.ID)
 	th.AssertNoErr(t, err)
 
 	// Cleanup

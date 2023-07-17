@@ -37,6 +37,9 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	_ = virtual_gateway.Update(client, created.ID, updateOpts)
 	th.AssertNoErr(t, err)
 
+	_, err = virtual_gateway.List(client, created.ID)
+	th.AssertNoErr(t, err)
+
 	t.Cleanup(func() {
 		err = virtual_gateway.Delete(client, created.ID)
 		th.AssertNoErr(t, err)

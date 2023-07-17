@@ -32,10 +32,7 @@ func TestDirectConnectLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	// List direct connects
-	listOpts := direct_connect.ListOpts{
-		ID: created.ID,
-	}
-	_, err = direct_connect.List(client, listOpts)
+	_, err = direct_connect.List(client, created.ID)
 	th.AssertNoErr(t, err)
 
 	// Update a direct connect
