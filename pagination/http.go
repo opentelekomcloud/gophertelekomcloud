@@ -12,7 +12,7 @@ import (
 // PageResult stores the HTTP response that returned the current page of results.
 type PageResult struct {
 	golangsdk.Result
-	url.URL
+	URL url.URL
 }
 
 // GetBodyAsSlice tries to convert page body to a slice, returning nil on fail
