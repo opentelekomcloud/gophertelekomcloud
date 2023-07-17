@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -113,7 +114,7 @@ func (r VolumePage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"volumes_links"`
 	}
-	err := r.ExtractInto(&s)
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -139,11 +140,11 @@ func (r commonResult) Extract() (*Volume, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "volume")
+	return extract.IntoStructPtr(r.Body, v, "volume")
 }
 
 func ExtractVolumesInto(r pagination.Page, v interface{}) error {
-	return r.(VolumePage).Result.ExtractIntoSlicePtr(v, "volumes")
+	return extract.IntoSlicePtr(r.(VolumePage).Body, v, "volumes")
 }
 
 // CreateResult contains the response body and error from a Create request.

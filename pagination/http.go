@@ -1,7 +1,7 @@
 package pagination
 
 import (
-	"bytes"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -12,7 +12,7 @@ import (
 // PageResult stores the HTTP response that returned the current page of results.
 type PageResult struct {
 	// Body is the payload of the HTTP response from the server.
-	Body []byte
+	Body io.Reader
 
 	// Header contains the HTTP header structure from the original response.
 	Header http.Header
@@ -24,7 +24,7 @@ type PageResult struct {
 func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
 	result := make([]interface{}, 0)
 
-	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
+	if err := extract.Into(r.Body, &result); err != nil {
 		return nil, err
 	}
 
@@ -35,7 +35,7 @@ func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
 func (r PageResult) GetBodyAsMap() (map[string]interface{}, error) {
 	result := make(map[string]interface{}, 0)
 
-	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
+	if err := extract.Into(r.Body, &result); err != nil {
 		return nil, err
 	}
 
