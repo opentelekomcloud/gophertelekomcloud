@@ -1,5 +1,3 @@
-// +build acceptance
-
 package v3
 
 import (
@@ -10,23 +8,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/endpoints"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/services"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestEndpointsList(t *testing.T) {
 	client, err := clients.NewIdentityV3Client()
-	if err != nil {
-		t.Fatalf("Unable to obtain an identity client: %v")
-	}
+	th.AssertNoErr(t, err)
 
 	allPages, err := endpoints.List(client, nil).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to list endpoints: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	allEndpoints, err := endpoints.ExtractEndpoints(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract endpoints: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	for _, endpoint := range allEndpoints {
 		tools.PrintResource(t, endpoint)
@@ -35,9 +28,7 @@ func TestEndpointsList(t *testing.T) {
 
 func TestEndpointsNavigateCatalog(t *testing.T) {
 	client, err := clients.NewIdentityV3Client()
-	if err != nil {
-		t.Fatalf("Unable to obtain an identity client: %v")
-	}
+	th.AssertNoErr(t, err)
 
 	// Discover the service we're interested in.
 	serviceListOpts := services.ListOpts{
@@ -45,14 +36,10 @@ func TestEndpointsNavigateCatalog(t *testing.T) {
 	}
 
 	allPages, err := services.List(client, serviceListOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to lookup compute service: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	allServices, err := services.ExtractServices(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract service: %v")
-	}
+	th.AssertNoErr(t, err)
 
 	if len(allServices) != 1 {
 		t.Fatalf("Expected one service, got %d", len(allServices))
@@ -68,19 +55,14 @@ func TestEndpointsNavigateCatalog(t *testing.T) {
 	}
 
 	allPages, err = endpoints.List(client, endpointListOpts).AllPages()
-	if err != nil {
-		t.Fatalf("Unable to lookup compute endpoint: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	allEndpoints, err := endpoints.ExtractEndpoints(allPages)
-	if err != nil {
-		t.Fatalf("Unable to extract endpoint: %v")
-	}
+	th.AssertNoErr(t, err)
 
-	if len(allEndpoints) != 1 {
-		t.Fatalf("Expected one endpoint, got %d", len(allEndpoints))
-	}
-
-	tools.PrintResource(t, allEndpoints[0])
+	th.AssertEquals(t, allEndpoints[0].Region, "eu-de")
+	th.AssertEquals(t, allEndpoints[1].Region, "eu-nl")
+	th.CheckEquals(t, 2, len(allEndpoints))
+	tools.PrintResource(t, allEndpoints)
 
 }
