@@ -227,16 +227,22 @@ func NewIdentityV3AdminClient() (*golangsdk.ServiceClient, error) {
 	opts := golangsdk.AuthOptions{
 		IdentityEndpoint: cloud.AuthInfo.AuthURL,
 		Username:         cloud.AuthInfo.Username,
+		UserID:           cloud.AuthInfo.UserID,
 		Password:         cloud.AuthInfo.Password,
-		DomainName:       cloud.AuthInfo.UserDomainName,
+		Passcode:         cloud.AuthInfo.Passcode,
 		TenantID:         cloud.AuthInfo.ProjectID,
+		TenantName:       cloud.AuthInfo.ProjectName,
+		DomainName:       cloud.AuthInfo.UserDomainName,
+		DomainID:         cloud.AuthInfo.DomainID,
 	}
 
 	pClient, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
 		return nil, fmt.Errorf("error creating provider client: %w", err)
 	}
-	client, err := openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{})
+	client, err := openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{
+		Region: cloud.RegionName,
+	})
 
 	if err != nil {
 		return nil, err

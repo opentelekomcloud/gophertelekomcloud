@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/agency"
@@ -20,43 +21,7 @@ func TestPolicyLifecycle(t *testing.T) {
 	client, err := clients.NewIdentityV30AdminClient()
 	th.AssertNoErr(t, err)
 
-	createOpts := policies.CreateOpts{
-		DisplayName: tools.RandomString("policy-test-", 5),
-		Type:        "AX",
-		Description: tools.RandomString("Description-", 5),
-		Policy: policies.CreatePolicy{
-			Version: "1.1",
-			Statement: []policies.CreateStatement{
-				{Action: []string{
-					"obs:bucket:ListBucket",
-				},
-					Effect: "Allow",
-					Condition: map[string]map[string][]string{
-						"StringLikeAnyOfIfExists": {
-							"obs:prefix": []string{"ht"},
-						},
-						"StringNotEndWith": {
-							"g:UserName": []string{tools.RandomString("end_of_name-", 5)},
-						},
-					},
-					Resource: []string{"OBS:*:*:bucket:some-bucket", "OBS:*:*:bucket:test-bucket"},
-				},
-				{Action: []string{
-					"obs:bucket:ListBucket",
-				},
-					Effect: "Deny",
-					Condition: map[string]map[string][]string{
-						"StringEquals": {
-							"g:UserId": []string{tools.RandomString("dummy_id-", 5)},
-						},
-					},
-					Resource: []string{"OBS:*:*:bucket:bucket"},
-				},
-			},
-		},
-	}
-
-	newPolicy, err := policies.Create(client, createOpts).Extract()
+	newPolicy := createPolicy(t, client)
 	th.AssertNoErr(t, err)
 
 	defer func() {
@@ -258,4 +223,46 @@ func TestList(t *testing.T) {
 	if allPages.Links.Self == "" {
 		t.Error("Link parameter unmarshalled improperly")
 	}
+}
+
+func createPolicy(t *testing.T, client *golangsdk.ServiceClient) *policies.Policy {
+	createOpts := policies.CreateOpts{
+		DisplayName: tools.RandomString("policy-test-", 5),
+		Type:        "AX",
+		Description: tools.RandomString("Description-", 5),
+		Policy: policies.CreatePolicy{
+			Version: "1.1",
+			Statement: []policies.CreateStatement{
+				{Action: []string{
+					"obs:bucket:ListBucket",
+				},
+					Effect: "Allow",
+					Condition: map[string]map[string][]string{
+						"StringLikeAnyOfIfExists": {
+							"obs:prefix": []string{"ht"},
+						},
+						"StringNotEndWith": {
+							"g:UserName": []string{tools.RandomString("end_of_name-", 5)},
+						},
+					},
+					Resource: []string{"OBS:*:*:bucket:some-bucket", "OBS:*:*:bucket:test-bucket"},
+				},
+				{Action: []string{
+					"obs:bucket:ListBucket",
+				},
+					Effect: "Deny",
+					Condition: map[string]map[string][]string{
+						"StringEquals": {
+							"g:UserId": []string{tools.RandomString("dummy_id-", 5)},
+						},
+					},
+					Resource: []string{"OBS:*:*:bucket:bucket"},
+				},
+			},
+		},
+	}
+
+	newPolicy, err := policies.Create(client, createOpts).Extract()
+	th.AssertNoErr(t, err)
+	return newPolicy
 }
