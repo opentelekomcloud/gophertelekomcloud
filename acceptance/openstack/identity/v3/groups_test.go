@@ -13,7 +13,7 @@ import (
 )
 
 func TestGroupCRUD(t *testing.T) {
-	client, err := clients.NewIdentityV3Client()
+	client, err := clients.NewIdentityV3AdminClient()
 	th.AssertNoErr(t, err)
 
 	createOpts := groups.CreateOpts{
