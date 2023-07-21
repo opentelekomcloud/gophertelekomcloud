@@ -458,6 +458,8 @@ func defaultOkCodes(method string) []int {
 		return []int{200, 204}
 	case "DELETE":
 		return []int{202, 204}
+	case "HEAD":
+		return []int{204, 206}
 	}
 	return []int{}
 }

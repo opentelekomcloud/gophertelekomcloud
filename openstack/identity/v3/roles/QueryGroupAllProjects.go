@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/policies"
 )
 
+// QueryGroupAllProjects API not registered
 func QueryGroupAllProjects(client *golangsdk.ServiceClient, domainId, groupId, roleId string) (*policies.ListPolicy, error) {
 	// GET https://{Endpoint}/v3/OS-INHERIT/domains/{domain_id}/groups/{group_id}/roles/{role_id}/inherited_to_projects
 	raw, err := client.Get(client.ServiceURL("OS-INHERIT", "domains", domainId, "groups", groupId, "roles", roleId, "inherited_to_projects"),
