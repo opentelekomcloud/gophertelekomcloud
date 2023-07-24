@@ -6,13 +6,13 @@ import (
 )
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Host, error) {
-	// GET /v1/{project_id}/premium-waf/host
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
 
-	url := client.ServiceURL("host") + query.String()
+	// GET /v1/{project_id}/premium-waf/host
+	url := client.ServiceURL("premium-waf", "host") + query.String()
 	raw, err := client.Get(url, nil, nil)
 	if err != nil {
 		return nil, err

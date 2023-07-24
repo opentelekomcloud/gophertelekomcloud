@@ -7,7 +7,7 @@ import (
 
 func Get(client *golangsdk.ServiceClient, id string) (*Instance, error) {
 	// GET /v1/{project_id}/premium-waf/instance
-	raw, err := client.Get(client.ServiceURL("instance", id), nil, nil)
+	raw, err := client.Get(client.ServiceURL("premium-waf", "instance", id), nil, nil)
 	if err != nil {
 		return nil, err
 	}

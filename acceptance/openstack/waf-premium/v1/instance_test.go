@@ -13,10 +13,43 @@ import (
 )
 
 func TestWafPremiumInstanceWorkflow(t *testing.T) {
-	client, err := clients.NewWafPremiumV1Client()
-	th.AssertNoErr(t, err)
+	region := os.Getenv("OS_REGION_NAME")
+	az := os.Getenv("OS_AVAILABILITY_ZONE")
+	vpcID := os.Getenv("OS_VPC_ID")
+	subnetID := os.Getenv("OS_NETWORK_ID")
+	if vpcID == "" && subnetID == "" && region == "" && az == "" {
+		t.Skip("OS_REGION_NAME, OS_AVAILABILITY_ZONE, OS_VPC_ID and OS_NETWORK_ID env vars is required for this test")
+	}
 
-	instanceId := createInstance(t, client)
+	var client *golangsdk.ServiceClient
+	var err error
+	if region == "eu-ch2" {
+		client, err = clients.NewWafdSwissV1Client()
+		th.AssertNoErr(t, err)
+	} else {
+		client, err = clients.NewWafdV1Client()
+		th.AssertNoErr(t, err)
+	}
+
+	opts := instances.CreateOpts{
+		Count:            1,
+		Region:           region,
+		AvailabilityZone: az,
+		Architecture:     "x86_64",
+		InstanceName:     tools.RandomString("waf-instance-", 3),
+		Specification:    "waf.instance.enterprise",
+		Flavor:           "s3.2xlarge.2",
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
+		SecurityGroupsId: []string{openstack.DefaultSecurityGroup(t)},
+	}
+
+	t.Logf("Attempting to create WAF premium instance")
+	inst, err := instances.Create(client, opts)
+	th.AssertNoErr(t, err)
+	t.Logf("Created WAF instance: %s", inst.Instances[0].Id)
+	instanceId := inst.Instances[0].Id
+
 	th.AssertNoErr(t, waitForInstanceToBeCreated(client, 600, instanceId))
 
 	t.Cleanup(func() {
@@ -42,38 +75,4 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instanceUpdated.Name, updatedName)
-}
-
-func createInstance(t *testing.T, client *golangsdk.ServiceClient) string {
-	t.Logf("Attempting to create WAF premium instance")
-
-	region := os.Getenv("OS_REGION_NAME")
-	az := os.Getenv("OS_AVAILABILITY_ZONE")
-	vpcID := os.Getenv("OS_VPC_ID")
-	subnetID := os.Getenv("OS_NETWORK_ID")
-	if vpcID == "" && subnetID == "" && region == "" && az == "" {
-		t.Skip("OS_REGION_NAME, OS_AVAILABILITY_ZONE, OS_VPC_ID and OS_NETWORK_ID env vars is required for this test")
-	}
-	// to be deleted
-	if region != "eu-ch2" {
-		t.Skip("this service deployed only in SWISS region for now")
-	}
-	//
-
-	opts := instances.CreateOpts{
-		Count:            1,
-		Region:           region,
-		AvailabilityZone: az,
-		Architecture:     "x86_64",
-		InstanceName:     tools.RandomString("waf-instance-", 3),
-		Specification:    "waf.instance.enterprise",
-		Flavor:           "s3.2xlarge.2",
-		VpcId:            vpcID,
-		SubnetId:         subnetID,
-		SecurityGroupsId: []string{openstack.DefaultSecurityGroup(t)},
-	}
-	inst, err := instances.Create(client, opts)
-	th.AssertNoErr(t, err)
-	t.Logf("Created WAF instance: %s", inst.Instances[0].Id)
-	return inst.Instances[0].Id
 }

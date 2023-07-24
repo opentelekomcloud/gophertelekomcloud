@@ -13,7 +13,7 @@ func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOpts) (err er
 	if err != nil {
 		return
 	}
-	_, err = client.Delete(client.ServiceURL("host", id)+q.String(), &golangsdk.RequestOpts{
+	_, err = client.Delete(client.ServiceURL("premium-waf", "host", id)+q.String(), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf8"},
 	})

@@ -56,7 +56,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*InstanceResponse
 	}
 
 	// POST /v1/{project_id}/premium-waf/instance
-	raw, err := client.Post(client.ServiceURL("instance"), b,
+	raw, err := client.Post(client.ServiceURL("premium-waf", "instance"), b,
 		nil, &golangsdk.RequestOpts{
 			OkCodes: []int{201},
 		})

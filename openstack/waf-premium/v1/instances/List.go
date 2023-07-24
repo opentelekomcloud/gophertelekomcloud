@@ -12,7 +12,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Instance, error) {
 		return nil, err
 	}
 
-	url := client.ServiceURL("instance") + query.String()
+	url := client.ServiceURL("premium-waf", "instance") + query.String()
 	raw, err := client.Get(url, nil, nil)
 	if err != nil {
 		return nil, err

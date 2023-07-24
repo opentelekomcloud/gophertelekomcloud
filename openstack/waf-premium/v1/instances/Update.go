@@ -18,7 +18,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Insta
 	}
 
 	// PUT /v1/{project_id}/premium-waf/instance
-	raw, err := client.Put(client.ServiceURL("instance", id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("premium-waf", "instance", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

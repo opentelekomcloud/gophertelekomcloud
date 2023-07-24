@@ -859,13 +859,23 @@ func NewWAFV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
-// NewWAFPremiumV1 creates a ServiceClient that may be used to access the premium WAF service.
-func NewWAFPremiumV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+// NewWAFDSwissV1 creates a ServiceClient that may be used to access the premium WAF service.
+func NewWAFDSwissV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "waf")
 	if err != nil {
 		return nil, err
 	}
-	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/premium-waf/"
+	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/"
+	return sc, err
+}
+
+// NewWAFDV1 creates a ServiceClient that may be used to access the premium WAF service.
+func NewWAFDV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "premium-waf")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/"
 	return sc, err
 }
 

@@ -64,7 +64,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Host,
 	}
 
 	// PUT /v1/{project_id}/premium-waf/host
-	raw, err := client.Put(client.ServiceURL("host", id), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("premium-waf", "host", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf8"},
 	})

@@ -22,7 +22,7 @@ func Upgrade(client *golangsdk.ServiceClient, id string) (*Instance, error) {
 	}
 
 	// POST /v1/{project_id}/premium-waf/instance
-	raw, err := client.Post(client.ServiceURL("instance", id, "action"), b,
+	raw, err := client.Post(client.ServiceURL("premium-waf", "instance", id, "action"), b,
 		nil, &golangsdk.RequestOpts{
 			OkCodes: []int{200},
 		})
