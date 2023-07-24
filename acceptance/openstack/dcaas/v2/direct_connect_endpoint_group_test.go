@@ -16,9 +16,10 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	name := strings.ToLower(tools.RandomString("test-direct-connect-endpoint-group", 5))
+	TenantId := clients.EnvOS.GetEnv("TENANT_ID")
 
 	createOpts := dc_endpoint_group.CreateOpts{
-		TenantId:  clients.EnvOS.GetEnv("OS_TENANT_ID"),
+		TenantId:  TenantId,
 		Name:      name,
 		Endpoints: []string{"10.2.0.0/24", "10.3.0.0/24"},
 		Type:      "cidr",

@@ -7,6 +7,7 @@ import (
 )
 
 type CreateOpts struct {
+	TenantID          string `json:"tenant_id,omitempty"`
 	Name              string `json:"name,omitempty"`
 	Description       string `json:"description,omitempty"`
 	DirectConnectID   string `json:"direct_connect_id"  required:"true"`

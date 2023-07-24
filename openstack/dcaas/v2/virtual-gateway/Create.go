@@ -22,9 +22,9 @@ type CreateOpts struct {
 	// Specifies the ID of the redundant physical device used by the virtual gateway.
 	RedundantDeviceId string `json:"redundant_device_id,omitempty"`
 	// Specifies the virtual gateway type. The value can only be default.
-	Type string `json:"type" Default:"default"`
+	Type string `json:"type"`
 	// Specifies the administrative status of the virtual gateway.
-	AdminStateUp bool `json:"admin_state_up,omitempty"`
+	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 }
 
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*VirtualGateway, error) {
