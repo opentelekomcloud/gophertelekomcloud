@@ -1,7 +1,6 @@
 package pagination
 
 import (
-	"bytes"
 	"fmt"
 	"reflect"
 
@@ -35,7 +34,7 @@ func (current LinkedPageBase) NextPageURL() (string, error) {
 
 	submap := make(map[string]interface{})
 
-	err := extract.Into(bytes.NewReader(current.Body), &submap)
+	err := extract.Into(current.Body, &submap)
 	if err != nil {
 		err := golangsdk.ErrUnexpectedType{}
 		err.Expected = "map[string]interface{}"
@@ -86,12 +85,6 @@ func (current LinkedPageBase) IsEmpty() (bool, error) {
 	}
 
 	return len(body) == 0, nil
-}
-
-// GetBody returns the linked page's body. This method is needed to satisfy the
-// Page interface.
-func (current LinkedPageBase) GetBody() []byte {
-	return current.Body
 }
 
 // WrapNextPageURL function use makerID to warp next page url,it returns the full url for request.

@@ -53,8 +53,3 @@ func (p OffsetPageBase) IsEmpty() (bool, error) {
 
 	return len(body) == 0, nil
 }
-
-// GetBody returns the Page Body. This is used in the `AllPages` method.
-func (p OffsetPageBase) GetBody() []byte {
-	return p.Body
-}

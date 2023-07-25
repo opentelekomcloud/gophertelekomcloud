@@ -46,9 +46,3 @@ func (current MarkerPageBase) IsEmpty() (bool, error) {
 
 	return len(body) == 0, nil
 }
-
-// GetBody returns the linked page's body. This method is needed to satisfy the
-// Page interface.
-func (current MarkerPageBase) GetBody() []byte {
-	return current.Body
-}

@@ -8,10 +8,6 @@ import (
 // Deprecated: use element slice as a return result.
 type SinglePageBase PageResult
 
-func (current SinglePageBase) GetBody() []byte {
-	return current.Body
-}
-
 func (current SinglePageBase) GetBodyAsSlice() ([]interface{}, error) {
 	return PageResult(current).GetBodyAsSlice()
 }

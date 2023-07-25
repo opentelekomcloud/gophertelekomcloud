@@ -20,6 +20,11 @@ type PageResult struct {
 	URL url.URL
 }
 
+func (r PageResult) GetBody() []byte {
+	b, _ := io.ReadAll(r.Body)
+	return b
+}
+
 // GetBodyAsSlice tries to convert page body to a slice, returning nil on fail
 func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
 	result := make([]interface{}, 0)
