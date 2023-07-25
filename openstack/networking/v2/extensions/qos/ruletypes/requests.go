@@ -11,7 +11,7 @@ func ListRuleTypes(c *golangsdk.ServiceClient) (result pagination.Pager) {
 		Client:     c,
 		InitialURL: listRuleTypesURL(c),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return ListRuleTypesPage{pagination.SinglePageBase(r)}
+			return ListRuleTypesPage{pagination.SinglePageBase{r}}
 		},
 	}
 }

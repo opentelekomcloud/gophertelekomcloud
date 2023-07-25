@@ -13,7 +13,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: hypervisorsListDetailURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return HypervisorPage{pagination.SinglePageBase(r)}
+			return HypervisorPage{pagination.SinglePageBase{r}}
 		},
 	}
 }

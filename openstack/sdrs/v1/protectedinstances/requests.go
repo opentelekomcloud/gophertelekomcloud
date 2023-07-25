@@ -163,7 +163,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		Client:     c,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return InstancePage{pagination.SinglePageBase(r)}
+			return InstancePage{pagination.SinglePageBase{r}}
 		},
 	}
 }

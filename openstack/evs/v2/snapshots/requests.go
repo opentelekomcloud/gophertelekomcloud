@@ -135,7 +135,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		Client:     client,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return SnapshotPage{pagination.SinglePageBase(r)}
+			return SnapshotPage{pagination.SinglePageBase{r}}
 		},
 	}
 }

@@ -1,7 +1,6 @@
 package snapshots
 
 import (
-	"bytes"
 	"encoding/json"
 	"time"
 
@@ -103,7 +102,7 @@ type UpdateMetadataResult struct {
 
 // ExtractMetadata returns the metadata from a response from snapshots.UpdateMetadata.
 func (r UpdateMetadataResult) ExtractMetadata() (map[string]interface{}, error) {
-	return metadata.Extract(bytes.NewReader(r.Body))
+	return metadata.Extract(r.Body)
 }
 
 type commonResult struct {

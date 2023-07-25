@@ -11,7 +11,7 @@ func List(client *golangsdk.ServiceClient, serverID string) pagination.Pager {
 		Client:     client,
 		InitialURL: listInterfaceURL(client, serverID),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return InterfacePage{pagination.SinglePageBase(r)}
+			return InterfacePage{pagination.SinglePageBase{r}}
 		},
 	}
 }

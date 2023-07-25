@@ -1,9 +1,7 @@
 package snapshots
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -117,8 +115,7 @@ type UpdateMetadataResult struct {
 
 // ExtractMetadata returns the metadata from a response from snapshots.UpdateMetadata.
 func (r UpdateMetadataResult) ExtractMetadata() (map[string]interface{}, error) {
-	var r2 io.Reader = bytes.NewReader(r.Body)
-	return metadata.Extract(r2)
+	return metadata.Extract(r.Body)
 }
 
 type commonResult struct {

@@ -176,7 +176,7 @@ func ListAccesses(client *golangsdk.ServiceClient, id string) pagination.Pager {
 		Client:     client,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return AccessPage{pagination.SinglePageBase(r)}
+			return AccessPage{pagination.SinglePageBase{r}}
 		},
 	}
 }

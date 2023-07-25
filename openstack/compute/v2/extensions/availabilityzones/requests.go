@@ -11,7 +11,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: listURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return AvailabilityZonePage{pagination.SinglePageBase(r)}
+			return AvailabilityZonePage{pagination.SinglePageBase{r}}
 		},
 	}
 }
@@ -22,7 +22,7 @@ func ListDetail(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: listDetailURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return AvailabilityZonePage{pagination.SinglePageBase(r)}
+			return AvailabilityZonePage{pagination.SinglePageBase{r}}
 		},
 	}
 }

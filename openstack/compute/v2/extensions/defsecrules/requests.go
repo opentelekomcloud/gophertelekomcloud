@@ -13,7 +13,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: rootURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return DefaultRulePage{pagination.SinglePageBase(r)}
+			return DefaultRulePage{pagination.SinglePageBase{r}}
 		},
 	}
 }

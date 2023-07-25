@@ -217,7 +217,7 @@ func List(client *golangsdk.ServiceClient, opts ListDmsBuilder) pagination.Pager
 		Client:     client,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return DmsPage{pagination.SinglePageBase(r)}
+			return DmsPage{pagination.SinglePageBase{r}}
 		},
 	}
 

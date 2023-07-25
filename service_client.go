@@ -43,7 +43,7 @@ func (client *ServiceClient) ServiceURL(parts ...string) string {
 	return client.ResourceBaseURL() + strings.Join(parts, "/")
 }
 
-func (client *ServiceClient) initReqOpts(JSONBody map[string]interface{}, JSONResponse *io.Reader, opts *RequestOpts) {
+func (client *ServiceClient) initReqOpts(JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) {
 	opts.JSONBody = JSONBody
 
 	if JSONResponse != nil {
@@ -71,7 +71,7 @@ func (client *ServiceClient) Get(url string, JSONResponse *io.Reader, opts *Requ
 
 // Post calls `Request` with the "POST" HTTP verb. Def 201, 202
 // JSONResponse Deprecated
-func (client *ServiceClient) Post(url string, JSONBody map[string]interface{}, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Post(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -81,7 +81,7 @@ func (client *ServiceClient) Post(url string, JSONBody map[string]interface{}, J
 
 // Put calls `Request` with the "PUT" HTTP verb. Def 201, 202
 // JSONResponse Deprecated
-func (client *ServiceClient) Put(url string, JSONBody map[string]interface{}, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Put(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -91,7 +91,7 @@ func (client *ServiceClient) Put(url string, JSONBody map[string]interface{}, JS
 
 // Patch calls `Request` with the "PATCH" HTTP verb. Def 200, 204
 // JSONResponse Deprecated
-func (client *ServiceClient) Patch(url string, JSONBody map[string]interface{}, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Patch(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -118,7 +118,7 @@ func (client *ServiceClient) Head(url string, opts *RequestOpts) (*http.Response
 }
 
 // DeleteWithBody calls `Request` with the "DELETE" HTTP verb. Def 202, 204
-func (client *ServiceClient) DeleteWithBody(url string, JSONBody map[string]interface{}, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) DeleteWithBody(url string, JSONBody any, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -138,7 +138,7 @@ func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse *io.Rea
 
 // DeleteWithBodyResp calls `Request` with the "DELETE" HTTP verb. Def 202, 204
 // Deprecated
-func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody map[string]interface{}, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
