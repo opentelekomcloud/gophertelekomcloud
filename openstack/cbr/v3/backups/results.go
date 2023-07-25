@@ -1,8 +1,6 @@
 package backups
 
 import (
-	"bytes"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -78,7 +76,7 @@ type BackupPage struct {
 
 func (r BackupPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(bytes.NewReader(r.Body), &res, "backups_links")
+	err := extract.IntoSlicePtr(r.Body, &res, "backups_links")
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +90,7 @@ func (r BackupPage) IsEmpty() (bool, error) {
 
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
 	var res []Backup
-	err := extract.IntoSlicePtr(bytes.NewReader(r.(BackupPage).Body), &res, "backups")
+	err := extract.IntoSlicePtr(r.(BackupPage).Body, &res, "backups")
 	if err != nil {
 		return nil, err
 	}

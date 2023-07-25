@@ -1,7 +1,6 @@
 package flavors
 
 import (
-	"bytes"
 	"encoding/json"
 	"strconv"
 
@@ -89,7 +88,7 @@ func (page FlavorPage) IsEmpty() (bool, error) {
 // next page of results.
 func (page FlavorPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(bytes.NewReader(page.Body), &res, "flavors_links")
+	err := extract.IntoSlicePtr(page.Body, &res, "flavors_links")
 	if err != nil {
 		return "", err
 	}
@@ -100,6 +99,6 @@ func (page FlavorPage) NextPageURL() (string, error) {
 // from the List operation.
 func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
 	var res []Flavor
-	err := extract.IntoSlicePtr(bytes.NewReader(r.(FlavorPage).Body), &res, "flavors")
+	err := extract.IntoSlicePtr(r.(FlavorPage).Body, &res, "flavors")
 	return res, err
 }

@@ -1,8 +1,6 @@
 package nics
 
 import (
-	"bytes"
-
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -37,7 +35,7 @@ type NicPage struct {
 // to do this, it needs to construct the next page's URL.
 func (r NicPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(bytes.NewReader(r.Body), &res, "interfaceAttachments_links")
+	err := extract.IntoSlicePtr(r.Body, &res, "interfaceAttachments_links")
 	if err != nil {
 		return "", err
 	}
@@ -56,6 +54,6 @@ func (r NicPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractNics(r pagination.Page) ([]Nic, error) {
 	var res []Nic
-	err := extract.IntoSlicePtr(bytes.NewReader(r.(NicPage).Body), &res, "interfaceAttachments")
+	err := extract.IntoSlicePtr(r.(NicPage).Body, &res, "interfaceAttachments")
 	return res, err
 }

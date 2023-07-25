@@ -1,7 +1,6 @@
 package servers
 
 import (
-	"bytes"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -22,7 +21,7 @@ func (r ServerPage) IsEmpty() (bool, error) {
 // NextPageURL uses the response's embedded link reference to navigate to the next page of results.
 func (r ServerPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(bytes.NewReader(r.Body), &res, "servers_links")
+	err := extract.IntoSlicePtr(r.Body, &res, "servers_links")
 	if err != nil {
 		return "", err
 	}
@@ -34,7 +33,7 @@ func (r ServerPage) NextPageURL() (string, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractServers(r pagination.Page) ([]Server, error) {
 	var res []Server
-	err := extract.IntoSlicePtr(bytes.NewReader(r.(ServerPage).Body), &res, "servers")
+	err := extract.IntoSlicePtr(r.(ServerPage).Body, &res, "servers")
 	return res, err
 }
 

@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"bytes"
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -76,6 +75,6 @@ type RepositoryPage struct {
 
 func ExtractRepositories(p pagination.Page) ([]ImageRepository, error) {
 	var res []ImageRepository
-	err := extract.IntoSlicePtr(bytes.NewReader(p.(RepositoryPage).Body), &res, "")
+	err := extract.IntoSlicePtr(p.(RepositoryPage).Body, &res, "")
 	return res, err
 }
