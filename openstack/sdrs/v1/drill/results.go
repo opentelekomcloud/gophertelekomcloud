@@ -38,7 +38,7 @@ func (r commonResult) Extract() (*Drill, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "disaster_recovery_drill")
+	return r.ExtractIntoStructPtr(v, "disaster_recovery_drill")
 }
 
 // UpdateResult represents the result of a update operation. Call its Extract

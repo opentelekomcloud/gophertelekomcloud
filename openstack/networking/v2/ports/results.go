@@ -17,7 +17,7 @@ func (r commonResult) Extract() (*Port, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "port")
+	return r.ExtractIntoStructPtr(v, "port")
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
@@ -139,5 +139,5 @@ func ExtractPorts(r pagination.Page) ([]Port, error) {
 }
 
 func ExtractPortsInto(r pagination.Page, v interface{}) error {
-	return r.(PortPage).Result.ExtractIntoSlicePtr(v, "ports")
+	return r.(PortPage).ExtractIntoSlicePtr(v, "ports")
 }

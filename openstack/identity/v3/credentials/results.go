@@ -65,7 +65,7 @@ func (lr ListResult) Extract() ([]Credential, error) {
 	var a struct {
 		Instances []Credential `json:"credentials"`
 	}
-	err := lr.Result.ExtractInto(&a)
+	err := lr.ExtractInto(&a)
 	return a.Instances, err
 }
 

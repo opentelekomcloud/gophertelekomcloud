@@ -154,7 +154,7 @@ func (r commonResult) ExtractKeyInfo() (*Key, error) {
 }
 
 func (r commonResult) ExtractKeyInfoInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "key_info")
+	return r.ExtractIntoStructPtr(v, "key_info")
 }
 
 func (r commonResult) ExtractDataKey() (*DataKey, error) {

@@ -25,7 +25,7 @@ type GetResult struct {
 
 func (r GetResult) Extract() (SnatRule, error) {
 	var SR SnatRule
-	err := r.Result.ExtractIntoStructPtr(&SR, "snat_rule")
+	err := r.ExtractIntoStructPtr(&SR, "snat_rule")
 	return SR, err
 }
 
@@ -36,7 +36,7 @@ type CreateResult struct {
 
 func (r CreateResult) Extract() (SnatRule, error) {
 	var SR SnatRule
-	err := r.Result.ExtractIntoStructPtr(&SR, "snat_rule")
+	err := r.ExtractIntoStructPtr(&SR, "snat_rule")
 	return SR, err
 }
 

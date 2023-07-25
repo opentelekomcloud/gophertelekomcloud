@@ -26,7 +26,7 @@ type GetResult struct {
 
 func (r GetResult) Extract() (*SnatRule, error) {
 	s := new(SnatRule)
-	err := r.Result.ExtractIntoStructPtr(s, "snat_rule")
+	err := r.ExtractIntoStructPtr(s, "snat_rule")
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ type CreateResult struct {
 
 func (r CreateResult) Extract() (*SnatRule, error) {
 	s := new(SnatRule)
-	err := r.Result.ExtractIntoStructPtr(s, "snat_rule")
+	err := r.ExtractIntoStructPtr(s, "snat_rule")
 	if err != nil {
 		return nil, err
 	}

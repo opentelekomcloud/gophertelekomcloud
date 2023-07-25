@@ -65,12 +65,12 @@ func (r commonResult) Extract() (*VolumeType, error) {
 
 // ExtractInto converts our response data into a volume type struct
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "volume_type")
+	return r.ExtractIntoStructPtr(v, "volume_type")
 }
 
 // ExtractVolumesInto similar to ExtractInto but operates on a `list` of volume types
 func ExtractVolumeTypesInto(r pagination.Page, v interface{}) error {
-	return r.(VolumeTypePage).Result.ExtractIntoSlicePtr(v, "volume_types")
+	return r.(VolumeTypePage).ExtractIntoSlicePtr(v, "volume_types")
 }
 
 // GetResult contains the response body and error from a Get request.

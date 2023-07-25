@@ -18,5 +18,5 @@ func (r GetResult) Extract() (*VolumeAttachment, error) {
 }
 
 func (r GetResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "volumeAttachment")
+	return r.ExtractIntoStructPtr(v, "volumeAttachment")
 }

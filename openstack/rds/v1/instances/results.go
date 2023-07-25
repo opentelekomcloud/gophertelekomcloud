@@ -73,7 +73,7 @@ func (r commonResult) Extract() (*Instance, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "instance")
+	return r.ExtractIntoStructPtr(v, "instance")
 }
 
 type commonResult struct {
@@ -105,6 +105,6 @@ func (lr ListResult) Extract() ([]Instance, error) {
 	var a struct {
 		Instances []Instance `json:"instances"`
 	}
-	err := lr.Result.ExtractInto(&a)
+	err := lr.ExtractInto(&a)
 	return a.Instances, err
 }

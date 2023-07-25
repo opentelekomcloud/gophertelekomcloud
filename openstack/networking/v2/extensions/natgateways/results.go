@@ -25,7 +25,7 @@ type GetResult struct {
 
 func (r GetResult) Extract() (NatGateway, error) {
 	var natGw NatGateway
-	err := r.Result.ExtractIntoStructPtr(&natGw, "nat_gateway")
+	err := r.ExtractIntoStructPtr(&natGw, "nat_gateway")
 	return natGw, err
 }
 
@@ -36,7 +36,7 @@ type CreateResult struct {
 
 func (r CreateResult) Extract() (NatGateway, error) {
 	var NatGW NatGateway
-	err := r.Result.ExtractIntoStructPtr(&NatGW, "nat_gateway")
+	err := r.ExtractIntoStructPtr(&NatGW, "nat_gateway")
 	return NatGW, err
 }
 
@@ -47,7 +47,7 @@ type UpdateResult struct {
 
 func (r UpdateResult) Extract() (NatGateway, error) {
 	var natGw NatGateway
-	err := r.Result.ExtractIntoStructPtr(&natGw, "nat_gateway")
+	err := r.ExtractIntoStructPtr(&natGw, "nat_gateway")
 	return natGw, err
 }
 

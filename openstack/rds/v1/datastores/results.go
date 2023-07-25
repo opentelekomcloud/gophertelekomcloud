@@ -19,6 +19,6 @@ func (lr ListResult) Extract() ([]DataStore, error) {
 	var a struct {
 		DataStores []DataStore `json:"datastores"`
 	}
-	err := lr.Result.ExtractInto(&a)
+	err := lr.ExtractInto(&a)
 	return a.DataStores, err
 }

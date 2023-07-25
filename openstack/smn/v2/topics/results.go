@@ -32,7 +32,7 @@ func (r commonResult) ExtractGet() (*TopicGet, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "")
+	return r.ExtractIntoStructPtr(v, "")
 }
 
 type commonResult struct {
@@ -64,6 +64,6 @@ func (lr ListResult) Extract() ([]TopicGet, error) {
 	var a struct {
 		Topics []TopicGet `json:"topics"`
 	}
-	err := lr.Result.ExtractInto(&a)
+	err := lr.ExtractInto(&a)
 	return a.Topics, err
 }

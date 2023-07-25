@@ -35,7 +35,7 @@ func (r commonResult) Extract() (*Group, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "server_group")
+	return r.ExtractIntoStructPtr(v, "server_group")
 }
 
 // UpdateResult represents the result of a update operation. Call its Extract

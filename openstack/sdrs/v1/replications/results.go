@@ -59,7 +59,7 @@ func (r commonResult) Extract() (*Replication, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "replication")
+	return r.ExtractIntoStructPtr(v, "replication")
 }
 
 // UpdateResult represents the result of a update operation. Call its Extract

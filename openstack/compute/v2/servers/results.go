@@ -25,11 +25,11 @@ func (r serverResult) Extract() (*Server, error) {
 }
 
 func (r serverResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "server")
+	return r.ExtractIntoStructPtr(v, "server")
 }
 
 func ExtractServersInto(r pagination.Page, v interface{}) error {
-	return r.(ServerPage).Result.ExtractIntoSlicePtr(v, "servers")
+	return r.(ServerPage).ExtractIntoSlicePtr(v, "servers")
 }
 
 // CreateResult is the response from a Create operation. Call its Extract
@@ -105,7 +105,8 @@ type GetPasswordResult struct {
 // If privateKey != nil the password is decrypted with the private key.
 // If privateKey == nil the encrypted password is returned and can be decrypted
 // with:
-//   echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
+//
+//	echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
 func (r GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string, error) {
 	var s struct {
 		Password string `json:"password"`

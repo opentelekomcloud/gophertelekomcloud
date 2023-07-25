@@ -17,6 +17,6 @@ func (lr ListResult) Extract() ([]Flavor, error) {
 	var a struct {
 		Flavors []Flavor `json:"flavors"`
 	}
-	err := lr.Result.ExtractInto(&a)
+	err := lr.ExtractInto(&a)
 	return a.Flavors, err
 }

@@ -17,7 +17,7 @@ func (r commonResult) Extract() (*Network, error) {
 }
 
 func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "network")
+	return r.ExtractIntoStructPtr(v, "network")
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
@@ -114,5 +114,5 @@ func ExtractNetworks(r pagination.Page) ([]Network, error) {
 }
 
 func ExtractNetworksInto(r pagination.Page, v interface{}) error {
-	return r.(NetworkPage).Result.ExtractIntoSlicePtr(v, "networks")
+	return r.(NetworkPage).ExtractIntoSlicePtr(v, "networks")
 }

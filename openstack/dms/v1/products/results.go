@@ -57,6 +57,6 @@ type GetResult struct {
 // Extract from GetResult
 func (r GetResult) Extract() (*GetResponse, error) {
 	var s GetResponse
-	err := r.Result.ExtractInto(&s)
+	err := r.ExtractInto(&s)
 	return &s, err
 }

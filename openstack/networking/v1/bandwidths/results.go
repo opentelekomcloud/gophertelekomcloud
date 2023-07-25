@@ -54,7 +54,7 @@ func (r GetResult) Extract() (BandWidth, error) {
 	var BW struct {
 		BW BandWidth `json:"bandwidth"`
 	}
-	err := r.Result.ExtractInto(&BW)
+	err := r.ExtractInto(&BW)
 	return BW.BW, err
 }
 
@@ -65,7 +65,7 @@ type UpdateResult struct {
 
 func (r UpdateResult) Extract() (BandWidth, error) {
 	var bw BandWidth
-	err := r.Result.ExtractIntoStructPtr(&bw, "bandwidth")
+	err := r.ExtractIntoStructPtr(&bw, "bandwidth")
 	return bw, err
 }
 
