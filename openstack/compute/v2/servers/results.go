@@ -30,7 +30,7 @@ func (r serverResult) ExtractInto(v interface{}) error {
 }
 
 func ExtractServersInto(r pagination.Page, v interface{}) error {
-	return r.(ServerPage).ExtractIntoSlicePtr(v, "servers")
+	return extract.IntoSlicePtr(r.(ServerPage).Body, v, "servers")
 }
 
 // CreateResult is the response from a Create operation. Call its Extract

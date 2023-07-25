@@ -141,5 +141,5 @@ func ExtractPorts(r pagination.Page) ([]Port, error) {
 }
 
 func ExtractPortsInto(r pagination.Page, v interface{}) error {
-	return r.(PortPage).ExtractIntoSlicePtr(v, "ports")
+	return extract.IntoSlicePtr(r.(PortPage).Body, v, "ports")
 }

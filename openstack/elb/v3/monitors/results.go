@@ -2,6 +2,7 @@ package monitors
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -92,7 +93,8 @@ func (r MonitorPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractMonitors(r pagination.Page) ([]Monitor, error) {
 	var s []Monitor
-	err := (r.(MonitorPage)).ExtractIntoSlicePtr(&s, "healthmonitors")
+
+	err := extract.IntoSlicePtr((r.(MonitorPage)).Body, &s, "healthmonitors")
 	if err != nil {
 		return nil, err
 	}

@@ -76,7 +76,8 @@ func (r VpcPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractVpcs(r pagination.Page) ([]Vpc, error) {
 	var s []Vpc
-	err := (r.(VpcPage)).ExtractIntoSlicePtr(&s, "vpcs")
+
+	err := extract.IntoSlicePtr((r.(VpcPage)).Body, &s, "vpcs")
 	if err != nil {
 		return nil, err
 	}

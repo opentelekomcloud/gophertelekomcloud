@@ -2,6 +2,7 @@ package policies
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/rules"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -70,7 +71,8 @@ func (p PolicyPage) IsEmpty() (bool, error) {
 
 func ExtractPolicies(p pagination.Page) ([]Policy, error) {
 	var policies []Policy
-	err := p.(PolicyPage).ExtractIntoSlicePtr(&policies, "l7policies")
+
+	err := extract.IntoSlicePtr(p.(PolicyPage).Body, &policies, "l7policies")
 	if err != nil {
 		return nil, err
 	}

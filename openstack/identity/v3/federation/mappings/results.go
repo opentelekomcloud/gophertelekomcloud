@@ -2,6 +2,7 @@ package mappings
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -71,7 +72,8 @@ func (r MappingPage) IsEmpty() (bool, error) {
 // ExtractMappings returns a slice of Mappings contained in a linked page of results.
 func ExtractMappings(r pagination.Page) ([]Mapping, error) {
 	var s []Mapping
-	err := (r.(MappingPage)).ExtractIntoSlicePtr(&s, "mappings")
+
+	err := extract.IntoSlicePtr((r.(MappingPage)).Body, &s, "mappings")
 	return s, err
 }
 

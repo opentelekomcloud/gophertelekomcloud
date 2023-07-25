@@ -2,6 +2,7 @@ package providers
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -44,7 +45,8 @@ func (p ProviderPage) IsEmpty() (bool, error) {
 
 func ExtractProviders(r pagination.Page) ([]Provider, error) {
 	var providers []Provider
-	err := (r.(ProviderPage)).ExtractIntoSlicePtr(&providers, "identity_providers")
+
+	err := extract.IntoSlicePtr((r.(ProviderPage)).Body, &providers, "identity_providers")
 	return providers, err
 }
 

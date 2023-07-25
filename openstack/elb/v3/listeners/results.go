@@ -2,6 +2,7 @@ package listeners
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -149,7 +150,8 @@ func (p ListenerPage) IsEmpty() (bool, error) {
 
 func ExtractListeners(r pagination.Page) ([]Listener, error) {
 	var s []Listener
-	err := (r.(ListenerPage)).ExtractIntoSlicePtr(&s, "listeners")
+
+	err := extract.IntoSlicePtr((r.(ListenerPage)).Body, &s, "listeners")
 	if err != nil {
 		return nil, err
 	}

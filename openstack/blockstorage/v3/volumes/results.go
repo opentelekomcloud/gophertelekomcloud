@@ -148,7 +148,7 @@ func (r commonResult) ExtractInto(v interface{}) error {
 
 // ExtractVolumesInto similar to ExtractInto but operates on a `list` of volumes
 func ExtractVolumesInto(r pagination.Page, v interface{}) error {
-	return r.(VolumePage).ExtractIntoSlicePtr(v, "volumes")
+	return extract.IntoSlicePtr(r.(VolumePage).Body, v, "volumes")
 }
 
 // CreateResult contains the response body and error from a Create request.

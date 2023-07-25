@@ -2,6 +2,7 @@ package bandwidths
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -102,7 +103,8 @@ func (r BandwidthPage) IsEmpty() (bool, error) {
 
 func ExtractBandwidths(r pagination.Page) ([]Bandwidth, error) {
 	var s []Bandwidth
-	err := (r.(BandwidthPage)).ExtractIntoSlicePtr(&s, "bandwidths")
+
+	err := extract.IntoSlicePtr((r.(BandwidthPage)).Body, &s, "bandwidths")
 	if err != nil {
 		return nil, err
 	}

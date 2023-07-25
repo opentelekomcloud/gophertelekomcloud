@@ -2,6 +2,7 @@ package loadbalancers
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -185,7 +186,8 @@ func (r LoadbalancerPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractLoadbalancers(r pagination.Page) ([]LoadBalancer, error) {
 	var s []LoadBalancer
-	err := (r.(LoadbalancerPage)).ExtractIntoSlicePtr(&s, "loadbalancers")
+
+	err := extract.IntoSlicePtr((r.(LoadbalancerPage)).Body, &s, "loadbalancers")
 	if err != nil {
 		return nil, err
 	}

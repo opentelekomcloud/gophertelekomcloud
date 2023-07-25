@@ -116,5 +116,5 @@ func ExtractNetworks(r pagination.Page) ([]Network, error) {
 }
 
 func ExtractNetworksInto(r pagination.Page, v interface{}) error {
-	return r.(NetworkPage).ExtractIntoSlicePtr(v, "networks")
+	return extract.IntoSlicePtr(r.(NetworkPage).Body, v, "networks")
 }

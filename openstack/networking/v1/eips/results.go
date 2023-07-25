@@ -2,6 +2,7 @@ package eips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -85,6 +86,7 @@ func (r EipPage) LastMarker() (string, error) {
 // ExtractEips extracts and returns Public IPs. It is used while iterating over a public ips.
 func ExtractEips(r pagination.Page) ([]PublicIp, error) {
 	var s []PublicIp
-	err := (r.(EipPage)).ExtractIntoSlicePtr(&s, "publicips")
+
+	err := extract.IntoSlicePtr((r.(EipPage)).Body, &s, "publicips")
 	return s, err
 }

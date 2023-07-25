@@ -137,7 +137,8 @@ func (r UserPage) NextPageURL() (string, error) {
 // ExtractUsers returns a slice of Users contained in a single page of results.
 func ExtractUsers(r pagination.Page) ([]User, error) {
 	var s []User
-	err := (r.(UserPage)).ExtractIntoSlicePtr(&s, "users")
+
+	err := extract.IntoSlicePtr((r.(UserPage)).Body, &s, "users")
 	if err != nil {
 		return nil, err
 	}

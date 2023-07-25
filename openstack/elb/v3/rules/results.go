@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -54,7 +55,8 @@ func (p RulePage) IsEmpty() (bool, error) {
 
 func ExtractRules(p pagination.Page) ([]ForwardingRule, error) {
 	var policies []ForwardingRule
-	err := p.(RulePage).ExtractIntoSlicePtr(&policies, "rules")
+
+	err := extract.IntoSlicePtr(p.(RulePage).Body, &policies, "rules")
 	if err != nil {
 		return nil, err
 	}

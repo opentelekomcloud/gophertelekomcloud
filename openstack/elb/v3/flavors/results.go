@@ -2,6 +2,7 @@ package flavors
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -62,7 +63,8 @@ func (r FlavorPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
 	var s []Flavor
-	err := (r.(FlavorPage)).ExtractIntoSlicePtr(&s, "flavors")
+
+	err := extract.IntoSlicePtr((r.(FlavorPage)).Body, &s, "flavors")
 	if err != nil {
 		return nil, err
 	}

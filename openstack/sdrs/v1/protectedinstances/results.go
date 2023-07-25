@@ -2,6 +2,7 @@ package protectedinstances
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -81,6 +82,7 @@ func (r InstancePage) IsEmpty() (bool, error) {
 // a List() API call, producing a slice of []Instance structures.
 func ExtractInstances(r pagination.Page) ([]Instance, error) {
 	var s []Instance
-	err := (r.(InstancePage)).ExtractIntoSlicePtr(&s, "protected_instances")
+
+	err := extract.IntoSlicePtr((r.(InstancePage)).Body, &s, "protected_instances")
 	return s, err
 }

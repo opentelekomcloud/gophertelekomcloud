@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -29,7 +31,8 @@ type Struct struct {
 
 func ExtractStructs(p pagination.Page) ([]Struct, error) {
 	var structs []Struct
-	err := p.(InfoPageResult).ExtractIntoSlicePtr(&structs, "structs")
+
+	err := extract.IntoSlicePtr(p.(InfoPageResult).Body, &structs, "structs")
 	if err != nil {
 		return nil, err
 	}

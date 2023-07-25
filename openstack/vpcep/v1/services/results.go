@@ -2,6 +2,7 @@ package services
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -82,7 +83,8 @@ type ServicePage struct {
 
 func ExtractServices(p pagination.Page) ([]Service, error) {
 	var srv []Service
-	err := (p.(ServicePage)).ExtractIntoSlicePtr(&srv, "endpoint_services")
+
+	err := extract.IntoSlicePtr((p.(ServicePage)).Body, &srv, "endpoint_services")
 	return srv, err
 }
 
@@ -97,7 +99,8 @@ type PublicService struct {
 
 func ExtractPublicServices(p pagination.Page) ([]PublicService, error) {
 	var srv []PublicService
-	err := (p.(ServicePage)).ExtractIntoSlicePtr(&srv, "endpoint_services")
+
+	err := extract.IntoSlicePtr((p.(ServicePage)).Body, &srv, "endpoint_services")
 	return srv, err
 }
 

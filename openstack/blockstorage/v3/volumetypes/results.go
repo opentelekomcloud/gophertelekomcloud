@@ -72,7 +72,7 @@ func (r commonResult) ExtractInto(v interface{}) error {
 
 // ExtractVolumesInto similar to ExtractInto but operates on a `list` of volume types
 func ExtractVolumeTypesInto(r pagination.Page, v interface{}) error {
-	return r.(VolumeTypePage).ExtractIntoSlicePtr(v, "volume_types")
+	return extract.IntoSlicePtr(r.(VolumeTypePage).Body, v, "volume_types")
 }
 
 // GetResult contains the response body and error from a Get request.

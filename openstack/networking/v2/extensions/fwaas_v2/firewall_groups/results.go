@@ -37,7 +37,7 @@ func (r commonResult) ExtractInto(v interface{}) error {
 }
 
 func ExtractFirewallGroupsInto(r pagination.Page, v interface{}) error {
-	return r.(FirewallGroupPage).ExtractIntoSlicePtr(v, "firewall_groups")
+	return extract.IntoSlicePtr(r.(FirewallGroupPage).Body, v, "firewall_groups")
 }
 
 // FirewallPage is the page returned by a pager when traversing over a

@@ -2,6 +2,7 @@ package pools
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -80,7 +81,8 @@ func (r PoolPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractPools(r pagination.Page) ([]Pool, error) {
 	var s []Pool
-	err := (r.(PoolPage)).ExtractIntoSlicePtr(&s, "pools")
+
+	err := extract.IntoSlicePtr((r.(PoolPage)).Body, &s, "pools")
 	if err != nil {
 		return nil, err
 	}

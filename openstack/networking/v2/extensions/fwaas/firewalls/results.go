@@ -34,7 +34,7 @@ func (r commonResult) ExtractInto(v interface{}) error {
 }
 
 func ExtractFirewallsInto(r pagination.Page, v interface{}) error {
-	return r.(FirewallPage).ExtractIntoSlicePtr(v, "firewalls")
+	return extract.IntoSlicePtr(r.(FirewallPage).Body, v, "firewalls")
 }
 
 // FirewallPage is the page returned by a pager when traversing over a

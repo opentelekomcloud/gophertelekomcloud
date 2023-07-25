@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpcep/v1/services"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -125,6 +126,7 @@ func (p EndpointPage) IsEmpty() (bool, error) {
 
 func ExtractEndpoints(p pagination.Page) ([]Endpoint, error) {
 	var eps []Endpoint
-	err := p.(EndpointPage).ExtractIntoSlicePtr(&eps, "endpoints")
+
+	err := extract.IntoSlicePtr(p.(EndpointPage).Body, &eps, "endpoints")
 	return eps, err
 }

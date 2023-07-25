@@ -91,7 +91,8 @@ func (r SubnetPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractSubnets(r pagination.Page) ([]Subnet, error) {
 	var s []Subnet
-	err := (r.(SubnetPage)).ExtractIntoSlicePtr(&s, "subnets")
+
+	err := extract.IntoSlicePtr((r.(SubnetPage)).Body, &s, "subnets")
 	if err != nil {
 		return nil, err
 	}

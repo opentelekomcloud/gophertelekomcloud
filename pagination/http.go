@@ -20,10 +20,6 @@ type PageResult struct {
 	URL url.URL
 }
 
-func (r PageResult) ExtractIntoSlicePtr(to interface{}, label string) error {
-	return extract.IntoSlicePtr(r.Body, to, label)
-}
-
 func (r PageResult) GetBody() []byte {
 	b, _ := io.ReadAll(r.Body)
 	return b

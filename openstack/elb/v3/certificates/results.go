@@ -2,6 +2,7 @@ package certificates
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -31,7 +32,8 @@ type CertificatePage struct {
 // a generic collection is mapped into a relevant slice.
 func ExtractCertificates(r pagination.Page) ([]Certificate, error) {
 	var s []Certificate
-	err := (r.(CertificatePage)).ExtractIntoSlicePtr(&s, "certificates")
+
+	err := extract.IntoSlicePtr((r.(CertificatePage)).Body, &s, "certificates")
 	if err != nil {
 		return nil, err
 	}

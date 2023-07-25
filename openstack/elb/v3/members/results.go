@@ -2,6 +2,7 @@ package members
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -59,7 +60,8 @@ func (p MemberPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractMembers(r pagination.Page) ([]Member, error) {
 	var s []Member
-	err := (r.(MemberPage)).ExtractIntoSlicePtr(&s, "members")
+
+	err := extract.IntoSlicePtr((r.(MemberPage)).Body, &s, "members")
 	if err != nil {
 		return nil, err
 	}
