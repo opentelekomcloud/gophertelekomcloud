@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -29,7 +30,7 @@ Deprecated: use functions from internal/extract package instead
 */
 type Result struct {
 	// Body is the payload of the HTTP response from the server.
-	Body []byte
+	Body io.Reader
 
 	// Header contains the HTTP header structure from the original response.
 	Header http.Header
@@ -60,7 +61,7 @@ func (r Result) ExtractInto(to interface{}) error {
 		return r.Err
 	}
 
-	return extract.Into(bytes.NewReader(r.Body), to)
+	return extract.Into(r.Body, to)
 }
 
 // ExtractIntoStructPtr will unmarshal the Result (r) into the provided
@@ -79,7 +80,7 @@ func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 		return r.Err
 	}
 
-	return extract.IntoStructPtr(bytes.NewReader(r.Body), to, label)
+	return extract.IntoStructPtr(r.Body, to, label)
 }
 
 // ExtractIntoSlicePtr will unmarshal the Result (r) into the provided
@@ -98,7 +99,7 @@ func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
 		return r.Err
 	}
 
-	return extract.IntoSlicePtr(bytes.NewReader(r.Body), to, label)
+	return extract.IntoSlicePtr(r.Body, to, label)
 }
 
 func PrettyPrintJSON(body interface{}) string {

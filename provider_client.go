@@ -2,7 +2,6 @@ package golangsdk
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -149,14 +148,14 @@ type RequestOpts struct {
 	// JSONBody, if provided, will be encoded as JSON and used as the body of the HTTP request. The
 	// content type of the request will default to "application/json" unless overridden by MoreHeaders.
 	// It's an error to specify both a JSONBody and a RawBody.
-	JSONBody interface{}
+	JSONBody map[string]interface{}
 	// RawBody contains an io.Reader that will be consumed by the request directly. No content-type
 	// will be set unless one is provided explicitly by MoreHeaders.
 	RawBody io.Reader
 	// JSONResponse, if provided, will be populated with the contents of the response body parsed as JSON.
 	// Not that setting it will drain and close Response.Body.
 	// Deprecated: Use http.Response Body instead.
-	JSONResponse interface{}
+	JSONResponse *io.Reader
 	// OkCodes contains a list of numeric HTTP status codes that should be interpreted as success. If
 	// the response has a different code, an error will be returned.
 	OkCodes []int
@@ -421,25 +420,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	// Parse the response body as JSON, if requested to do so.
 	// TODO: When all refactoring of the extract is done, remove this.
 	if options.JSONResponse != nil && resp.StatusCode != http.StatusNoContent {
-		switch r := options.JSONResponse.(type) {
-		case *[]byte:
-			data, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, fmt.Errorf("error reading response body: %w", err)
-			}
-			defer func(Body io.ReadCloser) {
-				err := Body.Close()
-				if err != nil {
-					_ = fmt.Errorf("error in closing : %w", err)
-				}
-			}(resp.Body)
-
-			*r = data
-		default:
-			if err := extract.Into(resp.Body, &r); err != nil {
-				return nil, err
-			}
-		}
+		*options.JSONResponse = resp.Body
 	}
 
 	return resp, nil
