@@ -227,16 +227,22 @@ func NewIdentityV3AdminClient() (*golangsdk.ServiceClient, error) {
 	opts := golangsdk.AuthOptions{
 		IdentityEndpoint: cloud.AuthInfo.AuthURL,
 		Username:         cloud.AuthInfo.Username,
+		UserID:           cloud.AuthInfo.UserID,
 		Password:         cloud.AuthInfo.Password,
-		DomainName:       cloud.AuthInfo.UserDomainName,
+		Passcode:         cloud.AuthInfo.Passcode,
 		TenantID:         cloud.AuthInfo.ProjectID,
+		TenantName:       cloud.AuthInfo.ProjectName,
+		DomainName:       cloud.AuthInfo.UserDomainName,
+		DomainID:         cloud.AuthInfo.DomainID,
 	}
 
 	pClient, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
 		return nil, fmt.Errorf("error creating provider client: %w", err)
 	}
-	client, err := openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{})
+	client, err := openstack.NewIdentityV3(pClient, golangsdk.EndpointOpts{
+		Region: cloud.RegionName,
+	})
 
 	if err != nil {
 		return nil, err
@@ -528,6 +534,24 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 	return openstack.NewWAFV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+}
+
+// NewWafdSwissV1Client returns authenticated WAF premium v1 client
+func NewWafdSwissV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewWAFDSwissV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+}
+
+// NewWafdV1Client returns authenticated WAF premium v1 client
+func NewWafdV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewWAFDV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
 }
 
 // NewCsbsV1Client returns authenticated CSBS v1 client

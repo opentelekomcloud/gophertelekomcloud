@@ -108,6 +108,15 @@ func (client *ServiceClient) Delete(url string, opts *RequestOpts) (*http.Respon
 	return client.Request("DELETE", url, opts)
 }
 
+// Head calls `Request` with the "HEAD" HTTP verb. Def 204, 206
+func (client *ServiceClient) Head(url string, opts *RequestOpts) (*http.Response, error) {
+	if opts == nil {
+		opts = new(RequestOpts)
+	}
+	client.initReqOpts(url, nil, nil, opts)
+	return client.Request("HEAD", url, opts)
+}
+
 // DeleteWithBody calls `Request` with the "DELETE" HTTP verb. Def 202, 204
 func (client *ServiceClient) DeleteWithBody(url string, JSONBody map[string]interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
