@@ -875,7 +875,7 @@ func NewWAFDV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*go
 	if err != nil {
 		return nil, err
 	}
-	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/"
+	sc.ResourceBase = sc.Endpoint
 	return sc, err
 }
 

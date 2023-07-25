@@ -13,6 +13,9 @@ import (
 )
 
 func TestWafPremiumInstanceWorkflow(t *testing.T) {
+	if os.Getenv("RUN_WAFD_INSTANCE_WORKFLOW") == "" {
+		t.Skip("too slow to run in zuul")
+	}
 	region := os.Getenv("OS_REGION_NAME")
 	az := os.Getenv("OS_AVAILABILITY_ZONE")
 	vpcID := os.Getenv("OS_VPC_ID")
@@ -23,19 +26,22 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 
 	var client *golangsdk.ServiceClient
 	var err error
+	architecture := "x86"
 	if region == "eu-ch2" {
 		client, err = clients.NewWafdSwissV1Client()
 		th.AssertNoErr(t, err)
+		architecture = "x86_64"
 	} else {
 		client, err = clients.NewWafdV1Client()
 		th.AssertNoErr(t, err)
+
 	}
 
 	opts := instances.CreateOpts{
 		Count:            1,
 		Region:           region,
 		AvailabilityZone: az,
-		Architecture:     "x86_64",
+		Architecture:     architecture,
 		InstanceName:     tools.RandomString("waf-instance-", 3),
 		Specification:    "waf.instance.enterprise",
 		Flavor:           "s3.2xlarge.2",
