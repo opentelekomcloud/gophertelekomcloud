@@ -113,7 +113,7 @@ func (client *ServiceClient) Head(url string, opts *RequestOpts) (*http.Response
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
-	client.initReqOpts(url, nil, nil, opts)
+	client.initReqOpts(nil, nil, opts)
 	return client.Request("HEAD", url, opts)
 }
 
