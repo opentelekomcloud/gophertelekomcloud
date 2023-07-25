@@ -6,14 +6,8 @@ import (
 
 // SinglePageBase may be embedded in a Page that contains all the results from an operation at once.
 // Deprecated: use element slice as a return result.
-type SinglePageBase PageResult
-
-func (current SinglePageBase) GetBodyAsSlice() ([]interface{}, error) {
-	return PageResult(current).GetBodyAsSlice()
-}
-
-func (current SinglePageBase) GetBodyAsMap() (map[string]interface{}, error) {
-	return PageResult(current).GetBodyAsMap()
+type SinglePageBase struct {
+	PageResult
 }
 
 // NextPageURL always returns "" to indicate that there are no more pages to return.
