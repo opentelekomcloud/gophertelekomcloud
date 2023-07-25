@@ -2,6 +2,7 @@ package domains
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -70,7 +71,8 @@ func (r DomainPage) NextPageURL() (string, error) {
 			Previous string `json:"previous"`
 		} `json:"links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -83,7 +85,8 @@ func ExtractDomains(r pagination.Page) ([]Domain, error) {
 	var s struct {
 		Domains []Domain `json:"domains"`
 	}
-	err := (r.(DomainPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(DomainPage)).Body, &s)
 	return s.Domains, err
 }
 

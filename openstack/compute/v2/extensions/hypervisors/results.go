@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -184,11 +186,12 @@ func (page HypervisorPage) IsEmpty() (bool, error) {
 
 // ExtractHypervisors interprets a page of results as a slice of Hypervisors.
 func ExtractHypervisors(p pagination.Page) ([]Hypervisor, error) {
-	var h struct {
+	var s struct {
 		Hypervisors []Hypervisor `json:"hypervisors"`
 	}
-	err := (p.(HypervisorPage)).ExtractInto(&h)
-	return h.Hypervisors, err
+
+	err := extract.Into((p.(HypervisorPage)).Body, &s)
+	return s.Hypervisors, err
 }
 
 type HypervisorResult struct {

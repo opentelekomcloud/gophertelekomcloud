@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -299,7 +300,8 @@ func (r ServerPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"servers_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -407,7 +409,8 @@ func ExtractAddresses(r pagination.Page) (map[string][]Address, error) {
 	var s struct {
 		Addresses map[string][]Address `json:"addresses"`
 	}
-	err := (r.(AddressPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(AddressPage)).Body, &s)
 	return s.Addresses, err
 }
 
@@ -430,7 +433,8 @@ func (r NetworkAddressPage) IsEmpty() (bool, error) {
 // ListAddressesByNetwork() call, producing a slice of addresses.
 func ExtractNetworkAddresses(r pagination.Page) ([]Address, error) {
 	var s map[string][]Address
-	err := (r.(NetworkAddressPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(NetworkAddressPage)).Body, &s)
 	if err != nil {
 		return nil, err
 	}

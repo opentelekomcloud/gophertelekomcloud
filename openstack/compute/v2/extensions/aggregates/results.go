@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -80,7 +82,8 @@ func ExtractAggregates(p pagination.Page) ([]Aggregate, error) {
 	var a struct {
 		Aggregates []Aggregate `json:"aggregates"`
 	}
-	err := (p.(AggregatesPage)).ExtractInto(&a)
+
+	err := extract.Into((p.(AggregatesPage)).Body, &a)
 	return a.Aggregates, err
 }
 

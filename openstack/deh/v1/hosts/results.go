@@ -3,6 +3,8 @@ package hosts
 import (
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -70,7 +72,8 @@ func ExtractHosts(r pagination.Page) ([]Host, error) {
 	var s struct {
 		ListedStacks []Host `json:"dedicated_hosts"`
 	}
-	err := (r.(HostPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(HostPage)).Body, &s)
 	return s.ListedStacks, err
 }
 
@@ -81,7 +84,8 @@ func (r HostPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"dedicated_hostslinks"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -183,7 +187,8 @@ func (r ServerPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"servers_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -197,6 +202,7 @@ func ExtractServers(r pagination.Page) ([]Server, error) {
 	var s struct {
 		ListedStacks []Server `json:"servers"`
 	}
-	err := (r.(ServerPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ServerPage)).Body, &s)
 	return s.ListedStacks, err
 }

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -83,7 +84,8 @@ func (r ObjectPage) LastMarker() (string, error) {
 // full information.
 func ExtractInfo(r pagination.Page) ([]Object, error) {
 	var s []Object
-	err := (r.(ObjectPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ObjectPage)).Body, &s)
 	return s, err
 }
 
@@ -111,9 +113,8 @@ func ExtractNames(r pagination.Page) ([]string, error) {
 		return names, nil
 	case strings.HasPrefix(ct, "text/plain"):
 		names := make([]string, 0, 50)
-
-		body := string(r.(ObjectPage).Body)
-		for _, name := range strings.Split(body, "\n") {
+		body, _ := io.ReadAll(r.(ObjectPage).Body)
+		for _, name := range strings.Split(string(body), "\n") {
 			if len(name) > 0 {
 				names = append(names, name)
 			}
@@ -561,9 +562,8 @@ func extractLastMarker(r pagination.Page) (string, error) {
 		return lastObject.Subdir, nil
 	case strings.HasPrefix(ct, "text/plain"):
 		names := make([]string, 0, 50)
-
-		body := string(r.(ObjectPage).Body)
-		for _, name := range strings.Split(body, "\n") {
+		body, _ := io.ReadAll(r.(ObjectPage).Body)
+		for _, name := range strings.Split(string(body), "\n") {
 			if len(name) > 0 {
 				names = append(names, name)
 			}

@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -176,7 +178,8 @@ func (r SubnetPoolPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"subnetpools_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -195,6 +198,7 @@ func ExtractSubnetPools(r pagination.Page) ([]SubnetPool, error) {
 	var s struct {
 		SubnetPools []SubnetPool `json:"subnetpools"`
 	}
-	err := (r.(SubnetPoolPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(SubnetPoolPage)).Body, &s)
 	return s.SubnetPools, err
 }

@@ -2,6 +2,7 @@ package networks
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -108,7 +109,8 @@ func ExtractNetworks(r pagination.Page) ([]Network, error) {
 	var s struct {
 		Networks []Network `json:"networks"`
 	}
-	err := (r.(NetworkPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(NetworkPage)).Body, &s)
 	return s.Networks, err
 }
 

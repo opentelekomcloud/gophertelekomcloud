@@ -2,6 +2,7 @@ package peerings
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -45,7 +46,8 @@ func (r PeeringConnectionPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"peerings_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +67,8 @@ func ExtractPeerings(r pagination.Page) ([]Peering, error) {
 	var s struct {
 		Peerings []Peering `json:"peerings"`
 	}
-	err := (r.(PeeringConnectionPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(PeeringConnectionPage)).Body, &s)
 	return s.Peerings, err
 }
 

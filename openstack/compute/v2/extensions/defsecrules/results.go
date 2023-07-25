@@ -3,6 +3,8 @@ package defsecrules
 import (
 	"encoding/json"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -39,7 +41,8 @@ func ExtractDefaultRules(r pagination.Page) ([]DefaultRule, error) {
 	var s struct {
 		DefaultRules []DefaultRule `json:"security_group_default_rules"`
 	}
-	err := (r.(DefaultRulePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(DefaultRulePage)).Body, &s)
 	return s.DefaultRules, err
 }
 

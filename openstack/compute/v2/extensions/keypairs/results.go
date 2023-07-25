@@ -2,6 +2,7 @@ package keypairs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -50,7 +51,8 @@ func ExtractKeyPairs(r pagination.Page) ([]KeyPair, error) {
 	var s struct {
 		KeyPairs []pair `json:"keypairs"`
 	}
-	err := (r.(KeyPairPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(KeyPairPage)).Body, &s)
 	results := make([]KeyPair, len(s.KeyPairs))
 	for i, pair := range s.KeyPairs {
 		results[i] = pair.KeyPair

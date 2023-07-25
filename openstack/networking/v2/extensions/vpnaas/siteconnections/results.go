@@ -2,6 +2,7 @@ package siteconnections
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -105,7 +106,8 @@ func (r ConnectionPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"ipsec_site_connections_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -125,7 +127,8 @@ func ExtractConnections(r pagination.Page) ([]Connection, error) {
 	var s struct {
 		Connections []Connection `json:"ipsec_site_connections"`
 	}
-	err := (r.(ConnectionPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ConnectionPage)).Body, &s)
 	return s.Connections, err
 }
 

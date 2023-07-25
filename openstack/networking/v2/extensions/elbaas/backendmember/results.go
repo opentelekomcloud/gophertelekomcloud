@@ -2,6 +2,7 @@ package backendmember
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -55,7 +56,8 @@ func (r BackendPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractBackend(r pagination.Page) ([]Backend, error) {
 	var Backends []Backend
-	err := (r.(BackendPage)).ExtractInto(&Backends)
+
+	err := extract.Into((r.(BackendPage)).Body, &Backends)
 	return Backends, err
 }
 

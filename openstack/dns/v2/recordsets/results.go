@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -60,7 +62,8 @@ func ExtractRecordSets(r pagination.Page) ([]RecordSet, error) {
 	var s struct {
 		RecordSets []RecordSet `json:"recordsets"`
 	}
-	err := (r.(RecordSetPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(RecordSetPage)).Body, &s)
 	return s.RecordSets, err
 }
 

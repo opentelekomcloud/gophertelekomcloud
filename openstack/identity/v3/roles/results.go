@@ -3,6 +3,8 @@ package roles
 import (
 	"encoding/json"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -103,7 +105,8 @@ func (r RolePage) NextPageURL() (string, error) {
 			Previous string `json:"previous"`
 		} `json:"links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -116,7 +119,8 @@ func ExtractRoles(r pagination.Page) ([]Role, error) {
 	var s struct {
 		Roles []Role `json:"roles"`
 	}
-	err := (r.(RolePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(RolePage)).Body, &s)
 	return s.Roles, err
 }
 
@@ -169,7 +173,8 @@ func (r RoleAssignmentPage) NextPageURL() (string, error) {
 			Next string `json:"next"`
 		} `json:"links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	return s.Links.Next, err
 }
 
@@ -179,7 +184,8 @@ func ExtractRoleAssignments(r pagination.Page) ([]RoleAssignment, error) {
 	var s struct {
 		RoleAssignments []RoleAssignment `json:"roles"`
 	}
-	err := (r.(RoleAssignmentPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(RoleAssignmentPage)).Body, &s)
 	return s.RoleAssignments, err
 }
 

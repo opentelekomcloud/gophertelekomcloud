@@ -2,6 +2,7 @@ package listeners
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	// "fmt"
 )
@@ -92,7 +93,8 @@ func (r ListenerPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractListeners(r pagination.Page) ([]Listener, error) {
 	var Listeners []Listener
-	err := (r.(ListenerPage)).ExtractInto(&Listeners)
+
+	err := extract.Into((r.(ListenerPage)).Body, &Listeners)
 	return Listeners, err
 }
 

@@ -2,6 +2,7 @@ package pools
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/monitors"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -12,15 +13,20 @@ import (
 // types of persistence are supported:
 //
 // SOURCE_IP:   With this mode, all connections originating from the same source
-//              IP address, will be handled by the same Member of the Pool.
+//
+//	IP address, will be handled by the same Member of the Pool.
+//
 // HTTP_COOKIE: With this persistence mode, the load balancing function will
-//              create a cookie on the first request from a client. Subsequent
-//              requests containing the same cookie value will be handled by
-//              the same Member of the Pool.
+//
+//	create a cookie on the first request from a client. Subsequent
+//	requests containing the same cookie value will be handled by
+//	the same Member of the Pool.
+//
 // APP_COOKIE:  With this persistence mode, the load balancing function will
-//              rely on a cookie established by the backend application. All
-//              requests carrying the same cookie value will be handled by the
-//              same Member of the Pool.
+//
+//	rely on a cookie established by the backend application. All
+//	requests carrying the same cookie value will be handled by the
+//	same Member of the Pool.
 type SessionPersistence struct {
 	// The type of persistence mode.
 	Type string `json:"type"`
@@ -111,7 +117,8 @@ func (r PoolPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"pools_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -131,7 +138,8 @@ func ExtractPools(r pagination.Page) ([]Pool, error) {
 	var s struct {
 		Pools []Pool `json:"pools"`
 	}
-	err := (r.(PoolPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(PoolPage)).Body, &s)
 	return s.Pools, err
 }
 
@@ -219,7 +227,8 @@ func (r MemberPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"members_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -239,7 +248,8 @@ func ExtractMembers(r pagination.Page) ([]Member, error) {
 	var s struct {
 		Members []Member `json:"members"`
 	}
-	err := (r.(MemberPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(MemberPage)).Body, &s)
 	return s.Members, err
 }
 

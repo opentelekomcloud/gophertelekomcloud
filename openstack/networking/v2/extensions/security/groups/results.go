@@ -2,6 +2,7 @@ package groups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/rules"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -42,7 +43,8 @@ func (r SecGroupPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"security_groups_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +65,8 @@ func ExtractGroups(r pagination.Page) ([]SecGroup, error) {
 	var s struct {
 		SecGroups []SecGroup `json:"security_groups"`
 	}
-	err := (r.(SecGroupPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(SecGroupPage)).Body, &s)
 	return s.SecGroups, err
 }
 

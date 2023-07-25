@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -132,7 +133,8 @@ func (r SingleTenantPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"tenant_usage_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -144,7 +146,8 @@ func ExtractSingleTenant(page pagination.Page) (*TenantUsage, error) {
 	var s struct {
 		TenantUsage *TenantUsage `json:"tenant_usage"`
 	}
-	err := (page.(SingleTenantPage)).ExtractInto(&s)
+
+	err := extract.Into((page.(SingleTenantPage)).Body, &s)
 	return s.TenantUsage, err
 }
 
@@ -159,7 +162,8 @@ func ExtractAllTenants(page pagination.Page) ([]TenantUsage, error) {
 	var s struct {
 		TenantUsages []TenantUsage `json:"tenant_usages"`
 	}
-	err := (page.(AllTenantsPage)).ExtractInto(&s)
+
+	err := extract.Into((page.(AllTenantsPage)).Body, &s)
 	return s.TenantUsages, err
 }
 
@@ -175,7 +179,8 @@ func (r AllTenantsPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"tenant_usages_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}

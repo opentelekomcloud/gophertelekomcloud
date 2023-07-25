@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -65,7 +67,8 @@ func ExtractFloatingIPs(r pagination.Page) ([]FloatingIP, error) {
 	var s struct {
 		FloatingIPs []FloatingIP `json:"floating_ips"`
 	}
-	err := (r.(FloatingIPPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(FloatingIPPage)).Body, &s)
 	return s.FloatingIPs, err
 }
 

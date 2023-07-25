@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -113,7 +114,8 @@ func (r ServicePage) NextPageURL() (string, error) {
 			Previous string `json:"previous"`
 		} `json:"links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -126,6 +128,7 @@ func ExtractServices(r pagination.Page) ([]Service, error) {
 	var s struct {
 		Services []Service `json:"services"`
 	}
-	err := (r.(ServicePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ServicePage)).Body, &s)
 	return s.Services, err
 }

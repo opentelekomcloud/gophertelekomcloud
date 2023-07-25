@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/metadata"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -91,7 +92,8 @@ func (r SnapshotPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"snapshots_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -103,7 +105,8 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 	var s struct {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
-	err := (r.(SnapshotPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(SnapshotPage)).Body, &s)
 	return s.Snapshots, err
 }
 

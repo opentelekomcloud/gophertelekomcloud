@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -24,7 +25,8 @@ func ExtractLinkedInts(r pagination.Page) ([]int, error) {
 	var s struct {
 		Ints []int `json:"ints"`
 	}
-	err := (r.(LinkedPageResult)).ExtractInto(&s)
+
+	err := extract.Into((r.(LinkedPageResult)).Body, &s)
 	return s.Ints, err
 }
 

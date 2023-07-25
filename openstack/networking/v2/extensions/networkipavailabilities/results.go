@@ -2,6 +2,7 @@ package networkipavailabilities
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -88,7 +89,8 @@ func ExtractNetworkIPAvailabilities(r pagination.Page) ([]NetworkIPAvailability,
 	var s struct {
 		NetworkIPAvailabilities []NetworkIPAvailability `json:"network_ip_availabilities"`
 	}
-	err := (r.(NetworkIPAvailabilityPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(NetworkIPAvailabilityPage)).Body, &s)
 	if err != nil {
 		return nil, err
 	}

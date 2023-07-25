@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -139,7 +140,8 @@ func ExtractSecurityGroups(r pagination.Page) ([]SecurityGroup, error) {
 	var s struct {
 		SecurityGroups []SecurityGroup `json:"security_groups"`
 	}
-	err := (r.(SecurityGroupPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(SecurityGroupPage)).Body, &s)
 	return s.SecurityGroups, err
 }
 

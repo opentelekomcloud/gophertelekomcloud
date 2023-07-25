@@ -2,6 +2,7 @@ package subnets
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -71,7 +72,8 @@ func (r SubnetPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"subnets_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}

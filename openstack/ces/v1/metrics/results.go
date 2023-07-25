@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -48,14 +49,16 @@ type ListResult struct {
 
 func ExtractMetrics(r pagination.Page) (ListMetricsResponse, error) {
 	var s ListMetricsResponse
-	err := r.(MetricsPage).ExtractInto(&s)
+
+	err := extract.Into(r.(MetricsPage).Body, &s)
 	return s, err
 }
 
 func ExtractAllPagesMetrics(r pagination.Page) (ListMetricsResponse, error) {
 	var s ListMetricsResponse
 	s.Metrics = make([]MetricInfoList, 0)
-	err := r.(MetricsPage).ExtractInto(&s)
+
+	err := extract.Into(r.(MetricsPage).Body, &s)
 	if len(s.Metrics) == 0 {
 		return s, nil
 	}

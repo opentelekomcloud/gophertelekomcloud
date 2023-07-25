@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -120,7 +121,8 @@ func (page FlavorPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"flavors_links"`
 	}
-	err := page.ExtractInto(&s)
+
+	err := extract.Into(page.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -133,7 +135,8 @@ func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
 	var s struct {
 		Flavors []Flavor `json:"flavors"`
 	}
-	err := (r.(FlavorPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(FlavorPage)).Body, &s)
 	return s.Flavors, err
 }
 
@@ -153,7 +156,8 @@ func ExtractAccesses(r pagination.Page) ([]FlavorAccess, error) {
 	var s struct {
 		FlavorAccesses []FlavorAccess `json:"flavor_access"`
 	}
-	err := (r.(AccessPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(AccessPage)).Body, &s)
 	return s.FlavorAccesses, err
 }
 

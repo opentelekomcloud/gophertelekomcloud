@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -93,6 +94,7 @@ func ExtractEvents(r pagination.Page) ([]Event, error) {
 	var s struct {
 		Events []Event `json:"events"`
 	}
-	err := (r.(EventPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(EventPage)).Body, &s)
 	return s.Events, err
 }

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -71,6 +73,7 @@ func ExtractAvailabilityZones(r pagination.Page) ([]AvailabilityZone, error) {
 	var s struct {
 		AvailabilityZoneInfo []AvailabilityZone `json:"availabilityZoneInfo"`
 	}
-	err := (r.(AvailabilityZonePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(AvailabilityZonePage)).Body, &s)
 	return s.AvailabilityZoneInfo, err
 }

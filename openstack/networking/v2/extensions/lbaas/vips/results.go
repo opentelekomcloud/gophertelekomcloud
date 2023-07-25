@@ -2,6 +2,7 @@ package vips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -11,15 +12,20 @@ import (
 // types of persistence are supported:
 //
 // SOURCE_IP:   With this mode, all connections originating from the same source
-//              IP address, will be handled by the same member of the pool.
+//
+//	IP address, will be handled by the same member of the pool.
+//
 // HTTP_COOKIE: With this persistence mode, the load balancing function will
-//              create a cookie on the first request from a client. Subsequent
-//              requests containing the same cookie value will be handled by
-//              the same member of the pool.
+//
+//	create a cookie on the first request from a client. Subsequent
+//	requests containing the same cookie value will be handled by
+//	the same member of the pool.
+//
 // APP_COOKIE:  With this persistence mode, the load balancing function will
-//              rely on a cookie established by the backend application. All
-//              requests carrying the same cookie value will be handled by the
-//              same member of the pool.
+//
+//	rely on a cookie established by the backend application. All
+//	requests carrying the same cookie value will be handled by the
+//	same member of the pool.
 type SessionPersistence struct {
 	// Type is the type of persistence mode.
 	Type string `json:"type"`
@@ -94,7 +100,8 @@ func (r VIPPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"vips_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -114,7 +121,8 @@ func ExtractVIPs(r pagination.Page) ([]VirtualIP, error) {
 	var s struct {
 		VIPs []VirtualIP `json:"vips"`
 	}
-	err := (r.(VIPPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(VIPPage)).Body, &s)
 	return s.VIPs, err
 }
 

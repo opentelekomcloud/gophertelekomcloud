@@ -2,6 +2,7 @@ package extensions
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -48,6 +49,7 @@ func ExtractExtensions(r pagination.Page) ([]Extension, error) {
 	var s struct {
 		Extensions []Extension `json:"extensions"`
 	}
-	err := (r.(ExtensionPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ExtensionPage)).Body, &s)
 	return s.Extensions, err
 }

@@ -2,6 +2,7 @@ package bandwidths
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -110,7 +111,8 @@ func ExtractBandWidths(r pagination.Page) ([]BandWidth, error) {
 	var s struct {
 		BandWidths []BandWidth `json:"bandwidths"`
 	}
-	err := r.(BandWidthPage).ExtractInto(&s)
+
+	err := extract.Into(r.(BandWidthPage).Body, &s)
 	return s.BandWidths, err
 }
 func (r BandWidthPage) NextPageURL() (string, error) {

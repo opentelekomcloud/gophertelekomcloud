@@ -2,6 +2,7 @@ package attachinterfaces
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -75,6 +76,7 @@ func ExtractInterfaces(r pagination.Page) ([]Interface, error) {
 	var s struct {
 		Interfaces []Interface `json:"interfaceAttachments"`
 	}
-	err := (r.(InterfacePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(InterfacePage)).Body, &s)
 	return s.Interfaces, err
 }

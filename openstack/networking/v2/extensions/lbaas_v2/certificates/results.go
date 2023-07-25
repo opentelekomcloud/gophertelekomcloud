@@ -2,6 +2,7 @@ package certificates
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -33,7 +34,8 @@ func ExtractCertificates(r pagination.Page) ([]Certificate, error) {
 	var s struct {
 		Certificates []Certificate `json:"certificates"`
 	}
-	err := (r.(CertificatePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(CertificatePage)).Body, &s)
 	return s.Certificates, err
 }
 

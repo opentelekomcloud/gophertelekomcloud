@@ -1,6 +1,9 @@
 package ruletypes
 
-import "github.com/opentelekomcloud/gophertelekomcloud/pagination"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+)
 
 // The result of listing the qos rule types
 type RuleType struct {
@@ -21,6 +24,6 @@ func ExtractRuleTypes(r pagination.Page) ([]RuleType, error) {
 		RuleTypes []RuleType `json:"rule_types"`
 	}
 
-	err := (r.(ListRuleTypesPage)).ExtractInto(&s)
+	err := extract.Into((r.(ListRuleTypesPage)).Body, &s)
 	return s.RuleTypes, err
 }

@@ -1,6 +1,7 @@
 package catalog
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -22,6 +23,7 @@ func ExtractServiceCatalog(r pagination.Page) ([]tokens.CatalogEntry, error) {
 	var s struct {
 		Entries []tokens.CatalogEntry `json:"catalog"`
 	}
-	err := (r.(CatalogPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(CatalogPage)).Body, &s)
 	return s.Entries, err
 }

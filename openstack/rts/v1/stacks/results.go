@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -82,7 +83,8 @@ func ExtractStacks(r pagination.Page) ([]ListedStack, error) {
 	var s struct {
 		ListedStacks []ListedStack `json:"stacks"`
 	}
-	err := (r.(StackPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(StackPage)).Body, &s)
 	return s.ListedStacks, err
 }
 

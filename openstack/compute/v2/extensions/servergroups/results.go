@@ -2,6 +2,7 @@ package servergroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -50,7 +51,8 @@ func ExtractServerGroups(r pagination.Page) ([]ServerGroup, error) {
 	var s struct {
 		ServerGroups []ServerGroup `json:"server_groups"`
 	}
-	err := (r.(ServerGroupPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ServerGroupPage)).Body, &s)
 	return s.ServerGroups, err
 }
 

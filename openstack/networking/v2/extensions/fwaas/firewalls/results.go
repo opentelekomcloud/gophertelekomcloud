@@ -2,6 +2,7 @@ package firewalls
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -49,7 +50,8 @@ func (r FirewallPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"firewalls_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -71,7 +73,8 @@ func (r BackupPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"backups_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +94,8 @@ func ExtractBackups(r pagination.Page) ([]Backup, error) {
 	var s struct {
 		Backups []Backup `json:"backups"`
 	}
-	err := (r.(BackupPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(BackupPage)).Body, &s)
 	return s.Backups, err
 }
 

@@ -2,6 +2,7 @@ package floatingips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -94,7 +95,8 @@ func (r FloatingIPPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"floatingips_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -114,6 +116,7 @@ func ExtractFloatingIPs(r pagination.Page) ([]FloatingIP, error) {
 	var s struct {
 		FloatingIPs []FloatingIP `json:"floatingips"`
 	}
-	err := (r.(FloatingIPPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(FloatingIPPage)).Body, &s)
 	return s.FloatingIPs, err
 }

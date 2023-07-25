@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -38,7 +39,8 @@ func (r RoutePage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"routes_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +60,8 @@ func ExtractRoutes(r pagination.Page) ([]Route, error) {
 	var s struct {
 		Routes []Route `json:"routes"`
 	}
-	err := (r.(RoutePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(RoutePage)).Body, &s)
 	return s.Routes, err
 }
 

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -60,6 +61,7 @@ func ExtractResources(r pagination.Page) ([]Resource, error) {
 	var s struct {
 		Resources []Resource `json:"resources"`
 	}
-	err := (r.(ResourcePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ResourcePage)).Body, &s)
 	return s.Resources, err
 }

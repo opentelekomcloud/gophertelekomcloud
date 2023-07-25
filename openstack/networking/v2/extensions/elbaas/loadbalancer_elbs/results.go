@@ -2,6 +2,8 @@ package loadbalancer_elbs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	// "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/elbaas/listeners"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 	// "fmt"
@@ -72,7 +74,8 @@ func ExtractLoadBalancers(r pagination.Page) ([]LoadBalancer, error) {
 	var s struct {
 		LoadBalancers []LoadBalancer `json:"loadbalancers"`
 	}
-	err := (r.(LoadBalancerPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(LoadBalancerPage)).Body, &s)
 	return s.LoadBalancers, err
 }
 

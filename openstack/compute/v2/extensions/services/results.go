@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -68,6 +70,7 @@ func ExtractServices(r pagination.Page) ([]Service, error) {
 	var s struct {
 		Service []Service `json:"services"`
 	}
-	err := (r.(ServicePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ServicePage)).Body, &s)
 	return s.Service, err
 }

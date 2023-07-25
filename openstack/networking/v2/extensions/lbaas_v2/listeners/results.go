@@ -2,6 +2,7 @@ package listeners
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/l7policies"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/pools"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -86,7 +87,8 @@ func (r ListenerPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"listeners_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}
@@ -106,7 +108,8 @@ func ExtractListeners(r pagination.Page) ([]Listener, error) {
 	var s struct {
 		Listeners []Listener `json:"listeners"`
 	}
-	err := (r.(ListenerPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(ListenerPage)).Body, &s)
 	return s.Listeners, err
 }
 

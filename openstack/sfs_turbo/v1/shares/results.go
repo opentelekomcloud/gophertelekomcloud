@@ -2,6 +2,7 @@ package shares
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -114,7 +115,8 @@ func ExtractTurbos(r pagination.Page) ([]Turbo, error) {
 	var s struct {
 		ListedShares []Turbo `json:"shares"`
 	}
-	err := (r.(TurboPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(TurboPage)).Body, &s)
 	return s.ListedShares, err
 }
 
@@ -131,7 +133,8 @@ func (r TurboPage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"shares_links"`
 	}
-	err := r.ExtractInto(&s)
+
+	err := extract.Into(r.Body, &s)
 	if err != nil {
 		return "", err
 	}

@@ -1,6 +1,7 @@
 package apiversions
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -29,7 +30,8 @@ func ExtractAPIVersions(r pagination.Page) ([]APIVersion, error) {
 	var s struct {
 		Versions []APIVersion `json:"versions"`
 	}
-	err := (r.(APIVersionPage)).ExtractInto(&s)
+
+	err := extract.Into((r.(APIVersionPage)).Body, &s)
 	return s.Versions, err
 }
 
@@ -61,6 +63,7 @@ func ExtractVersionResources(r pagination.Page) ([]APIVersionResource, error) {
 	var s struct {
 		APIVersionResources []APIVersionResource `json:"resources"`
 	}
-	err := (r.(APIVersionResourcePage)).ExtractInto(&s)
+
+	err := extract.Into((r.(APIVersionResourcePage)).Body, &s)
 	return s.APIVersionResources, err
 }
