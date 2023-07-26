@@ -73,6 +73,9 @@ type Instance struct {
 	ServerId string `json:"server_id"`
 	// Timestamp when the dedicated WAF engine was created.
 	CreatedAt int `json:"create_time"`
+	// Resource specifications code.
+	// This code is used to identify the resource specifications the dedicated engine uses.
+	ResourceSpecification string `json:"resourceSpecCode"`
 }
 
 type HostEntry struct {

@@ -68,6 +68,7 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 	instance, err := instances.Get(client, instanceId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instance.ID, instanceId)
+	th.AssertEquals(t, instance.ResourceSpecification, "waf.instance.enterprise")
 
 	instancesList, err := instances.List(client, instances.ListOpts{})
 	th.AssertNoErr(t, err)
