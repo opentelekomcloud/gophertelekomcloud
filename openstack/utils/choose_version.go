@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // Version is a supported API version, corresponding to a vN package within the appropriate service.
@@ -58,12 +59,15 @@ func ChooseVersion(client *golangsdk.ProviderClient, recognized []*Version) (*Ve
 		}
 	}
 
-	var resp response
-	_, err := client.Request("GET", client.IdentityBase, &golangsdk.RequestOpts{
-		JSONResponse: &resp,
-		OkCodes:      []int{200, 300},
+	raw, err := client.Request("GET", client.IdentityBase, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 300},
 	})
+	if err != nil {
+		return nil, "", err
+	}
 
+	var resp response
+	err = extract.Into(raw.Body, &resp)
 	if err != nil {
 		return nil, "", err
 	}

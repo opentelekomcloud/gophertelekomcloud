@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type JobResponse struct {
@@ -40,13 +41,17 @@ func (r JobResult) ExtractJobStatus() (*JobStatus, error) {
 }
 
 func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) error {
-
 	jobClient := *client
 	jobClient.Endpoint = strings.Replace(jobClient.Endpoint, "v2", "v1", 1)
 	jobClient.ResourceBase = jobClient.Endpoint
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		job := new(JobStatus)
-		_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobID), &job, nil)
+		raw, err := jobClient.Get(jobClient.ServiceURL("jobs", jobID), nil, nil)
+		if err != nil {
+			return false, err
+		}
+
+		var job JobStatus
+		err = extract.Into(raw.Body, &job)
 		if err != nil {
 			return false, err
 		}
@@ -64,12 +69,17 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 }
 
 func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
-
 	jobClient := *client
 	jobClient.Endpoint = strings.Replace(jobClient.Endpoint, "v2", "v1", 1)
 	jobClient.ResourceBase = jobClient.Endpoint
-	job := new(JobStatus)
-	_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobId), &job, nil)
+
+	raw, err := jobClient.Get(jobClient.ServiceURL("jobs", jobId), nil, nil)
+	if err != nil {
+		return false, err
+	}
+
+	var job JobStatus
+	err = extract.Into(raw.Body, &job)
 	if err != nil {
 		return nil, err
 	}
