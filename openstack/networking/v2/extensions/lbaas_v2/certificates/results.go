@@ -1,6 +1,8 @@
 package certificates
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -35,7 +37,7 @@ func ExtractCertificates(r pagination.Page) ([]Certificate, error) {
 		Certificates []Certificate `json:"certificates"`
 	}
 
-	err := extract.Into((r.(CertificatePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(CertificatePage)).Body), &s)
 	return s.Certificates, err
 }
 

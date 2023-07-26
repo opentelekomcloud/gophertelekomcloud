@@ -1,6 +1,8 @@
 package attachinterfaces
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -77,6 +79,6 @@ func ExtractInterfaces(r pagination.Page) ([]Interface, error) {
 		Interfaces []Interface `json:"interfaceAttachments"`
 	}
 
-	err := extract.Into((r.(InterfacePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(InterfacePage)).Body), &s)
 	return s.Interfaces, err
 }

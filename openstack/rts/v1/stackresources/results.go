@@ -1,6 +1,7 @@
 package stackresources
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -62,6 +63,6 @@ func ExtractResources(r pagination.Page) ([]Resource, error) {
 		Resources []Resource `json:"resources"`
 	}
 
-	err := extract.Into((r.(ResourcePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ResourcePage)).Body), &s)
 	return s.Resources, err
 }

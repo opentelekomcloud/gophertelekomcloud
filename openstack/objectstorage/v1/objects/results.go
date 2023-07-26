@@ -1,6 +1,7 @@
 package objects
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -85,7 +86,7 @@ func (r ObjectPage) LastMarker() (string, error) {
 func ExtractInfo(r pagination.Page) ([]Object, error) {
 	var s []Object
 
-	err := extract.Into((r.(ObjectPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ObjectPage)).Body), &s)
 	return s, err
 }
 
@@ -113,7 +114,7 @@ func ExtractNames(r pagination.Page) ([]string, error) {
 		return names, nil
 	case strings.HasPrefix(ct, "text/plain"):
 		names := make([]string, 0, 50)
-		body, _ := io.ReadAll(r.(ObjectPage).Body)
+		body := r.(ObjectPage).Body
 		for _, name := range strings.Split(string(body), "\n") {
 			if len(name) > 0 {
 				names = append(names, name)
@@ -562,7 +563,7 @@ func extractLastMarker(r pagination.Page) (string, error) {
 		return lastObject.Subdir, nil
 	case strings.HasPrefix(ct, "text/plain"):
 		names := make([]string, 0, 50)
-		body, _ := io.ReadAll(r.(ObjectPage).Body)
+		body := r.(ObjectPage).Body
 		for _, name := range strings.Split(string(body), "\n") {
 			if len(name) > 0 {
 				names = append(names, name)

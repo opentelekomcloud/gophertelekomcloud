@@ -1,6 +1,8 @@
 package backendmember
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -57,7 +59,7 @@ func (r BackendPage) IsEmpty() (bool, error) {
 func ExtractBackend(r pagination.Page) ([]Backend, error) {
 	var Backends []Backend
 
-	err := extract.Into((r.(BackendPage)).Body, &Backends)
+	err := extract.Into(bytes.NewReader((r.(BackendPage)).Body), &Backends)
 	return Backends, err
 }
 

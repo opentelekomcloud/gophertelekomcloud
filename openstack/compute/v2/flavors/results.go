@@ -1,6 +1,7 @@
 package flavors
 
 import (
+	"bytes"
 	"encoding/json"
 	"strconv"
 
@@ -122,7 +123,7 @@ func (page FlavorPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"flavors_links"`
 	}
 
-	err := extract.Into(page.Body, &s)
+	err := extract.Into(bytes.NewReader(page.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -136,7 +137,7 @@ func ExtractFlavors(r pagination.Page) ([]Flavor, error) {
 		Flavors []Flavor `json:"flavors"`
 	}
 
-	err := extract.Into((r.(FlavorPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(FlavorPage)).Body), &s)
 	return s.Flavors, err
 }
 
@@ -157,7 +158,7 @@ func ExtractAccesses(r pagination.Page) ([]FlavorAccess, error) {
 		FlavorAccesses []FlavorAccess `json:"flavor_access"`
 	}
 
-	err := extract.Into((r.(AccessPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(AccessPage)).Body), &s)
 	return s.FlavorAccesses, err
 }
 

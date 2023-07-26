@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"testing"
@@ -26,7 +27,7 @@ func ExtractLinkedInts(r pagination.Page) ([]int, error) {
 		Ints []int `json:"ints"`
 	}
 
-	err := extract.Into((r.(LinkedPageResult)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(LinkedPageResult)).Body), &s)
 	return s.Ints, err
 }
 

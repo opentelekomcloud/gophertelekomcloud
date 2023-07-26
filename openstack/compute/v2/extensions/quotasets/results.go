@@ -1,6 +1,8 @@
 package quotasets
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -139,7 +141,7 @@ func ExtractQuotaSets(r pagination.Page) ([]QuotaSet, error) {
 		QuotaSets []QuotaSet `json:"quotas"`
 	}
 
-	err := extract.Into((r.(QuotaSetPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(QuotaSetPage)).Body), &s)
 	return s.QuotaSets, err
 }
 

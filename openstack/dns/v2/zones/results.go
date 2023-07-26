@@ -1,6 +1,8 @@
 package zones
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -59,7 +61,7 @@ func ExtractZones(r pagination.Page) ([]Zone, error) {
 		Zones []Zone `json:"zones"`
 	}
 
-	err := extract.Into((r.(ZonePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ZonePage)).Body), &s)
 	return s.Zones, err
 }
 

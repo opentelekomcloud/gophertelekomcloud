@@ -1,6 +1,8 @@
 package publicips
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -193,7 +195,7 @@ func ExtractPublicIPs(r pagination.Page) ([]PublicIP, error) {
 		PublicIPs []PublicIP `json:"publicips"`
 	}
 
-	err := extract.Into(r.(PublicIPPage).Body, &s)
+	err := extract.Into(bytes.NewReader(r.(PublicIPPage).Body), &s)
 	return s.PublicIPs, err
 }
 

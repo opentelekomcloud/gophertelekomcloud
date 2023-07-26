@@ -1,6 +1,7 @@
 package stackevents
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -95,6 +96,6 @@ func ExtractEvents(r pagination.Page) ([]Event, error) {
 		Events []Event `json:"events"`
 	}
 
-	err := extract.Into((r.(EventPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(EventPage)).Body), &s)
 	return s.Events, err
 }

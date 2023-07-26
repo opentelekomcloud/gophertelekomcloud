@@ -1,6 +1,7 @@
 package floatingips
 
 import (
+	"bytes"
 	"encoding/json"
 	"strconv"
 
@@ -68,7 +69,7 @@ func ExtractFloatingIPs(r pagination.Page) ([]FloatingIP, error) {
 		FloatingIPs []FloatingIP `json:"floating_ips"`
 	}
 
-	err := extract.Into((r.(FloatingIPPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(FloatingIPPage)).Body), &s)
 	return s.FloatingIPs, err
 }
 

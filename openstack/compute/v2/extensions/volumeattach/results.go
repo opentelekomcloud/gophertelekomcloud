@@ -1,6 +1,8 @@
 package volumeattach
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -41,7 +43,7 @@ func ExtractVolumeAttachments(r pagination.Page) ([]VolumeAttachment, error) {
 		VolumeAttachments []VolumeAttachment `json:"volumeAttachments"`
 	}
 
-	err := extract.Into((r.(VolumeAttachmentPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(VolumeAttachmentPage)).Body), &s)
 	return s.VolumeAttachments, err
 }
 

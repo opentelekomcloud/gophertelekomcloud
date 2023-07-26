@@ -1,6 +1,8 @@
 package tenantnetworks
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -35,7 +37,7 @@ func ExtractNetworks(r pagination.Page) ([]Network, error) {
 		Networks []Network `json:"networks"`
 	}
 
-	err := extract.Into((r.(NetworkPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(NetworkPage)).Body), &s)
 	return s.Networks, err
 }
 

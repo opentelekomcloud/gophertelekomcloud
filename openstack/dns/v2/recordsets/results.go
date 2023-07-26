@@ -1,6 +1,7 @@
 package recordsets
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -63,7 +64,7 @@ func ExtractRecordSets(r pagination.Page) ([]RecordSet, error) {
 		RecordSets []RecordSet `json:"recordsets"`
 	}
 
-	err := extract.Into((r.(RecordSetPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(RecordSetPage)).Body), &s)
 	return s.RecordSets, err
 }
 

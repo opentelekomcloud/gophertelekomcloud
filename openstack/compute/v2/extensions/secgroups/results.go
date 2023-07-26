@@ -1,6 +1,7 @@
 package secgroups
 
 import (
+	"bytes"
 	"encoding/json"
 	"strconv"
 
@@ -141,7 +142,7 @@ func ExtractSecurityGroups(r pagination.Page) ([]SecurityGroup, error) {
 		SecurityGroups []SecurityGroup `json:"security_groups"`
 	}
 
-	err := extract.Into((r.(SecurityGroupPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SecurityGroupPage)).Body), &s)
 	return s.SecurityGroups, err
 }
 

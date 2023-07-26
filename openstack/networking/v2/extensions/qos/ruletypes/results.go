@@ -1,6 +1,8 @@
 package ruletypes
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -24,6 +26,6 @@ func ExtractRuleTypes(r pagination.Page) ([]RuleType, error) {
 		RuleTypes []RuleType `json:"rule_types"`
 	}
 
-	err := extract.Into((r.(ListRuleTypesPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ListRuleTypesPage)).Body), &s)
 	return s.RuleTypes, err
 }

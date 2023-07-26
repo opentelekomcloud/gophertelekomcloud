@@ -1,6 +1,8 @@
 package networkipavailabilities
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -90,7 +92,7 @@ func ExtractNetworkIPAvailabilities(r pagination.Page) ([]NetworkIPAvailability,
 		NetworkIPAvailabilities []NetworkIPAvailability `json:"network_ip_availabilities"`
 	}
 
-	err := extract.Into((r.(NetworkIPAvailabilityPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(NetworkIPAvailabilityPage)).Body), &s)
 	if err != nil {
 		return nil, err
 	}

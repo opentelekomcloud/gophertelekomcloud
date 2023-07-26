@@ -1,6 +1,7 @@
 package defsecrules
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -42,7 +43,7 @@ func ExtractDefaultRules(r pagination.Page) ([]DefaultRule, error) {
 		DefaultRules []DefaultRule `json:"security_group_default_rules"`
 	}
 
-	err := extract.Into((r.(DefaultRulePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(DefaultRulePage)).Body), &s)
 	return s.DefaultRules, err
 }
 

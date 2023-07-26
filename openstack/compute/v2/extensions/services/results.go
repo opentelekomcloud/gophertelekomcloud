@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -71,6 +72,6 @@ func ExtractServices(r pagination.Page) ([]Service, error) {
 		Service []Service `json:"services"`
 	}
 
-	err := extract.Into((r.(ServicePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ServicePage)).Body), &s)
 	return s.Service, err
 }

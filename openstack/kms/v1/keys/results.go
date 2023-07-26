@@ -1,6 +1,8 @@
 package keys
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -190,7 +192,7 @@ func ExtractKeys(r pagination.Page) ([]Key, error) {
 		Keys []Key `json:"keys"`
 	}
 
-	err := extract.Into((r.(KeyPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(KeyPage)).Body), &s)
 	if err != nil {
 		return nil, err
 	}

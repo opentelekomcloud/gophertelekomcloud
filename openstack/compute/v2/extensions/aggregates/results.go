@@ -1,6 +1,7 @@
 package aggregates
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -83,7 +84,7 @@ func ExtractAggregates(p pagination.Page) ([]Aggregate, error) {
 		Aggregates []Aggregate `json:"aggregates"`
 	}
 
-	err := extract.Into((p.(AggregatesPage)).Body, &a)
+	err := extract.Into(bytes.NewReader((p.(AggregatesPage)).Body), &a)
 	return a.Aggregates, err
 }
 

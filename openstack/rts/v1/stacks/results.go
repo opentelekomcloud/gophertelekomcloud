@@ -84,7 +84,7 @@ func ExtractStacks(r pagination.Page) ([]ListedStack, error) {
 		ListedStacks []ListedStack `json:"stacks"`
 	}
 
-	err := extract.Into((r.(StackPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(StackPage)).Body), &s)
 	return s.ListedStacks, err
 }
 

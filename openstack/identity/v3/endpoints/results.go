@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -77,6 +79,6 @@ func ExtractEndpoints(r pagination.Page) ([]Endpoint, error) {
 		Endpoints []Endpoint `json:"endpoints"`
 	}
 
-	err := extract.Into((r.(EndpointPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(EndpointPage)).Body), &s)
 	return s.Endpoints, err
 }

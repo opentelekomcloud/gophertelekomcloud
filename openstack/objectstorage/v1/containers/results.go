@@ -1,9 +1,9 @@
 package containers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"strconv"
 	"strings"
 	"time"
@@ -55,7 +55,7 @@ func (r ContainerPage) LastMarker() (string, error) {
 func ExtractInfo(r pagination.Page) ([]Container, error) {
 	var s []Container
 
-	err := extract.Into((r.(ContainerPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ContainerPage)).Body), &s)
 	return s, err
 }
 
@@ -79,7 +79,7 @@ func ExtractNames(page pagination.Page) ([]string, error) {
 		return names, nil
 	case strings.HasPrefix(ct, "text/plain"):
 		names := make([]string, 0, 50)
-		body, _ := io.ReadAll(page.(ContainerPage).Body)
+		body := page.(ContainerPage).Body
 		for _, name := range strings.Split(string(body), "\n") {
 			if len(name) > 0 {
 				names = append(names, name)

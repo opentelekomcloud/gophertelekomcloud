@@ -1,6 +1,7 @@
 package hypervisors
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -190,7 +191,7 @@ func ExtractHypervisors(p pagination.Page) ([]Hypervisor, error) {
 		Hypervisors []Hypervisor `json:"hypervisors"`
 	}
 
-	err := extract.Into((p.(HypervisorPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((p.(HypervisorPage)).Body), &s)
 	return s.Hypervisors, err
 }
 

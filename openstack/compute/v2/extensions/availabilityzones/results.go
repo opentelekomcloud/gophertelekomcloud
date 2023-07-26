@@ -1,6 +1,7 @@
 package availabilityzones
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -74,6 +75,6 @@ func ExtractAvailabilityZones(r pagination.Page) ([]AvailabilityZone, error) {
 		AvailabilityZoneInfo []AvailabilityZone `json:"availabilityZoneInfo"`
 	}
 
-	err := extract.Into((r.(AvailabilityZonePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(AvailabilityZonePage)).Body), &s)
 	return s.AvailabilityZoneInfo, err
 }

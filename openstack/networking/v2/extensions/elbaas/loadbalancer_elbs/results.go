@@ -1,6 +1,8 @@
 package loadbalancer_elbs
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 
@@ -75,7 +77,7 @@ func ExtractLoadBalancers(r pagination.Page) ([]LoadBalancer, error) {
 		LoadBalancers []LoadBalancer `json:"loadbalancers"`
 	}
 
-	err := extract.Into((r.(LoadBalancerPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(LoadBalancerPage)).Body), &s)
 	return s.LoadBalancers, err
 }
 

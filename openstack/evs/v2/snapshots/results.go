@@ -1,6 +1,7 @@
 package snapshots
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -99,7 +100,7 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
 
-	err := extract.Into((r.(SnapshotPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SnapshotPage)).Body), &s)
 	return s.Snapshots, err
 }
 

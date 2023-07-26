@@ -1,6 +1,8 @@
 package backup
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -89,7 +91,7 @@ type СsbsBackupPage struct {
 // to do this, it needs to construct the next page's URL.
 func (r СsbsBackupPage) NextPageURL() (string, error) {
 	var res []golangsdk.Link
-	err := extract.IntoSlicePtr(r.Body, &res, "checkpoint_items_links")
+	err := extract.IntoSlicePtr(bytes.NewReader(r.Body), &res, "checkpoint_items_links")
 	if err != nil {
 		return "", err
 	}
@@ -107,9 +109,6 @@ func (r СsbsBackupPage) IsEmpty() (bool, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractBackups(r pagination.Page) ([]Backup, error) {
 	var res []Backup
-	err := extract.IntoSlicePtr(r.(СsbsBackupPage).Body, &res, "checkpoint_items")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
+	err := extract.IntoSlicePtr(bytes.NewReader(r.(СsbsBackupPage).Body), &res, "checkpoint_items")
+	return res, err
 }

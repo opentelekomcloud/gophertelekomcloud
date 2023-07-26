@@ -1,6 +1,8 @@
 package extensions
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -50,6 +52,6 @@ func ExtractExtensions(r pagination.Page) ([]Extension, error) {
 		Extensions []Extension `json:"extensions"`
 	}
 
-	err := extract.Into((r.(ExtensionPage)).Body, &s)
+	err := extract.Into(bytes.NewReader(r.(ExtensionPage).Body), &s)
 	return s.Extensions, err
 }

@@ -1,6 +1,8 @@
 package listeners
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -94,7 +96,7 @@ func (r ListenerPage) IsEmpty() (bool, error) {
 func ExtractListeners(r pagination.Page) ([]Listener, error) {
 	var Listeners []Listener
 
-	err := extract.Into((r.(ListenerPage)).Body, &Listeners)
+	err := extract.Into(bytes.NewReader((r.(ListenerPage)).Body), &Listeners)
 	return Listeners, err
 }
 
