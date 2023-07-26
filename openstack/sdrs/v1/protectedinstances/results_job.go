@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type JobResponse struct {
@@ -66,8 +67,13 @@ func (r JobResult) ExtractJobStatus() (*JobStatus, error) {
 
 func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		job := new(JobStatus)
-		_, err := client.Get(client.ServiceURL("jobs", jobID), &job, nil)
+		raw, err := client.Get(client.ServiceURL("jobs", jobID), nil, nil)
+		if err != nil {
+			return false, err
+		}
+
+		var job JobStatus
+		err = extract.Into(raw.Body, &job)
 		if err != nil {
 			return false, err
 		}
@@ -90,8 +96,13 @@ func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (
 		return nil, fmt.Errorf("unsupported label %s in GetJobEntity", label)
 	}
 
-	job := new(JobStatus)
-	_, err := client.Get(client.ServiceURL("jobs", jobID), &job, nil)
+	raw, err := client.Get(client.ServiceURL("jobs", jobID), nil, nil)
+	if err != nil {
+		return false, err
+	}
+
+	var job JobStatus
+	err = extract.Into(raw.Body, &job)
 	if err != nil {
 		return nil, err
 	}

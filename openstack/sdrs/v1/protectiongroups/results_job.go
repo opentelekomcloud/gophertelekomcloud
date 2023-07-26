@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type JobResponse struct {
@@ -47,8 +48,13 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	jobClient := *client
 	jobClient.ResourceBase = jobClient.Endpoint
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		job := new(JobStatus)
-		_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobID), &job, nil)
+		raw, err := jobClient.Get(jobClient.ServiceURL("jobs", jobID), nil, nil)
+		if err != nil {
+			return false, err
+		}
+
+		var job JobStatus
+		err = extract.Into(raw.Body, &job)
 		if err != nil {
 			return false, err
 		}
@@ -67,15 +73,19 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 }
 
 func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
-
 	if label != "server_group_id" {
 		return nil, fmt.Errorf("Unsupported label %s in GetJobEntity.", label)
 	}
 
 	jobClient := *client
 	jobClient.ResourceBase = jobClient.Endpoint
-	job := new(JobStatus)
-	_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobId), &job, nil)
+	raw, err := jobClient.Get(jobClient.ServiceURL("jobs", jobId), nil, nil)
+	if err != nil {
+		return false, err
+	}
+
+	var job JobStatus
+	err = extract.Into(raw.Body, &job)
 	if err != nil {
 		return nil, err
 	}
