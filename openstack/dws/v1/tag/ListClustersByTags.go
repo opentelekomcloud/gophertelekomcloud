@@ -67,7 +67,7 @@ func ListClustersByTags(client *golangsdk.ServiceClient, opts ListResourceReq) (
 	}
 
 	// POST /v1.0/{project_id}/clusters/resource_instances/action
-	raw, err := client.Get(client.ServiceURL("clusters", "resource_instances", "action"), b, nil)
+	raw, err := client.Post(client.ServiceURL("clusters", "resource_instances", "action"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}
