@@ -42,5 +42,5 @@ func List(c *golangsdk.ServiceClient, engineType string, opts ListOpts) (*ListRe
 
 	var res ListResp
 	err = extract.Into(raw.Body, &res)
-	return &res, nil
+	return &res, err
 }
