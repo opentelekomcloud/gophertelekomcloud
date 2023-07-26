@@ -1,6 +1,8 @@
 package services
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -65,7 +67,7 @@ func (r ServicePage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"vpnservices_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -86,7 +88,7 @@ func ExtractServices(r pagination.Page) ([]Service, error) {
 		Services []Service `json:"vpnservices"`
 	}
 
-	err := extract.Into((r.(ServicePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ServicePage)).Body), &s)
 	return s.Services, err
 }
 

@@ -1,6 +1,8 @@
 package rules
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -40,7 +42,7 @@ func (r RulePage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"firewall_rules_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -61,7 +63,7 @@ func ExtractRules(r pagination.Page) ([]Rule, error) {
 		Rules []Rule `json:"firewall_rules"`
 	}
 
-	err := extract.Into((r.(RulePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(RulePage)).Body), &s)
 	return s.Rules, err
 }
 

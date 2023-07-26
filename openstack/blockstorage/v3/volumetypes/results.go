@@ -1,6 +1,8 @@
 package volumetypes
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -40,7 +42,7 @@ func (r VolumeTypePage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"volume_type_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -72,7 +74,7 @@ func (r commonResult) ExtractInto(v any) error {
 
 // ExtractVolumesInto similar to ExtractInto but operates on a `list` of volume types
 func ExtractVolumeTypesInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(VolumeTypePage).Body, v, "volume_types")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(VolumeTypePage).Body), v, "volume_types")
 }
 
 // GetResult contains the response body and error from a Get request.

@@ -1,6 +1,8 @@
 package pools
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -71,7 +73,7 @@ func (r PoolPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"pools_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +94,7 @@ func ExtractPools(r pagination.Page) ([]Pool, error) {
 		Pools []Pool `json:"pools"`
 	}
 
-	err := extract.Into((r.(PoolPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(PoolPage)).Body), &s)
 	return s.Pools, err
 }
 

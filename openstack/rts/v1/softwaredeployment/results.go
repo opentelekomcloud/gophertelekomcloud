@@ -1,6 +1,8 @@
 package softwaredeployment
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -43,7 +45,7 @@ func (r DeploymentPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"software_deployments_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +66,7 @@ func ExtractDeployments(r pagination.Page) ([]Deployment, error) {
 		Deployments []Deployment `json:"software_deployments"`
 	}
 
-	err := extract.Into((r.(DeploymentPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(DeploymentPage)).Body), &s)
 	return s.Deployments, err
 }
 

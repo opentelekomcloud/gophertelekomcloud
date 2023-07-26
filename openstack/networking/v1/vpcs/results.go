@@ -1,6 +1,8 @@
 package vpcs
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -58,7 +60,7 @@ func (r VpcPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"vpcs_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -77,7 +79,7 @@ func (r VpcPage) IsEmpty() (bool, error) {
 func ExtractVpcs(r pagination.Page) ([]Vpc, error) {
 	var s []Vpc
 
-	err := extract.IntoSlicePtr((r.(VpcPage)).Body, &s, "vpcs")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(VpcPage)).Body), &s, "vpcs")
 	if err != nil {
 		return nil, err
 	}

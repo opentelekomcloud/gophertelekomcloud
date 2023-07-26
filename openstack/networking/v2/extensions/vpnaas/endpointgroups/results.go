@@ -1,6 +1,8 @@
 package endpointgroups
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -57,7 +59,7 @@ func (r EndpointGroupPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"endpoint_groups_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -78,7 +80,7 @@ func ExtractEndpointGroups(r pagination.Page) ([]EndpointGroup, error) {
 		EndpointGroups []EndpointGroup `json:"endpoint_groups"`
 	}
 
-	err := extract.Into((r.(EndpointGroupPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(EndpointGroupPage)).Body), &s)
 	return s.EndpointGroups, err
 }
 

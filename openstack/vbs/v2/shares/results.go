@@ -1,6 +1,7 @@
 package shares
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -104,7 +105,7 @@ func (r SharePage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"shared_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -125,7 +126,7 @@ func ExtractShareList(r pagination.Page) ([]Share, error) {
 		Shares []Share `json:"shared"`
 	}
 
-	err := extract.Into((r.(SharePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SharePage)).Body), &s)
 	return s.Shares, err
 }
 

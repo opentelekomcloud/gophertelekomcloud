@@ -1,6 +1,7 @@
 package usage
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -134,7 +135,7 @@ func (r SingleTenantPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"tenant_usage_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -147,7 +148,7 @@ func ExtractSingleTenant(page pagination.Page) (*TenantUsage, error) {
 		TenantUsage *TenantUsage `json:"tenant_usage"`
 	}
 
-	err := extract.Into((page.(SingleTenantPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((page.(SingleTenantPage)).Body), &s)
 	return s.TenantUsage, err
 }
 
@@ -163,7 +164,7 @@ func ExtractAllTenants(page pagination.Page) ([]TenantUsage, error) {
 		TenantUsages []TenantUsage `json:"tenant_usages"`
 	}
 
-	err := extract.Into((page.(AllTenantsPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((page.(AllTenantsPage)).Body), &s)
 	return s.TenantUsages, err
 }
 
@@ -180,7 +181,7 @@ func (r AllTenantsPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"tenant_usages_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}

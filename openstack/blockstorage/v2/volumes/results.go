@@ -1,6 +1,7 @@
 package volumes
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -114,7 +115,7 @@ func (r VolumePage) NextPageURL() (string, error) {
 	var s struct {
 		Links []golangsdk.Link `json:"volumes_links"`
 	}
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -140,11 +141,11 @@ func (r commonResult) Extract() (*Volume, error) {
 }
 
 func (r commonResult) ExtractInto(v any) error {
-	return extract.IntoStructPtr(r.Body, v, "volume")
+	return extract.IntoStructPtr(bytes.NewReader(r.Body), v, "volume")
 }
 
 func ExtractVolumesInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(VolumePage).Body, v, "volumes")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(VolumePage).Body), v, "volumes")
 }
 
 // CreateResult contains the response body and error from a Create request.

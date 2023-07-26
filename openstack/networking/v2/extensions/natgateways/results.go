@@ -1,6 +1,8 @@
 package natgateways
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -66,7 +68,7 @@ func (r NatGatewayPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"nat_gateways_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -83,6 +85,6 @@ func ExtractNatGateways(r pagination.Page) ([]NatGateway, error) {
 		NatGateways []NatGateway `json:"nat_gateways"`
 	}
 
-	err := extract.Into((r.(NatGatewayPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(NatGatewayPage)).Body), &s)
 	return s.NatGateways, err
 }

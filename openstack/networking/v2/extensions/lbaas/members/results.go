@@ -1,6 +1,8 @@
 package members
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -49,7 +51,7 @@ func (r MemberPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"members_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -70,7 +72,7 @@ func ExtractMembers(r pagination.Page) ([]Member, error) {
 		Members []Member `json:"members"`
 	}
 
-	err := extract.Into((r.(MemberPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(MemberPage)).Body), &s)
 	return s.Members, err
 }
 

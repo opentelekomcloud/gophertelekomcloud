@@ -1,6 +1,7 @@
 package backups
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -74,7 +75,7 @@ func (r BackupPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"backups_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -95,7 +96,7 @@ func ExtractBackups(r pagination.Page) ([]Backup, error) {
 		Backups []Backup `json:"backups"`
 	}
 
-	err := extract.Into((r.(BackupPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(BackupPage)).Body), &s)
 	return s.Backups, err
 }
 

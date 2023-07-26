@@ -1,6 +1,8 @@
 package softwareconfig
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -39,7 +41,7 @@ func (r SoftwareConfigPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"software_config_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -60,7 +62,7 @@ func ExtractSoftwareConfigs(r pagination.Page) ([]SoftwareConfig, error) {
 		SoftwareConfigs []SoftwareConfig `json:"software_configs"`
 	}
 
-	err := extract.Into((r.(SoftwareConfigPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SoftwareConfigPage)).Body), &s)
 	return s.SoftwareConfigs, err
 }
 

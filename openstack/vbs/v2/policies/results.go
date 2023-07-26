@@ -1,6 +1,8 @@
 package policies
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -83,7 +85,7 @@ func (r PolicyPage) NextPageURL() (string, error) {
 		Policies []golangsdk.Link `json:"backup_policies_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +100,7 @@ func ExtractPolicies(r pagination.Page) ([]Policy, error) {
 		Policies []Policy `json:"backup_policies"`
 	}
 
-	err := extract.Into((r.(PolicyPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(PolicyPage)).Body), &s)
 	return s.Policies, err
 }
 

@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -84,7 +86,7 @@ func (r RouterPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"routers_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -105,7 +107,7 @@ func ExtractRouters(r pagination.Page) ([]Router, error) {
 		Routers []Router `json:"routers"`
 	}
 
-	err := extract.Into((r.(RouterPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(RouterPage)).Body), &s)
 	return s.Routers, err
 }
 

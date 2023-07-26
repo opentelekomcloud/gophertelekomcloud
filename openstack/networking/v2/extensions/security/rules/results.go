@@ -1,6 +1,8 @@
 package rules
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -73,7 +75,7 @@ func (r SecGroupRulePage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"security_group_rules_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -94,7 +96,7 @@ func ExtractRules(r pagination.Page) ([]SecGroupRule, error) {
 		SecGroupRules []SecGroupRule `json:"security_group_rules"`
 	}
 
-	err := extract.Into((r.(SecGroupRulePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SecGroupRulePage)).Body), &s)
 	return s.SecGroupRules, err
 }
 

@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"bytes"
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
@@ -30,7 +31,7 @@ func (r serverResult) ExtractInto(v any) error {
 }
 
 func ExtractServersInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(ServerPage).Body, v, "servers")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(ServerPage).Body), v, "servers")
 }
 
 // CreateResult is the response from a Create operation. Call its Extract
@@ -301,7 +302,7 @@ func (r ServerPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"servers_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -410,7 +411,7 @@ func ExtractAddresses(r pagination.Page) (map[string][]Address, error) {
 		Addresses map[string][]Address `json:"addresses"`
 	}
 
-	err := extract.Into((r.(AddressPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(AddressPage)).Body), &s)
 	return s.Addresses, err
 }
 
@@ -434,7 +435,7 @@ func (r NetworkAddressPage) IsEmpty() (bool, error) {
 func ExtractNetworkAddresses(r pagination.Page) ([]Address, error) {
 	var s map[string][]Address
 
-	err := extract.Into((r.(NetworkAddressPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(NetworkAddressPage)).Body), &s)
 	if err != nil {
 		return nil, err
 	}

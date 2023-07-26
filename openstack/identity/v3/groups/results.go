@@ -1,6 +1,7 @@
 package groups
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -108,7 +109,7 @@ func (r GroupPage) NextPageURL() (string, error) {
 		} `json:"links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -121,7 +122,7 @@ func ExtractGroups(r pagination.Page) ([]Group, error) {
 		Groups []Group `json:"groups"`
 	}
 
-	err := extract.Into((r.(GroupPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(GroupPage)).Body), &s)
 	return s.Groups, err
 }
 

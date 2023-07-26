@@ -1,6 +1,8 @@
 package loadbalancers
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/listeners"
@@ -77,7 +79,7 @@ func (r LoadBalancerPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"loadbalancers_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +100,7 @@ func ExtractLoadBalancers(r pagination.Page) ([]LoadBalancer, error) {
 		LoadBalancers []LoadBalancer `json:"loadbalancers"`
 	}
 
-	err := extract.Into((r.(LoadBalancerPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(LoadBalancerPage)).Body), &s)
 	return s.LoadBalancers, err
 }
 

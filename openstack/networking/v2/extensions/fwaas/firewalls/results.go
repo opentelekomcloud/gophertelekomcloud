@@ -1,6 +1,8 @@
 package firewalls
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -34,7 +36,7 @@ func (r commonResult) ExtractInto(v any) error {
 }
 
 func ExtractFirewallsInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(FirewallPage).Body, v, "firewalls")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(FirewallPage).Body), v, "firewalls")
 }
 
 // FirewallPage is the page returned by a pager when traversing over a
@@ -51,7 +53,7 @@ func (r FirewallPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"firewalls_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}

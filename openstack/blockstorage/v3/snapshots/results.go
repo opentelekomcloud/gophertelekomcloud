@@ -1,6 +1,7 @@
 package snapshots
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -91,7 +92,7 @@ func (r SnapshotPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"snapshots_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -104,7 +105,7 @@ func ExtractSnapshots(r pagination.Page) ([]Snapshot, error) {
 		Snapshots []Snapshot `json:"snapshots"`
 	}
 
-	err := extract.Into((r.(SnapshotPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SnapshotPage)).Body), &s)
 	return s.Snapshots, err
 }
 
@@ -115,7 +116,7 @@ type UpdateMetadataResult struct {
 
 // ExtractMetadata returns the metadata from a response from snapshots.UpdateMetadata.
 func (r UpdateMetadataResult) ExtractMetadata() (map[string]any, error) {
-	return metadata.Extract(r.Body)
+	return metadata.Extract(bytes.NewReader(r.Body))
 }
 
 type commonResult struct {

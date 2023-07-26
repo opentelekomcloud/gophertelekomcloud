@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -115,7 +116,7 @@ func (r ServicePage) NextPageURL() (string, error) {
 		} `json:"links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -129,6 +130,6 @@ func ExtractServices(r pagination.Page) ([]Service, error) {
 		Services []Service `json:"services"`
 	}
 
-	err := extract.Into((r.(ServicePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ServicePage)).Body), &s)
 	return s.Services, err
 }

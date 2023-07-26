@@ -1,6 +1,8 @@
 package l7policies
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -130,7 +132,7 @@ func (r L7PolicyPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"l7policies_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -151,7 +153,7 @@ func ExtractL7Policies(r pagination.Page) ([]L7Policy, error) {
 		L7Policies []L7Policy `json:"l7policies"`
 	}
 
-	err := extract.Into((r.(L7PolicyPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(L7PolicyPage)).Body), &s)
 	return s.L7Policies, err
 }
 
@@ -206,7 +208,7 @@ func (r RulePage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"rules_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -227,7 +229,7 @@ func ExtractRules(r pagination.Page) ([]Rule, error) {
 		Rules []Rule `json:"rules"`
 	}
 
-	err := extract.Into((r.(RulePage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(RulePage)).Body), &s)
 	return s.Rules, err
 }
 

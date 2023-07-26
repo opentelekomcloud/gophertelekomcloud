@@ -1,6 +1,8 @@
 package vips
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -101,7 +103,7 @@ func (r VIPPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"vips_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -122,7 +124,7 @@ func ExtractVIPs(r pagination.Page) ([]VirtualIP, error) {
 		VIPs []VirtualIP `json:"vips"`
 	}
 
-	err := extract.Into((r.(VIPPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(VIPPage)).Body), &s)
 	return s.VIPs, err
 }
 

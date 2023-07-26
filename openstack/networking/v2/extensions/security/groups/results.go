@@ -1,6 +1,8 @@
 package groups
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/security/rules"
@@ -44,7 +46,7 @@ func (r SecGroupPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"security_groups_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -66,7 +68,7 @@ func ExtractGroups(r pagination.Page) ([]SecGroup, error) {
 		SecGroups []SecGroup `json:"security_groups"`
 	}
 
-	err := extract.Into((r.(SecGroupPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SecGroupPage)).Body), &s)
 	return s.SecGroups, err
 }
 

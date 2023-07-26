@@ -1,6 +1,8 @@
 package networks
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -93,7 +95,7 @@ func (r NetworkPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"networks_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -116,5 +118,5 @@ func ExtractNetworks(r pagination.Page) ([]Network, error) {
 }
 
 func ExtractNetworksInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(NetworkPage).Body, v, "networks")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(NetworkPage).Body), v, "networks")
 }

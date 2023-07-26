@@ -1,6 +1,7 @@
 package users
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 
@@ -127,7 +128,7 @@ func (r UserPage) NextPageURL() (string, error) {
 		} `json:"links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -138,7 +139,7 @@ func (r UserPage) NextPageURL() (string, error) {
 func ExtractUsers(r pagination.Page) ([]User, error) {
 	var s []User
 
-	err := extract.IntoSlicePtr((r.(UserPage)).Body, &s, "users")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(UserPage)).Body), &s, "users")
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,8 @@
 package monitors
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -97,7 +99,7 @@ func (r MonitorPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"healthmonitors_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -119,7 +121,7 @@ func ExtractMonitors(r pagination.Page) ([]Monitor, error) {
 		Monitors []Monitor `json:"healthmonitors"`
 	}
 
-	err := extract.Into((r.(MonitorPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(MonitorPage)).Body), &s)
 	return s.Monitors, err
 }
 

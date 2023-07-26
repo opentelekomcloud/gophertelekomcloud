@@ -1,6 +1,8 @@
 package ports
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -118,7 +120,7 @@ func (r PortPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"ports_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -141,5 +143,5 @@ func ExtractPorts(r pagination.Page) ([]Port, error) {
 }
 
 func ExtractPortsInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(PortPage).Body, v, "ports")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(PortPage).Body), v, "ports")
 }

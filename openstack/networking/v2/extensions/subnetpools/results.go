@@ -1,6 +1,7 @@
 package subnetpools
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -179,7 +180,7 @@ func (r SubnetPoolPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"subnetpools_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -199,6 +200,6 @@ func ExtractSubnetPools(r pagination.Page) ([]SubnetPool, error) {
 		SubnetPools []SubnetPool `json:"subnetpools"`
 	}
 
-	err := extract.Into((r.(SubnetPoolPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(SubnetPoolPage)).Body), &s)
 	return s.SubnetPools, err
 }

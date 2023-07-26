@@ -1,6 +1,8 @@
 package projects
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -78,7 +80,7 @@ func (r ProjectPage) NextPageURL() (string, error) {
 		} `json:"links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +94,7 @@ func ExtractProjects(r pagination.Page) ([]Project, error) {
 		Projects []Project `json:"projects"`
 	}
 
-	err := extract.Into((r.(ProjectPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(ProjectPage)).Body), &s)
 	return s.Projects, err
 }
 

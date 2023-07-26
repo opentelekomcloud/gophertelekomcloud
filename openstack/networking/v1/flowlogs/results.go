@@ -1,6 +1,8 @@
 package flowlogs
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -62,7 +64,7 @@ func (r FlowLogPage) NextPageURL() (string, error) {
 		Links []golangsdk.Link `json:"flowlogs_links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -83,7 +85,7 @@ func ExtractFlowLogs(r pagination.Page) ([]FlowLog, error) {
 		FlowLogs []FlowLog `json:"flow_logs"`
 	}
 
-	err := extract.Into((r.(FlowLogPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(FlowLogPage)).Body), &s)
 	return s.FlowLogs, err
 }
 

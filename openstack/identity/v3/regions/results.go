@@ -1,6 +1,7 @@
 package regions
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -105,7 +106,7 @@ func (r RegionPage) NextPageURL() (string, error) {
 		} `json:"links"`
 	}
 
-	err := extract.Into(r.Body, &s)
+	err := extract.Into(bytes.NewReader(r.Body), &s)
 	if err != nil {
 		return "", err
 	}
@@ -118,7 +119,7 @@ func ExtractRegions(r pagination.Page) ([]Region, error) {
 		Regions []Region `json:"regions"`
 	}
 
-	err := extract.Into((r.(RegionPage)).Body, &s)
+	err := extract.Into(bytes.NewReader((r.(RegionPage)).Body), &s)
 	return s.Regions, err
 }
 
