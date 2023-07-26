@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type JobId struct {
@@ -16,10 +17,14 @@ func WaitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string
 	jobClient.ResourceBase = jobClient.Endpoint
 
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		job := new(golangsdk.RDSJobStatus)
-
 		requestOpts := &golangsdk.RequestOpts{MoreHeaders: map[string]string{"Content-Type": "application/json"}}
-		_, err := jobClient.Get(fmt.Sprintf("%sjobs?id=%s", jobClient.ResourceBase, jobID), job, requestOpts)
+		raw, err := jobClient.Get(fmt.Sprintf("%sjobs?id=%s", jobClient.ResourceBase, jobID), nil, requestOpts)
+		if err != nil {
+			return false, err
+		}
+
+		var job golangsdk.RDSJobStatus
+		err = extract.Into(raw.Body, &job)
 		if err != nil {
 			return false, err
 		}
@@ -42,10 +47,14 @@ func WaitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID
 	jobClient.ResourceBase = jobClient.Endpoint
 
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		job := new(golangsdk.JsonRDSInstanceStatus)
-
 		requestOpts := &golangsdk.RequestOpts{MoreHeaders: map[string]string{"Content-Type": "application/json"}}
-		_, err := jobClient.Get(fmt.Sprintf("%sinstances?id=%s", jobClient.ResourceBase, instanceID), job, requestOpts)
+		raw, err := jobClient.Get(fmt.Sprintf("%sinstances?id=%s", jobClient.ResourceBase, instanceID), nil, requestOpts)
+		if err != nil {
+			return false, err
+		}
+
+		var job golangsdk.JsonRDSInstanceStatus
+		err = extract.Into(raw.Body, &job)
 		if err != nil {
 			return false, err
 		}
