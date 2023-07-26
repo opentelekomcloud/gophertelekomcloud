@@ -109,6 +109,10 @@ func JsonMarshal(t interface{}) ([]byte, error) {
 
 // Into parses input as JSON and convert to a structure.
 func Into(body io.Reader, to interface{}) error {
+	if closer, ok := body.(io.ReadCloser); ok {
+		defer closer.Close()
+	}
+
 	byteBody, err := io.ReadAll(body)
 	if err != nil {
 		return fmt.Errorf("error reading from stream: %w", err)
