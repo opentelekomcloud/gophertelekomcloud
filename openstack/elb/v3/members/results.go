@@ -1,6 +1,8 @@
 package members
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -61,7 +63,7 @@ func (p MemberPage) IsEmpty() (bool, error) {
 func ExtractMembers(r pagination.Page) ([]Member, error) {
 	var s []Member
 
-	err := extract.IntoSlicePtr((r.(MemberPage)).Body, &s, "members")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(MemberPage)).Body), &s, "members")
 	if err != nil {
 		return nil, err
 	}

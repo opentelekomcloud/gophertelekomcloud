@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
@@ -127,6 +129,6 @@ func (p EndpointPage) IsEmpty() (bool, error) {
 func ExtractEndpoints(p pagination.Page) ([]Endpoint, error) {
 	var eps []Endpoint
 
-	err := extract.IntoSlicePtr(p.(EndpointPage).Body, &eps, "endpoints")
+	err := extract.IntoSlicePtr(bytes.NewReader(p.(EndpointPage).Body), &eps, "endpoints")
 	return eps, err
 }

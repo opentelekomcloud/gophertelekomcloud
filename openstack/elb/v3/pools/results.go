@@ -1,6 +1,8 @@
 package pools
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
@@ -82,7 +84,7 @@ func (r PoolPage) IsEmpty() (bool, error) {
 func ExtractPools(r pagination.Page) ([]Pool, error) {
 	var s []Pool
 
-	err := extract.IntoSlicePtr((r.(PoolPage)).Body, &s, "pools")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(PoolPage)).Body), &s, "pools")
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,8 @@
 package protocols
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -24,7 +26,7 @@ func (p ProtocolPage) IsEmpty() (bool, error) {
 func ExtractProtocols(p pagination.Page) ([]Protocol, error) {
 	var protocols []Protocol
 
-	err := extract.IntoSlicePtr(p.(ProtocolPage).Body, &protocols, "protocols")
+	err := extract.IntoSlicePtr(bytes.NewReader(p.(ProtocolPage).Body), &protocols, "protocols")
 	return protocols, err
 }
 

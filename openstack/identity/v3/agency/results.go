@@ -1,6 +1,8 @@
 package agency
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/roles"
@@ -66,7 +68,7 @@ type AgenciesPage struct {
 func ExtractAgencies(p pagination.Page) ([]Agency, error) {
 	var agencies []Agency
 
-	err := extract.IntoSlicePtr(p.(AgenciesPage).Body, &agencies, "agencies")
+	err := extract.IntoSlicePtr(bytes.NewReader(p.(AgenciesPage).Body), &agencies, "agencies")
 	if err != nil {
 		return nil, err
 	}

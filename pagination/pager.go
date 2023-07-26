@@ -3,6 +3,7 @@ package pagination
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"reflect"
 	"strings"
@@ -54,8 +55,14 @@ func (p Pager) fetchNextPage(url string) (Page, error) {
 		return nil, err
 	}
 
+	defer resp.Body.Close()
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
 	return p.CreatePage(PageResult{
-		Body:   resp.Body,
+		Body:   rawBody,
 		Header: resp.Header,
 		URL:    *resp.Request.URL,
 	}), nil

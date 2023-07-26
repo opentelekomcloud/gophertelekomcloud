@@ -1,6 +1,8 @@
 package policies
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
@@ -72,7 +74,7 @@ func (p PolicyPage) IsEmpty() (bool, error) {
 func ExtractPolicies(p pagination.Page) ([]Policy, error) {
 	var policies []Policy
 
-	err := extract.IntoSlicePtr(p.(PolicyPage).Body, &policies, "l7policies")
+	err := extract.IntoSlicePtr(bytes.NewReader(p.(PolicyPage).Body), &policies, "l7policies")
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package pagination
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 
@@ -34,7 +35,7 @@ func (current LinkedPageBase) NextPageURL() (string, error) {
 
 	submap := make(map[string]any)
 
-	err := extract.Into(current.Body, &submap)
+	err := extract.Into(bytes.NewReader(current.Body), &submap)
 	if err != nil {
 		err := golangsdk.ErrUnexpectedType{}
 		err.Expected = "map[string]any"

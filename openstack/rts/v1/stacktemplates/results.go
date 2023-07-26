@@ -2,7 +2,6 @@ package stacktemplates
 
 import (
 	"encoding/json"
-	"io"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -19,13 +18,8 @@ func (r GetResult) Extract() ([]byte, error) {
 	}
 	mapBody := make(map[string]any)
 
-	bytes, err := io.ReadAll(r.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	// make sure return pretty-printed body
-	if err := json.Unmarshal(bytes, &mapBody); err != nil {
+	if err := json.Unmarshal(r.Body, &mapBody); err != nil {
 		return nil, err
 	}
 

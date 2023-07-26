@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -32,7 +33,7 @@ type Struct struct {
 func ExtractStructs(p pagination.Page) ([]Struct, error) {
 	var structs []Struct
 
-	err := extract.IntoSlicePtr(p.(InfoPageResult).Body, &structs, "structs")
+	err := extract.IntoSlicePtr(bytes.NewReader(p.(InfoPageResult).Body), &structs, "structs")
 	if err != nil {
 		return nil, err
 	}

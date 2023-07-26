@@ -1,6 +1,8 @@
 package protectedinstances
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -83,6 +85,6 @@ func (r InstancePage) IsEmpty() (bool, error) {
 func ExtractInstances(r pagination.Page) ([]Instance, error) {
 	var s []Instance
 
-	err := extract.IntoSlicePtr((r.(InstancePage)).Body, &s, "protected_instances")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(InstancePage)).Body), &s, "protected_instances")
 	return s, err
 }

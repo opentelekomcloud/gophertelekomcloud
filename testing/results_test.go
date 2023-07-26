@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"bytes"
 	"encoding/json"
 	"testing"
 
@@ -98,7 +97,7 @@ func TestUnmarshalAnonymousStructs(t *testing.T) {
 
 	sejson := []byte(singleResponse)
 	var singleResult = golangsdk.Result{
-		Body: bytes.NewReader(sejson),
+		Body: sejson,
 	}
 
 	err := singleResult.ExtractIntoStructPtr(&actual, "person")
@@ -116,7 +115,7 @@ func TestUnmarshalSliceOfAnonymousStructs(t *testing.T) {
 	sejson := []byte(multiResponse)
 
 	var multiResult = golangsdk.Result{
-		Body: bytes.NewReader(sejson),
+		Body: sejson,
 	}
 
 	err := multiResult.ExtractIntoSlicePtr(&actual, "people")
@@ -135,7 +134,7 @@ func TestUnmarshalSliceofStruct(t *testing.T) {
 
 	sejson := []byte(multiResponse)
 	var multiResult = golangsdk.Result{
-		Body: bytes.NewReader(sejson),
+		Body: sejson,
 	}
 
 	err := multiResult.ExtractIntoSlicePtr(&actual, "people")
@@ -152,7 +151,7 @@ func TestUnmarshalNamedStructs(t *testing.T) {
 	sejson := []byte(singleResponse)
 
 	var singleResult = golangsdk.Result{
-		Body: bytes.NewReader(sejson),
+		Body: sejson,
 	}
 
 	err := singleResult.ExtractIntoStructPtr(&actual, "person")
@@ -169,7 +168,7 @@ func TestUnmarshalSliceOfNamedStructs(t *testing.T) {
 	sejson := []byte(multiResponse)
 
 	var multiResult = golangsdk.Result{
-		Body: bytes.NewReader(sejson),
+		Body: sejson,
 	}
 
 	err := multiResult.ExtractIntoSlicePtr(&actual, "people")

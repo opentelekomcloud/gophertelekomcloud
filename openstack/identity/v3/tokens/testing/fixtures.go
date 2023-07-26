@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"bytes"
 	"net/http"
 	"testing"
 	"time"
@@ -298,7 +297,7 @@ func getGetResult(t *testing.T) tokens.GetResult {
 	result.Header = http.Header{
 		"X-Subject-Token": []string{testTokenID},
 	}
-	result.Body = bytes.NewReader([]byte(TokenOutput))
+	result.Body = []byte(TokenOutput)
 	return result
 }
 
@@ -315,6 +314,6 @@ func getGetDomainResult(t *testing.T) tokens.GetResult {
 	result.Header = http.Header{
 		"X-Subject-Token": []string{testTokenID},
 	}
-	result.Body = bytes.NewReader([]byte(DomainToken))
+	result.Body = []byte(DomainToken)
 	return result
 }

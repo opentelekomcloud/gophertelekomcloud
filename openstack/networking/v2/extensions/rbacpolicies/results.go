@@ -1,6 +1,8 @@
 package rbacpolicies
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -95,5 +97,5 @@ func ExtractRBACPolicies(r pagination.Page) ([]RBACPolicy, error) {
 
 // ExtractRBACPolicesInto extracts the elements into a slice of RBAC Policy structs.
 func ExtractRBACPolicesInto(r pagination.Page, v any) error {
-	return extract.IntoSlicePtr(r.(RBACPolicyPage).Body, v, "rbac_policies")
+	return extract.IntoSlicePtr(bytes.NewReader(r.(RBACPolicyPage).Body), v, "rbac_policies")
 }

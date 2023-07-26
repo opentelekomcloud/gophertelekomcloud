@@ -1,6 +1,8 @@
 package listeners
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
@@ -151,7 +153,7 @@ func (p ListenerPage) IsEmpty() (bool, error) {
 func ExtractListeners(r pagination.Page) ([]Listener, error) {
 	var s []Listener
 
-	err := extract.IntoSlicePtr((r.(ListenerPage)).Body, &s, "listeners")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(ListenerPage)).Body), &s, "listeners")
 	if err != nil {
 		return nil, err
 	}

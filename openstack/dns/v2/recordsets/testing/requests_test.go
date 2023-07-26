@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"bytes"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dns/v2/recordsets"
@@ -74,7 +73,7 @@ func TestGet(t *testing.T) {
 
 func TestNextPageURL(t *testing.T) {
 	var page recordsets.RecordSetPage
-	page.Body = bytes.NewReader([]byte(NextPageRequest))
+	page.Body = []byte(NextPageRequest)
 	expected := "http://127.0.0.1:9001/v2/zones/2150b1bf-dee2-4221-9d85-11f7886fb15f/recordsets?limit=1&marker=f7b10e9b-0cae-4a91-b162-562bc6096648"
 	actual, err := page.NextPageURL()
 	th.AssertNoErr(t, err)

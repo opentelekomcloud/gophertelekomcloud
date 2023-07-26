@@ -1,6 +1,8 @@
 package monitors
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
@@ -94,7 +96,7 @@ func (r MonitorPage) IsEmpty() (bool, error) {
 func ExtractMonitors(r pagination.Page) ([]Monitor, error) {
 	var s []Monitor
 
-	err := extract.IntoSlicePtr((r.(MonitorPage)).Body, &s, "healthmonitors")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(MonitorPage)).Body), &s, "healthmonitors")
 	if err != nil {
 		return nil, err
 	}

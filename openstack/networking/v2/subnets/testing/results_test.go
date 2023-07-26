@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"bytes"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -39,7 +38,7 @@ func TestHostRoute(t *testing.T) {
   }}
 `)
 
-	resp := golangsdk.Result{Body: bytes.NewReader(sejson)}
+	resp := golangsdk.Result{Body: sejson}
 	var subnetWrapper struct {
 		Subnet subnets.Subnet `json:"subnet"`
 	}

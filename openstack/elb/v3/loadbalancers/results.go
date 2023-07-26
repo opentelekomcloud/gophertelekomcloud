@@ -1,6 +1,8 @@
 package loadbalancers
 
 import (
+	"bytes"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
@@ -187,7 +189,7 @@ func (r LoadbalancerPage) IsEmpty() (bool, error) {
 func ExtractLoadbalancers(r pagination.Page) ([]LoadBalancer, error) {
 	var s []LoadBalancer
 
-	err := extract.IntoSlicePtr((r.(LoadbalancerPage)).Body, &s, "loadbalancers")
+	err := extract.IntoSlicePtr(bytes.NewReader((r.(LoadbalancerPage)).Body), &s, "loadbalancers")
 	if err != nil {
 		return nil, err
 	}

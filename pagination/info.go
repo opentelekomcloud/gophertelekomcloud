@@ -1,6 +1,10 @@
 package pagination
 
-import "github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+import (
+	"bytes"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
 
 // PageWithInfo is a page with marker information inside `page_info`
 type PageWithInfo struct {
@@ -15,7 +19,7 @@ type pageInfo struct {
 
 func (p PageWithInfo) LastMarker() (string, error) {
 	var info pageInfo
-	err := extract.IntoStructPtr(p.Body, &info, "page_info")
+	err := extract.IntoStructPtr(bytes.NewReader(p.Body), &info, "page_info")
 	if err != nil {
 		return "", err
 	}

@@ -1,6 +1,8 @@
 package instances
 
 import (
+	"bytes"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -117,7 +119,7 @@ func (r DmsPage) IsEmpty() (bool, error) {
 func ExtractDmsInstances(r pagination.Page) (*ListDmsResponse, error) {
 	var s ListDmsResponse
 
-	err := extract.IntoStructPtr((r.(DmsPage)).Body, &s, "")
+	err := extract.IntoStructPtr(bytes.NewReader((r.(DmsPage)).Body), &s, "")
 	if err != nil {
 		return nil, err
 	}
