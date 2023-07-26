@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type JobResponse struct {
@@ -81,8 +82,13 @@ func (r JobResult) ExtractJobStatus() (*JobStatus, error) {
 
 func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		job := new(JobStatus)
-		_, err := client.Get(jobURL(client, jobID), &job, nil)
+		raw, err := client.Get(jobURL(client, jobID), nil, nil)
+		if err != nil {
+			return false, err
+		}
+
+		var job JobStatus
+		err = extract.Into(raw.Body, &job)
 		if err != nil {
 			return false, err
 		}
@@ -101,10 +107,15 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 }
 
 func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (interface{}, error) {
-	job := new(JobStatus)
-	_, err := client.Get(jobURL(client, jobID), &job, nil)
+	raw, err := client.Get(jobURL(client, jobID), nil, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	var job JobStatus
+	err = extract.Into(raw.Body, &job)
+	if err != nil {
+		return false, err
 	}
 
 	if job.Status == "SUCCESS" {
