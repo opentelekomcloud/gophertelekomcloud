@@ -47,7 +47,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToFloatingIPCreateMap() (map[string]any, error)
+	ToFloatingIPCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new floating IP
@@ -65,7 +65,7 @@ type CreateOpts struct {
 
 // ToFloatingIPCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
-func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "floatingip")
 }
 
@@ -112,7 +112,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToFloatingIPUpdateMap() (map[string]any, error)
+	ToFloatingIPUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a floating IP resource. The
@@ -125,7 +125,7 @@ type UpdateOpts struct {
 
 // ToFloatingIPUpdateMap allows UpdateOpts to satisfy the UpdateOptsBuilder
 // interface
-func (opts UpdateOpts) ToFloatingIPUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToFloatingIPUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "floatingip")
 }
 

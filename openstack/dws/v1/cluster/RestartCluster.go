@@ -11,7 +11,7 @@ import (
 type RestartClusterOpts struct {
 	ClusterId string `json:"-"`
 	// Restart flag.
-	Restart any `json:"restart" required:"true"`
+	Restart interface{} `json:"restart" required:"true"`
 }
 
 func RestartCluster(client *golangsdk.ServiceClient, opts RestartClusterOpts) (err error) {

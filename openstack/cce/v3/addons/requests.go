@@ -13,7 +13,7 @@ var RequestOpts = golangsdk.RequestOpts{
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToAddonCreateMap() (map[string]any, error)
+	ToAddonCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new addon
@@ -49,13 +49,13 @@ type RequestSpec struct {
 }
 
 type Values struct {
-	Basic    map[string]any `json:"basic" required:"true"`
-	Advanced map[string]any `json:"custom,omitempty"`
-	Flavor   map[string]any `json:"flavor,omitempty"`
+	Basic    map[string]interface{} `json:"basic" required:"true"`
+	Advanced map[string]interface{} `json:"custom,omitempty"`
+	Flavor   map[string]interface{} `json:"flavor,omitempty"`
 }
 
 // ToAddonCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToAddonCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToAddonCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -83,7 +83,7 @@ func Get(c *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToAddonUpdateMap() (map[string]any, error)
+	ToAddonUpdateMap() (map[string]interface{}, error)
 }
 
 type UpdateMetadata struct {
@@ -109,7 +109,7 @@ type UpdateOpts struct {
 	Spec RequestSpec `json:"spec" required:"true"`
 }
 
-func (opts UpdateOpts) ToAddonUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToAddonUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

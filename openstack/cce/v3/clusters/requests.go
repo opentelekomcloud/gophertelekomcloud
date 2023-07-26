@@ -96,7 +96,7 @@ func GetStructNestedField(v *Clusters, field string, structDriller []string) str
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToClusterCreateMap() (map[string]any, error)
+	ToClusterCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new cluster
@@ -122,19 +122,19 @@ type CreateMetaData struct {
 }
 
 // ToClusterCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToClusterCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToClusterCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 type ExpirationOptsBuilder interface {
-	ToExpirationGetMap() (map[string]any, error)
+	ToExpirationGetMap() (map[string]interface{}, error)
 }
 
 type ExpirationOpts struct {
 	Duration int `json:"duration" required:"true"`
 }
 
-func (opts ExpirationOpts) ToExpirationGetMap() (map[string]any, error) {
+func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -197,11 +197,11 @@ type UpdateSpec struct {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToClusterUpdateMap() (map[string]any, error)
+	ToClusterUpdateMap() (map[string]interface{}, error)
 }
 
 // ToClusterUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToClusterUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToClusterUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -238,10 +238,10 @@ type IpSpec struct {
 }
 
 type UpdateIpOptsBuilder interface {
-	ToMasterIpUpdateMap() (map[string]any, error)
+	ToMasterIpUpdateMap() (map[string]interface{}, error)
 }
 
-func (opts UpdateIpOpts) ToMasterIpUpdateMap() (map[string]any, error) {
+func (opts UpdateIpOpts) ToMasterIpUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "spec")
 }
 

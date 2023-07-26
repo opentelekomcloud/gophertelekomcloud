@@ -48,7 +48,7 @@ func FilterRoles(roles ListPolicy, opts ListOpts) (ListPolicy, error) {
 		Links: roles.Links,
 	}
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.DisplayName != "" {
 		m["DisplayName"] = opts.DisplayName
@@ -142,12 +142,12 @@ type CreateStatement struct {
 	// In the case of a custom policy for agencies, the type of this parameter is map[string][]string
 	// and the value should be set to
 	// "Resource": {"uri": ["/iam/agencies/07805acaba800fdd4fbdc00b8f888c7c"]}.
-	Resource any `json:"Resource,omitempty"`
+	Resource interface{} `json:"Resource,omitempty"`
 }
 
 type Condition map[string]map[string][]string
 
-func (opts CreateOpts) ToPolicyCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "role")
 	if err != nil {
 		return nil, err
@@ -156,7 +156,7 @@ func (opts CreateOpts) ToPolicyCreateMap() (map[string]any, error) {
 }
 
 type CreateOptsBuilder interface {
-	ToPolicyCreateMap() (map[string]any, error)
+	ToPolicyCreateMap() (map[string]interface{}, error)
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
@@ -173,7 +173,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-func (opts CreateOpts) ToPolicyUpdateMap() (map[string]any, error) {
+func (opts CreateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "role")
 }
 

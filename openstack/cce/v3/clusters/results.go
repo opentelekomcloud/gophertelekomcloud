@@ -305,8 +305,8 @@ func (r GetCertResult) Extract() (*Certificate, error) {
 }
 
 // ExtractMap is a function that accepts a result and extracts a kubeconfig.
-func (r GetCertResult) ExtractMap() (map[string]any, error) {
-	var s map[string]any
+func (r GetCertResult) ExtractMap() (map[string]interface{}, error) {
+	var s map[string]interface{}
 	err := r.ExtractInto(&s)
 	return s, err
 }

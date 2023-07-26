@@ -26,7 +26,7 @@ type CreateOpts struct {
 	// Keys in this list must be unique.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
 	// Additional information about the backup object
-	ExtraInfo any `json:"extra_info,omitempty"`
+	ExtraInfo interface{} `json:"extra_info,omitempty"`
 }
 
 // Create will create a new backup based on the values in CreateOpts. To extract
@@ -66,7 +66,7 @@ type Checkpoint struct {
 	// Backup plan information
 	ProtectionPlan ProtectionPlan `json:"protection_plan"`
 	// Additional information
-	ExtraInfo any `json:"extra_info"`
+	ExtraInfo interface{} `json:"extra_info"`
 }
 
 type ProtectionPlan struct {
@@ -87,5 +87,5 @@ type СsbsBackupResource struct {
 	// Backup object name
 	Name string `json:"name"`
 	// Additional information about the backup object
-	ExtraInfo any `json:"extra_info"`
+	ExtraInfo interface{} `json:"extra_info"`
 }

@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToDomainCreateMap() (map[string]any, error)
+	ToDomainCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new backup.
@@ -43,7 +43,7 @@ type ServerOpts struct {
 }
 
 // ToDomainCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToDomainCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToDomainCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -62,7 +62,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToDomainUpdateMap() (map[string]any, error)
+	ToDomainUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update a Domain.
@@ -98,7 +98,7 @@ type CustomPage struct {
 }
 
 // ToDomainUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToDomainUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToDomainUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

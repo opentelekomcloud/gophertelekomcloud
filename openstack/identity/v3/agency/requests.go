@@ -13,10 +13,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToAgencyCreateMap() (map[string]any, error)
+	ToAgencyCreateMap() (map[string]interface{}, error)
 }
 
-func (opts CreateOpts) ToAgencyCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToAgencyCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "agency")
 }
 
@@ -37,10 +37,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToAgencyUpdateMap() (map[string]any, error)
+	ToAgencyUpdateMap() (map[string]interface{}, error)
 }
 
-func (opts UpdateOpts) ToAgencyUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToAgencyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "agency")
 }
 

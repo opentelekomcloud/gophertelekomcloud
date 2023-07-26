@@ -48,7 +48,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToRouterCreateMap() (map[string]any, error)
+	ToRouterCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new router. There are
@@ -64,7 +64,7 @@ type CreateOpts struct {
 }
 
 // ToRouterCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToRouterCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToRouterCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "router")
 }
 
@@ -95,7 +95,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToRouterUpdateMap() (map[string]any, error)
+	ToRouterUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a router.
@@ -108,7 +108,7 @@ type UpdateOpts struct {
 }
 
 // ToRouterUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToRouterUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToRouterUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "router")
 }
 
@@ -138,7 +138,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // AddInterfaceOptsBuilder allows extensions to add additional parameters to
 // the AddInterface request.
 type AddInterfaceOptsBuilder interface {
-	ToRouterAddInterfaceMap() (map[string]any, error)
+	ToRouterAddInterfaceMap() (map[string]interface{}, error)
 }
 
 // AddInterfaceOpts represents the options for adding an interface to a router.
@@ -148,7 +148,7 @@ type AddInterfaceOpts struct {
 }
 
 // ToRouterAddInterfaceMap builds a request body from AddInterfaceOpts.
-func (opts AddInterfaceOpts) ToRouterAddInterfaceMap() (map[string]any, error) {
+func (opts AddInterfaceOpts) ToRouterAddInterfaceMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -188,7 +188,7 @@ func AddInterface(c *golangsdk.ServiceClient, id string, opts AddInterfaceOptsBu
 // RemoveInterfaceOptsBuilder allows extensions to add additional parameters to
 // the RemoveInterface request.
 type RemoveInterfaceOptsBuilder interface {
-	ToRouterRemoveInterfaceMap() (map[string]any, error)
+	ToRouterRemoveInterfaceMap() (map[string]interface{}, error)
 }
 
 // RemoveInterfaceOpts represents options for removing an interface from
@@ -200,7 +200,7 @@ type RemoveInterfaceOpts struct {
 
 // ToRouterRemoveInterfaceMap builds a request body based on
 // RemoveInterfaceOpts.
-func (opts RemoveInterfaceOpts) ToRouterRemoveInterfaceMap() (map[string]any, error) {
+func (opts RemoveInterfaceOpts) ToRouterRemoveInterfaceMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

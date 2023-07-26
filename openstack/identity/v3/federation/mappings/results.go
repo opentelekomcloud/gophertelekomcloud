@@ -14,7 +14,7 @@ type Mapping struct {
 	ID string `json:"id"`
 
 	// Resource Links of mappings.
-	Links map[string]any `json:"links"`
+	Links map[string]interface{} `json:"links"`
 
 	// Rules used to map federated users to local users
 	Rules []Rule `json:"rules"`

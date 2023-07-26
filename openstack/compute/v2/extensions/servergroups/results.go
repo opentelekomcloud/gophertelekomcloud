@@ -32,7 +32,7 @@ type ServerGroup struct {
 
 	// Metadata includes a list of all user-specified key-value pairs attached
 	// to the Server Group.
-	Metadata map[string]any
+	Metadata map[string]interface{}
 }
 
 // ServerGroupPage stores a single page of all ServerGroups results from a

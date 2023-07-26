@@ -79,10 +79,10 @@ func TestUpdateMetadata(t *testing.T) {
 
 	MockUpdateMetadataResponse(t)
 
-	expected := map[string]any{"key": "v1"}
+	expected := map[string]interface{}{"key": "v1"}
 
 	options := snapshots.UpdateMetadataOpts{
-		Metadata: map[string]any{
+		Metadata: map[string]interface{}{
 			"key": "v1",
 		},
 	}

@@ -69,7 +69,7 @@ type uploadPartTask struct {
 	enableCheckpoint bool
 }
 
-func (task *uploadPartTask) Run() any {
+func (task *uploadPartTask) Run() interface{} {
 	if atomic.LoadInt32(task.abort) == 1 {
 		return errAbort
 	}
@@ -105,7 +105,7 @@ func (task *uploadPartTask) Run() any {
 	return err
 }
 
-func loadCheckpointFile(checkpointFile string, result any) error {
+func loadCheckpointFile(checkpointFile string, result interface{}) error {
 	ret, err := os.ReadFile(checkpointFile)
 	if err != nil {
 		return err
@@ -116,7 +116,7 @@ func loadCheckpointFile(checkpointFile string, result any) error {
 	return xml.Unmarshal(ret, result)
 }
 
-func updateCheckpointFile(fc any, checkpointFilePath string) error {
+func updateCheckpointFile(fc interface{}, checkpointFilePath string) error {
 	result, err := xml.Marshal(fc)
 	if err != nil {
 		return err
@@ -331,7 +331,7 @@ func (obsClient ObsClient) resumeUpload(input *UploadFileInput) (output *Complet
 	return completeOutput, err
 }
 
-func handleUploadTaskResult(result any, ufc *UploadCheckpoint, partNum int, enableCheckpoint bool, checkpointFilePath string, lock *sync.Mutex) (err error) {
+func handleUploadTaskResult(result interface{}, ufc *UploadCheckpoint, partNum int, enableCheckpoint bool, checkpointFilePath string, lock *sync.Mutex) (err error) {
 	if uploadPartOutput, ok := result.(*UploadPartOutput); ok {
 		lock.Lock()
 		defer lock.Unlock()
@@ -379,7 +379,7 @@ func (obsClient ObsClient) uploadPartConcurrent(ufc *UploadCheckpoint, checkpoin
 			abort:            &abort,
 			enableCheckpoint: input.EnableCheckpoint,
 		}
-		pool.ExecuteFunc(func() any {
+		pool.ExecuteFunc(func() interface{} {
 			result := task.Run()
 			err := handleUploadTaskResult(result, ufc, task.PartNumber, input.EnableCheckpoint, input.CheckpointFile, lock)
 			if err != nil && atomic.CompareAndSwapInt32(&errFlag, 0, 1) {
@@ -462,7 +462,7 @@ type downloadPartTask struct {
 	enableCheckpoint bool
 }
 
-func (task *downloadPartTask) Run() any {
+func (task *downloadPartTask) Run() interface{} {
 	if atomic.LoadInt32(task.abort) == 1 {
 		return errAbort
 	}
@@ -763,7 +763,7 @@ func updateDownloadFile(filePath string, rangeStart int64, output *GetObjectOutp
 	return nil
 }
 
-func handleDownloadTaskResult(result any, dfc *DownloadCheckpoint, partNum int64, enableCheckpoint bool, checkpointFile string, lock *sync.Mutex) (err error) {
+func handleDownloadTaskResult(result interface{}, dfc *DownloadCheckpoint, partNum int64, enableCheckpoint bool, checkpointFile string, lock *sync.Mutex) (err error) {
 	if _, ok := result.(*GetObjectOutput); ok {
 		lock.Lock()
 		defer lock.Unlock()
@@ -811,7 +811,7 @@ func (obsClient ObsClient) downloadFileConcurrent(input *DownloadFileInput, dfc 
 			tempFileURL:      dfc.TempFileInfo.TempFileUrl,
 			enableCheckpoint: input.EnableCheckpoint,
 		}
-		pool.ExecuteFunc(func() any {
+		pool.ExecuteFunc(func() interface{} {
 			result := task.Run()
 			err := handleDownloadTaskResult(result, dfc, task.partNumber, input.EnableCheckpoint, input.CheckpointFile, lock)
 			if err != nil && atomic.CompareAndSwapInt32(&errFlag, 0, 1) {

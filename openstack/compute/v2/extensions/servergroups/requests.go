@@ -20,7 +20,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToServerGroupCreateMap() (map[string]any, error)
+	ToServerGroupCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts specifies Server Group creation parameters.
@@ -33,7 +33,7 @@ type CreateOpts struct {
 }
 
 // ToServerGroupCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToServerGroupCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToServerGroupCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "server_group")
 }
 

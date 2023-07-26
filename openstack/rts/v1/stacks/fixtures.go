@@ -142,30 +142,30 @@ parameter_defaults:
 `
 
 // ValidJSONEnvironmentParsed is the expected parsed version of ValidJSONEnvironment
-var ValidJSONEnvironmentParsed = map[string]any{
-	"parameters": map[string]any{
+var ValidJSONEnvironmentParsed = map[string]interface{}{
+	"parameters": map[string]interface{}{
 		"user_key": "userkey",
 	},
-	"resource_registry": map[string]any{
+	"resource_registry": map[string]interface{}{
 		"My::WP::Server":         "file:///home/shardy/git/heat-templates/hot/F18/WordPress_Native.yaml",
 		"OS::Quantum*":           "OS::Neutron*",
 		"AWS::CloudWatch::Alarm": "file:///etc/heat/templates/AWS_CloudWatch_Alarm.yaml",
 		"OS::Metering::Alarm":    "OS::Ceilometer::Alarm",
 		"AWS::RDS::DBInstance":   "file:///etc/heat/templates/AWS_RDS_DBInstance.yaml",
-		"resources": map[string]any{
-			"my_db_server": map[string]any{
+		"resources": map[string]interface{}{
+			"my_db_server": map[string]interface{}{
 				"OS::DBInstance": "file:///home/mine/all_my_cool_templates/db.yaml",
 			},
-			"my_server": map[string]any{
+			"my_server": map[string]interface{}{
 				"OS::DBInstance": "file:///home/mine/all_my_cool_templates/db.yaml",
 				"hooks":          "pre-create",
 			},
-			"nested_stack": map[string]any{
-				"nested_resource": map[string]any{
+			"nested_stack": map[string]interface{}{
+				"nested_resource": map[string]interface{}{
 					"hooks": "pre-update",
 				},
-				"another_resource": map[string]any{
-					"hooks": []any{
+				"another_resource": map[string]interface{}{
+					"hooks": []interface{}{
 						"pre-create",
 						"pre-update",
 					},
@@ -176,19 +176,19 @@ var ValidJSONEnvironmentParsed = map[string]any{
 }
 
 // ValidJSONTemplateParsed is the expected parsed version of ValidJSONTemplate
-var ValidJSONTemplateParsed = map[string]any{
+var ValidJSONTemplateParsed = map[string]interface{}{
 	"heat_template_version": "2014-10-16",
-	"parameters": map[string]any{
-		"flavor": map[string]any{
+	"parameters": map[string]interface{}{
+		"flavor": map[string]interface{}{
 			"default":     "debian2G",
 			"description": "Flavor for the server to be created",
 			"hidden":      true,
 			"type":        "string",
 		},
 	},
-	"resources": map[string]any{
-		"test_server": map[string]any{
-			"properties": map[string]any{
+	"resources": map[string]interface{}{
+		"test_server": map[string]interface{}{
+			"properties": map[string]interface{}{
 				"flavor": "2 GB General Purpose v1",
 				"image":  "Debian 7 (Wheezy) (PVHVM)",
 				"name":   "test-server",

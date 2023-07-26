@@ -23,22 +23,22 @@ type DeleteOpts struct {
 
 // ToCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "tag")
 }
 
 // ToDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
-func (opts DeleteOpts) ToDeleteMap() (map[string]any, error) {
+func (opts DeleteOpts) ToDeleteMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 type CreateOptsBuilder interface {
-	ToCreateMap() (map[string]any, error)
+	ToCreateMap() (map[string]interface{}, error)
 }
 
 type DeleteOptsBuilder interface {
-	ToDeleteMap() (map[string]any, error)
+	ToDeleteMap() (map[string]interface{}, error)
 }
 
 // Create implements tag create request.

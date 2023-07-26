@@ -65,7 +65,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	})
 }
 
-func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (any, error) {
+func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
 	jobClient := *client
 	jobClient.ResourceBase = jobClient.Endpoint
 

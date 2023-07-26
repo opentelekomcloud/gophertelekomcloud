@@ -25,16 +25,16 @@ import (
 //	}
 type Body struct {
 	RootTag string
-	Wrapped any
+	Wrapped interface{}
 }
 
 // prepared returns request body, wrapped into a root tag, if required.
-func (r Body) prepared() any {
+func (r Body) prepared() interface{} {
 	if r.RootTag == "" {
 		return r.Wrapped
 	}
 
-	return map[string]any{
+	return map[string]interface{}{
 		r.RootTag: r.Wrapped,
 	}
 }
@@ -55,7 +55,7 @@ func (r Body) String() string {
 }
 
 // RequestBody validates given structure by its tags and build the body ready to be marshalled to the JSON.
-func RequestBody(opts any, parent string) (*Body, error) {
+func RequestBody(opts interface{}, parent string) (*Body, error) {
 	if opts == nil {
 		return nil, fmt.Errorf("error building request body: %w", ErrNilOpts)
 	}

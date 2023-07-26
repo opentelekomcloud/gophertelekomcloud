@@ -3,7 +3,7 @@ package grants
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
 type CreateOptsBuilder interface {
-	ToGrantCreateMap() (map[string]any, error)
+	ToGrantCreateMap() (map[string]interface{}, error)
 }
 
 type CreateOpts struct {
@@ -27,7 +27,7 @@ type CreateOpts struct {
 
 // ToGrantCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToGrantCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToGrantCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -47,7 +47,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 }
 
 type DeleteOptsBuilder interface {
-	ToGrantDeleteMap() (map[string]any, error)
+	ToGrantDeleteMap() (map[string]interface{}, error)
 }
 
 type DeleteOpts struct {
@@ -63,7 +63,7 @@ type DeleteOpts struct {
 
 // ToGrantDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
-func (opts DeleteOpts) ToGrantDeleteMap() (map[string]any, error) {
+func (opts DeleteOpts) ToGrantDeleteMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -82,7 +82,7 @@ func Delete(client *golangsdk.ServiceClient, opts DeleteOptsBuilder) (r DeleteRe
 }
 
 type ListOptsBuilder interface {
-	ToGrantListMap() (map[string]any, error)
+	ToGrantListMap() (map[string]interface{}, error)
 }
 
 type ListOpts struct {
@@ -92,7 +92,7 @@ type ListOpts struct {
 	Sequence string `json:"sequence,omitempty"`
 }
 
-func (opts ListOpts) ToGrantListMap() (map[string]any, error) {
+func (opts ListOpts) ToGrantListMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

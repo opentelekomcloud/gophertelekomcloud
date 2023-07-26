@@ -124,11 +124,11 @@ type CreateSpec struct {
 // logical Node Pool. When it is created, the Node Pool does not have an internal
 // interface
 type CreateOptsBuilder interface {
-	ToNodePoolCreateMap() (map[string]any, error)
+	ToNodePoolCreateMap() (map[string]interface{}, error)
 }
 
 // ToNodePoolCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToNodePoolCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToNodePoolCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -157,7 +157,7 @@ func Get(c *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToNodePoolUpdateMap() (map[string]any, error)
+	ToNodePoolUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update a new node pool
@@ -202,7 +202,7 @@ type UpdateMetadata struct {
 }
 
 // ToNodePoolUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

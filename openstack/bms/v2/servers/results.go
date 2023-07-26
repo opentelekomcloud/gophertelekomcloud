@@ -68,7 +68,7 @@ type Server struct {
 	// Flavor refers to a JSON object, which itself indicates the hardware configuration of the deployed server.
 	Flavor Flavor `json:"flavor"`
 	// Addresses includes a list of all IP addresses assigned to the server, keyed by pool.
-	Addresses map[string]any `json:"addresses"`
+	Addresses map[string]interface{} `json:"addresses"`
 	// Metadata includes a list of all user-specified key-value pairs attached to the server.
 	Metadata map[string]string `json:"metadata"`
 	// Links includes HTTP references to itself, useful for passing along to other APIs that might want a server reference.

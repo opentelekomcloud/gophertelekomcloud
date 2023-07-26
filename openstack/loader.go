@@ -424,7 +424,7 @@ func selectExisting(files []string) string {
 
 // mergeClouds merges two Config recursively (the AuthInfo also gets merged).
 // In case both Config define a value, the value in the 'cloud' cloud takes precedence
-func mergeClouds(cloud, fallback any) (*Cloud, error) {
+func mergeClouds(cloud, fallback interface{}) (*Cloud, error) {
 	overrideJson, err := json.Marshal(fallback)
 	if err != nil {
 		return nil, err
@@ -433,12 +433,12 @@ func mergeClouds(cloud, fallback any) (*Cloud, error) {
 	if err != nil {
 		return nil, err
 	}
-	var fallbackInterface any
+	var fallbackInterface interface{}
 	err = json.Unmarshal(overrideJson, &fallbackInterface)
 	if err != nil {
 		return nil, err
 	}
-	var cloudInterface any
+	var cloudInterface interface{}
 	err = json.Unmarshal(cloudJson, &cloudInterface)
 	if err != nil {
 		return nil, err

@@ -118,7 +118,7 @@ func GetStructNestedField(v *Share, field string, structDriller []string) string
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToShareCreateMap() (map[string]any, error)
+	ToShareCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new share.
@@ -130,7 +130,7 @@ type CreateOpts struct {
 }
 
 // ToShareCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToShareCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToShareCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "shared")
 }
 

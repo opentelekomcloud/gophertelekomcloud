@@ -52,7 +52,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToCertificateCreateMap() (map[string]any, error)
+	ToCertificateCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts is the common options' struct used in this package's Create
@@ -67,7 +67,7 @@ type CreateOpts struct {
 }
 
 // ToCertificateCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToCertificateCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToCertificateCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "certificate")
 }
 
@@ -101,7 +101,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToCertificateUpdateMap() (map[string]any, error)
+	ToCertificateUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is the common options' struct used in this package's Update
@@ -115,7 +115,7 @@ type UpdateOpts struct {
 }
 
 // ToCertificateUpdateMap casts a UpdateOpts struct to a map.
-func (opts UpdateOpts) ToCertificateUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToCertificateUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "certificate")
 }
 

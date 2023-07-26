@@ -75,7 +75,7 @@ func TestUploadImage(t *testing.T) {
 			Name:        "basic.ru-2a",
 			Description: "",
 			IsPublic:    true,
-			ExtraSpecs:  map[string]any{"volume_backend_name": "basic.ru-2a"},
+			ExtraSpecs:  map[string]interface{}{"volume_backend_name": "basic.ru-2a"},
 			QosSpecsID:  "",
 			Deleted:     false,
 			DeletedAt:   time.Time{},

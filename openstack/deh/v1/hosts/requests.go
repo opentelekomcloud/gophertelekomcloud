@@ -10,7 +10,7 @@ import (
 // AllocateOptsBuilder allows extensions to add additional parameters to the
 // Allocate request.
 type AllocateOptsBuilder interface {
-	ToDeHAllocateMap() (map[string]any, error)
+	ToDeHAllocateMap() (map[string]interface{}, error)
 }
 
 // AllocateOpts contains all the values needed to allocate a new DeH.
@@ -23,7 +23,7 @@ type AllocateOpts struct {
 }
 
 // ToDeHAllocateMap builds a allocate request body from AllocateOpts.
-func (opts AllocateOpts) ToDeHAllocateMap() (map[string]any, error) {
+func (opts AllocateOpts) ToDeHAllocateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -42,7 +42,7 @@ func Allocate(c *golangsdk.ServiceClient, opts AllocateOptsBuilder) (r AllocateR
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToDeHUpdateMap() (map[string]any, error)
+	ToDeHUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update a DeH.
@@ -52,7 +52,7 @@ type UpdateOpts struct {
 }
 
 // ToDeHUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToDeHUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToDeHUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "dedicated_host")
 }
 
@@ -198,7 +198,7 @@ func FilterServers(servers []Server, opts ListServerOpts) ([]Server, error) {
 
 	var refinedServers []Server
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID

@@ -34,7 +34,7 @@ func (r commonResult) Extract() (*Group, error) {
 	return &response, err
 }
 
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "server_group")
 }
 

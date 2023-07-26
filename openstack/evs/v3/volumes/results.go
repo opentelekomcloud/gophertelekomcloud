@@ -115,7 +115,7 @@ func (r commonResult) Extract() (*Volume, error) {
 }
 
 // ExtractInto converts our response data into a volume struct
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "volume")
 }
 

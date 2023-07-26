@@ -6,7 +6,7 @@ import (
 )
 
 type CreateOptsBuilder interface {
-	ToEndpointCreateMap() (map[string]any, error)
+	ToEndpointCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains the subset of Endpoint attributes that should be used
@@ -31,7 +31,7 @@ type CreateOpts struct {
 }
 
 // ToEndpointCreateMap builds a request body from the Endpoint Create options.
-func (opts CreateOpts) ToEndpointCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToEndpointCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "endpoint")
 }
 
@@ -99,7 +99,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 
 // UpdateOptsBuilder allows extensions to add parameters to the Update request.
 type UpdateOptsBuilder interface {
-	ToEndpointUpdateMap() (map[string]any, error)
+	ToEndpointUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the subset of Endpoint attributes that should be used to
@@ -124,7 +124,7 @@ type UpdateOpts struct {
 }
 
 // ToEndpointUpdateMap builds an update request body from the Update options.
-func (opts UpdateOpts) ToEndpointUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToEndpointUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "endpoint")
 }
 

@@ -64,7 +64,7 @@ type Pool struct {
 	Description string `json:"description"`
 
 	// A list of listeners objects IDs.
-	Listeners []ListenerID `json:"listeners"` // []map[string]any
+	Listeners []ListenerID `json:"listeners"` // []map[string]interface{}
 
 	// A list of member objects IDs.
 	Members []Member `json:"members"`

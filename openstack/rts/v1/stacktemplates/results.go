@@ -16,7 +16,7 @@ func (r GetResult) Extract() ([]byte, error) {
 	if r.Err != nil {
 		return nil, r.Err
 	}
-	mapBody := make(map[string]any)
+	mapBody := make(map[string]interface{})
 
 	// make sure return pretty-printed body
 	if err := json.Unmarshal(r.Body, &mapBody); err != nil {

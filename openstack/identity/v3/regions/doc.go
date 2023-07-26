@@ -26,7 +26,7 @@ Example to Create a Region
 	createOpts := regions.CreateOpts{
 		ID:             "TestRegion",
 		Description: "Region for testing"
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"email": "testregionsupport@example.com",
 		}
 	}

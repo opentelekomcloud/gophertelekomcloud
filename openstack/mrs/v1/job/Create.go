@@ -112,7 +112,7 @@ type CreateSparkOpts struct {
 }
 
 // Create Use CreateOpts or CreateDistCpOpts or CreateSparkOpts
-func Create(c *golangsdk.ServiceClient, opts any) (*JobExecution, error) {
+func Create(c *golangsdk.ServiceClient, opts interface{}) (*JobExecution, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

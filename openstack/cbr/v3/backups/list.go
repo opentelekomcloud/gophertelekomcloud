@@ -56,7 +56,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 func filterBackups(backups []Backup, opts ListOpts) ([]Backup, error) {
 	var refinedBackups []Backup
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 	if opts.ID != "" {
 		m["ID"] = opts.ID
 	}

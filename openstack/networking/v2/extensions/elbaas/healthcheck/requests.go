@@ -18,7 +18,7 @@ const (
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToHealthCreateMap() (map[string]any, error)
+	ToHealthCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts is the common options struct used in this package's Create
@@ -51,7 +51,7 @@ type CreateOpts struct {
 }
 
 // ToHealthCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToHealthCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToHealthCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToHealthUpdateMap() (map[string]any, error)
+	ToHealthUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is the common options struct used in this package's Update
@@ -129,7 +129,7 @@ type UpdateOpts struct {
 }
 
 // ToHealthpdateMap casts a UpdateOpts struct to a map.
-func (opts UpdateOpts) ToHealthUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToHealthUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

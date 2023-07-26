@@ -140,7 +140,7 @@ func (r commonResult) Extract() (*Volume, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return extract.IntoStructPtr(bytes.NewReader(r.Body), v, "volume")
 }
 

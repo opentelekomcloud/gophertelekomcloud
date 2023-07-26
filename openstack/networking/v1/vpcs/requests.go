@@ -60,7 +60,7 @@ func FilterVPCs(vpcs []Vpc, opts ListOpts) ([]Vpc, error) {
 
 	var refinedVPCs []Vpc
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID
@@ -106,7 +106,7 @@ func getStructField(v *Vpc, field string) string {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToVpcCreateMap() (map[string]any, error)
+	ToVpcCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new vpc. There are
@@ -118,7 +118,7 @@ type CreateOpts struct {
 }
 
 // ToVpcCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToVpcCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToVpcCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "vpc")
 }
 
@@ -151,7 +151,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToVpcUpdateMap() (map[string]any, error)
+	ToVpcUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a vpc.
@@ -163,7 +163,7 @@ type UpdateOpts struct {
 }
 
 // ToVpcUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToVpcUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToVpcUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "vpc")
 }
 

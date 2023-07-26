@@ -49,7 +49,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToLBMemberCreateMap() (map[string]any, error)
+	ToLBMemberCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new pool member.
@@ -69,7 +69,7 @@ type CreateOpts struct {
 }
 
 // ToLBMemberCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToLBMemberCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToLBMemberCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "member")
 }
 
@@ -94,7 +94,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToLBMemberUpdateMap() (map[string]any, error)
+	ToLBMemberUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a pool member.
@@ -104,7 +104,7 @@ type UpdateOpts struct {
 }
 
 // ToLBMemberUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToLBMemberUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToLBMemberUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "member")
 }
 

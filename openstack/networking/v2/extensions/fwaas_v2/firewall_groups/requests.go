@@ -70,7 +70,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToFirewallGroupCreateMap() (map[string]any, error)
+	ToFirewallGroupCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new firewall_group.
@@ -87,7 +87,7 @@ type CreateOpts struct {
 }
 
 // ToFirewallGroupCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToFirewallGroupCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToFirewallGroupCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall_group")
 }
 
@@ -115,7 +115,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToFirewallGroupUpdateMap() (map[string]any, error)
+	ToFirewallGroupUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a firewall.
@@ -129,7 +129,7 @@ type UpdateOpts struct {
 }
 
 // ToFirewallGroupUpdateMap casts a CreateOpts struct to a map.
-func (opts UpdateOpts) ToFirewallGroupUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToFirewallGroupUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall_group")
 }
 

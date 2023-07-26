@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSnapshotCreateMap() (map[string]any, error)
+	ToSnapshotCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains options for creating a Snapshot.
@@ -23,7 +23,7 @@ type CreateOpts struct {
 
 // ToSnapshotCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToSnapshotCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToSnapshotCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "snapshot")
 }
 
@@ -45,7 +45,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToSnapshotUpdateMap() (map[string]any, error)
+	ToSnapshotUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contain options for updating an existing Snapshot.
@@ -57,7 +57,7 @@ type UpdateOpts struct {
 
 // ToSnapshotUpdateMap assembles a request body based on the contents of
 // an UpdateOpts.
-func (opts UpdateOpts) ToSnapshotUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToSnapshotUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "snapshot")
 }
 

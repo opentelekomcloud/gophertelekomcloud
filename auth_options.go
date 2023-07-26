@@ -97,13 +97,13 @@ type AuthOptions struct {
 
 // ToTokenV2CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
 // interface in the v2 tokens package
-func (opts AuthOptions) ToTokenV2CreateMap() (map[string]any, error) {
+func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
 	// Populate the request map.
-	authMap := make(map[string]any)
+	authMap := make(map[string]interface{})
 
 	if opts.Username != "" {
 		if opts.Password != "" {
-			authMap["passwordCredentials"] = map[string]any{
+			authMap["passwordCredentials"] = map[string]interface{}{
 				"username": opts.Username,
 				"password": opts.Password,
 			}
@@ -111,7 +111,7 @@ func (opts AuthOptions) ToTokenV2CreateMap() (map[string]any, error) {
 			return nil, ErrMissingInput{Argument: "Password"}
 		}
 	} else if opts.TokenID != "" {
-		authMap["token"] = map[string]any{
+		authMap["token"] = map[string]interface{}{
 			"id": opts.TokenID,
 		}
 	} else {
@@ -125,10 +125,10 @@ func (opts AuthOptions) ToTokenV2CreateMap() (map[string]any, error) {
 		authMap["tenantName"] = opts.TenantName
 	}
 
-	return map[string]any{"auth": authMap}, nil
+	return map[string]interface{}{"auth": authMap}, nil
 }
 
-func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]any, error) {
+func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
 	type domainReq struct {
 		ID   *string `json:"id,omitempty"`
 		Name *string `json:"name,omitempty"`
@@ -270,13 +270,13 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]an
 	}
 
 	if len(scope) != 0 {
-		b["auth"].(map[string]any)["scope"] = scope
+		b["auth"].(map[string]interface{})["scope"] = scope
 	}
 
 	return b, nil
 }
 
-func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
+func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
 	var scope scopeInfo
 
 	if opts.TenantID != "" {
@@ -319,7 +319,7 @@ type scopeInfo struct {
 	DomainName  string
 }
 
-func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]any, error) {
+func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
 	if scope.ProjectName != "" {
 		// ProjectName provided: either DomainID or DomainName must also be supplied.
 		// ProjectID may not be supplied.
@@ -332,20 +332,20 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]any, error) {
 
 		if scope.DomainID != "" {
 			// ProjectName + DomainID
-			return map[string]any{
-				"project": map[string]any{
+			return map[string]interface{}{
+				"project": map[string]interface{}{
 					"name":   &scope.ProjectName,
-					"domain": map[string]any{"id": &scope.DomainID},
+					"domain": map[string]interface{}{"id": &scope.DomainID},
 				},
 			}, nil
 		}
 
 		if scope.DomainName != "" {
 			// ProjectName + DomainName
-			return map[string]any{
-				"project": map[string]any{
+			return map[string]interface{}{
+				"project": map[string]interface{}{
 					"name":   &scope.ProjectName,
-					"domain": map[string]any{"name": &scope.DomainName},
+					"domain": map[string]interface{}{"name": &scope.DomainName},
 				},
 			}, nil
 		}
@@ -359,8 +359,8 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]any, error) {
 		}
 
 		// ProjectID
-		return map[string]any{
-			"project": map[string]any{
+		return map[string]interface{}{
+			"project": map[string]interface{}{
 				"id": &scope.ProjectID,
 			},
 		}, nil
@@ -371,15 +371,15 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]any, error) {
 		}
 
 		// DomainID
-		return map[string]any{
-			"domain": map[string]any{
+		return map[string]interface{}{
+			"domain": map[string]interface{}{
 				"id": &scope.DomainID,
 			},
 		}, nil
 	} else if scope.DomainName != "" {
 		// DomainName
-		return map[string]any{
-			"domain": map[string]any{
+		return map[string]interface{}{
+			"domain": map[string]interface{}{
 				"name": &scope.DomainName,
 			},
 		}, nil
@@ -408,7 +408,7 @@ func (opts *AgencyAuthOptions) AuthHeaderDomainID() string {
 	return opts.DomainID
 }
 
-func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
+func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
 	scope := scopeInfo{
 		ProjectName: opts.DelegatedProject,
 		DomainName:  opts.AgencyDomainName,
@@ -417,7 +417,7 @@ func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
 	return scope.BuildTokenV3ScopeMap()
 }
 
-func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]any, error) {
+func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
 	type assumeRoleReq struct {
 		DomainName string `json:"domain_name"`
 		AgencyName string `json:"xrole_name"`
@@ -444,7 +444,7 @@ func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[str
 	}
 
 	if len(scope) != 0 {
-		r["auth"].(map[string]any)["scope"] = scope
+		r["auth"].(map[string]interface{})["scope"] = scope
 	}
 	return r, nil
 }

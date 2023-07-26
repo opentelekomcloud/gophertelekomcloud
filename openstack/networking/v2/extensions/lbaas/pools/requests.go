@@ -66,7 +66,7 @@ const (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToLBPoolCreateMap() (map[string]any, error)
+	ToLBPoolCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new pool.
@@ -96,7 +96,7 @@ type CreateOpts struct {
 }
 
 // ToLBPoolCreateMap builds a request body based on CreateOpts.
-func (opts CreateOpts) ToLBPoolCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToLBPoolCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "pool")
 }
 
@@ -121,7 +121,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters ot the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToLBPoolUpdateMap() (map[string]any, error)
+	ToLBPoolUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a pool.
@@ -136,7 +136,7 @@ type UpdateOpts struct {
 }
 
 // ToLBPoolUpdateMap builds a request body based on UpdateOpts.
-func (opts UpdateOpts) ToLBPoolUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToLBPoolUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "pool")
 }
 
@@ -165,7 +165,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // member can be deactivated (status set to INACTIVE) if any of health monitors
 // finds it unhealthy.
 func AssociateMonitor(c *golangsdk.ServiceClient, poolID, monitorID string) (r AssociateResult) {
-	b := map[string]any{"health_monitor": map[string]string{"id": monitorID}}
+	b := map[string]interface{}{"health_monitor": map[string]string{"id": monitorID}}
 	_, r.Err = c.Post(associateURL(c, poolID), b, &r.Body, nil)
 	return
 }

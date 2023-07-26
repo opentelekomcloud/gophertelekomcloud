@@ -61,7 +61,7 @@ type RestoreResp struct {
 	// Project ID
 	ProviderId string `json:"provider_id"`
 	// Resource status after the resource is restored, for example, available
-	ResourcesStatus any `json:"resources_status"`
+	ResourcesStatus interface{} `json:"resources_status"`
 	// Restoration parameters
 	Parameters RestoreParam `json:"parameters"`
 	// Backup record ID
@@ -71,5 +71,5 @@ type RestoreResp struct {
 	// Restoration ID
 	Id string `json:"id"`
 	// Cause of the resource restoration failure
-	ResourcesReason any `json:"resources_reason"`
+	ResourcesReason interface{} `json:"resources_reason"`
 }

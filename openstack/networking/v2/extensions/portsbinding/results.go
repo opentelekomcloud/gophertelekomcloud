@@ -14,7 +14,7 @@ type PortsBindingExt struct {
 
 	// A dictionary that enables the application to pass information about
 	// functions that the Networking API provides.
-	VIFDetails map[string]any `json:"binding:vif_details"`
+	VIFDetails map[string]interface{} `json:"binding:vif_details"`
 
 	// The VIF type for the port.
 	VIFType string `json:"binding:vif_type"`

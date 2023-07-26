@@ -46,17 +46,17 @@ type IBaseModel interface {
 
 // ISerializable defines interface with function: trans
 type ISerializable interface {
-	trans(isObs bool) (map[string]string, map[string][]string, any, error)
+	trans(isObs bool) (map[string]string, map[string][]string, interface{}, error)
 }
 
 // DefaultSerializable defines default serializable struct
 type DefaultSerializable struct {
 	params  map[string]string
 	headers map[string][]string
-	data    any
+	data    interface{}
 }
 
-func (input DefaultSerializable) trans(_ bool) (map[string]string, map[string][]string, any, error) {
+func (input DefaultSerializable) trans(_ bool) (map[string]string, map[string][]string, interface{}, error) {
 	return input.params, input.headers, input.data, nil
 }
 
@@ -66,7 +66,7 @@ func newSubResourceSerial(subResource SubResourceType) *DefaultSerializable {
 	return &DefaultSerializable{map[string]string{string(subResource): ""}, nil, nil}
 }
 
-func trans(subResource SubResourceType, input any) (params map[string]string, headers map[string][]string, data any, err error) {
+func trans(subResource SubResourceType, input interface{}) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(subResource): ""}
 	data, err = ConvertRequestToIoReader(input)
 	return
@@ -84,7 +84,7 @@ func (baseModel *BaseModel) setResponseHeaders(responseHeaders map[string][]stri
 	baseModel.ResponseHeaders = responseHeaders
 }
 
-func (input ListBucketsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ListBucketsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	headers = make(map[string][]string)
 	if input.QueryLocation && !isObs {
 		setHeaders(headers, HEADER_LOCATION_AMZ, []string{"true"}, isObs)
@@ -119,7 +119,7 @@ func (input CreateBucketInput) prepareGrantHeaders(headers map[string][]string, 
 	}
 }
 
-func (input CreateBucketInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input CreateBucketInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	headers = make(map[string][]string)
 	if acl := string(input.ACL); acl != "" {
 		setHeaders(headers, HEADER_ACL, []string{acl}, isObs)
@@ -160,7 +160,7 @@ func (input CreateBucketInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input SetBucketStoragePolicyInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketStoragePolicyInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	xml := make([]string, 0, 1)
 	if !isObs {
 		storageClass := "STANDARD"
@@ -182,7 +182,7 @@ func (input SetBucketStoragePolicyInput) trans(isObs bool) (params map[string]st
 	return
 }
 
-func (input ListObjsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ListObjsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = make(map[string]string)
 	if input.Prefix != "" {
 		params["prefix"] = input.Prefix
@@ -203,7 +203,7 @@ func (input ListObjsInput) trans(_ bool) (params map[string]string, headers map[
 	return
 }
 
-func (input ListObjectsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ListObjectsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.ListObjsInput.trans(isObs)
 	if err != nil {
 		return
@@ -214,7 +214,7 @@ func (input ListObjectsInput) trans(isObs bool) (params map[string]string, heade
 	return
 }
 
-func (input ListVersionsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ListVersionsInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.ListObjsInput.trans(isObs)
 	if err != nil {
 		return
@@ -229,7 +229,7 @@ func (input ListVersionsInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input ListMultipartUploadsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ListMultipartUploadsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceUploads): ""}
 	if input.Prefix != "" {
 		params["prefix"] = input.Prefix
@@ -249,11 +249,11 @@ func (input ListMultipartUploadsInput) trans(_ bool) (params map[string]string, 
 	return
 }
 
-func (input SetBucketQuotaInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketQuotaInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	return trans(SubResourceQuota, input)
 }
 
-func (input SetBucketAclInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketAclInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceAcl): ""}
 	headers = make(map[string][]string)
 
@@ -265,13 +265,13 @@ func (input SetBucketAclInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input SetBucketPolicyInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketPolicyInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourcePolicy): ""}
 	data = strings.NewReader(input.Policy)
 	return
 }
 
-func (input SetBucketCorsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketCorsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceCors): ""}
 	data, md5, err := ConvertRequestToIoReaderV2(input)
 	if err != nil {
@@ -281,17 +281,17 @@ func (input SetBucketCorsInput) trans(_ bool) (params map[string]string, headers
 	return
 }
 
-func (input SetBucketVersioningInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketVersioningInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	return trans(SubResourceVersioning, input)
 }
 
-func (input SetBucketWebsiteConfigurationInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketWebsiteConfigurationInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceWebsite): ""}
 	data, _ = ConvertWebsiteConfigurationToXml(input.BucketWebsiteConfiguration, false)
 	return
 }
 
-func (input GetBucketMetadataInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input GetBucketMetadataInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	headers = make(map[string][]string)
 	if origin := strings.TrimSpace(input.Origin); origin != "" {
 		headers[HEADER_ORIGIN_CAMEL] = []string{origin}
@@ -302,26 +302,26 @@ func (input GetBucketMetadataInput) trans(_ bool) (params map[string]string, hea
 	return
 }
 
-func (input SetBucketLoggingConfigurationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketLoggingConfigurationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceLogging): ""}
 	data, _ = ConvertLoggingStatusToXml(input.BucketLoggingStatus, false, isObs)
 	return
 }
 
-func (input SetBucketLifecycleConfigurationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketLifecycleConfigurationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceLifecycle): ""}
 	data, md5 := ConvertLifecyleConfigurationToXml(input.BucketLifecycleConfiguration, true, isObs)
 	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
 
-func (input SetBucketEncryptionInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketEncryptionInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceEncryption): ""}
 	data, _ = ConvertEncryptionConfigurationToXml(input.BucketEncryptionConfiguration, false, isObs)
 	return
 }
 
-func (input SetBucketTaggingInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketTaggingInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceTagging): ""}
 	data, md5, err := ConvertRequestToIoReaderV2(input)
 	if err != nil {
@@ -331,13 +331,13 @@ func (input SetBucketTaggingInput) trans(_ bool) (params map[string]string, head
 	return
 }
 
-func (input SetBucketNotificationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetBucketNotificationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceNotification): ""}
 	data, _ = ConvertNotificationToXml(input.BucketNotification, false, isObs)
 	return
 }
 
-func (input DeleteObjectInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input DeleteObjectInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = make(map[string]string)
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -345,14 +345,14 @@ func (input DeleteObjectInput) trans(_ bool) (params map[string]string, headers 
 	return
 }
 
-func (input DeleteObjectsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input DeleteObjectsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceDelete): ""}
 	data, md5 := convertDeleteObjectsToXML(input)
 	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
 	return
 }
 
-func (input SetObjectAclInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetObjectAclInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceAcl): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -366,7 +366,7 @@ func (input SetObjectAclInput) trans(isObs bool) (params map[string]string, head
 	return
 }
 
-func (input GetObjectAclInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input GetObjectAclInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceAcl): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -374,7 +374,7 @@ func (input GetObjectAclInput) trans(_ bool) (params map[string]string, headers 
 	return
 }
 
-func (input RestoreObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input RestoreObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceRestore): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -444,7 +444,7 @@ func setSseHeader(headers map[string][]string, sseHeader ISseHeader, sseCOnly bo
 	}
 }
 
-func (input GetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input GetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = make(map[string]string)
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -491,7 +491,7 @@ func (input SetObjectMetadataInput) prepareStorageClass(headers map[string][]str
 	}
 }
 
-func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input SetObjectMetadataInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(SubResourceMetadata): ""}
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId
@@ -544,7 +544,7 @@ func (input GetObjectInput) prepareResponseParams(params map[string]string) {
 	}
 }
 
-func (input GetObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input GetObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.GetObjectMetadataInput.trans(isObs)
 	if err != nil {
 		return
@@ -587,7 +587,7 @@ func (input ObjectOperationInput) prepareGrantHeaders(headers map[string][]strin
 	}
 }
 
-func (input ObjectOperationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ObjectOperationInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	headers = make(map[string][]string)
 	params = make(map[string]string)
 	if acl := string(input.ACL); acl != "" {
@@ -621,7 +621,7 @@ func (input ObjectOperationInput) trans(isObs bool) (params map[string]string, h
 	return
 }
 
-func (input PutObjectBasicInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input PutObjectBasicInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.ObjectOperationInput.trans(isObs)
 	if err != nil {
 		return
@@ -641,7 +641,7 @@ func (input PutObjectBasicInput) trans(isObs bool) (params map[string]string, he
 	return
 }
 
-func (input PutObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input PutObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.PutObjectBasicInput.trans(isObs)
 	if err != nil {
 		return
@@ -688,7 +688,7 @@ func (input CopyObjectInput) prepareCopySourceHeaders(headers map[string][]strin
 	}
 }
 
-func (input CopyObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input CopyObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.ObjectOperationInput.trans(isObs)
 	if err != nil {
 		return
@@ -724,12 +724,12 @@ func (input CopyObjectInput) trans(isObs bool) (params map[string]string, header
 	return
 }
 
-func (input AbortMultipartUploadInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input AbortMultipartUploadInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId}
 	return
 }
 
-func (input InitiateMultipartUploadInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input InitiateMultipartUploadInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params, headers, data, err = input.ObjectOperationInput.trans(isObs)
 	if err != nil {
 		return
@@ -741,7 +741,7 @@ func (input InitiateMultipartUploadInput) trans(isObs bool) (params map[string]s
 	return
 }
 
-func (input UploadPartInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input UploadPartInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId, "partNumber": IntToString(input.PartNumber)}
 	headers = make(map[string][]string)
 	setSseHeader(headers, input.SseHeader, true, isObs)
@@ -754,13 +754,13 @@ func (input UploadPartInput) trans(isObs bool) (params map[string]string, header
 	return
 }
 
-func (input CompleteMultipartUploadInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input CompleteMultipartUploadInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId}
 	data, _ = ConvertCompleteMultipartUploadInputToXml(input, false)
 	return
 }
 
-func (input ListPartsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input ListPartsInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId}
 	if input.MaxParts > 0 {
 		params["max-parts"] = IntToString(input.MaxParts)
@@ -771,7 +771,7 @@ func (input ListPartsInput) trans(_ bool) (params map[string]string, headers map
 	return
 }
 
-func (input CopyPartInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input CopyPartInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{"uploadId": input.UploadId, "partNumber": IntToString(input.PartNumber)}
 	headers = make(map[string][]string, 1)
 	var copySource string
@@ -797,7 +797,7 @@ func (input CopyPartInput) trans(isObs bool) (params map[string]string, headers 
 	return
 }
 
-func (input HeadObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data any, err error) {
+func (input HeadObjectInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = make(map[string]string)
 	if input.VersionId != "" {
 		params[PARAM_VERSION_ID] = input.VersionId

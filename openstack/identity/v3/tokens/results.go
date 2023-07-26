@@ -174,6 +174,6 @@ type Token struct {
 	ExpiresAt time.Time `json:"expires_at"`
 }
 
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "token")
 }

@@ -11,7 +11,7 @@ import (
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type AddOptsBuilder interface {
-	ToBackendAddMap() (map[string]any, error)
+	ToBackendAddMap() (map[string]interface{}, error)
 }
 
 // CreateOpts is the common options struct used in this package's Create
@@ -24,7 +24,7 @@ type AddOpts struct {
 }
 
 // ToBackendAddMap casts a CreateOpts struct to a map.
-func (opts AddOpts) ToBackendAddMap() (map[string]any, error) {
+func (opts AddOpts) ToBackendAddMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -38,7 +38,7 @@ func (opts AddOpts) ToBackendAddMap() (map[string]any, error) {
 func Add(c *golangsdk.ServiceClient, listener_id string, opts AddOptsBuilder) (r AddResult) {
 	b, err := opts.ToBackendAddMap()
 	// API takes an array of these...
-	a := make([]map[string]any, 1)
+	a := make([]map[string]interface{}, 1)
 	a[0] = b
 	if err != nil {
 		r.Err = err
@@ -55,7 +55,7 @@ func Add(c *golangsdk.ServiceClient, listener_id string, opts AddOptsBuilder) (r
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type RemoveOptsBuilder interface {
-	ToBackendRemoveMap() (map[string]any, error)
+	ToBackendRemoveMap() (map[string]interface{}, error)
 }
 
 type LoadBalancerID struct {
@@ -70,7 +70,7 @@ type RemoveOpts struct {
 }
 
 // ToBackendCreateMap casts a CreateOpts struct to a map.
-func (opts RemoveOpts) ToBackendRemoveMap() (map[string]any, error) {
+func (opts RemoveOpts) ToBackendRemoveMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -85,11 +85,11 @@ func Remove(c *golangsdk.ServiceClient, listener_id string, id string) (r Remove
 	}
 	fmt.Printf("removeOpts=%+v.\n", removeOpts)
 	b, err := removeOpts.ToBackendRemoveMap() */
-	lbid := make(map[string]any)
+	lbid := make(map[string]interface{})
 	lbid["id"] = id
-	lbids := make([]map[string]any, 1)
+	lbids := make([]map[string]interface{}, 1)
 	lbids[0] = lbid
-	b := make(map[string]any)
+	b := make(map[string]interface{})
 	b["removeMember"] = lbids
 	// fmt.Printf("b=%+v.\n", b)
 	/* if err != nil {

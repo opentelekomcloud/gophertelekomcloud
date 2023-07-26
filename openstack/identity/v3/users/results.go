@@ -29,7 +29,7 @@ type User struct {
 	ID string `json:"id"`
 
 	// Links contains referencing links to the user.
-	Links map[string]any `json:"links"`
+	Links map[string]interface{} `json:"links"`
 
 	// Name is the name of the user.
 	Name string `json:"name"`

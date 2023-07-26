@@ -24,13 +24,13 @@ type CreateOptsExt struct {
 }
 
 // ToPortCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOptsExt) ToPortCreateMap() (map[string]any, error) {
+func (opts CreateOptsExt) ToPortCreateMap() (map[string]interface{}, error) {
 	base, err := opts.CreateOptsBuilder.ToPortCreateMap()
 	if err != nil {
 		return nil, err
 	}
 
-	port := base["port"].(map[string]any)
+	port := base["port"].(map[string]interface{})
 
 	if opts.HostID != "" {
 		port["binding:host_id"] = opts.HostID
@@ -67,13 +67,13 @@ type UpdateOptsExt struct {
 }
 
 // ToPortUpdateMap casts an UpdateOpts struct to a map.
-func (opts UpdateOptsExt) ToPortUpdateMap() (map[string]any, error) {
+func (opts UpdateOptsExt) ToPortUpdateMap() (map[string]interface{}, error) {
 	base, err := opts.UpdateOptsBuilder.ToPortUpdateMap()
 	if err != nil {
 		return nil, err
 	}
 
-	port := base["port"].(map[string]any)
+	port := base["port"].(map[string]interface{})
 
 	if opts.HostID != "" {
 		port["binding:host_id"] = opts.HostID

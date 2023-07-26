@@ -66,7 +66,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToRouteCreateMap() (map[string]any, error)
+	ToRouteCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new routes. There are
@@ -80,7 +80,7 @@ type CreateOpts struct {
 }
 
 // ToRouteCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToRouteCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToRouteCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "route")
 }
 

@@ -22,14 +22,14 @@ func TestTEFixFileRefs(t *testing.T) {
 }
 
 func TestToStringKeys(t *testing.T) {
-	var test1 any = map[any]any{
+	var test1 interface{} = map[interface{}]interface{}{
 		"Adam":  "Smith",
 		"Isaac": "Newton",
 	}
 	result1, err := toStringKeys(test1)
 	th.AssertNoErr(t, err)
 
-	expected := map[string]any{
+	expected := map[string]interface{}{
 		"Adam":  "Smith",
 		"Isaac": "Newton",
 	}

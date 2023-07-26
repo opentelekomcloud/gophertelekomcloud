@@ -17,8 +17,8 @@ type Scope struct {
 type AuthOptionsBuilder interface {
 	// ToTokenV3CreateMap assembles the Create request body, returning an error
 	// if parameters are missing or inconsistent.
-	ToTokenV3CreateMap(map[string]any) (map[string]any, error)
-	ToTokenV3ScopeMap() (map[string]any, error)
+	ToTokenV3CreateMap(map[string]interface{}) (map[string]interface{}, error)
+	ToTokenV3ScopeMap() (map[string]interface{}, error)
 	CanReauth() bool
 	AuthTokenID() string
 	AuthHeaderDomainID() string
@@ -63,7 +63,7 @@ type AuthOptions struct {
 }
 
 // ToTokenV3CreateMap builds a request body from AuthOptions.
-func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]any, error) {
+func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
 	golangsdkAuthOpts := golangsdk.AuthOptions{
 		Username:    opts.Username,
 		UserID:      opts.UserID,
@@ -79,7 +79,7 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]an
 }
 
 // ToTokenV3ScopeMap builds a scope request body from AuthOptions.
-func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
+func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
 	if opts.Scope.ProjectName != "" {
 		// ProjectName provided: either DomainID or DomainName must also be supplied.
 		// ProjectID may not be supplied.
@@ -92,20 +92,20 @@ func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
 
 		if opts.Scope.DomainID != "" {
 			// ProjectName + DomainID
-			return map[string]any{
-				"project": map[string]any{
+			return map[string]interface{}{
+				"project": map[string]interface{}{
 					"name":   &opts.Scope.ProjectName,
-					"domain": map[string]any{"id": &opts.Scope.DomainID},
+					"domain": map[string]interface{}{"id": &opts.Scope.DomainID},
 				},
 			}, nil
 		}
 
 		if opts.Scope.DomainName != "" {
 			// ProjectName + DomainName
-			return map[string]any{
-				"project": map[string]any{
+			return map[string]interface{}{
+				"project": map[string]interface{}{
 					"name":   &opts.Scope.ProjectName,
-					"domain": map[string]any{"name": &opts.Scope.DomainName},
+					"domain": map[string]interface{}{"name": &opts.Scope.DomainName},
 				},
 			}, nil
 		}
@@ -119,8 +119,8 @@ func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
 		}
 
 		// ProjectID
-		return map[string]any{
-			"project": map[string]any{
+		return map[string]interface{}{
+			"project": map[string]interface{}{
 				"id": &opts.Scope.ProjectID,
 			},
 		}, nil
@@ -131,15 +131,15 @@ func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
 		}
 
 		// DomainID
-		return map[string]any{
-			"domain": map[string]any{
+		return map[string]interface{}{
+			"domain": map[string]interface{}{
 				"id": &opts.Scope.DomainID,
 			},
 		}, nil
 	} else if opts.Scope.DomainName != "" {
 		// DomainName
-		return map[string]any{
-			"domain": map[string]any{
+		return map[string]interface{}{
+			"domain": map[string]interface{}{
 				"name": &opts.Scope.DomainName,
 			},
 		}, nil

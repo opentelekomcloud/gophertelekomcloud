@@ -47,7 +47,7 @@ func (e *Environment) getRRFileContents(ignoreIf igFunc) error {
 	// search the resource registry for URLs
 	switch rr.(type) {
 	// process further only if the resource registry is a map
-	case map[string]any, map[any]any:
+	case map[string]interface{}, map[interface{}]interface{}:
 		rrMap, err := toStringKeys(rr)
 		if err != nil {
 			return err
@@ -78,14 +78,14 @@ func (e *Environment) getRRFileContents(ignoreIf igFunc) error {
 		if val, ok := rrMap["resources"]; ok {
 			switch val.(type) {
 			// process further only if the contents are a map
-			case map[string]any, map[any]any:
+			case map[string]interface{}, map[interface{}]interface{}:
 				resourcesMap, err := toStringKeys(val)
 				if err != nil {
 					return err
 				}
 				for _, v := range resourcesMap {
 					switch v.(type) {
-					case map[string]any, map[any]any:
+					case map[string]interface{}, map[interface{}]interface{}:
 						resourceMap, err := toStringKeys(v)
 						if err != nil {
 							return err
@@ -115,7 +115,7 @@ func (e *Environment) getRRFileContents(ignoreIf igFunc) error {
 }
 
 // function to choose keys whose values are other environment files
-func ignoreIfEnvironment(key string, value any) bool {
+func ignoreIfEnvironment(key string, value interface{}) bool {
 	// base_url and hooks refer to components which cannot have urls
 	if key == "base_url" || key == "hooks" {
 		return true

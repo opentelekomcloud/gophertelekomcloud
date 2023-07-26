@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToServiceCreateMap() (map[string]any, error)
+	ToServiceCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new VPN service
@@ -38,7 +38,7 @@ type CreateOpts struct {
 }
 
 // ToServiceCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToServiceCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToServiceCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "vpnservice")
 }
 
@@ -64,7 +64,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToServiceUpdateMap() (map[string]any, error)
+	ToServiceUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a VPN service
@@ -80,7 +80,7 @@ type UpdateOpts struct {
 }
 
 // ToServiceUpdateMap casts aa UodateOpts struct to a map.
-func (opts UpdateOpts) ToServiceUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToServiceUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "vpnservice")
 }
 

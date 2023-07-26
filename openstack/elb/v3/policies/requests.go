@@ -161,10 +161,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToPolicyCreateMap() (map[string]any, error)
+	ToPolicyCreateMap() (map[string]interface{}, error)
 }
 
-func (opts CreateOpts) ToPolicyCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "l7policy")
 }
 
@@ -242,10 +242,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToPolicyUpdateMap() (map[string]any, error)
+	ToPolicyUpdateMap() (map[string]interface{}, error)
 }
 
-func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "l7policy")
 }
 

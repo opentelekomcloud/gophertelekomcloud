@@ -60,10 +60,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToRuleCreateMap() (map[string]any, error)
+	ToRuleCreateMap() (map[string]interface{}, error)
 }
 
-func (opts CreateOpts) ToRuleCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "rule")
 }
 
@@ -83,7 +83,7 @@ func Get(client *golangsdk.ServiceClient, policyID, id string) (r GetResult) {
 }
 
 type UpdateOptsBuilder interface {
-	ToUpdateRuleMap() (map[string]any, error)
+	ToUpdateRuleMap() (map[string]interface{}, error)
 }
 
 type UpdateOpts struct {
@@ -92,7 +92,7 @@ type UpdateOpts struct {
 	Conditions  []Condition `json:"conditions,omitempty"`
 }
 
-func (opts UpdateOpts) ToUpdateRuleMap() (map[string]any, error) {
+func (opts UpdateOpts) ToUpdateRuleMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "rule")
 }
 

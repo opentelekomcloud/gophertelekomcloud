@@ -117,22 +117,22 @@ const UpdateOutput = `
 // FirstRegion is the first region in the List request.
 var FirstRegion = regions.Region{
 	ID: "RegionOne-East",
-	Links: map[string]any{
+	Links: map[string]interface{}{
 		"self": "http://example.com/identity/v3/regions/RegionOne-East",
 	},
 	Description:    "East sub-region of RegionOne",
-	Extra:          map[string]any{},
+	Extra:          map[string]interface{}{},
 	ParentRegionID: "RegionOne",
 }
 
 // SecondRegion is the second region in the List request.
 var SecondRegion = regions.Region{
 	ID: "RegionOne-West",
-	Links: map[string]any{
+	Links: map[string]interface{}{
 		"self": "https://example.com/identity/v3/regions/RegionOne-West",
 	},
 	Description: "West sub-region of RegionOne",
-	Extra: map[string]any{
+	Extra: map[string]interface{}{
 		"email": "westsupport@example.com",
 	},
 	ParentRegionID: "RegionOne",
@@ -149,11 +149,11 @@ var SecondRegion = regions.Region{
 // SecondRegionUpdated is the second region in the List request.
 var SecondRegionUpdated = regions.Region{
 	ID: "RegionOne-West",
-	Links: map[string]any{
+	Links: map[string]interface{}{
 		"self": "https://example.com/identity/v3/regions/RegionOne-West",
 	},
 	Description: "First West sub-region of RegionOne",
-	Extra: map[string]any{
+	Extra: map[string]interface{}{
 		"email": "westsupport@example.com",
 	},
 	ParentRegionID: "RegionOne",

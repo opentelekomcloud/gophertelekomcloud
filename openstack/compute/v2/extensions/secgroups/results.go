@@ -34,7 +34,7 @@ func (r *SecurityGroup) UnmarshalJSON(b []byte) error {
 	type tmp SecurityGroup
 	var s struct {
 		tmp
-		ID any `json:"id"`
+		ID interface{} `json:"id"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -84,8 +84,8 @@ func (r *Rule) UnmarshalJSON(b []byte) error {
 	type tmp Rule
 	var s struct {
 		tmp
-		ID            any `json:"id"`
-		ParentGroupID any `json:"parent_group_id"`
+		ID            interface{} `json:"id"`
+		ParentGroupID interface{} `json:"parent_group_id"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {

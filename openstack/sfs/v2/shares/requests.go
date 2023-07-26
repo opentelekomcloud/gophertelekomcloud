@@ -104,7 +104,7 @@ func FilterShares(shares []Share, opts ListOpts) ([]Share, error) {
 
 	var refinedShares []Share
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID
@@ -139,7 +139,7 @@ func getStructField(v *Share, field string) string {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToShareCreateMap() (map[string]any, error)
+	ToShareCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains the options for create a Share. This object is
@@ -173,7 +173,7 @@ type CreateOpts struct {
 
 // ToShareCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToShareCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToShareCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "share")
 }
 
@@ -195,7 +195,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToShareUpdateMap() (map[string]any, error)
+	ToShareUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a Share.
@@ -209,7 +209,7 @@ type UpdateOpts struct {
 }
 
 // ToShareUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToShareUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToShareUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "share")
 }
 
@@ -243,7 +243,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // the AccessRight slice from the response, call the Extract method on the AccessRightsResult.
 // Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
 func ListAccessRights(client *golangsdk.ServiceClient, share_id string) (r AccessRightsResult) {
-	requestBody := map[string]any{"os-access_list": nil}
+	requestBody := map[string]interface{}{"os-access_list": nil}
 	_, r.Err = client.Post(rootURL(client, share_id), requestBody, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
@@ -253,7 +253,7 @@ func ListAccessRights(client *golangsdk.ServiceClient, share_id string) (r Acces
 // GrantAccessOptsBuilder allows extensions to add additional parameters to the
 // GrantAccess request.
 type GrantAccessOptsBuilder interface {
-	ToGrantAccessMap() (map[string]any, error)
+	ToGrantAccessMap() (map[string]interface{}, error)
 }
 
 // GrantAccessOpts contains the options for creation of an GrantAccess request.
@@ -270,7 +270,7 @@ type GrantAccessOpts struct {
 
 // ToGrantAccessMap assembles a request body based on the contents of a
 // GrantAccessOpts.
-func (opts GrantAccessOpts) ToGrantAccessMap() (map[string]any, error) {
+func (opts GrantAccessOpts) ToGrantAccessMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "os-allow_access")
 }
 
@@ -291,7 +291,7 @@ func GrantAccess(client *golangsdk.ServiceClient, share_id string, opts GrantAcc
 
 // Delete the Access Rule
 type DeleteAccessOptsBuilder interface {
-	ToDeleteAccessMap() (map[string]any, error)
+	ToDeleteAccessMap() (map[string]interface{}, error)
 }
 
 type DeleteAccessOpts struct {
@@ -299,7 +299,7 @@ type DeleteAccessOpts struct {
 	AccessID string `json:"access_id"`
 }
 
-func (opts DeleteAccessOpts) ToDeleteAccessMap() (map[string]any, error) {
+func (opts DeleteAccessOpts) ToDeleteAccessMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "os-deny_access")
 }
 
@@ -327,7 +327,7 @@ func GetExportLocations(client *golangsdk.ServiceClient, id string) (r GetExport
 // ExpandOptsBuilder allows extensions to add additional parameters to the
 // Expand request.
 type ExpandOptsBuilder interface {
-	ToShareExpandMap() (map[string]any, error)
+	ToShareExpandMap() (map[string]interface{}, error)
 }
 
 // ExpandOpts contains the options for expanding a Share. This object is
@@ -346,7 +346,7 @@ type OSExtendOpts struct {
 
 // ToShareExpandMap assembles a request body based on the contents of a
 // ExpandOpts.
-func (opts ExpandOpts) ToShareExpandMap() (map[string]any, error) {
+func (opts ExpandOpts) ToShareExpandMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -366,7 +366,7 @@ func Expand(client *golangsdk.ServiceClient, share_id string, opts ExpandOptsBui
 // ShrinkOptsBuilder allows extensions to add additional parameters to the
 // Shrink request.
 type ShrinkOptsBuilder interface {
-	ToShareShrinkMap() (map[string]any, error)
+	ToShareShrinkMap() (map[string]interface{}, error)
 }
 
 // ShrinkOpts contains the options for shrinking a Share. This object is
@@ -385,7 +385,7 @@ type OSShrinkOpts struct {
 
 // ToShareShrinkMap assembles a request body based on the contents of a
 // ShrinkOpts.
-func (opts ShrinkOpts) ToShareShrinkMap() (map[string]any, error) {
+func (opts ShrinkOpts) ToShareShrinkMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

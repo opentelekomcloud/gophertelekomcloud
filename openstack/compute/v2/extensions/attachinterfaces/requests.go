@@ -27,7 +27,7 @@ func Get(client *golangsdk.ServiceClient, serverID, portID string) (r GetResult)
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToAttachInterfacesCreateMap() (map[string]any, error)
+	ToAttachInterfacesCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts specifies parameters of a new interface attachment.
@@ -51,7 +51,7 @@ type CreateOpts struct {
 }
 
 // ToAttachInterfacesCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToAttachInterfacesCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToAttachInterfacesCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "interfaceAttachment")
 }
 

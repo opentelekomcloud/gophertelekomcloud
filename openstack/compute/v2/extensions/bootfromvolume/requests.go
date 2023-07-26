@@ -90,7 +90,7 @@ type CreateOptsExt struct {
 
 // ToServerCreateMap adds the block device mapping option to the base server
 // creation options.
-func (opts CreateOptsExt) ToServerCreateMap() (map[string]any, error) {
+func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 	base, err := opts.CreateOptsBuilder.ToServerCreateMap()
 	if err != nil {
 		return nil, err
@@ -102,9 +102,9 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]any, error) {
 		return nil, err
 	}
 
-	serverMap := base["server"].(map[string]any)
+	serverMap := base["server"].(map[string]interface{})
 
-	blockDevice := make([]map[string]any, len(opts.BlockDevice))
+	blockDevice := make([]map[string]interface{}, len(opts.BlockDevice))
 
 	for i, bd := range opts.BlockDevice {
 		b, err := golangsdk.BuildRequestBody(bd, "")

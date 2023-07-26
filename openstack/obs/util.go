@@ -144,7 +144,7 @@ func Sha256Hash(value []byte) []byte {
 }
 
 // ParseXml wrapper of xml.Unmarshal
-func ParseXml(value []byte, result any) error {
+func ParseXml(value []byte, result interface{}) error {
 	if len(value) == 0 {
 		return nil
 	}
@@ -152,7 +152,7 @@ func ParseXml(value []byte, result any) error {
 }
 
 // parseJSON wrapper of json.Unmarshal
-func parseJSON(value []byte, result any) error {
+func parseJSON(value []byte, result interface{}) error {
 	if len(value) == 0 {
 		return nil
 	}
@@ -160,7 +160,7 @@ func parseJSON(value []byte, result any) error {
 }
 
 // TransToXml wrapper of xml.Marshal
-func TransToXml(value any) ([]byte, error) {
+func TransToXml(value interface{}) ([]byte, error) {
 	if value == nil {
 		return []byte{}, nil
 	}

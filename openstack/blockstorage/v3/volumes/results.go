@@ -143,12 +143,12 @@ func (r commonResult) Extract() (*Volume, error) {
 }
 
 // ExtractInto converts our response data into a volume struct
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "volume")
 }
 
 // ExtractVolumesInto similar to ExtractInto but operates on a `list` of volumes
-func ExtractVolumesInto(r pagination.Page, v any) error {
+func ExtractVolumesInto(r pagination.Page, v interface{}) error {
 	return extract.IntoSlicePtr(bytes.NewReader(r.(VolumePage).Body), v, "volumes")
 }
 

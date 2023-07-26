@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToWhiteBlackIPCreateMap() (map[string]any, error)
+	ToWhiteBlackIPCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new whiteblackip rule.
@@ -18,7 +18,7 @@ type CreateOpts struct {
 }
 
 // ToWhiteBlackIPCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToWhiteBlackIPCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToWhiteBlackIPCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -37,7 +37,7 @@ func Create(c *golangsdk.ServiceClient, policyID string, opts CreateOptsBuilder)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToWhiteBlackIPUpdateMap() (map[string]any, error)
+	ToWhiteBlackIPUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update a whiteblackip rule.
@@ -47,7 +47,7 @@ type UpdateOpts struct {
 }
 
 // ToWhiteBlackIPUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToWhiteBlackIPUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToWhiteBlackIPUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

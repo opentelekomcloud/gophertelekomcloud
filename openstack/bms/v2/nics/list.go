@@ -44,7 +44,7 @@ func filterNICs(nics []Nic, opts ListOpts) ([]Nic, error) {
 
 	var refinedNICs []Nic
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID

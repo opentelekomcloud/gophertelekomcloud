@@ -133,7 +133,7 @@ func (lw *loggerWrapper) doWrite() {
 
 }
 
-func (lw *loggerWrapper) Printf(format string, v ...any) {
+func (lw *loggerWrapper) Printf(format string, v ...interface{}) {
 	if !lw.closed {
 		msg := fmt.Sprintf(format, v...)
 		lw.ch <- msg
@@ -259,11 +259,11 @@ func logEnabled() bool {
 	return consoleLogger != nil || fileLogger != nil
 }
 
-func DoLog(level Level, format string, v ...any) {
+func DoLog(level Level, format string, v ...interface{}) {
 	doLog(level, format, v...)
 }
 
-func doLog(level Level, format string, v ...any) {
+func doLog(level Level, format string, v ...interface{}) {
 	if logEnabled() && logConf.level <= level {
 		msg := fmt.Sprintf(format, v...)
 		if _, file, line, ok := runtime.Caller(1); ok {

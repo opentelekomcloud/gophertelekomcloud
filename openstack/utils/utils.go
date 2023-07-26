@@ -8,7 +8,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-func DeleteNotPassParams(params *map[string]any, notPassParams []string) {
+func DeleteNotPassParams(params *map[string]interface{}, notPassParams []string) {
 	for _, i := range notPassParams {
 		delete(*params, i)
 	}
@@ -16,10 +16,10 @@ func DeleteNotPassParams(params *map[string]any, notPassParams []string) {
 
 // merges two interfaces. In cases where a value is defined for both 'overridingInterface' and
 // 'inferiorInterface' the value in 'overridingInterface' will take precedence.
-func MergeInterfaces(overridingInterface, inferiorInterface any) any {
+func MergeInterfaces(overridingInterface, inferiorInterface interface{}) interface{} {
 	switch overriding := overridingInterface.(type) {
-	case map[string]any:
-		interfaceMap, ok := inferiorInterface.(map[string]any)
+	case map[string]interface{}:
+		interfaceMap, ok := inferiorInterface.(map[string]interface{})
 		if !ok {
 			return overriding
 		}
@@ -30,8 +30,8 @@ func MergeInterfaces(overridingInterface, inferiorInterface any) any {
 				overriding[k] = v
 			}
 		}
-	case []any:
-		list, ok := inferiorInterface.([]any)
+	case []interface{}:
+		list, ok := inferiorInterface.([]interface{})
 		if !ok {
 			return overriding
 		}
@@ -39,7 +39,7 @@ func MergeInterfaces(overridingInterface, inferiorInterface any) any {
 		return overriding
 	case nil:
 		// mergeClouds(nil, map[string]interface{...}) -> map[string]interface{...}
-		v, ok := inferiorInterface.(map[string]any)
+		v, ok := inferiorInterface.(map[string]interface{})
 		if ok {
 			return v
 		}
@@ -61,8 +61,8 @@ func PrependString(item string, slice []string) []string {
 	return result
 }
 
-func In(item any, slice any) bool {
-	for _, it := range slice.([]any) {
+func In(item interface{}, slice interface{}) bool {
+	for _, it := range slice.([]interface{}) {
 		if reflect.DeepEqual(item, it) {
 			return true
 		}

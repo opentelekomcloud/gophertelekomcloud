@@ -65,19 +65,19 @@ type scheduledOperationString struct {
 }
 
 type operationDefinitionString struct {
-	MaxBackups            any    `json:"max_backups"`
-	RetentionDurationDays any    `json:"retention_duration_days"`
-	Permanent             any    `json:"permanent"`
-	PlanId                string `json:"plan_id"`
-	ProviderId            string `json:"provider_id"`
-	DayBackups            any    `json:"day_backups"`
-	WeekBackups           any    `json:"week_backups"`
-	MonthBackups          any    `json:"month_backups"`
-	YearBackups           any    `json:"year_backups"`
-	TimeZone              string `json:"timezone"`
+	MaxBackups            interface{} `json:"max_backups"`
+	RetentionDurationDays interface{} `json:"retention_duration_days"`
+	Permanent             interface{} `json:"permanent"`
+	PlanId                string      `json:"plan_id"`
+	ProviderId            string      `json:"provider_id"`
+	DayBackups            interface{} `json:"day_backups"`
+	WeekBackups           interface{} `json:"week_backups"`
+	MonthBackups          interface{} `json:"month_backups"`
+	YearBackups           interface{} `json:"year_backups"`
+	TimeZone              string      `json:"timezone"`
 }
 
-func toInt(v any) int {
+func toInt(v interface{}) int {
 	var i int
 
 	switch v := v.(type) {

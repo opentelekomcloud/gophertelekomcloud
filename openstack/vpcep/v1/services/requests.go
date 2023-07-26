@@ -70,10 +70,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToServiceCreateMap() (map[string]any, error)
+	ToServiceCreateMap() (map[string]interface{}, error)
 }
 
-func (opts CreateOpts) ToServiceCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToServiceCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -160,7 +160,7 @@ func ListPublic(client *golangsdk.ServiceClient, opts ListOptsBuilder) paginatio
 }
 
 type UpdateOptsBuilder interface {
-	ToServiceUpdateMap() (map[string]any, error)
+	ToServiceUpdateMap() (map[string]interface{}, error)
 }
 
 type UpdateOpts struct {
@@ -171,7 +171,7 @@ type UpdateOpts struct {
 	VIPPortID       string        `json:"vip_port_id,omitempty"`
 }
 
-func (opts UpdateOpts) ToServiceUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToServiceUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

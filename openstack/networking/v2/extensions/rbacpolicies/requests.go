@@ -81,7 +81,7 @@ const (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToRBACPolicyCreateMap() (map[string]any, error)
+	ToRBACPolicyCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts represents options used to create a rbac-policy.
@@ -93,7 +93,7 @@ type CreateOpts struct {
 }
 
 // ToRBACPolicyCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToRBACPolicyCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToRBACPolicyCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "rbac_policy")
 }
 
@@ -121,7 +121,7 @@ func Delete(c *golangsdk.ServiceClient, rbacPolicyID string) (r DeleteResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToRBACPolicyUpdateMap() (map[string]any, error)
+	ToRBACPolicyUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents options used to update a rbac-policy.
@@ -130,7 +130,7 @@ type UpdateOpts struct {
 }
 
 // ToRBACPolicyUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToRBACPolicyUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToRBACPolicyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "rbac_policy")
 }
 

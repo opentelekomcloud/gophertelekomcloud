@@ -5,7 +5,7 @@ import "github.com/opentelekomcloud/gophertelekomcloud"
 // RescueOptsBuilder is an interface that allows extensions to override the
 // default structure of a Rescue request.
 type RescueOptsBuilder interface {
-	ToServerRescueMap() (map[string]any, error)
+	ToServerRescueMap() (map[string]interface{}, error)
 }
 
 // RescueOpts represents the configuration options used to control a Rescue
@@ -24,7 +24,7 @@ type RescueOpts struct {
 
 // ToServerRescueMap formats a RescueOpts as a map that can be used as a JSON
 // request body for the Rescue request.
-func (opts RescueOpts) ToServerRescueMap() (map[string]any, error) {
+func (opts RescueOpts) ToServerRescueMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "rescue")
 }
 
@@ -43,6 +43,6 @@ func Rescue(client *golangsdk.ServiceClient, id string, opts RescueOptsBuilder) 
 
 // Unrescue instructs the provider to return the server from RESCUE mode.
 func Unrescue(client *golangsdk.ServiceClient, id string) (r UnrescueResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]any{"unrescue": nil}, nil, nil)
+	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"unrescue": nil}, nil, nil)
 	return
 }

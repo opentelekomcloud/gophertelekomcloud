@@ -67,7 +67,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToFirewallCreateMap() (map[string]any, error)
+	ToFirewallCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new firewall.
@@ -85,7 +85,7 @@ type CreateOpts struct {
 }
 
 // ToFirewallCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToFirewallCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToFirewallCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall")
 }
 
@@ -109,7 +109,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToFirewallUpdateMap() (map[string]any, error)
+	ToFirewallUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains the values used when updating a firewall.
@@ -122,7 +122,7 @@ type UpdateOpts struct {
 }
 
 // ToFirewallUpdateMap casts a CreateOpts struct to a map.
-func (opts UpdateOpts) ToFirewallUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToFirewallUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall")
 }
 

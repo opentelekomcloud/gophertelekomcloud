@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSnapshotCreateMap() (map[string]any, error)
+	ToSnapshotCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains options for creating a Snapshot. This object is passed to
@@ -24,7 +24,7 @@ type CreateOpts struct {
 
 // ToSnapshotCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToSnapshotCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToSnapshotCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "snapshot")
 }
 
@@ -125,19 +125,19 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // UpdateMetadataOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateMetadataOptsBuilder interface {
-	ToSnapshotUpdateMetadataMap() (map[string]any, error)
+	ToSnapshotUpdateMetadataMap() (map[string]interface{}, error)
 }
 
 // UpdateMetadataOpts contain options for updating an existing Snapshot. This
 // object is passed to the snapshots.Update function. For more information
 // about the parameters, see the Snapshot object.
 type UpdateMetadataOpts struct {
-	Metadata map[string]any `json:"metadata,omitempty"`
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
 
 // ToSnapshotUpdateMetadataMap assembles a request body based on the contents of
 // an UpdateMetadataOpts.
-func (opts UpdateMetadataOpts) ToSnapshotUpdateMetadataMap() (map[string]any, error) {
+func (opts UpdateMetadataOpts) ToSnapshotUpdateMetadataMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

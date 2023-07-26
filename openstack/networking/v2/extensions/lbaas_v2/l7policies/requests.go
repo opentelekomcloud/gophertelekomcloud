@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToL7PolicyCreateMap() (map[string]any, error)
+	ToL7PolicyCreateMap() (map[string]interface{}, error)
 }
 
 type Action string
@@ -69,7 +69,7 @@ type CreateOpts struct {
 }
 
 // ToL7PolicyCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToL7PolicyCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToL7PolicyCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "l7policy")
 }
 
@@ -157,7 +157,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToL7PolicyUpdateMap() (map[string]any, error)
+	ToL7PolicyUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is the common options struct used in this package's Update
@@ -189,13 +189,13 @@ type UpdateOpts struct {
 }
 
 // ToL7PolicyUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToL7PolicyUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToL7PolicyUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "l7policy")
 	if err != nil {
 		return nil, err
 	}
 
-	m := b["l7policy"].(map[string]any)
+	m := b["l7policy"].(map[string]interface{})
 
 	if m["redirect_pool_id"] == "" {
 		m["redirect_pool_id"] = nil
@@ -250,7 +250,7 @@ type CreateRuleOpts struct {
 }
 
 // ToRuleCreateMap builds a request body from CreateRuleOpts.
-func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]any, error) {
+func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "rule")
 }
 
@@ -335,7 +335,7 @@ func DeleteRule(c *golangsdk.ServiceClient, policyID string, ruleID string) (r D
 
 // UpdateRuleOptsBuilder allows to add additional parameters to the PUT request.
 type UpdateRuleOptsBuilder interface {
-	ToRuleUpdateMap() (map[string]any, error)
+	ToRuleUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateRuleOpts is the common options struct used in this package's Update
@@ -363,13 +363,13 @@ type UpdateRuleOpts struct {
 }
 
 // ToRuleUpdateMap builds a request body from UpdateRuleOpts.
-func (opts UpdateRuleOpts) ToRuleUpdateMap() (map[string]any, error) {
+func (opts UpdateRuleOpts) ToRuleUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "rule")
 	if err != nil {
 		return nil, err
 	}
 
-	if m := b["rule"].(map[string]any); m["key"] == "" {
+	if m := b["rule"].(map[string]interface{}); m["key"] == "" {
 		m["key"] = nil
 	}
 

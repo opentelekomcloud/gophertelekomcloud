@@ -54,7 +54,7 @@ func TestHeaders_notOk(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]struct {
-		opts   any
+		opts   interface{}
 		errMsg string
 	}{
 		"nil": {
@@ -62,7 +62,7 @@ func TestHeaders_notOk(t *testing.T) {
 			"error building headers: nil options provided",
 		},
 		"not_struct": {
-			map[string]any{},
+			map[string]interface{}{},
 			"error building headers: options type is not a struct",
 		},
 		"no_required": {

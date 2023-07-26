@@ -6,17 +6,17 @@ import (
 
 // SnatRule is a struct that represents a snat rule
 type SnatRule struct {
-	ID                string `json:"id"`
-	NatGatewayID      string `json:"nat_gateway_id"`
-	NetworkID         string `json:"network_id"`
-	TenantID          string `json:"tenant_id"`
-	FloatingIPID      string `json:"floating_ip_id"`
-	FloatingIPAddress string `json:"floating_ip_address"`
-	Status            string `json:"status"`
-	AdminStateUp      bool   `json:"admin_state_up"`
-	Cidr              string `json:"cidr"`
-	SourceType        any    `json:"source_type"`
-	CreatedAt         string `json:"created_at"`
+	ID                string      `json:"id"`
+	NatGatewayID      string      `json:"nat_gateway_id"`
+	NetworkID         string      `json:"network_id"`
+	TenantID          string      `json:"tenant_id"`
+	FloatingIPID      string      `json:"floating_ip_id"`
+	FloatingIPAddress string      `json:"floating_ip_address"`
+	Status            string      `json:"status"`
+	AdminStateUp      bool        `json:"admin_state_up"`
+	Cidr              string      `json:"cidr"`
+	SourceType        interface{} `json:"source_type"`
+	CreatedAt         string      `json:"created_at"`
 }
 
 // GetResult is a return struct of get method

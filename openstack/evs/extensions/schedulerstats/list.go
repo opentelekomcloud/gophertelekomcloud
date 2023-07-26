@@ -64,8 +64,8 @@ func (r *Capabilities) UnmarshalJSON(b []byte) error {
 	type tmp Capabilities
 	var s struct {
 		tmp
-		FreeCapacityGB  any `json:"free_capacity_gb"`
-		TotalCapacityGB any `json:"total_capacity_gb"`
+		FreeCapacityGB  interface{} `json:"free_capacity_gb"`
+		TotalCapacityGB interface{} `json:"total_capacity_gb"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -75,7 +75,7 @@ func (r *Capabilities) UnmarshalJSON(b []byte) error {
 
 	// Generic function to parse a capacity value which may be a numeric
 	// value, "unknown", or "infinite"
-	parseCapacity := func(capacity any) float64 {
+	parseCapacity := func(capacity interface{}) float64 {
 		if capacity != nil {
 			switch capacity := capacity.(type) {
 			case float64:

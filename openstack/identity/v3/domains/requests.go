@@ -57,7 +57,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToDomainCreateMap() (map[string]any, error)
+	ToDomainCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts provides options used to create a domain.
@@ -73,7 +73,7 @@ type CreateOpts struct {
 }
 
 // ToDomainCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToDomainCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToDomainCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "domain")
 }
 
@@ -99,7 +99,7 @@ func Delete(client *golangsdk.ServiceClient, domainID string) (r DeleteResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToDomainUpdateMap() (map[string]any, error)
+	ToDomainUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents parameters to update a domain.
@@ -115,7 +115,7 @@ type UpdateOpts struct {
 }
 
 // ToUpdateCreateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToDomainUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToDomainUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "domain")
 }
 

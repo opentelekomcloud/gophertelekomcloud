@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPolicyCreateMap() (map[string]any, error)
+	ToPolicyCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new policy.
@@ -18,7 +18,7 @@ type CreateOpts struct {
 }
 
 // ToPolicyCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToPolicyCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -37,7 +37,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToPolicyUpdateMap() (map[string]any, error)
+	ToPolicyUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update a policy.
@@ -55,7 +55,7 @@ type UpdateOpts struct {
 }
 
 // ToPolicyUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -74,7 +74,7 @@ func Update(c *golangsdk.ServiceClient, policyID string, opts UpdateOptsBuilder)
 // UpdateHostsOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateHostsOptsBuilder interface {
-	ToPolicyHostsUpdateMap() (map[string]any, error)
+	ToPolicyHostsUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateHostsOpts contains all the values needed to update a policy hosts.
@@ -84,7 +84,7 @@ type UpdateHostsOpts struct {
 }
 
 // ToPolicyHostsUpdateMap builds a update request body from UpdateHostsOpts.
-func (opts UpdateHostsOpts) ToPolicyHostsUpdateMap() (map[string]any, error) {
+func (opts UpdateHostsOpts) ToPolicyHostsUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

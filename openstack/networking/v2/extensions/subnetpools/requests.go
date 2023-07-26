@@ -80,7 +80,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSubnetPoolCreateMap() (map[string]any, error)
+	ToSubnetPoolCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts specifies parameters of a new subnetpool.
@@ -133,7 +133,7 @@ type CreateOpts struct {
 }
 
 // ToSubnetPoolCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToSubnetPoolCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToSubnetPoolCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "subnetpool")
 }
 
@@ -153,7 +153,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToSubnetPoolUpdateMap() (map[string]any, error)
+	ToSubnetPoolUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents options used to update a network.
@@ -203,7 +203,7 @@ type UpdateOpts struct {
 }
 
 // ToSubnetPoolUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToSubnetPoolUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToSubnetPoolUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "subnetpool")
 }
 

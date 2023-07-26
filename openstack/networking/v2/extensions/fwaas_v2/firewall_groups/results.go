@@ -34,11 +34,11 @@ func (r commonResult) Extract() (*FirewallGroup, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "firewall_group")
 }
 
-func ExtractFirewallGroupsInto(r pagination.Page, v any) error {
+func ExtractFirewallGroupsInto(r pagination.Page, v interface{}) error {
 	return extract.IntoSlicePtr(bytes.NewReader(r.(FirewallGroupPage).Body), v, "firewall_groups")
 }
 

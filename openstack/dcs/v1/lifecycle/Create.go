@@ -109,7 +109,7 @@ type CreateOps struct {
 	// Critical command renaming, which is supported only by Redis 4.0 and Redis 5.0 instances and not by Redis 3.0 instances.
 	// If this parameter is not sent or is left empty when you create a Redis 4.0 or 5.0 instance, no critical command will be renamed.
 	// Currently, only COMMAND, KEYS, FLUSHDB, FLUSHALL, and HGETALL commands can be renamed.
-	RenameCommands *any `json:"rename_commands,omitempty"`
+	RenameCommands *interface{} `json:"rename_commands,omitempty"`
 	// An indicator of whether a DCS instance can be accessed in password-free mode.
 	// true: indicates that a DCS instance can be accessed without a password.
 	// false: indicates that a DCS instance can be accessed only after password authentication.

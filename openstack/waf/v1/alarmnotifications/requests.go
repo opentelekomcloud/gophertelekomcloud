@@ -8,7 +8,7 @@ import (
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToAlarmNotificationUpdateMap() (map[string]any, error)
+	ToAlarmNotificationUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update the alarm notification.
@@ -22,7 +22,7 @@ type UpdateOpts struct {
 }
 
 // ToAlarmNotificationUpdateMap casts a UpdateOpts struct to a map.
-func (opts UpdateOpts) ToAlarmNotificationUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToAlarmNotificationUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

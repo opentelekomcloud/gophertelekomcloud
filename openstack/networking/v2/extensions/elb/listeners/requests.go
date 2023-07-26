@@ -12,7 +12,7 @@ import (
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToListenerCreateMap() (map[string]any, error)
+	ToListenerCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts is the common options struct used in this package's Create
@@ -40,7 +40,7 @@ type CreateOpts struct {
 }
 
 // ToListenerCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToListenerCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToListenerCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -76,7 +76,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToListenerUpdateMap() (map[string]any, error)
+	ToListenerUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is the common options struct used in this package's Update
@@ -98,7 +98,7 @@ type UpdateOpts struct {
 }
 
 // ToListenerUpdateMap casts a UpdateOpts struct to a map.
-func (opts UpdateOpts) ToListenerUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToListenerUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

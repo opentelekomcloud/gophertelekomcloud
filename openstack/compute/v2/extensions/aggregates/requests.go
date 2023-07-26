@@ -29,7 +29,7 @@ type CreateOpts struct {
 	AvailabilityZone string `json:"availability_zone,omitempty"`
 }
 
-func (opts CreateOpts) ToAggregatesCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToAggregatesCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "aggregate")
 }
 
@@ -75,7 +75,7 @@ type UpdateOpts struct {
 	AvailabilityZone string `json:"availability_zone,omitempty"`
 }
 
-func (opts UpdateOpts) ToAggregatesUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToAggregatesUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "aggregate")
 }
 
@@ -99,7 +99,7 @@ type AddHostOpts struct {
 	Host string `json:"host" required:"true"`
 }
 
-func (opts AddHostOpts) ToAggregatesAddHostMap() (map[string]any, error) {
+func (opts AddHostOpts) ToAggregatesAddHostMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "add_host")
 }
 
@@ -123,7 +123,7 @@ type RemoveHostOpts struct {
 	Host string `json:"host" required:"true"`
 }
 
-func (opts RemoveHostOpts) ToAggregatesRemoveHostMap() (map[string]any, error) {
+func (opts RemoveHostOpts) ToAggregatesRemoveHostMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "remove_host")
 }
 
@@ -143,10 +143,10 @@ func RemoveHost(client *golangsdk.ServiceClient, aggregateID int, opts RemoveHos
 }
 
 type SetMetadataOpts struct {
-	Metadata map[string]any `json:"metadata" required:"true"`
+	Metadata map[string]interface{} `json:"metadata" required:"true"`
 }
 
-func (opts SetMetadataOpts) ToSetMetadataMap() (map[string]any, error) {
+func (opts SetMetadataOpts) ToSetMetadataMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "set_metadata")
 }
 

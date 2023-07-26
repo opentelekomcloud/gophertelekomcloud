@@ -73,7 +73,7 @@ func FilterPublicIPs(publicIPs []PublicIp, opts ListOpts) ([]PublicIp, error) {
 	if err != nil {
 		return nil, err
 	}
-	var matchOpts map[string]any
+	var matchOpts map[string]interface{}
 	err = json.Unmarshal(matchOptsByte, &matchOpts)
 	if err != nil {
 		return nil, err
@@ -92,7 +92,7 @@ func FilterPublicIPs(publicIPs []PublicIp, opts ListOpts) ([]PublicIp, error) {
 	return refinedPublicIPs, nil
 }
 
-func publicIPMatchesFilter(publicIP *PublicIp, filter map[string]any) bool {
+func publicIPMatchesFilter(publicIP *PublicIp, filter map[string]interface{}) bool {
 	for key, expectedValue := range filter {
 		if getStructField(publicIP, key) != expectedValue {
 			return false
@@ -110,7 +110,7 @@ func getStructField(v *PublicIp, field string) string {
 // ApplyOptsBuilder is an interface by which can build the request body of public ip
 // application
 type ApplyOptsBuilder interface {
-	ToPublicIpApplyMap() (map[string]any, error)
+	ToPublicIpApplyMap() (map[string]interface{}, error)
 }
 
 // ApplyOpts is a struct which is used to create public ip
@@ -132,7 +132,7 @@ type BandwidthOpts struct {
 	ChargeMode string `json:"charge_mode,omitempty"`
 }
 
-func (opts ApplyOpts) ToPublicIpApplyMap() (map[string]any, error) {
+func (opts ApplyOpts) ToPublicIpApplyMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -164,7 +164,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // UpdateOptsBuilder is an interface by which can be able to build the request
 // body
 type UpdateOptsBuilder interface {
-	ToPublicIpUpdateMap() (map[string]any, error)
+	ToPublicIpUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is a struct which represents the request body of update method
@@ -172,7 +172,7 @@ type UpdateOpts struct {
 	PortID string `json:"port_id,omitempty"`
 }
 
-func (opts UpdateOpts) ToPublicIpUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToPublicIpUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "publicip")
 }
 

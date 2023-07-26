@@ -124,7 +124,7 @@ func (r *RecordSet) UnmarshalJSON(b []byte) error {
 		tmp
 		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
 		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
-		Links     map[string]any                `json:"links"`
+		Links     map[string]interface{}        `json:"links"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {

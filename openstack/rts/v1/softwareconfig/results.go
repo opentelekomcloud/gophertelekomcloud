@@ -10,11 +10,11 @@ import (
 
 type SoftwareConfig struct {
 	// Specifies the software configuration input.
-	Inputs []map[string]any `json:"inputs"`
+	Inputs []map[string]interface{} `json:"inputs"`
 	// Specifies the name of the software configuration.
 	Name string `json:"name"`
 	// Specifies the software configuration output.
-	Outputs []map[string]any `json:"outputs"`
+	Outputs []map[string]interface{} `json:"outputs"`
 	// Specifies the time when a configuration is created.
 	CreationTime golangsdk.JSONRFC3339NoZ `json:"creation_time"`
 	// Specifies the name of the software configuration group.
@@ -22,7 +22,7 @@ type SoftwareConfig struct {
 	// Specifies the configuration code.
 	Config string `json:"config"`
 	// Specifies configuration options.
-	Options map[string]any `json:"options"`
+	Options map[string]interface{} `json:"options"`
 	// Specifies the software configuration ID.
 	Id string `json:"id"`
 }

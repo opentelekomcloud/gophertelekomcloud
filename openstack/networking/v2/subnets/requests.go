@@ -78,7 +78,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // List request.
 type CreateOptsBuilder interface {
-	ToSubnetCreateMap() (map[string]any, error)
+	ToSubnetCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts represents the attributes used when creating a new subnet.
@@ -133,13 +133,13 @@ type CreateOpts struct {
 }
 
 // ToSubnetCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToSubnetCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToSubnetCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "subnet")
 	if err != nil {
 		return nil, err
 	}
 
-	if m := b["subnet"].(map[string]any); m["gateway_ip"] == "" {
+	if m := b["subnet"].(map[string]interface{}); m["gateway_ip"] == "" {
 		m["gateway_ip"] = nil
 	}
 
@@ -162,7 +162,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToSubnetUpdateMap() (map[string]any, error)
+	ToSubnetUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents the attributes used when updating an existing subnet.
@@ -190,13 +190,13 @@ type UpdateOpts struct {
 }
 
 // ToSubnetUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "subnet")
 	if err != nil {
 		return nil, err
 	}
 
-	if m := b["subnet"].(map[string]any); m["gateway_ip"] == "" {
+	if m := b["subnet"].(map[string]interface{}); m["gateway_ip"] == "" {
 		m["gateway_ip"] = nil
 	}
 

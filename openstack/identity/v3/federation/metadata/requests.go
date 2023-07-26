@@ -3,7 +3,7 @@ package metadata
 import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
 type ImportOptsBuilder interface {
-	ToMetadataImportMap() (map[string]any, error)
+	ToMetadataImportMap() (map[string]interface{}, error)
 }
 
 type ImportOpts struct {
@@ -12,7 +12,7 @@ type ImportOpts struct {
 	Metadata     string `json:"metadata" required:"true"`
 }
 
-func (opts ImportOpts) ToMetadataImportMap() (map[string]any, error) {
+func (opts ImportOpts) ToMetadataImportMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

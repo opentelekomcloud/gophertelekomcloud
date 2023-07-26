@@ -145,22 +145,22 @@ const ListAssignmentOutput = `
 var FirstRole = roles.Role{
 	DomainID: "default",
 	ID:       "2844b2a08be147a08ef58317d6471f1f",
-	Links: map[string]any{
+	Links: map[string]interface{}{
 		"self": "http://example.com/identity/v3/roles/2844b2a08be147a08ef58317d6471f1f",
 	},
 	Name:  "admin-read-only",
-	Extra: map[string]any{},
+	Extra: map[string]interface{}{},
 }
 
 // SecondRole is the second role in the List request.
 var SecondRole = roles.Role{
 	DomainID: "1789d1",
 	ID:       "9fe1d3",
-	Links: map[string]any{
+	Links: map[string]interface{}{
 		"self": "https://example.com/identity/v3/roles/9fe1d3",
 	},
 	Name: "support",
-	Extra: map[string]any{
+	Extra: map[string]interface{}{
 		"description": "read-only support role",
 	},
 }
@@ -169,11 +169,11 @@ var SecondRole = roles.Role{
 var SecondRoleUpdated = roles.Role{
 	DomainID: "1789d1",
 	ID:       "9fe1d3",
-	Links: map[string]any{
+	Links: map[string]interface{}{
 		"self": "https://example.com/identity/v3/roles/9fe1d3",
 	},
 	Name: "support",
-	Extra: map[string]any{
+	Extra: map[string]interface{}{
 		"description": "admin read-only support role",
 	},
 }

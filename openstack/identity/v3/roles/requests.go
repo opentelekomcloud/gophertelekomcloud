@@ -58,7 +58,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToRoleCreateMap() (map[string]any, error)
+	ToRoleCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts provides options used to create a role.
@@ -70,18 +70,18 @@ type CreateOpts struct {
 	DomainID string `json:"domain_id,omitempty"`
 
 	// Extra is free-form extra key/value pairs to describe the role.
-	Extra map[string]any `json:"-"`
+	Extra map[string]interface{} `json:"-"`
 }
 
 // ToRoleCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToRoleCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToRoleCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "role")
 	if err != nil {
 		return nil, err
 	}
 
 	if opts.Extra != nil {
-		if v, ok := b["role"].(map[string]any); ok {
+		if v, ok := b["role"].(map[string]interface{}); ok {
 			for key, value := range opts.Extra {
 				v[key] = value
 			}
@@ -107,7 +107,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToRoleUpdateMap() (map[string]any, error)
+	ToRoleUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts provides options for updating a role.
@@ -116,18 +116,18 @@ type UpdateOpts struct {
 	Name string `json:"name,omitempty"`
 
 	// Extra is free-form extra key/value pairs to describe the role.
-	Extra map[string]any `json:"-"`
+	Extra map[string]interface{} `json:"-"`
 }
 
 // ToRoleUpdateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToRoleUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToRoleUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "role")
 	if err != nil {
 		return nil, err
 	}
 
 	if opts.Extra != nil {
-		if v, ok := b["role"].(map[string]any); ok {
+		if v, ok := b["role"].(map[string]interface{}); ok {
 			for key, value := range opts.Extra {
 				v[key] = value
 			}

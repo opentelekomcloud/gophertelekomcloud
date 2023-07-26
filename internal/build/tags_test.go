@@ -33,7 +33,7 @@ func TestValidateTags_required(t *testing.T) {
 	t.Run("ok", func(t *testing.T) {
 		t.Parallel()
 
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple":                     testStructRequired{"data"},
 			"pointer_struct":             &testStructRequired{"data"},
 			"pointer_value":              testStructRequiredPtrField{pointerto.String("data")},
@@ -52,7 +52,7 @@ func TestValidateTags_required(t *testing.T) {
 	t.Run("not_ok", func(t *testing.T) {
 		t.Parallel()
 
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple":                     testStructRequired{},
 			"pointer_struct":             &testStructRequired{},
 			"pointer_value":              testStructRequiredPtrField{},
@@ -85,7 +85,7 @@ func TestValidateTags_or(t *testing.T) {
 
 	t.Run("ok", func(t *testing.T) {
 		// pair-wise testing :D
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple_one":                 testStructOr{"data", ""},
 			"simple_both":                testStructOr{"data1", "data2"},
 			"pointer_struct":             &testStructOr{"", "data"},
@@ -103,7 +103,7 @@ func TestValidateTags_or(t *testing.T) {
 	})
 
 	t.Run("not_ok", func(t *testing.T) {
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple":                     testStructOr{},
 			"pointer_struct":             &testStructOr{},
 			"pointer_value":              testStructOrPtrField{},
@@ -140,7 +140,7 @@ func TestValidateTags_xor(t *testing.T) {
 	t.Parallel()
 
 	t.Run("ok", func(t *testing.T) {
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple":                     testStructXor{"data", ""},
 			"pointer_struct":             &testStructXor{"", "data"},
 			"pointer_value":              testStructXorPtrField{nil, pointerto.String("data")},
@@ -157,7 +157,7 @@ func TestValidateTags_xor(t *testing.T) {
 	})
 
 	t.Run("neither", func(t *testing.T) {
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple":                     testStructXor{},
 			"pointer_struct":             &testStructXor{},
 			"pointer_value":              testStructXorPtrField{},
@@ -180,7 +180,7 @@ func TestValidateTags_xor(t *testing.T) {
 	})
 
 	t.Run("both", func(t *testing.T) {
-		cases := map[string]any{
+		cases := map[string]interface{}{
 			"simple":                     testStructXor{"data1", "data2"},
 			"pointer_struct":             &testStructXor{"data1", "data2"},
 			"pointer_value":              testStructXorPtrField{pointerto.String(""), pointerto.String("")},

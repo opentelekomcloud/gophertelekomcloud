@@ -36,7 +36,7 @@ will be converted into:
 Untagged fields and fields left at their zero values are skipped. Integers,
 booleans and string values are supported.
 */
-func Headers(opts any) (map[string]string, error) {
+func Headers(opts interface{}) (map[string]string, error) {
 	if opts == nil {
 		return nil, fmt.Errorf("error building headers: %w", ErrNilOpts)
 	}

@@ -57,7 +57,7 @@ func FilterDeployments(deployments []Deployment, opts ListOpts) ([]Deployment, e
 
 	var refinedDeployments []Deployment
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.Id != "" {
 		m["Id"] = opts.Id
@@ -106,7 +106,7 @@ func getStructField(v *Deployment, field string) string {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSoftwareDeploymentCreateMap() (map[string]any, error)
+	ToSoftwareDeploymentCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new Software Deployment. There are
@@ -117,7 +117,7 @@ type CreateOpts struct {
 	// Specifies the ID of the software configuration resource running on an instance.
 	ConfigId string `json:"config_id" required:"true"`
 	// Specifies input data stored in the form of a key-value pair.
-	InputValues map[string]any `json:"input_values,omitempty"`
+	InputValues map[string]interface{} `json:"input_values,omitempty"`
 	// Specifies the ID of the instance deployed by the software configuration.
 	ServerId string `json:"server_id" required:"true"`
 	// Specifies the ID of the authenticated tenant who can perform operations on the deployment resources.
@@ -129,7 +129,7 @@ type CreateOpts struct {
 }
 
 // ToSoftwareDeploymentCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToSoftwareDeploymentCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToSoftwareDeploymentCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -153,7 +153,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 
 // UpdateOptsBuilder is an interface by which can be able to build the request body of software deployment.
 type UpdateOptsBuilder interface {
-	ToSoftwareDeploymentUpdateMap() (map[string]any, error)
+	ToSoftwareDeploymentUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is a struct which represents the request body of update method.
@@ -163,9 +163,9 @@ type UpdateOpts struct {
 	// Specifies the ID of the software configuration resource running on an instance.
 	ConfigId string `json:"config_id" required:"true"`
 	// Specifies input data stored in the form of a key-value pair.
-	InputValues map[string]any `json:"input_values,omitempty"`
+	InputValues map[string]interface{} `json:"input_values,omitempty"`
 	// Specifies output data stored in the form of a key-value pair.
-	OutputValues map[string]any `json:"output_values" required:"true"`
+	OutputValues map[string]interface{} `json:"output_values" required:"true"`
 	// Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.
 	Status string `json:"status,omitempty"`
 	// Specifies the cause of the current deployment resource status.
@@ -173,7 +173,7 @@ type UpdateOpts struct {
 }
 
 // ToSoftwareDeploymentUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToSoftwareDeploymentUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToSoftwareDeploymentUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

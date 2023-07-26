@@ -60,10 +60,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToCreatePublicIPMap() (map[string]any, error)
+	ToCreatePublicIPMap() (map[string]interface{}, error)
 }
 
-func (opts CreateOpts) ToCreatePublicIPMap() (map[string]any, error) {
+func (opts CreateOpts) ToCreatePublicIPMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -151,10 +151,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToUpdatePublicIPMap() (map[string]any, error)
+	ToUpdatePublicIPMap() (map[string]interface{}, error)
 }
 
-func (opts UpdateOpts) ToUpdatePublicIPMap() (map[string]any, error) {
+func (opts UpdateOpts) ToUpdatePublicIPMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "publicip")
 	if err != nil {
 		return nil, err

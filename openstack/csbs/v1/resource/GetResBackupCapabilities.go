@@ -23,7 +23,7 @@ func GetResBackupCapabilities(client *golangsdk.ServiceClient, opts []ResourceBa
 	return doAction(client, opts, "check_protectable", "protectable")
 }
 
-func doAction(client *golangsdk.ServiceClient, opts any, parent, label string) ([]ResourceCapability, error) {
+func doAction(client *golangsdk.ServiceClient, opts interface{}, parent, label string) ([]ResourceCapability, error) {
 	b, err := build.RequestBody(opts, parent)
 	if err != nil {
 		return nil, err

@@ -106,10 +106,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToCreateMap() (map[string]any, error)
+	ToCreateMap() (map[string]interface{}, error)
 }
 
-func (opts CreateOpts) ToCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "flow_log")
 	if err != nil {
 		return nil, err
@@ -154,10 +154,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToUpdateMap() (map[string]any, error)
+	ToUpdateMap() (map[string]interface{}, error)
 }
 
-func (opts UpdateOpts) ToUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "flow_log")
 	if err != nil {
 		return nil, err

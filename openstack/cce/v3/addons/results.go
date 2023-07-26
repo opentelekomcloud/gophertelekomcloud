@@ -113,7 +113,7 @@ type Version struct {
 	// Add-on version
 	Version string `json:"version"`
 	// Add-on installation parameters
-	Input map[string]any `json:"input"`
+	Input map[string]interface{} `json:"input"`
 	// Whether the add-on version is a stable release
 	Stable bool `json:"stable"`
 	// Cluster versions that support the add-on template
@@ -178,22 +178,22 @@ type InstanceMetadata struct {
 }
 
 type AddonInstanceSpec struct {
-	ClusterID      string         `json:"clusterID"`
-	Version        string         `json:"version"`
-	TemplateName   string         `json:"addonTemplateName"`
-	TemplateType   string         `json:"addonTemplateType"`
-	TemplateLabels []string       `json:"addonTemplateLabels"`
-	Descrition     string         `json:"descrition"`
-	Values         map[string]any `json:"values"`
+	ClusterID      string                 `json:"clusterID"`
+	Version        string                 `json:"version"`
+	TemplateName   string                 `json:"addonTemplateName"`
+	TemplateType   string                 `json:"addonTemplateType"`
+	TemplateLabels []string               `json:"addonTemplateLabels"`
+	Descrition     string                 `json:"descrition"`
+	Values         map[string]interface{} `json:"values"`
 }
 
 type Versions struct {
-	Version           string         `json:"version"`
-	Input             map[string]any `json:"input"`
-	Stable            bool           `json:"stable"`
-	Translate         map[string]any `json:"translate"`
-	UpdateTimestamp   string         `json:"updateTimestamp"`
-	CreationTimestamp string         `json:"creationTimestamp"`
+	Version           string                 `json:"version"`
+	Input             map[string]interface{} `json:"input"`
+	Stable            bool                   `json:"stable"`
+	Translate         map[string]interface{} `json:"translate"`
+	UpdateTimestamp   string                 `json:"updateTimestamp"`
+	CreationTimestamp string                 `json:"creationTimestamp"`
 }
 
 type InstanceStatus struct {

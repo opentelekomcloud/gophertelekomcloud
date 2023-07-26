@@ -37,7 +37,7 @@ func (r commonResult) Extract() (*Drill, error) {
 	return &response, err
 }
 
-func (r commonResult) ExtractInto(v any) error {
+func (r commonResult) ExtractInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "disaster_recovery_drill")
 }
 

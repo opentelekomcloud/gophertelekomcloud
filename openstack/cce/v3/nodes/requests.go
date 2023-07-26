@@ -111,11 +111,11 @@ type CreateMetaData struct {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToNodeCreateMap() (map[string]any, error)
+	ToNodeCreateMap() (map[string]interface{}, error)
 }
 
 // ToNodeCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToNodeCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -144,7 +144,7 @@ func Get(c *golangsdk.ServiceClient, clusterID, nodeID string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToNodeUpdateMap() (map[string]any, error)
+	ToNodeUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts contains all the values needed to update a new node
@@ -157,7 +157,7 @@ type UpdateMetadata struct {
 }
 
 // ToNodeUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToNodeUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

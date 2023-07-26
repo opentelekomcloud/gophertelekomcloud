@@ -35,7 +35,7 @@ func (e ErrMissingInput) Error() string {
 // ErrInvalidInput is an error type used for most non-HTTP Gophercloud errors.
 type ErrInvalidInput struct {
 	ErrMissingInput
-	Value any
+	Value interface{}
 }
 
 func (e ErrInvalidInput) Error() string {

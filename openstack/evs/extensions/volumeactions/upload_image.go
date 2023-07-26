@@ -88,7 +88,7 @@ type ImageVolumeType struct {
 	// Flag for public access.
 	IsPublic bool `json:"is_public"`
 	// Extra specifications for volume type.
-	ExtraSpecs map[string]any `json:"extra_specs"`
+	ExtraSpecs map[string]interface{} `json:"extra_specs"`
 	// ID of quality of service specs.
 	QosSpecsID string `json:"qos_specs_id"`
 	// Flag for deletion status of volume type.

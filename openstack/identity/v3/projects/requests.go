@@ -60,7 +60,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToProjectCreateMap() (map[string]any, error)
+	ToProjectCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts represents parameters used to create a project.
@@ -79,7 +79,7 @@ type CreateOpts struct {
 }
 
 // ToProjectCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToProjectCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToProjectCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "project")
 }
 
@@ -105,7 +105,7 @@ func Delete(client *golangsdk.ServiceClient, projectID string) (r DeleteResult) 
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToProjectUpdateMap() (map[string]any, error)
+	ToProjectUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents parameters to update a project.
@@ -118,7 +118,7 @@ type UpdateOpts struct {
 }
 
 // ToUpdateCreateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToProjectUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToProjectUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "project")
 }
 

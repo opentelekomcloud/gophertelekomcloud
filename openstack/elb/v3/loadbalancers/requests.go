@@ -58,7 +58,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToLoadBalancerCreateMap() (map[string]any, error)
+	ToLoadBalancerCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts is the common options' struct used in this package's Create
@@ -157,7 +157,7 @@ type Bandwidth struct {
 }
 
 // ToLoadBalancerCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToLoadBalancerCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToLoadBalancerCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "loadbalancer")
 }
 
@@ -184,7 +184,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToLoadBalancerUpdateMap() (map[string]any, error)
+	ToLoadBalancerUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is the common options' struct used in this package's Update
@@ -229,7 +229,7 @@ type UpdateOpts struct {
 }
 
 // ToLoadBalancerUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToLoadBalancerUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToLoadBalancerUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "loadbalancer")
 }
 

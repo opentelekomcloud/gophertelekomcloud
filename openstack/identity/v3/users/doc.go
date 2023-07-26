@@ -31,7 +31,7 @@ Example to Create a User
 		DefaultProjectID: projectID,
 		Enabled:          golangsdk.Enabled,
 		Password:         "supersecret",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"email": "username@example.com",
 		}
 	}

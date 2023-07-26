@@ -17,7 +17,7 @@ func TestCreateSuccessful(t *testing.T) {
 
 	createOpts := services.CreateOpts{
 		Type: "compute",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"name":        "service-two",
 			"description": "Service Two",
 			"email":       "service@example.com",
@@ -82,7 +82,7 @@ func TestUpdateSuccessful(t *testing.T) {
 
 	updateOpts := services.UpdateOpts{
 		Type: "compute2",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"description": "Service Two Updated",
 		},
 	}

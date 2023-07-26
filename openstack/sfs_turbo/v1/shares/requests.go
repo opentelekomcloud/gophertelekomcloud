@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToShareCreateMap() (map[string]any, error)
+	ToShareCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains the options for create an SFS Turbo. This object is
@@ -47,7 +47,7 @@ type Metadata struct {
 
 // ToShareCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToShareCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToShareCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "share")
 }
 
@@ -119,7 +119,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // ExpandOptsBuilder allows extensions to add additional parameters to the
 // Expand request.
 type ExpandOptsBuilder interface {
-	ToShareExpandMap() (map[string]any, error)
+	ToShareExpandMap() (map[string]interface{}, error)
 }
 
 // ExpandOpts contains the options for expanding a SFS Turbo. This object is
@@ -136,7 +136,7 @@ type ExtendOpts struct {
 
 // ToShareExpandMap assembles a request body based on the contents of a
 // ExpandOpts.
-func (opts ExpandOpts) ToShareExpandMap() (map[string]any, error) {
+func (opts ExpandOpts) ToShareExpandMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -156,7 +156,7 @@ func Expand(client *golangsdk.ServiceClient, shareID string, opts ExpandOptsBuil
 // ChangeSGOptsBuilder allows extensions to change the security group
 // bound to a SFS Turbo file system
 type ChangeSGOptsBuilder interface {
-	ToShareSGMap() (map[string]any, error)
+	ToShareSGMap() (map[string]interface{}, error)
 }
 
 // ChangeSGOpts contains the options for changing security group to a SFS Turbo
@@ -172,7 +172,7 @@ type SecurityGroupOpts struct {
 
 // ToShareExpandMap assembles a request body based on the contents of a
 // ChangeSGOpts.
-func (opts ChangeSGOpts) ToShareSGMap() (map[string]any, error) {
+func (opts ChangeSGOpts) ToShareSGMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

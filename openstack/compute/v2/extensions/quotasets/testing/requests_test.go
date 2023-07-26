@@ -57,7 +57,7 @@ func TestDelete(t *testing.T) {
 
 type ErrorUpdateOpts quotasets.UpdateOpts
 
-func (opts ErrorUpdateOpts) ToComputeQuotaUpdateMap() (map[string]any, error) {
+func (opts ErrorUpdateOpts) ToComputeQuotaUpdateMap() (map[string]interface{}, error) {
 	return nil, errors.New("this is an error")
 }
 

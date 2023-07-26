@@ -61,7 +61,7 @@ func TestCreateRole(t *testing.T) {
 	createOpts := roles.CreateOpts{
 		Name:     "support",
 		DomainID: "1789d1",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"description": "read-only support role",
 		},
 	}
@@ -77,7 +77,7 @@ func TestUpdateRole(t *testing.T) {
 	HandleUpdateRoleSuccessfully(t)
 
 	updateOpts := roles.UpdateOpts{
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"description": "admin read-only support role",
 		},
 	}

@@ -67,7 +67,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPoolCreateMap() (map[string]any, error)
+	ToPoolCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts is the common options' struct used in this package's Create
@@ -146,7 +146,7 @@ type SlowStart struct {
 }
 
 // ToPoolCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToPoolCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToPoolCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "pool")
 }
 
@@ -171,7 +171,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToPoolUpdateMap() (map[string]any, error)
+	ToPoolUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts is the common options' struct used in this package's Update
@@ -214,7 +214,7 @@ type UpdateOpts struct {
 }
 
 // ToPoolUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToPoolUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToPoolUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "pool")
 }
 

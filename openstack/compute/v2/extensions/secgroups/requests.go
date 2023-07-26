@@ -45,11 +45,11 @@ type CreateOpts GroupOpts
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSecGroupCreateMap() (map[string]any, error)
+	ToSecGroupCreateMap() (map[string]interface{}, error)
 }
 
 // ToSecGroupCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToSecGroupCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToSecGroupCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "security_group")
 }
 
@@ -72,11 +72,11 @@ type UpdateOpts GroupOpts
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToSecGroupUpdateMap() (map[string]any, error)
+	ToSecGroupUpdateMap() (map[string]interface{}, error)
 }
 
 // ToSecGroupUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "security_group")
 }
 
@@ -156,11 +156,11 @@ type CreateRuleOpts struct {
 // CreateRuleOptsBuilder allows extensions to add additional parameters to the
 // CreateRule request.
 type CreateRuleOptsBuilder interface {
-	ToRuleCreateMap() (map[string]any, error)
+	ToRuleCreateMap() (map[string]interface{}, error)
 }
 
 // ToRuleCreateMap builds a request body from CreateRuleOpts.
-func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]any, error) {
+func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "security_group_rule")
 }
 

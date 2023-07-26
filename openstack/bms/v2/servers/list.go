@@ -113,7 +113,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 func filterServers(servers []Server, opts ListOpts) ([]Server, error) {
 	var refinedServers []Server
 	var matched bool
-	m := map[string]any{}
+	m := map[string]interface{}{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID

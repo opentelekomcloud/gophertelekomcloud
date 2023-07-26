@@ -74,7 +74,7 @@ var FirstServerGroup = servergroups.ServerGroup{
 		"anti-affinity",
 	},
 	Members:  []string{},
-	Metadata: map[string]any{},
+	Metadata: map[string]interface{}{},
 }
 
 // SecondServerGroup is the second result in ListOutput.
@@ -85,7 +85,7 @@ var SecondServerGroup = servergroups.ServerGroup{
 		"affinity",
 	},
 	Members:  []string{},
-	Metadata: map[string]any{},
+	Metadata: map[string]interface{}{},
 }
 
 // ExpectedServerGroupSlice is the slice of results that should be parsed
@@ -100,7 +100,7 @@ var CreatedServerGroup = servergroups.ServerGroup{
 		"anti-affinity",
 	},
 	Members:  []string{},
-	Metadata: map[string]any{},
+	Metadata: map[string]interface{}{},
 }
 
 // HandleListSuccessfully configures the test server to respond to a List request.

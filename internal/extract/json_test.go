@@ -177,7 +177,7 @@ func TestIntoStructPtr(t *testing.T) {
 	t.Run("non struct", func(t *testing.T) {
 		t.Parallel()
 
-		actual := make(map[string]any)
+		actual := make(map[string]interface{})
 		value := randomString("v-", 20)
 
 		data := fmt.Sprintf(`

@@ -11,7 +11,7 @@ type UpdateInstanceConfigurationOpts struct {
 	InstanceId string `json:"-"`
 	// Specifies the parameter values defined by users based on the default parameter templates.
 	// For example, "max_connections": "10"
-	Values map[string]any `json:"values"`
+	Values map[string]interface{} `json:"values"`
 }
 
 func UpdateInstanceConfiguration(client *golangsdk.ServiceClient, opts UpdateInstanceConfigurationOpts) (*UpdateInstanceConfigurationResponse, error) {

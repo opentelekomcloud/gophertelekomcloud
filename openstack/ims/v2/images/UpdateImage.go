@@ -30,7 +30,7 @@ type UpdateImageOpts struct {
 	// You can add or delete extension attributes.
 	Path string `json:"path" required:"true"`
 	// Specifies the new value of the attribute. For detailed description, see Image Attributes.
-	Value any `json:"value"`
+	Value interface{} `json:"value"`
 }
 
 // UpdateImage This API is used to modify image attributes and update image information.

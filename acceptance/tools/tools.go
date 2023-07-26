@@ -67,7 +67,7 @@ func Elide(value string) string {
 }
 
 // PrintResource returns a resource as a readable structure
-func PrintResource(t *testing.T, resource any) {
+func PrintResource(t *testing.T, resource interface{}) {
 	b, _ := json.MarshalIndent(resource, "", "  ")
 	t.Logf(string(b))
 }

@@ -132,14 +132,14 @@ type JobExecution struct {
 	// This parameter is not used in the current version, but is retained for compatibility with earlier versions.
 	UserId string `json:"user_id,omitempty"`
 	// Key-value pair set for saving job running configurations
-	JobConfigs map[string]any `json:"job_configs,omitempty"`
+	JobConfigs map[string]interface{} `json:"job_configs,omitempty"`
 	// Authentication information
 	// The current version does not support this function.
-	Extra map[string]any `json:"extra,omitempty"`
+	Extra map[string]interface{} `json:"extra,omitempty"`
 	// Data source URL
-	DataSourceUrls map[string]any `json:"data_source_urls,omitempty"`
+	DataSourceUrls map[string]interface{} `json:"data_source_urls,omitempty"`
 	// Key-value pair set, containing job running information returned by Oozie
-	Info map[string]any `json:"info,omitempty"`
+	Info map[string]interface{} `json:"info,omitempty"`
 	// Encrypt Type
 	EncryptType int `json:"encrypt_type,omitempty"`
 }

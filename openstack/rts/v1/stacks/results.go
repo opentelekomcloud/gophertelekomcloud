@@ -91,14 +91,14 @@ func ExtractStacks(r pagination.Page) ([]ListedStack, error) {
 // RetrievedStack represents the object extracted from a Get operation.
 // RetrievedStack represents the object extracted from a Get operation.
 type RetrievedStack struct {
-	Capabilities        []any             `json:"capabilities"`
+	Capabilities        []interface{}     `json:"capabilities"`
 	CreationTime        time.Time         `json:"-"`
 	Description         string            `json:"description"`
 	DisableRollback     bool              `json:"disable_rollback"`
 	ID                  string            `json:"id"`
 	TenantId            string            `json:"tenant_id"`
 	Links               []golangsdk.Link  `json:"links"`
-	NotificationTopics  []any             `json:"notification_topics"`
+	NotificationTopics  []interface{}     `json:"notification_topics"`
 	Outputs             []*Output         `json:"outputs"`
 	Parameters          map[string]string `json:"parameters"`
 	Name                string            `json:"stack_name"`
@@ -201,7 +201,7 @@ type DeleteResult struct {
 }
 
 // Prettify returns the string representation of a value.
-func Prettify(i any) string {
+func Prettify(i interface{}) string {
 	var buf bytes.Buffer
 	prettify(reflect.ValueOf(i), 0, &buf)
 	return buf.String()

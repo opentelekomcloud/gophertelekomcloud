@@ -20,20 +20,20 @@ type Role struct {
 	ID string `json:"id"`
 
 	// Links contains referencing links to the role.
-	Links map[string]any `json:"links"`
+	Links map[string]interface{} `json:"links"`
 
 	// Name is the role name
 	Name string `json:"name"`
 
 	// Extra is a collection of miscellaneous key/values.
-	Extra map[string]any `json:"-"`
+	Extra map[string]interface{} `json:"-"`
 }
 
 func (r *Role) UnmarshalJSON(b []byte) error {
 	type tmp Role
 	var s struct {
 		tmp
-		Extra map[string]any `json:"extra"`
+		Extra map[string]interface{} `json:"extra"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -46,12 +46,12 @@ func (r *Role) UnmarshalJSON(b []byte) error {
 	if s.Extra != nil {
 		r.Extra = s.Extra
 	} else {
-		var result any
+		var result interface{}
 		err := json.Unmarshal(b, &result)
 		if err != nil {
 			return err
 		}
-		if resultMap, ok := result.(map[string]any); ok {
+		if resultMap, ok := result.(map[string]interface{}); ok {
 			r.Extra = internal.RemainingKeys(Role{}, resultMap)
 		}
 	}

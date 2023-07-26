@@ -26,7 +26,7 @@ Example to Create a Group
 	createOpts := groups.CreateOpts{
 		Name:             "groupname",
 		DomainID:         "default",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"email": "groupname@example.com",
 		}
 	}

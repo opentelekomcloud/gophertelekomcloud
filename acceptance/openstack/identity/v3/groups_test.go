@@ -19,7 +19,7 @@ func TestGroupCRUD(t *testing.T) {
 	createOpts := groups.CreateOpts{
 		Name:     "testgroup",
 		DomainID: "default",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"email": "testgroup@example.com",
 		},
 	}
@@ -36,7 +36,7 @@ func TestGroupCRUD(t *testing.T) {
 
 	updateOpts := groups.UpdateOpts{
 		Description: "Test Users",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"email": "thetestgroup@example.com",
 		},
 	}

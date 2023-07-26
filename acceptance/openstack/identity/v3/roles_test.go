@@ -53,7 +53,7 @@ func TestRoleCRUD(t *testing.T) {
 	createOpts := roles.CreateOpts{
 		Name:     "testrole",
 		DomainID: "default",
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"description": "test role description",
 		},
 	}
@@ -70,7 +70,7 @@ func TestRoleCRUD(t *testing.T) {
 	tools.PrintResource(t, role.Extra)
 
 	updateOpts := roles.UpdateOpts{
-		Extra: map[string]any{
+		Extra: map[string]interface{}{
 			"description": "updated test role description",
 		},
 	}

@@ -156,7 +156,7 @@ func (r commonResult) ExtractKeyInfo() (*Key, error) {
 	return &s, nil
 }
 
-func (r commonResult) ExtractKeyInfoInto(v any) error {
+func (r commonResult) ExtractKeyInfoInto(v interface{}) error {
 	return r.ExtractIntoStructPtr(v, "key_info")
 }
 

@@ -71,7 +71,7 @@ func Get(client *golangsdk.ServiceClient, zoneID string, rrsetID string) (r GetR
 // CreateOptsBuilder allows extensions to add additional attributes to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToRecordSetCreateMap() (map[string]any, error)
+	ToRecordSetCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts specifies the base attributes that may be used to create a
@@ -94,7 +94,7 @@ type CreateOpts struct {
 }
 
 // ToRecordSetCreateMap formats an CreateOpts structure into a request body.
-func (opts CreateOpts) ToRecordSetCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToRecordSetCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func Create(client *golangsdk.ServiceClient, zoneID string, opts CreateOptsBuild
 // UpdateOptsBuilder allows extensions to add additional attributes to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToRecordSetUpdateMap() (map[string]any, error)
+	ToRecordSetUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts specifies the base attributes that may be updated on an existing
@@ -136,7 +136,7 @@ type UpdateOpts struct {
 }
 
 // ToRecordSetUpdateMap formats an UpdateOpts structure into a request body.
-func (opts UpdateOpts) ToRecordSetUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToRecordSetUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

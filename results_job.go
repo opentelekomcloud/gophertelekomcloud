@@ -13,12 +13,12 @@ type JobResponse struct {
 }
 
 type JobStatus struct {
-	Status     string         `json:"status"`
-	Entities   map[string]any `json:"entities"`
-	JobID      string         `json:"job_id"`
-	JobType    string         `json:"job_type"`
-	ErrorCode  string         `json:"error_code"`
-	FailReason string         `json:"fail_reason"`
+	Status     string                 `json:"status"`
+	Entities   map[string]interface{} `json:"entities"`
+	JobID      string                 `json:"job_id"`
+	JobType    string                 `json:"job_type"`
+	ErrorCode  string                 `json:"error_code"`
+	FailReason string                 `json:"fail_reason"`
 }
 
 type RDSJobStatus struct {
@@ -87,7 +87,7 @@ func WaitForJobSuccess(client *ServiceClient, uri string, secs int) error {
 	})
 }
 
-func GetJobEntity(client *ServiceClient, uri string, label string) (any, error) {
+func GetJobEntity(client *ServiceClient, uri string, label string) (interface{}, error) {
 	uri = strings.Replace(uri, "v1", "v1.0", 1)
 
 	raw, err := client.Get(GetJobEndpoint(client.Endpoint)+uri, nil, nil)

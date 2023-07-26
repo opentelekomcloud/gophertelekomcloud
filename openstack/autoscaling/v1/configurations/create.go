@@ -72,7 +72,7 @@ type AdminPassMetadata struct {
 	AdminPass string `json:"admin_pass,omitempty"`
 }
 
-func (opts CreateOpts) toConfigurationCreateMap() (map[string]any, error) {
+func (opts CreateOpts) toConfigurationCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (opts CreateOpts) toConfigurationCreateMap() (map[string]any, error) {
 		} else {
 			userData = string(opts.InstanceConfig.UserData)
 		}
-		b["instance_config"].(map[string]any)["user_data"] = &userData
+		b["instance_config"].(map[string]interface{})["user_data"] = &userData
 	}
 
 	return b, nil

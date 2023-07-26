@@ -11,7 +11,7 @@ type CreateOptsExt struct {
 }
 
 // ToNetworkCreateMap adds segments to the base network creation options.
-func (opts CreateOptsExt) ToNetworkCreateMap() (map[string]any, error) {
+func (opts CreateOptsExt) ToNetworkCreateMap() (map[string]interface{}, error) {
 	base, err := opts.CreateOptsBuilder.ToNetworkCreateMap()
 	if err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func (opts CreateOptsExt) ToNetworkCreateMap() (map[string]any, error) {
 		return base, nil
 	}
 
-	providerMap := base["network"].(map[string]any)
+	providerMap := base["network"].(map[string]interface{})
 	providerMap["segments"] = opts.Segments
 
 	return base, nil

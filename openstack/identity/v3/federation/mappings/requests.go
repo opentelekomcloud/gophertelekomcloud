@@ -27,7 +27,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToMappingCreateMap() (map[string]any, error)
+	ToMappingCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts provides options used to create a mapping.
@@ -69,7 +69,7 @@ type RemoteRuleOpts struct {
 }
 
 // ToMappingCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToMappingCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToMappingCreateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "mapping")
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func Create(client *golangsdk.ServiceClient, mappingID string, opts CreateOptsBu
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToMappingUpdateMap() (map[string]any, error)
+	ToMappingUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts provides options for updating a mapping.
@@ -104,7 +104,7 @@ type UpdateOpts struct {
 }
 
 // ToMappingUpdateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToMappingUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToMappingUpdateMap() (map[string]interface{}, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "mapping")
 	if err != nil {
 		return nil, err

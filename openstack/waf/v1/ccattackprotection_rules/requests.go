@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToCcAttackCreateMap() (map[string]any, error)
+	ToCcAttackCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts contains all the values needed to create a new cc attack protection rule.
@@ -43,7 +43,7 @@ type Response struct {
 }
 
 // ToCcAttackCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToCcAttackCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToCcAttackCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

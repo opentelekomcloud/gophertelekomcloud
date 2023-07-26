@@ -76,7 +76,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPortCreateMap() (map[string]any, error)
+	ToPortCreateMap() (map[string]interface{}, error)
 }
 
 // CreateOpts represents the attributes used when creating a new port.
@@ -85,7 +85,7 @@ type CreateOpts struct {
 	Name                string        `json:"name,omitempty"`
 	AdminStateUp        *bool         `json:"admin_state_up,omitempty"`
 	MACAddress          string        `json:"mac_address,omitempty"`
-	FixedIPs            any           `json:"fixed_ips,omitempty"`
+	FixedIPs            interface{}   `json:"fixed_ips,omitempty"`
 	DeviceID            string        `json:"device_id,omitempty"`
 	DeviceOwner         string        `json:"device_owner,omitempty"`
 	TenantID            string        `json:"tenant_id,omitempty"`
@@ -95,7 +95,7 @@ type CreateOpts struct {
 }
 
 // ToPortCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToPortCreateMap() (map[string]any, error) {
+func (opts CreateOpts) ToPortCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "port")
 }
 
@@ -114,14 +114,14 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToPortUpdateMap() (map[string]any, error)
+	ToPortUpdateMap() (map[string]interface{}, error)
 }
 
 // UpdateOpts represents the attributes used when updating an existing port.
 type UpdateOpts struct {
 	Name                string         `json:"name,omitempty"`
 	AdminStateUp        *bool          `json:"admin_state_up,omitempty"`
-	FixedIPs            any            `json:"fixed_ips,omitempty"`
+	FixedIPs            interface{}    `json:"fixed_ips,omitempty"`
 	DeviceID            string         `json:"device_id,omitempty"`
 	DeviceOwner         string         `json:"device_owner,omitempty"`
 	SecurityGroups      *[]string      `json:"security_groups,omitempty"`
@@ -129,7 +129,7 @@ type UpdateOpts struct {
 }
 
 // ToPortUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToPortUpdateMap() (map[string]any, error) {
+func (opts UpdateOpts) ToPortUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "port")
 }
 

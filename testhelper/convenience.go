@@ -23,11 +23,11 @@ func prefix(depth int) string {
 	return fmt.Sprintf("Failure in %s, line %d:", filepath.Base(file), line)
 }
 
-func green(str any) string {
+func green(str interface{}) string {
 	return fmt.Sprintf("%s%#v%s", greenCode, str, resetCode)
 }
 
-func yellow(str any) string {
+func yellow(str interface{}) string {
 	return fmt.Sprintf("%s%#v%s", yellowCode, str, resetCode)
 }
 
@@ -41,7 +41,7 @@ func logError(t *testing.T, str string) {
 	t.Errorf(logBodyFmt, prefix(3), str)
 }
 
-type diffLogger func([]string, any, any)
+type diffLogger func([]string, interface{}, interface{})
 
 type visit struct {
 	a1  uintptr
@@ -56,7 +56,7 @@ func deepDiffEqual(expected, actual reflect.Value, visited map[visit]bool, path 
 	defer func() {
 		// Fall back to the regular reflect.DeepEquals function.
 		if r := recover(); r != nil {
-			var e, a any
+			var e, a interface{}
 			if expected.IsValid() {
 				e = expected.Interface()
 			}
@@ -196,7 +196,7 @@ func deepDiffEqual(expected, actual reflect.Value, visited map[visit]bool, path 
 	}
 }
 
-func deepDiff(expected, actual any, logDifference diffLogger) {
+func deepDiff(expected, actual interface{}, logDifference diffLogger) {
 	if expected == nil || actual == nil {
 		logDifference([]string{}, expected, actual)
 		return
@@ -214,7 +214,7 @@ func deepDiff(expected, actual any, logDifference diffLogger) {
 
 // AssertEquals compares two arbitrary values and performs a comparison. If the
 // comparison fails, a fatal error is raised that will fail the test
-func AssertEquals(t *testing.T, expected, actual any) {
+func AssertEquals(t *testing.T, expected, actual interface{}) {
 	t.Helper()
 	if expected != actual {
 		logFatal(t, fmt.Sprintf("expected %s but got %s", green(expected), yellow(actual)))
@@ -222,7 +222,7 @@ func AssertEquals(t *testing.T, expected, actual any) {
 }
 
 // CheckEquals is similar to AssertEquals, except with a non-fatal error
-func CheckEquals(t *testing.T, expected, actual any) {
+func CheckEquals(t *testing.T, expected, actual interface{}) {
 	t.Helper()
 	if expected != actual {
 		logError(t, fmt.Sprintf("expected %s but got %s", green(expected), yellow(actual)))
@@ -231,12 +231,12 @@ func CheckEquals(t *testing.T, expected, actual any) {
 
 // AssertDeepEquals - like Equals - performs a comparison - but on more complex
 // structures that requires deeper inspection
-func AssertDeepEquals(t *testing.T, expected, actual any) {
+func AssertDeepEquals(t *testing.T, expected, actual interface{}) {
 	t.Helper()
 	pre := prefix(2)
 
 	differed := false
-	deepDiff(expected, actual, func(path []string, expected, actual any) {
+	deepDiff(expected, actual, func(path []string, expected, actual interface{}) {
 		differed = true
 		t.Errorf("\033[1;31m%sat %s expected %s, but got %s\033[0m",
 			pre,
@@ -250,11 +250,11 @@ func AssertDeepEquals(t *testing.T, expected, actual any) {
 }
 
 // CheckDeepEquals is similar to AssertDeepEquals, except with a non-fatal error
-func CheckDeepEquals(t *testing.T, expected, actual any) {
+func CheckDeepEquals(t *testing.T, expected, actual interface{}) {
 	t.Helper()
 	pre := prefix(2)
 
-	deepDiff(expected, actual, func(path []string, expected, actual any) {
+	deepDiff(expected, actual, func(path []string, expected, actual interface{}) {
 		t.Errorf("\033[1;31m%s at %s expected %s, but got %s\033[0m",
 			pre,
 			strings.Join(path, ""),
@@ -285,8 +285,8 @@ func CheckByteArrayEquals(t *testing.T, expectedBytes []byte, actualBytes []byte
 
 // isJSONEquals is a utility function that implements JSON comparison for AssertJSONEquals and
 // CheckJSONEquals.
-func isJSONEquals(t *testing.T, expectedJSON string, actual any) bool {
-	var parsedExpected, parsedActual any
+func isJSONEquals(t *testing.T, expectedJSON string, actual interface{}) bool {
+	var parsedExpected, parsedActual interface{}
 	err := json.Unmarshal([]byte(expectedJSON), &parsedExpected)
 	if err != nil {
 		t.Errorf("Unable to parse expected value as JSON: %v", err)
@@ -325,9 +325,9 @@ func isJSONEquals(t *testing.T, expectedJSON string, actual any) bool {
 // both are consistent. If they aren't, the expected and actual structures are pretty-printed and
 // shown for comparison.
 //
-// This is useful for comparing structures that are built as nested map[string]any values,
+// This is useful for comparing structures that are built as nested map[string]interface{} values,
 // which are a pain to construct as literals.
-func AssertJSONEquals(t *testing.T, expectedJSON string, actual any) {
+func AssertJSONEquals(t *testing.T, expectedJSON string, actual interface{}) {
 	t.Helper()
 	if !isJSONEquals(t, expectedJSON, actual) {
 		logFatal(t, "The generated JSON structure differed.")
@@ -335,7 +335,7 @@ func AssertJSONEquals(t *testing.T, expectedJSON string, actual any) {
 }
 
 // CheckJSONEquals is similar to AssertJSONEquals, but nonfatal.
-func CheckJSONEquals(t *testing.T, expectedJSON string, actual any) {
+func CheckJSONEquals(t *testing.T, expectedJSON string, actual interface{}) {
 	t.Helper()
 	if !isJSONEquals(t, expectedJSON, actual) {
 		logError(t, "The generated JSON structure differed.")

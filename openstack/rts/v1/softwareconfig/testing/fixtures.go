@@ -12,11 +12,11 @@ import (
 
 // CreateExpected represents the expected object from a Create request.
 var CreateExpected = &softwareconfig.SoftwareConfig{
-	Inputs: []map[string]any{{"type": "String", "name": "foo"},
+	Inputs: []map[string]interface{}{{"type": "String", "name": "foo"},
 		{"type": "String", "name": "bar"}},
 	Group:   "script",
 	Name:    "test-cong",
-	Outputs: []map[string]any{{"type": "String", "name": "result", "error_output": "false"}},
+	Outputs: []map[string]interface{}{{"type": "String", "name": "result", "error_output": "false"}},
 	Config:  "#!/bin/sh -x\necho \"Writing to /tmp/$bar\"\necho $foo > /tmp/$bar\necho -n \"The file /tmp/$bar contains cat /tmp/$bar for server $deploy_server_id during $deploy_action\" > $heat_outputs_path.result\necho \"Written to /tmp/$bar\"\necho \"Output to stderr\" 1>&2",
 	Id:      "e0be7e37-a581-4b24-bfb1-df4f3048c090",
 }
@@ -120,11 +120,11 @@ func HandleListSuccessfully(t *testing.T, output string) {
 
 // GetExpected represents the expected object from a Get request.
 var GetExpected = &softwareconfig.SoftwareConfig{
-	Inputs: []map[string]any{{"type": "String", "name": "foo"},
+	Inputs: []map[string]interface{}{{"type": "String", "name": "foo"},
 		{"type": "String", "name": "bar"}},
 	Group:   "script",
 	Name:    "test-cong",
-	Outputs: []map[string]any{{"type": "String", "name": "result", "error_output": "false"}},
+	Outputs: []map[string]interface{}{{"type": "String", "name": "result", "error_output": "false"}},
 	Config:  "#!/bin/sh -x\necho \"Writing to /tmp/$bar\"\necho $foo > /tmp/$bar\necho -n \"The file /tmp/$bar contains cat /tmp/$bar for server $deploy_server_id during $deploy_action\" > $heat_outputs_path.result\necho \"Written to /tmp/$bar\"\necho \"Output to stderr\" 1>&2",
 	Id:      "e0be7e37-a581-4b24-bfb1-df4f3048c090",
 }

@@ -111,7 +111,7 @@ type Disk struct {
 	// Each disk in an AS configuration must correspond to a disk backup in the full-ECS backup by snapshot_id.
 	SnapshotID string `json:"snapshot_id"`
 	// Specifies the metadata for creating disks.
-	Metadata map[string]any `json:"metadata"`
+	Metadata map[string]interface{} `json:"metadata"`
 }
 
 type Personality struct {

@@ -11,13 +11,13 @@ type CreateOptsExt struct {
 }
 
 // ToFirewallGroupCreateMap adds ports to the base firewall creation options.
-func (opts CreateOptsExt) ToFirewallGroupCreateMap() (map[string]any, error) {
+func (opts CreateOptsExt) ToFirewallGroupCreateMap() (map[string]interface{}, error) {
 	base, err := opts.CreateOptsBuilder.ToFirewallGroupCreateMap()
 	if err != nil {
 		return nil, err
 	}
 
-	firewallMap := base["firewall_group"].(map[string]any)
+	firewallMap := base["firewall_group"].(map[string]interface{})
 	firewallMap["ports"] = opts.PortIDs
 
 	return base, nil
@@ -30,13 +30,13 @@ type UpdateOptsExt struct {
 }
 
 // ToFirewallGroupUpdateMap adds ports to the base firewall update options.
-func (opts UpdateOptsExt) ToFirewallGroupUpdateMap() (map[string]any, error) {
+func (opts UpdateOptsExt) ToFirewallGroupUpdateMap() (map[string]interface{}, error) {
 	base, err := opts.UpdateOptsBuilder.ToFirewallGroupUpdateMap()
 	if err != nil {
 		return nil, err
 	}
 
-	firewallMap := base["firewall_group"].(map[string]any)
+	firewallMap := base["firewall_group"].(map[string]interface{})
 	firewallMap["ports"] = opts.PortIDs
 
 	return base, nil
