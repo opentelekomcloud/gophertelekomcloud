@@ -12,7 +12,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: listURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return ServerGroupPage{pagination.SinglePageBase{r}}
+			return ServerGroupPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

@@ -56,7 +56,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		Client:     c,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return NetworkIPAvailabilityPage{pagination.SinglePageBase{r}}
+			return NetworkIPAvailabilityPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

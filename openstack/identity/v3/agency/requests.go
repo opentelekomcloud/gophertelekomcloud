@@ -131,7 +131,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		Client:     client,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return AgenciesPage{pagination.SinglePageBase{r}}
+			return AgenciesPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 	pager.Headers = map[string]string{"Content-Type": "application/json"}

@@ -18,7 +18,7 @@ func List(c *golangsdk.ServiceClient) pagination.Pager {
 		Client:     c,
 		InitialURL: ListExtensionURL(c),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return ExtensionPage{pagination.SinglePageBase{r}}
+			return ExtensionPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

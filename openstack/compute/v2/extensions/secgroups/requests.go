@@ -12,7 +12,7 @@ func commonList(client *golangsdk.ServiceClient, url string) pagination.Pager {
 		Client:     client,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return SecurityGroupPage{pagination.SinglePageBase{r}}
+			return SecurityGroupPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

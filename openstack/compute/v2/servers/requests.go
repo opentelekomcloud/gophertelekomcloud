@@ -689,7 +689,7 @@ func ListAddresses(client *golangsdk.ServiceClient, id string) pagination.Pager 
 		Client:     client,
 		InitialURL: listAddressesURL(client, id),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return AddressPage{pagination.SinglePageBase{r}}
+			return AddressPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }
@@ -701,7 +701,7 @@ func ListAddressesByNetwork(client *golangsdk.ServiceClient, id, network string)
 		Client:     client,
 		InitialURL: listAddressesByNetworkURL(client, id, network),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return NetworkAddressPage{pagination.SinglePageBase{r}}
+			return NetworkAddressPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

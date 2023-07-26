@@ -11,7 +11,7 @@ func ListVersions(c *golangsdk.ServiceClient) pagination.Pager {
 		Client:     c,
 		InitialURL: apiVersionsURL(c),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return APIVersionPage{pagination.SinglePageBase{r}}
+			return APIVersionPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }
@@ -24,7 +24,7 @@ func ListVersionResources(c *golangsdk.ServiceClient, v string) pagination.Pager
 		Client:     c,
 		InitialURL: apiInfoURL(c, v),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return APIVersionResourcePage{pagination.SinglePageBase{r}}
+			return APIVersionResourcePage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

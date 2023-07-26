@@ -67,7 +67,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: rootURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return BandwidthPage{pagination.SinglePageBase{r}}
+			return BandwidthPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

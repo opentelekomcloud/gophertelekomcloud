@@ -42,7 +42,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 		Client:     client,
 		InitialURL: url,
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return CertificatePage{pagination.SinglePageBase{r}}
+			return CertificatePage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }

@@ -37,7 +37,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 		Client:     client,
 		InitialURL: listURL(client),
 		CreatePage: func(r pagination.PageResult) pagination.Page {
-			return KeyPairPage{pagination.SinglePageBase{r}}
+			return KeyPairPage{SinglePageBase: pagination.SinglePageBase{PageResult: r}}
 		},
 	}
 }
