@@ -2,6 +2,7 @@ package testing
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -71,7 +72,7 @@ func createMarkerPaged(t *testing.T) pagination.Pager {
 }
 
 func ExtractMarkerStrings(page pagination.Page) ([]string, error) {
-	content := page.(MarkerPageResult).Body
+	content, _ := io.ReadAll(page.(MarkerPageResult).Body)
 	parts := strings.Split(string(content), "\n")
 	results := make([]string, 0, len(parts))
 	for _, part := range parts {
