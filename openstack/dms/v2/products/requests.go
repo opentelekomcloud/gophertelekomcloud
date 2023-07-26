@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // Get products
@@ -29,17 +30,17 @@ type ListOpts struct {
 }
 
 func List(c *golangsdk.ServiceClient, engineType string, opts ListOpts) (*ListResp, error) {
-	url := listURL(c, engineType)
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
 	}
-	url += query.String()
 
-	var r ListResp
-	_, err = c.Get(url, &r, nil)
+	raw, err := c.Get(listURL(c, engineType)+query.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &r, nil
+
+	var res ListResp
+	err = extract.Into(raw.Body, &res)
+	return &res, nil
 }
