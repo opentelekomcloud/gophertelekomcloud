@@ -18,7 +18,7 @@ func List(client *golangsdk.ServiceClient) ([]VolumeType, error) {
 
 type VolumeType struct {
 	// user-defined metadata
-	ExtraSpecs map[string]interface{} `json:"extra_specs"`
+	ExtraSpecs map[string]any `json:"extra_specs"`
 	// unique identifier
 	ID string `json:"id"`
 	// display name

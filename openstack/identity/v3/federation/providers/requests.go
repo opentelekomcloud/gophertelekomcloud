@@ -9,7 +9,7 @@ import (
 
 type CreateOptsBuilder interface {
 	Id() string
-	ToProviderCreateMap() (map[string]interface{}, error)
+	ToProviderCreateMap() (map[string]any, error)
 }
 
 type CreateOpts struct {
@@ -18,7 +18,7 @@ type CreateOpts struct {
 	Enabled     bool   `json:"enabled,omitempty"`
 }
 
-func (opts CreateOpts) ToProviderCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToProviderCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "identity_provider")
 }
 
@@ -57,7 +57,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 }
 
 type UpdateOptsBuilder interface {
-	ToUpdateOptsMap() (map[string]interface{}, error)
+	ToUpdateOptsMap() (map[string]any, error)
 }
 
 type UpdateOpts struct {
@@ -65,7 +65,7 @@ type UpdateOpts struct {
 	Enabled     *bool  `json:"enabled,omitempty"`
 }
 
-func (opts UpdateOpts) ToUpdateOptsMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToUpdateOptsMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "identity_provider")
 }
 

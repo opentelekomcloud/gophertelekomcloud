@@ -17,7 +17,7 @@ func (r commonResult) Extract() (*Port, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v interface{}) error {
+func (r commonResult) ExtractInto(v any) error {
 	return r.ExtractIntoStructPtr(v, "port")
 }
 
@@ -140,6 +140,6 @@ func ExtractPorts(r pagination.Page) ([]Port, error) {
 	return s, err
 }
 
-func ExtractPortsInto(r pagination.Page, v interface{}) error {
+func ExtractPortsInto(r pagination.Page, v any) error {
 	return extract.IntoSlicePtr(r.(PortPage).Body, v, "ports")
 }

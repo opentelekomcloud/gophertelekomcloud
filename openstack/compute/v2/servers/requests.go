@@ -88,7 +88,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToServerCreateMap() (map[string]interface{}, error)
+	ToServerCreateMap() (map[string]any, error)
 }
 
 // Network is used within CreateOpts to control a new server's network
@@ -200,7 +200,7 @@ type CreateOpts struct {
 
 // ToServerCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToServerCreateMap() (map[string]any, error) {
 	sc := opts.ServiceClient
 	opts.ServiceClient = nil
 	b, err := golangsdk.BuildRequestBody(opts, "")
@@ -219,17 +219,17 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 	}
 
 	if len(opts.SecurityGroups) > 0 {
-		securityGroups := make([]map[string]interface{}, len(opts.SecurityGroups))
+		securityGroups := make([]map[string]any, len(opts.SecurityGroups))
 		for i, groupName := range opts.SecurityGroups {
-			securityGroups[i] = map[string]interface{}{"name": groupName}
+			securityGroups[i] = map[string]any{"name": groupName}
 		}
 		b["security_groups"] = securityGroups
 	}
 
 	if len(opts.Networks) > 0 {
-		networks := make([]map[string]interface{}, len(opts.Networks))
+		networks := make([]map[string]any, len(opts.Networks))
 		for i, net := range opts.Networks {
-			networks[i] = make(map[string]interface{})
+			networks[i] = make(map[string]any)
 			if net.UUID != "" {
 				networks[i]["uuid"] = net.UUID
 			}
@@ -281,7 +281,7 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 		b["flavorRef"] = flavorID
 	}
 
-	return map[string]interface{}{"server": b}, nil
+	return map[string]any{"server": b}, nil
 }
 
 // Create requests a server to be provisioned to the user in the current tenant.
@@ -304,7 +304,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 
 // ForceDelete forces the deletion of a server.
 func ForceDelete(client *golangsdk.ServiceClient, id string) (r ActionResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"forceDelete": ""}, nil, nil)
+	_, r.Err = client.Post(actionURL(client, id), map[string]any{"forceDelete": ""}, nil, nil)
 	return
 }
 
@@ -326,7 +326,7 @@ func GetNICs(client *golangsdk.ServiceClient, id string) (r GetNICResult) {
 // UpdateOptsBuilder allows extensions to add additional attributes to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToServerUpdateMap() (map[string]interface{}, error)
+	ToServerUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts specifies the base attributes that may be updated on an existing
@@ -345,7 +345,7 @@ type UpdateOpts struct {
 }
 
 // ToServerUpdateMap formats an UpdateOpts structure into a request body.
-func (opts UpdateOpts) ToServerUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToServerUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "server")
 }
 
@@ -365,7 +365,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 // ChangeAdminPassword alters the administrator or root password for a specified
 // server.
 func ChangeAdminPassword(client *golangsdk.ServiceClient, id, newPassword string) (r ActionResult) {
-	b := map[string]interface{}{
+	b := map[string]any{
 		"changePassword": map[string]string{
 			"adminPass": newPassword,
 		},
@@ -389,7 +389,7 @@ const (
 // RebootOptsBuilder allows extensions to add additional parameters to the
 // reboot request.
 type RebootOptsBuilder interface {
-	ToServerRebootMap() (map[string]interface{}, error)
+	ToServerRebootMap() (map[string]any, error)
 }
 
 // RebootOpts provides options to the reboot request.
@@ -399,7 +399,7 @@ type RebootOpts struct {
 }
 
 // ToServerRebootMap builds a body for the reboot request.
-func (opts RebootOpts) ToServerRebootMap() (map[string]interface{}, error) {
+func (opts RebootOpts) ToServerRebootMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "reboot")
 }
 
@@ -431,7 +431,7 @@ func Reboot(client *golangsdk.ServiceClient, id string, opts RebootOptsBuilder) 
 // RebuildOptsBuilder allows extensions to provide additional parameters to the
 // rebuild request.
 type RebuildOptsBuilder interface {
-	ToServerRebuildMap() (map[string]interface{}, error)
+	ToServerRebuildMap() (map[string]any, error)
 }
 
 // RebuildOpts represents the configuration options used in a server rebuild
@@ -469,7 +469,7 @@ type RebuildOpts struct {
 }
 
 // ToServerRebuildMap formats a RebuildOpts struct into a map for use in JSON
-func (opts RebuildOpts) ToServerRebuildMap() (map[string]interface{}, error) {
+func (opts RebuildOpts) ToServerRebuildMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -494,7 +494,7 @@ func (opts RebuildOpts) ToServerRebuildMap() (map[string]interface{}, error) {
 		}
 	}
 
-	return map[string]interface{}{"rebuild": b}, nil
+	return map[string]any{"rebuild": b}, nil
 }
 
 // Rebuild will reprovision the server according to the configuration options
@@ -512,7 +512,7 @@ func Rebuild(client *golangsdk.ServiceClient, id string, opts RebuildOptsBuilder
 // ResizeOptsBuilder allows extensions to add additional parameters to the
 // resize request.
 type ResizeOptsBuilder interface {
-	ToServerResizeMap() (map[string]interface{}, error)
+	ToServerResizeMap() (map[string]any, error)
 }
 
 // ResizeOpts represents the configuration options used to control a Resize
@@ -524,7 +524,7 @@ type ResizeOpts struct {
 
 // ToServerResizeMap formats a ResizeOpts as a map that can be used as a JSON
 // request body for the Resize request.
-func (opts ResizeOpts) ToServerResizeMap() (map[string]interface{}, error) {
+func (opts ResizeOpts) ToServerResizeMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "resize")
 }
 
@@ -550,7 +550,7 @@ func Resize(client *golangsdk.ServiceClient, id string, opts ResizeOptsBuilder) 
 // ConfirmResize confirms a previous resize operation on a server.
 // See Resize() for more details.
 func ConfirmResize(client *golangsdk.ServiceClient, id string) (r ActionResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"confirmResize": nil}, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(actionURL(client, id), map[string]any{"confirmResize": nil}, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201, 202, 204},
 	})
 	return
@@ -559,14 +559,14 @@ func ConfirmResize(client *golangsdk.ServiceClient, id string) (r ActionResult) 
 // RevertResize cancels a previous resize operation on a server.
 // See Resize() for more details.
 func RevertResize(client *golangsdk.ServiceClient, id string) (r ActionResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"revertResize": nil}, nil, nil)
+	_, r.Err = client.Post(actionURL(client, id), map[string]any{"revertResize": nil}, nil, nil)
 	return
 }
 
 // ResetMetadataOptsBuilder allows extensions to add additional parameters to
 // the Reset request.
 type ResetMetadataOptsBuilder interface {
-	ToMetadataResetMap() (map[string]interface{}, error)
+	ToMetadataResetMap() (map[string]any, error)
 }
 
 // MetadataOpts is a map that contains key-value pairs.
@@ -574,14 +574,14 @@ type MetadataOpts map[string]string
 
 // ToMetadataResetMap assembles a body for a Reset request based on the contents
 // of a MetadataOpts.
-func (opts MetadataOpts) ToMetadataResetMap() (map[string]interface{}, error) {
-	return map[string]interface{}{"metadata": opts}, nil
+func (opts MetadataOpts) ToMetadataResetMap() (map[string]any, error) {
+	return map[string]any{"metadata": opts}, nil
 }
 
 // ToMetadataUpdateMap assembles a body for an Update request based on the
 // contents of a MetadataOpts.
-func (opts MetadataOpts) ToMetadataUpdateMap() (map[string]interface{}, error) {
-	return map[string]interface{}{"metadata": opts}, nil
+func (opts MetadataOpts) ToMetadataUpdateMap() (map[string]any, error) {
+	return map[string]any{"metadata": opts}, nil
 }
 
 // ResetMetadata will create multiple new key-value pairs for the given server
@@ -610,7 +610,7 @@ func Metadata(client *golangsdk.ServiceClient, id string) (r GetMetadataResult) 
 // UpdateMetadataOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type UpdateMetadataOptsBuilder interface {
-	ToMetadataUpdateMap() (map[string]interface{}, error)
+	ToMetadataUpdateMap() (map[string]any, error)
 }
 
 // UpdateMetadata updates (or creates) all the metadata specified by opts for
@@ -631,7 +631,7 @@ func UpdateMetadata(client *golangsdk.ServiceClient, id string, opts UpdateMetad
 // MetadatumOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type MetadatumOptsBuilder interface {
-	ToMetadatumCreateMap() (map[string]interface{}, string, error)
+	ToMetadatumCreateMap() (map[string]any, string, error)
 }
 
 // MetadatumOpts is a map of length one that contains a key-value pair.
@@ -639,14 +639,14 @@ type MetadatumOpts map[string]string
 
 // ToMetadatumCreateMap assembles a body for a Create request based on the
 // contents of a MetadataumOpts.
-func (opts MetadatumOpts) ToMetadatumCreateMap() (map[string]interface{}, string, error) {
+func (opts MetadatumOpts) ToMetadatumCreateMap() (map[string]any, string, error) {
 	if len(opts) != 1 {
 		err := golangsdk.ErrInvalidInput{}
 		err.Argument = "servers.MetadatumOpts"
 		err.Info = "Must have 1 and only 1 key-value pair"
 		return nil, "", err
 	}
-	metadatum := map[string]interface{}{"meta": opts}
+	metadatum := map[string]any{"meta": opts}
 	var key string
 	for k := range metadatum["meta"].(MetadatumOpts) {
 		key = k
@@ -709,7 +709,7 @@ func ListAddressesByNetwork(client *golangsdk.ServiceClient, id, network string)
 // CreateImageOptsBuilder allows extensions to add additional parameters to the
 // CreateImage request.
 type CreateImageOptsBuilder interface {
-	ToServerCreateImageMap() (map[string]interface{}, error)
+	ToServerCreateImageMap() (map[string]any, error)
 }
 
 // CreateImageOpts provides options to pass to the CreateImage request.
@@ -724,7 +724,7 @@ type CreateImageOpts struct {
 
 // ToServerCreateImageMap formats a CreateImageOpts structure into a request
 // body.
-func (opts CreateImageOpts) ToServerCreateImageMap() (map[string]interface{}, error) {
+func (opts CreateImageOpts) ToServerCreateImageMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "createImage")
 }
 
@@ -793,7 +793,7 @@ func GetPassword(client *golangsdk.ServiceClient, serverId string) (r GetPasswor
 // ShowConsoleOutputOptsBuilder is the interface types must satisfy in order to be
 // used as ShowConsoleOutput options
 type ShowConsoleOutputOptsBuilder interface {
-	ToServerShowConsoleOutputMap() (map[string]interface{}, error)
+	ToServerShowConsoleOutputMap() (map[string]any, error)
 }
 
 // ShowConsoleOutputOpts satisfies the ShowConsoleOutputOptsBuilder
@@ -804,7 +804,7 @@ type ShowConsoleOutputOpts struct {
 }
 
 // ToServerShowConsoleOutputMap formats a ShowConsoleOutputOpts structure into a request body.
-func (opts ShowConsoleOutputOpts) ToServerShowConsoleOutputMap() (map[string]interface{}, error) {
+func (opts ShowConsoleOutputOpts) ToServerShowConsoleOutputMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "os-getConsoleOutput")
 }
 

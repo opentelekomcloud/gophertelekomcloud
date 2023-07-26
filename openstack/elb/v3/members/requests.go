@@ -67,7 +67,7 @@ func List(client *golangsdk.ServiceClient, poolID string, opts ListOptsBuilder) 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToMemberCreateMap() (map[string]interface{}, error)
+	ToMemberCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is the common options' struct used in this package's CreateMember
@@ -105,7 +105,7 @@ type CreateOpts struct {
 }
 
 // ToMemberCreateMap builds a request body from CreateOptsBuilder.
-func (opts CreateOpts) ToMemberCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToMemberCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "member")
 }
 
@@ -131,7 +131,7 @@ func Get(client *golangsdk.ServiceClient, poolID string, memberID string) (r Get
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // List request.
 type UpdateOptsBuilder interface {
-	ToMemberUpdateMap() (map[string]interface{}, error)
+	ToMemberUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is the common options' struct used in this package's Update
@@ -152,7 +152,7 @@ type UpdateOpts struct {
 }
 
 // ToMemberUpdateMap builds a request body from UpdateOptsBuilder.
-func (opts UpdateOpts) ToMemberUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToMemberUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "member")
 }
 

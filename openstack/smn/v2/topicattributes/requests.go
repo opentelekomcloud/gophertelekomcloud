@@ -39,14 +39,14 @@ func List(client *golangsdk.ServiceClient, topicURN string, opts ListOptsBuilder
 }
 
 type UpdateOptsBuilder interface {
-	ToAttributeUpdateMap() (map[string]interface{}, error)
+	ToAttributeUpdateMap() (map[string]any, error)
 }
 
 type UpdateOpts struct {
 	Value string `json:"value"`
 }
 
-func (opts UpdateOpts) ToAttributeUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToAttributeUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToVolumeTypeCreateMap() (map[string]interface{}, error)
+	ToVolumeTypeCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains options for creating a Volume Type. This object is passed to
@@ -27,7 +27,7 @@ type CreateOpts struct {
 
 // ToVolumeTypeCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToVolumeTypeCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToVolumeTypeCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "volume_type")
 }
 
@@ -112,7 +112,7 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToVolumeTypeUpdateMap() (map[string]interface{}, error)
+	ToVolumeTypeUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contain options for updating an existing Volume Type. This object is passed
@@ -126,7 +126,7 @@ type UpdateOpts struct {
 
 // ToVolumeUpdateMap assembles a request body based on the contents of an
 // UpdateOpts.
-func (opts UpdateOpts) ToVolumeTypeUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToVolumeTypeUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "volume_type")
 }
 

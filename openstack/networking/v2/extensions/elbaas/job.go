@@ -20,12 +20,12 @@ func (r JobResult) Extract() (*Job, error) {
 }
 
 type JobInfo struct {
-	Status     string                 `json:"status"`
-	Entities   map[string]interface{} `json:"entities"`
-	JobId      string                 `json:"job_id"`
-	JobType    string                 `json:"job_type"`
-	ErrorCode  string                 `json:"error_code"`
-	FailReason string                 `json:"fail_reason"`
+	Status     string         `json:"status"`
+	Entities   map[string]any `json:"entities"`
+	JobId      string         `json:"job_id"`
+	JobType    string         `json:"job_type"`
+	ErrorCode  string         `json:"error_code"`
+	FailReason string         `json:"fail_reason"`
 }
 
 type JobInfoResult struct {

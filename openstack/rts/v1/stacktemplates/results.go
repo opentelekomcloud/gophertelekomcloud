@@ -17,7 +17,7 @@ func (r GetResult) Extract() ([]byte, error) {
 	if r.Err != nil {
 		return nil, r.Err
 	}
-	mapBody := make(map[string]interface{})
+	mapBody := make(map[string]any)
 
 	bytes, err := io.ReadAll(r.Body)
 	if err != nil {

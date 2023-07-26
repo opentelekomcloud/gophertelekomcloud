@@ -25,7 +25,7 @@ type SchedulerHints struct {
 
 	// Query is a conditional statement that results in compute nodes able to
 	// host the instance.
-	Query []interface{}
+	Query []any
 
 	// TargetCell specifies a cell name where the instance will be placed.
 	TargetCell string `json:"target_cell,omitempty"`
@@ -34,7 +34,7 @@ type SchedulerHints struct {
 	BuildNearHostIP string
 
 	// AdditionalProperies are arbitrary key/values that are not validated by nova.
-	AdditionalProperties map[string]interface{}
+	AdditionalProperties map[string]any
 
 	// Specifies whether the ECS is created on a Dedicated Host (DeH) or in a shared pool.
 	Tenancy string `json:"tenancy,omitempty"`
@@ -45,12 +45,12 @@ type SchedulerHints struct {
 
 // CreateOptsBuilder builds the scheduler hints into a serializable format.
 type CreateOptsBuilder interface {
-	ToServerSchedulerHintsCreateMap() (map[string]interface{}, error)
+	ToServerSchedulerHintsCreateMap() (map[string]any, error)
 }
 
 // ToServerSchedulerHintsMap builds the scheduler hints into a serializable format.
-func (opts SchedulerHints) ToServerSchedulerHintsCreateMap() (map[string]interface{}, error) {
-	sh := make(map[string]interface{})
+func (opts SchedulerHints) ToServerSchedulerHintsCreateMap() (map[string]any, error) {
+	sh := make(map[string]any)
 
 	uuidRegex, _ := regexp.Compile("^[a-z0-9]{8}-[a-z0-9]{4}-[1-5][a-z0-9]{3}-[a-z0-9]{4}-[a-z0-9]{12}$")
 
@@ -157,7 +157,7 @@ type CreateOptsExt struct {
 }
 
 // ToServerCreateMap adds the SchedulerHints option to the base server creation options.
-func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
+func (opts CreateOptsExt) ToServerCreateMap() (map[string]any, error) {
 	base, err := opts.CreateOptsBuilder.ToServerCreateMap()
 	if err != nil {
 		return nil, err

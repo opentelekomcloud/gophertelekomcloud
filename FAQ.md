@@ -74,8 +74,8 @@ type MyCreateServerOpts struct {
 to `servers.Create`, simply implement the `servers.CreateOptsBuilder` interface:
 
 ```go
-func (o MyCreateServeropts) ToServerCreateMap() (map[string]interface{}, error) {
-	return map[string]interface{}{
+func (o MyCreateServeropts) ToServerCreateMap() (map[string]any, error) {
+	return map[string]any{
 		"name": o.Name,
 		"size": o.Size,
 	}, nil

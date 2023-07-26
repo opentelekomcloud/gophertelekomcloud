@@ -64,7 +64,7 @@ func FilterResources(resources []Resource, opts ListOpts) ([]Resource, error) {
 
 	var refinedResources []Resource
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.LogicalID != "" {
 		m["LogicalID"] = opts.LogicalID

@@ -71,7 +71,7 @@ func TestGet(t *testing.T) {
 	expected := &volumes.Volume{
 		Status: "active",
 		Name:   "vol-001",
-		Attachments: []map[string]interface{}{
+		Attachments: []map[string]any{
 			{
 				"attachment_id": "03987cd1-0ad5-40d1-9b2a-7cc48295d4fa",
 				"id":            "47e9ecc5-4045-4ee3-9a4b-d859d546a0cf",

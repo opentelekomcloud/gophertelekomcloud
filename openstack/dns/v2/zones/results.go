@@ -108,7 +108,7 @@ type Zone struct {
 
 	// Links includes HTTP references to the itself, useful for passing along
 	// to other APIs that might want a server reference.
-	Links map[string]interface{} `json:"links"`
+	Links map[string]any `json:"links"`
 
 	// Routers associate with the Zone
 	Routers []RouterResult `json:"routers"`

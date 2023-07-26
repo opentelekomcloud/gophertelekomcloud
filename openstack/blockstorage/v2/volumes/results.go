@@ -139,11 +139,11 @@ func (r commonResult) Extract() (*Volume, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v interface{}) error {
+func (r commonResult) ExtractInto(v any) error {
 	return extract.IntoStructPtr(r.Body, v, "volume")
 }
 
-func ExtractVolumesInto(r pagination.Page, v interface{}) error {
+func ExtractVolumesInto(r pagination.Page, v any) error {
 	return extract.IntoSlicePtr(r.(VolumePage).Body, v, "volumes")
 }
 

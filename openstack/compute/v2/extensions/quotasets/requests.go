@@ -89,11 +89,11 @@ type UpdateOpts struct {
 type UpdateOptsBuilder interface {
 	// Extra specific name to prevent collisions with interfaces for other quotas
 	// (e.g. neutron)
-	ToComputeQuotaUpdateMap() (map[string]interface{}, error)
+	ToComputeQuotaUpdateMap() (map[string]any, error)
 }
 
 // ToComputeQuotaUpdateMap builds the update options into a serializable
 // format.
-func (opts UpdateOpts) ToComputeQuotaUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToComputeQuotaUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "quota_set")
 }

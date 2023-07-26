@@ -72,7 +72,7 @@ func (r commonResult) Extract() (*Instance, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v interface{}) error {
+func (r commonResult) ExtractInto(v any) error {
 	return r.ExtractIntoStructPtr(v, "instance")
 }
 

@@ -39,7 +39,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	custom := map[string]interface{}{
+	custom := map[string]any{
 		"coresTotal":                     32000,
 		"maxEmptyBulkDeleteFlag":         10,
 		"maxNodesTotal":                  1000,
@@ -69,7 +69,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 			ClusterID:         a.clusterID,
 			AddonTemplateName: "autoscaler",
 			Values: addons.Values{
-				Basic: map[string]interface{}{
+				Basic: map[string]any{
 					"cceEndpoint":     "https://cce.eu-de.otc.t-systems.com",
 					"ecsEndpoint":     "https://ecs.eu-de.otc.t-systems.com",
 					"euleros_version": "2.5",

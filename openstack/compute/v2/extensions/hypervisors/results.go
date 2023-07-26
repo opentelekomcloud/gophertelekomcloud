@@ -105,10 +105,10 @@ func (r *Hypervisor) UnmarshalJSON(b []byte) error {
 	type tmp Hypervisor
 	var s struct {
 		tmp
-		CPUInfo           interface{} `json:"cpu_info"`
-		HypervisorVersion interface{} `json:"hypervisor_version"`
-		FreeDiskGB        interface{} `json:"free_disk_gb"`
-		LocalGB           interface{} `json:"local_gb"`
+		CPUInfo           any `json:"cpu_info"`
+		HypervisorVersion any `json:"hypervisor_version"`
+		FreeDiskGB        any `json:"free_disk_gb"`
+		LocalGB           any `json:"local_gb"`
 	}
 
 	err := json.Unmarshal(b, &s)
@@ -126,7 +126,7 @@ func (r *Hypervisor) UnmarshalJSON(b []byte) error {
 	switch t := s.CPUInfo.(type) {
 	case string:
 		tmpb = []byte(t)
-	case map[string]interface{}:
+	case map[string]any:
 		tmpb, err = json.Marshal(t)
 		if err != nil {
 			return err

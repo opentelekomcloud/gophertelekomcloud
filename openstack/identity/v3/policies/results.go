@@ -70,10 +70,10 @@ type CustomPolicy struct {
 }
 
 type Statement struct {
-	Action    []string    `json:"Action"`
-	Effect    string      `json:"Effect"`
-	Condition Condition   `json:"Condition,omitempty"`
-	Resource  interface{} `json:"Resource,omitempty"`
+	Action    []string  `json:"Action"`
+	Effect    string    `json:"Effect"`
+	Condition Condition `json:"Condition,omitempty"`
+	Resource  any       `json:"Resource,omitempty"`
 }
 
 func (r commonResult) ExtractPolicies() (ListPolicy, error) {

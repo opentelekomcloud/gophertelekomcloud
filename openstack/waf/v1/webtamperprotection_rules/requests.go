@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToWebTamperCreateMap() (map[string]interface{}, error)
+	ToWebTamperCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new web tamper protection rule.
@@ -18,7 +18,7 @@ type CreateOpts struct {
 }
 
 // ToWebTamperCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToWebTamperCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToWebTamperCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

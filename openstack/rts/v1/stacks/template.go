@@ -44,7 +44,7 @@ func (t *Template) Validate() error {
 // parameter of the template structure. This is the only way that a user can
 // use child templates that are located in their filesystem; urls located on the
 // web (e.g. on github or swift) can be fetched directly by Heat engine.
-func (t *Template) getFileContents(te interface{}, ignoreIf igFunc, recurse bool) error {
+func (t *Template) getFileContents(te any, ignoreIf igFunc, recurse bool) error {
 	// initialize template if empty
 	if t.Files == nil {
 		t.Files = make(map[string]string)
@@ -54,7 +54,7 @@ func (t *Template) getFileContents(te interface{}, ignoreIf igFunc, recurse bool
 	}
 	switch te := te.(type) {
 	// if te is a map
-	case map[string]interface{}, map[interface{}]interface{}:
+	case map[string]any, map[any]any:
 		teMap, err := toStringKeys(te)
 		if err != nil {
 			return err
@@ -106,7 +106,7 @@ func (t *Template) getFileContents(te interface{}, ignoreIf igFunc, recurse bool
 		}
 		return nil
 	// if te is a slice, call the function on each element of the slice.
-	case []interface{}:
+	case []any:
 		for i := range te {
 			if err := t.getFileContents(te[i], ignoreIf, recurse); err != nil {
 				return err
@@ -122,7 +122,7 @@ func (t *Template) getFileContents(te interface{}, ignoreIf igFunc, recurse bool
 }
 
 // function to choose keys whose values are other template files
-func ignoreIfTemplate(key string, value interface{}) bool {
+func ignoreIfTemplate(key string, value any) bool {
 	// key must be either `get_file` or `type` for value to be a URL
 	if key != "get_file" && key != "type" {
 		return true

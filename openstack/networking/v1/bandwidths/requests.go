@@ -7,7 +7,7 @@ import (
 // UpdateOptsBuilder is an interface by which can be able to build the request
 // body
 type UpdateOptsBuilder interface {
-	ToBWUpdateMap() (map[string]interface{}, error)
+	ToBWUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is a struct which represents the request body of update method
@@ -16,7 +16,7 @@ type UpdateOpts struct {
 	Name string `json:"name,omitempty"`
 }
 
-func (opts UpdateOpts) ToBWUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToBWUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 

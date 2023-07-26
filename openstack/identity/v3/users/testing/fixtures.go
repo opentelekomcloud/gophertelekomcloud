@@ -255,10 +255,10 @@ var FirstGroup = groups.Group{
 	Description: "Developers cleared for work on all general projects",
 	DomainID:    "1789d1",
 	ID:          "ea167b",
-	Links: map[string]interface{}{
+	Links: map[string]any{
 		"self": "https://example.com/identity/v3/groups/ea167b",
 	},
-	Extra: map[string]interface{}{
+	Extra: map[string]any{
 		"building": "Hilltop A",
 	},
 	Name: "Developers",
@@ -268,10 +268,10 @@ var SecondGroup = groups.Group{
 	Description: "Developers cleared for work on secret projects",
 	DomainID:    "1789d1",
 	ID:          "a62db1",
-	Links: map[string]interface{}{
+	Links: map[string]any{
 		"self": "https://example.com/identity/v3/groups/a62db1",
 	},
-	Extra: map[string]interface{}{},
+	Extra: map[string]any{},
 	Name:  "Secure Developers",
 }
 

@@ -16,9 +16,9 @@ type InitializeConnectionOpts struct {
 	OSType    string   `json:"os_type,omitempty"`
 }
 
-func InitializeConnection(client *golangsdk.ServiceClient, id string, opts InitializeConnectionOpts) (map[string]interface{}, error) {
+func InitializeConnection(client *golangsdk.ServiceClient, id string, opts InitializeConnectionOpts) (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "connector")
-	b = map[string]interface{}{"os-initialize_connection": b}
+	b = map[string]any{"os-initialize_connection": b}
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func InitializeConnection(client *golangsdk.ServiceClient, id string, opts Initi
 	}
 
 	var res struct {
-		ConnectionInfo map[string]interface{} `json:"connection_info"`
+		ConnectionInfo map[string]any `json:"connection_info"`
 	}
 	err = extract.Into(raw.Body, &res)
 	return res.ConnectionInfo, err

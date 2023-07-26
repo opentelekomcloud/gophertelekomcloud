@@ -20,7 +20,7 @@ func Get(c *golangsdk.ServiceClient, clusterID, k8sName string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToNodeUpdateMap() (map[string]interface{}, error)
+	ToNodeUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update a new node
@@ -29,11 +29,11 @@ type UpdateOpts struct {
 }
 
 type Metadata struct {
-	Labels map[string]interface{} `json:"labels,omitempty"`
+	Labels map[string]any `json:"labels,omitempty"`
 }
 
 // ToNodeUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToNodeUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

@@ -7,7 +7,7 @@ import (
 // CreateOptsBuilder is an interface must satisfy to be used as Create
 // options.
 type CreateOptsBuilder interface {
-	ToDnatRuleCreateMap() (map[string]interface{}, error)
+	ToDnatRuleCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new dnat rule
@@ -24,7 +24,7 @@ type CreateOpts struct {
 
 // ToDnatRuleCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
-func (opts CreateOpts) ToDnatRuleCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToDnatRuleCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "dnat_rule")
 }
 

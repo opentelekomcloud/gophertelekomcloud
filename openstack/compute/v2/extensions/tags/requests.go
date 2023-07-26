@@ -8,7 +8,7 @@ import (
 // The CreateOpts struct in this package does.
 type CreateOptsBuilder interface {
 	// Returns value that can be passed to json.Marshal
-	ToTagsCreateMap() (map[string]interface{}, error)
+	ToTagsCreateMap() (map[string]any, error)
 }
 
 // CreateOpts implements CreateOptsBuilder
@@ -19,7 +19,7 @@ type CreateOpts struct {
 
 // ToImageCreateMap assembles a request body based on the contents of
 // a CreateOpts.
-func (opts CreateOpts) ToTagsCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToTagsCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

@@ -68,10 +68,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToBandwidthsUpdateMap() (map[string]interface{}, error)
+	ToBandwidthsUpdateMap() (map[string]any, error)
 }
 
-func (opts UpdateOpts) ToBandwidthsUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToBandwidthsUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(&opts, "bandwidth")
 	if err != nil {
 		return nil, err

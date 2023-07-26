@@ -794,7 +794,7 @@ func ParseGetObjectOutput(output *GetObjectOutput) {
 }
 
 // ConvertRequestToIoReaderV2 converts req to XML data
-func ConvertRequestToIoReaderV2(req interface{}) (io.Reader, string, error) {
+func ConvertRequestToIoReaderV2(req any) (io.Reader, string, error) {
 	data, err := TransToXml(req)
 	if err == nil {
 		if isDebugLogEnabled() {
@@ -806,7 +806,7 @@ func ConvertRequestToIoReaderV2(req interface{}) (io.Reader, string, error) {
 }
 
 // ConvertRequestToIoReader converts req to XML data
-func ConvertRequestToIoReader(req interface{}) (io.Reader, error) {
+func ConvertRequestToIoReader(req any) (io.Reader, error) {
 	body, err := TransToXml(req)
 	if err == nil {
 		if isDebugLogEnabled() {

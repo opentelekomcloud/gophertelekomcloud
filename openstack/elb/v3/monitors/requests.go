@@ -83,7 +83,7 @@ const (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // List request.
 type CreateOptsBuilder interface {
-	ToMonitorCreateMap() (map[string]interface{}, error)
+	ToMonitorCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is the common options' struct used in this package's Create
@@ -144,7 +144,7 @@ type CreateOpts struct {
 }
 
 // ToMonitorCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToMonitorCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToMonitorCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "healthmonitor")
 	if err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToMonitorUpdateMap() (map[string]interface{}, error)
+	ToMonitorUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is the common options' struct used in this package's Update
@@ -226,7 +226,7 @@ type UpdateOpts struct {
 }
 
 // ToMonitorUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToMonitorUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToMonitorUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "healthmonitor")
 }
 

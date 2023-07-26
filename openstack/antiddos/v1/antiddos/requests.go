@@ -26,10 +26,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToCreateMap() (map[string]interface{}, error)
+	ToCreateMap() (map[string]any, error)
 }
 
-func (opts CreateOpts) ToCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -209,7 +209,7 @@ func FilterDdosStatus(ddosStatus []DdosStatus, opts ListStatusOpts) ([]DdosStatu
 
 	var refinedDdosStatus []DdosStatus
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.FloatingIpId != "" {
 		m["FloatingIpId"] = opts.FloatingIpId
@@ -259,10 +259,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToUpdateMap() (map[string]interface{}, error)
+	ToUpdateMap() (map[string]any, error)
 }
 
-func (opts UpdateOpts) ToUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

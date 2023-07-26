@@ -13,7 +13,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional attributes to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPtrCreateMap() (map[string]interface{}, error)
+	ToPtrCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies the attributes used to create a ptr.
@@ -40,7 +40,7 @@ type Tag struct {
 }
 
 // ToPtrCreateMap formats an CreateOpts structure into a request body.
-func (opts CreateOpts) ToPtrCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToPtrCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

@@ -15,7 +15,7 @@ type Tag struct {
 // BatchOptsBuilder allows extensions to add additional parameters to the
 // BatchAction request.
 type BatchOptsBuilder interface {
-	ToTagsBatchMap() (map[string]interface{}, error)
+	ToTagsBatchMap() (map[string]any, error)
 }
 
 // BatchOpts contains all the values needed to perform BatchAction on the instance tags.
@@ -37,7 +37,7 @@ var (
 )
 
 // ToTagsBatchMap builds a BatchAction request body from BatchOpts.
-func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
+func (opts BatchOpts) ToTagsBatchMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

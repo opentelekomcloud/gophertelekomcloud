@@ -153,7 +153,7 @@ func (r *DownloadHeader) UnmarshalJSON(b []byte) error {
 		Date              golangsdk.JSONRFC1123 `json:"Date"`
 		DeleteAt          golangsdk.JSONUnix    `json:"X-Delete-At"`
 		LastModified      golangsdk.JSONRFC1123 `json:"Last-Modified"`
-		StaticLargeObject interface{}           `json:"X-Static-Large-Object"`
+		StaticLargeObject any                   `json:"X-Static-Large-Object"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -243,7 +243,7 @@ func (r *GetHeader) UnmarshalJSON(b []byte) error {
 		Date              golangsdk.JSONRFC1123 `json:"Date"`
 		DeleteAt          golangsdk.JSONUnix    `json:"X-Delete-At"`
 		LastModified      golangsdk.JSONRFC1123 `json:"Last-Modified"`
-		StaticLargeObject interface{}           `json:"X-Static-Large-Object"`
+		StaticLargeObject any                   `json:"X-Static-Large-Object"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {

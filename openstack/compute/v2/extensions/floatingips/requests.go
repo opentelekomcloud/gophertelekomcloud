@@ -19,7 +19,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToFloatingIPCreateMap() (map[string]interface{}, error)
+	ToFloatingIPCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies a Floating IP allocation request.
@@ -29,7 +29,7 @@ type CreateOpts struct {
 }
 
 // ToFloatingIPCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -61,7 +61,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // AssociateOptsBuilder allows extensions to add additional parameters to the
 // Associate request.
 type AssociateOptsBuilder interface {
-	ToFloatingIPAssociateMap() (map[string]interface{}, error)
+	ToFloatingIPAssociateMap() (map[string]any, error)
 }
 
 // AssociateOpts specifies the required information to associate a Floating IP with an instance
@@ -74,7 +74,7 @@ type AssociateOpts struct {
 }
 
 // ToFloatingIPAssociateMap constructs a request body from AssociateOpts.
-func (opts AssociateOpts) ToFloatingIPAssociateMap() (map[string]interface{}, error) {
+func (opts AssociateOpts) ToFloatingIPAssociateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "addFloatingIp")
 }
 
@@ -92,7 +92,7 @@ func AssociateInstance(client *golangsdk.ServiceClient, serverID string, opts As
 // DisassociateOptsBuilder allows extensions to add additional parameters to
 // the Disassociate request.
 type DisassociateOptsBuilder interface {
-	ToFloatingIPDisassociateMap() (map[string]interface{}, error)
+	ToFloatingIPDisassociateMap() (map[string]any, error)
 }
 
 // DisassociateOpts specifies the required information to disassociate a
@@ -102,7 +102,7 @@ type DisassociateOpts struct {
 }
 
 // ToFloatingIPDisassociateMap constructs a request body from DisassociateOpts.
-func (opts DisassociateOpts) ToFloatingIPDisassociateMap() (map[string]interface{}, error) {
+func (opts DisassociateOpts) ToFloatingIPDisassociateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "removeFloatingIp")
 }
 

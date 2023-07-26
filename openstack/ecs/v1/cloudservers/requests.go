@@ -69,12 +69,12 @@ type CreateOpts struct {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToServerCreateMap() (map[string]interface{}, error)
+	ToServerCreateMap() (map[string]any, error)
 }
 
 // ToServerCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToServerCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 		b["user_data"] = &userData
 	}
 
-	return map[string]interface{}{"server": b}, nil
+	return map[string]any{"server": b}, nil
 }
 
 type Nic struct {
@@ -161,7 +161,7 @@ type RootVolume struct {
 	// If the value of this parameter is true, the created disk is of SCSI type.
 	PassThrough *bool `json:"hw:passthrough,omitempty"`
 
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 }
 
 type DataVolume struct {
@@ -184,7 +184,7 @@ type DataVolume struct {
 	DataImageID string `json:"data_image_id,omitempty"`
 
 	// EVS disk Metadata.
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 }
 
 type VolumeExtendParam struct {
@@ -290,7 +290,7 @@ type Server struct {
 
 // ToServerDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
-func (opts DeleteOpts) ToServerDeleteMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToServerDeleteMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

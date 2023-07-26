@@ -58,7 +58,7 @@ func TestCreate(t *testing.T) {
 		Description: "My plan",
 		ProviderId:  "fc4d5750-22e7-4798-8a46-f48f62c4c1da",
 		Parameters: policies.PolicyParam{
-			Common: map[string]interface{}{},
+			Common: map[string]any{},
 		},
 		ScheduledOperations: []policies.ScheduledOperation{{
 			Name:        "my-backup-policy",
@@ -193,7 +193,7 @@ func TestList(t *testing.T) {
 			ID:   "4d1ce19b-d681-4e44-a87e-c44eb9bfc4c7",
 			Name: "my-plan-test1",
 			Parameters: policies.PolicyParam{
-				Common: map[string]interface{}{},
+				Common: map[string]any{},
 			},
 			CreatedAt: CreatedAt,
 			ProjectId: "91d687759aed45d28b5f6084bc2fa8ad",

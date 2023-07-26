@@ -29,7 +29,7 @@ type Backend struct {
 	// Specifies the original back member ID.
 	ServerID string `json:"server_id"`
 	// Specifies the listener to which the backend ECS belongs.
-	Listeners []map[string]interface{} `json:"listeners"`
+	Listeners []map[string]any `json:"listeners"`
 }
 
 // ListenerPage is the page returned by a pager when traversing over a

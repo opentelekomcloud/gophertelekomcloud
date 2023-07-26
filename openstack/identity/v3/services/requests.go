@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToServiceCreateMap() (map[string]interface{}, error)
+	ToServiceCreateMap() (map[string]any, error)
 }
 
 // CreateOpts provides options used to create a service.
@@ -20,18 +20,18 @@ type CreateOpts struct {
 	Enabled *bool `json:"enabled,omitempty"`
 
 	// Extra is free-form extra key/value pairs to describe the service.
-	Extra map[string]interface{} `json:"-"`
+	Extra map[string]any `json:"-"`
 }
 
 // ToServiceCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToServiceCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToServiceCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "service")
 	if err != nil {
 		return nil, err
 	}
 
 	if opts.Extra != nil {
-		if v, ok := b["service"].(map[string]interface{}); ok {
+		if v, ok := b["service"].(map[string]any); ok {
 			for key, value := range opts.Extra {
 				v[key] = value
 			}
@@ -106,7 +106,7 @@ func Get(client *golangsdk.ServiceClient, serviceID string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToServiceUpdateMap() (map[string]interface{}, error)
+	ToServiceUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts provides options for updating a service.
@@ -118,18 +118,18 @@ type UpdateOpts struct {
 	Enabled *bool `json:"enabled,omitempty"`
 
 	// Extra is free-form extra key/value pairs to describe the service.
-	Extra map[string]interface{} `json:"-"`
+	Extra map[string]any `json:"-"`
 }
 
 // ToServiceUpdateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToServiceUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToServiceUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "service")
 	if err != nil {
 		return nil, err
 	}
 
 	if opts.Extra != nil {
-		if v, ok := b["service"].(map[string]interface{}); ok {
+		if v, ok := b["service"].(map[string]any); ok {
 			for key, value := range opts.Extra {
 				v[key] = value
 			}

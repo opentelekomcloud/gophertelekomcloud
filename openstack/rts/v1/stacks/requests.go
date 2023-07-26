@@ -13,7 +13,7 @@ import (
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToStackCreateMap() (map[string]interface{}, error)
+	ToStackCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is the common options struct used in this package's Create
@@ -39,7 +39,7 @@ type CreateOpts struct {
 }
 
 // ToStackCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToStackCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToStackCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func FilterStacks(stacks []ListedStack, opts ListOpts) ([]ListedStack, error) {
 
 	var refinedStacks []ListedStack
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID
@@ -222,7 +222,7 @@ func Get(c *golangsdk.ServiceClient, stackName string) (r GetResult) {
 // UpdateOptsBuilder is the interface options structs have to satisfy in order
 // to be used in the Update operation in this package.
 type UpdateOptsBuilder interface {
-	ToStackUpdateMap() (map[string]interface{}, error)
+	ToStackUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains the common options struct used in this package's Update
@@ -246,7 +246,7 @@ type UpdateOpts struct {
 }
 
 // ToStackUpdateMap casts a CreateOpts struct to a map.
-func (opts UpdateOpts) ToStackUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToStackUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

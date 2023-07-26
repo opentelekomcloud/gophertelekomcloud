@@ -7,7 +7,7 @@ import (
 
 type CreateOpts struct {
 	// See VolumeType.
-	ExtraSpecs map[string]interface{} `json:"extra_specs,omitempty"`
+	ExtraSpecs map[string]any `json:"extra_specs,omitempty"`
 	// See VolumeType.
 	Name string `json:"name,omitempty"`
 }

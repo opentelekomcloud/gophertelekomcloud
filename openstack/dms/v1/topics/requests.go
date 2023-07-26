@@ -5,11 +5,11 @@ import (
 )
 
 type CreateOptsBuilder interface {
-	ToTopicCreateMap() (map[string]interface{}, error)
+	ToTopicCreateMap() (map[string]any, error)
 }
 
 type DeleteOptsBuilder interface {
-	ToTopicDeleteMap() (map[string]interface{}, error)
+	ToTopicDeleteMap() (map[string]any, error)
 }
 
 type CreateOpts struct {
@@ -21,7 +21,7 @@ type CreateOpts struct {
 	SyncMessageFlush bool   `json:"sync_message_flush,omitempty"`
 }
 
-func (opts CreateOpts) ToTopicCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToTopicCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -46,7 +46,7 @@ type DeleteOpts struct {
 	Topics []string `json:"topics" required:"true"`
 }
 
-func (opts DeleteOpts) ToTopicDeleteMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToTopicDeleteMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

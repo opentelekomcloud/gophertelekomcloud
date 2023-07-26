@@ -7,7 +7,7 @@ import (
 // CreateOptsBuilder is an interface must satisfy to be used as Create
 // options.
 type CreateOptsBuilder interface {
-	ToSnatRuleCreateMap() (map[string]interface{}, error)
+	ToSnatRuleCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new snat rule
@@ -22,7 +22,7 @@ type CreateOpts struct {
 
 // ToSnatRuleCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
-func (opts CreateOpts) ToSnatRuleCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToSnatRuleCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "snat_rule")
 }
 

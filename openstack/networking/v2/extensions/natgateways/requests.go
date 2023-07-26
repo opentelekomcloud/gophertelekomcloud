@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder is an interface must satisfy to be used as Create
 // options.
 type CreateOptsBuilder interface {
-	ToNatGatewayCreateMap() (map[string]interface{}, error)
+	ToNatGatewayCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new nat gateway
@@ -38,7 +38,7 @@ type ListOpts struct {
 
 // ToNatGatewayCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
-func (opts CreateOpts) ToNatGatewayCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToNatGatewayCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "nat_gateway")
 }
 
@@ -71,7 +71,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 // UpdateOptsBuilder is the interface type must satisfy to be used as Update
 // options.
 type UpdateOptsBuilder interface {
-	ToNatGatewayUpdateMap() (map[string]interface{}, error)
+	ToNatGatewayUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is a struct which represents the request body of update method
@@ -81,7 +81,7 @@ type UpdateOpts struct {
 	Spec        string `json:"spec,omitempty"`
 }
 
-func (opts UpdateOpts) ToNatGatewayUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToNatGatewayUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "nat_gateway")
 }
 

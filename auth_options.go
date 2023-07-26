@@ -12,20 +12,20 @@ provider.
 
 An example of manually providing authentication information:
 
-  opts := golangsdk.AuthOptions{
-    IdentityEndpoint: "https://openstack.example.com:5000/v2.0",
-    Username: "{username}",
-    Password: "{password}",
-    TenantID: "{tenant_id}",
-  }
+	opts := golangsdk.AuthOptions{
+	  IdentityEndpoint: "https://openstack.example.com:5000/v2.0",
+	  Username: "{username}",
+	  Password: "{password}",
+	  TenantID: "{tenant_id}",
+	}
 
-  provider, err := openstack.AuthenticatedClient(opts)
+	provider, err := openstack.AuthenticatedClient(opts)
 
 An example of using AuthOptionsFromEnv(), where the environment variables can
 be read from a file, such as a standard openrc file:
 
-  opts, err := openstack.AuthOptionsFromEnv()
-  provider, err := openstack.AuthenticatedClient(opts)
+	opts, err := openstack.AuthOptionsFromEnv()
+	provider, err := openstack.AuthenticatedClient(opts)
 */
 type AuthOptions struct {
 	// IdentityEndpoint specifies the HTTP endpoint that is required to work with
@@ -97,13 +97,13 @@ type AuthOptions struct {
 
 // ToTokenV2CreateMap allows AuthOptions to satisfy the AuthOptionsBuilder
 // interface in the v2 tokens package
-func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
+func (opts AuthOptions) ToTokenV2CreateMap() (map[string]any, error) {
 	// Populate the request map.
-	authMap := make(map[string]interface{})
+	authMap := make(map[string]any)
 
 	if opts.Username != "" {
 		if opts.Password != "" {
-			authMap["passwordCredentials"] = map[string]interface{}{
+			authMap["passwordCredentials"] = map[string]any{
 				"username": opts.Username,
 				"password": opts.Password,
 			}
@@ -111,7 +111,7 @@ func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
 			return nil, ErrMissingInput{Argument: "Password"}
 		}
 	} else if opts.TokenID != "" {
-		authMap["token"] = map[string]interface{}{
+		authMap["token"] = map[string]any{
 			"id": opts.TokenID,
 		}
 	} else {
@@ -125,10 +125,10 @@ func (opts AuthOptions) ToTokenV2CreateMap() (map[string]interface{}, error) {
 		authMap["tenantName"] = opts.TenantName
 	}
 
-	return map[string]interface{}{"auth": authMap}, nil
+	return map[string]any{"auth": authMap}, nil
 }
 
-func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
+func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]any, error) {
 	type domainReq struct {
 		ID   *string `json:"id,omitempty"`
 		Name *string `json:"name,omitempty"`
@@ -270,13 +270,13 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 	}
 
 	if len(scope) != 0 {
-		b["auth"].(map[string]interface{})["scope"] = scope
+		b["auth"].(map[string]any)["scope"] = scope
 	}
 
 	return b, nil
 }
 
-func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
+func (opts *AuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
 	var scope scopeInfo
 
 	if opts.TenantID != "" {
@@ -319,7 +319,7 @@ type scopeInfo struct {
 	DomainName  string
 }
 
-func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
+func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]any, error) {
 	if scope.ProjectName != "" {
 		// ProjectName provided: either DomainID or DomainName must also be supplied.
 		// ProjectID may not be supplied.
@@ -332,20 +332,20 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
 
 		if scope.DomainID != "" {
 			// ProjectName + DomainID
-			return map[string]interface{}{
-				"project": map[string]interface{}{
+			return map[string]any{
+				"project": map[string]any{
 					"name":   &scope.ProjectName,
-					"domain": map[string]interface{}{"id": &scope.DomainID},
+					"domain": map[string]any{"id": &scope.DomainID},
 				},
 			}, nil
 		}
 
 		if scope.DomainName != "" {
 			// ProjectName + DomainName
-			return map[string]interface{}{
-				"project": map[string]interface{}{
+			return map[string]any{
+				"project": map[string]any{
 					"name":   &scope.ProjectName,
-					"domain": map[string]interface{}{"name": &scope.DomainName},
+					"domain": map[string]any{"name": &scope.DomainName},
 				},
 			}, nil
 		}
@@ -359,8 +359,8 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
 		}
 
 		// ProjectID
-		return map[string]interface{}{
-			"project": map[string]interface{}{
+		return map[string]any{
+			"project": map[string]any{
 				"id": &scope.ProjectID,
 			},
 		}, nil
@@ -371,15 +371,15 @@ func (scope *scopeInfo) BuildTokenV3ScopeMap() (map[string]interface{}, error) {
 		}
 
 		// DomainID
-		return map[string]interface{}{
-			"domain": map[string]interface{}{
+		return map[string]any{
+			"domain": map[string]any{
 				"id": &scope.DomainID,
 			},
 		}, nil
 	} else if scope.DomainName != "" {
 		// DomainName
-		return map[string]interface{}{
-			"domain": map[string]interface{}{
+		return map[string]any{
+			"domain": map[string]any{
 				"name": &scope.DomainName,
 			},
 		}, nil
@@ -408,7 +408,7 @@ func (opts *AgencyAuthOptions) AuthHeaderDomainID() string {
 	return opts.DomainID
 }
 
-func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, error) {
+func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]any, error) {
 	scope := scopeInfo{
 		ProjectName: opts.DelegatedProject,
 		DomainName:  opts.AgencyDomainName,
@@ -417,7 +417,7 @@ func (opts *AgencyAuthOptions) ToTokenV3ScopeMap() (map[string]interface{}, erro
 	return scope.BuildTokenV3ScopeMap()
 }
 
-func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
+func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]any) (map[string]any, error) {
 	type assumeRoleReq struct {
 		DomainName string `json:"domain_name"`
 		AgencyName string `json:"xrole_name"`
@@ -444,7 +444,7 @@ func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) 
 	}
 
 	if len(scope) != 0 {
-		r["auth"].(map[string]interface{})["scope"] = scope
+		r["auth"].(map[string]any)["scope"] = scope
 	}
 	return r, nil
 }

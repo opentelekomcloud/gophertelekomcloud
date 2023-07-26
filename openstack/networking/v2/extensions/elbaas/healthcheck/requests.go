@@ -18,7 +18,7 @@ const (
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToHealthCreateMap() (map[string]interface{}, error)
+	ToHealthCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is the common options struct used in this package's Create
@@ -51,7 +51,7 @@ type CreateOpts struct {
 }
 
 // ToHealthCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToHealthCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToHealthCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -61,19 +61,19 @@ func (opts CreateOpts) ToHealthCreateMap() (map[string]interface{}, error) {
 }
 
 /*
- Create is an operation which provisions a new Health Monitor. There are
- different types of Monitor you can provision: PING, TCP or HTTP(S). Below
- are examples of how to create each one.
+Create is an operation which provisions a new Health Monitor. There are
+different types of Monitor you can provision: PING, TCP or HTTP(S). Below
+are examples of how to create each one.
 
- Here is an example config struct to use when creating a PING or TCP Monitor:
+Here is an example config struct to use when creating a PING or TCP Monitor:
 
- CreateOpts{Type: TypePING, Delay: 20, Timeout: 10, MaxRetries: 3}
- CreateOpts{Type: TypeTCP, Delay: 20, Timeout: 10, MaxRetries: 3}
+CreateOpts{Type: TypePING, Delay: 20, Timeout: 10, MaxRetries: 3}
+CreateOpts{Type: TypeTCP, Delay: 20, Timeout: 10, MaxRetries: 3}
 
- Here is an example config struct to use when creating a HTTP(S) Monitor:
+Here is an example config struct to use when creating a HTTP(S) Monitor:
 
- CreateOpts{Type: TypeHTTP, Delay: 20, Timeout: 10, MaxRetries: 3,
- HttpMethod: "HEAD", ExpectedCodes: "200", PoolID: "2c946bfc-1804-43ab-a2ff-58f6a762b505"}
+CreateOpts{Type: TypeHTTP, Delay: 20, Timeout: 10, MaxRetries: 3,
+HttpMethod: "HEAD", ExpectedCodes: "200", PoolID: "2c946bfc-1804-43ab-a2ff-58f6a762b505"}
 */
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToHealthCreateMap()
@@ -98,7 +98,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToHealthUpdateMap() (map[string]interface{}, error)
+	ToHealthUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is the common options struct used in this package's Update
@@ -129,7 +129,7 @@ type UpdateOpts struct {
 }
 
 // ToHealthpdateMap casts a UpdateOpts struct to a map.
-func (opts UpdateOpts) ToHealthUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToHealthUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

@@ -7,7 +7,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToTagCreateMap() (map[string]interface{}, error)
+	ToTagCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create or add a new tag.
@@ -25,7 +25,7 @@ type Tag struct {
 }
 
 // ToTagCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToTagCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToTagCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -58,7 +58,7 @@ func Get(client *golangsdk.ServiceClient, policyID string) (r GetResult) {
 // ListOptsBuilder allows extensions to add additional parameters to the
 // ListResources request.
 type ListOptsBuilder interface {
-	ToTagsListMap() (map[string]interface{}, error)
+	ToTagsListMap() (map[string]any, error)
 }
 
 // ListOpts contains all the values needed to ListResources the policy details based on tags.
@@ -87,7 +87,7 @@ type Tags struct {
 }
 
 // ToTagsListMap builds a ListResources request body from ListOpts.
-func (opts ListOpts) ToTagsListMap() (map[string]interface{}, error) {
+func (opts ListOpts) ToTagsListMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -109,7 +109,7 @@ func ListResources(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r Que
 // BatchOptsBuilder allows extensions to add additional parameters to the
 // BatchAction request.
 type BatchOptsBuilder interface {
-	ToTagsBatchMap() (map[string]interface{}, error)
+	ToTagsBatchMap() (map[string]any, error)
 }
 
 // BatchOpts contains all the values needed to perform BatchAction on the policy tags.
@@ -133,7 +133,7 @@ var (
 )
 
 // ToTagsBatchMap builds a BatchAction request body from BatchOpts.
-func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
+func (opts BatchOpts) ToTagsBatchMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

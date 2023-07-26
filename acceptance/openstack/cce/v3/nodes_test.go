@@ -83,7 +83,7 @@ func (s *testNodes) TestNodeLifecycle() {
 				{
 					Size:       100,
 					VolumeType: "SSD",
-					Metadata: map[string]interface{}{
+					Metadata: map[string]any{
 						"__system__encrypted": encryption,
 						"__system__cmkid":     s.kmsID,
 					},

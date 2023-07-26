@@ -92,7 +92,7 @@ var FirstZone = zones.Zone{
 	Description: "This is an example zone.",
 	Masters:     []string{},
 	CreatedAt:   "2014-07-07T18:25:31.275934",
-	Links: map[string]interface{}{
+	Links: map[string]any{
 		"self": "https://127.0.0.1:9001/v2/zones/a86dba58-0043-4cc6-a1bb-69d5e86f3ca3",
 	},
 }
@@ -110,7 +110,7 @@ var SecondZone = zones.Zone{
 	Masters:     []string{"example.com."},
 	CreatedAt:   "2014-07-07T18:25:31.275934",
 	UpdatedAt:   "2015-02-25T20:23:01.234567",
-	Links: map[string]interface{}{
+	Links: map[string]any{
 		"self": "https://127.0.0.1:9001/v2/zones/34c4561c-9205-4386-9df5-167436f5a222",
 	},
 }

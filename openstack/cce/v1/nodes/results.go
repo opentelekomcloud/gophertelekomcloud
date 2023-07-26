@@ -31,13 +31,13 @@ type Node struct {
 }
 
 type MetadataNode struct {
-	Name              string                 `json:"name"`
-	SelfLink          string                 `json:"selfLink"`
-	ID                string                 `json:"uid"`
-	ResourceVersion   string                 `json:"resourceVersion"`
-	CreationTimestamp string                 `json:"creationTimestamp"`
-	Labels            map[string]interface{} `json:"labels"`
-	Annotations       map[string]interface{} `json:"annotations"`
+	Name              string         `json:"name"`
+	SelfLink          string         `json:"selfLink"`
+	ID                string         `json:"uid"`
+	ResourceVersion   string         `json:"resourceVersion"`
+	CreationTimestamp string         `json:"creationTimestamp"`
+	Labels            map[string]any `json:"labels"`
+	Annotations       map[string]any `json:"annotations"`
 }
 
 type Spec struct {

@@ -75,7 +75,7 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 	if err != nil {
 		return nil, err
 	}
-	var matchOpts map[string]interface{}
+	var matchOpts map[string]any
 	err = json.Unmarshal(matchOptsByte, &matchOpts)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func FilterSubnets(subnets []Subnet, opts ListOpts) ([]Subnet, error) {
 	return refinedSubnets, nil
 }
 
-func subnetMatchesFilter(subnet *Subnet, filter map[string]interface{}) bool {
+func subnetMatchesFilter(subnet *Subnet, filter map[string]any) bool {
 	for key, expectedValue := range filter {
 		if getStructField(subnet, key) != expectedValue {
 			return false
@@ -112,7 +112,7 @@ func getStructField(v *Subnet, field string) string {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSubnetCreateMap() (map[string]interface{}, error)
+	ToSubnetCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new subnets. There are
@@ -137,7 +137,7 @@ type ExtraDHCPOpt struct {
 }
 
 // ToSubnetCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToSubnetCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToSubnetCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "subnet")
 }
 
@@ -165,7 +165,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToSubnetUpdateMap() (map[string]interface{}, error)
+	ToSubnetUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains the values used when updating a subnets.
@@ -180,7 +180,7 @@ type UpdateOpts struct {
 }
 
 // ToSubnetUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "subnet")
 }
 

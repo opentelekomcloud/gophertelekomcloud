@@ -17,7 +17,7 @@ func (r commonResult) Extract() (*RBACPolicy, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v interface{}) error {
+func (r commonResult) ExtractInto(v any) error {
 	return r.ExtractIntoStructPtr(v, "rbac_policy")
 }
 
@@ -94,6 +94,6 @@ func ExtractRBACPolicies(r pagination.Page) ([]RBACPolicy, error) {
 }
 
 // ExtractRBACPolicesInto extracts the elements into a slice of RBAC Policy structs.
-func ExtractRBACPolicesInto(r pagination.Page, v interface{}) error {
+func ExtractRBACPolicesInto(r pagination.Page, v any) error {
 	return extract.IntoSlicePtr(r.(RBACPolicyPage).Body, v, "rbac_policies")
 }

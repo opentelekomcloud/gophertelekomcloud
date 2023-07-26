@@ -146,9 +146,9 @@ type VolumeSpec struct {
 	// Disk VolumeType
 	VolumeType string `json:"volumetype" required:"true"`
 	// Metadata contains data disk encryption information
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 	// Disk extension parameter
-	ExtendParam map[string]interface{} `json:"extendParam,omitempty"`
+	ExtendParam map[string]any `json:"extendParam,omitempty"`
 }
 
 type ExtendParam struct {

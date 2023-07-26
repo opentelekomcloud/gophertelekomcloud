@@ -10,7 +10,7 @@ var RequestOpts = golangsdk.RequestOpts{
 
 // CreateOptsBuilder allows extensions to add parameters to the Create request.
 type CreateOptsBuilder interface {
-	ToReplicationAttachmentCreateMap() (map[string]interface{}, error)
+	ToReplicationAttachmentCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies replication attachment creation or import parameters.
@@ -24,7 +24,7 @@ type CreateOpts struct {
 }
 
 // ToReplicationAttachmentCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToReplicationAttachmentCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToReplicationAttachmentCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "replicationAttachment")
 }
 

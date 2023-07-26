@@ -65,7 +65,7 @@ const (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToLBMonitorCreateMap() (map[string]interface{}, error)
+	ToLBMonitorCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new health monitor.
@@ -108,7 +108,7 @@ type CreateOpts struct {
 }
 
 // ToLBMonitorCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToLBMonitorCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToLBMonitorCreateMap() (map[string]any, error) {
 	if opts.Type == TypeHTTP || opts.Type == TypeHTTPS {
 		if opts.URLPath == "" {
 			err := golangsdk.ErrMissingInput{}
@@ -163,7 +163,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToLBMonitorUpdateMap() (map[string]interface{}, error)
+	ToLBMonitorUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update an existing monitor.
@@ -199,7 +199,7 @@ type UpdateOpts struct {
 }
 
 // ToLBMonitorUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToLBMonitorUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToLBMonitorUpdateMap() (map[string]any, error) {
 	if opts.Delay > 0 && opts.Timeout > 0 && opts.Delay < opts.Timeout {
 		err := golangsdk.ErrInvalidInput{}
 		err.Argument = "monitors.CreateOpts.Delay/monitors.CreateOpts.Timeout"

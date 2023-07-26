@@ -27,9 +27,9 @@ type Page interface {
 	// GetBody returns the Page Body. This is used in the `AllPages` method.
 	GetBody() []byte
 	// GetBodyAsSlice tries to convert page body to a slice.
-	GetBodyAsSlice() ([]interface{}, error)
+	GetBodyAsSlice() ([]any, error)
 	// GetBodyAsMap tries to convert page body to a map.
-	GetBodyAsMap() (map[string]interface{}, error)
+	GetBodyAsMap() (map[string]any, error)
 }
 
 // Pager knows how to advance through a specific resource collection, one page at a time.
@@ -121,7 +121,7 @@ func (p Pager) AllPages() (Page, error) {
 	}
 
 	if _, err := testPage.GetBodyAsSlice(); err == nil {
-		var pagesSlice []interface{}
+		var pagesSlice []any
 
 		// Iterate over the pages to concatenate the bodies.
 		err = p.EachPage(func(page Page) (bool, error) {
@@ -141,9 +141,9 @@ func (p Pager) AllPages() (Page, error) {
 			return nil, err
 		}
 	} else if _, err := testPage.GetBodyAsMap(); err == nil {
-		var pagesSlice []interface{}
+		var pagesSlice []any
 
-		// key is the map key for the page body if the body type is `map[string]interface{}`.
+		// key is the map key for the page body if the body type is `map[string]any`.
 		var key string
 		// Iterate over the pages to concatenate the bodies.
 		err = p.EachPage(func(page Page) (bool, error) {
@@ -154,9 +154,9 @@ func (p Pager) AllPages() (Page, error) {
 			for k, v := range b {
 				// If it's a linked page, we don't want the `links`, we want the other one.
 				if !strings.HasSuffix(k, "links") {
-					// check the field's type. we only want []interface{} (which is really []map[string]interface{})
+					// check the field's type. we only want []any (which is really []map[string]any)
 					switch vt := v.(type) {
-					case []interface{}:
+					case []any:
 						key = k
 						pagesSlice = append(pagesSlice, vt...)
 					}
@@ -168,7 +168,7 @@ func (p Pager) AllPages() (Page, error) {
 			return nil, err
 		}
 
-		mapBody := map[string]interface{}{
+		mapBody := map[string]any{
 			key: pagesSlice,
 		}
 

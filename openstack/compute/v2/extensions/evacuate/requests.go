@@ -7,7 +7,7 @@ import (
 // EvacuateOptsBuilder allows extensions to add additional parameters to the
 // the Evacuate request.
 type EvacuateOptsBuilder interface {
-	ToEvacuateMap() (map[string]interface{}, error)
+	ToEvacuateMap() (map[string]any, error)
 }
 
 // EvacuateOpts specifies Evacuate action parameters.
@@ -23,7 +23,7 @@ type EvacuateOpts struct {
 }
 
 // ToServerGroupCreateMap constructs a request body from CreateOpts.
-func (opts EvacuateOpts) ToEvacuateMap() (map[string]interface{}, error) {
+func (opts EvacuateOpts) ToEvacuateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "evacuate")
 }
 

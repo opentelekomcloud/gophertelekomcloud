@@ -159,13 +159,13 @@ type Server struct {
 	Status string `json:"status"`
 	// Image refers to a JSON object, which itself indicates the OS image used to
 	// deploy the server.
-	Image map[string]interface{} `json:"-"`
+	Image map[string]any `json:"-"`
 	// Flavor refers to a JSON object, which itself indicates the hardware
 	// configuration of the deployed server.
-	Flavor map[string]interface{} `json:"flavor"`
+	Flavor map[string]any `json:"flavor"`
 	// Addresses includes a list of all IP addresses assigned to the server,
 	// keyed by pool.
-	Addresses map[string]interface{} `json:"addresses"`
+	Addresses map[string]any `json:"addresses"`
 	// Metadata includes a list of all user-specified key-value pairs attached
 	// to the server.
 	Metadata map[string]string `json:"metadata"`

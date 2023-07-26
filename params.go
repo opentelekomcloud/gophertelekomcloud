@@ -36,7 +36,7 @@ BuildRequestBody is used within Gophercloud to more fully understand how it
 fits within the request process as a whole rather than use it directly as shown
 above.
 */
-func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, error) {
+func BuildRequestBody(opts any, parent string) (map[string]any, error) {
 	optsValue := reflect.ValueOf(opts)
 	if optsValue.Kind() == reflect.Ptr {
 		optsValue = optsValue.Elem()
@@ -47,7 +47,7 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 		optsType = optsType.Elem()
 	}
 
-	optsMap := make(map[string]interface{})
+	optsMap := make(map[string]any)
 	if optsValue.Kind() == reflect.Struct {
 		// fmt.Printf("optsValue.Kind() is a reflect.Struct: %+v\n", optsValue.Kind())
 		for i := 0; i < optsValue.NumField(); i++ {
@@ -164,7 +164,7 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 		// fmt.Printf("optsMap: %+v\n", optsMap)
 
 		if parent != "" {
-			optsMap = map[string]interface{}{parent: optsMap}
+			optsMap = map[string]any{parent: optsMap}
 		}
 		// fmt.Printf("optsMap after parent added: %+v\n", optsMap)
 		return optsMap, nil
@@ -301,7 +301,7 @@ will be converted into "?x_bar=AAA&lorem_ipsum=BBB".
 The struct's fields may be strings, integers, or boolean values. Fields left at
 their type's zero value will be omitted from the query.
 */
-func BuildQueryString(opts interface{}) (*url.URL, error) {
+func BuildQueryString(opts any) (*url.URL, error) {
 	optsValue := reflect.ValueOf(opts)
 	if optsValue.Kind() == reflect.Ptr {
 		optsValue = optsValue.Elem()
@@ -404,7 +404,7 @@ will be converted into:
 Untagged fields and fields left at their zero values are skipped. Integers,
 booleans and string values are supported.
 */
-func BuildHeaders(opts interface{}) (map[string]string, error) {
+func BuildHeaders(opts any) (map[string]string, error) {
 	optsValue := reflect.ValueOf(opts)
 	if optsValue.Kind() == reflect.Ptr {
 		optsValue = optsValue.Elem()

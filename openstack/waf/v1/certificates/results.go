@@ -69,7 +69,7 @@ func (p CertificatePage) IsEmpty() (bool, error) {
 		return false, err
 	}
 
-	items, ok := body["items"].([]interface{})
+	items, ok := body["items"].([]any)
 	if !ok {
 		return false, fmt.Errorf("map `items` are not a slice: %+v", body)
 	}

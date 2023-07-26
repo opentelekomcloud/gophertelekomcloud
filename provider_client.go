@@ -2,6 +2,7 @@ package golangsdk
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -155,7 +156,7 @@ type RequestOpts struct {
 	// JSONResponse, if provided, will be populated with the contents of the response body parsed as JSON.
 	// Not that setting it will drain and close Response.Body.
 	// Deprecated: Use http.Response Body instead.
-	JSONResponse *io.Reader
+	JSONResponse *[]byte
 	// OkCodes contains a list of numeric HTTP status codes that should be interpreted as success. If
 	// the response has a different code, an error will be returned.
 	OkCodes []int
@@ -420,7 +421,13 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	// Parse the response body as JSON, if requested to do so.
 	// TODO: When all refactoring of the extract is done, remove this.
 	if options.JSONResponse != nil && resp.StatusCode != http.StatusNoContent {
-		*options.JSONResponse = resp.Body
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+
+		defer resp.Body.Close()
+		*options.JSONResponse = data
 	}
 
 	return resp, nil

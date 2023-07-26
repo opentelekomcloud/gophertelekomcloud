@@ -9,7 +9,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToInstanceCreateMap() (map[string]interface{}, error)
+	ToInstanceCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new instance.
@@ -40,7 +40,7 @@ type Tags struct {
 }
 
 // ToInstanceCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToInstanceCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "protected_instance")
 }
 
@@ -60,7 +60,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToInstanceUpdateMap() (map[string]interface{}, error)
+	ToInstanceUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update an Instance.
@@ -70,7 +70,7 @@ type UpdateOpts struct {
 }
 
 // ToInstanceUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "protected_instance")
 }
 
@@ -96,7 +96,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // DeleteOptsBuilder allows extensions to add additional parameters to the
 // Delete request.
 type DeleteOptsBuilder interface {
-	ToInstanceDeleteMap() (map[string]interface{}, error)
+	ToInstanceDeleteMap() (map[string]any, error)
 }
 
 // DeleteOpts contains all the values needed to delete an Instance.
@@ -108,7 +108,7 @@ type DeleteOpts struct {
 }
 
 // ToInstanceDeleteMap builds a update request body from DeleteOpts.
-func (opts DeleteOpts) ToInstanceDeleteMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToInstanceDeleteMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

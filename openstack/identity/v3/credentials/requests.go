@@ -42,7 +42,7 @@ func Get(client *golangsdk.ServiceClient, credentialID string) (r GetResult) {
 }
 
 type CreateOptsBuilder interface {
-	ToCredentialCreateMap() (map[string]interface{}, error)
+	ToCredentialCreateMap() (map[string]any, error)
 }
 
 type CreateOpts struct {
@@ -50,7 +50,7 @@ type CreateOpts struct {
 	Description string `json:"description"`
 }
 
-func (opts CreateOpts) ToCredentialCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToCredentialCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, parentElement)
 }
 
@@ -65,7 +65,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 }
 
 type UpdateOptsBuilder interface {
-	ToCredentialUpdateMap() (map[string]interface{}, error)
+	ToCredentialUpdateMap() (map[string]any, error)
 }
 
 type UpdateOpts struct {
@@ -73,7 +73,7 @@ type UpdateOpts struct {
 	Description string `json:"description,omitempty"`
 }
 
-func (opts UpdateOpts) ToCredentialUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToCredentialUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, parentElement)
 }
 
@@ -95,7 +95,7 @@ func Delete(client *golangsdk.ServiceClient, credentialID string) (r DeleteResul
 }
 
 type CreateTemporaryOptsBuilder interface {
-	ToTempCredentialCreateMap() (map[string]interface{}, error)
+	ToTempCredentialCreateMap() (map[string]any, error)
 }
 
 type CreateTemporaryOpts struct {
@@ -121,7 +121,7 @@ type CreateTemporaryOpts struct {
 }
 
 // ToTempCredentialCreateMap
-func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]interface{}, error) {
+func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]any, error) {
 	// doc: https://docs.otc.t-systems.com/en-us/api/iam/en-us_topic_0097949518.html
 
 	if len(opts.Methods) < 1 {
@@ -133,9 +133,9 @@ func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]interfac
 
 	method := opts.Methods[0]
 
-	authMap := map[string]interface{}{
-		"auth": map[string]interface{}{
-			"identity": map[string]interface{}{
+	authMap := map[string]any{
+		"auth": map[string]any{
+			"identity": map[string]any{
 				"methods": opts.Methods,
 			},
 		},
@@ -143,12 +143,12 @@ func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]interfac
 
 	switch method {
 	case "token":
-		authMap["token"] = map[string]interface{}{
+		authMap["token"] = map[string]any{
 			"id":               opts.Token,
 			"duration-seconds": opts.Duration,
 		}
 	case "assume_role":
-		role := map[string]interface{}{
+		role := map[string]any{
 			"agency_name":      opts.AgencyName,
 			"duration-seconds": opts.Duration,
 		}

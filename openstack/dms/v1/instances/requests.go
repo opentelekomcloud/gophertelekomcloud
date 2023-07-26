@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder is used for creating instance parameters.
 // any struct providing the parameters should implement this interface
 type CreateOptsBuilder interface {
-	ToInstanceCreateMap() (map[string]interface{}, error)
+	ToInstanceCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is a struct that contains all the parameters.
@@ -101,7 +101,7 @@ type CreateOpts struct {
 }
 
 // ToInstanceCreateMap is used for type convert
-func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToInstanceCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -127,7 +127,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 
 // UpdateOptsBuilder is an interface which can build the map parameter of update function
 type UpdateOptsBuilder interface {
-	ToInstanceUpdateMap() (map[string]interface{}, error)
+	ToInstanceUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is a struct which represents the parameters of update function
@@ -155,7 +155,7 @@ type UpdateOpts struct {
 }
 
 // ToInstanceUpdateMap is used for type convert
-func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

@@ -16,9 +16,9 @@ type Deployment struct {
 	// Specifies the ID of this deployment resource.
 	Id string `json:"id"`
 	// Specifies input data stored in the form of a key-value pair.
-	InputValues map[string]interface{} `json:"input_values"`
+	InputValues map[string]any `json:"input_values"`
 	// Specifies output data stored in the form of a key-value pair.
-	OutputValues map[string]interface{} `json:"output_values"`
+	OutputValues map[string]any `json:"output_values"`
 	// Specifies the ID of the instance deployed by the software Deployments.
 	ServerId string `json:"server_id"`
 	// Specifies the current status of deployment resources. Valid values include COMPLETE, IN_PROGRESS, and FAILED.

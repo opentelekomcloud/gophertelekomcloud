@@ -70,7 +70,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 func filterFlavors(flavors []Flavor, opts ListOpts) ([]Flavor, error) {
 	var refinedFlavors []Flavor
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID

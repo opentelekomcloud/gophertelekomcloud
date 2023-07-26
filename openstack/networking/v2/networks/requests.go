@@ -69,7 +69,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToNetworkCreateMap() (map[string]interface{}, error)
+	ToNetworkCreateMap() (map[string]any, error)
 }
 
 // CreateOpts represents options used to create a network.
@@ -83,7 +83,7 @@ type CreateOpts struct {
 }
 
 // ToNetworkCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToNetworkCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToNetworkCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "network")
 }
 
@@ -107,7 +107,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToNetworkUpdateMap() (map[string]interface{}, error)
+	ToNetworkUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts represents options used to update a network.
@@ -118,7 +118,7 @@ type UpdateOpts struct {
 }
 
 // ToNetworkUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToNetworkUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToNetworkUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "network")
 }
 

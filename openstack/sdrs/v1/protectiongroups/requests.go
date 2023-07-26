@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToGroupCreateMap() (map[string]interface{}, error)
+	ToGroupCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new group.
@@ -30,7 +30,7 @@ type CreateOpts struct {
 }
 
 // ToGroupCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToGroupCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "server_group")
 }
 
@@ -49,7 +49,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToGroupUpdateMap() (map[string]interface{}, error)
+	ToGroupUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update a Group.
@@ -59,7 +59,7 @@ type UpdateOpts struct {
 }
 
 // ToGroupUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToGroupUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToGroupUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "server_group")
 }
 
@@ -94,7 +94,7 @@ type EnableOpts struct {
 }
 
 // ToGroupEnableMap builds a create request body from EnableOpts.
-func (opts EnableOpts) ToGroupEnableMap() (map[string]interface{}, error) {
+func (opts EnableOpts) ToGroupEnableMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "start-server-group")
 }
 
@@ -117,7 +117,7 @@ type DisableOpts struct {
 }
 
 // ToGroupDisableMap builds a create request body from DisableOpts.
-func (opts DisableOpts) ToGroupDisableMap() (map[string]interface{}, error) {
+func (opts DisableOpts) ToGroupDisableMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "stop-server-group")
 }
 

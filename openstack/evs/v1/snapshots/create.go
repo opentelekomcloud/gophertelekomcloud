@@ -6,11 +6,11 @@ import (
 )
 
 type CreateOpts struct {
-	VolumeID    string                 `json:"volume_id" required:"true"`
-	Description string                 `json:"display_description,omitempty"`
-	Force       bool                   `json:"force,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty"`
-	Name        string                 `json:"display_name,omitempty"`
+	VolumeID    string         `json:"volume_id" required:"true"`
+	Description string         `json:"display_description,omitempty"`
+	Force       bool           `json:"force,omitempty"`
+	Metadata    map[string]any `json:"metadata,omitempty"`
+	Name        string         `json:"display_name,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Snapshot, error) {

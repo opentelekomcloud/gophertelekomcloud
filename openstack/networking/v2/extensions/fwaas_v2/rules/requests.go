@@ -94,7 +94,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToRuleCreateMap() (map[string]interface{}, error)
+	ToRuleCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new firewall rule.
@@ -114,13 +114,13 @@ type CreateOpts struct {
 }
 
 // ToRuleCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToRuleCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "firewall_rule")
 	if err != nil {
 		return nil, err
 	}
 
-	if m := b["firewall_rule"].(map[string]interface{}); m["protocol"] == "any" {
+	if m := b["firewall_rule"].(map[string]any); m["protocol"] == "any" {
 		m["protocol"] = nil
 	}
 
@@ -149,7 +149,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToRuleUpdateMap() (map[string]interface{}, error)
+	ToRuleUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains the values used when updating a firewall rule.
@@ -168,7 +168,7 @@ type UpdateOpts struct {
 }
 
 // ToRuleUpdateMap casts a UpdateOpts struct to a map.
-func (opts UpdateOpts) ToRuleUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToRuleUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall_rule")
 }
 

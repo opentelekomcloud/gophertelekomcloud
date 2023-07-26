@@ -44,7 +44,7 @@ func (s *testNodes) TestNodePoolLifecycle() {
 					{
 						Size:       100,
 						VolumeType: "SSD",
-						ExtendParam: map[string]interface{}{
+						ExtendParam: map[string]any{
 							"useType": "docker",
 						},
 					},

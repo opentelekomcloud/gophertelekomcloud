@@ -15,17 +15,17 @@ Example to List Software Deployments
 
 Example to Get Software Deployment
 
-	deploymentID:="bd7d48a5-6e33-4b95-aa28-d0d3af46c635"
+		deploymentID:="bd7d48a5-6e33-4b95-aa28-d0d3af46c635"
 
- 	deployments,err:=softwaredeployment.Get(client,deploymentID).Extract()
+	 	deployments,err:=softwaredeployment.Get(client,deploymentID).Extract()
 
-	if err != nil {
-		panic(err)
-	}
+		if err != nil {
+			panic(err)
+		}
 
 Example to Create a Software Deployments
 
-	input:=map[string]interface{}{"name":"foo"}
+	input:=map[string]any{"name":"foo"}
 
 	createOpts := softwaredeployment.CreateOpts{
 		Status:"IN_PROGRESS",
@@ -42,9 +42,10 @@ Example to Create a Software Deployments
 	}
 
 Example to Update a Software Deployments
+
 	deploymentID:="bd7d48a5-6e33-4b95-aa28-d0d3af46c635"
 
-	ouput:=map[string]interface{}{"deploy_stdout":"Writing to /tmp/baaaaa\nWritten to /tmp/baaaaa\n","deploy_stderr":"+ echo Writing to /tmp/baaaaa\n+ echo fooooo\n+ cat /tmp/baaaaa\n+ echo -n The file /tmp/baaaaa contains fooooo for server ec14c864-096e-4e27-bb8a-2c2b4dc6f3f5 during CREATE\n+ echo Written to /tmp/baaaaa\n+ echo Output to stderr\nOutput to stderr\n",
+	ouput:=map[string]any{"deploy_stdout":"Writing to /tmp/baaaaa\nWritten to /tmp/baaaaa\n","deploy_stderr":"+ echo Writing to /tmp/baaaaa\n+ echo fooooo\n+ cat /tmp/baaaaa\n+ echo -n The file /tmp/baaaaa contains fooooo for server ec14c864-096e-4e27-bb8a-2c2b4dc6f3f5 during CREATE\n+ echo Written to /tmp/baaaaa\n+ echo Output to stderr\nOutput to stderr\n",
 		"deploy_status_code":0,"result":"The file /tmp/baaaaa contains fooooo for server ec14c864-096e-4e27-bb8a-2c2b4dc6f3f5 during CREATE"}
 
 	updateOpts := softwaredeployment.UpdateOpts{
@@ -57,7 +58,6 @@ Example to Update a Software Deployments
 	if err != nil {
 		panic(err)
 	}
-
 
 Example to Delete a Software Deployments
 

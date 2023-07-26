@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,7 +29,7 @@ Deprecated: use functions from internal/extract package instead
 */
 type Result struct {
 	// Body is the payload of the HTTP response from the server.
-	Body io.Reader
+	Body []byte
 
 	// Header contains the HTTP header structure from the original response.
 	Header http.Header
@@ -56,16 +55,16 @@ type JsonRDSInstanceField struct {
 // different fields in the response object than OpenStack proper.
 //
 // Deprecated: use extract.Into function instead
-func (r Result) ExtractInto(to interface{}) error {
+func (r Result) ExtractInto(to any) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	return extract.Into(r.Body, to)
+	return extract.Into(bytes.NewReader(r.Body), to)
 }
 
 // ExtractIntoStructPtr will unmarshal the Result (r) into the provided
-// interface{} (to).
+// any (to).
 //
 // NOTE: For internal use only
 //
@@ -75,16 +74,16 @@ func (r Result) ExtractInto(to interface{}) error {
 // body prior to `r` being unmarshalled into `to`.
 //
 // Deprecated: use extract.IntoStructPtr function instead
-func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
+func (r Result) ExtractIntoStructPtr(to any, label string) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	return extract.IntoStructPtr(r.Body, to, label)
+	return extract.IntoStructPtr(bytes.NewReader(r.Body), to, label)
 }
 
 // ExtractIntoSlicePtr will unmarshal the Result (r) into the provided
-// interface{} (to).
+// any (to).
 //
 // NOTE: For internal use only
 //
@@ -94,15 +93,15 @@ func (r Result) ExtractIntoStructPtr(to interface{}, label string) error {
 // body prior to `r` being unmarshalled into `to`.
 //
 // Deprecated: use extract.IntoSlicePtr function instead
-func (r Result) ExtractIntoSlicePtr(to interface{}, label string) error {
+func (r Result) ExtractIntoSlicePtr(to any, label string) error {
 	if r.Err != nil {
 		return r.Err
 	}
 
-	return extract.IntoSlicePtr(r.Body, to, label)
+	return extract.IntoSlicePtr(bytes.NewReader(r.Body), to, label)
 }
 
-func PrettyPrintJSON(body interface{}) string {
+func PrettyPrintJSON(body any) string {
 	pretty, err := json.MarshalIndent(body, "", "  ")
 	if err != nil {
 		panic(err.Error())
@@ -178,7 +177,7 @@ type HeaderResult struct {
 
 // ExtractInto allows users to provide an object into which `Extract` will
 // extract the http.Header headers of the result.
-func (r HeaderResult) ExtractInto(to interface{}) error {
+func (r HeaderResult) ExtractInto(to any) error {
 	if r.Err != nil {
 		return r.Err
 	}

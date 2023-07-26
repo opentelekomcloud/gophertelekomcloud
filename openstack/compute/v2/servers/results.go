@@ -25,11 +25,11 @@ func (r serverResult) Extract() (*Server, error) {
 	return &s, err
 }
 
-func (r serverResult) ExtractInto(v interface{}) error {
+func (r serverResult) ExtractInto(v any) error {
 	return r.ExtractIntoStructPtr(v, "server")
 }
 
-func ExtractServersInto(r pagination.Page, v interface{}) error {
+func ExtractServersInto(r pagination.Page, v any) error {
 	return extract.IntoSlicePtr(r.(ServerPage).Body, v, "servers")
 }
 
@@ -189,15 +189,15 @@ type Server struct {
 
 	// Image refers to a JSON object, which itself indicates the OS image used to
 	// deploy the server.
-	Image map[string]interface{} `json:"-"`
+	Image map[string]any `json:"-"`
 
 	// Flavor refers to a JSON object, which itself indicates the hardware
 	// configuration of the deployed server.
-	Flavor map[string]interface{} `json:"flavor"`
+	Flavor map[string]any `json:"flavor"`
 
 	// Addresses includes a list of all IP addresses assigned to the server,
 	// keyed by pool.
-	Addresses map[string]interface{} `json:"addresses"`
+	Addresses map[string]any `json:"addresses"`
 
 	// Metadata includes a list of all user-specified key-value pairs attached
 	// to the server.
@@ -205,7 +205,7 @@ type Server struct {
 
 	// Links includes HTTP references to the itself, useful for passing along to
 	// other APIs that might want a server reference.
-	Links []interface{} `json:"links"`
+	Links []any `json:"links"`
 
 	// KeyName indicates which public key was injected into the server on launch.
 	KeyName string `json:"key_name"`
@@ -218,7 +218,7 @@ type Server struct {
 
 	// SecurityGroups includes the security groups that this instance has applied
 	// to it.
-	SecurityGroups []map[string]interface{} `json:"security_groups"`
+	SecurityGroups []map[string]any `json:"security_groups"`
 
 	// Fault contains failure information about a server.
 	Fault Fault `json:"fault"`
@@ -238,7 +238,7 @@ func (r *Server) UnmarshalJSON(b []byte) error {
 	type tmp Server
 	var s struct {
 		tmp
-		Image interface{} `json:"image"`
+		Image any `json:"image"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -248,7 +248,7 @@ func (r *Server) UnmarshalJSON(b []byte) error {
 	*r = Server(s.tmp)
 
 	switch t := s.Image.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		r.Image = t
 	case string:
 		switch t {

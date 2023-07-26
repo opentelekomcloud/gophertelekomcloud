@@ -129,32 +129,32 @@ func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string
 }
 
 func (obsClient ObsClient) doHttpGet(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
+	headers map[string][]string, data any, repeatable bool) (*http.Response, error) {
 	return obsClient.doHttp(HTTP_GET, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpHead(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
+	headers map[string][]string, data any, repeatable bool) (*http.Response, error) {
 	return obsClient.doHttp(HTTP_HEAD, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpOptions(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
+	headers map[string][]string, data any, repeatable bool) (*http.Response, error) {
 	return obsClient.doHttp(HTTP_OPTIONS, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpDelete(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
+	headers map[string][]string, data any, repeatable bool) (*http.Response, error) {
 	return obsClient.doHttp(HTTP_DELETE, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpPut(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
+	headers map[string][]string, data any, repeatable bool) (*http.Response, error) {
 	return obsClient.doHttp(HTTP_PUT, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
 func (obsClient ObsClient) doHttpPost(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
+	headers map[string][]string, data any, repeatable bool) (*http.Response, error) {
 	return obsClient.doHttp(HTTP_POST, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
 }
 
@@ -194,7 +194,7 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 		doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
 	}
 
-	var msg interface{}
+	var msg any
 	if err != nil {
 		respError = err
 		resp = nil
@@ -226,7 +226,7 @@ func (obsClient ObsClient) doHttpWithSignedUrl(action, method string, signedUrl 
 }
 
 func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (resp *http.Response, respError error) {
+	headers map[string][]string, data any, repeatable bool) (resp *http.Response, respError error) {
 
 	bucketName = strings.TrimSpace(bucketName)
 
@@ -322,7 +322,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 			doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
 		}
 
-		var msg interface{}
+		var msg any
 		if err != nil {
 			msg = err
 			respError = err

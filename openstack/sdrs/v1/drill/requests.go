@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToDrillCreateMap() (map[string]interface{}, error)
+	ToDrillCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new dr-drill.
@@ -22,7 +22,7 @@ type CreateOpts struct {
 }
 
 // ToDrillCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToDrillCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToDrillCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "disaster_recovery_drill")
 }
 
@@ -41,7 +41,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToDrillUpdateMap() (map[string]interface{}, error)
+	ToDrillUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update a dr-drill.
@@ -51,7 +51,7 @@ type UpdateOpts struct {
 }
 
 // ToDrillUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToDrillUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToDrillUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "disaster_recovery_drill")
 }
 

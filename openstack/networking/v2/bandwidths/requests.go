@@ -6,7 +6,7 @@ import (
 )
 
 type CreateOptsBuilder interface {
-	ToBandwidthCreateMap() (map[string]interface{}, error)
+	ToBandwidthCreateMap() (map[string]any, error)
 }
 
 type CreateOpts struct {
@@ -14,7 +14,7 @@ type CreateOpts struct {
 	Size int    `json:"size" required:"true"`
 }
 
-func (opts CreateOpts) ToBandwidthCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToBandwidthCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 
@@ -32,7 +32,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 }
 
 type UpdateOptsBuilder interface {
-	ToBandwidthUpdateMap() (map[string]interface{}, error)
+	ToBandwidthUpdateMap() (map[string]any, error)
 }
 
 type UpdateOpts struct {
@@ -40,7 +40,7 @@ type UpdateOpts struct {
 	Size int    `json:"size,omitempty"`
 }
 
-func (opts UpdateOpts) ToBandwidthUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToBandwidthUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 
@@ -78,7 +78,7 @@ func Delete(client *golangsdk.ServiceClient, bandwidthID string) (r DeleteResult
 }
 
 type InsertOptsBuilder interface {
-	ToBandwidthInsertMap() (map[string]interface{}, error)
+	ToBandwidthInsertMap() (map[string]any, error)
 }
 
 type InsertOpts struct {
@@ -90,7 +90,7 @@ type PublicIpInfoInsertOpts struct {
 	PublicIpType string `json:"publicip_type,omitempty"`
 }
 
-func (opts InsertOpts) ToBandwidthInsertMap() (map[string]interface{}, error) {
+func (opts InsertOpts) ToBandwidthInsertMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 
@@ -108,7 +108,7 @@ func Insert(client *golangsdk.ServiceClient, bandwidthID string, opts InsertOpts
 }
 
 type RemoveOptsBuilder interface {
-	ToBandwidthRemoveMap() (map[string]interface{}, error)
+	ToBandwidthRemoveMap() (map[string]any, error)
 }
 
 type RemoveOpts struct {
@@ -121,7 +121,7 @@ type PublicIpInfoID struct {
 	PublicIpID string `json:"publicip_id" required:"true"`
 }
 
-func (opts RemoveOpts) ToBandwidthRemoveMap() (map[string]interface{}, error) {
+func (opts RemoveOpts) ToBandwidthRemoveMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "bandwidth")
 }
 

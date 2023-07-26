@@ -33,7 +33,7 @@ type CreateOptsExt struct {
 }
 
 // ToServerCreateMap adds the diskconfig option to the base server creation options.
-func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
+func (opts CreateOptsExt) ToServerCreateMap() (map[string]any, error) {
 	base, err := opts.CreateOptsBuilder.ToServerCreateMap()
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 		return base, nil
 	}
 
-	serverMap := base["server"].(map[string]interface{})
+	serverMap := base["server"].(map[string]any)
 	serverMap["OS-DCF:diskConfig"] = string(opts.DiskConfig)
 
 	return base, nil
@@ -58,7 +58,7 @@ type RebuildOptsExt struct {
 }
 
 // ToServerRebuildMap adds the diskconfig option to the base server rebuild options.
-func (opts RebuildOptsExt) ToServerRebuildMap() (map[string]interface{}, error) {
+func (opts RebuildOptsExt) ToServerRebuildMap() (map[string]any, error) {
 	if opts.DiskConfig != Auto && opts.DiskConfig != Manual {
 		err := golangsdk.ErrInvalidInput{}
 		err.Argument = "diskconfig.RebuildOptsExt.DiskConfig"
@@ -71,7 +71,7 @@ func (opts RebuildOptsExt) ToServerRebuildMap() (map[string]interface{}, error) 
 		return nil, err
 	}
 
-	serverMap := base["rebuild"].(map[string]interface{})
+	serverMap := base["rebuild"].(map[string]any)
 	serverMap["OS-DCF:diskConfig"] = string(opts.DiskConfig)
 
 	return base, nil
@@ -86,7 +86,7 @@ type ResizeOptsExt struct {
 }
 
 // ToServerResizeMap adds the diskconfig option to the base server creation options.
-func (opts ResizeOptsExt) ToServerResizeMap() (map[string]interface{}, error) {
+func (opts ResizeOptsExt) ToServerResizeMap() (map[string]any, error) {
 	if opts.DiskConfig != Auto && opts.DiskConfig != Manual {
 		err := golangsdk.ErrInvalidInput{}
 		err.Argument = "diskconfig.ResizeOptsExt.DiskConfig"
@@ -99,7 +99,7 @@ func (opts ResizeOptsExt) ToServerResizeMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	serverMap := base["resize"].(map[string]interface{})
+	serverMap := base["resize"].(map[string]any)
 	serverMap["OS-DCF:diskConfig"] = string(opts.DiskConfig)
 
 	return base, nil

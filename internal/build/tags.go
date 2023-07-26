@@ -27,7 +27,7 @@ type fieldValue struct {
 //	required (`required:"true"`)  - mark field required, returns error if it is empty.
 //	or:      (`or:"OtherField"`)  - requires at least one field to be not empty.
 //	xor:     (`xor:"OtherField"`) - requires exactly of this and the other field to be set.
-func ValidateTags(opts interface{}) error {
+func ValidateTags(opts any) error {
 	if opts == nil {
 		return nil // nil is an ideal value
 	}

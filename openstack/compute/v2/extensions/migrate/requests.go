@@ -6,14 +6,14 @@ import (
 
 // Migrate will initiate a migration of the instance to another host.
 func Migrate(client *golangsdk.ServiceClient, id string) (r MigrateResult) {
-	_, r.Err = client.Post(actionURL(client, id), map[string]interface{}{"migrate": nil}, nil, nil)
+	_, r.Err = client.Post(actionURL(client, id), map[string]any{"migrate": nil}, nil, nil)
 	return
 }
 
 // LiveMigrateOptsBuilder allows extensions to add additional parameters to the
 // LiveMigrate request.
 type LiveMigrateOptsBuilder interface {
-	ToLiveMigrateMap() (map[string]interface{}, error)
+	ToLiveMigrateMap() (map[string]any, error)
 }
 
 // LiveMigrateOpts specifies parameters of live migrate action.
@@ -34,7 +34,7 @@ type LiveMigrateOpts struct {
 }
 
 // ToLiveMigrateMap constructs a request body from LiveMigrateOpts.
-func (opts LiveMigrateOpts) ToLiveMigrateMap() (map[string]interface{}, error) {
+func (opts LiveMigrateOpts) ToLiveMigrateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "os-migrateLive")
 }
 

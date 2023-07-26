@@ -73,7 +73,7 @@ func TestConfigurations(t *testing.T) {
 
 	opts := configurations.UpdateInstanceConfigurationOpts{
 		InstanceId: rds.Id,
-		Values: map[string]interface{}{
+		Values: map[string]any{
 			"max_connections": "37",
 			"autocommit":      "OFF",
 		}}

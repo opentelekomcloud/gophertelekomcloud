@@ -119,9 +119,9 @@ func (r *SubnetPool) UnmarshalJSON(b []byte) error {
 	type tmp SubnetPool
 	var s struct {
 		tmp
-		DefaultPrefixLen interface{} `json:"default_prefixlen"`
-		MinPrefixLen     interface{} `json:"min_prefixlen"`
-		MaxPrefixLen     interface{} `json:"max_prefixlen"`
+		DefaultPrefixLen any `json:"default_prefixlen"`
+		MinPrefixLen     any `json:"min_prefixlen"`
+		MaxPrefixLen     any `json:"max_prefixlen"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {

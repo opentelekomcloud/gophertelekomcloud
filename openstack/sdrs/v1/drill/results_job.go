@@ -12,14 +12,14 @@ type JobResponse struct {
 }
 
 type JobStatus struct {
-	Status     string                 `json:"status"`
-	Entities   map[string]interface{} `json:"entities"`
-	JobID      string                 `json:"job_id"`
-	JobType    string                 `json:"job_type"`
-	BeginTime  string                 `json:"begin_time"`
-	EndTime    string                 `json:"end_time"`
-	ErrorCode  string                 `json:"error_code"`
-	FailReason string                 `json:"fail_reason"`
+	Status     string         `json:"status"`
+	Entities   map[string]any `json:"entities"`
+	JobID      string         `json:"job_id"`
+	JobType    string         `json:"job_type"`
+	BeginTime  string         `json:"begin_time"`
+	EndTime    string         `json:"end_time"`
+	ErrorCode  string         `json:"error_code"`
+	FailReason string         `json:"fail_reason"`
 }
 
 type JobResult struct {
@@ -65,7 +65,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	})
 }
 
-func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
+func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (any, error) {
 	jobClient := *client
 	jobClient.ResourceBase = jobClient.Endpoint
 

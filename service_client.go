@@ -1,7 +1,6 @@
 package golangsdk
 
 import (
-	"io"
 	"net/http"
 	"strings"
 )
@@ -43,7 +42,7 @@ func (client *ServiceClient) ServiceURL(parts ...string) string {
 	return client.ResourceBaseURL() + strings.Join(parts, "/")
 }
 
-func (client *ServiceClient) initReqOpts(JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) {
+func (client *ServiceClient) initReqOpts(JSONBody any, JSONResponse *[]byte, opts *RequestOpts) {
 	opts.JSONBody = JSONBody
 
 	if JSONResponse != nil {
@@ -61,7 +60,7 @@ func (client *ServiceClient) initReqOpts(JSONBody any, JSONResponse *io.Reader, 
 
 // Get calls `Request` with the "GET" HTTP verb. Def 200
 // JSONResponse Deprecated
-func (client *ServiceClient) Get(url string, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Get(url string, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -71,7 +70,7 @@ func (client *ServiceClient) Get(url string, JSONResponse *io.Reader, opts *Requ
 
 // Post calls `Request` with the "POST" HTTP verb. Def 201, 202
 // JSONResponse Deprecated
-func (client *ServiceClient) Post(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Post(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -81,7 +80,7 @@ func (client *ServiceClient) Post(url string, JSONBody any, JSONResponse *io.Rea
 
 // Put calls `Request` with the "PUT" HTTP verb. Def 201, 202
 // JSONResponse Deprecated
-func (client *ServiceClient) Put(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Put(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -91,7 +90,7 @@ func (client *ServiceClient) Put(url string, JSONBody any, JSONResponse *io.Read
 
 // Patch calls `Request` with the "PATCH" HTTP verb. Def 200, 204
 // JSONResponse Deprecated
-func (client *ServiceClient) Patch(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Patch(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -128,7 +127,7 @@ func (client *ServiceClient) DeleteWithBody(url string, JSONBody any, opts *Requ
 
 // DeleteWithResponse calls `Request` with the "DELETE" HTTP verb. Def 202, 204
 // Deprecated
-func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -138,7 +137,7 @@ func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse *io.Rea
 
 // DeleteWithBodyResp calls `Request` with the "DELETE" HTTP verb. Def 202, 204
 // Deprecated
-func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody any, JSONResponse *io.Reader, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}

@@ -29,11 +29,11 @@ func (r commonResult) Extract() (*Firewall, error) {
 	return &s, err
 }
 
-func (r commonResult) ExtractInto(v interface{}) error {
+func (r commonResult) ExtractInto(v any) error {
 	return r.ExtractIntoStructPtr(v, "firewall")
 }
 
-func ExtractFirewallsInto(r pagination.Page, v interface{}) error {
+func ExtractFirewallsInto(r pagination.Page, v any) error {
 	return extract.IntoSlicePtr(r.(FirewallPage).Body, v, "firewalls")
 }
 

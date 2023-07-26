@@ -45,10 +45,10 @@ type CreateOpts struct {
 }
 
 type CreateOptsBuilder interface {
-	ToEndpointCreateMap() (map[string]interface{}, error)
+	ToEndpointCreateMap() (map[string]any, error)
 }
 
-func (opts CreateOpts) ToEndpointCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToEndpointCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

@@ -11,7 +11,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToCertCreateMap() (map[string]interface{}, error)
+	ToCertCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new certificate.
@@ -25,7 +25,7 @@ type CreateOpts struct {
 }
 
 // ToCertCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToCertCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToCertCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -44,7 +44,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToCertUpdateMap() (map[string]interface{}, error)
+	ToCertUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update a certificate.
@@ -54,7 +54,7 @@ type UpdateOpts struct {
 }
 
 // ToCertUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToCertUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToCertUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

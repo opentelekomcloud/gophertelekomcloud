@@ -11,12 +11,12 @@ type AuthOptsExt struct {
 }
 
 // ToTokenV3CreateMap builds a create request body from the AuthOpts.
-func (opts AuthOptsExt) ToTokenV3CreateMap(scope map[string]interface{}) (map[string]interface{}, error) {
+func (opts AuthOptsExt) ToTokenV3CreateMap(scope map[string]any) (map[string]any, error) {
 	return opts.AuthOptionsBuilder.ToTokenV3CreateMap(scope)
 }
 
 // ToTokenV3ScopeMap builds a scope from AuthOpts.
-func (opts AuthOptsExt) ToTokenV3ScopeMap() (map[string]interface{}, error) {
+func (opts AuthOptsExt) ToTokenV3ScopeMap() (map[string]any, error) {
 	b, err := opts.AuthOptionsBuilder.ToTokenV3ScopeMap()
 	if err != nil {
 		return nil, err
@@ -24,9 +24,9 @@ func (opts AuthOptsExt) ToTokenV3ScopeMap() (map[string]interface{}, error) {
 
 	if opts.TrustID != "" {
 		if b == nil {
-			b = make(map[string]interface{})
+			b = make(map[string]any)
 		}
-		b["OS-TRUST:trust"] = map[string]interface{}{
+		b["OS-TRUST:trust"] = map[string]any{
 			"id": opts.TrustID,
 		}
 	}

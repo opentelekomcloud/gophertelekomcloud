@@ -84,86 +84,86 @@ type RotationOpts struct {
 
 // ToKeyCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToKeyCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToKeyCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // ToKeyDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
-func (opts DeleteOpts) ToKeyDeleteMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToKeyDeleteMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // ToKeyCancelDeleteMap assembles a request body based on the contents of a
 // CancelDeleteOpts.
-func (opts CancelDeleteOpts) ToKeyCancelDeleteMap() (map[string]interface{}, error) {
+func (opts CancelDeleteOpts) ToKeyCancelDeleteMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // ToKeyUpdateAliasMap assembles a request body based on the contents of a
 // UpdateAliasOpts.
-func (opts UpdateAliasOpts) ToKeyUpdateAliasMap() (map[string]interface{}, error) {
+func (opts UpdateAliasOpts) ToKeyUpdateAliasMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // ToKeyUpdateDesMap assembles a request body based on the contents of a
 // UpdateDesOpts.
-func (opts UpdateDesOpts) ToKeyUpdateDesMap() (map[string]interface{}, error) {
+func (opts UpdateDesOpts) ToKeyUpdateDesMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func (opts DataEncryptOpts) ToDataEncryptMap() (map[string]interface{}, error) {
+func (opts DataEncryptOpts) ToDataEncryptMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func (opts EncryptDEKOpts) ToEncryptDEKMap() (map[string]interface{}, error) {
+func (opts EncryptDEKOpts) ToEncryptDEKMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-func (opts ListOpts) ToKeyListMap() (map[string]interface{}, error) {
+func (opts ListOpts) ToKeyListMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 // ToKeyRotationMap assembles a request body based on the contents of a
 // RotationOpts.
-func (opts RotationOpts) ToKeyRotationMap() (map[string]interface{}, error) {
+func (opts RotationOpts) ToKeyRotationMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
 type CreateOptsBuilder interface {
-	ToKeyCreateMap() (map[string]interface{}, error)
+	ToKeyCreateMap() (map[string]any, error)
 }
 
 type DeleteOptsBuilder interface {
-	ToKeyDeleteMap() (map[string]interface{}, error)
+	ToKeyDeleteMap() (map[string]any, error)
 }
 
 type CancelDeleteOptsBuilder interface {
-	ToKeyCancelDeleteMap() (map[string]interface{}, error)
+	ToKeyCancelDeleteMap() (map[string]any, error)
 }
 
 type UpdateAliasOptsBuilder interface {
-	ToKeyUpdateAliasMap() (map[string]interface{}, error)
+	ToKeyUpdateAliasMap() (map[string]any, error)
 }
 
 type UpdateDesOptsBuilder interface {
-	ToKeyUpdateDesMap() (map[string]interface{}, error)
+	ToKeyUpdateDesMap() (map[string]any, error)
 }
 
 type DataEncryptOptsBuilder interface {
-	ToDataEncryptMap() (map[string]interface{}, error)
+	ToDataEncryptMap() (map[string]any, error)
 }
 
 type EncryptDEKOptsBuilder interface {
-	ToEncryptDEKMap() (map[string]interface{}, error)
+	ToEncryptDEKMap() (map[string]any, error)
 }
 
 type ListOptsBuilder interface {
-	ToKeyListMap() (map[string]interface{}, error)
+	ToKeyListMap() (map[string]any, error)
 }
 
 type RotationOptsBuilder interface {
-	ToKeyRotationMap() (map[string]interface{}, error)
+	ToKeyRotationMap() (map[string]any, error)
 }
 
 // Create will create a new key based on the values in CreateOpts. To ExtractKeyInfo
@@ -184,7 +184,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // Get retrieves the key with the provided ID. To extract the key object
 // from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	b := map[string]interface{}{"key_id": id}
+	b := map[string]any{"key_id": id}
 	_, r.Err = client.Post(getURL(client), &b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
@@ -266,7 +266,7 @@ func EncryptDEKGet(client *golangsdk.ServiceClient, opts EncryptDEKOptsBuilder) 
 }
 
 func EnableKey(client *golangsdk.ServiceClient, id string) (r ExtractUpdateKeyStateResult) {
-	b := map[string]interface{}{"key_id": id}
+	b := map[string]any{"key_id": id}
 	_, r.Err = client.Post(enableKeyURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
@@ -274,7 +274,7 @@ func EnableKey(client *golangsdk.ServiceClient, id string) (r ExtractUpdateKeySt
 }
 
 func DisableKey(client *golangsdk.ServiceClient, id string) (r ExtractUpdateKeyStateResult) {
-	b := map[string]interface{}{"key_id": id}
+	b := map[string]any{"key_id": id}
 	_, r.Err = client.Post(disableKeyURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})

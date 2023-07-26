@@ -11,23 +11,23 @@ var RequestOpts = golangsdk.RequestOpts{
 // CreateOpsBuilder is used for creating instance parameters.
 // any struct providing the parameters should implement this interface
 type CreateOpsBuilder interface {
-	ToInstanceCreateMap() (map[string]interface{}, error)
+	ToInstanceCreateMap() (map[string]any, error)
 }
 
 type UpdateOpsBuilder interface {
-	ToInstanceUpdateMap() (map[string]interface{}, error)
+	ToInstanceUpdateMap() (map[string]any, error)
 }
 
 type UpdatePolicyOpsBuilder interface {
-	ToInstanceUpdatePolicyMap() (map[string]interface{}, error)
+	ToInstanceUpdatePolicyMap() (map[string]any, error)
 }
 
 type UpdateFlavorOpsBuilder interface {
-	ToInstanceFlavorUpdateMap() (map[string]interface{}, error)
+	ToInstanceFlavorUpdateMap() (map[string]any, error)
 }
 
 type UpdateOps struct {
-	Volume map[string]interface{} `json:"volume"`
+	Volume map[string]any `json:"volume"`
 }
 
 type UpdatePolicyOps struct {
@@ -98,19 +98,19 @@ type HaOps struct {
 	ReplicationMode string `json:"replicationMode" required:"true"`
 }
 
-func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
+func (ops CreateOps) ToInstanceCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "instance")
 }
 
-func (ops UpdateOps) ToInstanceUpdateMap() (map[string]interface{}, error) {
+func (ops UpdateOps) ToInstanceUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "resize")
 }
 
-func (ops UpdatePolicyOps) ToInstanceUpdatePolicyMap() (map[string]interface{}, error) {
+func (ops UpdatePolicyOps) ToInstanceUpdatePolicyMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "policy")
 }
 
-func (ops UpdateFlavorOps) ToInstanceFlavorUpdateMap() (map[string]interface{}, error) {
+func (ops UpdateFlavorOps) ToInstanceFlavorUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "resize")
 }
 
@@ -176,7 +176,7 @@ func UpdateFlavorRef(client *golangsdk.ServiceClient, ops UpdateFlavorOpsBuilder
 func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	RequestOpts.OkCodes = []int{202}
 	RequestOpts.JSONBody = nil
-	JSONBody := make(map[string]interface{})
+	JSONBody := make(map[string]any)
 	_, r.Err = client.Delete(deleteURL(client, id), &golangsdk.RequestOpts{
 		OkCodes:     []int{202},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: JSONBody,

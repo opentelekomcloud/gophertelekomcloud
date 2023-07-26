@@ -8,7 +8,7 @@ import (
 // CreateOpsBuilder is used for creating topic parameters.
 // any struct providing the parameters should implement this interface
 type CreateOpsBuilder interface {
-	ToTopicCreateMap() (map[string]interface{}, error)
+	ToTopicCreateMap() (map[string]any, error)
 }
 
 // CreateOps is a struct that contains all the parameters.
@@ -20,14 +20,14 @@ type CreateOps struct {
 	DisplayName string `json:"display_name,omitempty"`
 }
 
-func (ops CreateOps) ToTopicCreateMap() (map[string]interface{}, error) {
+func (ops CreateOps) ToTopicCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "")
 }
 
 // CreateOpsBuilder is used for updating topic parameters.
 // any struct providing the parameters should implement this interface
 type UpdateOpsBuilder interface {
-	ToTopicUpdateMap() (map[string]interface{}, error)
+	ToTopicUpdateMap() (map[string]any, error)
 }
 
 // UpdateOps is a struct that contains all the parameters.
@@ -36,7 +36,7 @@ type UpdateOps struct {
 	DisplayName string `json:"display_name,omitempty"`
 }
 
-func (ops UpdateOps) ToTopicUpdateMap() (map[string]interface{}, error) {
+func (ops UpdateOps) ToTopicUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "")
 }
 

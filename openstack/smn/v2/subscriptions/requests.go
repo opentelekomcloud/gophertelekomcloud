@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder is used for creating subscription parameters.
 // any struct providing the parameters should implement this interface
 type CreateOptsBuilder interface {
-	ToSubscriptionCreateMap() (map[string]interface{}, error)
+	ToSubscriptionCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is a struct that contains all the parameters.
@@ -21,7 +21,7 @@ type CreateOpts struct {
 	Remark string `json:"remark,omitempty"`
 }
 
-func (ops CreateOpts) ToSubscriptionCreateMap() (map[string]interface{}, error) {
+func (ops CreateOpts) ToSubscriptionCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(ops, "")
 }
 

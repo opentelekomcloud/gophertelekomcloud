@@ -12,7 +12,7 @@ import (
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToBackendECSCreateMap() (map[string]interface{}, error)
+	ToBackendECSCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is the common options struct used in this package's Create
@@ -23,7 +23,7 @@ type CreateOpts struct {
 }
 
 // ToBackendECSCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToBackendECSCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToBackendECSCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -42,7 +42,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder, lId string) (r e
 	}
 
 	// API takes an array of these...
-	body := []map[string]interface{}{b}
+	body := []map[string]any{b}
 	log.Printf("[DEBUG] create ELB-BackendECS url:%q, body=%#v", rootURL(c, lId), body)
 
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
@@ -88,7 +88,7 @@ func Get(c *golangsdk.ServiceClient, lId string, backendId string) (r GetResult)
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type DeleteOptsBuilder interface {
-	ToBackendECSDeleteMap() (map[string]interface{}, error)
+	ToBackendECSDeleteMap() (map[string]any, error)
 }
 
 // UpdateOpts is the common options struct used in this package's Update
@@ -103,7 +103,7 @@ type DeleteOpts struct {
 }
 
 // ToBackendECSUpdateMap casts a UpdateOpts struct to a map.
-func (opts DeleteOpts) ToBackendECSDeleteMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToBackendECSDeleteMap() (map[string]any, error) {
 	/*
 		o, err := golangsdk.BuildRequestBody(opts, "")
 		if err != nil {

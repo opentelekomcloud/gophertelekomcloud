@@ -52,7 +52,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create Request.
 type CreateOptsBuilder interface {
-	ToVIPCreateMap() (map[string]interface{}, error)
+	ToVIPCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new virtual IP.
@@ -97,7 +97,7 @@ type CreateOpts struct {
 }
 
 // ToVIPCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToVIPCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToVIPCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "vip")
 }
 
@@ -131,7 +131,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToVIPUpdateMap() (map[string]interface{}, error)
+	ToVIPUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update an existing virtual IP.
@@ -160,7 +160,7 @@ type UpdateOpts struct {
 }
 
 // ToVIPUpdateMap builds a request body based on UpdateOpts.
-func (opts UpdateOpts) ToVIPUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToVIPUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "vip")
 }
 

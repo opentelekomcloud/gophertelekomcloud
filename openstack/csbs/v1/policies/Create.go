@@ -34,7 +34,7 @@ type CreateOpts struct {
 
 type PolicyParam struct {
 	// General backup policy parameters, which are blank by default
-	Common interface{} `json:"common,omitempty"`
+	Common any `json:"common,omitempty"`
 }
 
 type ScheduledOperation struct {

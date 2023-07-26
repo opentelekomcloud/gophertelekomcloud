@@ -80,7 +80,7 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Peering, error) {
 func FilterVpcPeeringConns(peerings []Peering, opts ListOpts) ([]Peering, error) {
 	var refinedPeerings []Peering
 	var matched bool
-	filterMap := map[string]interface{}{}
+	filterMap := map[string]any{}
 
 	if opts.VpcId != "" {
 		filterMap["RequestVpcInfo"] = opts.VpcId
@@ -144,7 +144,7 @@ func Reject(c *golangsdk.ServiceClient, id string) (r RejectResult) {
 
 // CreateOptsBuilder is an interface by which can build the request body of vpc peering connection.
 type CreateOptsBuilder interface {
-	ToPeeringCreateMap() (map[string]interface{}, error)
+	ToPeeringCreateMap() (map[string]any, error)
 }
 
 // CreateOpts is a struct which is used to create vpc peering connection.
@@ -155,7 +155,7 @@ type CreateOpts struct {
 }
 
 // ToVpcPeeringCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToPeeringCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToPeeringCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "peering")
 }
 
@@ -180,7 +180,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 
 // UpdateOptsBuilder is an interface by which can be able to build the request body of vpc peering connection.
 type UpdateOptsBuilder interface {
-	ToVpcPeeringUpdateMap() (map[string]interface{}, error)
+	ToVpcPeeringUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts is a struct which represents the request body of update method.
@@ -189,7 +189,7 @@ type UpdateOpts struct {
 }
 
 // ToVpcPeeringUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToVpcPeeringUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToVpcPeeringUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "peering")
 }
 

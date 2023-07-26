@@ -20,14 +20,14 @@ func List(client *golangsdk.ServiceClient, provider string) pagination.Pager {
 }
 
 type CreateOptsBuilder interface {
-	ToProtocolCreateMap() (map[string]interface{}, error)
+	ToProtocolCreateMap() (map[string]any, error)
 }
 
 type CreateOpts struct {
 	MappingID string `json:"mapping_id"`
 }
 
-func (opts CreateOpts) ToProtocolCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToProtocolCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "protocol")
 }
 
@@ -50,14 +50,14 @@ func Get(client *golangsdk.ServiceClient, provider, protocol string) (r GetResul
 }
 
 type UpdateOptsBuilder interface {
-	ToProtocolUpdateMap() (map[string]interface{}, error)
+	ToProtocolUpdateMap() (map[string]any, error)
 }
 
 type UpdateOpts struct {
 	MappingID string `json:"mapping_id"`
 }
 
-func (opts UpdateOpts) ToProtocolUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToProtocolUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "protocol")
 }
 

@@ -72,7 +72,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	})
 }
 
-func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
+func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (any, error) {
 	if label != "server_group_id" {
 		return nil, fmt.Errorf("Unsupported label %s in GetJobEntity.", label)
 	}

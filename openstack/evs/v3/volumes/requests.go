@@ -7,7 +7,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToVolumeCreateMap() (map[string]interface{}, error)
+	ToVolumeCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains options for creating a Volume. This object is passed to
@@ -46,7 +46,7 @@ type CreateOpts struct {
 
 // ToVolumeCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToVolumeCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToVolumeCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "volume")
 }
 

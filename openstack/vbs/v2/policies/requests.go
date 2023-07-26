@@ -10,7 +10,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPolicyCreateMap() (map[string]interface{}, error)
+	ToPolicyCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains the options for create a Policy. This object is
@@ -53,7 +53,7 @@ type Tag struct {
 
 // ToPolicyCreateMap assembles a request body based on the contents of a
 // CreateOpts.
-func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToPolicyCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -75,7 +75,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToPolicyUpdateMap() (map[string]interface{}, error)
+	ToPolicyUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains the options for Update a Policy.
@@ -106,7 +106,7 @@ type UpdateSchedule struct {
 
 // ToPolicyUpdateMap assembles a request body based on the contents of a
 // UpdateOpts.
-func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -219,7 +219,7 @@ type FilterStruct struct {
 // AssociateOptsBuilder allows extensions to add additional parameters to the
 // Associate request.
 type AssociateOptsBuilder interface {
-	ToPolicyAssociateMap() (map[string]interface{}, error)
+	ToPolicyAssociateMap() (map[string]any, error)
 }
 
 // AssociateOpts contains the options to associate a resource to a Policy.
@@ -239,7 +239,7 @@ type AssociateResource struct {
 
 // ToPolicyAssociateMap assembles a request body based on the contents of a
 // AssociateOpts.
-func (opts AssociateOpts) ToPolicyAssociateMap() (map[string]interface{}, error) {
+func (opts AssociateOpts) ToPolicyAssociateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -261,7 +261,7 @@ func Associate(client *golangsdk.ServiceClient, opts AssociateOpts) (r ResourceR
 // DisassociateOptsBuilder allows extensions to add additional parameters to the
 // Disassociate request.
 type DisassociateOptsBuilder interface {
-	ToPolicyDisassociateMap() (map[string]interface{}, error)
+	ToPolicyDisassociateMap() (map[string]any, error)
 }
 
 // DisassociateOpts contains the options disassociate a resource from a Policy.
@@ -277,7 +277,7 @@ type DisassociateResource struct {
 
 // ToPolicyDisassociateMap assembles a request body based on the contents of a
 // DisassociateOpts.
-func (opts DisassociateOpts) ToPolicyDisassociateMap() (map[string]interface{}, error) {
+func (opts DisassociateOpts) ToPolicyDisassociateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

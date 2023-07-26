@@ -15,7 +15,7 @@ type CreateOptsExt struct {
 }
 
 // ToServerCreateMap adds the key_name to the base server creation options.
-func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
+func (opts CreateOptsExt) ToServerCreateMap() (map[string]any, error) {
 	base, err := opts.CreateOptsBuilder.ToServerCreateMap()
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 		return base, nil
 	}
 
-	serverMap := base["server"].(map[string]interface{})
+	serverMap := base["server"].(map[string]any)
 	serverMap["key_name"] = opts.KeyName
 
 	return base, nil
@@ -45,7 +45,7 @@ func List(client *golangsdk.ServiceClient) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToKeyPairCreateMap() (map[string]interface{}, error)
+	ToKeyPairCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies KeyPair creation or import parameters.
@@ -59,7 +59,7 @@ type CreateOpts struct {
 }
 
 // ToKeyPairCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToKeyPairCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToKeyPairCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "keypair")
 }
 

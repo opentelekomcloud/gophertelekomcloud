@@ -39,11 +39,11 @@ type CreateOpts struct {
 
 // CreateOptsBuilder builds the create rule options into a serializable format.
 type CreateOptsBuilder interface {
-	ToRuleCreateMap() (map[string]interface{}, error)
+	ToRuleCreateMap() (map[string]any, error)
 }
 
 // ToRuleCreateMap builds the create rule options into a serializable format.
-func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToRuleCreateMap() (map[string]any, error) {
 	if opts.FromPort == 0 && strings.ToUpper(opts.IPProtocol) != "ICMP" {
 		return nil, golangsdk.ErrMissingInput{Argument: "FromPort"}
 	}

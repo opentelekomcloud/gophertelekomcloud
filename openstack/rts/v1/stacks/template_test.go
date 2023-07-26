@@ -52,7 +52,7 @@ func TestTemplateParsing(t *testing.T) {
 func TestIgnoreIfTemplate(t *testing.T) {
 	var keyValueTests = []struct {
 		key   string
-		value interface{}
+		value any
 		out   bool
 	}{
 		{"not_get_file", "afksdf", true},
@@ -135,10 +135,10 @@ resources:
       - {uuid: 11111111-1111-1111-1111-111111111111}`}
 	th.AssertEquals(t, expectedFiles["my_nova.yaml"], te.Files[fakeURL])
 	te.fixFileRefs()
-	expectedParsed := map[string]interface{}{
+	expectedParsed := map[string]any{
 		"heat_template_version": "2015-04-30",
-		"resources": map[string]interface{}{
-			"my_server": map[string]interface{}{
+		"resources": map[string]any{
+			"my_server": map[string]any{
 				"type": fakeURL,
 			},
 		},

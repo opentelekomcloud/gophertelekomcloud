@@ -114,7 +114,7 @@ type UpdateMetadataResult struct {
 }
 
 // ExtractMetadata returns the metadata from a response from snapshots.UpdateMetadata.
-func (r UpdateMetadataResult) ExtractMetadata() (map[string]interface{}, error) {
+func (r UpdateMetadataResult) ExtractMetadata() (map[string]any, error) {
 	return metadata.Extract(r.Body)
 }
 

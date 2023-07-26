@@ -28,7 +28,7 @@ type Resource struct {
 	// Backup object name
 	Name string `json:"name" required:"true"`
 	// Additional information about the backup object
-	ExtraInfo interface{} `json:"extra_info,omitempty"`
+	ExtraInfo any `json:"extra_info,omitempty"`
 }
 
 type ScheduledOperationToUpdate struct {

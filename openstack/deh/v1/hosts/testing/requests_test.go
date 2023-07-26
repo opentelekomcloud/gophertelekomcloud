@@ -113,15 +113,15 @@ func TestListServer(t *testing.T) {
 	expected := []hosts.Server{
 		{
 			Status: "ACTIVE",
-			Addresses: map[string]interface{}{
-				"0b98c646-617f-4d90-9ca5-385f0cd73ea7": []interface{}{
-					map[string]interface{}{
+			Addresses: map[string]any{
+				"0b98c646-617f-4d90-9ca5-385f0cd73ea7": []any{
+					map[string]any{
 						"version": float64(4),
 						"addr":    "192.168.3.133",
 					},
 				},
 			},
-			Flavor: map[string]interface{}{
+			Flavor: map[string]any{
 				"id": "normal1",
 			},
 			ID:       "3de1ce75-2550-4a46-a689-dd33ca2b62d6",

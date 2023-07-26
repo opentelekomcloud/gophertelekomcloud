@@ -54,7 +54,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToRegionCreateMap() (map[string]interface{}, error)
+	ToRegionCreateMap() (map[string]any, error)
 }
 
 // CreateOpts provides options used to create a region.
@@ -69,18 +69,18 @@ type CreateOpts struct {
 	ParentRegionID string `json:"parent_region_id,omitempty"`
 
 	// Extra is free-form extra key/value pairs to describe the region.
-	Extra map[string]interface{} `json:"-"`
+	Extra map[string]any `json:"-"`
 }
 
 // ToRegionCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToRegionCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToRegionCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "region")
 	if err != nil {
 		return nil, err
 	}
 
 	if opts.Extra != nil {
-		if v, ok := b["region"].(map[string]interface{}); ok {
+		if v, ok := b["region"].(map[string]any); ok {
 			for key, value := range opts.Extra {
 				v[key] = value
 			}
@@ -106,7 +106,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToRegionUpdateMap() (map[string]interface{}, error)
+	ToRegionUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts provides options for updating a region.
@@ -123,12 +123,12 @@ type UpdateOpts struct {
 		// The following lines should be uncommented once the fix is merged.
 
 		// Extra is free-form extra key/value pairs to describe the region.
-		Extra map[string]interface{} `json:"-"`
+		Extra map[string]any `json:"-"`
 	*/
 }
 
 // ToRegionUpdateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToRegionUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToRegionUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "region")
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (opts UpdateOpts) ToRegionUpdateMap() (map[string]interface{}, error) {
 		// The following lines should be uncommented once the fix is merged.
 
 		if opts.Extra != nil {
-			if v, ok := b["region"].(map[string]interface{}); ok {
+			if v, ok := b["region"].(map[string]any); ok {
 				for key, value := range opts.Extra {
 					v[key] = value
 				}

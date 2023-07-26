@@ -46,7 +46,7 @@ type MetricsDimension struct {
 }
 
 func CreateMetricData(client *golangsdk.ServiceClient, items []MetricDataItem) error {
-	b := make([]map[string]interface{}, len(items))
+	b := make([]map[string]any, len(items))
 
 	for i, opt := range items {
 		opt, err := golangsdk.BuildRequestBody(opt, "")

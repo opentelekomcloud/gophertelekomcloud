@@ -11,10 +11,10 @@ type UpdateOpts struct {
 }
 
 type UpdateOptsBuilder interface {
-	ToAutoRecoveryUpdateMap() (map[string]interface{}, error)
+	ToAutoRecoveryUpdateMap() (map[string]any, error)
 }
 
-func (opts UpdateOpts) ToAutoRecoveryUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToAutoRecoveryUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

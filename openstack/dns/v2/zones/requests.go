@@ -82,7 +82,7 @@ func Get(client *golangsdk.ServiceClient, zoneID string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional attributes to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToZoneCreateMap() (map[string]interface{}, error)
+	ToZoneCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies the attributes used to create a zone.
@@ -107,7 +107,7 @@ type CreateOpts struct {
 }
 
 // ToZoneCreateMap formats an CreateOpts structure into a request body.
-func (opts CreateOpts) ToZoneCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToZoneCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional attributes to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToZoneUpdateMap() (map[string]interface{}, error)
+	ToZoneUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts specifies the attributes to update a zone.
@@ -147,7 +147,7 @@ type UpdateOpts struct {
 }
 
 // ToZoneUpdateMap formats an UpdateOpts structure into a request body.
-func (opts UpdateOpts) ToZoneUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToZoneUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -179,7 +179,7 @@ func Delete(client *golangsdk.ServiceClient, zoneID string) (r DeleteResult) {
 
 // RouterOptsBuilder allows adding parameters to the associate/disassociate Zone request.
 type RouterOptsBuilder interface {
-	ToRouterMap() (map[string]interface{}, error)
+	ToRouterMap() (map[string]any, error)
 }
 
 // RouterOpts specifies the required information to associate/disassociate a Router with a Zone.
@@ -192,7 +192,7 @@ type RouterOpts struct {
 }
 
 // ToRouterMap constructs a request body from RouterOpts.
-func (opts RouterOpts) ToRouterMap() (map[string]interface{}, error) {
+func (opts RouterOpts) ToRouterMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "router")
 }
 

@@ -79,7 +79,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToListenerCreateMap() (map[string]interface{}, error)
+	ToListenerCreateMap() (map[string]any, error)
 }
 
 // CreateOpts represents options for creating a listener.
@@ -134,7 +134,7 @@ type CreateOpts struct {
 }
 
 // ToListenerCreateMap builds a request body from CreateOpts.
-func (opts CreateOpts) ToListenerCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToListenerCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "listener")
 }
 
@@ -164,7 +164,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToListenerUpdateMap() (map[string]interface{}, error)
+	ToListenerUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts represents options for updating a Listener.
@@ -199,7 +199,7 @@ type UpdateOpts struct {
 }
 
 // ToListenerUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToListenerUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToListenerUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "listener")
 }
 

@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToReplicationCreateMap() (map[string]interface{}, error)
+	ToReplicationCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new replication.
@@ -24,7 +24,7 @@ type CreateOpts struct {
 }
 
 // ToReplicationCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToReplicationCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToReplicationCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "replication")
 }
 
@@ -43,7 +43,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToReplicationUpdateMap() (map[string]interface{}, error)
+	ToReplicationUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update a Replication.
@@ -53,7 +53,7 @@ type UpdateOpts struct {
 }
 
 // ToReplicationUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToReplicationUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToReplicationUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "replication")
 }
 
@@ -78,7 +78,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // DeleteOptsBuilder allows extensions to add additional parameters to the
 // Delete request.
 type DeleteOptsBuilder interface {
-	ToReplicationDeleteMap() (map[string]interface{}, error)
+	ToReplicationDeleteMap() (map[string]any, error)
 }
 
 // DeleteOpts contains all the values needed to delete a Replication.
@@ -90,7 +90,7 @@ type DeleteOpts struct {
 }
 
 // ToReplicationDeleteMap builds a update request body from DeleteOpts.
-func (opts DeleteOpts) ToReplicationDeleteMap() (map[string]interface{}, error) {
+func (opts DeleteOpts) ToReplicationDeleteMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "replication")
 }
 

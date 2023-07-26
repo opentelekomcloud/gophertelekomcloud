@@ -74,7 +74,7 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
-	ToUserCreateMap() (map[string]interface{}, error)
+	ToUserCreateMap() (map[string]any, error)
 }
 
 // CreateOpts provides options used to create a user.
@@ -102,7 +102,7 @@ type CreateOpts struct {
 }
 
 // ToUserCreateMap formats a CreateOpts into a create request.
-func (opts CreateOpts) ToUserCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToUserCreateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "user")
 	if err != nil {
 		return nil, err
@@ -127,7 +127,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
-	ToUserUpdateMap() (map[string]interface{}, error)
+	ToUserUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts provides options for updating a user account.
@@ -155,7 +155,7 @@ type UpdateOpts struct {
 }
 
 // ToUserUpdateMap formats a UpdateOpts into an update request.
-func (opts UpdateOpts) ToUserUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToUserUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "user")
 	if err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func Update(client *golangsdk.ServiceClient, userID string, opts UpdateOptsBuild
 // ExtendedUpdateOptsBuilder allows extensions to add additional parameters to
 // the ExtendedUpdate request.
 type ExtendedUpdateOptsBuilder interface {
-	ToUserUpdateMap() (map[string]interface{}, error)
+	ToUserUpdateMap() (map[string]any, error)
 }
 
 // ExtendedUpdateOpts allows modifying User information (including e-mail address and mobile number)
@@ -223,7 +223,7 @@ type ExtendedUpdateOpts struct {
 	XUserID string `json:"xuser_id,omitempty"`
 }
 
-func (opts ExtendedUpdateOpts) ToUserUpdateMap() (map[string]interface{}, error) {
+func (opts ExtendedUpdateOpts) ToUserUpdateMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "user")
 	if err != nil {
 		return nil, err

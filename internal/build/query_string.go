@@ -32,7 +32,7 @@ will be converted into "?x_bar=AAA&lorem_ipsum=BBB".
 The struct's fields may be strings, integers, or boolean values. Fields left at
 their type's zero value will be omitted from the query.
 */
-func QueryString(opts interface{}) (*url.URL, error) {
+func QueryString(opts any) (*url.URL, error) {
 	if opts == nil {
 		return nil, fmt.Errorf("error building query string: %w", ErrNilOpts)
 	}

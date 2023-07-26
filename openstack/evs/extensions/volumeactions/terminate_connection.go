@@ -13,14 +13,14 @@ type TerminateConnectionOpts struct {
 	OSType    string   `json:"os_type,omitempty"`
 }
 
-func (opts TerminateConnectionOpts) ToVolumeTerminateConnectionMap() (map[string]interface{}, error) {
+func (opts TerminateConnectionOpts) ToVolumeTerminateConnectionMap() (map[string]any, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "connector")
-	return map[string]interface{}{"os-terminate_connection": b}, err
+	return map[string]any{"os-terminate_connection": b}, err
 }
 
 func TerminateConnection(client *golangsdk.ServiceClient, id string, opts TerminateConnectionOpts) (err error) {
 	b, err := golangsdk.BuildRequestBody(opts, "connector")
-	b = map[string]interface{}{"os-terminate_connection": b}
+	b = map[string]any{"os-terminate_connection": b}
 	if err != nil {
 		return
 	}

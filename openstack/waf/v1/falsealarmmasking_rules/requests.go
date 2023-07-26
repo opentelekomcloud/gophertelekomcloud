@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToAlarmMaskingCreateMap() (map[string]interface{}, error)
+	ToAlarmMaskingCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new falsealarmmasking rule.
@@ -18,7 +18,7 @@ type CreateOpts struct {
 }
 
 // ToAlarmMaskingCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToAlarmMaskingCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToAlarmMaskingCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

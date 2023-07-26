@@ -13,7 +13,7 @@ type Volume struct {
 	// Human-readable display name for the volume.
 	Name string `json:"display_name"`
 	// Instances onto which the volume is attached.
-	Attachments []map[string]interface{} `json:"attachments"`
+	Attachments []map[string]any `json:"attachments"`
 	// This parameter is no longer used.
 	AvailabilityZone string `json:"availability_zone"`
 	// Indicates whether this is a bootable volume.

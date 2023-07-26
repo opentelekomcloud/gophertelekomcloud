@@ -17,7 +17,7 @@ func TestRemainingKeys(t *testing.T) {
 		IsAdmin   bool
 	}
 
-	userResponse := map[string]interface{}{
+	userResponse := map[string]any{
 		"user_id":      "abcd1234",
 		"username":     "jdoe",
 		"location":     "Hawaii",
@@ -27,7 +27,7 @@ func TestRemainingKeys(t *testing.T) {
 		"custom_field": "foo",
 	}
 
-	expected := map[string]interface{}{
+	expected := map[string]any{
 		"created_at":   "2017-06-08T02:49:03.000000",
 		"is_admin":     "true",
 		"custom_field": "foo",

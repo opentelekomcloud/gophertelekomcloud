@@ -75,7 +75,7 @@ func TestQueryString_notOk(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]struct {
-		opts   interface{}
+		opts   any
 		errMsg string
 	}{
 		"nil opts": {
@@ -87,7 +87,7 @@ func TestQueryString_notOk(t *testing.T) {
 			"error building query string: required query parameter [Bar] not set",
 		},
 		"not_struct": {
-			map[string]interface{}{},
+			map[string]any{},
 			"error building query string: options type is not a struct",
 		},
 		"with_non_str_map": {

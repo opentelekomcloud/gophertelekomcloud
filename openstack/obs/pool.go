@@ -11,21 +11,21 @@ import (
 
 // Future defines interface with function: Get
 type Future interface {
-	Get() interface{}
+	Get() any
 }
 
 // FutureResult for task result
 type FutureResult struct {
-	result     interface{}
-	resultChan chan interface{}
+	result     any
+	resultChan chan any
 	lock       sync.Mutex
 }
 
 type panicResult struct {
-	presult interface{}
+	presult any
 }
 
-func (f *FutureResult) checkPanic() interface{} {
+func (f *FutureResult) checkPanic() any {
 	if r, ok := f.result.(panicResult); ok {
 		panic(r.presult)
 	}
@@ -33,7 +33,7 @@ func (f *FutureResult) checkPanic() interface{} {
 }
 
 // Get gets the task result
-func (f *FutureResult) Get() interface{} {
+func (f *FutureResult) Get() any {
 	if f.resultChan == nil {
 		return f.checkPanic()
 	}
@@ -51,14 +51,14 @@ func (f *FutureResult) Get() interface{} {
 
 // Task defines interface with function: Run
 type Task interface {
-	Run() interface{}
+	Run() any
 }
 
 type funcWrapper struct {
-	f func() interface{}
+	f func() any
 }
 
-func (fw *funcWrapper) Run() interface{} {
+func (fw *funcWrapper) Run() any {
 	if fw.f != nil {
 		return fw.f()
 	}
@@ -70,7 +70,7 @@ type taskWrapper struct {
 	f *FutureResult
 }
 
-func (tw *taskWrapper) Run() interface{} {
+func (tw *taskWrapper) Run() any {
 	if tw.t != nil {
 		return tw.t.Run()
 	}
@@ -81,7 +81,7 @@ type signalTask struct {
 	id string
 }
 
-func (signalTask) Run() interface{} {
+func (signalTask) Run() any {
 	return nil
 }
 
@@ -144,9 +144,9 @@ func (w *worker) release() {
 type Pool interface {
 	ShutDown()
 	Submit(t Task) (Future, error)
-	SubmitFunc(f func() interface{}) (Future, error)
+	SubmitFunc(f func() any) (Future, error)
 	Execute(t Task)
-	ExecuteFunc(f func() interface{})
+	ExecuteFunc(f func() any)
 	GetMaxWorkerCnt() int64
 	AddMaxWorkerCnt(value int64) int64
 	GetCurrentWorkingCnt() int64
@@ -338,7 +338,7 @@ func (pool *RoutinePool) autoTuneWorker(w *worker) bool {
 }
 
 // ExecuteFunc creates a funcWrapper instance with the specified function and calls the Execute function
-func (pool *RoutinePool) ExecuteFunc(f func() interface{}) {
+func (pool *RoutinePool) ExecuteFunc(f func() any) {
 	fw := &funcWrapper{
 		f: f,
 	}
@@ -353,7 +353,7 @@ func (pool *RoutinePool) Execute(t Task) {
 }
 
 // SubmitFunc creates a funcWrapper instance with the specified function and calls the Submit function
-func (pool *RoutinePool) SubmitFunc(f func() interface{}) (Future, error) {
+func (pool *RoutinePool) SubmitFunc(f func() any) (Future, error) {
 	fw := &funcWrapper{
 		f: f,
 	}
@@ -366,7 +366,7 @@ func (pool *RoutinePool) Submit(t Task) (Future, error) {
 		return nil, err
 	}
 	f := &FutureResult{}
-	f.resultChan = make(chan interface{}, 1)
+	f.resultChan = make(chan any, 1)
 	tw := &taskWrapper{
 		t: t,
 		f: f,
@@ -392,7 +392,7 @@ func (pool *RoutinePool) SubmitWithTimeout(t Task, timeout int64) (Future, error
 	}()
 
 	f := &FutureResult{}
-	f.resultChan = make(chan interface{}, 1)
+	f.resultChan = make(chan any, 1)
 	tw := &taskWrapper{
 		t: t,
 		f: f,
@@ -437,7 +437,7 @@ func (pool *RoutinePool) ShutDown() {
 type NoChanPool struct {
 	basicPool
 	wg     *sync.WaitGroup
-	tokens chan interface{}
+	tokens chan any
 }
 
 // NewNochanPool creates a new NoChanPool instance
@@ -448,7 +448,7 @@ func NewNochanPool(maxWorkerCnt int) Pool {
 
 	pool := &NoChanPool{
 		wg:     new(sync.WaitGroup),
-		tokens: make(chan interface{}, maxWorkerCnt),
+		tokens: make(chan any, maxWorkerCnt),
 	}
 	pool.isShutDown = 0
 	pool.AddMaxWorkerCnt(int64(maxWorkerCnt))
@@ -496,7 +496,7 @@ func (pool *NoChanPool) Execute(t Task) {
 }
 
 // ExecuteFunc creates a funcWrapper instance with the specified function and calls the Execute function
-func (pool *NoChanPool) ExecuteFunc(f func() interface{}) {
+func (pool *NoChanPool) ExecuteFunc(f func() any) {
 	fw := &funcWrapper{
 		f: f,
 	}
@@ -510,7 +510,7 @@ func (pool *NoChanPool) Submit(t Task) (Future, error) {
 	}
 
 	f := &FutureResult{}
-	f.resultChan = make(chan interface{}, 1)
+	f.resultChan = make(chan any, 1)
 	tw := &taskWrapper{
 		t: t,
 		f: f,
@@ -521,7 +521,7 @@ func (pool *NoChanPool) Submit(t Task) (Future, error) {
 }
 
 // SubmitFunc creates a funcWrapper instance with the specified function and calls the Submit function
-func (pool *NoChanPool) SubmitFunc(f func() interface{}) (Future, error) {
+func (pool *NoChanPool) SubmitFunc(f func() any) (Future, error) {
 	fw := &funcWrapper{
 		f: f,
 	}

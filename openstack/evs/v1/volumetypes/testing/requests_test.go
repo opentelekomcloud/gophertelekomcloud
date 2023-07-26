@@ -26,14 +26,14 @@ func TestList(t *testing.T) {
 		{
 			ID:   "289da7f8-6440-407c-9fb4-7db01ec49164",
 			Name: "vol-type-001",
-			ExtraSpecs: map[string]interface{}{
+			ExtraSpecs: map[string]any{
 				"capabilities": "gpu",
 			},
 		},
 		{
 			ID:         "96c3bda7-c82a-4f50-be73-ca7621794835",
 			Name:       "vol-type-002",
-			ExtraSpecs: map[string]interface{}{},
+			ExtraSpecs: map[string]any{},
 		},
 	}
 
@@ -49,7 +49,7 @@ func TestGet(t *testing.T) {
 	vt, err := volumetypes.Get(client.ServiceClient(), "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 	th.AssertNoErr(t, err)
 
-	th.AssertDeepEquals(t, vt.ExtraSpecs, map[string]interface{}{"serverNumber": "2"})
+	th.AssertDeepEquals(t, vt.ExtraSpecs, map[string]any{"serverNumber": "2"})
 	th.AssertEquals(t, vt.Name, "vol-type-001")
 	th.AssertEquals(t, vt.ID, "d32019d3-bc6e-4319-9c1d-6722fc136a22")
 }

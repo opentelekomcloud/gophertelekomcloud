@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToDataMaskingCreateMap() (map[string]interface{}, error)
+	ToDataMaskingCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new datamasking rule.
@@ -19,7 +19,7 @@ type CreateOpts struct {
 }
 
 // ToDataMaskingCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToDataMaskingCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToDataMaskingCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -38,7 +38,7 @@ func Create(c *golangsdk.ServiceClient, policyID string, opts CreateOptsBuilder)
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToDataMaskingUpdateMap() (map[string]interface{}, error)
+	ToDataMaskingUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains all the values needed to update a datamasking rule.
@@ -49,7 +49,7 @@ type UpdateOpts struct {
 }
 
 // ToDataMaskingUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToDataMaskingUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToDataMaskingUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

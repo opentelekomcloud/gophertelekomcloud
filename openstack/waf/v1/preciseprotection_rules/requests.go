@@ -8,7 +8,7 @@ import (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPreciseCreateMap() (map[string]interface{}, error)
+	ToPreciseCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new precise protection rule.
@@ -34,7 +34,7 @@ type Action struct {
 }
 
 // ToPreciseCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToPreciseCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToPreciseCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

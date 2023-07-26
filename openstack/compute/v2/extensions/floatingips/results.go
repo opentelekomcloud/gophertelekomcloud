@@ -32,7 +32,7 @@ func (r *FloatingIP) UnmarshalJSON(b []byte) error {
 	type tmp FloatingIP
 	var s struct {
 		tmp
-		ID interface{} `json:"id"`
+		ID any `json:"id"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {

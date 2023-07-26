@@ -91,7 +91,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	})
 }
 
-func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (interface{}, error) {
+func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (any, error) {
 	if label != "protected_instance_id" {
 		return nil, fmt.Errorf("unsupported label %s in GetJobEntity", label)
 	}

@@ -37,7 +37,7 @@ const (
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToPolicyCreateMap() (map[string]interface{}, error)
+	ToPolicyCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new IPSec policy
@@ -97,7 +97,7 @@ type LifetimeCreateOpts struct {
 }
 
 // ToPolicyCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToPolicyCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "ipsecpolicy")
 }
 
@@ -180,7 +180,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToPolicyUpdateMap() (map[string]interface{}, error)
+	ToPolicyUpdateMap() (map[string]any, error)
 }
 
 type LifetimeUpdateOpts struct {
@@ -201,7 +201,7 @@ type UpdateOpts struct {
 }
 
 // ToPolicyUpdateMap casts an UpdateOpts struct to a map.
-func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "ipsecpolicy")
 }
 

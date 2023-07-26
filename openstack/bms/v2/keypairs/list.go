@@ -38,7 +38,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]KeyPair, error) {
 func filterKeyPairs(keypairs []KeyPair, opts ListOpts) ([]KeyPair, error) {
 	var refinedKeypairs []KeyPair
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.Name != "" {
 		m["Name"] = opts.Name

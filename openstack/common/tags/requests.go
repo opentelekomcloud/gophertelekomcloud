@@ -7,7 +7,7 @@ import (
 
 // ActionOptsBuilder is an interface from which can build the request of creating/deleting tags
 type ActionOptsBuilder interface {
-	ToTagsActionMap() (map[string]interface{}, error)
+	ToTagsActionMap() (map[string]any, error)
 }
 
 // ResourceTag is in key-value format
@@ -23,7 +23,7 @@ type ActionOpts struct {
 }
 
 // ToTagsActionMap build the action request in json format
-func (opts ActionOpts) ToTagsActionMap() (map[string]interface{}, error) {
+func (opts ActionOpts) ToTagsActionMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 

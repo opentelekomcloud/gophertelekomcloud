@@ -56,7 +56,7 @@ func FilterBackups(backup []Backup, opts ListOpts) ([]Backup, error) {
 
 	var refinedBackup []Backup
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.Id != "" {
 		m["Id"] = opts.Id
@@ -94,7 +94,7 @@ func getStructField(v *Backup, field string) string {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToBackupCreateMap() (map[string]interface{}, error)
+	ToBackupCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new backup.
@@ -119,7 +119,7 @@ type Tag struct {
 }
 
 // ToBackupCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToBackupCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToBackupCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "backup")
 }
 
@@ -140,7 +140,7 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 // RestoreOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type RestoreOptsBuilder interface {
-	ToRestoreCreateMap() (map[string]interface{}, error)
+	ToRestoreCreateMap() (map[string]any, error)
 }
 
 // BackupRestoreOpts contains all the values needed to create a new backup.
@@ -150,7 +150,7 @@ type BackupRestoreOpts struct {
 }
 
 // ToRestoreCreateMap builds a create request body from BackupRestoreOpts.
-func (opts BackupRestoreOpts) ToRestoreCreateMap() (map[string]interface{}, error) {
+func (opts BackupRestoreOpts) ToRestoreCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "restore")
 }
 

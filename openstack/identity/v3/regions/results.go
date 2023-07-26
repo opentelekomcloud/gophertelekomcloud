@@ -18,10 +18,10 @@ type Region struct {
 	ID string `json:"id"`
 
 	// Extra is a collection of miscellaneous key/values.
-	Extra map[string]interface{} `json:"-"`
+	Extra map[string]any `json:"-"`
 
 	// Links contains referencing links to the region.
-	Links map[string]interface{} `json:"links"`
+	Links map[string]any `json:"links"`
 
 	// ParentRegionID is the ID of the parent region.
 	ParentRegionID string `json:"parent_region_id"`
@@ -31,7 +31,7 @@ func (r *Region) UnmarshalJSON(b []byte) error {
 	type tmp Region
 	var s struct {
 		tmp
-		Extra map[string]interface{} `json:"extra"`
+		Extra map[string]any `json:"extra"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -44,12 +44,12 @@ func (r *Region) UnmarshalJSON(b []byte) error {
 	if s.Extra != nil {
 		r.Extra = s.Extra
 	} else {
-		var result interface{}
+		var result any
 		err := json.Unmarshal(b, &result)
 		if err != nil {
 			return err
 		}
-		if resultMap, ok := result.(map[string]interface{}); ok {
+		if resultMap, ok := result.(map[string]any); ok {
 			r.Extra = internal.RemainingKeys(Region{}, resultMap)
 		}
 	}

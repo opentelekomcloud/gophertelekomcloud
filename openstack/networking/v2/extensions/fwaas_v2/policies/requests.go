@@ -67,7 +67,7 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type CreateOptsBuilder interface {
-	ToFirewallPolicyCreateMap() (map[string]interface{}, error)
+	ToFirewallPolicyCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new firewall policy.
@@ -83,7 +83,7 @@ type CreateOpts struct {
 }
 
 // ToFirewallPolicyCreateMap casts a CreateOpts struct to a map.
-func (opts CreateOpts) ToFirewallPolicyCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToFirewallPolicyCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall_policy")
 }
 
@@ -109,7 +109,7 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 // extensions decorate or modify the common logic, it is useful for them to
 // satisfy a basic interface in order for them to be used.
 type UpdateOptsBuilder interface {
-	ToFirewallPolicyUpdateMap() (map[string]interface{}, error)
+	ToFirewallPolicyUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts contains the values used when updating a firewall policy.
@@ -122,7 +122,7 @@ type UpdateOpts struct {
 }
 
 // ToFirewallPolicyUpdateMap casts a CreateOpts struct to a map.
-func (opts UpdateOpts) ToFirewallPolicyUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToFirewallPolicyUpdateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "firewall_policy")
 }
 
@@ -146,7 +146,7 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 }
 
 type InsertRuleOptsBuilder interface {
-	ToFirewallPolicyInsertRuleMap() (map[string]interface{}, error)
+	ToFirewallPolicyInsertRuleMap() (map[string]any, error)
 }
 
 type InsertRuleOpts struct {
@@ -155,7 +155,7 @@ type InsertRuleOpts struct {
 	AfterRuleID  string `json:"insert_after,omitempty"`
 }
 
-func (opts InsertRuleOpts) ToFirewallPolicyInsertRuleMap() (map[string]interface{}, error) {
+func (opts InsertRuleOpts) ToFirewallPolicyInsertRuleMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
@@ -172,7 +172,7 @@ func AddRule(c *golangsdk.ServiceClient, id string, opts InsertRuleOptsBuilder) 
 }
 
 func RemoveRule(c *golangsdk.ServiceClient, id, ruleID string) (r RemoveRuleResult) {
-	b := map[string]interface{}{"firewall_rule_id": ruleID}
+	b := map[string]any{"firewall_rule_id": ruleID}
 	_, r.Err = c.Put(removeURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})

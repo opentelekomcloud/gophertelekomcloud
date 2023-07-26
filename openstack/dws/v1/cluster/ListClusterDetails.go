@@ -70,7 +70,7 @@ type ClusterDetail struct {
 	// REPAIRING
 	// CREATING
 	// The value indicates the task progress.
-	ActionProgress map[string]interface{} `json:"action_progress"`
+	ActionProgress map[string]any `json:"action_progress"`
 	// Sub-status of clusters in the AVAILABLE state. The value can be one of the following:
 	// NORMAL
 	// READONLY

@@ -106,7 +106,7 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 	})
 }
 
-func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (interface{}, error) {
+func GetJobEntity(client *golangsdk.ServiceClient, jobID string, label string) (any, error) {
 	raw, err := client.Get(jobURL(client, jobID), nil, nil)
 	if err != nil {
 		return nil, err

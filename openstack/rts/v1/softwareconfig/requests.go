@@ -53,7 +53,7 @@ func FilterSoftwareConfig(config []SoftwareConfig, opts ListOpts) ([]SoftwareCon
 
 	var refinedSoftwareConfig []SoftwareConfig
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]any{}
 
 	if opts.Id != "" {
 		m["Id"] = opts.Id
@@ -91,7 +91,7 @@ func getStructField(v *SoftwareConfig, field string) string {
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToSoftwareConfigCreateMap() (map[string]interface{}, error)
+	ToSoftwareConfigCreateMap() (map[string]any, error)
 }
 
 // CreateOpts contains all the values needed to create a new Software Config. There are
@@ -104,15 +104,15 @@ type CreateOpts struct {
 	// Specifies the name of the software configuration.
 	Name string `json:"name" required:"true"`
 	// Specifies the software configuration input.
-	Inputs []map[string]interface{} `json:"inputs,omitempty"`
+	Inputs []map[string]any `json:"inputs,omitempty"`
 	// Specifies the software configuration output.
-	Outputs []map[string]interface{} `json:"outputs,omitempty"`
+	Outputs []map[string]any `json:"outputs,omitempty"`
 	// Specifies options used by a software configuration management tool.
-	Options map[string]interface{} `json:"options,omitempty"`
+	Options map[string]any `json:"options,omitempty"`
 }
 
 // ToSoftwareConfigCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToSoftwareConfigCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToSoftwareConfigCreateMap() (map[string]any, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
