@@ -9,30 +9,6 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestMaybeString(t *testing.T) {
-	testString := ""
-	var expected *string
-	actual := golangsdk.MaybeString(testString)
-	th.CheckDeepEquals(t, expected, actual)
-
-	testString = "carol"
-	expected = &testString
-	actual = golangsdk.MaybeString(testString)
-	th.CheckDeepEquals(t, expected, actual)
-}
-
-func TestMaybeInt(t *testing.T) {
-	testInt := 0
-	var expected *int
-	actual := golangsdk.MaybeInt(testInt)
-	th.CheckDeepEquals(t, expected, actual)
-
-	testInt = 4
-	expected = &testInt
-	actual = golangsdk.MaybeInt(testInt)
-	th.CheckDeepEquals(t, expected, actual)
-}
-
 func TestBuildQueryString(t *testing.T) {
 	type testVar string
 	iFalse := false

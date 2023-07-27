@@ -202,41 +202,6 @@ const (
 	IPv6 IPVersion = 6
 )
 
-/*
-MaybeString is an internal function to be used by request methods in individual
-resource packages.
-
-It takes a string that might be a zero value and returns either a pointer to its
-address or nil. This is useful for allowing users to conveniently omit values
-from an options struct by leaving them zeroed, but still pass nil to the JSON
-serializer so they'll be omitted from the request body.
-
-Deprecated
-*/
-func MaybeString(original string) *string {
-	if original != "" {
-		return &original
-	}
-	return nil
-}
-
-/*
-MaybeInt is an internal function to be used by request methods in individual
-resource packages.
-
-Like MaybeString, it accepts an int that may or may not be a zero value, and
-returns either a pointer to its address or nil. It's intended to hint that the
-JSON serializer should omit its field.
-
-Deprecated
-*/
-func MaybeInt(original int) *int {
-	if original != 0 {
-		return &original
-	}
-	return nil
-}
-
 var t time.Time
 
 // isZero checks if given argument has default type value.
