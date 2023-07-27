@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/networkipavailabilities"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -79,7 +78,7 @@ func TestGet(t *testing.T) {
 			SubnetID:   "4afe6e5f-9649-40db-b18f-64c7ead942bd",
 			SubnetName: "public-subnet",
 			CIDR:       "203.0.113.0/24",
-			IPVersion:  int(golangsdk.IPv4),
+			IPVersion:  4,
 			TotalIPs:   253,
 			UsedIPs:    3,
 		},

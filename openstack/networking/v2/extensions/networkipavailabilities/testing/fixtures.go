@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/networkipavailabilities"
 )
 
@@ -70,7 +69,7 @@ var NetworkIPAvailability1 = networkipavailabilities.NetworkIPAvailability{
 			SubnetID:   "497ac4d3-0b92-42cf-82de-71302ab2b656",
 			SubnetName: "second-private-subnet",
 			CIDR:       "10.0.0.64/26",
-			IPVersion:  int(golangsdk.IPv4),
+			IPVersion:  4,
 			TotalIPs:   61,
 			UsedIPs:    12,
 		},
@@ -78,7 +77,7 @@ var NetworkIPAvailability1 = networkipavailabilities.NetworkIPAvailability{
 			SubnetID:   "521f47e7-c4fb-452c-b71a-851da38cc571",
 			SubnetName: "private-subnet",
 			CIDR:       "10.0.0.0/26",
-			IPVersion:  int(golangsdk.IPv4),
+			IPVersion:  4,
 			TotalIPs:   61,
 			UsedIPs:    2,
 		},
@@ -98,7 +97,7 @@ var NetworkIPAvailability2 = networkipavailabilities.NetworkIPAvailability{
 			SubnetID:   "4afe6e5f-9649-40db-b18f-64c7ead942bd",
 			SubnetName: "public-subnet",
 			CIDR:       "203.0.113.0/24",
-			IPVersion:  int(golangsdk.IPv4),
+			IPVersion:  4,
 			TotalIPs:   253,
 			UsedIPs:    3,
 		},

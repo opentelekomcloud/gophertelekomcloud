@@ -25,7 +25,7 @@ type CreateExtraDHCPOpt struct {
 	OptValue string `json:"opt_value" required:"true"`
 
 	// IPVersion is the IP protocol version of a DHCP option.
-	IPVersion golangsdk.IPVersion `json:"ip_version,omitempty"`
+	IPVersion int `json:"ip_version,omitempty"`
 }
 
 // ToPortCreateMap casts a CreateOptsExt struct to a map.
@@ -73,7 +73,7 @@ type UpdateExtraDHCPOpt struct {
 	OptValue *string `json:"opt_value"`
 
 	// IPVersion is the IP protocol version of a DHCP option.
-	IPVersion golangsdk.IPVersion `json:"ip_version,omitempty"`
+	IPVersion int `json:"ip_version,omitempty"`
 }
 
 // ToPortUpdateMap casts an UpdateOpts struct to a map.

@@ -21,7 +21,7 @@ type ListOpts struct {
 	NetworkName string `q:"network_name"`
 
 	// IPVersion allows to filter on the version of the IP protocol.
-	// You can use the well-known IP versions with the golangsdk.IPVersion type.
+	// You can use the well-known IP versions with the int type.
 	IPVersion string `q:"ip_version"`
 
 	// ProjectID allows to filter on the Identity project field.

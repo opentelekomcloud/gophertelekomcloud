@@ -31,17 +31,6 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 	return res, err
 }
 
-// IPVersion is a type for the possible IP address versions. Valid instances
-// are IPv4 and IPv6
-type IPVersion int
-
-const (
-	// IPv4 is used for IP version 4 addresses
-	IPv4 IPVersion = 4
-	// IPv6 is used for IP version 6 addresses
-	IPv6 IPVersion = 6
-)
-
 var t time.Time
 
 // isZero checks if given argument has default type value.

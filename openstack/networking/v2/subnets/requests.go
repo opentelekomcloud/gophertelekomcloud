@@ -110,7 +110,7 @@ type CreateOpts struct {
 	GatewayIP *string `json:"gateway_ip,omitempty"`
 
 	// IPVersion is the IP version for the subnet.
-	IPVersion golangsdk.IPVersion `json:"ip_version,omitempty"`
+	IPVersion int `json:"ip_version,omitempty"`
 
 	// EnableDHCP will either enable to disable the DHCP service.
 	EnableDHCP *bool `json:"enable_dhcp,omitempty"`
