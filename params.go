@@ -1,7 +1,6 @@
 package golangsdk
 
 import (
-	"encoding/json"
 	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
@@ -16,14 +15,7 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 		return nil, err
 	}
 
-	var res map[string]interface{}
-	marshal, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(marshal, &res)
-	return res, err
+	return body.ToMap()
 }
 
 /*
