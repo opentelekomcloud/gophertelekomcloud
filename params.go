@@ -69,78 +69,7 @@ func isZero(v reflect.Value) bool {
 Deprecated: use `internal/build.QueryString` instead.
 */
 func BuildQueryString(opts interface{}) (*url.URL, error) {
-	optsValue := reflect.ValueOf(opts)
-	if optsValue.Kind() == reflect.Ptr {
-		optsValue = optsValue.Elem()
-	}
-
-	optsType := reflect.TypeOf(opts)
-	if optsType.Kind() == reflect.Ptr {
-		optsType = optsType.Elem()
-	}
-
-	params := url.Values{}
-
-	if optsValue.Kind() == reflect.Struct {
-		for i := 0; i < optsValue.NumField(); i++ {
-			v := optsValue.Field(i)
-			f := optsType.Field(i)
-			qTag := f.Tag.Get("q")
-
-			// if the field has a 'q' tag, it goes in the query string
-			if qTag != "" {
-				tags := strings.Split(qTag, ",")
-
-				// if the field is set, add it to the slice of query pieces
-				if !isZero(v) {
-				loop:
-					switch v.Kind() {
-					case reflect.Ptr:
-						v = v.Elem()
-						goto loop
-					case reflect.String:
-						params.Add(tags[0], v.String())
-					case reflect.Int:
-						params.Add(tags[0], strconv.FormatInt(v.Int(), 10))
-					case reflect.Int64:
-						params.Add(tags[0], strconv.FormatInt(v.Int(), 10))
-					case reflect.Bool:
-						params.Add(tags[0], strconv.FormatBool(v.Bool()))
-					case reflect.Slice:
-						switch v.Type().Elem() {
-						case reflect.TypeOf(0):
-							for i := 0; i < v.Len(); i++ {
-								params.Add(tags[0], strconv.FormatInt(v.Index(i).Int(), 10))
-							}
-						default:
-							for i := 0; i < v.Len(); i++ {
-								params.Add(tags[0], v.Index(i).String())
-							}
-						}
-					case reflect.Map:
-						if v.Type().Key().Kind() == reflect.String && v.Type().Elem().Kind() == reflect.String {
-							var s []string
-							for _, k := range v.MapKeys() {
-								value := v.MapIndex(k).String()
-								s = append(s, fmt.Sprintf("'%s':'%s'", k.String(), value))
-							}
-							params.Add(tags[0], fmt.Sprintf("{%s}", strings.Join(s, ", ")))
-						}
-					}
-				} else {
-					// Otherwise, the field is not set.
-					if len(tags) == 2 && tags[1] == "required" {
-						// And the field is required. Return an error.
-						return &url.URL{}, fmt.Errorf("required query parameter [%s] not set", f.Name)
-					}
-				}
-			}
-		}
-
-		return &url.URL{RawQuery: params.Encode()}, nil
-	}
-	// Return an error if the underlying type of 'opts' isn't a struct.
-	return nil, fmt.Errorf("options type is not a struct")
+	return build.QueryString(opts)
 }
 
 /*
