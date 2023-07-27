@@ -2,11 +2,8 @@ package golangsdk
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"reflect"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
@@ -76,49 +73,5 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 Deprecated: use `internal/build.Headers` instead.
 */
 func BuildHeaders(opts interface{}) (map[string]string, error) {
-	optsValue := reflect.ValueOf(opts)
-	if optsValue.Kind() == reflect.Ptr {
-		optsValue = optsValue.Elem()
-	}
-
-	optsType := reflect.TypeOf(opts)
-	if optsType.Kind() == reflect.Ptr {
-		optsType = optsType.Elem()
-	}
-
-	optsMap := make(map[string]string)
-	if optsValue.Kind() == reflect.Struct {
-		for i := 0; i < optsValue.NumField(); i++ {
-			v := optsValue.Field(i)
-			f := optsType.Field(i)
-			hTag := f.Tag.Get("h")
-
-			// if the field has a 'h' tag, it goes in the header
-			if hTag != "" {
-				tags := strings.Split(hTag, ",")
-
-				// if the field is set, add it to the slice of query pieces
-				if !isZero(v) {
-					switch v.Kind() {
-					case reflect.String:
-						optsMap[tags[0]] = v.String()
-					case reflect.Int:
-						optsMap[tags[0]] = strconv.FormatInt(v.Int(), 10)
-					case reflect.Bool:
-						optsMap[tags[0]] = strconv.FormatBool(v.Bool())
-					}
-				} else {
-					// Otherwise, the field is not set.
-					if len(tags) == 2 && tags[1] == "required" {
-						// And the field is required. Return an error.
-						return optsMap, fmt.Errorf("Required header not set.")
-					}
-				}
-			}
-
-		}
-		return optsMap, nil
-	}
-	// Return an error if the underlying type of 'opts' isn't a struct.
-	return optsMap, fmt.Errorf("options type is not a struct")
+	return build.Headers(opts)
 }
