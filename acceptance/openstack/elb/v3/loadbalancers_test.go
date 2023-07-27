@@ -18,7 +18,7 @@ func TestLoadBalancerList(t *testing.T) {
 	loadbalancerPages, err := loadbalancers.List(client, listOpts).AllPages()
 	th.AssertNoErr(t, err)
 
-	loadbalancerList, err := loadbalancers.ExtractLoadbalancers(loadbalancerPages)
+	loadbalancerList, err := loadbalancers.ExtractLoadBalancers(loadbalancerPages)
 	th.AssertNoErr(t, err)
 
 	for _, lb := range loadbalancerList {
@@ -31,35 +31,37 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
+	t.Cleanup(func() {
+		deleteLoadbalancer(t, client, loadbalancerID)
+	})
 
 	t.Logf("Attempting to update ELBv3 LoadBalancer: %s", loadbalancerID)
 	lbName := tools.RandomString("update-lb-", 3)
 	emptyDescription := ""
 	updateOptsDpE := loadbalancers.UpdateOpts{
 		Name:                     lbName,
-		Description:              &emptyDescription,
+		Description:              emptyDescription,
 		DeletionProtectionEnable: pointerto.Bool(true),
 	}
-	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpE).Extract()
+	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpE)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
-	err = loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err = loadbalancers.Delete(client, loadbalancerID)
 	if err != nil {
 		t.Logf("Cannot delete, Deletion Protection enabled for ELBv3 LoadBalancer: %s", loadbalancerID)
 	}
 
 	updateOptsDpD := loadbalancers.UpdateOpts{
 		Name:                     lbName,
-		Description:              &emptyDescription,
+		Description:              emptyDescription,
 		DeletionProtectionEnable: pointerto.Bool(false),
 	}
-	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpD).Extract()
+	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpD)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
-	newLoadbalancer, err := loadbalancers.Get(client, loadbalancerID).Extract()
+	newLoadbalancer, err := loadbalancers.Get(client, loadbalancerID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOptsDpD.Name, newLoadbalancer.Name)
 	th.AssertEquals(t, emptyDescription, newLoadbalancer.Description)

@@ -3,64 +3,74 @@ package ipgroups
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
+	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 type ListOpts struct {
-	Limit       int    `q:"limit"`
-	Marker      string `q:"marker"`
-	PageReverse bool   `q:"page_reverse"`
-
-	ID          []string `q:"id"`
-	Name        []string `q:"name"`
+	// Specifies the number of records on each page.
+	//
+	// Minimum: 0
+	//
+	// Maximum: 2000
+	//
+	// Default: 2000
+	Limit int `q:"limit"`
+	// Specifies the ID of the last record on the previous page.
+	//
+	// Note:
+	//
+	// This parameter must be used together with limit.
+	//
+	// If this parameter is not specified, the first page will be queried.
+	//
+	// This parameter cannot be left blank or set to an invalid ID.
+	Marker string `q:"marker"`
+	// Specifies whether to use reverse query. Values:
+	//
+	// true: Query the previous page.
+	//
+	// false (default): Query the next page.
+	//
+	// Note:
+	//
+	// This parameter must be used together with limit.
+	//
+	// If page_reverse is set to true and you want to query the previous page, set the value of marker to the value of previous_marker.
+	PageReverse bool `q:"page_reverse"`
+	// Specifies the ID of the IP address group.
+	ID []string `q:"id"`
+	// Specifies the name of the IP address group.
+	Name []string `q:"name"`
+	// Provides supplementary information about the IP address group.
 	Description []string `q:"description"`
-	IpList      []string `q:"ip_list"`
+	// Lists the IP addresses in the IP address group. Multiple IP addresses are separated with commas.
+	IpList []string `q:"ip_list"`
 }
 
 // List is used to obtain the parameter ipGroup list
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]IpGroup, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
-		return nil, err
+		return pagination.Pager{Err: err}
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/backups
-	raw, err := client.Get(client.ServiceURL("ipgroups")+q.String(), nil, openstack.StdRequestOpts())
-	if err != nil {
-		return nil, err
-	}
+	return pagination.NewPager(client, client.ServiceURL("ipgroups")+q.String(), func(r pagination.PageResult) pagination.Page {
+		return IpGroupPage{PageWithInfo: pagination.NewPageWithInfo(r)}
+	})
+}
 
+type IpGroupPage struct {
+	pagination.PageWithInfo
+}
+
+func (r IpGroupPage) IsEmpty() (bool, error) {
+	is, err := ExtractIpGroups(r)
+	return len(is) == 0, err
+}
+
+func ExtractIpGroups(r pagination.Page) ([]IpGroup, error) {
 	var res []IpGroup
-	err = extract.IntoSlicePtr(raw.Body, &res, "ipgroups")
+	err := extract.IntoSlicePtr(r.(IpGroupPage).BodyReader(), &res, "ipgroups")
 	return res, err
-}
-
-// IpGroup The IP address can contain IP addresses or CIDR blocks.
-// 0.0.0.0 will be considered the same as 0.0.0.0/32. If you enter both 0.0.0.0 and 0.0.0.0/32,
-// only one will be kept. 0:0:0:0:0:0:0:1 will be considered the same as ::1 and ::1/128.
-// If you enter 0:0:0:0:0:0:0:1, ::1 and ::1/128, only one will be kept.
-type IpGroup struct {
-	// The unique ID for the IpGroup.
-	ID string `json:"id"`
-	// Specifies the IP address group name.
-	Name string `json:"name"`
-	// Provides remarks about the IP address group.
-	Description string `json:"description"`
-	// Specifies the project ID of the IP address group.
-	ProjectId string `json:"project_id"`
-	// Specifies the IP addresses or CIDR blocks in the IP address group. [] indicates any IP address.
-	IpList []IpInfo `json:"ip_list"`
-	// Lists the IDs of listeners with which the IP address group is associated.
-	Listeners []structs.ResourceRef `json:"listeners"`
-	// Specifies the time when the IP address group was created.
-	CreatedAt string `json:"created_at"`
-	// Specifies the time when the IP address group was updated.
-	UpdatedAt string `json:"updated_at"`
-}
-type IpInfo struct {
-	// Specifies the IP addresses in the IP address group.
-	Ip string `json:"ip"`
-	// Provides remarks about the IP address group.
-	Description string `json:"description"`
 }

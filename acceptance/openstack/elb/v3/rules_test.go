@@ -20,38 +20,38 @@ func TestRuleWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listenerID := createListener(t, client, lbID)
-	defer deleteListener(t, client, listenerID)
+	t.Cleanup(func() { deleteListener(t, client, listenerID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	policyID := createPolicy(t, client, listenerID, poolID)
-	defer deletePolicy(t, client, policyID)
+	t.Cleanup(func() { deletePolicy(t, client, policyID) })
 
 	opts := rules.CreateOpts{
-		Type:        rules.Path,
-		CompareType: rules.Regex,
+		Type:        "PATH",
+		CompareType: "REGEX",
 		Value:       "^.+$",
 	}
-	created, err := rules.Create(client, policyID, opts).Extract()
+	created, err := rules.Create(client, policyID, opts)
 	th.AssertNoErr(t, err)
-	id := created.ID
+	id := created.Id
 	t.Logf("Rule %s added to the policy %s", id, policyID)
 	th.CheckEquals(t, opts.Type, created.Type)
 
-	defer func() {
-		th.AssertNoErr(t, rules.Delete(client, policyID, id).ExtractErr())
+	t.Cleanup(func() {
+		th.AssertNoErr(t, rules.Delete(client, policyID, id))
 		t.Log("Rule removed from policy")
-	}()
+	})
 
-	got, err := rules.Get(client, policyID, id).Extract()
+	got, err := rules.Get(client, policyID, id)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, created, got)
 
-	pages, err := rules.List(client, policyID, nil).AllPages()
+	pages, err := rules.List(client, policyID, rules.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 
 	rulesSlice, err := rules.ExtractRules(pages)
@@ -63,10 +63,10 @@ func TestRuleWorkflow(t *testing.T) {
 	updateOpts := rules.UpdateOpts{
 		Value: "^.*$",
 	}
-	updated, err := rules.Update(client, policyID, id, updateOpts).Extract()
+	updated, err := rules.Update(client, policyID, id, updateOpts)
 	th.AssertNoErr(t, err)
 
-	got2, err := rules.Get(client, policyID, id).Extract()
+	got2, err := rules.Get(client, policyID, id)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, updated, got2)
 }
@@ -78,48 +78,50 @@ func TestRuleWorkflowConditions(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() {
+		deleteLoadbalancer(t, client, lbID)
+	})
 
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  lbID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() { deleteListener(t, client, listener.ID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	policyID := createPolicy(t, client, listener.ID, poolID)
-	defer deletePolicy(t, client, policyID)
-	condition := rules.Condition{
+	t.Cleanup(func() { deletePolicy(t, client, policyID) })
+	condition := policies.RuleCondition{
 		Key:   "",
 		Value: "/",
 	}
 	opts := rules.CreateOpts{
-		Type:        rules.Path,
-		CompareType: rules.StartsWith,
+		Type:        "PATH",
+		CompareType: "STARTS_WITH",
 		Value:       "/bbb.html",
-		Conditions:  []rules.Condition{condition},
+		Conditions:  []policies.RuleCondition{condition},
 	}
-	created, err := rules.Create(client, policyID, opts).Extract()
+	created, err := rules.Create(client, policyID, opts)
 	th.AssertNoErr(t, err)
-	id := created.ID
+	id := created.Id
 	t.Logf("Rule %s added to the policy %s", id, policyID)
 	th.CheckEquals(t, opts.Type, created.Type)
 
-	defer func() {
-		th.AssertNoErr(t, rules.Delete(client, policyID, id).ExtractErr())
+	t.Cleanup(func() {
+		th.AssertNoErr(t, rules.Delete(client, policyID, id))
 		t.Log("Rule removed from policy")
-	}()
+	})
 
-	got, err := rules.Get(client, policyID, id).Extract()
+	got, err := rules.Get(client, policyID, id)
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, created, got)
 
-	pages, err := rules.List(client, policyID, nil).AllPages()
+	pages, err := rules.List(client, policyID, rules.ListOpts{}).AllPages()
 	th.AssertNoErr(t, err)
 
 	rulesSlice, err := rules.ExtractRules(pages)
@@ -127,39 +129,39 @@ func TestRuleWorkflowConditions(t *testing.T) {
 
 	th.AssertEquals(t, 1, len(rulesSlice))
 	th.CheckDeepEquals(t, *got, rulesSlice[0])
-	conditionUpdate := rules.Condition{
+	conditionUpdate := policies.RuleCondition{
 		Key:   "",
 		Value: "/home",
 	}
 	updateOpts := rules.UpdateOpts{
-		CompareType: rules.EqualTo,
-		Conditions:  []rules.Condition{conditionUpdate},
+		CompareType: "EQUAL_TO",
+		Conditions:  []policies.RuleCondition{conditionUpdate},
 	}
-	updated, err := rules.Update(client, policyID, id, updateOpts).Extract()
+	updated, err := rules.Update(client, policyID, id, updateOpts)
 	th.AssertNoErr(t, err)
 
-	got2, err := rules.Get(client, policyID, id).Extract()
+	got2, err := rules.Get(client, policyID, id)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, updated, got2)
 }
 
 func createPolicy(t *testing.T, client *golangsdk.ServiceClient, listenerID, poolID string) string {
 	createOpts := policies.CreateOpts{
-		Action:         policies.ActionRedirectToPool,
-		ListenerID:     listenerID,
-		RedirectPoolID: poolID,
+		Action:         "REDIRECT_TO_POOL",
+		ListenerId:     listenerID,
+		RedirectPoolId: poolID,
 		Description:    "Go SDK test policy",
 		Name:           tools.RandomString("sdk-pol-", 5),
-		Position:       37,
+		Position:       pointerto.Int(37),
 	}
-	created, err := policies.Create(client, createOpts).Extract()
+	created, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
-	id := created.ID
+	id := created.Id
 	t.Logf("Policy created: %s", id)
 	return id
 }
 
 func deletePolicy(t *testing.T, client *golangsdk.ServiceClient, policyID string) {
-	th.AssertNoErr(t, policies.Delete(client, policyID).ExtractErr())
+	th.AssertNoErr(t, policies.Delete(client, policyID))
 	t.Logf("Policy %s deleted", policyID)
 }

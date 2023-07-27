@@ -15,10 +15,12 @@ func TestListenerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
+	t.Cleanup(func() {
+		deleteLoadbalancer(t, client, loadbalancerID)
+	})
 
 	certificateID := createCertificate(t, client)
-	defer deleteCertificate(t, client, certificateID)
+	t.Cleanup(func() { deleteCertificate(t, client, certificateID) })
 
 	t.Logf("Attempting to create ELBv3 Listener")
 	listenerName := tools.RandomString("create-listener-", 3)
@@ -38,13 +40,13 @@ func TestListenerLifecycle(t *testing.T) {
 		},
 	}
 
-	listener, err := listeners.Create(client, createOpts).Extract()
-	defer func() {
+	listener, err := listeners.Create(client, createOpts)
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
-		err := listeners.Delete(client, listener.ID).ExtractErr()
+		err := listeners.Delete(client, listener.ID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Listener: %s", listener.ID)
-	}()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, listener.Name)
 	th.AssertEquals(t, createOpts.Description, listener.Description)
@@ -58,11 +60,11 @@ func TestListenerLifecycle(t *testing.T) {
 		Name:         &listenerName,
 		SniMatchAlgo: "longest_suffix",
 	}
-	_, err = listeners.Update(client, listener.ID, updateOpts).Extract()
+	_, err = listeners.Update(client, listener.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Listener: %s", listener.ID)
 
-	newListener, err := listeners.Get(client, listener.ID).Extract()
+	newListener, err := listeners.Get(client, listener.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, listenerName, newListener.Name)
 	th.AssertEquals(t, emptyDescription, newListener.Description)

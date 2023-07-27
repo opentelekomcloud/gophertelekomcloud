@@ -1,22 +1,21 @@
 package ipgroups
 
 import (
+	"net/http"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// CreateOpts is the common options' struct used in this package's Create
-// operation.
+// CreateOpts is the common options' struct used in this package's Create operation.
 type CreateOpts struct {
 	// Specifies the IP address group name.
 	Name string `json:"name,omitempty"`
-
 	// Provides supplementary information about the IP address group.
 	Description string `json:"description,omitempty"`
-
 	// Specifies the project ID of the IP address group.
 	ProjectId string `json:"project_id,omitempty"`
-
 	// Specifies the IP addresses or CIDR blocks in the IP address group. [] indicates any IP address.
 	IpList []IpGroupOption `json:"ip_list,omitempty"`
 }
@@ -24,7 +23,6 @@ type CreateOpts struct {
 type IpGroupOption struct {
 	// Specifies the IP addresses in the IP address group.
 	Ip string `json:"ip" required:"true"`
-
 	// Provides remarks about the IP address group.
 	Description string `json:"description"`
 }
@@ -48,13 +46,17 @@ type DataStore struct {
 // validated and progress has started on the provisioning process, a
 // IpGroup will be returned.
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*IpGroup, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "ipgroup")
+	b, err := build.RequestBody(opts, "ipgroup")
 	if err != nil {
 		return nil, err
 	}
-	raw, err := c.Post(c.ServiceURL("ipgroups"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{201},
-	})
+
+	// POST /v3/{project_id}/elb/ipgroups
+	raw, err := c.Post(c.ServiceURL("ipgroups"), b, nil, nil)
+	return extra(err, raw)
+}
+
+func extra(err error, raw *http.Response) (*IpGroup, error) {
 	if err != nil {
 		return nil, err
 	}

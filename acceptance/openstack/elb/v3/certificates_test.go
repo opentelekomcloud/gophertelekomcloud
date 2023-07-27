@@ -30,22 +30,23 @@ func TestCertificateLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	certificateID := createCertificate(t, client)
-	defer deleteCertificate(t, client, certificateID)
+	t.Cleanup(func() {
+		deleteCertificate(t, client, certificateID)
+	})
 
 	t.Logf("Attempting to update ELBv3 certificate: %s", certificateID)
 	certName := tools.RandomString("update-cert-", 3)
-	emptyDescription := ""
 	updateOpts := certificates.UpdateOpts{
 		Name:        certName,
-		Description: &emptyDescription,
+		Description: "",
 	}
 
-	_, err = certificates.Update(client, certificateID, updateOpts).Extract()
+	_, err = certificates.Update(client, certificateID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 certificate: %s", certificateID)
 
-	newCertificate, err := certificates.Get(client, certificateID).Extract()
+	newCertificate, err := certificates.Get(client, certificateID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newCertificate.Name)
-	th.AssertEquals(t, emptyDescription, newCertificate.Description)
+	th.AssertEquals(t, "", newCertificate.Description)
 }

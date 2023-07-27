@@ -50,7 +50,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 		IpTargetEnable: &ipTargetEnable,
 	}
 
-	loadbalancer, err := loadbalancers.Create(client, createOpts).Extract()
+	loadbalancer, err := loadbalancers.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, loadbalancer.Name)
 	th.AssertEquals(t, createOpts.Description, loadbalancer.Description)
@@ -61,7 +61,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func deleteLoadbalancer(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) {
 	t.Logf("Attempting to delete ELBv3 LoadBalancer: %s", loadbalancerID)
-	err := loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err := loadbalancers.Delete(client, loadbalancerID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 LoadBalancer: %s", loadbalancerID)
 }
@@ -130,7 +130,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 		Certificate: cert,
 	}
 
-	certificate, err := certificates.Create(client, createOpts).Extract()
+	certificate, err := certificates.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, certificate.Name)
 	th.AssertEquals(t, createOpts.Description, certificate.Description)
@@ -141,7 +141,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 
 func deleteCertificate(t *testing.T, client *golangsdk.ServiceClient, certificateID string) {
 	t.Logf("Attempting to delete ELBv3 certificate: %s", certificateID)
-	err := certificates.Delete(client, certificateID).ExtractErr()
+	err := certificates.Delete(client, certificateID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 certificate: %s", certificateID)
 }
@@ -151,32 +151,32 @@ func createPool(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID st
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	poolName := tools.RandomString("create-pool-", 3)
 	createOpts := pools.CreateOpts{
-		LBMethod:                 "LEAST_CONNECTIONS",
-		Protocol:                 "HTTP",
-		LoadbalancerID:           loadbalancerID,
-		Name:                     poolName,
-		Description:              "some interesting description",
-		VpcId:                    vpcID,
-		Type:                     "instance",
-		DeletionProtectionEnable: pointerto.Bool(true),
+		LbAlgorithm:                    "LEAST_CONNECTIONS",
+		Protocol:                       "HTTP",
+		LoadbalancerId:                 loadbalancerID,
+		Name:                           poolName,
+		Description:                    "some interesting description",
+		VpcId:                          vpcID,
+		Type:                           "instance",
+		MemberDeletionProtectionEnable: pointerto.Bool(true),
 	}
 
-	pool, err := pools.Create(client, createOpts).Extract()
+	pool, err := pools.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, pool.Name)
 	th.AssertEquals(t, createOpts.Description, pool.Description)
-	th.AssertEquals(t, createOpts.LBMethod, pool.LBMethod)
-	th.AssertEquals(t, true, pool.DeletionProtectionEnable)
+	th.AssertEquals(t, createOpts.LbAlgorithm, pool.LbAlgorithm)
+	th.AssertEquals(t, true, pool.MemberDeletionProtectionEnable)
 	th.AssertEquals(t, createOpts.Type, pool.Type)
 	th.AssertEquals(t, createOpts.VpcId, pool.VpcId)
-	t.Logf("Created ELBv3 Pool: %s", pool.ID)
+	t.Logf("Created ELBv3 Pool: %s", pool.Id)
 
-	return pool.ID
+	return pool.Id
 }
 
 func deletePool(t *testing.T, client *golangsdk.ServiceClient, poolID string) {
 	t.Logf("Attempting to delete ELBv3 Pool: %s", poolID)
-	err := pools.Delete(client, poolID).ExtractErr()
+	err := pools.Delete(client, poolID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 Pool: %s", poolID)
 }
@@ -184,13 +184,13 @@ func deletePool(t *testing.T, client *golangsdk.ServiceClient, poolID string) {
 func createListener(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) string {
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID: loadbalancerID,
-		Protocol:       listeners.ProtocolHTTP,
+		Protocol:       "HTTP",
 		ProtocolPort:   80,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	return listener.ID
 }
 
 func deleteListener(t *testing.T, client *golangsdk.ServiceClient, listenerID string) {
-	th.AssertNoErr(t, listeners.Delete(client, listenerID).ExtractErr())
+	th.AssertNoErr(t, listeners.Delete(client, listenerID))
 }

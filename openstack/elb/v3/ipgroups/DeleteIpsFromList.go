@@ -3,7 +3,6 @@ package ipgroups
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // DeleteIpFromList is used to create or update the ip list of specific ip group.
@@ -12,17 +11,12 @@ func DeleteIpFromList(c *golangsdk.ServiceClient, id string, opts BatchDeleteOpt
 	if err != nil {
 		return nil, err
 	}
-	url := c.ServiceURL("ipgroups", id, "iplist", "batch-delete")
-	raw, err := c.Post(url, b, nil, &golangsdk.RequestOpts{
+
+	// POST /v3/{project_id}/elb/ipgroups/{ipgroup_id}/iplist/batch-delete
+	raw, err := c.Post(c.ServiceURL("ipgroups", id, "iplist", "batch-delete"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	var res IpGroup
-	err = extract.IntoStructPtr(raw.Body, &res, "ipgroup")
-	return &res, err
+	return extra(err, raw)
 }
 
 // BatchDeleteOpts contains all the values needed to perform BatchDelete on the IP address group.

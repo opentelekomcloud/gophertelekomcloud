@@ -18,57 +18,56 @@ func TestPolicyWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listenerID := createListener(t, client, lbID)
-	defer deleteListener(t, client, listenerID)
+	t.Cleanup(func() { deleteListener(t, client, listenerID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
-		Action:         policies.ActionRedirectToPool,
-		ListenerID:     listenerID,
-		RedirectPoolID: poolID,
+		Action:         "REDIRECT_TO_POOL",
+		ListenerId:     listenerID,
+		RedirectPoolId: poolID,
 		Description:    "Go SDK test policy",
 		Name:           tools.RandomString("sdk-pol-", 5),
-		Position:       37,
+		Position:       pointerto.Int(37),
 	}
-	created, err := policies.Create(client, createOpts).Extract()
+	created, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created L7 Policy")
-	id := created.ID
+	id := created.Id
 
-	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
+	t.Cleanup(func() {
+		th.AssertNoErr(t, policies.Delete(client, id))
 		t.Log("Deleted L7 Policy")
-	}()
+	})
 
-	got, err := policies.Get(client, id).Extract()
+	got, err := policies.Get(client, id)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, created, got)
 
 	listOpts := policies.ListOpts{
-		ListenerID: []string{listenerID},
+		ListenerId: []string{listenerID},
 	}
 	pages, err := policies.List(client, listOpts).AllPages()
 	th.AssertNoErr(t, err)
 	policySlice, err := policies.ExtractPolicies(pages)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(policySlice))
-	th.AssertEquals(t, id, policySlice[0].ID)
+	th.AssertEquals(t, id, policySlice[0].Id)
 
-	nameUpdated := tools.RandomString("updated-", 5)
 	updateOpts := policies.UpdateOpts{
-		Name: &nameUpdated,
+		Name: tools.RandomString("updated-", 5),
 	}
-	updated, err := policies.Update(client, id, updateOpts).Extract()
+	updated, err := policies.Update(client, id, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Log("Updated l7 Policy")
 	th.AssertEquals(t, created.Action, updated.Action)
-	th.AssertEquals(t, id, updated.ID)
+	th.AssertEquals(t, id, updated.Id)
 
-	got2, _ := policies.Get(client, id).Extract()
+	got2, _ := policies.Get(client, id)
 	th.AssertDeepEquals(t, updated, got2)
 }
 
@@ -79,72 +78,71 @@ func TestPolicyWorkflowFixedResponse(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  lbID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() { deleteListener(t, client, listener.ID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
-		Action:     policies.ActionFixedResponse,
-		ListenerID: listener.ID,
-		FixedResponseConfig: &policies.FixedResponseOptions{
+		Action:     "FIXED_RESPONSE",
+		ListenerId: listener.ID,
+		FixedResponseConfig: policies.FixedResponseOptions{
 			StatusCode:  "200",
 			ContentType: "text/plain",
 			MessageBody: "Fixed Response",
 		},
 		Description: "Go SDK test policy",
 		Name:        tools.RandomString("sdk-pol-", 5),
-		Position:    37,
+		Position:    pointerto.Int(37),
 	}
-	created, err := policies.Create(client, createOpts).Extract()
+	created, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created L7 Policy")
-	id := created.ID
+	id := created.Id
 
-	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
+	t.Cleanup(func() {
+		th.AssertNoErr(t, policies.Delete(client, id))
 		t.Log("Deleted L7 Policy")
-	}()
+	})
 
-	got, err := policies.Get(client, id).Extract()
+	got, err := policies.Get(client, id)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, created, got)
 
 	listOpts := policies.ListOpts{
-		ListenerID: []string{listener.ID},
+		ListenerId: []string{listener.ID},
 	}
 	pages, err := policies.List(client, listOpts).AllPages()
 	th.AssertNoErr(t, err)
 	policySlice, err := policies.ExtractPolicies(pages)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(policySlice))
-	th.AssertEquals(t, id, policySlice[0].ID)
+	th.AssertEquals(t, id, policySlice[0].Id)
 
-	nameUpdated := tools.RandomString("updated-", 5)
 	updateOpts := policies.UpdateOpts{
-		Name: &nameUpdated,
-		FixedResponseConfig: &policies.FixedResponseOptions{
+		Name: tools.RandomString("updated-", 5),
+		FixedResponseConfig: policies.FixedResponseOptions{
 			StatusCode:  "200",
 			ContentType: "text/plain",
 			MessageBody: "Fixed Response Update",
 		},
 	}
-	updated, err := policies.Update(client, id, updateOpts).Extract()
+	updated, err := policies.Update(client, id, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Log("Updated l7 Policy")
 	th.AssertEquals(t, created.Action, updated.Action)
-	th.AssertEquals(t, id, updated.ID)
+	th.AssertEquals(t, id, updated.Id)
 
-	got2, _ := policies.Get(client, id).Extract()
+	got2, _ := policies.Get(client, id)
 	th.AssertDeepEquals(t, updated, got2)
 }
 
@@ -155,25 +153,25 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	lbID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, lbID)
+	t.Cleanup(func() { deleteLoadbalancer(t, client, lbID) })
 
 	listener, err := listeners.Create(client, listeners.CreateOpts{
 		LoadbalancerID:  lbID,
-		Protocol:        listeners.ProtocolHTTP,
+		Protocol:        "HTTP",
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	t.Cleanup(func() { deleteListener(t, client, listener.ID) })
 
 	poolID := createPool(t, client, lbID)
-	defer deletePool(t, client, poolID)
+	t.Cleanup(func() { deletePool(t, client, poolID) })
 
 	createOpts := policies.CreateOpts{
-		Action:      policies.ActionUrlRedirect,
-		ListenerID:  listener.ID,
+		Action:      "REDIRECT_TO_URL",
+		ListenerId:  listener.ID,
 		RedirectUrl: "https://www.bing.com:443",
-		RedirectUrlConfig: &policies.RedirectUrlOptions{
+		RedirectUrlConfig: policies.RedirectUrlOptions{
 			StatusCode: "302",
 			Protocol:   "${protocol}",
 			Port:       "${port}",
@@ -183,36 +181,35 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 		},
 		Description: "Go SDK test policy",
 		Name:        tools.RandomString("sdk-pol-", 5),
-		Position:    37,
+		Position:    pointerto.Int(37),
 	}
-	created, err := policies.Create(client, createOpts).Extract()
+	created, err := policies.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created L7 Policy")
-	id := created.ID
+	id := created.Id
 
-	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
+	t.Cleanup(func() {
+		th.AssertNoErr(t, policies.Delete(client, id))
 		t.Log("Deleted L7 Policy")
-	}()
+	})
 
-	got, err := policies.Get(client, id).Extract()
+	got, err := policies.Get(client, id)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, created, got)
 
 	listOpts := policies.ListOpts{
-		ListenerID: []string{listener.ID},
+		ListenerId: []string{listener.ID},
 	}
 	pages, err := policies.List(client, listOpts).AllPages()
 	th.AssertNoErr(t, err)
 	policySlice, err := policies.ExtractPolicies(pages)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(policySlice))
-	th.AssertEquals(t, id, policySlice[0].ID)
+	th.AssertEquals(t, id, policySlice[0].Id)
 
-	nameUpdated := tools.RandomString("updated-", 5)
 	updateOpts := policies.UpdateOpts{
-		Name: &nameUpdated,
-		RedirectUrlConfig: &policies.RedirectUrlOptions{
+		Name: tools.RandomString("updated-", 5),
+		RedirectUrlConfig: policies.RedirectUrlOptions{
 			StatusCode: "308",
 			Protocol:   "${protocol}",
 			Port:       "${port}",
@@ -221,12 +218,12 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 			Host:       "${host}",
 		},
 	}
-	updated, err := policies.Update(client, id, updateOpts).Extract()
+	updated, err := policies.Update(client, id, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Log("Updated l7 Policy")
 	th.AssertEquals(t, created.Action, updated.Action)
-	th.AssertEquals(t, id, updated.ID)
+	th.AssertEquals(t, id, updated.Id)
 
-	got2, _ := policies.Get(client, id).Extract()
+	got2, _ := policies.Get(client, id)
 	th.AssertDeepEquals(t, updated, got2)
 }

@@ -3,14 +3,33 @@ package security_policy
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type CreateOpts struct {
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description,omitempty"`
-	Protocols   []string `json:"protocols" required:"true"`
-	Ciphers     []string `json:"ciphers" required:"true"`
+	// Specifies the name of the custom security policy. The default value is "".
+	//
+	// Minimum: 0
+	//
+	// Maximum: 255
+	Name string `json:"name,omitempty"`
+	// Provides supplementary information about the custom security policy. The default value is "".
+	//
+	// Minimum: 0
+	//
+	// Maximum: 255
+	Description string `json:"description,omitempty"`
+	// Specifies the enterprise project ID. This parameter is unsupported. Please do not use it.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
+	// Lists the TLS protocols supported by the custom security policy. Value options: TLSv1, TLSv1.1, TLSv1.2, and TLSv1.3.
+	Protocols []string `json:"protocols" required:"true"`
+	// Lists the cipher suites supported by the custom security policy. The following cipher suites are supported: ECDHE-RSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,AES128-GCM-SHA256,AES256-GCM-SHA384,ECDHE-ECDSA-AES128-SHA256,ECDHE-RSA-AES128-SHA256,AES128-SHA256,AES256-SHA256,ECDHE-ECDSA-AES256-SHA384,ECDHE-RSA-AES256-SHA384,ECDHE-ECDSA-AES128-SHA,ECDHE-RSA-AES128-SHA,ECDHE-RSA-AES256-SHA,ECDHE-ECDSA-AES256-SHA,AES128-SHA,AES256-SHA,CAMELLIA128-SHA,DES-CBC3-SHA,CAMELLIA256-SHA,ECDHE-RSA-CHACHA20-POLY1305,ECDHE-ECDSA-CHACHA20-POLY1305,TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,TLS_AES_128_CCM_SHA256,TLS_AES_128_CCM_8_SHA256
+	//
+	// Note:
+	//
+	// The protocol and cipher suite must match. At least one cipher suite must match the protocol.
+	//
+	// You can match the protocol and cipher suite based on system security policy.
+	Ciphers []string `json:"ciphers" required:"true"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*SecurityPolicy, error) {
@@ -20,32 +39,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*SecurityPolicy, 
 	}
 
 	raw, err := client.Post(client.ServiceURL("security-policies"), b, nil, &golangsdk.RequestOpts{OkCodes: []int{201}})
-	if err != nil {
-		return nil, err
-	}
-
-	var res SecurityPolicy
-	err = extract.Into(raw.Body, &res)
-	return &res, err
-}
-
-type SecurityPolicy struct {
-	SecurityPolicy PolicyRef `json:"security_policy"`
-	RequestId      string    `json:"request_id"`
-}
-
-type PolicyRef struct {
-	ID          string        `json:"id"`
-	ProjectId   string        `json:"project_id"`
-	Name        string        `json:"name"`
-	Description string        `json:"description"`
-	Listeners   []ListenerRef `json:"listeners"`
-	Protocols   []string      `json:"protocols"`
-	Ciphers     []string      `json:"ciphers"`
-	CreatedAt   string        `json:"created_at"`
-	UpdatedAt   string        `json:"updated_at"`
-}
-
-type ListenerRef struct {
-	ID string `json:"id"`
+	return extra(err, raw)
 }
