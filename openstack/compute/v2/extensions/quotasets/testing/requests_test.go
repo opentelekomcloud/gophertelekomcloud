@@ -4,7 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/quotasets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -41,7 +42,7 @@ func TestPartialUpdate(t *testing.T) {
 	th.SetupHTTP()
 	t.Cleanup(th.TeardownHTTP)
 	HandlePartialPutSuccessfully(t)
-	opts := quotasets.UpdateOpts{Cores: golangsdk.IntToPointer(200), Force: true}
+	opts := quotasets.UpdateOpts{Cores: pointerto.Int(200), Force: true}
 	actual, err := quotasets.Update(client.ServiceClient(), FirstTenantID, opts).Extract()
 	th.AssertNoErr(t, err)
 	th.CheckDeepEquals(t, &FirstQuotaSet, actual)

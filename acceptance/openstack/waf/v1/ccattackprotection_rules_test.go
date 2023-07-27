@@ -3,6 +3,8 @@ package v1
 import (
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	rules "github.com/opentelekomcloud/gophertelekomcloud/openstack/waf/v1/ccattackprotection_rules"
@@ -17,9 +19,9 @@ func TestCCAttackProtectionRuleWorkflow(t *testing.T) {
 	pID := prepareAndRemovePolicy(t, client)
 	opts := rules.CreateOpts{
 		Path:        "/admin*",
-		LimitNum:    golangsdk.IntToPointer(2),
-		LimitPeriod: golangsdk.IntToPointer(30),
-		LockTime:    golangsdk.IntToPointer(1200),
+		LimitNum:    pointerto.Int(2),
+		LimitPeriod: pointerto.Int(30),
+		LockTime:    pointerto.Int(1200),
 		TagType:     "cookie",
 		TagIndex:    "sessionid",
 		TagCondition: rules.TagCondition{

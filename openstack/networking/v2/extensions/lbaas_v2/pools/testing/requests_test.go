@@ -3,7 +3,8 @@ package testing
 import (
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/pools"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -196,7 +197,7 @@ func TestCreateMember(t *testing.T) {
 		TenantID:     "2ffc6e22aae24e4795f87155d24c896f",
 		Address:      "10.0.2.11",
 		ProtocolPort: 80,
-		Weight:       golangsdk.IntToPointer(10),
+		Weight:       pointerto.Int(10),
 	}).Extract()
 	th.AssertNoErr(t, err)
 
@@ -253,7 +254,7 @@ func TestUpdateMember(t *testing.T) {
 	client := fake.ServiceClient()
 	actual, err := pools.UpdateMember(client, "332abe93-f488-41ba-870b-2ac66be7f853", "2a280670-c202-4b0b-a562-34077415aabf", pools.UpdateMemberOpts{
 		Name:   "newMemberName",
-		Weight: golangsdk.IntToPointer(4),
+		Weight: pointerto.Int(4),
 	}).Extract()
 	if err != nil {
 		t.Fatalf("Unexpected Update error: %v", err)

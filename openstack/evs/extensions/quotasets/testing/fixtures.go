@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/quotasets"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -96,12 +97,12 @@ var fullUpdateExpectedJSONBody = `
 }`
 
 var fullUpdateOpts = quotasets.UpdateOpts{
-	Volumes:            golangsdk.IntToPointer(8),
-	Snapshots:          golangsdk.IntToPointer(9),
-	Gigabytes:          golangsdk.IntToPointer(10),
-	PerVolumeGigabytes: golangsdk.IntToPointer(11),
-	Backups:            golangsdk.IntToPointer(12),
-	BackupGigabytes:    golangsdk.IntToPointer(13),
+	Volumes:            pointerto.Int(8),
+	Snapshots:          pointerto.Int(9),
+	Gigabytes:          pointerto.Int(10),
+	PerVolumeGigabytes: pointerto.Int(11),
+	Backups:            pointerto.Int(12),
+	BackupGigabytes:    pointerto.Int(13),
 }
 
 var fullUpdateExpectedQuotaSet = quotasets.QuotaSet{
@@ -126,12 +127,12 @@ var partialUpdateExpectedJSONBody = `
 }`
 
 var partialUpdateOpts = quotasets.UpdateOpts{
-	Volumes:            golangsdk.IntToPointer(200),
-	Snapshots:          golangsdk.IntToPointer(0),
-	Gigabytes:          golangsdk.IntToPointer(0),
-	PerVolumeGigabytes: golangsdk.IntToPointer(0),
-	Backups:            golangsdk.IntToPointer(0),
-	BackupGigabytes:    golangsdk.IntToPointer(0),
+	Volumes:            pointerto.Int(200),
+	Snapshots:          pointerto.Int(0),
+	Gigabytes:          pointerto.Int(0),
+	PerVolumeGigabytes: pointerto.Int(0),
+	Backups:            pointerto.Int(0),
+	BackupGigabytes:    pointerto.Int(0),
 }
 
 var partiualUpdateExpectedQuotaSet = quotasets.QuotaSet{Volumes: 200}
