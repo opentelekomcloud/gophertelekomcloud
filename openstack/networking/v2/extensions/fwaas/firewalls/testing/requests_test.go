@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/firewalls"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/routerinsertion"
@@ -187,7 +188,7 @@ func TestCreate(t *testing.T) {
 		TenantID:     "b4eedccc6fb74fa8a7ad6b08382b852b",
 		Name:         "fw",
 		Description:  "OpenStack firewall",
-		AdminStateUp: golangsdk.Enabled,
+		AdminStateUp: pointerto.Bool(true),
 		PolicyID:     "19ab8c87-4a32-4e6a-a74e-b77fffb89a0c",
 	}
 	_, err := firewalls.Create(fake.ServiceClient(), options).Extract()
@@ -318,7 +319,7 @@ func TestUpdate(t *testing.T) {
 	options := firewalls.UpdateOpts{
 		Name:         "fw",
 		Description:  "updated fw",
-		AdminStateUp: golangsdk.Disabled,
+		AdminStateUp: pointerto.Bool(false),
 		PolicyID:     "19ab8c87-4a32-4e6a-a74e-b77fffb89a0c",
 	}
 

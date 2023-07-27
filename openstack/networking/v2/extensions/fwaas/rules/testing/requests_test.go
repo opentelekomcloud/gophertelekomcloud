@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/rules"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -359,7 +360,7 @@ func TestUpdate(t *testing.T) {
 		DestinationPort:      &newDestintionPort,
 		Name:                 &newName,
 		Action:               &newAction,
-		Enabled:              golangsdk.Disabled,
+		Enabled:              pointerto.Bool(false),
 	}
 
 	_, err := rules.Update(fake.ServiceClient(), "f03bd950-6c56-4f5e-a307-45967078f507", options).Extract()

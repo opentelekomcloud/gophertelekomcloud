@@ -3,7 +3,8 @@ package testing
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/listeners"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -62,7 +63,7 @@ func TestCreateListener(t *testing.T) {
 		Protocol:               "TCP",
 		Name:                   "db",
 		LoadbalancerID:         "79e05663-7f03-45d2-a092-8b94062f22ab",
-		AdminStateUp:           golangsdk.Enabled,
+		AdminStateUp:           pointerto.Bool(true),
 		DefaultTlsContainerRef: "2c433435-20de-4411-84ae-9cc8917def76",
 		DefaultPoolID:          "41efe233-7591-43c5-9cf7-923964759f9e",
 		ProtocolPort:           3306,

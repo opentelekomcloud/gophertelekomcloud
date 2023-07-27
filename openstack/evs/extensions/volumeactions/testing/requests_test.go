@@ -4,9 +4,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/extensions/volumeactions"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
@@ -116,7 +117,7 @@ func TestInitializeConnection(t *testing.T) {
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
-		Multipath: golangsdk.Disabled,
+		Multipath: pointerto.Bool(false),
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}
@@ -134,7 +135,7 @@ func TestTerminateConnection(t *testing.T) {
 		IP:        "127.0.0.1",
 		Host:      "stack",
 		Initiator: "iqn.1994-05.com.redhat:17cf566367d2",
-		Multipath: golangsdk.Enabled,
+		Multipath: pointerto.Bool(true),
 		Platform:  "x86_64",
 		OSType:    "linux2",
 	}

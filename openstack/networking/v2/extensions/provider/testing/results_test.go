@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/provider"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/networks"
@@ -98,7 +99,7 @@ func TestCreate(t *testing.T) {
 		provider.NetworkProviderExt
 	}
 
-	options := networks.CreateOpts{Name: "private", AdminStateUp: golangsdk.Enabled}
+	options := networks.CreateOpts{Name: "private", AdminStateUp: pointerto.Bool(true)}
 	err := networks.Create(fake.ServiceClient(), options).ExtractInto(&s)
 	th.AssertNoErr(t, err)
 
@@ -211,7 +212,7 @@ func TestUpdate(t *testing.T) {
 	}
 
 	iTrue := true
-	options := networks.UpdateOpts{Name: "new_network_name", AdminStateUp: golangsdk.Disabled, Shared: &iTrue}
+	options := networks.UpdateOpts{Name: "new_network_name", AdminStateUp: pointerto.Bool(false), Shared: &iTrue}
 	err := networks.Update(fake.ServiceClient(), "4e8e5957-649f-477b-9e5b-f1f75b21c03c", options).ExtractInto(&s)
 	th.AssertNoErr(t, err)
 

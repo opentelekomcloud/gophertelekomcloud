@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas/vips"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -166,7 +167,7 @@ func TestCreate(t *testing.T) {
 	opts := vips.CreateOpts{
 		Protocol:     "HTTP",
 		Name:         "NewVip",
-		AdminStateUp: golangsdk.Enabled,
+		AdminStateUp: pointerto.Bool(true),
 		SubnetID:     "8032909d-47a1-4715-90af-5153ffe39861",
 		PoolID:       "61b1f87a-7a21-4ad3-9dda-7f81d249944f",
 		ProtocolPort: 80,

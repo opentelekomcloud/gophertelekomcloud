@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/vpnaas/services"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -58,7 +59,7 @@ func TestCreate(t *testing.T) {
 		TenantID:     "10039663455a446d8ba2cbb058b0f578",
 		Name:         "vpn",
 		Description:  "OpenStack VPN service",
-		AdminStateUp: golangsdk.Enabled,
+		AdminStateUp: pointerto.Bool(true),
 		RouterID:     "66e3b16c-8ce5-40fb-bb49-ab6d8dc3f2aa",
 	}
 	actual, err := services.Create(fake.ServiceClient(), options).Extract()
@@ -244,7 +245,7 @@ func TestUpdate(t *testing.T) {
 	options := services.UpdateOpts{
 		Name:         &updatedName,
 		Description:  &updatedServiceDescription,
-		AdminStateUp: golangsdk.Disabled,
+		AdminStateUp: pointerto.Bool(false),
 	}
 
 	actual, err := services.Update(fake.ServiceClient(), "5c561d9d-eaea-45f6-ae3e-08d1a7080828", options).Extract()

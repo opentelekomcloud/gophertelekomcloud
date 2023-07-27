@@ -3,7 +3,8 @@ package testing
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/rts/v1/stacks"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -29,7 +30,7 @@ func TestCreateStack(t *testing.T) {
 		Name:            "stackcreated",
 		Timeout:         60,
 		TemplateOpts:    template,
-		DisableRollback: golangsdk.Disabled,
+		DisableRollback: pointerto.Bool(false),
 	}
 	actual, err := stacks.Create(fake.ServiceClient(), createOpts).Extract()
 	th.AssertNoErr(t, err)

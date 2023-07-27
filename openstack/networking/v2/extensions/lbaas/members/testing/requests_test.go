@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas/members"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -217,7 +218,7 @@ func TestUpdate(t *testing.T) {
     `)
 	})
 
-	options := members.UpdateOpts{AdminStateUp: golangsdk.Disabled}
+	options := members.UpdateOpts{AdminStateUp: pointerto.Bool(false)}
 
 	_, err := members.Update(fake.ServiceClient(), "332abe93-f488-41ba-870b-2ac66be7f853", options).Extract()
 	th.AssertNoErr(t, err)

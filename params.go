@@ -31,24 +31,6 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 	return res, err
 }
 
-// EnabledState is a convenience type, mostly used in Create and Update
-// operations. Because the zero value of a bool is FALSE, we need to use a
-// pointer instead to indicate zero-ness.
-// Deprecated, use pointerto.Bool instead
-type EnabledState *bool
-
-// Convenience vars for EnabledState values.
-// Deprecated: use `pointerto.Bool` instead.
-var (
-	iTrue  = true
-	iFalse = false
-
-	// Enabled is a pointer to `true`.
-	Enabled EnabledState = &iTrue
-	// Disabled is a pointer to `false`.
-	Disabled EnabledState = &iFalse
-)
-
 // IPVersion is a type for the possible IP address versions. Valid instances
 // are IPv4 and IPv6
 type IPVersion int

@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/vpnaas/siteconnections"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -79,7 +80,7 @@ func TestCreate(t *testing.T) {
 
 	options := siteconnections.CreateOpts{
 		Name:           "vpnconnection1",
-		AdminStateUp:   golangsdk.Enabled,
+		AdminStateUp:   pointerto.Bool(true),
 		PSK:            "secret",
 		Initiator:      siteconnections.InitiatorBiDirectional,
 		IPSecPolicyID:  "e6e23d0c-9519-4d52-8ea4-5b1f96d857b1",

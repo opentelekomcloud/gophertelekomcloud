@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/fwaas/policies"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -149,8 +150,8 @@ func TestCreate(t *testing.T) {
 		TenantID:    "9145d91459d248b1b02fdaca97c6a75d",
 		Name:        "policy",
 		Description: "Firewall policy",
-		Shared:      golangsdk.Disabled,
-		Audited:     golangsdk.Enabled,
+		Shared:      pointerto.Bool(false),
+		Audited:     pointerto.Bool(true),
 		Rules: []string{
 			"98a58c87-76be-ae7c-a74e-b77fffb88d95",
 			"11a58c87-76be-ae7c-a74e-b77fffb88a32",

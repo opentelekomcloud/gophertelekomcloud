@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas/monitors"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -289,7 +290,7 @@ func TestUpdate(t *testing.T) {
 		MaxRetries:    10,
 		URLPath:       "/another_check",
 		ExpectedCodes: "301",
-		AdminStateUp:  golangsdk.Enabled,
+		AdminStateUp:  pointerto.Bool(true),
 	}).Extract()
 
 	th.AssertNoErr(t, err)

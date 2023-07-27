@@ -3,7 +3,8 @@ package testing
 import (
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/lbaas_v2/loadbalancers"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -60,7 +61,7 @@ func TestCreateLoadbalancer(t *testing.T) {
 
 	actual, err := loadbalancers.Create(fake.ServiceClient(), loadbalancers.CreateOpts{
 		Name:         "db_lb",
-		AdminStateUp: golangsdk.Enabled,
+		AdminStateUp: pointerto.Bool(true),
 		VipSubnetID:  "9cedb85d-0759-4898-8a4b-fa5a5ea10086",
 		VipAddress:   "10.30.176.48",
 		Flavor:       "medium",

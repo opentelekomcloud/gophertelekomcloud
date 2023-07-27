@@ -6,7 +6,8 @@ package v3
 import (
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/domains"
@@ -138,7 +139,7 @@ func TestRoleAssignToUserOnDomain(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	domain, err := CreateDomain(t, client, &domains.CreateOpts{
-		Enabled: golangsdk.Disabled,
+		Enabled: pointerto.Bool(false),
 	})
 	th.AssertNoErr(t, err)
 
@@ -191,7 +192,7 @@ func TestRoleAssignToGroupOnDomain(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	domain, err := CreateDomain(t, client, &domains.CreateOpts{
-		Enabled: golangsdk.Disabled,
+		Enabled: pointerto.Bool(false),
 	})
 	th.AssertNoErr(t, err)
 
