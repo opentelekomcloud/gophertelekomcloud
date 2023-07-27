@@ -270,8 +270,8 @@ func (jt *JSONUnix) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	t = time.Unix(unix, 0)
-	*jt = JSONUnix(t)
+	TempT = time.Unix(unix, 0)
+	*jt = JSONUnix(TempT)
 	return nil
 }
 

@@ -31,7 +31,7 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 	return res, err
 }
 
-var t time.Time
+var TempT time.Time
 
 // isZero checks if given argument has default type value.
 func isZero(v reflect.Value) bool {
@@ -51,7 +51,7 @@ func isZero(v reflect.Value) bool {
 		}
 		return z
 	case reflect.Struct:
-		if v.Type() == reflect.TypeOf(t) {
+		if v.Type() == reflect.TypeOf(TempT) {
 			return v.Interface().(time.Time).IsZero()
 		}
 		z := true
