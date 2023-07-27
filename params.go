@@ -11,30 +11,7 @@ import (
 )
 
 /*
-BuildRequestBody builds a map[string]interface from the given `struct`. If
-parent is not an empty string, the final map[string]interface returned will
-encapsulate the built one.
-
-Deprecated: use `internal/params.BuildRequestBody` instead.
-
-For example:
-
-	disk := 1
-	createOpts := flavors.CreateOpts{
-	  ID:         "1",
-	  Name:       "m1.tiny",
-	  Disk:       &disk,
-	  RAM:        512,
-	  VCPUs:      1,
-	  RxTxFactor: 1.0,
-	}
-
-	body, err := golangsdk.BuildRequestBody(createOpts, "flavor")
-
-The above example can be run as-is, however it is recommended to look at how
-BuildRequestBody is used within Gophercloud to more fully understand how it
-fits within the request process as a whole rather than use it directly as shown
-above.
+Deprecated: use `internal/build.RequestBody` instead.
 */
 func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, error) {
 	optsValue := reflect.ValueOf(opts)
@@ -238,26 +215,7 @@ func isZero(v reflect.Value) bool {
 }
 
 /*
-BuildQueryString is an internal function to be used by request methods in
-individual resource packages.
-
-It accepts a tagged structure and expands it into a URL struct. Field names are
-converted into query parameters based on a "q" tag. For example:
-
-	type struct Something {
-	   Bar string `q:"x_bar"`
-	   Baz int    `q:"lorem_ipsum"`
-	}
-
-	instance := Something{
-	   Bar: "AAA",
-	   Baz: "BBB",
-	}
-
-will be converted into "?x_bar=AAA&lorem_ipsum=BBB".
-
-The struct's fields may be strings, integers, or boolean values. Fields left at
-their type's zero value will be omitted from the query.
+Deprecated: use `internal/build.QueryString` instead.
 */
 func BuildQueryString(opts interface{}) (*url.URL, error) {
 	optsValue := reflect.ValueOf(opts)
@@ -335,32 +293,7 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 }
 
 /*
-BuildHeaders is an internal function to be used by request methods in
-individual resource packages.
-
-It accepts an arbitrary tagged structure and produces a string map that's
-suitable for use as the HTTP headers of an outgoing request. Field names are
-mapped to header names based in "h" tags.
-
-	type struct Something {
-	  Bar string `h:"x_bar"`
-	  Baz int    `h:"lorem_ipsum"`
-	}
-
-	instance := Something{
-	  Bar: "AAA",
-	  Baz: "BBB",
-	}
-
-will be converted into:
-
-	map[string]string{
-	  "x_bar": "AAA",
-	  "lorem_ipsum": "BBB",
-	}
-
-Untagged fields and fields left at their zero values are skipped. Integers,
-booleans and string values are supported.
+Deprecated: use `internal/build.Headers` instead.
 */
 func BuildHeaders(opts interface{}) (map[string]string, error) {
 	optsValue := reflect.ValueOf(opts)
