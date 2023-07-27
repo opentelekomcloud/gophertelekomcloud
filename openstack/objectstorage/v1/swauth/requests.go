@@ -1,6 +1,9 @@
 package swauth
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // AuthOptsBuilder describes struct types that can be accepted by the Auth call.
 type AuthOptsBuilder interface {
@@ -18,7 +21,7 @@ type AuthOpts struct {
 
 // ToAuthOptsMap formats an AuthOpts structure into a request body.
 func (opts AuthOpts) ToAuthOptsMap() (map[string]string, error) {
-	return golangsdk.BuildHeaders(opts)
+	return build.Headers(opts)
 }
 
 // Auth performs an authentication request for a Swauth-based user.

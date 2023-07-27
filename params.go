@@ -24,10 +24,3 @@ Deprecated: use `internal/build.QueryString` instead.
 func BuildQueryString(opts interface{}) (*url.URL, error) {
 	return build.QueryString(opts)
 }
-
-/*
-Deprecated: use `internal/build.Headers` instead.
-*/
-func BuildHeaders(opts interface{}) (map[string]string, error) {
-	return build.Headers(opts)
-}

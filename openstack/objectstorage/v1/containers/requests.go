@@ -2,6 +2,7 @@ package containers
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -85,7 +86,7 @@ type CreateOpts struct {
 
 // ToContainerCreateMap formats a CreateOpts into a map of headers.
 func (opts CreateOpts) ToContainerCreateMap() (map[string]string, error) {
-	h, err := golangsdk.BuildHeaders(opts)
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +149,7 @@ type UpdateOpts struct {
 
 // ToContainerUpdateMap formats a UpdateOpts into a map of headers.
 func (opts UpdateOpts) ToContainerUpdateMap() (map[string]string, error) {
-	h, err := golangsdk.BuildHeaders(opts)
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +198,7 @@ type GetOpts struct {
 
 // ToContainerGetMap formats a GetOpts into a map of headers.
 func (opts GetOpts) ToContainerGetMap() (map[string]string, error) {
-	return golangsdk.BuildHeaders(opts)
+	return build.Headers(opts)
 }
 
 // Get is a function that retrieves the metadata of a container. To extract just

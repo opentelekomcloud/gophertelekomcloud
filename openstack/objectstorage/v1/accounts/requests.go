@@ -1,6 +1,9 @@
 package accounts
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // GetOptsBuilder allows extensions to add additional headers to the Get
 // request.
@@ -16,7 +19,7 @@ type GetOpts struct {
 
 // ToAccountGetMap formats a GetOpts into a map[string]string of headers.
 func (opts GetOpts) ToAccountGetMap() (map[string]string, error) {
-	return golangsdk.BuildHeaders(opts)
+	return build.Headers(opts)
 }
 
 // Get is a function that retrieves an account's metadata. To extract just the
@@ -64,7 +67,7 @@ type UpdateOpts struct {
 
 // ToAccountUpdateMap formats an UpdateOpts into a map[string]string of headers.
 func (opts UpdateOpts) ToAccountUpdateMap() (map[string]string, error) {
-	headers, err := golangsdk.BuildHeaders(opts)
+	headers, err := build.Headers(opts)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -74,17 +75,17 @@ func TestBuildHeaders(t *testing.T) {
 		Style:  true,
 	}
 	expected := map[string]string{"Accept": "application/json", "Number": "4", "Style": "true"}
-	actual, err := golangsdk.BuildHeaders(&testStruct)
+	actual, err := build.Headers(&testStruct)
 	th.CheckNoErr(t, err)
 	th.CheckDeepEquals(t, expected, actual)
 
 	testStruct.Num = 0
-	_, err = golangsdk.BuildHeaders(&testStruct)
+	_, err = build.Headers(&testStruct)
 	if err == nil {
 		t.Errorf("Expected error: 'Required header not set'")
 	}
 
-	_, err = golangsdk.BuildHeaders(map[string]interface{}{"Number": 4})
+	_, err = build.Headers(map[string]interface{}{"Number": 4})
 	if err == nil {
 		t.Errorf("Expected error: 'Options type is not a struct'")
 	}

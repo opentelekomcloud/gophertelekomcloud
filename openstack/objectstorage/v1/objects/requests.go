@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/objectstorage/v1/accounts"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -106,7 +108,8 @@ func (opts DownloadOpts) ToObjectDownloadParams() (map[string]string, string, er
 	if err != nil {
 		return nil, "", err
 	}
-	h, err := golangsdk.BuildHeaders(opts)
+
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, q.String(), err
 	}
@@ -179,7 +182,8 @@ func (opts CreateOpts) ToObjectCreateParams() (io.Reader, map[string]string, str
 	if err != nil {
 		return nil, nil, "", err
 	}
-	h, err := golangsdk.BuildHeaders(opts)
+
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, nil, "", err
 	}
@@ -271,7 +275,7 @@ type CopyOpts struct {
 
 // ToObjectCopyMap formats a CopyOpts into a map of headers.
 func (opts CopyOpts) ToObjectCopyMap() (map[string]string, error) {
-	h, err := golangsdk.BuildHeaders(opts)
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -365,7 +369,8 @@ func (opts GetOpts) ToObjectGetParams() (map[string]string, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
-	h, err := golangsdk.BuildHeaders(opts)
+
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, q.String(), err
 	}
@@ -421,7 +426,7 @@ type UpdateOpts struct {
 
 // ToObjectUpdateMap formats a UpdateOpts into a map of headers.
 func (opts UpdateOpts) ToObjectUpdateMap() (map[string]string, error) {
-	h, err := golangsdk.BuildHeaders(opts)
+	h, err := build.Headers(opts)
 	if err != nil {
 		return nil, err
 	}
