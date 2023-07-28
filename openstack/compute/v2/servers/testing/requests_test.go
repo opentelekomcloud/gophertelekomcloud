@@ -397,7 +397,7 @@ func TestDeleteMetadatum(t *testing.T) {
 
 	HandleMetadatumDeleteSuccessfully(t)
 
-	err := servers.DeleteMetadatum(client.ServiceClient(), "1234asdf", "foo").ExtractErr()
+	err := servers.DeleteMetadatum(client.ServiceClient(), "1234asdf", "foo").Err
 	th.AssertNoErr(t, err)
 }
 

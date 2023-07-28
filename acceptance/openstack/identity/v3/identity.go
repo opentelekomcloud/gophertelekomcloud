@@ -207,7 +207,7 @@ func CreateService(t *testing.T, client *golangsdk.ServiceClient, c *services.Cr
 // the project ID failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteProject(t *testing.T, client *golangsdk.ServiceClient, projectID string) {
-	err := projects.Delete(client, projectID).ExtractErr()
+	err := projects.Delete(client, projectID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete project %s: %v", projectID, err)
 	}
@@ -219,7 +219,7 @@ func DeleteProject(t *testing.T, client *golangsdk.ServiceClient, projectID stri
 // the user failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteUser(t *testing.T, client *golangsdk.ServiceClient, userID string) {
-	err := users.Delete(client, userID).ExtractErr()
+	err := users.Delete(client, userID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete user with ID %s: %v", userID, err)
 	}
@@ -231,7 +231,7 @@ func DeleteUser(t *testing.T, client *golangsdk.ServiceClient, userID string) {
 // the group failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteGroup(t *testing.T, client *golangsdk.ServiceClient, groupID string) {
-	err := groups.Delete(client, groupID).ExtractErr()
+	err := groups.Delete(client, groupID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete group %s: %v", groupID, err)
 	}
@@ -243,7 +243,7 @@ func DeleteGroup(t *testing.T, client *golangsdk.ServiceClient, groupID string) 
 // the project ID failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteDomain(t *testing.T, client *golangsdk.ServiceClient, domainID string) {
-	err := domains.Delete(client, domainID).ExtractErr()
+	err := domains.Delete(client, domainID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete domain %s: %v", domainID, err)
 	}
@@ -255,7 +255,7 @@ func DeleteDomain(t *testing.T, client *golangsdk.ServiceClient, domainID string
 // the role failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteRole(t *testing.T, client *golangsdk.ServiceClient, roleID string) {
-	err := roles.Delete(client, roleID).ExtractErr()
+	err := roles.Delete(client, roleID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete role %s: %v", roleID, err)
 	}
@@ -267,7 +267,7 @@ func DeleteRole(t *testing.T, client *golangsdk.ServiceClient, roleID string) {
 // the region failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteRegion(t *testing.T, client *golangsdk.ServiceClient, regionID string) {
-	err := regions.Delete(client, regionID).ExtractErr()
+	err := regions.Delete(client, regionID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete region %s: %v", regionID, err)
 	}
@@ -279,7 +279,7 @@ func DeleteRegion(t *testing.T, client *golangsdk.ServiceClient, regionID string
 // the service failed to be deleted. This works best when using it as
 // a deferred function.
 func DeleteService(t *testing.T, client *golangsdk.ServiceClient, serviceID string) {
-	err := services.Delete(client, serviceID).ExtractErr()
+	err := services.Delete(client, serviceID).Err
 	if err != nil {
 		t.Fatalf("Unable to delete service %s: %v", serviceID, err)
 	}
@@ -291,7 +291,7 @@ func DeleteService(t *testing.T, client *golangsdk.ServiceClient, serviceID stri
 // A fatal error will occur if it fails to delete the assignment.
 // This works best when using it as a deferred function.
 func UnassignRole(t *testing.T, client *golangsdk.ServiceClient, roleID string, opts *roles.UnassignOpts) {
-	err := roles.Unassign(client, roleID, *opts).ExtractErr()
+	err := roles.Unassign(client, roleID, *opts).Err
 	if err != nil {
 		t.Fatalf("Unable to unassign a role %v on context %+v: %v", roleID, *opts, err)
 	}

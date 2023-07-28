@@ -34,7 +34,7 @@ func TestDnatRuleLifeCycle(t *testing.T) {
 
 	defer func() {
 		t.Logf("Attempting to delete DNAT rule: %s", dnatRule.ID)
-		err = dnatrules.Delete(client, dnatRule.ID).ExtractErr()
+		err = dnatrules.Delete(client, dnatRule.ID).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted DNAT rule: %s", dnatRule.ID)
 	}()

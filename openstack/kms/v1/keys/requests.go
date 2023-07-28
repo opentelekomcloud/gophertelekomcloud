@@ -306,7 +306,7 @@ func ListAllKeys(client *golangsdk.ServiceClient, opts ListOptsBuilder) (r ListR
 	return
 }
 
-func EnableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.ErrResult) {
+func EnableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.Result) {
 	b, err := opts.ToKeyRotationMap()
 	if err != nil {
 		r.Err = err
@@ -319,7 +319,7 @@ func EnableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder
 	return
 }
 
-func DisableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.ErrResult) {
+func DisableKeyRotation(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.Result) {
 	b, err := opts.ToKeyRotationMap()
 	if err != nil {
 		r.Err = err
@@ -344,7 +344,7 @@ func GetKeyRotationStatus(client *golangsdk.ServiceClient, opts RotationOptsBuil
 	return
 }
 
-func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.ErrResult) {
+func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts RotationOptsBuilder) (r golangsdk.Result) {
 	b, err := opts.ToKeyRotationMap()
 	if err != nil {
 		r.Err = err

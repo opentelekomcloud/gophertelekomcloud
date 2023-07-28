@@ -104,25 +104,25 @@ func TestAssign(t *testing.T) {
 	err := roles.Assign(client.ServiceClient(), "{role_id}", roles.AssignOpts{
 		UserID:    "{user_id}",
 		ProjectID: "{project_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	err = roles.Assign(client.ServiceClient(), "{role_id}", roles.AssignOpts{
 		UserID:   "{user_id}",
 		DomainID: "{domain_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	err = roles.Assign(client.ServiceClient(), "{role_id}", roles.AssignOpts{
 		GroupID:   "{group_id}",
 		ProjectID: "{project_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	err = roles.Assign(client.ServiceClient(), "{role_id}", roles.AssignOpts{
 		GroupID:  "{group_id}",
 		DomainID: "{domain_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -134,24 +134,24 @@ func TestUnassign(t *testing.T) {
 	err := roles.Unassign(client.ServiceClient(), "{role_id}", roles.UnassignOpts{
 		UserID:    "{user_id}",
 		ProjectID: "{project_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	err = roles.Unassign(client.ServiceClient(), "{role_id}", roles.UnassignOpts{
 		UserID:   "{user_id}",
 		DomainID: "{domain_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	err = roles.Unassign(client.ServiceClient(), "{role_id}", roles.UnassignOpts{
 		GroupID:   "{group_id}",
 		ProjectID: "{project_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	err = roles.Unassign(client.ServiceClient(), "{role_id}", roles.UnassignOpts{
 		GroupID:  "{group_id}",
 		DomainID: "{domain_id}",
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 }

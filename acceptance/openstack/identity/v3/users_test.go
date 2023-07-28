@@ -55,7 +55,7 @@ func TestUserLifecycle(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		err = users.Delete(client, user.ID).ExtractErr()
+		err = users.Delete(client, user.ID).Err
 		th.AssertNoErr(t, err)
 	})
 

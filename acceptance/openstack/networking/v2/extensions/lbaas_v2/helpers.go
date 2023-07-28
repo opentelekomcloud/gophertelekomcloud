@@ -85,7 +85,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 func deleteLbaasCertificate(t *testing.T, client *golangsdk.ServiceClient, lbaasCertificateId string) {
 	t.Logf("Attempting to delete LbaasV2 certificate: %s", lbaasCertificateId)
 
-	err := certificates.Delete(client, lbaasCertificateId).ExtractErr()
+	err := certificates.Delete(client, lbaasCertificateId).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("LbaasV2 certificate is deleted: %s", lbaasCertificateId)
@@ -153,7 +153,7 @@ func createLbaasPool(t *testing.T, client *golangsdk.ServiceClient, loadBalancer
 func deleteLbaasPool(t *testing.T, client *golangsdk.ServiceClient, lbaasPoolID string) {
 	t.Logf("Attempting to delete LbaasV2 pool: %s", lbaasPoolID)
 
-	err := pools.Delete(client, lbaasPoolID).ExtractErr()
+	err := pools.Delete(client, lbaasPoolID).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("LbaasV2 pool is deleted: %s", lbaasPoolID)
@@ -183,7 +183,7 @@ func createLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) (*lo
 func deleteLbaasLoadBalancer(t *testing.T, client *golangsdk.ServiceClient, lbaasLBID string) {
 	t.Logf("Attempting to delete LbaasV2 LoadBalancer: %s", lbaasLBID)
 
-	err := loadbalancers.Delete(client, lbaasLBID).ExtractErr()
+	err := loadbalancers.Delete(client, lbaasLBID).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("LbaasV2 LoadBalancer is deleted: %s", lbaasLBID)

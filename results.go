@@ -48,10 +48,6 @@ type JsonRDSInstanceField struct {
 	Status string `json:"status"`
 }
 
-// ExtractInto allows users to provide an object into which `Extract` will extract
-// the `Result.Body`. This would be useful for OpenStack providers that have
-// different fields in the response object than OpenStack proper.
-//
 // Deprecated: use extract.Into function instead
 func (r Result) ExtractInto(to any) error {
 	if r.Err != nil {
@@ -61,16 +57,6 @@ func (r Result) ExtractInto(to any) error {
 	return extract.Into(bytes.NewReader(r.Body), to)
 }
 
-// ExtractIntoStructPtr will unmarshal the Result (r) into the provided
-// any (to).
-//
-// NOTE: For internal use only
-//
-// `to` must be a pointer to an underlying struct type
-//
-// If provided, `label` will be filtered out of the response
-// body prior to `r` being unmarshalled into `to`.
-//
 // Deprecated: use extract.IntoStructPtr function instead
 func (r Result) ExtractIntoStructPtr(to any, label string) error {
 	if r.Err != nil {
@@ -80,16 +66,6 @@ func (r Result) ExtractIntoStructPtr(to any, label string) error {
 	return extract.IntoStructPtr(bytes.NewReader(r.Body), to, label)
 }
 
-// ExtractIntoSlicePtr will unmarshal the Result (r) into the provided
-// any (to).
-//
-// NOTE: For internal use only
-//
-// `to` must be a pointer to an underlying slice type
-//
-// If provided, `label` will be filtered out of the response
-// body prior to `r` being unmarshalled into `to`.
-//
 // Deprecated: use extract.IntoSlicePtr function instead
 func (r Result) ExtractIntoSlicePtr(to any, label string) error {
 	if r.Err != nil {
@@ -99,20 +75,16 @@ func (r Result) ExtractIntoSlicePtr(to any, label string) error {
 	return extract.IntoSlicePtr(bytes.NewReader(r.Body), to, label)
 }
 
-func PrettyPrintJSON(body any) string {
-	pretty, err := json.MarshalIndent(body, "", "  ")
-	if err != nil {
-		panic(err.Error())
-	}
-	return string(pretty)
-}
-
 // PrettyPrintJSON creates a string containing the full response body as
 // pretty-printed JSON. It's useful for capturing test fixtures and for
 // debugging extraction bugs. If you include its output in an issue related to
 // a buggy extraction function, we will all love you forever.
-func (r Result) PrettyPrintJSON() string {
-	return PrettyPrintJSON(r.Body)
+func (r Result) String() string {
+	pretty, err := json.MarshalIndent(r.Body, "", "  ")
+	if err != nil {
+		panic(err.Error())
+	}
+	return string(pretty)
 }
 
 // ErrResult is an internal type to be used by individual resource packages, but
@@ -127,12 +99,7 @@ func (r Result) PrettyPrintJSON() string {
 //
 // Deprecated: use plain err return instead
 type ErrResult struct {
-	Result
-}
-
-// ExtractErr is a function that extracts error information, or nil, from a result.
-func (r ErrResult) ExtractErr() error {
-	return r.Err
+	Err error
 }
 
 // ----------------------------------------------------------------------------

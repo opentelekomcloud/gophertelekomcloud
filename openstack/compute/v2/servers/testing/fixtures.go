@@ -2,10 +2,11 @@ package testing
 
 import (
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"

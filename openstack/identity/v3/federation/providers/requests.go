@@ -2,6 +2,7 @@ package providers
 
 import (
 	"fmt"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"

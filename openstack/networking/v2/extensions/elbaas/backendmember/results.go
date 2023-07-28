@@ -101,5 +101,5 @@ func (r GetResult) Extract() ([]Backend, error) {
 
 // RemoveResult represents the result of a delete operation.
 type RemoveResult struct {
-	golangsdk.ErrResult
+	golangsdk.Result
 }

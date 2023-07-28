@@ -48,7 +48,7 @@ func deleteEip(t *testing.T, eipID string) {
 
 	t.Logf("Attempting to delete eip/bandwidth: %s", eipID)
 
-	err = eips.Delete(client, eipID).ExtractErr()
+	err = eips.Delete(client, eipID).Err
 	th.AssertNoErr(t, err)
 
 	// wait to be deleted

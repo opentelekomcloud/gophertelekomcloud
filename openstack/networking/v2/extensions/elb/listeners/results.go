@@ -88,7 +88,8 @@ type CreateResult struct {
 
 func (r CreateResult) Extract() (*CreateResponse, error) {
 	s := &CreateResponse{}
-	return s, r.ExtractInto(s)
+	err := r.ExtractInto(s)
+	return s, err
 }
 
 // DeleteResult represents the result of a delete operation.
@@ -103,7 +104,8 @@ type GetResult struct {
 
 func (r GetResult) Extract() (*Listener, error) {
 	s := &Listener{}
-	return s, r.ExtractInto(s)
+	err := r.ExtractInto(s)
+	return s, err
 }
 
 type UpdateResult struct {
@@ -112,5 +114,6 @@ type UpdateResult struct {
 
 func (r UpdateResult) Extract() (*UpdateResponse, error) {
 	s := &UpdateResponse{}
-	return s, r.ExtractInto(s)
+	err := r.ExtractInto(s)
+	return s, err
 }

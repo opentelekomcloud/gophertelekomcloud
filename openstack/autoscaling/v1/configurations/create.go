@@ -2,6 +2,7 @@ package configurations
 
 import (
 	"encoding/base64"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"

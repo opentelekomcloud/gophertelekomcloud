@@ -39,7 +39,7 @@ func (r CreateResult) Extract() (*CreateGrant, error) {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	golangsdk.Result
 }
 
 type ListResult struct {

@@ -19,7 +19,7 @@ func TestVPCListing(t *testing.T) {
 	vpc, err := vpcs.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = vpcs.Delete(client, vpc.ID).ExtractErr()
+		err = vpcs.Delete(client, vpc.ID).Err
 		th.AssertNoErr(t, err)
 	})
 
@@ -61,7 +61,7 @@ func TestVPCLifecycle(t *testing.T) {
 	th.AssertEquals(t, vpc.Name, name)
 
 	t.Cleanup(func() {
-		err = vpcs.Delete(client, vpc.ID).ExtractErr()
+		err = vpcs.Delete(client, vpc.ID).Err
 		th.AssertNoErr(t, err)
 	})
 

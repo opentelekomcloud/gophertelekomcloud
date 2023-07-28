@@ -31,7 +31,7 @@ func TestSnatRuleLifeCycle(t *testing.T) {
 
 	defer func() {
 		t.Logf("Attempting to delete SNAT rule: %s", snatRule.ID)
-		err = snatrules.Delete(client, snatRule.ID).ExtractErr()
+		err = snatrules.Delete(client, snatRule.ID).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SNAT rule: %s", snatRule.ID)
 	}()

@@ -44,6 +44,6 @@ func TestUnrescue(t *testing.T) {
 		w.WriteHeader(http.StatusAccepted)
 	})
 
-	err := rescueunrescue.Unrescue(fake.ServiceClient(), "3f54d05f-3430-4d80-aa07-63e6af9e2488").ExtractErr()
+	err := rescueunrescue.Unrescue(fake.ServiceClient(), "3f54d05f-3430-4d80-aa07-63e6af9e2488").Err
 	th.AssertNoErr(t, err)
 }

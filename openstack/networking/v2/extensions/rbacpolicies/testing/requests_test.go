@@ -139,7 +139,7 @@ func TestDelete(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	res := rbacpolicies.Delete(fake.ServiceClient(), "71d55b18-d2f8-4c76-a5e6-e0a3dd114361").ExtractErr()
+	res := rbacpolicies.Delete(fake.ServiceClient(), "71d55b18-d2f8-4c76-a5e6-e0a3dd114361").Err
 	th.AssertNoErr(t, res)
 }
 

@@ -136,5 +136,5 @@ func DeleteKeypair(t *testing.T, kp string) {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
-	th.AssertNoErr(t, keypairs.Delete(client, kp).ExtractErr())
+	th.AssertNoErr(t, keypairs.Delete(client, kp).Err)
 }

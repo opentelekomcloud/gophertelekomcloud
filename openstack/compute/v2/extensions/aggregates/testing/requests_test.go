@@ -62,7 +62,7 @@ func TestDeleteAggregates(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := aggregates.Delete(client.ServiceClient(), AggregateIDtoDelete).ExtractErr()
+	err := aggregates.Delete(client.ServiceClient(), AggregateIDtoDelete).Err
 	th.AssertNoErr(t, err)
 }
 

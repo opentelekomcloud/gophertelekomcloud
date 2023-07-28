@@ -2,6 +2,7 @@ package monitors
 
 import (
 	"fmt"
+
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

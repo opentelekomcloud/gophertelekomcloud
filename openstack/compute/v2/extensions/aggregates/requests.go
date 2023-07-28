@@ -1,8 +1,9 @@
 package aggregates
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"strconv"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

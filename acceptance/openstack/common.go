@@ -106,7 +106,7 @@ func CreateVolume(t *testing.T) *volumes.Volume {
 func DeleteVolume(t *testing.T, id string) {
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}).ExtractErr())
+	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}).Err)
 }
 
 const (
@@ -176,7 +176,7 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 
 func DryRunCloudServerConfig(t *testing.T, client *golangsdk.ServiceClient, createOpts cloudservers.CreateOpts) {
 	t.Logf("Attempting to check ECSv1 createOpts")
-	err := cloudservers.DryRun(client, createOpts).ExtractErr()
+	err := cloudservers.DryRun(client, createOpts).Err
 	th.AssertNoErr(t, err)
 }
 

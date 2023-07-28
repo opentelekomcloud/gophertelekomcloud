@@ -46,7 +46,7 @@ func TestFederatedMappingLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = mappings.Delete(client, mapping.ID).ExtractErr()
+		err = mappings.Delete(client, mapping.ID).Err
 		th.AssertNoErr(t, err)
 	})
 

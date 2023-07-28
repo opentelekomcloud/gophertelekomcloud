@@ -102,7 +102,7 @@ func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
 func deleteDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
 	t.Logf("Attempting to delete DMSv1 instance: %s", instanceID)
 
-	err := instances.Delete(client, instanceID).ExtractErr()
+	err := instances.Delete(client, instanceID).Err
 	th.AssertNoErr(t, err)
 
 	err = waitForInstanceDelete(client, 600, instanceID)
@@ -118,7 +118,7 @@ func updateDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID
 		Description: &emptyDescription,
 	}
 
-	err := instances.Update(client, instanceID, updateOpts).ExtractErr()
+	err := instances.Update(client, instanceID, updateOpts).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("DMSv1 instance updated successfully: %s", instanceID)

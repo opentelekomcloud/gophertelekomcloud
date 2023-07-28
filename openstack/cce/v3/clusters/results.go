@@ -314,5 +314,5 @@ func (r GetCertResult) ExtractMap() (map[string]interface{}, error) {
 // UpdateIpResult represents the result of an update operation. Call its Extract
 // method to interpret it as a Cluster.
 type UpdateIpResult struct {
-	golangsdk.ErrResult
+	golangsdk.Result
 }

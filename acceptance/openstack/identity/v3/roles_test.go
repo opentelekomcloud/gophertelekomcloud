@@ -108,7 +108,7 @@ func TestRoleAssignToUserOnProject(t *testing.T) {
 	err = roles.Assign(client, role.ID, roles.AssignOpts{
 		UserID:    user.ID,
 		ProjectID: project.ID,
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("Successfully assigned a role %s to a user %s on a project %s", role.Name, user.Name, project.Name)
@@ -161,7 +161,7 @@ func TestRoleAssignToUserOnDomain(t *testing.T) {
 	err = roles.Assign(client, role.ID, roles.AssignOpts{
 		UserID:   user.ID,
 		DomainID: domain.ID,
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("Successfully assigned a role %s to a user %s on a domain %s", role.Name, user.Name, domain.Name)
@@ -214,7 +214,7 @@ func TestRoleAssignToGroupOnDomain(t *testing.T) {
 	err = roles.Assign(client, role.ID, roles.AssignOpts{
 		GroupID:  group.ID,
 		DomainID: domain.ID,
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("Successfully assigned a role %s to a group %s on a domain %s", role.Name, group.Name, domain.Name)
@@ -264,7 +264,7 @@ func TestRoleAssignToGroupOnProject(t *testing.T) {
 	err = roles.Assign(client, role.ID, roles.AssignOpts{
 		GroupID:   group.ID,
 		ProjectID: project.ID,
-	}).ExtractErr()
+	}).Err
 	th.AssertNoErr(t, err)
 	t.Logf("Successfully assigned a role %s to a group %s on a project %s", role.Name, group.Name, project.Name)
 

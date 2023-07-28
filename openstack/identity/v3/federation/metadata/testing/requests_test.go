@@ -30,7 +30,7 @@ func TestImportMetadataRequest(t *testing.T) {
 		Metadata: data,
 	}
 
-	err := metadata.Import(fake.ServiceClient(), "ACME", "saml", opts).ExtractErr()
+	err := metadata.Import(fake.ServiceClient(), "ACME", "saml", opts).Err
 	th.AssertNoErr(t, err)
 }
 

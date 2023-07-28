@@ -32,7 +32,7 @@ func TestCertificateLifecycle(t *testing.T) {
 	th.AssertEquals(t, testCertExpiration, created.ExpireTime)
 
 	defer func() {
-		err := certificates.Delete(client, created.Id).ExtractErr()
+		err := certificates.Delete(client, created.Id).Err
 		th.AssertNoErr(t, err)
 	}()
 

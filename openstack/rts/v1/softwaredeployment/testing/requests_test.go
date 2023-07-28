@@ -77,6 +77,6 @@ func TestDeleteSoftwareConfig(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := softwaredeployment.Delete(fake.ServiceClient(), "43489279-7b12-4fc5-90ed-320f29e89419").ExtractErr()
+	err := softwaredeployment.Delete(fake.ServiceClient(), "43489279-7b12-4fc5-90ed-320f29e89419").Err
 	th.AssertNoErr(t, err)
 }

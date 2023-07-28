@@ -16,7 +16,7 @@ func TestLock(t *testing.T) {
 
 	mockStartServerResponse(t, serverID)
 
-	err := lockunlock.Lock(client.ServiceClient(), serverID).ExtractErr()
+	err := lockunlock.Lock(client.ServiceClient(), serverID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -26,6 +26,6 @@ func TestUnlock(t *testing.T) {
 
 	mockStopServerResponse(t, serverID)
 
-	err := lockunlock.Unlock(client.ServiceClient(), serverID).ExtractErr()
+	err := lockunlock.Unlock(client.ServiceClient(), serverID).Err
 	th.AssertNoErr(t, err)
 }

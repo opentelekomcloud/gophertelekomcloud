@@ -25,7 +25,7 @@ func TestPolicyLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		err = policies.Delete(client, newPolicy.ID).ExtractErr()
+		err = policies.Delete(client, newPolicy.ID).Err
 		th.AssertNoErr(t, err)
 	}()
 
@@ -116,7 +116,7 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		err = agency.Delete(client, createAgency.ID).ExtractErr()
+		err = agency.Delete(client, createAgency.ID).Err
 		th.AssertNoErr(t, err)
 	}()
 
@@ -145,7 +145,7 @@ func TestAgencyPolicyLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		err = policies.Delete(client, newPolicy.ID).ExtractErr()
+		err = policies.Delete(client, newPolicy.ID).Err
 		th.AssertNoErr(t, err)
 	}()
 

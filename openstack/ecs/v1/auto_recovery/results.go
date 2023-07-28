@@ -12,5 +12,6 @@ type GetResult struct {
 
 func (r GetResult) Extract() (*AutoRecovery, error) {
 	s := &AutoRecovery{}
-	return s, r.ExtractInto(s)
+	err := r.ExtractInto(s)
+	return s, err
 }

@@ -46,12 +46,12 @@ func DeleteNetwork(t *testing.T, subnet *subnets.Subnet) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
-	err = subnets.Delete(client, subnet.VpcID, subnet.ID).ExtractErr()
+	err = subnets.Delete(client, subnet.VpcID, subnet.ID).Err
 	th.AssertNoErr(t, err)
 	err = waitForSubnetToBeDeleted(client, subnet.ID, 300)
 	th.AssertNoErr(t, err)
 
-	err = vpcs.Delete(client, subnet.VpcID).ExtractErr()
+	err = vpcs.Delete(client, subnet.VpcID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -87,7 +87,7 @@ func CreateEip(t *testing.T, client *golangsdk.ServiceClient, bandwidthSize int)
 func DeleteEip(t *testing.T, client *golangsdk.ServiceClient, eipID string) {
 	t.Logf("Attempting to delete eip/bandwidth: %s", eipID)
 
-	err := eips.Delete(client, eipID).ExtractErr()
+	err := eips.Delete(client, eipID).Err
 	th.AssertNoErr(t, err)
 
 	// wait to be deleted
@@ -155,7 +155,7 @@ func createSubnet(t *testing.T, client *golangsdk.ServiceClient, vpcID string) *
 func deleteSubnet(t *testing.T, client *golangsdk.ServiceClient, vpcID string, id string) {
 	t.Logf("Attempting to delete subnet: %s", id)
 
-	err := subnets.Delete(client, vpcID, id).ExtractErr()
+	err := subnets.Delete(client, vpcID, id).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("Waiting for subnet %s to be deleted", id)
@@ -217,18 +217,18 @@ func createVpc(t *testing.T, client *golangsdk.ServiceClient) *vpcs.Vpc {
 func deleteVpc(t *testing.T, client *golangsdk.ServiceClient, vpcID string) {
 	t.Logf("Attempting to delete vpc: %s", vpcID)
 
-	err := vpcs.Delete(client, vpcID).ExtractErr()
+	err := vpcs.Delete(client, vpcID).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("Deleted vpc: %s", vpcID)
 }
 
 func createEipTags(t *testing.T, client *golangsdk.ServiceClient, eipID string, eipTags []tags.ResourceTag) {
-	err := tags.Create(client, "publicips", eipID, eipTags).ExtractErr()
+	err := tags.Create(client, "publicips", eipID, eipTags).Err
 	th.AssertNoErr(t, err)
 }
 
 func deleteEipTags(t *testing.T, client *golangsdk.ServiceClient, eipID string, eipTags []tags.ResourceTag) {
-	err := tags.Delete(client, "publicips", eipID, eipTags).ExtractErr()
+	err := tags.Delete(client, "publicips", eipID, eipTags).Err
 	th.AssertNoErr(t, err)
 }

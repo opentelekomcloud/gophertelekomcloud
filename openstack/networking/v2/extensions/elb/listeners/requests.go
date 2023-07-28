@@ -1,8 +1,9 @@
 package listeners
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/utils"

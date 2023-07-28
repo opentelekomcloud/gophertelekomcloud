@@ -122,6 +122,6 @@ func TestDelete(t *testing.T) {
 
 	mockDeleteRuleResponse(t, ruleID)
 
-	err := defsecrules.Delete(client.ServiceClient(), ruleID).ExtractErr()
+	err := defsecrules.Delete(client.ServiceClient(), ruleID).Err
 	th.AssertNoErr(t, err)
 }

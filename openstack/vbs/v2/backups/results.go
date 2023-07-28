@@ -110,7 +110,8 @@ func (r commonResult) Extract() (*Backup, error) {
 		Backup *Backup `json:"backup"`
 	}
 
-	if err := r.ExtractInto(&s); err != nil {
+	err := r.ExtractInto(&s)
+	if err != nil {
 		return nil, err
 	}
 
@@ -118,7 +119,7 @@ func (r commonResult) Extract() (*Backup, error) {
 	var desc struct {
 		Description string `json:"DESC"`
 	}
-	err := json.Unmarshal([]byte(s.Backup.Description), &desc)
+	err = json.Unmarshal([]byte(s.Backup.Description), &desc)
 	if err == nil {
 		s.Backup.Description = desc.Description
 	}

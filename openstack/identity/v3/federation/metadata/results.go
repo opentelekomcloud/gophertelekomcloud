@@ -27,5 +27,5 @@ func (r GetResult) Extract() (*Metadata, error) {
 }
 
 type ImportResult struct {
-	golangsdk.ErrResult
+	golangsdk.Result
 }

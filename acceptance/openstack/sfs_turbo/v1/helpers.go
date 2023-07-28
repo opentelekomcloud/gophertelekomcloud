@@ -51,7 +51,7 @@ env vars is missing but SFS Turbo test requires`)
 func deleteShare(t *testing.T, client *golangsdk.ServiceClient, shareID string) {
 	t.Logf("Attempting to delete SFS Turbo: %s", shareID)
 
-	err := shares.Delete(client, shareID).ExtractErr()
+	err := shares.Delete(client, shareID).Err
 	th.AssertNoErr(t, err)
 
 	err = waitForShareToDelete(client, shareID, 600)
@@ -69,7 +69,7 @@ func expandShare(t *testing.T, client *golangsdk.ServiceClient, shareID string) 
 		},
 	}
 
-	err := shares.Expand(client, shareID, expandOpts).ExtractErr()
+	err := shares.Expand(client, shareID, expandOpts).Err
 	th.AssertNoErr(t, err)
 
 	err = waitForShareSubStatusSuccess(client, shareID, 600)
@@ -92,7 +92,7 @@ func changeShareSG(t *testing.T, client *golangsdk.ServiceClient, shareID string
 		},
 	}
 
-	err := shares.ChangeSG(client, shareID, changeSGOpts).ExtractErr()
+	err := shares.ChangeSG(client, shareID, changeSGOpts).Err
 	th.AssertNoErr(t, err)
 
 	err = waitForShareSubStatusSuccess(client, shareID, 600)

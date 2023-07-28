@@ -16,7 +16,7 @@ func TestMigrate(t *testing.T) {
 
 	mockMigrateResponse(t, serverID)
 
-	err := migrate.Migrate(client.ServiceClient(), serverID).ExtractErr()
+	err := migrate.Migrate(client.ServiceClient(), serverID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -36,6 +36,6 @@ func TestLiveMigrate(t *testing.T) {
 		DiskOverCommit: &diskOverCommit,
 	}
 
-	err := migrate.LiveMigrate(client.ServiceClient(), serverID, migrationOpts).ExtractErr()
+	err := migrate.LiveMigrate(client.ServiceClient(), serverID, migrationOpts).Err
 	th.AssertNoErr(t, err)
 }

@@ -79,7 +79,7 @@ func (s *testNodes) TestNodePoolLifecycle() {
 	_, err = nodepools.Get(client, clusterId, nodeId).Extract()
 	th.AssertNoErr(t, err)
 
-	th.AssertNoErr(t, nodepools.Delete(client, clusterId, nodeId).ExtractErr())
+	th.AssertNoErr(t, nodepools.Delete(client, clusterId, nodeId).Err)
 
 	err = golangsdk.WaitFor(1800, func() (bool, error) {
 		_, err := nodepools.Get(client, clusterId, nodeId).Extract()

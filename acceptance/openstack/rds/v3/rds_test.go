@@ -46,7 +46,7 @@ func TestRdsLifecycle(t *testing.T) {
 			Value: "value-create",
 		},
 	}
-	err = tags.Create(client, "instances", rds.Id, tagList).ExtractErr()
+	err = tags.Create(client, "instances", rds.Id, tagList).Err
 	th.AssertNoErr(t, err)
 
 	t.Log("updateRDS")

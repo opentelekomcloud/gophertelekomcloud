@@ -103,7 +103,7 @@ func TestMrsClusterLifecycle(t *testing.T) {
 		},
 	}
 
-	err = tags.Create(client, "clusters", clResponse.ClusterId, tagOpts).ExtractErr()
+	err = tags.Create(client, "clusters", clResponse.ClusterId, tagOpts).Err
 	th.AssertNoErr(t, err)
 
 	newCluster, err := cluster.Get(client, clResponse.ClusterId)

@@ -69,11 +69,11 @@ func TestTags(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vaultTags[0].Key == firstTag.Key || vaultTags[0].Key == secondTag.Key, true)
 
-	th.AssertNoErr(t, cbrtags.DeleteVaultTag(client, resourceID, combineTag).ExtractErr())
+	th.AssertNoErr(t, cbrtags.DeleteVaultTag(client, resourceID, combineTag).Err)
 	vaultTags, _ = cbrtags.ShowVaultTag(client, resourceID).Extract()
 	th.AssertEquals(t, len(vaultTags), 0)
 
-	th.AssertNoErr(t, cbrtags.CreateVaultTags(client, resourceID, []tags.ResourceTag{firstTag}).ExtractErr())
+	th.AssertNoErr(t, cbrtags.CreateVaultTags(client, resourceID, []tags.ResourceTag{firstTag}).Err)
 	vaultTags, _ = cbrtags.ShowVaultTag(client, resourceID).Extract()
 	th.AssertEquals(t, len(vaultTags), 1)
 }

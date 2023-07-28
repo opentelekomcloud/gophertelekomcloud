@@ -1,8 +1,9 @@
 package nodepools
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"

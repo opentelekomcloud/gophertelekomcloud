@@ -103,5 +103,5 @@ func TestDeleteRequest(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	th.AssertNoErr(t, policies.Delete(client.ServiceClient(), id).ExtractErr())
+	th.AssertNoErr(t, policies.Delete(client.ServiceClient(), id).Err)
 }

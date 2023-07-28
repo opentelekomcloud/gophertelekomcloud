@@ -207,7 +207,7 @@ func TestDelete(t *testing.T) {
 
 	mockDeleteGroupResponse(t, groupID)
 
-	err := secgroups.Delete(client.ServiceClient(), groupID).ExtractErr()
+	err := secgroups.Delete(client.ServiceClient(), groupID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -277,7 +277,7 @@ func TestDeleteRule(t *testing.T) {
 
 	mockDeleteRuleResponse(t, ruleID)
 
-	err := secgroups.DeleteRule(client.ServiceClient(), ruleID).ExtractErr()
+	err := secgroups.DeleteRule(client.ServiceClient(), ruleID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -287,7 +287,7 @@ func TestAddServer(t *testing.T) {
 
 	mockAddServerToGroupResponse(t, serverID)
 
-	err := secgroups.AddServer(client.ServiceClient(), serverID, "test").ExtractErr()
+	err := secgroups.AddServer(client.ServiceClient(), serverID, "test").Err
 	th.AssertNoErr(t, err)
 }
 
@@ -297,6 +297,6 @@ func TestRemoveServer(t *testing.T) {
 
 	mockRemoveServerFromGroupResponse(t, serverID)
 
-	err := secgroups.RemoveServer(client.ServiceClient(), serverID, "test").ExtractErr()
+	err := secgroups.RemoveServer(client.ServiceClient(), serverID, "test").Err
 	th.AssertNoErr(t, err)
 }

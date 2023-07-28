@@ -1,8 +1,9 @@
 package loadbalancers
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/elb"

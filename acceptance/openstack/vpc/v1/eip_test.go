@@ -26,7 +26,7 @@ func TestEIPListing(t *testing.T) {
 	eip, err := eips.Apply(client, eipCreateOpts).Extract()
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = eips.Delete(client, eip.ID).ExtractErr()
+		err = eips.Delete(client, eip.ID).Err
 		th.AssertNoErr(t, err)
 	})
 

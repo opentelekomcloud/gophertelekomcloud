@@ -31,7 +31,7 @@ func CreateRoute(t *testing.T, clientV2 *golangsdk.ServiceClient, peeringConn *p
 func DeleteRoute(t *testing.T, clientV2 *golangsdk.ServiceClient, routeID string) {
 	t.Logf("Attempting to delete route: %s", routeID)
 
-	err := routes.Delete(clientV2, routeID).ExtractErr()
+	err := routes.Delete(clientV2, routeID).Err
 	if err != nil {
 		t.Fatalf("Error deleting route: %v", err)
 	}

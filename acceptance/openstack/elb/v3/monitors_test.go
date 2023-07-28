@@ -51,7 +51,7 @@ func TestMonitorLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to Delete ELBv3 Monitor: %s", monitor.ID)
-		err := monitors.Delete(client, monitor.ID).ExtractErr()
+		err := monitors.Delete(client, monitor.ID).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Monitor: %s", monitor.ID)
 	}()

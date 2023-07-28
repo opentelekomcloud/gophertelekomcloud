@@ -20,7 +20,7 @@ func TestWebTamperRuleWorkflow(t *testing.T) {
 	r, err := rules.Create(client, pID, opts).Extract()
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		th.AssertNoErr(t, rules.Delete(client, pID, r.Id).ExtractErr())
+		th.AssertNoErr(t, rules.Delete(client, pID, r.Id).Err)
 	})
 
 	th.AssertEquals(t, r.Path, opts.Path)

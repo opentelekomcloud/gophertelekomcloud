@@ -151,12 +151,12 @@ func TestCascadingDeleteLoadbalancer(t *testing.T) {
 
 	sc := fake.ServiceClient()
 	sc.Type = "network"
-	err := loadbalancers.CascadingDelete(sc, "36e08a3e-a78f-4b40-a229-1e7e23eee1ab").ExtractErr()
+	err := loadbalancers.CascadingDelete(sc, "36e08a3e-a78f-4b40-a229-1e7e23eee1ab").Err
 	if err == nil {
 		t.Fatalf("expected error running CascadingDelete with Neutron service client but didn't get one")
 	}
 
 	sc.Type = "load-balancer"
-	err = loadbalancers.CascadingDelete(sc, "36e08a3e-a78f-4b40-a229-1e7e23eee1ab").ExtractErr()
+	err = loadbalancers.CascadingDelete(sc, "36e08a3e-a78f-4b40-a229-1e7e23eee1ab").Err
 	th.AssertNoErr(t, err)
 }

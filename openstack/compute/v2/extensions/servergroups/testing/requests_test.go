@@ -55,6 +55,6 @@ func TestDelete(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := servergroups.Delete(client.ServiceClient(), "616fb98f-46ca-475e-917e-2563e5a8cd19").ExtractErr()
+	err := servergroups.Delete(client.ServiceClient(), "616fb98f-46ca-475e-917e-2563e5a8cd19").Err
 	th.AssertNoErr(t, err)
 }

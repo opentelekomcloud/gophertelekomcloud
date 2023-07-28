@@ -72,7 +72,7 @@ func createNatGateway(t *testing.T, client *golangsdk.ServiceClient) *natgateway
 func deleteNatGateway(t *testing.T, client *golangsdk.ServiceClient, natGatewayID string) {
 	t.Logf("Attempting to delete Nat Gateway: %s", natGatewayID)
 
-	err := natgateways.Delete(client, natGatewayID).ExtractErr()
+	err := natgateways.Delete(client, natGatewayID).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("Nat Gateway is deleted: %s", natGatewayID)

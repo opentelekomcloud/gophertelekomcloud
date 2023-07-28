@@ -51,17 +51,17 @@ func prepareCertificate(t *testing.T, client *golangsdk.ServiceClient) *certific
 func cleanupIP(t *testing.T, ipID string) {
 	client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
-	err = floatingips.Delete(client, ipID).ExtractErr()
+	err = floatingips.Delete(client, ipID).Err
 	th.AssertNoErr(t, err)
 }
 
 func cleanupPolicy(t *testing.T, client *golangsdk.ServiceClient, policyID string) {
-	err := policies.Delete(client, policyID).ExtractErr()
+	err := policies.Delete(client, policyID).Err
 	th.AssertNoErr(t, err)
 }
 
 func cleanupCertificate(t *testing.T, client *golangsdk.ServiceClient, certID string) {
-	err := certificates.Delete(client, certID).ExtractErr()
+	err := certificates.Delete(client, certID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -102,7 +102,7 @@ func TestDomainLifecycle(t *testing.T) {
 	domain, err := domains.Create(client, createOpts).Extract()
 	th.AssertNoErr(t, err)
 	defer func() {
-		err = domains.Delete(client, domain.Id).ExtractErr()
+		err = domains.Delete(client, domain.Id).Err
 		th.AssertNoErr(t, err)
 	}()
 

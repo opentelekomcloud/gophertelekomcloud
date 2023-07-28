@@ -22,7 +22,7 @@ func createTopic(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func deleteTopic(t *testing.T, client *golangsdk.ServiceClient, topicURN string) {
 	t.Logf("Attempting to delete SMN topic: %s", topicURN)
-	err := topics.Delete(client, topicURN).ExtractErr()
+	err := topics.Delete(client, topicURN).Err
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted SMN topic: %s", topicURN)
 }

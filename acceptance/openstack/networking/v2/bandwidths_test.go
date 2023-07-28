@@ -25,7 +25,7 @@ func TestBandwidthLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete BandwidthV2: %s", bandwidth.ID)
-		err := bandwidths.Delete(client, bandwidth.ID).ExtractErr()
+		err := bandwidths.Delete(client, bandwidth.ID).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted BandwidthV2: %s", bandwidth.ID)
 	})
@@ -78,7 +78,7 @@ func TestBandwidthAssociate(t *testing.T) {
 	id := bandwidth.ID
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete BandwidthV2: %s", id)
-		err := bandwidths.Delete(client, id).ExtractErr()
+		err := bandwidths.Delete(client, id).Err
 		th.CheckNoErr(t, err)
 		t.Logf("Deleted BandwidthV2: %s", id)
 	})
@@ -88,7 +88,7 @@ func TestBandwidthAssociate(t *testing.T) {
 	}).Extract()
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err := floatingips.Delete(client, eip.ID).ExtractErr()
+		err := floatingips.Delete(client, eip.ID).Err
 		th.CheckNoErr(t, err)
 	})
 
@@ -127,7 +127,7 @@ func TestBandwidthAssociate(t *testing.T) {
 			{PublicIpID: eip.ID},
 		},
 	}
-	err = bandwidths.Remove(client, id, remOpts).ExtractErr()
+	err = bandwidths.Remove(client, id, remOpts).Err
 	th.AssertNoErr(t, err)
 
 	bnwAfter, err := bandwidths.Get(client, id).Extract()

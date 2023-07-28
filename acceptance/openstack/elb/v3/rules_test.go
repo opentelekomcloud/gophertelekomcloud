@@ -43,7 +43,7 @@ func TestRuleWorkflow(t *testing.T) {
 	th.CheckEquals(t, opts.Type, created.Type)
 
 	defer func() {
-		th.AssertNoErr(t, rules.Delete(client, policyID, id).ExtractErr())
+		th.AssertNoErr(t, rules.Delete(client, policyID, id).Err)
 		t.Log("Rule removed from policy")
 	}()
 
@@ -111,7 +111,7 @@ func TestRuleWorkflowConditions(t *testing.T) {
 	th.CheckEquals(t, opts.Type, created.Type)
 
 	defer func() {
-		th.AssertNoErr(t, rules.Delete(client, policyID, id).ExtractErr())
+		th.AssertNoErr(t, rules.Delete(client, policyID, id).Err)
 		t.Log("Rule removed from policy")
 	}()
 
@@ -160,6 +160,6 @@ func createPolicy(t *testing.T, client *golangsdk.ServiceClient, listenerID, poo
 }
 
 func deletePolicy(t *testing.T, client *golangsdk.ServiceClient, policyID string) {
-	th.AssertNoErr(t, policies.Delete(client, policyID).ExtractErr())
+	th.AssertNoErr(t, policies.Delete(client, policyID).Err)
 	t.Logf("Policy %s deleted", policyID)
 }

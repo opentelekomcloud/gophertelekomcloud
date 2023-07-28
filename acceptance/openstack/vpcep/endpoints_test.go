@@ -38,7 +38,7 @@ func createService(t *testing.T, client *golangsdk.ServiceClient, elbPortID stri
 }
 
 func deleteService(t *testing.T, client *golangsdk.ServiceClient, id string) {
-	th.AssertNoErr(t, services.Delete(client, id).ExtractErr())
+	th.AssertNoErr(t, services.Delete(client, id).Err)
 }
 
 func TestEndpointLifecycle(t *testing.T) {
@@ -70,7 +70,7 @@ func TestEndpointLifecycle(t *testing.T) {
 	th.AssertEquals(t, endpoints.StatusCreating, created.Status)
 
 	defer func() {
-		th.AssertNoErr(t, endpoints.Delete(client, created.ID).ExtractErr())
+		th.AssertNoErr(t, endpoints.Delete(client, created.ID).Err)
 	}()
 
 	th.AssertNoErr(t, endpoints.WaitForEndpointStatus(client, created.ID, endpoints.StatusAccepted, 30))

@@ -81,7 +81,7 @@ func TestUpdateStack(t *testing.T) {
 	updateOpts := stacks.UpdateOpts{
 		TemplateOpts: template,
 	}
-	err := stacks.Update(fake.ServiceClient(), "golangsdk-test-stack-2", "db6977b2-27aa-4775-9ae7-6213212d4ada", updateOpts).ExtractErr()
+	err := stacks.Update(fake.ServiceClient(), "golangsdk-test-stack-2", "db6977b2-27aa-4775-9ae7-6213212d4ada", updateOpts).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -90,6 +90,6 @@ func TestDeleteStack(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := stacks.Delete(fake.ServiceClient(), "golangsdk-test-stack-2", "db6977b2-27aa-4775-9ae7-6213212d4ada").ExtractErr()
+	err := stacks.Delete(fake.ServiceClient(), "golangsdk-test-stack-2", "db6977b2-27aa-4775-9ae7-6213212d4ada").Err
 	th.AssertNoErr(t, err)
 }

@@ -41,7 +41,7 @@ func TestCCAttackProtectionRuleWorkflow(t *testing.T) {
 	r, err := rules.Create(client, pID, opts).Extract()
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		th.AssertNoErr(t, rules.Delete(client, pID, r.Id).ExtractErr())
+		th.AssertNoErr(t, rules.Delete(client, pID, r.Id).Err)
 	})
 
 	th.AssertEquals(t, r.PolicyID, pID)
@@ -50,7 +50,7 @@ func TestCCAttackProtectionRuleWorkflow(t *testing.T) {
 func prepareAndRemovePolicy(t *testing.T, client *golangsdk.ServiceClient) string {
 	p := preparePolicy(t, client)
 	t.Cleanup(func() {
-		th.AssertNoErr(t, policies.Delete(client, p.Id).ExtractErr())
+		th.AssertNoErr(t, policies.Delete(client, p.Id).Err)
 	})
 	return p.Id
 }

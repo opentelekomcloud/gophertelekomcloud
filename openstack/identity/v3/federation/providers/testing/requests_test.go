@@ -104,6 +104,6 @@ func TestProviderDeleteRequest(t *testing.T) {
 		w.WriteHeader(204)
 	})
 
-	err := providers.Delete(fake.ServiceClient(), providerID).ExtractErr()
+	err := providers.Delete(fake.ServiceClient(), providerID).Err
 	th.AssertNoErr(t, err)
 }

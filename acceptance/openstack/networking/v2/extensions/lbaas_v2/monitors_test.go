@@ -93,7 +93,7 @@ func TestLbaasV2MonitorLifeCycle(t *testing.T) {
 func deleteLbaasMonitor(t *testing.T, client *golangsdk.ServiceClient, lbaasMonitorID string) {
 	t.Logf("Attempting to delete LbaasV2 monitor: %s", lbaasMonitorID)
 
-	err := monitors.Delete(client, lbaasMonitorID).ExtractErr()
+	err := monitors.Delete(client, lbaasMonitorID).Err
 	th.AssertNoErr(t, err)
 
 	t.Logf("LbaasV2 monitor is deleted: %s", lbaasMonitorID)

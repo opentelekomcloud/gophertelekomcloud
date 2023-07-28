@@ -1,8 +1,9 @@
 package defsecrules
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"strings"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

@@ -61,7 +61,7 @@ type UpdateResult struct {
 // DeleteResult is the response from a Delete operation. Call its ExtractErr
 // method to determine if the call succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	golangsdk.Result
 }
 
 // RebuildResult is the response from a Rebuild operation. Call its Extract

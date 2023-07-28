@@ -40,7 +40,7 @@ func TestMemberLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to delete ELBv3 Member: %s", member.ID)
-		err := members.Delete(client, poolID, member.ID).ExtractErr()
+		err := members.Delete(client, poolID, member.ID).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Member: %s", member.ID)
 	}()

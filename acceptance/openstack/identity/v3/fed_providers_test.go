@@ -30,7 +30,7 @@ func TestFederatedProviderLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = providers.Delete(client, provider.ID).ExtractErr()
+		err = providers.Delete(client, provider.ID).Err
 		th.AssertNoErr(t, err)
 	})
 

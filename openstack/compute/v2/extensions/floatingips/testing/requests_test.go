@@ -66,7 +66,7 @@ func TestDelete(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleDeleteSuccessfully(t)
 
-	err := floatingips.Delete(client.ServiceClient(), "1").ExtractErr()
+	err := floatingips.Delete(client.ServiceClient(), "1").Err
 	th.AssertNoErr(t, err)
 }
 
@@ -79,7 +79,7 @@ func TestAssociate(t *testing.T) {
 		FloatingIP: "10.10.10.2",
 	}
 
-	err := floatingips.AssociateInstance(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0", associateOpts).ExtractErr()
+	err := floatingips.AssociateInstance(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0", associateOpts).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -93,7 +93,7 @@ func TestAssociateFixed(t *testing.T) {
 		FixedIP:    "166.78.185.201",
 	}
 
-	err := floatingips.AssociateInstance(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0", associateOpts).ExtractErr()
+	err := floatingips.AssociateInstance(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0", associateOpts).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -106,6 +106,6 @@ func TestDisassociateInstance(t *testing.T) {
 		FloatingIP: "10.10.10.2",
 	}
 
-	err := floatingips.DisassociateInstance(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0", disassociateOpts).ExtractErr()
+	err := floatingips.DisassociateInstance(client.ServiceClient(), "4d8c3732-a248-40ed-bebc-539a6ffd25c0", disassociateOpts).Err
 	th.AssertNoErr(t, err)
 }

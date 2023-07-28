@@ -129,6 +129,6 @@ func TestMappingDeleteRequest(t *testing.T) {
 		w.WriteHeader(204)
 	})
 
-	err := mappings.Delete(fake.ServiceClient(), mappingID).ExtractErr()
+	err := mappings.Delete(fake.ServiceClient(), mappingID).Err
 	th.AssertNoErr(t, err)
 }

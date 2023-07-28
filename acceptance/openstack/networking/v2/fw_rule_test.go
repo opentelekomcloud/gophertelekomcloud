@@ -28,7 +28,7 @@ func TestFwRuleLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete FwaasV2: %s", rule.ID)
-		err := rules.Delete(client, rule.ID).ExtractErr()
+		err := rules.Delete(client, rule.ID).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted FwaasV2: %s", rule.ID)
 	})

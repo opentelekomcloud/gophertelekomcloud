@@ -63,7 +63,7 @@ func DeletePeeringConnNResources(t *testing.T, clientV2 *golangsdk.ServiceClient
 	peerClientV1 *golangsdk.ServiceClient, peeringConn *peerings.Peering) {
 	t.Logf("Attempting to delete vpc peering connection: %s", peeringConn.ID)
 
-	err := peerings.Delete(clientV2, peeringConn.ID).ExtractErr()
+	err := peerings.Delete(clientV2, peeringConn.ID).Err
 	if err != nil {
 		t.Fatalf("Error deleting vpc peering connection: %v", err)
 	}
@@ -72,12 +72,12 @@ func DeletePeeringConnNResources(t *testing.T, clientV2 *golangsdk.ServiceClient
 
 	t.Logf("Attempting to delete vpc: %s", peeringConn.RequestVpcInfo.VpcId)
 
-	err = vpcs.Delete(clientV1, peeringConn.RequestVpcInfo.VpcId).ExtractErr()
+	err = vpcs.Delete(clientV1, peeringConn.RequestVpcInfo.VpcId).Err
 	if err != nil {
 		t.Fatalf("Error deleting vpc: %v", err)
 	}
 
-	err = vpcs.Delete(peerClientV1, peeringConn.AcceptVpcInfo.VpcId).ExtractErr()
+	err = vpcs.Delete(peerClientV1, peeringConn.AcceptVpcInfo.VpcId).Err
 	if err != nil {
 		t.Fatalf("Error deleting vpc: %v", err)
 	}

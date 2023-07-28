@@ -37,7 +37,7 @@ func TestVBSV2BackupLifecycle(t *testing.T) {
 	backupID := v.(string)
 
 	defer func() {
-		err = backups.Delete(client, backupID).ExtractErr()
+		err = backups.Delete(client, backupID).Err
 		th.AssertNoErr(t, err)
 		t.Log("backup successfully deleted")
 	}()

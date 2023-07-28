@@ -2,8 +2,9 @@ package subnets
 
 import (
 	"encoding/json"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

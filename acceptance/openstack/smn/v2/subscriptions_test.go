@@ -26,7 +26,7 @@ func TestTopicSubscriptionWorkflow(t *testing.T) {
 	t.Logf("Created SMN subscription: %s", subscription.SubscriptionUrn)
 	defer func() {
 		t.Logf("Attempting to delete SMN subscription: %s", subscription.SubscriptionUrn)
-		err := subscriptions.Delete(client, subscription.SubscriptionUrn).ExtractErr()
+		err := subscriptions.Delete(client, subscription.SubscriptionUrn).Err
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SMN subscription: %s", subscription.SubscriptionUrn)
 	}()

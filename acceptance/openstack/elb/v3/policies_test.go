@@ -40,7 +40,7 @@ func TestPolicyWorkflow(t *testing.T) {
 	id := created.ID
 
 	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
+		th.AssertNoErr(t, policies.Delete(client, id).Err)
 		t.Log("Deleted L7 Policy")
 	}()
 
@@ -111,7 +111,7 @@ func TestPolicyWorkflowFixedResponse(t *testing.T) {
 	id := created.ID
 
 	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
+		th.AssertNoErr(t, policies.Delete(client, id).Err)
 		t.Log("Deleted L7 Policy")
 	}()
 
@@ -191,7 +191,7 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 	id := created.ID
 
 	defer func() {
-		th.AssertNoErr(t, policies.Delete(client, id).ExtractErr())
+		th.AssertNoErr(t, policies.Delete(client, id).Err)
 		t.Log("Deleted L7 Policy")
 	}()
 

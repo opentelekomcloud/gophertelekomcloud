@@ -16,7 +16,7 @@ func TestPause(t *testing.T) {
 
 	mockPauseServerResponse(t, serverID)
 
-	err := pauseunpause.Pause(client.ServiceClient(), serverID).ExtractErr()
+	err := pauseunpause.Pause(client.ServiceClient(), serverID).Err
 	th.AssertNoErr(t, err)
 }
 
@@ -26,6 +26,6 @@ func TestUnpause(t *testing.T) {
 
 	mockUnpauseServerResponse(t, serverID)
 
-	err := pauseunpause.Unpause(client.ServiceClient(), serverID).ExtractErr()
+	err := pauseunpause.Unpause(client.ServiceClient(), serverID).Err
 	th.AssertNoErr(t, err)
 }

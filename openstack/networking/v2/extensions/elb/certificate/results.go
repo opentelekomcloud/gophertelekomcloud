@@ -34,7 +34,8 @@ type commonResult struct {
 
 func (r commonResult) Extract() (*Certificate, error) {
 	s := &Certificate{}
-	return s, r.ExtractInto(s)
+	err := r.ExtractInto(s)
+	return s, err
 }
 
 type CreateResult struct {

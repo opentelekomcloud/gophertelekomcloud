@@ -118,7 +118,7 @@ func (s *testNodes) TestNodeLifecycle() {
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
 	defer func() {
-		th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
+		th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).Err)
 		err = golangsdk.WaitFor(1800, func() (bool, error) {
 			_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
 			if err != nil {

@@ -31,7 +31,7 @@ func createELB(t *testing.T) *loadbalancers.LoadBalancer {
 func deleteELB(t *testing.T, id string) {
 	client, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, loadbalancers.Delete(client, id).ExtractErr())
+	th.AssertNoErr(t, loadbalancers.Delete(client, id).Err)
 }
 
 func TestListPublicServices(t *testing.T) {
@@ -84,7 +84,7 @@ func TestServicesWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	defer func() {
-		err := services.Delete(client, svc.ID).ExtractErr()
+		err := services.Delete(client, svc.ID).Err
 		th.AssertNoErr(t, err)
 		th.AssertNoErr(t, services.WaitForServiceStatus(client, svc.ID, services.StatusDeleted, 30))
 	}()

@@ -31,7 +31,7 @@ func TestKmsGrantsLifecycle(t *testing.T) {
 			KeyID:   kmsID,
 			GrantID: createGrant.GrantID,
 		}
-		th.AssertNoErr(t, grants.Delete(client, deleteOpts).ExtractErr())
+		th.AssertNoErr(t, grants.Delete(client, deleteOpts).Err)
 	}()
 
 	listOpts := grants.ListOpts{

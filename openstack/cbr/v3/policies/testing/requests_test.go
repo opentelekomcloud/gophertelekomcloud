@@ -1,8 +1,9 @@
 package testing
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"testing"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"

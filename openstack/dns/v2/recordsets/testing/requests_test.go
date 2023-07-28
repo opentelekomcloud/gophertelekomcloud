@@ -133,7 +133,7 @@ func TestDelete(t *testing.T) {
 	DeletedRecordSet.Records = []string{"10.1.0.2", "10.1.0.3"}
 	DeletedRecordSet.Version = 2
 
-	err := recordsets.Delete(client.ServiceClient(), DeletedRecordSet.ZoneID, DeletedRecordSet.ID).ExtractErr()
+	err := recordsets.Delete(client.ServiceClient(), DeletedRecordSet.ZoneID, DeletedRecordSet.ID).Err
 	th.AssertNoErr(t, err)
 	// th.CheckDeepEquals(t, &DeletedZone, actual)
 }

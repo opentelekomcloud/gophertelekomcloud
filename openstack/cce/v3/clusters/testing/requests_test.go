@@ -277,7 +277,7 @@ func TestDeleteV3Cluster(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").ExtractErr()
+	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Err
 	th.AssertNoErr(t, err)
 
 }
@@ -292,7 +292,7 @@ func TestDeleteV3TurboCluster(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").ExtractErr()
+	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Err
 	th.AssertNoErr(t, err)
 
 }

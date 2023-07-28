@@ -61,7 +61,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func deleteLoadbalancer(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) {
 	t.Logf("Attempting to delete ELBv3 LoadBalancer: %s", loadbalancerID)
-	err := loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err := loadbalancers.Delete(client, loadbalancerID).Err
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 LoadBalancer: %s", loadbalancerID)
 }
@@ -141,7 +141,7 @@ i1YhgnQbn5E0hz55OLu5jvOkKQjPCW+8Kg==
 
 func deleteCertificate(t *testing.T, client *golangsdk.ServiceClient, certificateID string) {
 	t.Logf("Attempting to delete ELBv3 certificate: %s", certificateID)
-	err := certificates.Delete(client, certificateID).ExtractErr()
+	err := certificates.Delete(client, certificateID).Err
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 certificate: %s", certificateID)
 }
@@ -176,7 +176,7 @@ func createPool(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID st
 
 func deletePool(t *testing.T, client *golangsdk.ServiceClient, poolID string) {
 	t.Logf("Attempting to delete ELBv3 Pool: %s", poolID)
-	err := pools.Delete(client, poolID).ExtractErr()
+	err := pools.Delete(client, poolID).Err
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 Pool: %s", poolID)
 }
@@ -192,5 +192,5 @@ func createListener(t *testing.T, client *golangsdk.ServiceClient, loadbalancerI
 }
 
 func deleteListener(t *testing.T, client *golangsdk.ServiceClient, listenerID string) {
-	th.AssertNoErr(t, listeners.Delete(client, listenerID).ExtractErr())
+	th.AssertNoErr(t, listeners.Delete(client, listenerID).Err)
 }

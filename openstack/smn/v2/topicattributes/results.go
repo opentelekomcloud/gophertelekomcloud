@@ -18,7 +18,7 @@ func (r GetResult) Extract() (map[string]string, error) {
 }
 
 type UpdateResult struct {
-	golangsdk.ErrResult
+	golangsdk.Result
 }
 
 type DeleteResult struct {

@@ -20,7 +20,7 @@ func TestTopicAttributeWorkflow(t *testing.T) {
 	opts := topicattributes.UpdateOpts{
 		Value: examplePolicy,
 	}
-	err = topicattributes.Update(client, topic, attribute, opts).ExtractErr()
+	err = topicattributes.Update(client, topic, attribute, opts).Err
 	th.AssertNoErr(t, err)
 
 	listOpts := topicattributes.ListOpts{Name: attribute}
@@ -28,7 +28,7 @@ func TestTopicAttributeWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, examplePolicy, attributes[attribute])
 
-	err = topicattributes.Delete(client, topic, attribute).ExtractErr()
+	err = topicattributes.Delete(client, topic, attribute).Err
 	th.AssertNoErr(t, err)
 }
 
