@@ -32,8 +32,7 @@ type ListOpts struct {
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
-	var opts2 interface{} = &opts
-	query, err := build.QueryString(opts2)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

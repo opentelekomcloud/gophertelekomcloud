@@ -95,8 +95,7 @@ type GetTaskOptsBuilder interface {
 }
 
 func (opts GetTaskOpts) ToGetTaskQuery() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}
@@ -144,8 +143,7 @@ type ListLogsOptsBuilder interface {
 }
 
 func (opts ListLogsOpts) ToListLogsQuery() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}
@@ -191,8 +189,7 @@ type ListStatusOpts struct {
 func ListStatus(client *golangsdk.ServiceClient, opts ListStatusOpts) ([]DdosStatus, error) {
 	var r ListStatusResult
 
-	var opts2 interface{} = &opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

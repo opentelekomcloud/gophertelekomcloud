@@ -23,8 +23,7 @@ type BatchDeleteBody struct {
 }
 
 func BatchDelete(client *golangsdk.ServiceClient, opts BatchDeleteOpts) ([]BatchOpsResult, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

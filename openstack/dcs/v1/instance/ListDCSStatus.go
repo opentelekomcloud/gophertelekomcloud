@@ -14,8 +14,7 @@ type StatusOpts struct {
 }
 
 func ListDCSStatus(client *golangsdk.ServiceClient, opts StatusOpts) (*ListNumberOfInstancesInDifferentStatusResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

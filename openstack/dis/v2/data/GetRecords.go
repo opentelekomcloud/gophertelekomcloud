@@ -19,8 +19,7 @@ type GetRecordsOpts struct {
 }
 
 func GetRecords(client *golangsdk.ServiceClient, opts GetRecordsOpts) (*GetRecordsResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

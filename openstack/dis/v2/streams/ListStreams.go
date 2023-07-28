@@ -22,8 +22,7 @@ type ListStreamsOpts struct {
 }
 
 func ListStreams(client *golangsdk.ServiceClient, opts ListStreamsOpts) (*ListStreamsResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

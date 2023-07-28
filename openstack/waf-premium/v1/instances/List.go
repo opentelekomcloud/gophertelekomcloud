@@ -8,8 +8,7 @@ import (
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Instance, error) {
 	// GET /v1/{project_id}/premium-waf/instance
-	var opts2 interface{} = opts
-	query, err := build.QueryString(opts2)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

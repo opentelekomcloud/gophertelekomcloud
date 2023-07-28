@@ -22,8 +22,7 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]OperationLog, error) {
-	var opts2 interface{} = opts
-	query, err := build.QueryString(opts2)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

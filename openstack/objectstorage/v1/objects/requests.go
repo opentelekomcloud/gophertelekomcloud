@@ -42,8 +42,7 @@ type ListOpts struct {
 // ToObjectListParams formats a ListOpts into a query string and boolean
 // representing whether to list complete information for each object.
 func (opts ListOpts) ToObjectListParams() (bool, string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return false, "", err
 	}
@@ -105,8 +104,7 @@ type DownloadOpts struct {
 // ToObjectDownloadParams formats a DownloadOpts into a query string and map of
 // headers.
 func (opts DownloadOpts) ToObjectDownloadParams() (map[string]string, string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, "", err
 	}
@@ -180,8 +178,7 @@ type CreateOpts struct {
 // ToObjectCreateParams formats a CreateOpts into a query string and map of
 // headers.
 func (opts CreateOpts) ToObjectCreateParams() (io.Reader, map[string]string, string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, nil, "", err
 	}
@@ -326,8 +323,7 @@ type DeleteOpts struct {
 
 // ToObjectDeleteQuery formats a DeleteOpts into a query string.
 func (opts DeleteOpts) ToObjectDeleteQuery() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}
@@ -369,8 +365,7 @@ type GetOpts struct {
 
 // ToObjectGetParams formats a GetOpts into a query string and a map of headers.
 func (opts GetOpts) ToObjectGetParams() (map[string]string, string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, "", err
 	}

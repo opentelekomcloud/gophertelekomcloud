@@ -20,8 +20,7 @@ type ListAlarmsOpts struct {
 }
 
 func ListAlarms(client *golangsdk.ServiceClient, opts ListAlarmsOpts) (*ListAlarmsResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

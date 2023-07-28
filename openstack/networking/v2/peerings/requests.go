@@ -54,8 +54,7 @@ func FilterVpcIdParam(opts ListOpts) (filter ListOpts) {
 // filter  the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Peering, error) {
 	filter := FilterVpcIdParam(opts)
-	var opts2 interface{} = &filter
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(filter)
 	if err != nil {
 		return nil, err
 	}

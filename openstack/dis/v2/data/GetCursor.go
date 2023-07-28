@@ -51,8 +51,7 @@ type GetCursorOpts struct {
 }
 
 func GetCursor(client *golangsdk.ServiceClient, opts GetCursorOpts) (*GetCursorResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

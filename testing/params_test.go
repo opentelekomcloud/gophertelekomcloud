@@ -33,8 +33,7 @@ func TestBuildQueryString(t *testing.T) {
 		M:  map[string]string{"k1": "success1"},
 	}
 	expected := &url.URL{RawQuery: "c=true&f=false&j=2&m=%7B%27k1%27%3A%27success1%27%7D&r=red&s=one&s=two&s=three&ti=1&ti=2&ts=a&ts=b"}
-	var opts2 interface{} = &opts
-	actual, err := build.QueryString(opts2)
+	actual, err := build.QueryString(opts)
 	if err != nil {
 		t.Errorf("Error building query string: %v", err)
 	}

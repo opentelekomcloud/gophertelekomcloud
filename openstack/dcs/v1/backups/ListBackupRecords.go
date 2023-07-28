@@ -19,8 +19,7 @@ type ListBackupOpts struct {
 }
 
 func ListBackupRecords(client *golangsdk.ServiceClient, instancesId string, opts ListBackupOpts) (*ListBackupRecordsResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

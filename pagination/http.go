@@ -37,7 +37,7 @@ func (r PageResult) GetBodyAsSlice() ([]any, error) {
 
 // GetBodyAsMap tries to convert page body to a map, returning nil on fail
 func (r PageResult) GetBodyAsMap() (map[string]any, error) {
-	result := make(map[string]any, 0)
+	result := make(map[string]any)
 
 	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
 		return nil, err

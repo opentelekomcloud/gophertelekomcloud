@@ -34,8 +34,7 @@ type ListOpts struct {
 
 // ToPoolListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToPoolListQuery() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

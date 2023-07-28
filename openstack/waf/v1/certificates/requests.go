@@ -100,8 +100,7 @@ func (opts ListOpts) ToCertificateListQuery() (string, error) {
 	if opts.Limit > 50 || opts.Offset < -1 {
 		return "", fmt.Errorf("limit must be -1-50")
 	}
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

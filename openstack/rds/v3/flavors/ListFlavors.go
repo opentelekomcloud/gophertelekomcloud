@@ -25,8 +25,7 @@ type ListOpts struct {
 
 func ListFlavors(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 	// GET https://{Endpoint}/v3/{project_id}/flavors/{database_name}
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

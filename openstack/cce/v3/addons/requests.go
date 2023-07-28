@@ -144,8 +144,7 @@ type ListOpts struct {
 }
 
 func (opts ListOpts) ToAddonListQuery() (string, error) {
-	var opts2 interface{} = opts
-	u, err := build.QueryString(opts2)
+	u, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

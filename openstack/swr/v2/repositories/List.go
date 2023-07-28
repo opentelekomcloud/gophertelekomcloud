@@ -46,8 +46,7 @@ func (opts ListOpts) ToRepositoryListQuery() (string, error) {
 		return "", fmt.Errorf("`OrderColumn` and `OrderType` should always be used together")
 	}
 
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

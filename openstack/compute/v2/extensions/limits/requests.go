@@ -19,8 +19,7 @@ type GetOpts struct {
 
 // ToLimitsQuery formats a GetOpts into a query string.
 func (opts GetOpts) ToLimitsQuery() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

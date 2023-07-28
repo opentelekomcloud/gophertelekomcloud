@@ -37,8 +37,7 @@ type ListMetricsBuilder interface {
 }
 
 func (opts ListMetricsRequest) ToMetricsListMap() (string, error) {
-	var opts2 interface{} = &opts
-	s, err := build.QueryString(opts2)
+	s, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

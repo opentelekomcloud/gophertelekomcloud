@@ -35,8 +35,7 @@ type DbErrorlogOpts struct {
 }
 
 func ListErrorLog(client *golangsdk.ServiceClient, opts DbErrorlogOpts) (*ErrorLogResp, error) {
-	var opts2 interface{} = opts
-	query, err := build.QueryString(opts2)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

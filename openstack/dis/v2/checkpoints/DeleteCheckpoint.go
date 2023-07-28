@@ -24,8 +24,7 @@ type DeleteCheckpointOpts struct {
 }
 
 func DeleteCheckpoint(client *golangsdk.ServiceClient, opts DeleteCheckpointOpts) (err error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return err
 	}

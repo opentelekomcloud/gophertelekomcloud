@@ -111,8 +111,7 @@ type ListOptsBuilder interface {
 
 // ToRegionListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToHostListQuery() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}
@@ -173,8 +172,7 @@ type ListServerOpts struct {
 // dedicated hosts Server resources. It accepts a ListServerOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func ListServer(c *golangsdk.ServiceClient, id string, opts ListServerOpts) ([]Server, error) {
-	var opts2 interface{} = &opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

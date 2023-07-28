@@ -56,8 +56,7 @@ type ShowMetricDataOpts struct {
 }
 
 func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataOpts) (*MetricData, error) {
-	var opts2 interface{} = &opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

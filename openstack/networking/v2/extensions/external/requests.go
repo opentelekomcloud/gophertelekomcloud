@@ -18,8 +18,7 @@ type ListOptsExt struct {
 // ToNetworkListQuery adds the router:external option to the base network
 // list options.
 func (opts ListOptsExt) ToNetworkListQuery() (string, error) {
-	var opts2 interface{} = opts.ListOptsBuilder
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts.ListOptsBuilder)
 	if err != nil {
 		return "", err
 	}

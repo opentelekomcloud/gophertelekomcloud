@@ -46,8 +46,7 @@ type GetStreamMonitorOpts struct {
 }
 
 func GetStreamMonitor(client *golangsdk.ServiceClient, opts GetStreamMonitorOpts) (*GetStreamMonitorResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

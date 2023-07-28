@@ -16,8 +16,7 @@ import (
 
 // List implements image list request.
 func List(c *golangsdk.ServiceClient, opts images.ListImagesOpts) pagination.Pager {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return pagination.Pager{Err: err}
 	}

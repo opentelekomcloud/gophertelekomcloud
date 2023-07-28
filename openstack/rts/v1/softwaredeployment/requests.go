@@ -31,8 +31,7 @@ type ListOpts struct {
 // Default policy settings return only those Software Deployment that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Deployment, error) {
-	var opts2 interface{} = &opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

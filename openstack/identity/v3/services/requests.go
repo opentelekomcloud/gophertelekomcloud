@@ -72,8 +72,7 @@ type ListOpts struct {
 
 // ToServiceListMap builds a list query from the list options.
 func (opts ListOpts) ToServiceListMap() (string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return "", err
 	}

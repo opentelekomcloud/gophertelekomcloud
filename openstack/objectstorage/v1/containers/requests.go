@@ -26,8 +26,7 @@ type ListOpts struct {
 // ToContainerListParams formats a ListOpts into a query string and boolean
 // representing whether to list complete information for each container.
 func (opts ListOpts) ToContainerListParams() (bool, string, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return false, "", err
 	}

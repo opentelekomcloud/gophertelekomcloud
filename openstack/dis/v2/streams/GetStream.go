@@ -21,8 +21,7 @@ type GetStreamOpts struct {
 }
 
 func GetStream(client *golangsdk.ServiceClient, opts GetStreamOpts) (*DescribeStreamResponse, error) {
-	var opts2 interface{} = opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

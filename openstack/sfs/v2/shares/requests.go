@@ -77,8 +77,7 @@ type ListOpts struct {
 // share resources. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Share, error) {
-	var opts2 interface{} = &opts
-	q, err := build.QueryString(opts2)
+	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}
