@@ -47,7 +47,7 @@ for information about how you can create a local development environment to
 better understand the feature you're working on.
 
 Please do not hesitate to ask questions or request clarification. Your
-contribution is very much appreciated and we are happy to work with you to get
+contribution is very much appreciated, and we are happy to work with you to get
 it merged.
 
 ## Getting Started
@@ -99,9 +99,9 @@ way than just downloading it. Here are the basic instructions:
    git commit
    ```
 
-7. Submit your branch as a [Pull Request](https://help.github.com/articles/creating-a-pull-request/). When submitting a
-   Pull Request, please follow
-   our [Style Guide](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/STYLEGUIDE.md).
+7. Submit your branch as a [Pull Request](https://help.github.com/articles/creating-a-pull-request/).
+   When submitting a Pull Request, please follow our
+   [Style Guide](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/STYLEGUIDE.md).
 
 > Further information about using Git can be found [here](https://git-scm.com/book/en/v2).
 
