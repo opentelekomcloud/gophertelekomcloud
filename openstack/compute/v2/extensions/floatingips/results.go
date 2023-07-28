@@ -103,17 +103,17 @@ type GetResult struct {
 // DeleteResult is the response from a Delete operation. Call its ExtractErr
 // method to determine if the call succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // AssociateResult is the response from a Delete operation. Call its ExtractErr
 // method to determine if the call succeeded or failed.
 type AssociateResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // DisassociateResult is the response from a Delete operation. Call its
 // ExtractErr method to determine if the call succeeded or failed.
 type DisassociateResult struct {
-	golangsdk.ErrResult
+	Err error
 }

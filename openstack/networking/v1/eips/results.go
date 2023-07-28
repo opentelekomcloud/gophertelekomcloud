@@ -48,7 +48,7 @@ func (r GetResult) Extract() (*PublicIp, error) {
 
 // DeleteResult is a struct of delete result
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UpdateResult is a struct which contains the result of update method

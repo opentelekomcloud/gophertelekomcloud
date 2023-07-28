@@ -84,7 +84,7 @@ type UpdateResult struct {
 // DeleteResult is the response from a Delete operation. Call its ExtractErr to
 // determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // RolePage is a single page of Role results.
@@ -193,11 +193,11 @@ func ExtractRoleAssignments(r pagination.Page) ([]RoleAssignment, error) {
 // AssignmentResult represents the result of an assign operation.
 // Call ExtractErr method to determine if the request succeeded or failed.
 type AssignmentResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UnassignmentResult represents the result of an unassign operation.
 // Call ExtractErr method to determine if the request succeeded or failed.
 type UnassignmentResult struct {
-	golangsdk.ErrResult
+	Err error
 }

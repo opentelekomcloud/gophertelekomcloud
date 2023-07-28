@@ -29,7 +29,7 @@ type GetResult struct {
 // DeleteResult is the result from a Delete operation. Call its ExtractErr
 // method to determine if the call succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Extract provides access to the individual Flavor returned by the Get and
@@ -246,7 +246,7 @@ type UpdateExtraSpecResult struct {
 // DeleteExtraSpecResult contains the result of a Delete operation. Call its
 // ExtractErr method to determine if the call succeeded or failed.
 type DeleteExtraSpecResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Extract interprets any extraSpecResult as an ExtraSpec, if possible.

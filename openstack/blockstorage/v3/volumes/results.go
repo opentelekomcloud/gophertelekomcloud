@@ -169,5 +169,5 @@ type UpdateResult struct {
 
 // DeleteResult contains the response body and error from a Delete request.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }

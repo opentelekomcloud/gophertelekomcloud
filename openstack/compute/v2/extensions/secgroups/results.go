@@ -195,23 +195,23 @@ func (r CreateRuleResult) Extract() (*Rule, error) {
 // DeleteResult is the response from delete operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // DeleteRuleResult is the response from a DeleteRule operation. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type DeleteRuleResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // AddServerResult is the response from an AddServer operation. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type AddServerResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // RemoveServerResult is the response from a RemoveServer operation. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type RemoveServerResult struct {
-	golangsdk.ErrResult
+	Err error
 }

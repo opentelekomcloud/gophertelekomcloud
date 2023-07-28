@@ -114,5 +114,5 @@ func ExtractBandwidths(r pagination.Page) ([]Bandwidth, error) {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }

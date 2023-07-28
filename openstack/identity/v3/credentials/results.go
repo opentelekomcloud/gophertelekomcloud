@@ -72,7 +72,7 @@ func (lr ListResult) Extract() ([]Credential, error) {
 // DeleteResult is the response from a Delete operation. Call its ExtractErr to
 // determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type TemporaryCredential struct {

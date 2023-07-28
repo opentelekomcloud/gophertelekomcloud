@@ -132,7 +132,7 @@ type UpdateResult struct {
 // DeleteResult represents the result of a delete operation. Call its
 // ExtractErr method to interpret it as a Pool.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // AssociateResult represents the result of an association operation. Call its Extract

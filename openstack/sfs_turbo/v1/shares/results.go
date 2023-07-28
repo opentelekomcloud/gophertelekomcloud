@@ -77,17 +77,17 @@ type GetResult struct {
 
 // DeleteResult contains the error from a Delete request.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // ExpandResult contains the error from an Expand request.
 type ExpandResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // ChangeSGResult contains the error from a ChangeSG request.
 type ChangeSGResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Extract will get the Turbo response object from the CreateResult

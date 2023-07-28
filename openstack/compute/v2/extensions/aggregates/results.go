@@ -109,7 +109,7 @@ type GetResult struct {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type UpdateResult struct {

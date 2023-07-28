@@ -104,7 +104,7 @@ func (r CreateResult) Extract() (*FlowLog, error) {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type GetResult struct {

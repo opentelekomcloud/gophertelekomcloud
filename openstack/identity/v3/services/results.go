@@ -45,7 +45,7 @@ type UpdateResult struct {
 // DeleteResult is the response from a Delete request. Call its ExtractErr
 // method to interpret it as a Service.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Service represents an OpenStack Service.

@@ -49,7 +49,7 @@ type UpdateResult struct {
 // DeleteResult is result of a Delete operation. Call its ExtractErr method to
 // determine if the operation succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // IsEmpty returns true if the page contains no results.

@@ -34,5 +34,5 @@ type GetResult struct {
 
 // DeleteResult model
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }

@@ -166,7 +166,7 @@ type GetResult struct {
 // DeleteResult represents the result of a Delete operation. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UpdateResult represents the result of an Update operation. Call its Extract
@@ -242,7 +242,7 @@ type GetRuleResult struct {
 // DeleteRuleResult represents the result of a DeleteRule operation.
 // Call its ExtractErr method to determine if the request succeeded or failed.
 type DeleteRuleResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UpdateRuleResult represents the result of an UpdateRule operation.

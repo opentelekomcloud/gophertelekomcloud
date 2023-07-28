@@ -207,7 +207,7 @@ type CreateResult struct {
 
 // DeleteResult contains the response body and error from a Delete request.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UpdateResult contains the response body and error from a update request.
@@ -222,10 +222,10 @@ type GetResult struct {
 
 // ExpandResult contains the response body and error from a Expand request.
 type ExpandResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // ShrinkResult contains the response body and error from a Shrink request.
 type ShrinkResult struct {
-	golangsdk.ErrResult
+	Err error
 }

@@ -26,7 +26,7 @@ type UpdateResult struct {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type ListPolicy struct {

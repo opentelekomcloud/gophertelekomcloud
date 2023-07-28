@@ -145,7 +145,7 @@ type GetResult struct {
 // DeleteResult represents the result of a delete operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UnmarshalJSON overrides the default, to convert the JSON API response into our Backup struct

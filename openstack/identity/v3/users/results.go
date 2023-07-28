@@ -105,7 +105,7 @@ type UpdateExtendedResult struct {
 // DeleteResult is the response from a Delete operation. Call its ExtractErr to
 // determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UserPage is a single page of User results.
@@ -157,9 +157,9 @@ func (r userResult) Extract() (*User, error) {
 }
 
 type AddMembershipResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type WelcomeResult struct {
-	golangsdk.ErrResult
+	Err error
 }

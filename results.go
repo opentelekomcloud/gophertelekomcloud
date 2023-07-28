@@ -87,30 +87,11 @@ func (r Result) String() string {
 	return string(pretty)
 }
 
-// ErrResult is an internal type to be used by individual resource packages, but
-// its methods will be available on a wide variety of user-facing embedding
-// types.
-//
-// It represents results that only contain a potential error and
-// nothing else. Usually, if the operation executed successfully, the Err field
-// will be nil; otherwise it will be stocked with a relevant error. Use the
-// ExtractErr method
-// to cleanly pull it out.
-//
-// Deprecated: use plain err return instead
-type ErrResult struct {
-	Err error
-}
-
 // ----------------------------------------------------------------------------
 
 type ErrRespond struct {
 	ErrorCode string `json:"error_code"`
 	ErrorMsg  string `json:"error_msg"`
-}
-
-type ErrWithResult struct {
-	ErrResult
 }
 
 func (r Result) Extract() (*ErrRespond, error) {

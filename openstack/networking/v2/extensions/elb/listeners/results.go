@@ -94,7 +94,7 @@ func (r CreateResult) Extract() (*CreateResponse, error) {
 
 // DeleteResult represents the result of a delete operation.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // GetResult represents the result of a get operation.

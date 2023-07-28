@@ -35,7 +35,7 @@ type CreateResult struct {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type ListResult struct {

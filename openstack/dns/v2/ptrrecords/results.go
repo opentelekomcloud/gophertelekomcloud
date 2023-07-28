@@ -31,7 +31,7 @@ type GetResult struct {
 // DeleteResult is the result of a Delete request. Call its ExtractErr method
 // to determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Ptr represents a ptr record.

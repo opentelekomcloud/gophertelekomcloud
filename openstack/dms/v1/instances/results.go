@@ -30,7 +30,7 @@ func (r CreateResult) Extract() (*InstanceCreate, error) {
 
 // DeleteResult is a struct which contains the result of deletion
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type ListDmsResponse struct {
@@ -85,7 +85,7 @@ type Instance struct {
 
 // UpdateResult is a struct from which can get the result of update method
 type UpdateResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // GetResult contains the body of getting detailed

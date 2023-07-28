@@ -152,7 +152,7 @@ type CreateResult struct {
 // DeleteResult represents the result of a delete operation. Call its
 // ExtractErr method to determine if the operation succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // GetResult represents the result of a get operation. Call its Extract

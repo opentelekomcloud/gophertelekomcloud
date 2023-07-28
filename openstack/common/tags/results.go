@@ -11,7 +11,7 @@ type ListedTag struct {
 
 // ActionResult is the action result which is the result of create or delete operations
 type ActionResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // GetResult contains the body of getting detailed tags request

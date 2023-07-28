@@ -46,7 +46,7 @@ type UpdateResult struct {
 }
 
 type ErrResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type ListRolesResult struct {

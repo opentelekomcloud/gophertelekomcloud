@@ -73,7 +73,7 @@ type RebuildResult struct {
 // ActionResult represents the result of server action operations, like reboot.
 // Call its ExtractErr method to determine if the action succeeded or failed.
 type ActionResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // CreateImageResult is the response from a CreateImage operation. Call its
@@ -363,7 +363,7 @@ type CreateMetadatumResult struct {
 // DeleteMetadatumResult contains the result of a Delete operation. Call its
 // ExtractErr method to determine if the call succeeded or failed.
 type DeleteMetadatumResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Extract interprets any MetadataResult as a Metadata, if possible.

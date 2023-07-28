@@ -110,5 +110,5 @@ type UpdateResult struct {
 // DeleteResult represents the result of a delete operation. Call its
 // ExtractErr method to determine if the result succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }

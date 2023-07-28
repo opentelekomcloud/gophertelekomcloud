@@ -49,5 +49,5 @@ func (r CreateResult) Extract() (*SnatRule, error) {
 
 // DeleteResult is a return struct of delete method
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }

@@ -33,7 +33,7 @@ type CreateResult struct {
 
 // DeleteResult represents the result of a delete operation.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // GetResult represents the result of a get operation.

@@ -1,16 +1,12 @@
 package lockunlock
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-)
-
 // LockResult and UnlockResult are the responses from a Lock and Unlock
 // operations respectively. Call their ExtractErr methods to determine if the
 // requests suceeded or failed.
 type LockResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type UnlockResult struct {
-	golangsdk.ErrResult
+	Err error
 }

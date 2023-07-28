@@ -192,12 +192,12 @@ func (r GetResult) Extract() (*RetrievedStack, error) {
 
 // UpdateResult represents the result of a Update operation.
 type UpdateResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // DeleteResult represents the result of a Delete operation.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Prettify returns the string representation of a value.

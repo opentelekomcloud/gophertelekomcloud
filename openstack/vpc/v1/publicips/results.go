@@ -165,7 +165,7 @@ func (r CreateResult) Extract() (*PublicIPCreateResp, error) {
 }
 
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type GetResult struct {

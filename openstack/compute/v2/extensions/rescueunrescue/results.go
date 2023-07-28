@@ -15,7 +15,7 @@ type RescueResult struct {
 // UnrescueResult is the response from an UnRescue operation. Call its ExtractErr
 // method to determine if the call succeeded or failed.
 type UnrescueResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // Extract interprets any RescueResult as an AdminPass, if possible.

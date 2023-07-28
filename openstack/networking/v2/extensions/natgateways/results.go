@@ -56,7 +56,7 @@ func (r UpdateResult) Extract() (NatGateway, error) {
 
 // DeleteResult is a return struct of delete method
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 type NatGatewayPage struct {

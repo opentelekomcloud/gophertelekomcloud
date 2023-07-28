@@ -144,5 +144,5 @@ func (r GetResult) Extract() (*CloudServer, error) {
 }
 
 type DryRunResult struct {
-	golangsdk.ErrResult
+	Err error
 }

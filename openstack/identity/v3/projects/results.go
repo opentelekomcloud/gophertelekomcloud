@@ -27,7 +27,7 @@ type CreateResult struct {
 // DeleteResult is the result of a Delete request. Call its ExtractErr method to
 // determine if the request succeeded or failed.
 type DeleteResult struct {
-	golangsdk.ErrResult
+	Err error
 }
 
 // UpdateResult is the result of an Update request. Call its Extract method to
