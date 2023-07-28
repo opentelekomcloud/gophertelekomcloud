@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/hosts"
@@ -19,15 +18,7 @@ func TestWafPremiumHostWorkflow(t *testing.T) {
 		t.Skip("OS_REGION_NAME, OS_VPC_ID env vars is required for this test")
 	}
 
-	var client *golangsdk.ServiceClient
-	var err error
-	if region == "eu-ch2" {
-		client, err = clients.NewWafdSwissV1Client()
-		th.AssertNoErr(t, err)
-	} else {
-		client, err = clients.NewWafdV1Client()
-		th.AssertNoErr(t, err)
-	}
+	client, err := getWafdClient(t, region)
 
 	hostId := createHost(t, client, vpcID)
 
