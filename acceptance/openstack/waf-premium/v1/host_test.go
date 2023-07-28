@@ -21,6 +21,7 @@ func TestWafPremiumHostWorkflow(t *testing.T) {
 	client, err := getWafdClient(t, region)
 
 	hostId := createHost(t, client, vpcID)
+	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete WAF Premium host: %s", hostId)

@@ -28,6 +28,7 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 	}
 
 	client, err := getWafdClient(t, region)
+	th.AssertNoErr(t, err)
 
 	opts := instances.CreateOpts{
 		Count:            1,
