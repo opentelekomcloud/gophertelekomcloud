@@ -61,7 +61,7 @@ func Create(client *golangsdk.ServiceClient, region string, fip_id string, opts 
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Patch(baseURL(client, region, fip_id), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(baseURL(client, region, fip_id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return
@@ -72,7 +72,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	b := map[string]string{
 		"ptrname": "null",
 	}
-	_, r.Err = client.Patch(resourceURL(client, id), &b, nil, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(resourceURL(client, id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return

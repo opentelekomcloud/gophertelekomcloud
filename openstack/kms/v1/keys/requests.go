@@ -186,7 +186,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // from the response, call the Extract method on the GetResult.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	b := map[string]interface{}{"key_id": id}
-	_, r.Err = client.Post(getURL(client), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(getURL(client), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

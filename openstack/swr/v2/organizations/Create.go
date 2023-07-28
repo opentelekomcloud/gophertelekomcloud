@@ -18,6 +18,6 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (err error) {
 	}
 
 	// POST /v2/manage/namespaces
-	_, err = client.Post(client.ServiceURL("manage", "namespaces"), &b, nil, nil)
+	_, err = client.Post(client.ServiceURL("manage", "namespaces"), b, nil, nil)
 	return
 }

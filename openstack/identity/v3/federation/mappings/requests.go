@@ -86,7 +86,7 @@ func Create(client *golangsdk.ServiceClient, mappingID string, opts CreateOptsBu
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(mappingURL(client, mappingID), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(mappingURL(client, mappingID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	return
@@ -121,7 +121,7 @@ func Update(client *golangsdk.ServiceClient, mappingID string, opts UpdateOptsBu
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Patch(mappingURL(client, mappingID), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Patch(mappingURL(client, mappingID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

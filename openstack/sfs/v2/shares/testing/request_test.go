@@ -108,8 +108,8 @@ func TestListAccessRights(t *testing.T) {
 	})
 
 	c := client.ServiceClient()
-	// Client c must have Microversion set; minimum supported microversion for Grant Access is 2.7
-	c.Microversion = "2.7"
+	// Client c must have MicroVersion set; minimum supported microversion for Grant Access is 2.7
+	c.MicroVersion = "2.7"
 
 	s, err := shares.ListAccessRights(c, shareID).ExtractAccessRights()
 
@@ -140,8 +140,8 @@ func TestGrantAcessRight(t *testing.T) {
 	})
 
 	c := client.ServiceClient()
-	// Client c must have Microversion set; minimum supported microversion for Grant Access is 2.7
-	c.Microversion = "2.7"
+	// Client c must have MicroVersion set; minimum supported microversion for Grant Access is 2.7
+	c.MicroVersion = "2.7"
 
 	grantaccOpts := shares.GrantAccessOpts{AccessTo: "5232f396-d6cc-4a81-8de3-afd7a7ecdfd8", AccessType: "cert", AccessLevel: "rw"}
 	s, err := shares.GrantAccess(c, shareID, grantaccOpts).ExtractAccess()
@@ -170,7 +170,7 @@ func TestDeleteAcess(t *testing.T) {
 
 	})
 	c := client.ServiceClient()
-	c.Microversion = "2.7"
+	c.MicroVersion = "2.7"
 
 	res := shares.DeleteAccessOpts{AccessID: "ea07152b-d08b-4f6b-8785-ce64dce52679"}
 	s := shares.DeleteAccess(c, shareID, res)

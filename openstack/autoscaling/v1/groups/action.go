@@ -27,7 +27,7 @@ func doAction(client *golangsdk.ServiceClient, id string, opts ActionOpts) error
 		return err
 	}
 
-	_, err = client.Post(client.ServiceURL("scaling_group", id, "action"), &b, nil, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL("scaling_group", id, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 

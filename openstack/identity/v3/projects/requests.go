@@ -91,7 +91,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), &b, &r.Body, nil)
+	_, r.Err = client.Post(createURL(client), b, &r.Body, nil)
 	return
 }
 

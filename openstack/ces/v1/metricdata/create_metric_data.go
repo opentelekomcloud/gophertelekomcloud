@@ -60,6 +60,6 @@ func CreateMetricData(client *golangsdk.ServiceClient, items []MetricDataItem) e
 	}
 
 	// POST /V1.0/{project_id}/metric-data
-	_, err := client.Post(client.ServiceURL("metric-data"), &b, nil, nil)
+	_, err := client.Post(client.ServiceURL("metric-data"), b, nil, nil)
 	return err
 }

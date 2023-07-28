@@ -111,7 +111,7 @@ func Create(client *golangsdk.ServiceClient, zoneID string, opts CreateOptsBuild
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(baseURL(client, zoneID), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Post(baseURL(client, zoneID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{201, 202},
 	})
 	return
@@ -157,7 +157,7 @@ func Update(client *golangsdk.ServiceClient, zoneID string, rrsetID string, opts
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(rrsetURL(client, zoneID, rrsetID), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(rrsetURL(client, zoneID, rrsetID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 	return

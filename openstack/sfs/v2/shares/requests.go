@@ -243,7 +243,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
 
 // ListAccessRights lists all access rules assigned to a Share based on its id. To extract
 // the AccessRight slice from the response, call the Extract method on the AccessRightsResult.
-// Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
+// Client must have MicroVersion set; minimum supported microversion for ListAccessRights is 2.7.
 func ListAccessRights(client *golangsdk.ServiceClient, share_id string) (r AccessRightsResult) {
 	requestBody := map[string]interface{}{"os-access_list": nil}
 	_, r.Err = client.Post(rootURL(client, share_id), requestBody, &r.Body, &golangsdk.RequestOpts{
@@ -278,7 +278,7 @@ func (opts GrantAccessOpts) ToGrantAccessMap() (map[string]interface{}, error) {
 
 // GrantAccess will grant access to a Share based on the values in GrantAccessOpts. To extract
 // the GrantAccess object from the response, call the Extract method on the GrantAccessResult.
-// Client must have Microversion set; minimum supported microversion for GrantAccess is 2.7.
+// Client must have MicroVersion set; minimum supported microversion for GrantAccess is 2.7.
 func GrantAccess(client *golangsdk.ServiceClient, share_id string, opts GrantAccessOptsBuilder) (r GrantAccessResult) {
 	b, err := opts.ToGrantAccessMap()
 	if err != nil {

@@ -87,7 +87,7 @@ type ListOpts struct {
 // BMS Server resources. It accepts a ListServerOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
-	c.Microversion = "2.26"
+	c.MicroVersion = "2.26"
 	q, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err

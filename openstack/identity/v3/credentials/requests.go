@@ -61,7 +61,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), &b, &r.Body, nil)
+	_, r.Err = client.Post(createURL(client), b, &r.Body, nil)
 	return
 }
 
@@ -84,7 +84,7 @@ func Update(client *golangsdk.ServiceClient, credentialID string, opts UpdateOpt
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Put(updateURL(client, credentialID), &b, &r.Body, &golangsdk.RequestOpts{
+	_, r.Err = client.Put(updateURL(client, credentialID), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return

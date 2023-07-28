@@ -43,7 +43,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(listURL(client), &b, &r.Body, nil)
+	_, r.Err = client.Post(listURL(client), b, &r.Body, nil)
 	return
 }
 
@@ -136,7 +136,7 @@ func Update(client *golangsdk.ServiceClient, endpointID string, opts UpdateOptsB
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Patch(endpointURL(client, endpointID), &b, &r.Body, nil)
+	_, r.Err = client.Patch(endpointURL(client, endpointID), b, &r.Body, nil)
 	return
 }
 

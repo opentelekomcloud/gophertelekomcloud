@@ -25,8 +25,8 @@ type ServiceClient struct {
 	// It is only exported because it gets set in a different package.
 	Type string
 
-	// The microversion of the service to use. Set this to use a particular microversion.
-	Microversion string
+	// The MicroVersion of the service to use. Set this to use a particular MicroVersion.
+	MicroVersion string
 }
 
 // ResourceBaseURL returns the base URL of any resources used by this service. It MUST end with a /.
@@ -42,7 +42,7 @@ func (client *ServiceClient) ServiceURL(parts ...string) string {
 	return client.ResourceBaseURL() + strings.Join(parts, "/")
 }
 
-func (client *ServiceClient) initReqOpts(JSONBody any, JSONResponse *[]byte, opts *RequestOpts) {
+func (client *ServiceClient) initReqOpts(JSONBody interface{}, JSONResponse *[]byte, opts *RequestOpts) {
 	opts.JSONBody = JSONBody
 
 	if JSONResponse != nil {
@@ -53,7 +53,7 @@ func (client *ServiceClient) initReqOpts(JSONBody any, JSONResponse *[]byte, opt
 		opts.MoreHeaders = make(map[string]string)
 	}
 
-	if client.Microversion != "" {
+	if client.MicroVersion != "" {
 		client.setMicroversionHeader(opts)
 	}
 }
@@ -70,7 +70,7 @@ func (client *ServiceClient) Get(url string, JSONResponse *[]byte, opts *Request
 
 // Post calls `Request` with the "POST" HTTP verb. Def 201, 202
 // JSONResponse Deprecated
-func (client *ServiceClient) Post(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Post(url string, JSONBody interface{}, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -80,7 +80,7 @@ func (client *ServiceClient) Post(url string, JSONBody any, JSONResponse *[]byte
 
 // Put calls `Request` with the "PUT" HTTP verb. Def 201, 202
 // JSONResponse Deprecated
-func (client *ServiceClient) Put(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Put(url string, JSONBody interface{}, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -90,7 +90,7 @@ func (client *ServiceClient) Put(url string, JSONBody any, JSONResponse *[]byte,
 
 // Patch calls `Request` with the "PATCH" HTTP verb. Def 200, 204
 // JSONResponse Deprecated
-func (client *ServiceClient) Patch(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) Patch(url string, JSONBody interface{}, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -117,7 +117,7 @@ func (client *ServiceClient) Head(url string, opts *RequestOpts) (*http.Response
 }
 
 // DeleteWithBody calls `Request` with the "DELETE" HTTP verb. Def 202, 204
-func (client *ServiceClient) DeleteWithBody(url string, JSONBody any, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) DeleteWithBody(url string, JSONBody interface{}, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -137,7 +137,7 @@ func (client *ServiceClient) DeleteWithResponse(url string, JSONResponse *[]byte
 
 // DeleteWithBodyResp calls `Request` with the "DELETE" HTTP verb. Def 202, 204
 // Deprecated
-func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody any, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
+func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody interface{}, JSONResponse *[]byte, opts *RequestOpts) (*http.Response, error) {
 	if opts == nil {
 		opts = new(RequestOpts)
 	}
@@ -148,14 +148,14 @@ func (client *ServiceClient) DeleteWithBodyResp(url string, JSONBody any, JSONRe
 func (client *ServiceClient) setMicroversionHeader(opts *RequestOpts) {
 	switch client.Type {
 	case "compute":
-		opts.MoreHeaders["X-OpenStack-Nova-API-Version"] = client.Microversion
+		opts.MoreHeaders["X-OpenStack-Nova-API-Version"] = client.MicroVersion
 	case "sharev2":
-		opts.MoreHeaders["X-OpenStack-Manila-API-Version"] = client.Microversion
+		opts.MoreHeaders["X-OpenStack-Manila-API-Version"] = client.MicroVersion
 	case "volume":
-		opts.MoreHeaders["X-OpenStack-Volume-API-Version"] = client.Microversion
+		opts.MoreHeaders["X-OpenStack-Volume-API-Version"] = client.MicroVersion
 	}
 
 	if client.Type != "" {
-		opts.MoreHeaders["OpenStack-API-Version"] = client.Type + " " + client.Microversion
+		opts.MoreHeaders["OpenStack-API-Version"] = client.Type + " " + client.MicroVersion
 	}
 }
