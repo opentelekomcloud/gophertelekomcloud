@@ -2,8 +2,10 @@ package streams
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"net/url"
 )
 
 type GetStreamOpts struct {
@@ -20,7 +22,8 @@ type GetStreamOpts struct {
 }
 
 func GetStream(client *golangsdk.ServiceClient, opts GetStreamOpts) (*DescribeStreamResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

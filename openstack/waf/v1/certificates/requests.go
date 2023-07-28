@@ -2,6 +2,8 @@ package certificates
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
@@ -100,7 +102,8 @@ func (opts ListOpts) ToCertificateListQuery() (string, error) {
 	if opts.Limit > 50 || opts.Offset < -1 {
 		return "", fmt.Errorf("limit must be -1-50")
 	}
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

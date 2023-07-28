@@ -2,6 +2,8 @@ package policies
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -21,7 +23,8 @@ type ListOpts struct {
 }
 
 func (opts ListOpts) ToPolicyListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

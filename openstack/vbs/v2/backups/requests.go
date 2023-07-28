@@ -1,6 +1,8 @@
 package backups
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -27,7 +29,8 @@ type ListOpts struct {
 // Default policy settings return only those Backup that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

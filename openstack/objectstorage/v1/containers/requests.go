@@ -4,6 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the List
@@ -26,7 +27,8 @@ type ListOpts struct {
 // ToContainerListParams formats a ListOpts into a query string and boolean
 // representing whether to list complete information for each container.
 func (opts ListOpts) ToContainerListParams() (bool, string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return false, "", err
 	}

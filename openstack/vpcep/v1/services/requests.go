@@ -2,6 +2,8 @@ package services
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
@@ -116,7 +118,8 @@ type ListOpts struct {
 }
 
 func (opts ListOpts) ToServiceListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

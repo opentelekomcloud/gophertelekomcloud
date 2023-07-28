@@ -1,6 +1,10 @@
 package instances
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
+)
 
 type DeleteOpts struct {
 	InstanceId string
@@ -12,7 +16,8 @@ type DeleteOpts struct {
 }
 
 func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) error {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return err
 	}

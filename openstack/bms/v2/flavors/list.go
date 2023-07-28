@@ -1,6 +1,8 @@
 package flavors
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 	"strings"
 
@@ -42,7 +44,8 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

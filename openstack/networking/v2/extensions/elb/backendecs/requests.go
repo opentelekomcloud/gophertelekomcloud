@@ -1,7 +1,9 @@
 package backendecs
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/elb"
@@ -59,7 +61,8 @@ type getOpts struct {
 }
 
 func (opts getOpts) ToBackendECSListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

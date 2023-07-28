@@ -2,6 +2,8 @@ package limits
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 )
 
 // GetOptsBuilder allows extensions to add additional parameters to the
@@ -18,7 +20,8 @@ type GetOpts struct {
 
 // ToLimitsQuery formats a GetOpts into a query string.
 func (opts GetOpts) ToLimitsQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

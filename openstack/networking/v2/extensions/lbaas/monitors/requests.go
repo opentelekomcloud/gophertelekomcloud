@@ -2,6 +2,8 @@ package monitors
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -37,7 +39,8 @@ type ListOpts struct {
 // Default policy settings return only those monitors that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return pagination.Pager{Err: err}
 	}

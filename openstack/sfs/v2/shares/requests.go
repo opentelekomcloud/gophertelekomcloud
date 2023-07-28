@@ -1,6 +1,8 @@
 package shares
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -75,7 +77,8 @@ type ListOpts struct {
 // share resources. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Share, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

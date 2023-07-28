@@ -2,7 +2,9 @@ package policies
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 // OperationType is a Policy type.
@@ -15,7 +17,8 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Policy, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

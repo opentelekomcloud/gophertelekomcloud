@@ -1,6 +1,8 @@
 package hosts
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -109,7 +111,8 @@ type ListOptsBuilder interface {
 
 // ToRegionListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToHostListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}
@@ -170,7 +173,8 @@ type ListServerOpts struct {
 // dedicated hosts Server resources. It accepts a ListServerOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func ListServer(c *golangsdk.ServiceClient, id string, opts ListServerOpts) ([]Server, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

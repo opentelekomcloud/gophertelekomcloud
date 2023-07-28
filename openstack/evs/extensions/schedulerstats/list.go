@@ -2,7 +2,9 @@ package schedulerstats
 
 import (
 	"encoding/json"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"math"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -16,7 +18,8 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]StoragePool, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

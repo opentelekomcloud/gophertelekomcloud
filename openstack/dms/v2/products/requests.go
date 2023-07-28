@@ -2,6 +2,8 @@ package products
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -30,7 +32,8 @@ type ListOpts struct {
 }
 
 func List(c *golangsdk.ServiceClient, engineType string, opts ListOpts) (*ListResp, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

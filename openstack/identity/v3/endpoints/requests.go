@@ -2,7 +2,9 @@ package endpoints
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 type CreateOptsBuilder interface {
@@ -70,7 +72,8 @@ type ListOpts struct {
 
 // ToEndpointListParams builds a list request from the List options.
 func (opts ListOpts) ToEndpointListParams() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}
@@ -82,7 +85,8 @@ func (opts ListOpts) ToEndpointListParams() (string, error) {
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	u := listURL(client)
 	if opts != nil {
-		q, err := golangsdk.BuildQueryString(opts)
+		var opts2 interface{} = opts
+		q, err := build.QueryString(opts2)
 		if err != nil {
 			return pagination.Pager{Err: err}
 		}

@@ -1,6 +1,8 @@
 package peerings
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -52,7 +54,8 @@ func FilterVpcIdParam(opts ListOpts) (filter ListOpts) {
 // filter  the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Peering, error) {
 	filter := FilterVpcIdParam(opts)
-	q, err := golangsdk.BuildQueryString(&filter)
+	var opts2 interface{} = &filter
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

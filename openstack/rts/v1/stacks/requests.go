@@ -1,6 +1,8 @@
 package stacks
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 	"strings"
 
@@ -141,7 +143,8 @@ type ListOpts struct {
 
 // ToStackListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToStackListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

@@ -2,8 +2,10 @@ package logs
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/groups"
+	"net/url"
 )
 
 type ListScalingActivityLogsOpts struct {
@@ -40,7 +42,8 @@ type ListScalingActivityLogsOpts struct {
 }
 
 func ListScalingActivityLogs(client *golangsdk.ServiceClient, opts ListScalingActivityLogsOpts) (*ListScalingActivityLogsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,8 @@ package services
 
 import (
 	"encoding/json"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -16,7 +18,8 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Service, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

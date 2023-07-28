@@ -2,7 +2,9 @@ package stackevents
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // SortDir is a type for specifying in which direction to sort a list of events.
@@ -91,7 +93,8 @@ type ListOpts struct {
 
 // ToStackEventListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToStackEventListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

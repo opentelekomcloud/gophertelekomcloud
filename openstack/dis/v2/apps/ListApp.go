@@ -2,7 +2,9 @@ package apps
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 type ListAppOpts struct {
@@ -18,7 +20,8 @@ type ListAppOpts struct {
 }
 
 func ListApps(client *golangsdk.ServiceClient, opts ListAppOpts) (*ListAppResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

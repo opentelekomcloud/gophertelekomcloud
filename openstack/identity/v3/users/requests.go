@@ -2,9 +2,11 @@ package users
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // Option is a specific option defined at the API to enable features
@@ -39,7 +41,8 @@ type ListOpts struct {
 
 // ToUserListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToUserListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

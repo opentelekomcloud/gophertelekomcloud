@@ -1,6 +1,7 @@
 package external
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"net/url"
 	"strconv"
 
@@ -17,7 +18,8 @@ type ListOptsExt struct {
 // ToNetworkListQuery adds the router:external option to the base network
 // list options.
 func (opts ListOptsExt) ToNetworkListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts.ListOptsBuilder)
+	var opts2 interface{} = opts.ListOptsBuilder
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

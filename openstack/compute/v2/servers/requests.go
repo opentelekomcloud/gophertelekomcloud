@@ -3,6 +3,8 @@ package servers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
@@ -59,7 +61,8 @@ type ListOpts struct {
 
 // ToServerListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToServerListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

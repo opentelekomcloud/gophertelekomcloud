@@ -2,7 +2,9 @@ package publicips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 type PublicIPRequest struct {
@@ -116,7 +118,8 @@ type ListOptsBuilder interface {
 }
 
 func (opts ListOpts) ToListPublicIPQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

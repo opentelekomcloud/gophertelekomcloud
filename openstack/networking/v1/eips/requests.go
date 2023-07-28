@@ -2,6 +2,8 @@ package eips
 
 import (
 	"encoding/json"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -37,7 +39,8 @@ type ListOpts struct {
 
 // ToEipListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToEipListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

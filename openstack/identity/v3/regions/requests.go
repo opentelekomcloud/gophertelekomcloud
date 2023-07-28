@@ -2,7 +2,9 @@ package regions
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to
@@ -19,7 +21,8 @@ type ListOpts struct {
 
 // ToRegionListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToRegionListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

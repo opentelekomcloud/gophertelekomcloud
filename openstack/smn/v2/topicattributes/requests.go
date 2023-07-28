@@ -1,6 +1,10 @@
 package topicattributes
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
+)
 
 func commonOpts() *golangsdk.RequestOpts {
 	return &golangsdk.RequestOpts{
@@ -17,7 +21,8 @@ type ListOpts struct {
 }
 
 func (opts ListOpts) ToAttributeListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

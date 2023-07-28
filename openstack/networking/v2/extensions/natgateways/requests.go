@@ -2,7 +2,9 @@ package natgateways
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // CreateOptsBuilder is an interface must satisfy to be used as Create
@@ -86,7 +88,8 @@ func (opts UpdateOpts) ToNatGatewayUpdateMap() (map[string]interface{}, error) {
 }
 
 func (opts ListOpts) ToNatGatewayListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

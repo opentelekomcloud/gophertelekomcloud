@@ -2,8 +2,10 @@ package logs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"net/url"
 )
 
 type DbSlowLogOpts struct {
@@ -30,7 +32,8 @@ type DbSlowLogOpts struct {
 }
 
 func ListSlowLog(client *golangsdk.ServiceClient, opts DbSlowLogOpts) (*SlowLogResp, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

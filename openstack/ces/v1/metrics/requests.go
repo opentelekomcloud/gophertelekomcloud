@@ -2,7 +2,9 @@ package metrics
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 type ListMetricsRequest struct {
@@ -36,7 +38,8 @@ type ListMetricsBuilder interface {
 }
 
 func (opts ListMetricsRequest) ToMetricsListMap() (string, error) {
-	s, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	s, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

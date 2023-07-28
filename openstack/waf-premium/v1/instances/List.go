@@ -2,12 +2,15 @@ package instances
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Instance, error) {
 	// GET /v1/{project_id}/premium-waf/instance
-	query, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,9 @@ package flowlogs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the
@@ -50,7 +52,8 @@ type ListOpts struct {
 
 // ToFlowLogsListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToFlowLogsListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

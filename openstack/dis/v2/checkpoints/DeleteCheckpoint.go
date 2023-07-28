@@ -1,6 +1,10 @@
 package checkpoints
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
+)
 
 type DeleteCheckpointOpts struct {
 	// Name of the stream to which the checkpoint belongs.
@@ -21,7 +25,8 @@ type DeleteCheckpointOpts struct {
 }
 
 func DeleteCheckpoint(client *golangsdk.ServiceClient, opts DeleteCheckpointOpts) (err error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return err
 	}

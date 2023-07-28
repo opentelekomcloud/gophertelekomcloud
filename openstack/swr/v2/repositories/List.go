@@ -3,6 +3,8 @@ package repositories
 import (
 	"bytes"
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -45,7 +47,8 @@ func (opts ListOpts) ToRepositoryListQuery() (string, error) {
 		return "", fmt.Errorf("`OrderColumn` and `OrderType` should always be used together")
 	}
 
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

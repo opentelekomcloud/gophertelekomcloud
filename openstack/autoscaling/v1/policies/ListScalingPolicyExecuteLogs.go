@@ -2,7 +2,9 @@ package policies
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 type ListLogsOpts struct {
@@ -35,7 +37,8 @@ type ListLogsOpts struct {
 }
 
 func ListScalingPolicyExecuteLogs(client *golangsdk.ServiceClient, opts ListLogsOpts) (*ListScalingPolicyExecuteLogsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

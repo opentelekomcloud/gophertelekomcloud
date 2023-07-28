@@ -2,6 +2,8 @@ package addons
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -143,7 +145,8 @@ type ListOpts struct {
 }
 
 func (opts ListOpts) ToAddonListQuery() (string, error) {
-	u, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	u, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

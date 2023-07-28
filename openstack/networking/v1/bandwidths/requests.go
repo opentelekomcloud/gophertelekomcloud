@@ -2,6 +2,8 @@ package bandwidths
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 )
 
 // UpdateOptsBuilder is an interface by which can be able to build the request
@@ -53,7 +55,8 @@ type ListOpts struct {
 
 // ToBWListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToBandwidthListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

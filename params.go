@@ -1,8 +1,6 @@
 package golangsdk
 
 import (
-	"net/url"
-
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
@@ -21,6 +19,3 @@ func BuildRequestBody(opts interface{}, parent string) (map[string]interface{}, 
 /*
 Deprecated: use `internal/build.QueryString` instead.
 */
-func BuildQueryString(opts interface{}) (*url.URL, error) {
-	return build.QueryString(opts)
-}

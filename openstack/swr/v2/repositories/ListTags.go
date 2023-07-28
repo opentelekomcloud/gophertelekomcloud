@@ -2,7 +2,9 @@ package repositories
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 type ListTagsOpts struct {
@@ -23,7 +25,8 @@ type ListTagsOpts struct {
 }
 
 func ListTags(client *golangsdk.ServiceClient, opts ListTagsOpts) ([]TagsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

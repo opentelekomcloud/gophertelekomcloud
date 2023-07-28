@@ -1,6 +1,8 @@
 package servers
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 	"strings"
 
@@ -86,7 +88,8 @@ type ListOpts struct {
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 	c.Microversion = "2.26"
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

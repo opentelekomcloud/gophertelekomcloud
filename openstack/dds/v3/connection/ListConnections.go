@@ -2,7 +2,9 @@ package connection
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 type ListConnectionsOpts struct {
@@ -14,7 +16,8 @@ type ListConnectionsOpts struct {
 }
 
 func ListConnections(client *golangsdk.ServiceClient, opts ListConnectionsOpts) (*ListConnectionsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

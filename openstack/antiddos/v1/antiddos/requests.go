@@ -1,6 +1,8 @@
 package antiddos
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"reflect"
 	"strconv"
 	"time"
@@ -93,7 +95,8 @@ type GetTaskOptsBuilder interface {
 }
 
 func (opts GetTaskOpts) ToGetTaskQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}
@@ -141,7 +144,8 @@ type ListLogsOptsBuilder interface {
 }
 
 func (opts ListLogsOpts) ToListLogsQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}
@@ -187,7 +191,8 @@ type ListStatusOpts struct {
 func ListStatus(client *golangsdk.ServiceClient, opts ListStatusOpts) ([]DdosStatus, error) {
 	var r ListStatusResult
 
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

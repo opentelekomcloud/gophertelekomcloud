@@ -2,6 +2,8 @@ package zones
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -47,7 +49,8 @@ func (opts ListOpts) ToZoneListQuery() (string, error) {
 	}
 	opts.QueryTags = strings.Join(tagList, "|")
 
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return "", err
 	}

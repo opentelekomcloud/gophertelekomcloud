@@ -33,7 +33,8 @@ func TestBuildQueryString(t *testing.T) {
 		M:  map[string]string{"k1": "success1"},
 	}
 	expected := &url.URL{RawQuery: "c=true&f=false&j=2&m=%7B%27k1%27%3A%27success1%27%7D&r=red&s=one&s=two&s=three&ti=1&ti=2&ts=a&ts=b"}
-	actual, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	actual, err := build.QueryString(opts2)
 	if err != nil {
 		t.Errorf("Error building query string: %v", err)
 	}
@@ -52,13 +53,15 @@ func TestBuildQueryString(t *testing.T) {
 		J: 2,
 		C: true,
 	}
-	_, err = golangsdk.BuildQueryString(&opts)
+	var opts3 interface{} = &opts
+	_, err = build.QueryString(opts3)
 	if err == nil {
 		t.Errorf("Expected error: 'Required field not set'")
 	}
 	th.CheckDeepEquals(t, expected, actual)
 
-	_, err = golangsdk.BuildQueryString(map[string]interface{}{"Number": 4})
+	var opts4 interface{} = map[string]interface{}{"Number": 4}
+	_, err = build.QueryString(opts4)
 	if err == nil {
 		t.Errorf("Expected error: 'Options type is not a struct'")
 	}
@@ -99,7 +102,8 @@ func TestQueriesAreEscaped(t *testing.T) {
 
 	expected := &url.URL{RawQuery: "else=Triangl+e&something=blah%2B%3F%21%21foo"}
 
-	actual, err := golangsdk.BuildQueryString(foo{Name: "blah+?!!foo", Shape: "Triangl e"})
+	var opts interface{} = foo{Name: "blah+?!!foo", Shape: "Triangl e"}
+	actual, err := build.QueryString(opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, expected, actual)

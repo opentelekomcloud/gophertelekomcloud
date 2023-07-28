@@ -2,6 +2,8 @@ package policies
 
 import (
 	"bytes"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -31,7 +33,8 @@ type ListOpts struct {
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
-	query, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	query, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

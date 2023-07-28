@@ -2,7 +2,9 @@ package keyevent
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"net/url"
 )
 
 type ListNotificationsOpts struct {
@@ -15,7 +17,8 @@ type ListNotificationsOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListNotificationsOpts) ([]NotificationResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}

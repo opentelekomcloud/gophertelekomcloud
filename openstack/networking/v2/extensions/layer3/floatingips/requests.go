@@ -2,7 +2,9 @@ package floatingips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
+	"net/url"
 )
 
 // ListOpts allows the filtering and sorting of paginated collections through
@@ -30,7 +32,8 @@ type ListOpts struct {
 // floating IP resources. It accepts a ListOpts struct, which allows you to
 // filter and sort the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) pagination.Pager {
-	q, err := golangsdk.BuildQueryString(&opts)
+	var opts2 interface{} = &opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return pagination.Pager{Err: err}
 	}

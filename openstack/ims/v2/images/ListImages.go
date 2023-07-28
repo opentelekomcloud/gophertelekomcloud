@@ -1,6 +1,8 @@
 package images
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"net/url"
 	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -153,7 +155,8 @@ type ListImagesOpts struct {
 
 // ListImages This API is used to query images using search criteria and to display the images in a list.
 func ListImages(client *golangsdk.ServiceClient, opts ListImagesOpts) ([]ImageInfo, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	var opts2 interface{} = opts
+	q, err := build.QueryString(opts2)
 	if err != nil {
 		return nil, err
 	}
