@@ -9,12 +9,12 @@ import (
 	"reflect"
 )
 
-func intoPtr(body io.Reader, to any, label string) error {
+func intoPtr(body io.Reader, to interface{}, label string) error {
 	if label == "" {
 		return Into(body, &to)
 	}
 
-	var m map[string]any
+	var m map[string]interface{}
 	err := Into(body, &m)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func intoPtr(body io.Reader, to any, label string) error {
 			if typeOfV.NumField() > 0 && typeOfV.Field(0).Anonymous {
 				newSlice := reflect.MakeSlice(reflect.SliceOf(typeOfV), 0, 0)
 
-				for _, v := range m[label].([]any) {
+				for _, v := range m[label].([]interface{}) {
 					// For each iteration of the slice, we create a new struct.
 					// This is to work around a bug where elements of a slice
 					// are reused and not overwritten when the same copy of the
@@ -99,7 +99,7 @@ func intoPtr(body io.Reader, to any, label string) error {
 }
 
 // JsonMarshal marshals input to bytes via buffer with disabled HTML escaping.
-func JsonMarshal(t any) ([]byte, error) {
+func JsonMarshal(t interface{}) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 	enc := json.NewEncoder(buffer)
 	enc.SetEscapeHTML(false)
@@ -108,7 +108,7 @@ func JsonMarshal(t any) ([]byte, error) {
 }
 
 // Into parses input as JSON and convert to a structure.
-func Into(body io.Reader, to any) error {
+func Into(body io.Reader, to interface{}) error {
 	if closer, ok := body.(io.ReadCloser); ok {
 		defer closer.Close()
 	}
@@ -130,7 +130,7 @@ func Into(body io.Reader, to any) error {
 	return nil
 }
 
-func typeCheck(to any, kind reflect.Kind) error {
+func typeCheck(to interface{}, kind reflect.Kind) error {
 	t := reflect.TypeOf(to)
 	if k := t.Kind(); k != reflect.Ptr {
 		return fmt.Errorf("expected pointer, got %v", k)
@@ -144,7 +144,7 @@ func typeCheck(to any, kind reflect.Kind) error {
 }
 
 // IntoStructPtr will unmarshal the given body into the provided Struct.
-func IntoStructPtr(body io.Reader, to any, label string) error {
+func IntoStructPtr(body io.Reader, to interface{}, label string) error {
 	err := typeCheck(to, reflect.Struct)
 	if err != nil {
 		return err
@@ -154,7 +154,7 @@ func IntoStructPtr(body io.Reader, to any, label string) error {
 }
 
 // IntoSlicePtr will unmarshal the provided body into the provided Slice.
-func IntoSlicePtr(body io.Reader, to any, label string) error {
+func IntoSlicePtr(body io.Reader, to interface{}, label string) error {
 	err := typeCheck(to, reflect.Slice)
 	if err != nil {
 		return err
