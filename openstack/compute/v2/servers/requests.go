@@ -3,10 +3,9 @@ package servers
 import (
 	"encoding/base64"
 	"encoding/json"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

@@ -3,7 +3,6 @@ package bandwidths
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 )
 
 // UpdateOptsBuilder is an interface by which can be able to build the request

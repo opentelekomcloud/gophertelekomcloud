@@ -2,9 +2,9 @@ package zones
 
 import (
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"strings"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"

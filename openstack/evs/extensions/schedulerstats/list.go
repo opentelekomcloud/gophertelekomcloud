@@ -2,11 +2,10 @@ package schedulerstats
 
 import (
 	"encoding/json"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"math"
-	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 

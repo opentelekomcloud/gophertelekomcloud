@@ -2,10 +2,9 @@ package credentials
 
 import (
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 type Status string

@@ -54,7 +54,6 @@ pc.HTTPClient = newHTTPClient()
 //...
 ```
 
-
 ## Implementing custom objects
 
 OpenStack request/response objects may differ among variable names or types.

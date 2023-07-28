@@ -4,7 +4,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"net/url"
 )
 
 // CreateOptsBuilder is an interface must satisfy to be used as Create

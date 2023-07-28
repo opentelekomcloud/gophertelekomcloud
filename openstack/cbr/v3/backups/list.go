@@ -1,9 +1,9 @@
 package backups
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"reflect"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

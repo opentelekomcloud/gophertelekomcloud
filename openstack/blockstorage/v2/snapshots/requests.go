@@ -4,7 +4,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"net/url"
 )
 
 // CreateOpts contains options for creating a Snapshot. This object is passed to

@@ -3,7 +3,6 @@ package limits
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 )
 
 // GetOptsBuilder allows extensions to add additional parameters to the

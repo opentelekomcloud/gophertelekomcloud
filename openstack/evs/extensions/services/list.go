@@ -2,9 +2,9 @@ package services
 
 import (
 	"encoding/json"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"time"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"

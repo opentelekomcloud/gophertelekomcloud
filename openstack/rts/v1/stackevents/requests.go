@@ -4,7 +4,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"net/url"
 )
 
 // SortDir is a type for specifying in which direction to sort a list of events.

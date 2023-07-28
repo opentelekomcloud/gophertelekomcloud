@@ -5,7 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"net/url"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

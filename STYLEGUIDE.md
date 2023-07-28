@@ -1,4 +1,3 @@
-
 ## On Pull Requests
 
 - Please make sure to read our [contributing guide](/.github/CONTRIBUTING.md).
@@ -52,10 +51,10 @@
 
 - The following should be used in most cases:
 
-  - `requests.go`: contains all the functions that make HTTP requests and the
-    types associated with the HTTP request (parameters for URL, body, etc)
-  - `results.go`: contains all the response objects and their methods
-  - `urls.go`: contains the endpoints to which the requests are made
+    - `requests.go`: contains all the functions that make HTTP requests and the
+      types associated with the HTTP request (parameters for URL, body, etc)
+    - `results.go`: contains all the response objects and their methods
+    - `urls.go`: contains the endpoints to which the requests are made
 
 ### Naming
 

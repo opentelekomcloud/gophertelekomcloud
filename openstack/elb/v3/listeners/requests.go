@@ -5,7 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"net/url"
 )
 
 // Protocol represents a listener protocol.

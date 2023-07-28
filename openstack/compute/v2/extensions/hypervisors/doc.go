@@ -46,6 +46,5 @@ Example of Show Hypervisor Uptime
 	}
 
 	fmt.Printf("%+v\n", hypervisorUptime)
-
 */
 package hypervisors

@@ -7,7 +7,6 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"io"
-	"net/url"
 	"strings"
 	"time"
 

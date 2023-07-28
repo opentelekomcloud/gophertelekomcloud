@@ -5,17 +5,17 @@ import (
 )
 
 /*
-type CreateResponse struct {
-	TenantId    string `json:"tenant_id"`
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Domain      string `json:"domain"`
-	Certificate string `json:"certificate"`
-	PrivateKey  string `json:"private_key"`
-	CreateTime  string `json:"create_time"`
-	UpdateTime  string `json:"update_time"`
-}
+	type CreateResponse struct {
+		TenantId    string `json:"tenant_id"`
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Domain      string `json:"domain"`
+		Certificate string `json:"certificate"`
+		PrivateKey  string `json:"private_key"`
+		CreateTime  string `json:"create_time"`
+		UpdateTime  string `json:"update_time"`
+	}
 */
 type Certificate struct {
 	ID          string `json:"id"`

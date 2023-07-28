@@ -1,10 +1,10 @@
 package flavors
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"reflect"
 	"strings"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"

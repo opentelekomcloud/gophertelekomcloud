@@ -14,6 +14,5 @@ Example: You can list rule-types in the following way:
 	}
 
 	fmt.Printf("%v <- Rule Types\n", rules)
-
 */
 package ruletypes

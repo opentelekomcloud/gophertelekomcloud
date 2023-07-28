@@ -3,7 +3,6 @@ package hosts
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 )
 
 type DeleteOpts struct {

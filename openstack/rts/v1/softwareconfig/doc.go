@@ -15,14 +15,13 @@ Example to List Software Configs
 
 Example to Get Software Deployment
 
-	configID:="bd7d48a5-6e33-4b95-aa28-d0d3af46c635"
+		configID:="bd7d48a5-6e33-4b95-aa28-d0d3af46c635"
 
- 	configs,err:=softwareconfig.Get(client,configID).Extract()
+	 	configs,err:=softwareconfig.Get(client,configID).Extract()
 
-	if err != nil {
-		panic(err)
-	}
-
+		if err != nil {
+			panic(err)
+		}
 
 Example to Create a Software Configs
 

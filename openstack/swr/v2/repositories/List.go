@@ -3,10 +3,9 @@ package repositories
 import (
 	"bytes"
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )

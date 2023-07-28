@@ -1,9 +1,9 @@
 package images
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"time"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"

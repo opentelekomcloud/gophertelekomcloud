@@ -1,11 +1,11 @@
 package external
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"net/url"
 	"strconv"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/networks"
 )
 

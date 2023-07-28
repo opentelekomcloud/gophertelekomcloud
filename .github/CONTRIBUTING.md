@@ -56,7 +56,7 @@ As a contributor you will need to setup your workspace in a slightly different
 way than just downloading it. Here are the basic instructions:
 
 1. Configure your `$GOPATH` and run `go get` as described in the main
-[README](/README.md#how-to-install).
+   [README](/README.md#how-to-install).
 
    ```bash
    go get github.com/opentelekomcloud/gophertelekomcloud
@@ -69,8 +69,8 @@ way than just downloading it. Here are the basic instructions:
    ```
 
 3. Fork the `opentelekomcloud/gophertelekomcloud` repository and update your remote refs. You
-will need to rename the `origin` remote branch to `upstream`, and add your
-fork as `origin` instead:
+   will need to rename the `origin` remote branch to `upstream`, and add your
+   fork as `origin` instead:
 
    ```bash
    git remote rename origin upstream
@@ -84,13 +84,14 @@ fork as `origin` instead:
    ```
 
 5. If you're working on something (discussed more in detail below), you will
-need to checkout a new feature branch:
+   need to checkout a new feature branch:
 
    ```bash
    git checkout -b my-new-feature
    ```
 
-6. Use a standard text editor or IDE of your choice to make your changes to the code or documentation. Once finished, commit them.
+6. Use a standard text editor or IDE of your choice to make your changes to the code or documentation. Once finished,
+   commit them.
 
    ```bash
    git status
@@ -98,7 +99,9 @@ need to checkout a new feature branch:
    git commit
    ```
 
-7. Submit your branch as a [Pull Request](https://help.github.com/articles/creating-a-pull-request/). When submitting a Pull Request, please follow our [Style Guide](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/STYLEGUIDE.md).
+7. Submit your branch as a [Pull Request](https://help.github.com/articles/creating-a-pull-request/). When submitting a
+   Pull Request, please follow
+   our [Style Guide](https://github.com/opentelekomcloud/gophertelekomcloud/blob/master/STYLEGUIDE.md).
 
 > Further information about using Git can be found [here](https://git-scm.com/book/en/v2).
 

@@ -3,7 +3,6 @@ package topicattributes
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 )
 
 func commonOpts() *golangsdk.RequestOpts {

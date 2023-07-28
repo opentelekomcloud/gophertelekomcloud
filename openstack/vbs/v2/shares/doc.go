@@ -16,12 +16,12 @@ Example to List Shares
 
 Example to Get a Share
 
-   getshare,err:=shares.Get(vbsClient, "6149e448-dcac-4691-96d9-041e09ef617f").ExtractShare()
-   if err != nil {
-         panic(err)
-		}
+	   getshare,err:=shares.Get(vbsClient, "6149e448-dcac-4691-96d9-041e09ef617f").ExtractShare()
+	   if err != nil {
+	         panic(err)
+			}
 
-   fmt.Println(getshare)
+	   fmt.Println(getshare)
 
 Example to Create a Share
 

@@ -6,7 +6,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
-	"net/url"
 )
 
 type ListOpts struct {

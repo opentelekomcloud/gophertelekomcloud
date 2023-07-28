@@ -8,7 +8,6 @@ Example to List Routes
 	out,err:=routes.List(client,listroute)
 	fmt.Println(out[0].RouteID)
 
-
 Example to Create a Route
 
 	route:=routes.CreateOpts{
@@ -18,7 +17,6 @@ Example to Create a Route
 		VPC_ID:"3127e30b-5f8e-42d1-a3cc-fdadf412c5bf"}
 	outroute,err:=routes.Create(client,route).Extract()
 	fmt.Println(outroute)
-
 
 Example to Delete a Route
 

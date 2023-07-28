@@ -2,9 +2,9 @@ package policies
 
 import (
 	"fmt"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"reflect"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )

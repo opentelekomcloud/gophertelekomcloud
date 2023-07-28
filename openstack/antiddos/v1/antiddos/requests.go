@@ -1,11 +1,11 @@
 package antiddos
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )

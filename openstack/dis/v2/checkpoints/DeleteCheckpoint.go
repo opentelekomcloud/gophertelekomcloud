@@ -3,7 +3,6 @@ package checkpoints
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"net/url"
 )
 
 type DeleteCheckpointOpts struct {

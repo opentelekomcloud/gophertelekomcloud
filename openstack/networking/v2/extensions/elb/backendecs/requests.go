@@ -1,11 +1,10 @@
 package backendecs
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
-	"net/url"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/elb"
 )
 

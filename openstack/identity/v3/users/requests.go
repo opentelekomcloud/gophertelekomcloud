@@ -6,7 +6,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-	"net/url"
 )
 
 // Option is a specific option defined at the API to enable features

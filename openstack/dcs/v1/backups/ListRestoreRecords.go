@@ -4,7 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
-	"net/url"
 )
 
 func ListRestoreRecords(client *golangsdk.ServiceClient, instancesId string, opts ListBackupOpts) (*ListRestoreRecordsResponse, error) {
