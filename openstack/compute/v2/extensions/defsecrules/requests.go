@@ -1,6 +1,7 @@
 package defsecrules
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"strings"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -50,7 +51,7 @@ func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
 	if opts.ToPort == 0 && strings.ToUpper(opts.IPProtocol) != "ICMP" {
 		return nil, golangsdk.ErrMissingInput{Argument: "ToPort"}
 	}
-	return golangsdk.BuildRequestBody(opts, "security_group_default_rule")
+	return build.RequestBodyMap(opts, "security_group_default_rule")
 }
 
 // Create is the operation responsible for creating a new default rule.

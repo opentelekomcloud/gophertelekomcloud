@@ -2,6 +2,7 @@ package instances
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 var RequestOpts = golangsdk.RequestOpts{
@@ -99,19 +100,19 @@ type HaOps struct {
 }
 
 func (ops CreateOps) ToInstanceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "instance")
+	return build.RequestBodyMap(ops, "instance")
 }
 
 func (ops UpdateOps) ToInstanceUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "resize")
+	return build.RequestBodyMap(ops, "resize")
 }
 
 func (ops UpdatePolicyOps) ToInstanceUpdatePolicyMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "policy")
+	return build.RequestBodyMap(ops, "policy")
 }
 
 func (ops UpdateFlavorOps) ToInstanceFlavorUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "resize")
+	return build.RequestBodyMap(ops, "resize")
 }
 
 // Create a instance with given parameters.

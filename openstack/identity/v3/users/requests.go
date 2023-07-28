@@ -104,7 +104,7 @@ type CreateOpts struct {
 
 // ToUserCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToUserCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "user")
+	b, err := build.RequestBodyMap(opts, "user")
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ type UpdateOpts struct {
 
 // ToUserUpdateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToUserUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "user")
+	b, err := build.RequestBodyMap(opts, "user")
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ type ExtendedUpdateOpts struct {
 }
 
 func (opts ExtendedUpdateOpts) ToUserUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "user")
+	b, err := build.RequestBodyMap(opts, "user")
 	if err != nil {
 		return nil, err
 	}

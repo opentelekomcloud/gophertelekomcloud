@@ -110,7 +110,7 @@ type CreateOpts struct {
 
 // ToZoneCreateMap formats an CreateOpts structure into a request body.
 func (opts CreateOpts) ToZoneCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ type UpdateOpts struct {
 
 // ToZoneUpdateMap formats an UpdateOpts structure into a request body.
 func (opts UpdateOpts) ToZoneUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ type RouterOpts struct {
 
 // ToRouterMap constructs a request body from RouterOpts.
 func (opts RouterOpts) ToRouterMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "router")
+	return build.RequestBodyMap(opts, "router")
 }
 
 // AssociateZone associate a Router with a Zone.

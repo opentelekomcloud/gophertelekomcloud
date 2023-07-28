@@ -2,6 +2,7 @@ package evacuate
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // EvacuateOptsBuilder allows extensions to add additional parameters to the
@@ -24,7 +25,7 @@ type EvacuateOpts struct {
 
 // ToServerGroupCreateMap constructs a request body from CreateOpts.
 func (opts EvacuateOpts) ToEvacuateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "evacuate")
+	return build.RequestBodyMap(opts, "evacuate")
 }
 
 // Evacuate will Evacuate a failed instance to another host.

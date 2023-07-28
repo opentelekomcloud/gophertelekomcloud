@@ -42,7 +42,7 @@ type Tags struct {
 
 // ToInstanceCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protected_instance")
+	return build.RequestBodyMap(opts, "protected_instance")
 }
 
 // Create will create a new Instance based on the values in CreateOpts.
@@ -72,7 +72,7 @@ type UpdateOpts struct {
 
 // ToInstanceUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protected_instance")
+	return build.RequestBodyMap(opts, "protected_instance")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update an Instance.The response code from api is 200
@@ -110,7 +110,7 @@ type DeleteOpts struct {
 
 // ToInstanceDeleteMap builds a update request body from DeleteOpts.
 func (opts DeleteOpts) ToInstanceDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Delete will permanently delete a particular Instance based on its unique ID.

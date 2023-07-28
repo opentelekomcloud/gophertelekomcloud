@@ -2,6 +2,7 @@ package whitelists
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOptsBuilder is the interface options structs have to satisfy in order
@@ -23,7 +24,7 @@ type CreateOpts struct {
 
 // ToWhitelistCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToWhitelistCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "whitelist")
+	return build.RequestBodyMap(opts, "whitelist")
 }
 
 // Create is an operation which provisions a new whitelist based on the
@@ -66,7 +67,7 @@ type UpdateOpts struct {
 
 // ToWhitelistUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToWhitelistUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "whitelist")
+	return build.RequestBodyMap(opts, "whitelist")
 }
 
 // Update is an operation which modifies the attributes of the specified Whitelist.

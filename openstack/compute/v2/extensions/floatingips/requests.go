@@ -2,6 +2,7 @@ package floatingips
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -30,7 +31,7 @@ type CreateOpts struct {
 
 // ToFloatingIPCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create requests the creation of a new Floating IP.
@@ -75,7 +76,7 @@ type AssociateOpts struct {
 
 // ToFloatingIPAssociateMap constructs a request body from AssociateOpts.
 func (opts AssociateOpts) ToFloatingIPAssociateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "addFloatingIp")
+	return build.RequestBodyMap(opts, "addFloatingIp")
 }
 
 // AssociateInstance pairs an allocated Floating IP with a server.
@@ -103,7 +104,7 @@ type DisassociateOpts struct {
 
 // ToFloatingIPDisassociateMap constructs a request body from DisassociateOpts.
 func (opts DisassociateOpts) ToFloatingIPDisassociateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "removeFloatingIp")
+	return build.RequestBodyMap(opts, "removeFloatingIp")
 }
 
 // DisassociateInstance decouples an allocated Floating IP from an instance

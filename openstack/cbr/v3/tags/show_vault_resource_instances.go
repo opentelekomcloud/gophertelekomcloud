@@ -2,6 +2,7 @@ package tags
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
@@ -46,7 +47,7 @@ type ResourceInstancesRequest struct {
 }
 
 func ShowVaultResourceInstances(client *golangsdk.ServiceClient, req ResourceInstancesRequest) (*InstancesResponse, error) {
-	b, err := golangsdk.BuildRequestBody(req, "")
+	b, err := build.RequestBodyMap(req, "")
 	if err != nil {
 		return nil, err
 	}

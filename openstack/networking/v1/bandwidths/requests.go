@@ -18,7 +18,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToBWUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
+	return build.RequestBodyMap(opts, "bandwidth")
 }
 
 // Get is a method by which can get the detailed information of a bandwidth

@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -12,7 +13,7 @@ type CreateOpts struct {
 
 // Create will create a new Tag based on the values in CreateOpts.
 func Create(c *golangsdk.ServiceClient, serverId string, opts CreateOpts) ([]string, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

@@ -69,7 +69,7 @@ type CreateOpts struct {
 
 // ToCertificateCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToCertificateCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "certificate")
+	return build.RequestBodyMap(opts, "certificate")
 }
 
 // Create is an operation which provisions a new loadbalancer based on the
@@ -117,7 +117,7 @@ type UpdateOpts struct {
 
 // ToCertificateUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToCertificateUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "certificate")
+	return build.RequestBodyMap(opts, "certificate")
 }
 
 // Update is an operation which modifies the attributes of the specified Certificate.

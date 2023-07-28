@@ -131,7 +131,7 @@ type CreateOpts struct {
 
 // ToPoolCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToPoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "pool")
+	return build.RequestBodyMap(opts, "pool")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -179,7 +179,7 @@ type UpdateOpts struct {
 
 // ToPoolUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToPoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "pool")
+	return build.RequestBodyMap(opts, "pool")
 }
 
 // Update allows pools to be updated.
@@ -302,7 +302,7 @@ type CreateMemberOpts struct {
 
 // ToMemberCreateMap builds a request body from CreateMemberOpts.
 func (opts CreateMemberOpts) ToMemberCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "member")
+	return build.RequestBodyMap(opts, "member")
 }
 
 // CreateMember will create and associate a Member with a particular Pool.
@@ -347,7 +347,7 @@ type UpdateMemberOpts struct {
 
 // ToMemberUpdateMap builds a request body from UpdateMemberOpts.
 func (opts UpdateMemberOpts) ToMemberUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "member")
+	return build.RequestBodyMap(opts, "member")
 }
 
 // Update allows Member to be updated.

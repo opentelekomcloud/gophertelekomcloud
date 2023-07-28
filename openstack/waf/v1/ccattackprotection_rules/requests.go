@@ -2,6 +2,7 @@ package ccattackprotection_rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -44,7 +45,7 @@ type Response struct {
 
 // ToCcAttackCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToCcAttackCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new cc attack protection rule based on the values in CreateOpts.

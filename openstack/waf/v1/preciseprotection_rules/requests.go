@@ -2,6 +2,7 @@ package preciseprotection_rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -35,7 +36,7 @@ type Action struct {
 
 // ToPreciseCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToPreciseCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new precise protection rule based on the values in CreateOpts.

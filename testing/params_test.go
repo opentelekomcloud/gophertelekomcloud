@@ -180,7 +180,7 @@ func TestBuildRequestBody(t *testing.T) {
 	}
 
 	for _, successCase := range successCases {
-		actual, err := golangsdk.BuildRequestBody(successCase.opts, "auth")
+		actual, err := build.RequestBodyMap(successCase.opts, "auth")
 		th.AssertNoErr(t, err)
 		th.AssertDeepEquals(t, successCase.expected, actual)
 	}
@@ -231,7 +231,7 @@ func TestBuildRequestBody(t *testing.T) {
 	}
 
 	for _, failCase := range failCases {
-		_, err := golangsdk.BuildRequestBody(failCase.opts, "auth")
+		_, err := build.RequestBodyMap(failCase.opts, "auth")
 		th.AssertDeepEquals(t, reflect.TypeOf(failCase.expected), reflect.TypeOf(err))
 	}
 }

@@ -140,7 +140,7 @@ type CreateOpts struct {
 
 // ToFlavorCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToFlavorCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "flavor")
+	return build.RequestBodyMap(opts, "flavor")
 }
 
 // Create requests the creation of a new flavor.
@@ -196,7 +196,7 @@ type AddAccessOpts struct {
 
 // ToFlavorAddAccessMap constructs a request body from AddAccessOpts.
 func (opts AddAccessOpts) ToFlavorAddAccessMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "addTenantAccess")
+	return build.RequestBodyMap(opts, "addTenantAccess")
 }
 
 // AddAccess grants a tenant/project access to a flavor.
@@ -226,7 +226,7 @@ type RemoveAccessOpts struct {
 
 // ToFlavorRemoveAccessMap constructs a request body from RemoveAccessOpts.
 func (opts RemoveAccessOpts) ToFlavorRemoveAccessMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "removeTenantAccess")
+	return build.RequestBodyMap(opts, "removeTenantAccess")
 }
 
 // RemoveAccess removes/revokes a tenant/project access to a flavor.

@@ -18,7 +18,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToAgencyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "agency")
+	return build.RequestBodyMap(opts, "agency")
 }
 
 func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
@@ -42,7 +42,7 @@ type UpdateOptsBuilder interface {
 }
 
 func (opts UpdateOpts) ToAgencyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "agency")
+	return build.RequestBodyMap(opts, "agency")
 }
 
 func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {

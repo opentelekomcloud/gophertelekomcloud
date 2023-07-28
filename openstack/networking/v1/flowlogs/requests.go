@@ -111,7 +111,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "flow_log")
+	b, err := build.RequestBodyMap(opts, "flow_log")
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ type UpdateOptsBuilder interface {
 }
 
 func (opts UpdateOpts) ToUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "flow_log")
+	b, err := build.RequestBodyMap(opts, "flow_log")
 	if err != nil {
 		return nil, err
 	}

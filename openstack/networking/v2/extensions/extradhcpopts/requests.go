@@ -1,7 +1,7 @@
 package extradhcpopts
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/ports"
 )
 
@@ -41,7 +41,7 @@ func (opts CreateOptsExt) ToPortCreateMap() (map[string]interface{}, error) {
 	if opts.ExtraDHCPOpts != nil {
 		extraDHCPOpts := make([]map[string]interface{}, len(opts.ExtraDHCPOpts))
 		for i, opt := range opts.ExtraDHCPOpts {
-			b, err := golangsdk.BuildRequestBody(opt, "")
+			b, err := build.RequestBodyMap(opt, "")
 			if err != nil {
 				return nil, err
 			}
@@ -89,7 +89,7 @@ func (opts UpdateOptsExt) ToPortUpdateMap() (map[string]interface{}, error) {
 	if opts.ExtraDHCPOpts != nil {
 		extraDHCPOpts := make([]map[string]interface{}, len(opts.ExtraDHCPOpts))
 		for i, opt := range opts.ExtraDHCPOpts {
-			b, err := golangsdk.BuildRequestBody(opt, "")
+			b, err := build.RequestBodyMap(opt, "")
 			if err != nil {
 				return nil, err
 			}

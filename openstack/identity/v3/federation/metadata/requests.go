@@ -1,6 +1,9 @@
 package metadata
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type ImportOptsBuilder interface {
 	ToMetadataImportMap() (map[string]interface{}, error)
@@ -13,7 +16,7 @@ type ImportOpts struct {
 }
 
 func (opts ImportOpts) ToMetadataImportMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Import(client *golangsdk.ServiceClient, provider, protocol string, opts ImportOptsBuilder) (r ImportResult) {

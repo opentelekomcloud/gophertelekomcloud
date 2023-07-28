@@ -166,7 +166,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "l7policy")
+	return build.RequestBodyMap(opts, "l7policy")
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
@@ -247,7 +247,7 @@ type UpdateOptsBuilder interface {
 }
 
 func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "l7policy")
+	return build.RequestBodyMap(opts, "l7policy")
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {

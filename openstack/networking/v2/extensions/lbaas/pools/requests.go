@@ -98,7 +98,7 @@ type CreateOpts struct {
 
 // ToLBPoolCreateMap builds a request body based on CreateOpts.
 func (opts CreateOpts) ToLBPoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "pool")
+	return build.RequestBodyMap(opts, "pool")
 }
 
 // Create accepts a CreateOptsBuilder and uses the values to create a new
@@ -138,7 +138,7 @@ type UpdateOpts struct {
 
 // ToLBPoolUpdateMap builds a request body based on UpdateOpts.
 func (opts UpdateOpts) ToLBPoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "pool")
+	return build.RequestBodyMap(opts, "pool")
 }
 
 // Update allows pools to be updated.

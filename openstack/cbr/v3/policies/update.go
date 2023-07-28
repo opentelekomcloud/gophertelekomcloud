@@ -2,6 +2,7 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -25,7 +26,7 @@ type PolicyODCreate struct {
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Policy, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "policy")
+	b, err := build.RequestBodyMap(opts, "policy")
 	if err != nil {
 		return nil, err
 	}

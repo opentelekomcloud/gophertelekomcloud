@@ -2,6 +2,7 @@ package subnets
 
 import (
 	"encoding/json"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -138,7 +139,7 @@ type ExtraDHCPOpt struct {
 
 // ToSubnetCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToSubnetCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "subnet")
+	return build.RequestBodyMap(opts, "subnet")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -181,7 +182,7 @@ type UpdateOpts struct {
 
 // ToSubnetUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "subnet")
+	return build.RequestBodyMap(opts, "subnet")
 }
 
 // Update allows subnets to be updated. You can update the name, administrative

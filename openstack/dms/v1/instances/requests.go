@@ -103,7 +103,7 @@ type CreateOpts struct {
 
 // ToInstanceCreateMap is used for type convert
 func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create an instance with given parameters.
@@ -157,7 +157,7 @@ type UpdateOpts struct {
 
 // ToInstanceUpdateMap is used for type convert
 func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is a method which can be able to update the instance

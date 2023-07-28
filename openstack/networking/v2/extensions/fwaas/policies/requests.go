@@ -86,7 +86,7 @@ type CreateOpts struct {
 
 // ToFirewallPolicyCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToFirewallPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "firewall_policy")
+	return build.RequestBodyMap(opts, "firewall_policy")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -124,7 +124,7 @@ type UpdateOpts struct {
 
 // ToFirewallPolicyUpdateMap casts a CreateOpts struct to a map.
 func (opts UpdateOpts) ToFirewallPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "firewall_policy")
+	return build.RequestBodyMap(opts, "firewall_policy")
 }
 
 // Update allows firewall policies to be updated.
@@ -161,7 +161,7 @@ type InsertRuleOpts struct {
 }
 
 func (opts InsertRuleOpts) ToFirewallPolicyInsertRuleMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // AddRule will add a rule to a policy.

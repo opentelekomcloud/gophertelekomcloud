@@ -21,7 +21,7 @@ type CreateOpts struct {
 // extract the Snapshot object from the response, call the Extract method on the
 // CreateResult.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (r CreateResult) {
-	b, err := golangsdk.BuildRequestBody(opts, "snapshot")
+	b, err := build.RequestBodyMap(opts, "snapshot")
 	if err != nil {
 		r.Err = err
 		return
@@ -117,7 +117,7 @@ type UpdateMetadataOpts struct {
 // ToSnapshotUpdateMetadataMap assembles a request body based on the contents of
 // an UpdateMetadataOpts.
 func (opts UpdateMetadataOpts) ToSnapshotUpdateMetadataMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // UpdateMetadata will update the Snapshot with provided information. To

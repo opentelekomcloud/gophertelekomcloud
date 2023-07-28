@@ -33,7 +33,7 @@ type CreateOpts struct {
 
 // ToEndpointCreateMap builds a request body from the Endpoint Create options.
 func (opts CreateOpts) ToEndpointCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "endpoint")
+	return build.RequestBodyMap(opts, "endpoint")
 }
 
 // Create inserts a new Endpoint into the service catalog.
@@ -126,7 +126,7 @@ type UpdateOpts struct {
 
 // ToEndpointUpdateMap builds an update request body from the Update options.
 func (opts UpdateOpts) ToEndpointUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "endpoint")
+	return build.RequestBodyMap(opts, "endpoint")
 }
 
 // Update changes an existing endpoint with new data.

@@ -1,6 +1,7 @@
 package secgroups
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -50,7 +51,7 @@ type CreateOptsBuilder interface {
 
 // ToSecGroupCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToSecGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "security_group")
+	return build.RequestBodyMap(opts, "security_group")
 }
 
 // Create will create a new security group.
@@ -77,7 +78,7 @@ type UpdateOptsBuilder interface {
 
 // ToSecGroupUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "security_group")
+	return build.RequestBodyMap(opts, "security_group")
 }
 
 // Update will modify the mutable properties of a security group, notably its
@@ -161,7 +162,7 @@ type CreateRuleOptsBuilder interface {
 
 // ToRuleCreateMap builds a request body from CreateRuleOpts.
 func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "security_group_rule")
+	return build.RequestBodyMap(opts, "security_group_rule")
 }
 
 // CreateRule will add a new rule to an existing security group (whose ID is

@@ -2,6 +2,7 @@ package topics
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 type CreateOptsBuilder interface {
@@ -22,7 +23,7 @@ type CreateOpts struct {
 }
 
 func (opts CreateOpts) ToTopicCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder, instanceId string) (r CreateResult) {
@@ -47,7 +48,7 @@ type DeleteOpts struct {
 }
 
 func (opts DeleteOpts) ToTopicDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Delete(client *golangsdk.ServiceClient, opts DeleteOptsBuilder, instanceId string) (r DeleteResult) {

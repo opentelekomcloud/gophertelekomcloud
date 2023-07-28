@@ -128,7 +128,7 @@ func (opts CreateOpts) ToLBMonitorCreateMap() (map[string]interface{}, error) {
 		err.Info = "Delay must be greater than or equal to timeout"
 		return nil, err
 	}
-	return golangsdk.BuildRequestBody(opts, "health_monitor")
+	return build.RequestBodyMap(opts, "health_monitor")
 }
 
 // Create is an operation which provisions a new health monitor. There are
@@ -208,7 +208,7 @@ func (opts UpdateOpts) ToLBMonitorUpdateMap() (map[string]interface{}, error) {
 		err.Info = "Delay must be greater than or equal to timeout"
 		return nil, err
 	}
-	return golangsdk.BuildRequestBody(opts, "health_monitor")
+	return build.RequestBodyMap(opts, "health_monitor")
 }
 
 // Update is an operation which modifies the attributes of the specified

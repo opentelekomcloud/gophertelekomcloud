@@ -2,6 +2,7 @@ package topics
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -21,7 +22,7 @@ type CreateOps struct {
 }
 
 func (ops CreateOps) ToTopicCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+	return build.RequestBodyMap(ops, "")
 }
 
 // CreateOpsBuilder is used for updating topic parameters.
@@ -37,7 +38,7 @@ type UpdateOps struct {
 }
 
 func (ops UpdateOps) ToTopicUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+	return build.RequestBodyMap(ops, "")
 }
 
 // Create a topic with given parameters.

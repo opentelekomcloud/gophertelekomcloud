@@ -160,7 +160,7 @@ type CreateOpts struct {
 
 // ToListenerCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToListenerCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create is an operation which provisions a new Listeners based on the
@@ -250,7 +250,7 @@ type UpdateOpts struct {
 
 // ToListenerUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToListenerUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is an operation which modifies the attributes of the specified Listener.

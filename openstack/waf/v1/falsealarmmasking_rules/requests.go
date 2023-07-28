@@ -2,6 +2,7 @@ package falsealarmmasking_rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -19,7 +20,7 @@ type CreateOpts struct {
 
 // ToAlarmMaskingCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToAlarmMaskingCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new falsealarmmasking rule based on the values in CreateOpts.

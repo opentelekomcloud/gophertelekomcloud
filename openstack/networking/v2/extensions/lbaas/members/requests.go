@@ -71,7 +71,7 @@ type CreateOpts struct {
 
 // ToLBMemberCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToLBMemberCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "member")
+	return build.RequestBodyMap(opts, "member")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -106,7 +106,7 @@ type UpdateOpts struct {
 
 // ToLBMemberUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToLBMemberUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "member")
+	return build.RequestBodyMap(opts, "member")
 }
 
 // Update allows members to be updated.

@@ -1,6 +1,9 @@
 package snapshots
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 // PolicyCreateOpts contains options for creating a snapshot policy.
 // This object is passed to the snapshots.PolicyCreate function.
@@ -14,7 +17,7 @@ type PolicyCreateOpts struct {
 
 // PolicyCreate will create a new snapshot policy based on the values in PolicyCreateOpts.
 func PolicyCreate(client *golangsdk.ServiceClient, opts PolicyCreateOpts, clusterId string) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return
 	}

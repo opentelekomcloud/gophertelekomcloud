@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -54,7 +55,7 @@ type Tag struct {
 // ToPolicyCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new Policy based on the values in CreateOpts. To extract
@@ -107,7 +108,7 @@ type UpdateSchedule struct {
 // ToPolicyUpdateMap assembles a request body based on the contents of a
 // UpdateOpts.
 func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update will Update an existing backup Policy based on the values in UpdateOpts.To extract
@@ -240,7 +241,7 @@ type AssociateResource struct {
 // ToPolicyAssociateMap assembles a request body based on the contents of a
 // AssociateOpts.
 func (opts AssociateOpts) ToPolicyAssociateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Associate will associate a resource tp a backup policy based on the values in AssociateOpts. To extract
@@ -278,7 +279,7 @@ type DisassociateResource struct {
 // ToPolicyDisassociateMap assembles a request body based on the contents of a
 // DisassociateOpts.
 func (opts DisassociateOpts) ToPolicyDisassociateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Disassociate will disassociate a resource from a backup policy based on the values in DisassociateOpts. To extract

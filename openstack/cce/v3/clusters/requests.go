@@ -1,6 +1,7 @@
 package clusters
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -123,7 +124,7 @@ type CreateMetaData struct {
 
 // ToClusterCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToClusterCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 type ExpirationOptsBuilder interface {
@@ -135,7 +136,7 @@ type ExpirationOpts struct {
 }
 
 func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -202,7 +203,7 @@ type UpdateOptsBuilder interface {
 
 // ToClusterUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToClusterUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update allows clusters to update description.
@@ -242,7 +243,7 @@ type UpdateIpOptsBuilder interface {
 }
 
 func (opts UpdateIpOpts) ToMasterIpUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "spec")
+	return build.RequestBodyMap(opts, "spec")
 }
 
 // Update the access information of a specified cluster.

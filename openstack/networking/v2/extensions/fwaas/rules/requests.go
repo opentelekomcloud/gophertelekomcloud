@@ -116,7 +116,7 @@ type CreateOpts struct {
 
 // ToRuleCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "firewall_rule")
+	b, err := build.RequestBodyMap(opts, "firewall_rule")
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ type UpdateOpts struct {
 
 // ToRuleUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToRuleUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "firewall_rule")
+	return build.RequestBodyMap(opts, "firewall_rule")
 }
 
 // Update allows firewall policies to be updated.

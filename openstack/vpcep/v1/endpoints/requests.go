@@ -50,7 +50,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToEndpointCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {

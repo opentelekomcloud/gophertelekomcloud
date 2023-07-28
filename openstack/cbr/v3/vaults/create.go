@@ -2,6 +2,7 @@ package vaults
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -78,7 +79,7 @@ type CreateOpts struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Vault, error) {
-	reqBody, err := golangsdk.BuildRequestBody(opts, "vault")
+	reqBody, err := build.RequestBodyMap(opts, "vault")
 	if err != nil {
 		return nil, err
 	}

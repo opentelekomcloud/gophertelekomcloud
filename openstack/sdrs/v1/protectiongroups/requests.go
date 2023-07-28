@@ -2,6 +2,7 @@ package protectiongroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -31,7 +32,7 @@ type CreateOpts struct {
 
 // ToGroupCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server_group")
+	return build.RequestBodyMap(opts, "server_group")
 }
 
 // Create will create a new Group based on the values in CreateOpts.
@@ -60,7 +61,7 @@ type UpdateOpts struct {
 
 // ToGroupUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToGroupUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server_group")
+	return build.RequestBodyMap(opts, "server_group")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a Group.The response code from api is 200
@@ -95,7 +96,7 @@ type EnableOpts struct {
 
 // ToGroupEnableMap builds a create request body from EnableOpts.
 func (opts EnableOpts) ToGroupEnableMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "start-server-group")
+	return build.RequestBodyMap(opts, "start-server-group")
 }
 
 // Enable will enable protection for a protection Group.
@@ -118,7 +119,7 @@ type DisableOpts struct {
 
 // ToGroupDisableMap builds a create request body from DisableOpts.
 func (opts DisableOpts) ToGroupDisableMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "stop-server-group")
+	return build.RequestBodyMap(opts, "stop-server-group")
 }
 
 // Disable will disable protection for a protection Group.

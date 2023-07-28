@@ -2,6 +2,7 @@ package bandwidths
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -15,7 +16,7 @@ type CreateOpts struct {
 }
 
 func (opts CreateOpts) ToBandwidthCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
+	return build.RequestBodyMap(opts, "bandwidth")
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
@@ -41,7 +42,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToBandwidthUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
+	return build.RequestBodyMap(opts, "bandwidth")
 }
 
 func Update(client *golangsdk.ServiceClient, bandwidthID string, opts UpdateOptsBuilder) (r CreateResult) {
@@ -91,7 +92,7 @@ type PublicIpInfoInsertOpts struct {
 }
 
 func (opts InsertOpts) ToBandwidthInsertMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
+	return build.RequestBodyMap(opts, "bandwidth")
 }
 
 func Insert(client *golangsdk.ServiceClient, bandwidthID string, opts InsertOptsBuilder) (r CreateResult) {
@@ -122,7 +123,7 @@ type PublicIpInfoID struct {
 }
 
 func (opts RemoveOpts) ToBandwidthRemoveMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "bandwidth")
+	return build.RequestBodyMap(opts, "bandwidth")
 }
 
 func Remove(client *golangsdk.ServiceClient, bandwidthID string, opts RemoveOptsBuilder) (r DeleteResult) {

@@ -1,6 +1,7 @@
 package vpcs
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -119,7 +120,7 @@ type CreateOpts struct {
 
 // ToVpcCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToVpcCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "vpc")
+	return build.RequestBodyMap(opts, "vpc")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -164,7 +165,7 @@ type UpdateOpts struct {
 
 // ToVpcUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToVpcUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "vpc")
+	return build.RequestBodyMap(opts, "vpc")
 }
 
 // Update allows vpcs to be updated. You can update the name, administrative

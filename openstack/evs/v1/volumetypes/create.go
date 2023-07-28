@@ -2,6 +2,7 @@ package volumetypes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -13,7 +14,7 @@ type CreateOpts struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*VolumeType, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "volume_type")
+	b, err := build.RequestBodyMap(opts, "volume_type")
 	if err != nil {
 		return nil, err
 	}

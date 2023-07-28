@@ -3,6 +3,7 @@ package backendmember
 import (
 	// "fmt"
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	// "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -25,7 +26,7 @@ type AddOpts struct {
 
 // ToBackendAddMap casts a CreateOpts struct to a map.
 func (opts AddOpts) ToBackendAddMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Add is an operation which provisions a new Listeners based on the
@@ -71,7 +72,7 @@ type RemoveOpts struct {
 
 // ToBackendCreateMap casts a CreateOpts struct to a map.
 func (opts RemoveOpts) ToBackendRemoveMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Remove will permanently remove a particular backend based on its unique ID.

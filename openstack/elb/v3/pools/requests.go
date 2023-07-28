@@ -148,7 +148,7 @@ type SlowStart struct {
 
 // ToPoolCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToPoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "pool")
+	return build.RequestBodyMap(opts, "pool")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -216,7 +216,7 @@ type UpdateOpts struct {
 
 // ToPoolUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToPoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "pool")
+	return build.RequestBodyMap(opts, "pool")
 }
 
 // Update allows pools to be updated.

@@ -40,7 +40,7 @@ type ListOpts struct {
 // ToNatGatewayCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
 func (opts CreateOpts) ToNatGatewayCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "nat_gateway")
+	return build.RequestBodyMap(opts, "nat_gateway")
 }
 
 // Create is a method by which can create a new nat gateway
@@ -83,7 +83,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToNatGatewayUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "nat_gateway")
+	return build.RequestBodyMap(opts, "nat_gateway")
 }
 
 func (opts ListOpts) ToNatGatewayListQuery() (string, error) {

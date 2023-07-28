@@ -2,6 +2,7 @@ package keypairs
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -60,7 +61,7 @@ type CreateOpts struct {
 
 // ToKeyPairCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToKeyPairCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "keypair")
+	return build.RequestBodyMap(opts, "keypair")
 }
 
 // Create requests the creation of a new KeyPair on the server, or to import a

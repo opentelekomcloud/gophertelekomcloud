@@ -1,6 +1,7 @@
 package healthcheck
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -29,7 +30,7 @@ type CreateOpts struct {
 
 // ToHealthCheckCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToHealthCheckCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create is an operation which provisions a new loadbalancer based on the
@@ -87,7 +88,7 @@ func (opts UpdateOpts) IsNeedUpdate() (bool, error) {
 
 // ToHealthCheckUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToHealthCheckUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is an operation which modifies the attributes of the specified HealthCheck.

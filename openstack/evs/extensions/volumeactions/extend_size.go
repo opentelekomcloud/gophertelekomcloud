@@ -1,6 +1,9 @@
 package volumeactions
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type ExtendSizeOpts struct {
 	// NewSize is the new size of the volume, in GB.
@@ -8,7 +11,7 @@ type ExtendSizeOpts struct {
 }
 
 func ExtendSize(client *golangsdk.ServiceClient, id string, opts ExtendSizeOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "os-extend")
+	b, err := build.RequestBodyMap(opts, "os-extend")
 	if err != nil {
 		return
 	}

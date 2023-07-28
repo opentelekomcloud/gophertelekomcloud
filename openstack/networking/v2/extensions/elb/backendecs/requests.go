@@ -25,7 +25,7 @@ type CreateOpts struct {
 
 // ToBackendECSCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToBackendECSCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create is an operation which provisions a new loadbalancer based on the
@@ -106,13 +106,13 @@ type DeleteOpts struct {
 // ToBackendECSUpdateMap casts a UpdateOpts struct to a map.
 func (opts DeleteOpts) ToBackendECSDeleteMap() (map[string]interface{}, error) {
 	/*
-		o, err := golangsdk.BuildRequestBody(opts, "")
+		o, err := golangsdk.RequestBodyMap(opts, "")
 		if err != nil {
 			return nil, err
 		}
 		rm = removeMeber{RemoveMember: []map[string]string{o.([string]string)}}
 	*/
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is an operation which modifies the attributes of the specified BackendECS.

@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -26,7 +27,7 @@ type Tag struct {
 
 // ToTagCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToTagCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Adds a tag to a backup policy based on the values in CreateOpts. To extract
@@ -88,7 +89,7 @@ type Tags struct {
 
 // ToTagsListMap builds a ListResources request body from ListOpts.
 func (opts ListOpts) ToTagsListMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ListResources retrives a backup policy details using tags.To extract
@@ -134,7 +135,7 @@ var (
 
 // ToTagsBatchMap builds a BatchAction request body from BatchOpts.
 func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // BatchAction is used to create ,update or delete the tags of a specified backup policy.

@@ -67,7 +67,7 @@ type CreateOpts struct {
 // ToFloatingIPCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
 func (opts CreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "floatingip")
+	return build.RequestBodyMap(opts, "floatingip")
 }
 
 // Create accepts a CreateOpts struct and uses the values provided to create a
@@ -127,7 +127,7 @@ type UpdateOpts struct {
 // ToFloatingIPUpdateMap allows UpdateOpts to satisfy the UpdateOptsBuilder
 // interface
 func (opts UpdateOpts) ToFloatingIPUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "floatingip")
+	return build.RequestBodyMap(opts, "floatingip")
 }
 
 // Update allows floating IP resources to be updated. Currently, the only way to

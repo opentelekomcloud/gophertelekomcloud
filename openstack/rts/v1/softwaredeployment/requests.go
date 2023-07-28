@@ -132,7 +132,7 @@ type CreateOpts struct {
 
 // ToSoftwareDeploymentCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToSoftwareDeploymentCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new Software Deployment
@@ -176,7 +176,7 @@ type UpdateOpts struct {
 
 // ToSoftwareDeploymentUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToSoftwareDeploymentUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is a method which can be able to update the name of software deployment.

@@ -2,6 +2,7 @@ package alarmnotifications
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -23,7 +24,7 @@ type UpdateOpts struct {
 
 // ToAlarmNotificationUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToAlarmNotificationUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is an operation which modifies the attributes of the specified alarm notification.

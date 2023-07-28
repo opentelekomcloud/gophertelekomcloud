@@ -2,6 +2,7 @@ package replications
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -25,7 +26,7 @@ type CreateOpts struct {
 
 // ToReplicationCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToReplicationCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "replication")
+	return build.RequestBodyMap(opts, "replication")
 }
 
 // Create will create a new Replication based on the values in CreateOpts.
@@ -54,7 +55,7 @@ type UpdateOpts struct {
 
 // ToReplicationUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToReplicationUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "replication")
+	return build.RequestBodyMap(opts, "replication")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a Replication.The response code from api is 200
@@ -91,7 +92,7 @@ type DeleteOpts struct {
 
 // ToReplicationDeleteMap builds a update request body from DeleteOpts.
 func (opts DeleteOpts) ToReplicationDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "replication")
+	return build.RequestBodyMap(opts, "replication")
 }
 
 // Delete will permanently delete a particular Replication based on its unique ID.

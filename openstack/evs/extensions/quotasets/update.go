@@ -2,11 +2,12 @@ package quotasets
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 func Update(client *golangsdk.ServiceClient, projectID string, opts UpdateOpts) (*QuotaSet, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "quota_set")
+	b, err := build.RequestBodyMap(opts, "quota_set")
 	if err != nil {
 		return nil, err
 	}

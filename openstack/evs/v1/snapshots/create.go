@@ -2,6 +2,7 @@ package snapshots
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -14,7 +15,7 @@ type CreateOpts struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Snapshot, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "snapshot")
+	b, err := build.RequestBodyMap(opts, "snapshot")
 	if err != nil {
 		return nil, err
 	}

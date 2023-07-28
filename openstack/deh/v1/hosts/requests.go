@@ -26,7 +26,7 @@ type AllocateOpts struct {
 
 // ToDeHAllocateMap builds a allocate request body from AllocateOpts.
 func (opts AllocateOpts) ToDeHAllocateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Allocate accepts a AllocateOpts struct and uses the values to allocate a new DeH.
@@ -55,7 +55,7 @@ type UpdateOpts struct {
 
 // ToDeHUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToDeHUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "dedicated_host")
+	return build.RequestBodyMap(opts, "dedicated_host")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a DeH.The response code from api is 204

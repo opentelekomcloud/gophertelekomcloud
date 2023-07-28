@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOptsBuilder describes struct types that can be accepted by the Create call.
@@ -20,7 +21,7 @@ type CreateOpts struct {
 // ToImageCreateMap assembles a request body based on the contents of
 // a CreateOpts.
 func (opts CreateOpts) ToTagsCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

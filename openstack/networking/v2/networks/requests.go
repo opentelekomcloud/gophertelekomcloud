@@ -85,7 +85,7 @@ type CreateOpts struct {
 
 // ToNetworkCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToNetworkCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "network")
+	return build.RequestBodyMap(opts, "network")
 }
 
 // Create accepts a CreateOpts struct and creates a new network using the values
@@ -120,7 +120,7 @@ type UpdateOpts struct {
 
 // ToNetworkUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToNetworkUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "network")
+	return build.RequestBodyMap(opts, "network")
 }
 
 // Update accepts a UpdateOpts struct and updates an existing network using the

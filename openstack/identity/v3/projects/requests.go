@@ -81,7 +81,7 @@ type CreateOpts struct {
 
 // ToProjectCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToProjectCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "project")
+	return build.RequestBodyMap(opts, "project")
 }
 
 // Create creates a new Project.
@@ -120,7 +120,7 @@ type UpdateOpts struct {
 
 // ToUpdateCreateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToProjectUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "project")
+	return build.RequestBodyMap(opts, "project")
 }
 
 // Update modifies the attributes of a project.

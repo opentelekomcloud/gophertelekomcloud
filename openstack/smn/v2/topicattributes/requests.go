@@ -50,7 +50,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToAttributeUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Update(client *golangsdk.ServiceClient, topicURN, attribute string, opts UpdateOptsBuilder) (r UpdateResult) {

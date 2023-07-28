@@ -2,6 +2,7 @@ package cloudservers
 
 import (
 	"encoding/base64"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 )
@@ -75,7 +76,7 @@ type CreateOptsBuilder interface {
 // ToServerCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +292,7 @@ type Server struct {
 // ToServerDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
 func (opts DeleteOpts) ToServerDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Delete requests a server to be deleted to the user in the current tenant.

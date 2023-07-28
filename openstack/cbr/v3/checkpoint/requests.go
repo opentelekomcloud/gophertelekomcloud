@@ -2,6 +2,7 @@ package checkpoint
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -40,7 +41,7 @@ type Resource struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Checkpoint, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "checkpoint")
+	b, err := build.RequestBodyMap(opts, "checkpoint")
 	if err != nil {
 		return nil, err
 	}

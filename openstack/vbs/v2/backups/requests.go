@@ -122,7 +122,7 @@ type Tag struct {
 
 // ToBackupCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToBackupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "backup")
+	return build.RequestBodyMap(opts, "backup")
 }
 
 // Create will create a new Backup based on the values in CreateOpts. To extract
@@ -153,7 +153,7 @@ type BackupRestoreOpts struct {
 
 // ToRestoreCreateMap builds a create request body from BackupRestoreOpts.
 func (opts BackupRestoreOpts) ToRestoreCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "restore")
+	return build.RequestBodyMap(opts, "restore")
 }
 
 // CreateBackupRestore will create a new Restore based on the values in BackupRestoreOpts. To extract

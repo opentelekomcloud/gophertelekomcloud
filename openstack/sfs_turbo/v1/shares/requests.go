@@ -49,7 +49,7 @@ type Metadata struct {
 // ToShareCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToShareCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "share")
+	return build.RequestBodyMap(opts, "share")
 }
 
 // Create will create a new SFS Turbo file system based on the values in CreateOpts. To extract
@@ -138,7 +138,7 @@ type ExtendOpts struct {
 // ToShareExpandMap assembles a request body based on the contents of a
 // ExpandOpts.
 func (opts ExpandOpts) ToShareExpandMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Expand will expand a SFS Turbo based on the values in ExpandOpts.
@@ -174,7 +174,7 @@ type SecurityGroupOpts struct {
 // ToShareExpandMap assembles a request body based on the contents of a
 // ChangeSGOpts.
 func (opts ChangeSGOpts) ToShareSGMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ChangeSG will change security group to a SFS Turbo based on the values in ChangeSGOpts.

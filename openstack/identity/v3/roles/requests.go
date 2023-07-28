@@ -76,7 +76,7 @@ type CreateOpts struct {
 
 // ToRoleCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToRoleCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "role")
+	b, err := build.RequestBodyMap(opts, "role")
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ type UpdateOpts struct {
 
 // ToRoleUpdateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToRoleUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "role")
+	b, err := build.RequestBodyMap(opts, "role")
 	if err != nil {
 		return nil, err
 	}
@@ -263,7 +263,7 @@ type UnassignOpts struct {
 // to a user/group on a project/domain.
 func Assign(client *golangsdk.ServiceClient, roleID string, opts AssignOpts) (r AssignmentResult) {
 	// Check xor conditions
-	_, err := golangsdk.BuildRequestBody(opts, "")
+	_, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		r.Err = err
 		return
@@ -300,7 +300,7 @@ func Assign(client *golangsdk.ServiceClient, roleID string, opts AssignOpts) (r 
 // from a user/group on a project/domain.
 func Unassign(client *golangsdk.ServiceClient, roleID string, opts UnassignOpts) (r UnassignmentResult) {
 	// Check xor conditions
-	_, err := golangsdk.BuildRequestBody(opts, "")
+	_, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		r.Err = err
 		return

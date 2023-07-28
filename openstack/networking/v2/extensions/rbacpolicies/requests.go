@@ -95,7 +95,7 @@ type CreateOpts struct {
 
 // ToRBACPolicyCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToRBACPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "rbac_policy")
+	return build.RequestBodyMap(opts, "rbac_policy")
 }
 
 // Create accepts a CreateOpts struct and creates a new rbac-policy using the values
@@ -132,7 +132,7 @@ type UpdateOpts struct {
 
 // ToRBACPolicyUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToRBACPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "rbac_policy")
+	return build.RequestBodyMap(opts, "rbac_policy")
 }
 
 // Update accepts a UpdateOpts struct and updates an existing rbac-policy using the

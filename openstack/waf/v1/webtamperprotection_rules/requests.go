@@ -2,6 +2,7 @@ package webtamperprotection_rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -19,7 +20,7 @@ type CreateOpts struct {
 
 // ToWebTamperCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToWebTamperCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new web tamper protection rule based on the values in CreateOpts.

@@ -2,6 +2,7 @@ package volumeactions
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -17,7 +18,7 @@ type InitializeConnectionOpts struct {
 }
 
 func InitializeConnection(client *golangsdk.ServiceClient, id string, opts InitializeConnectionOpts) (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "connector")
+	b, err := build.RequestBodyMap(opts, "connector")
 	b = map[string]interface{}{"os-initialize_connection": b}
 	if err != nil {
 		return nil, err

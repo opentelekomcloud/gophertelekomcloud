@@ -135,7 +135,7 @@ type BandwidthOpts struct {
 }
 
 func (opts ApplyOpts) ToPublicIpApplyMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Apply is a method by which can access to apply the public ip
@@ -175,7 +175,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToPublicIpUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "publicip")
+	return build.RequestBodyMap(opts, "publicip")
 }
 
 // Update is a method which can be able to update the port of public ip

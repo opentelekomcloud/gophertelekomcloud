@@ -66,7 +66,7 @@ type CreateOpts struct {
 
 // ToRouterCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToRouterCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "router")
+	return build.RequestBodyMap(opts, "router")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -110,7 +110,7 @@ type UpdateOpts struct {
 
 // ToRouterUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToRouterUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "router")
+	return build.RequestBodyMap(opts, "router")
 }
 
 // Update allows routers to be updated. You can update the name, administrative
@@ -150,7 +150,7 @@ type AddInterfaceOpts struct {
 
 // ToRouterAddInterfaceMap builds a request body from AddInterfaceOpts.
 func (opts AddInterfaceOpts) ToRouterAddInterfaceMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // AddInterface attaches a subnet to an internal router interface. You must
@@ -202,7 +202,7 @@ type RemoveInterfaceOpts struct {
 // ToRouterRemoveInterfaceMap builds a request body based on
 // RemoveInterfaceOpts.
 func (opts RemoveInterfaceOpts) ToRouterRemoveInterfaceMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // RemoveInterface removes an internal router interface, which detaches a

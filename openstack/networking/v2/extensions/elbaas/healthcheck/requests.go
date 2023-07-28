@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	// "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -52,7 +53,7 @@ type CreateOpts struct {
 
 // ToHealthCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToHealthCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +131,7 @@ type UpdateOpts struct {
 
 // ToHealthpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToHealthUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is an operation which modifies the attributes of the specified Monitor.

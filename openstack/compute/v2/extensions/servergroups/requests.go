@@ -2,6 +2,7 @@ package servergroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -34,7 +35,7 @@ type CreateOpts struct {
 
 // ToServerGroupCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToServerGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server_group")
+	return build.RequestBodyMap(opts, "server_group")
 }
 
 // Create requests the creation of a new Server Group.

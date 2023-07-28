@@ -87,7 +87,7 @@ type CreateOpts struct {
 
 // ToFirewallCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToFirewallCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "firewall")
+	return build.RequestBodyMap(opts, "firewall")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new firewall.
@@ -124,7 +124,7 @@ type UpdateOpts struct {
 
 // ToFirewallUpdateMap casts a CreateOpts struct to a map.
 func (opts UpdateOpts) ToFirewallUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "firewall")
+	return build.RequestBodyMap(opts, "firewall")
 }
 
 // Update allows firewalls to be updated.

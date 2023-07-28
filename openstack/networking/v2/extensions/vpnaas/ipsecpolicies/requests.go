@@ -99,7 +99,7 @@ type LifetimeCreateOpts struct {
 
 // ToPolicyCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "ipsecpolicy")
+	return build.RequestBodyMap(opts, "ipsecpolicy")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -203,7 +203,7 @@ type UpdateOpts struct {
 
 // ToPolicyUpdateMap casts an UpdateOpts struct to a map.
 func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "ipsecpolicy")
+	return build.RequestBodyMap(opts, "ipsecpolicy")
 }
 
 // Update allows IPSec policies to be updated.

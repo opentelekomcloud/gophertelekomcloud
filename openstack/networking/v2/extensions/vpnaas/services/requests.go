@@ -40,7 +40,7 @@ type CreateOpts struct {
 
 // ToServiceCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToServiceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "vpnservice")
+	return build.RequestBodyMap(opts, "vpnservice")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -82,7 +82,7 @@ type UpdateOpts struct {
 
 // ToServiceUpdateMap casts aa UodateOpts struct to a map.
 func (opts UpdateOpts) ToServiceUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "vpnservice")
+	return build.RequestBodyMap(opts, "vpnservice")
 }
 
 // Update allows VPN services to be updated.

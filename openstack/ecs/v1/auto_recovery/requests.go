@@ -1,6 +1,7 @@
 package auto_recovery
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -15,7 +16,7 @@ type UpdateOptsBuilder interface {
 }
 
 func (opts UpdateOpts) ToAutoRecoveryUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) error {

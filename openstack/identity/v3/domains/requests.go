@@ -75,7 +75,7 @@ type CreateOpts struct {
 
 // ToDomainCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToDomainCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "domain")
+	return build.RequestBodyMap(opts, "domain")
 }
 
 // Create creates a new Domain.
@@ -117,7 +117,7 @@ type UpdateOpts struct {
 
 // ToUpdateCreateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToDomainUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "domain")
+	return build.RequestBodyMap(opts, "domain")
 }
 
 // Update modifies the attributes of a domain.

@@ -57,7 +57,7 @@ type Values struct {
 
 // ToAddonCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToAddonCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -111,7 +111,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToAddonUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Update(c *golangsdk.ServiceClient, id, clusterId string, opts UpdateOpts) (r UpdateResult) {

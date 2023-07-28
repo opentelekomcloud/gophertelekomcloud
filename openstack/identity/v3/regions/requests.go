@@ -75,7 +75,7 @@ type CreateOpts struct {
 
 // ToRegionCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToRegionCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "region")
+	b, err := build.RequestBodyMap(opts, "region")
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ type UpdateOpts struct {
 
 // ToRegionUpdateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToRegionUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "region")
+	b, err := build.RequestBodyMap(opts, "region")
 	if err != nil {
 		return nil, err
 	}

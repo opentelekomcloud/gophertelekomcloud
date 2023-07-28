@@ -2,6 +2,7 @@ package bootfromvolume
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 )
 
@@ -107,7 +108,7 @@ func (opts CreateOptsExt) ToServerCreateMap() (map[string]interface{}, error) {
 	blockDevice := make([]map[string]interface{}, len(opts.BlockDevice))
 
 	for i, bd := range opts.BlockDevice {
-		b, err := golangsdk.BuildRequestBody(bd, "")
+		b, err := build.RequestBodyMap(bd, "")
 		if err != nil {
 			return nil, err
 		}

@@ -150,7 +150,7 @@ type CreateStatement struct {
 type Condition map[string]map[string][]string
 
 func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "role")
+	b, err := build.RequestBodyMap(opts, "role")
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 }
 
 func (opts CreateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "role")
+	return build.RequestBodyMap(opts, "role")
 }
 
 func Update(c *golangsdk.ServiceClient, id string, opts CreateOpts) (r UpdateResult) {

@@ -2,6 +2,7 @@ package whiteblackip_rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -19,7 +20,7 @@ type CreateOpts struct {
 
 // ToWhiteBlackIPCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToWhiteBlackIPCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new whiteblackip rule based on the values in CreateOpts.
@@ -48,7 +49,7 @@ type UpdateOpts struct {
 
 // ToWhiteBlackIPUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToWhiteBlackIPUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a rule.The response code from api is 200

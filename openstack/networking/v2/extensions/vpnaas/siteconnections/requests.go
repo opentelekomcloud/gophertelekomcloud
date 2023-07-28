@@ -115,7 +115,7 @@ type CreateOpts struct {
 
 // ToConnectionCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToConnectionCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "ipsec_site_connection")
+	return build.RequestBodyMap(opts, "ipsec_site_connection")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -234,7 +234,7 @@ type UpdateOpts struct {
 
 // ToConnectionUpdateMap casts an UpdateOpts struct to a map.
 func (opts UpdateOpts) ToConnectionUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "ipsec_site_connection")
+	return build.RequestBodyMap(opts, "ipsec_site_connection")
 }
 
 // Update allows IPSec site connections to be updated.

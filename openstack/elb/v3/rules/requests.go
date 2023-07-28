@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -64,7 +65,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "rule")
+	return build.RequestBodyMap(opts, "rule")
 }
 
 func Create(client *golangsdk.ServiceClient, policyID string, opts CreateOptsBuilder) (r CreateResult) {
@@ -93,7 +94,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToUpdateRuleMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "rule")
+	return build.RequestBodyMap(opts, "rule")
 }
 
 func Update(client *golangsdk.ServiceClient, policyID, id string, opts UpdateOptsBuilder) (r UpdateResult) {

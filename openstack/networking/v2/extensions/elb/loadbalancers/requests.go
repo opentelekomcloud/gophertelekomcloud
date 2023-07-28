@@ -1,6 +1,7 @@
 package loadbalancers
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"log"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -36,7 +37,7 @@ type CreateOpts struct {
 
 // ToLoadBalancerCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToLoadBalancerCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create is an operation which provisions a new loadbalancer based on the
@@ -88,7 +89,7 @@ type UpdateOpts struct {
 
 // ToLoadBalancerUpdateMap casts a UpdateOpts struct to a map.
 func (opts UpdateOpts) ToLoadBalancerUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update is an operation which modifies the attributes of the specified LoadBalancer.

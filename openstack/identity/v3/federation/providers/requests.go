@@ -2,6 +2,7 @@ package providers
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -19,7 +20,7 @@ type CreateOpts struct {
 }
 
 func (opts CreateOpts) ToProviderCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "identity_provider")
+	return build.RequestBodyMap(opts, "identity_provider")
 }
 
 func (opts CreateOpts) Id() string {
@@ -66,7 +67,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToUpdateOptsMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "identity_provider")
+	return build.RequestBodyMap(opts, "identity_provider")
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {

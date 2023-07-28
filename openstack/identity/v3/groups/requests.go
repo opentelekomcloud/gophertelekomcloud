@@ -77,7 +77,7 @@ type CreateOpts struct {
 
 // ToGroupCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "group")
+	b, err := build.RequestBodyMap(opts, "group")
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ type UpdateOpts struct {
 
 // ToGroupUpdateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToGroupUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "group")
+	b, err := build.RequestBodyMap(opts, "group")
 	if err != nil {
 		return nil, err
 	}

@@ -1,5 +1,7 @@
 package golangsdk
 
+import "github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+
 /*
 AuthOptions stores information needed to authenticate to an OpenStack Cloud.
 You can populate one manually, or use a provider's AuthOptionsFromEnv() function
@@ -264,7 +266,7 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 		}
 	}
 
-	b, err := BuildRequestBody(req, "")
+	b, err := build.RequestBodyMap(req, "")
 	if err != nil {
 		return nil, err
 	}
@@ -438,7 +440,7 @@ func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) 
 		DomainName: opts.AgencyDomainName,
 		AgencyName: opts.AgencyName,
 	}
-	r, err := BuildRequestBody(req, "auth")
+	r, err := build.RequestBodyMap(req, "auth")
 	if err != nil {
 		return r, err
 	}

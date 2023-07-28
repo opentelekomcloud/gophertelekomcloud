@@ -2,6 +2,7 @@ package ipgroups
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -48,7 +49,7 @@ type DataStore struct {
 // validated and progress has started on the provisioning process, a
 // IpGroup will be returned.
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*IpGroup, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "ipgroup")
+	b, err := build.RequestBodyMap(opts, "ipgroup")
 	if err != nil {
 		return nil, err
 	}

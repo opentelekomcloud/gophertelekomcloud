@@ -2,6 +2,7 @@ package vaults
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -10,7 +11,7 @@ type BindPolicyOpts struct {
 }
 
 func BindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPolicyOpts) (*PolicyBinding, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

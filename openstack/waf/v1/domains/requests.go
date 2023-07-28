@@ -2,6 +2,7 @@ package domains
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -44,7 +45,7 @@ type ServerOpts struct {
 
 // ToDomainCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToDomainCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new Domain based on the values in CreateOpts.
@@ -99,7 +100,7 @@ type CustomPage struct {
 
 // ToDomainUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToDomainUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a Domain.The response code from api is 200

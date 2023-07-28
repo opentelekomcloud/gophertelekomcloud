@@ -2,11 +2,11 @@ package testing
 
 import (
 	"fmt"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"net/http"
 	"testing"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -611,7 +611,7 @@ type CreateOptsWithCustomField struct {
 }
 
 func (opts CreateOptsWithCustomField) ToServerCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server")
+	return build.RequestBodyMap(opts, "server")
 }
 
 // HandleServerCreationSuccessfully sets up the test server to respond to a server creation request

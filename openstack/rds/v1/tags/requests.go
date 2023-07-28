@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 var RequestOpts = golangsdk.RequestOpts{
@@ -24,13 +25,13 @@ type DeleteOpts struct {
 // ToCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "tag")
+	return build.RequestBodyMap(opts, "tag")
 }
 
 // ToDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
 func (opts DeleteOpts) ToDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 type CreateOptsBuilder interface {

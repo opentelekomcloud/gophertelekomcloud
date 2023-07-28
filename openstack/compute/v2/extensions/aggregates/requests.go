@@ -1,6 +1,7 @@
 package aggregates
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"strconv"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -30,7 +31,7 @@ type CreateOpts struct {
 }
 
 func (opts CreateOpts) ToAggregatesCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "aggregate")
+	return build.RequestBodyMap(opts, "aggregate")
 }
 
 // Create makes a request against the API to create an aggregate.
@@ -76,7 +77,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToAggregatesUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "aggregate")
+	return build.RequestBodyMap(opts, "aggregate")
 }
 
 // Update makes a request against the API to update a specific aggregate.
@@ -100,7 +101,7 @@ type AddHostOpts struct {
 }
 
 func (opts AddHostOpts) ToAggregatesAddHostMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "add_host")
+	return build.RequestBodyMap(opts, "add_host")
 }
 
 // AddHost makes a request against the API to add host to a specific aggregate.
@@ -124,7 +125,7 @@ type RemoveHostOpts struct {
 }
 
 func (opts RemoveHostOpts) ToAggregatesRemoveHostMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "remove_host")
+	return build.RequestBodyMap(opts, "remove_host")
 }
 
 // RemoveHost makes a request against the API to remove host from a specific aggregate.
@@ -147,7 +148,7 @@ type SetMetadataOpts struct {
 }
 
 func (opts SetMetadataOpts) ToSetMetadataMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "set_metadata")
+	return build.RequestBodyMap(opts, "set_metadata")
 }
 
 // SetMetadata makes a request against the API to set metadata to a specific aggregate.

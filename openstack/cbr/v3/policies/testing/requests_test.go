@@ -1,16 +1,16 @@
 package testing
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/policies"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	fake "github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
 )
 
 func TestCreateV3PolicyMarshall(t *testing.T) {
-	res, err := golangsdk.BuildRequestBody(createOpts, "policy")
+	res, err := build.RequestBodyMap(createOpts, "policy")
 	th.AssertNoErr(t, err)
 	th.AssertJSONEquals(t, expectedRequest, res)
 }

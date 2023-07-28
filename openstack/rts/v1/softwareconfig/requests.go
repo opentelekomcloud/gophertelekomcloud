@@ -115,7 +115,7 @@ type CreateOpts struct {
 
 // ToSoftwareConfigCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToSoftwareConfigCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new Software config

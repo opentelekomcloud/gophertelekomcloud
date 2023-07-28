@@ -2,6 +2,7 @@ package volumeactions
 
 import (
 	"encoding/json"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -20,7 +21,7 @@ type UploadImageOpts struct {
 }
 
 func UploadImage(client *golangsdk.ServiceClient, id string, opts UploadImageOpts) (*VolumeImage, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "os-volume_upload_image")
+	b, err := build.RequestBodyMap(opts, "os-volume_upload_image")
 	if err != nil {
 		return nil, err
 	}

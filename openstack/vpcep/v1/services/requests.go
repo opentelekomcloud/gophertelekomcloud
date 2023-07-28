@@ -75,7 +75,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToServiceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
@@ -173,7 +173,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToServiceUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {

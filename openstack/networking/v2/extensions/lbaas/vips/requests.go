@@ -99,7 +99,7 @@ type CreateOpts struct {
 
 // ToVIPCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToVIPCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "vip")
+	return build.RequestBodyMap(opts, "vip")
 }
 
 // Create is an operation which provisions a new virtual IP based on the
@@ -162,7 +162,7 @@ type UpdateOpts struct {
 
 // ToVIPUpdateMap builds a request body based on UpdateOpts.
 func (opts UpdateOpts) ToVIPUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "vip")
+	return build.RequestBodyMap(opts, "vip")
 }
 
 // Update is an operation which modifies the attributes of the specified VIP.

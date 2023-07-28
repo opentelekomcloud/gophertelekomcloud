@@ -2,6 +2,7 @@ package clusters
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -94,7 +95,7 @@ type DiskEncryption struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreatedCluster, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "cluster")
+	b, err := build.RequestBodyMap(opts, "cluster")
 	if err != nil {
 		return nil, err
 	}

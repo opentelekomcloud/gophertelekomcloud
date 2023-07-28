@@ -2,6 +2,7 @@ package mappings
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -70,7 +71,7 @@ type RemoteRuleOpts struct {
 
 // ToMappingCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToMappingCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "mapping")
+	b, err := build.RequestBodyMap(opts, "mapping")
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +106,7 @@ type UpdateOpts struct {
 
 // ToMappingUpdateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToMappingUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "mapping")
+	b, err := build.RequestBodyMap(opts, "mapping")
 	if err != nil {
 		return nil, err
 	}

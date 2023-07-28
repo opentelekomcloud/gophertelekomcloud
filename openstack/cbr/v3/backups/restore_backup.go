@@ -1,6 +1,9 @@
 package backups
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type RestoreBackupOpts struct {
 	Mappings []BackupRestoreServer `json:"mappings,omitempty"`
@@ -15,7 +18,7 @@ type BackupRestoreServer struct {
 }
 
 func RestoreBackup(client *golangsdk.ServiceClient, backupID string, opts RestoreBackupOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "restore")
+	b, err := build.RequestBodyMap(opts, "restore")
 	if err != nil {
 		return
 	}

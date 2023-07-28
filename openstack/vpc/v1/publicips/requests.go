@@ -65,7 +65,7 @@ type CreateOptsBuilder interface {
 }
 
 func (opts CreateOpts) ToCreatePublicIPMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ type UpdateOptsBuilder interface {
 }
 
 func (opts UpdateOpts) ToUpdatePublicIPMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "publicip")
+	b, err := build.RequestBodyMap(opts, "publicip")
 	if err != nil {
 		return nil, err
 	}

@@ -158,7 +158,7 @@ type CreateOpts struct {
 
 // ToVpcPeeringCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToPeeringCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "peering")
+	return build.RequestBodyMap(opts, "peering")
 }
 
 // Create is a method by which can access to create the vpc peering connection.
@@ -192,7 +192,7 @@ type UpdateOpts struct {
 
 // ToVpcPeeringUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToVpcPeeringUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "peering")
+	return build.RequestBodyMap(opts, "peering")
 }
 
 // Update is a method which can be able to update the name of vpc peering connection.

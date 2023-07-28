@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // Tag is a structure of key value pair.
@@ -38,7 +39,7 @@ var (
 
 // ToTagsBatchMap builds a BatchAction request body from BatchOpts.
 func (opts BatchOpts) ToTagsBatchMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // BatchAction is used to create ,update or delete the tags of a specified instance.

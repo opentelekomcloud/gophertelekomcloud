@@ -204,7 +204,7 @@ type CreateOpts struct {
 func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 	sc := opts.ServiceClient
 	opts.ServiceClient = nil
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -347,7 +347,7 @@ type UpdateOpts struct {
 
 // ToServerUpdateMap formats an UpdateOpts structure into a request body.
 func (opts UpdateOpts) ToServerUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server")
+	return build.RequestBodyMap(opts, "server")
 }
 
 // Update requests that various attributes of the indicated server be changed.
@@ -401,7 +401,7 @@ type RebootOpts struct {
 
 // ToServerRebootMap builds a body for the reboot request.
 func (opts RebootOpts) ToServerRebootMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "reboot")
+	return build.RequestBodyMap(opts, "reboot")
 }
 
 /*
@@ -471,7 +471,7 @@ type RebuildOpts struct {
 
 // ToServerRebuildMap formats a RebuildOpts struct into a map for use in JSON
 func (opts RebuildOpts) ToServerRebuildMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -526,7 +526,7 @@ type ResizeOpts struct {
 // ToServerResizeMap formats a ResizeOpts as a map that can be used as a JSON
 // request body for the Resize request.
 func (opts ResizeOpts) ToServerResizeMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "resize")
+	return build.RequestBodyMap(opts, "resize")
 }
 
 // Resize instructs the provider to change the flavor of the server.
@@ -726,7 +726,7 @@ type CreateImageOpts struct {
 // ToServerCreateImageMap formats a CreateImageOpts structure into a request
 // body.
 func (opts CreateImageOpts) ToServerCreateImageMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "createImage")
+	return build.RequestBodyMap(opts, "createImage")
 }
 
 // CreateImage makes a request against the nova API to schedule an image to be
@@ -806,7 +806,7 @@ type ShowConsoleOutputOpts struct {
 
 // ToServerShowConsoleOutputMap formats a ShowConsoleOutputOpts structure into a request body.
 func (opts ShowConsoleOutputOpts) ToServerShowConsoleOutputMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "os-getConsoleOutput")
+	return build.RequestBodyMap(opts, "os-getConsoleOutput")
 }
 
 // ShowConsoleOutput makes a request against the nova API to get console log from the server

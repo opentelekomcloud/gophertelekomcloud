@@ -2,6 +2,7 @@ package protocols
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -28,7 +29,7 @@ type CreateOpts struct {
 }
 
 func (opts CreateOpts) ToProtocolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protocol")
+	return build.RequestBodyMap(opts, "protocol")
 }
 
 func Create(client *golangsdk.ServiceClient, provider, protocol string, opts CreateOptsBuilder) (r CreateResult) {
@@ -58,7 +59,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToProtocolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protocol")
+	return build.RequestBodyMap(opts, "protocol")
 }
 
 func Update(client *golangsdk.ServiceClient, provider, protocol string, opts UpdateOptsBuilder) (r UpdateResult) {

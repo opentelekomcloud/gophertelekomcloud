@@ -2,6 +2,7 @@ package volumes
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -47,7 +48,7 @@ type CreateOpts struct {
 // ToVolumeCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToVolumeCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "volume")
+	return build.RequestBodyMap(opts, "volume")
 }
 
 // Create will create a new Volume based on the values in CreateOpts.

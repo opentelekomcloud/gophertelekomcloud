@@ -2,6 +2,7 @@ package dnatrules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOptsBuilder is an interface must satisfy to be used as Create
@@ -25,7 +26,7 @@ type CreateOpts struct {
 // ToDnatRuleCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
 func (opts CreateOpts) ToDnatRuleCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "dnat_rule")
+	return build.RequestBodyMap(opts, "dnat_rule")
 }
 
 // Create is a method by which can create a new dnat rule

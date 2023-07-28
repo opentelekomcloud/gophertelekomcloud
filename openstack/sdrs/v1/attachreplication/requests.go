@@ -2,6 +2,7 @@ package attachreplication
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 var RequestOpts = golangsdk.RequestOpts{
@@ -25,7 +26,7 @@ type CreateOpts struct {
 
 // ToReplicationAttachmentCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToReplicationAttachmentCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "replicationAttachment")
+	return build.RequestBodyMap(opts, "replicationAttachment")
 }
 
 // Create requests the creation of a new replication attachment on the instance.

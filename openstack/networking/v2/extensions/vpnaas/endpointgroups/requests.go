@@ -46,7 +46,7 @@ type CreateOpts struct {
 
 // ToEndpointGroupCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToEndpointGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "endpoint_group")
+	return build.RequestBodyMap(opts, "endpoint_group")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -135,7 +135,7 @@ type UpdateOpts struct {
 
 // ToEndpointGroupUpdateMap casts an UpdateOpts struct to a map.
 func (opts UpdateOpts) ToEndpointGroupUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "endpoint_group")
+	return build.RequestBodyMap(opts, "endpoint_group")
 }
 
 // Update allows endpoint groups to be updated.

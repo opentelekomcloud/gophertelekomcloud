@@ -2,6 +2,7 @@ package keys
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	// "github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -85,49 +86,49 @@ type RotationOpts struct {
 // ToKeyCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToKeyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ToKeyDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
 func (opts DeleteOpts) ToKeyDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ToKeyCancelDeleteMap assembles a request body based on the contents of a
 // CancelDeleteOpts.
 func (opts CancelDeleteOpts) ToKeyCancelDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ToKeyUpdateAliasMap assembles a request body based on the contents of a
 // UpdateAliasOpts.
 func (opts UpdateAliasOpts) ToKeyUpdateAliasMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ToKeyUpdateDesMap assembles a request body based on the contents of a
 // UpdateDesOpts.
 func (opts UpdateDesOpts) ToKeyUpdateDesMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func (opts DataEncryptOpts) ToDataEncryptMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func (opts EncryptDEKOpts) ToEncryptDEKMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func (opts ListOpts) ToKeyListMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // ToKeyRotationMap assembles a request body based on the contents of a
 // RotationOpts.
 func (opts RotationOpts) ToKeyRotationMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 type CreateOptsBuilder interface {

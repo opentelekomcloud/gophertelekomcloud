@@ -2,6 +2,7 @@ package configurations
 
 import (
 	"encoding/base64"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -73,7 +74,7 @@ type AdminPassMetadata struct {
 }
 
 func (opts CreateOpts) toConfigurationCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

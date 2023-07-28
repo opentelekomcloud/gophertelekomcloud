@@ -26,7 +26,7 @@ type CreateOpts struct {
 // ToSnapshotCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToSnapshotCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "snapshot")
+	return build.RequestBodyMap(opts, "snapshot")
 }
 
 // Create will create a new Snapshot based on the values in CreateOpts. To
@@ -139,7 +139,7 @@ type UpdateMetadataOpts struct {
 // ToSnapshotUpdateMetadataMap assembles a request body based on the contents of
 // an UpdateMetadataOpts.
 func (opts UpdateMetadataOpts) ToSnapshotUpdateMetadataMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // UpdateMetadata will update the Snapshot with provided information. To

@@ -122,7 +122,7 @@ type InsertHeaders struct {
 
 // ToListenerCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToListenerCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "listener")
+	return build.RequestBodyMap(opts, "listener")
 }
 
 // Create is an operation which provisions a new Listeners based on the
@@ -228,7 +228,7 @@ type UpdateOpts struct {
 
 // ToListenerUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToListenerUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "listener")
+	return build.RequestBodyMap(opts, "listener")
 }
 
 // Update is an operation which modifies the attributes of the specified

@@ -2,6 +2,7 @@ package datamasking_rules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -20,7 +21,7 @@ type CreateOpts struct {
 
 // ToDataMaskingCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToDataMaskingCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new datamasking rule based on the values in CreateOpts.
@@ -50,7 +51,7 @@ type UpdateOpts struct {
 
 // ToDataMaskingUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToDataMaskingUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a rule.The response code from api is 200

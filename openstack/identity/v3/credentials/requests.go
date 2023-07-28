@@ -52,7 +52,7 @@ type CreateOpts struct {
 }
 
 func (opts CreateOpts) ToCredentialCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, parentElement)
+	return build.RequestBodyMap(opts, parentElement)
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
@@ -75,7 +75,7 @@ type UpdateOpts struct {
 }
 
 func (opts UpdateOpts) ToCredentialUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, parentElement)
+	return build.RequestBodyMap(opts, parentElement)
 }
 
 func Update(client *golangsdk.ServiceClient, credentialID string, opts UpdateOptsBuilder) (r CreateResult) {

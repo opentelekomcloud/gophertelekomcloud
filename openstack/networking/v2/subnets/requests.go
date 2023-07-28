@@ -135,7 +135,7 @@ type CreateOpts struct {
 
 // ToSubnetCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToSubnetCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "subnet")
+	b, err := build.RequestBodyMap(opts, "subnet")
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +192,7 @@ type UpdateOpts struct {
 
 // ToSubnetUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToSubnetUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "subnet")
+	b, err := build.RequestBodyMap(opts, "subnet")
 	if err != nil {
 		return nil, err
 	}

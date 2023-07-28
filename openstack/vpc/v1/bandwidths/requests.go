@@ -73,7 +73,7 @@ type UpdateOptsBuilder interface {
 }
 
 func (opts UpdateOpts) ToBandwidthsUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(&opts, "bandwidth")
+	b, err := build.RequestBodyMap(&opts, "bandwidth")
 	if err != nil {
 		return nil, err
 	}

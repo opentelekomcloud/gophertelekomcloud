@@ -2,6 +2,7 @@ package ptrrecords
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // Get returns information about a ptr, given its ID.
@@ -41,7 +42,7 @@ type Tag struct {
 
 // ToPtrCreateMap formats an CreateOpts structure into a request body.
 func (opts CreateOpts) ToPtrCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

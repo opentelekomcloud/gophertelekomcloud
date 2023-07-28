@@ -2,6 +2,7 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -19,7 +20,7 @@ type CreateOpts struct {
 
 // ToPolicyCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new policy based on the values in CreateOpts.
@@ -56,7 +57,7 @@ type UpdateOpts struct {
 
 // ToPolicyUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a policy.The response code from api is 200
@@ -85,7 +86,7 @@ type UpdateHostsOpts struct {
 
 // ToPolicyHostsUpdateMap builds a update request body from UpdateHostsOpts.
 func (opts UpdateHostsOpts) ToPolicyHostsUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update accepts a UpdateHostsOpts struct and uses the values to update a policy hosts.The response code from api is 200

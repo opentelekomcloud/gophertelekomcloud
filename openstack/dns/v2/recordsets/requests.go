@@ -96,7 +96,7 @@ type CreateOpts struct {
 
 // ToRecordSetCreateMap formats an CreateOpts structure into a request body.
 func (opts CreateOpts) ToRecordSetCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ type UpdateOpts struct {
 
 // ToRecordSetUpdateMap formats an UpdateOpts structure into a request body.
 func (opts UpdateOpts) ToRecordSetUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

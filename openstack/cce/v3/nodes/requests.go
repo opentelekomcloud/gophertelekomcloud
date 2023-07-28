@@ -1,6 +1,7 @@
 package nodes
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -116,7 +117,7 @@ type CreateOptsBuilder interface {
 
 // ToNodeCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -158,7 +159,7 @@ type UpdateMetadata struct {
 
 // ToNodeUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update allows nodes to be updated.

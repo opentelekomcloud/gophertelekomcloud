@@ -1,6 +1,9 @@
 package grants
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type CreateOptsBuilder interface {
 	ToGrantCreateMap() (map[string]interface{}, error)
@@ -28,7 +31,7 @@ type CreateOpts struct {
 // ToGrantCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToGrantCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new Grant based on the values in CreateOpts. To
@@ -64,7 +67,7 @@ type DeleteOpts struct {
 // ToGrantDeleteMap assembles a request body based on the contents of a
 // DeleteOpts.
 func (opts DeleteOpts) ToGrantDeleteMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Delete will delete the existing Grant based on the values in DeleteOpts. To
@@ -93,7 +96,7 @@ type ListOpts struct {
 }
 
 func (opts ListOpts) ToGrantListMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // List will return a collection of Grants on a CMK.

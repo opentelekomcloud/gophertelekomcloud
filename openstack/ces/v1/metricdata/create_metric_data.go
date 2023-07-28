@@ -1,6 +1,9 @@
 package metricdata
 
-import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type MetricDataItem struct {
 	// Specifies the metric data.
@@ -49,7 +52,7 @@ func CreateMetricData(client *golangsdk.ServiceClient, items []MetricDataItem) e
 	b := make([]map[string]interface{}, len(items))
 
 	for i, opt := range items {
-		opt, err := golangsdk.BuildRequestBody(opt, "")
+		opt, err := build.RequestBodyMap(opt, "")
 		if err != nil {
 			return err
 		}

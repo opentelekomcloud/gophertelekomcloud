@@ -176,7 +176,7 @@ type CreateOpts struct {
 // ToShareCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToShareCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "share")
+	return build.RequestBodyMap(opts, "share")
 }
 
 // Create will create a new Share based on the values in CreateOpts. To extract
@@ -212,7 +212,7 @@ type UpdateOpts struct {
 
 // ToShareUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToShareUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "share")
+	return build.RequestBodyMap(opts, "share")
 }
 
 // Update allows shares to be updated. You can update the DisplayName, DisplayDescription.
@@ -273,7 +273,7 @@ type GrantAccessOpts struct {
 // ToGrantAccessMap assembles a request body based on the contents of a
 // GrantAccessOpts.
 func (opts GrantAccessOpts) ToGrantAccessMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "os-allow_access")
+	return build.RequestBodyMap(opts, "os-allow_access")
 }
 
 // GrantAccess will grant access to a Share based on the values in GrantAccessOpts. To extract
@@ -302,7 +302,7 @@ type DeleteAccessOpts struct {
 }
 
 func (opts DeleteAccessOpts) ToDeleteAccessMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "os-deny_access")
+	return build.RequestBodyMap(opts, "os-deny_access")
 }
 
 // Deletes the Access Rule
@@ -349,7 +349,7 @@ type OSExtendOpts struct {
 // ToShareExpandMap assembles a request body based on the contents of a
 // ExpandOpts.
 func (opts ExpandOpts) ToShareExpandMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Expand will expand a  Share based on the values in ExpandOpts.
@@ -388,7 +388,7 @@ type OSShrinkOpts struct {
 // ToShareShrinkMap assembles a request body based on the contents of a
 // ShrinkOpts.
 func (opts ShrinkOpts) ToShareShrinkMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Shrink will shrink a  Share based on the values in ShrinkOpts.

@@ -82,7 +82,7 @@ type CreateOpts struct {
 
 // ToRouteCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToRouteCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "route")
+	return build.RequestBodyMap(opts, "route")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new

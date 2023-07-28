@@ -96,7 +96,7 @@ type LifetimeCreateOpts struct {
 
 // ToPolicyCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToPolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "ikepolicy")
+	return build.RequestBodyMap(opts, "ikepolicy")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -201,7 +201,7 @@ type UpdateOpts struct {
 
 // ToPolicyUpdateMap casts an UpdateOpts struct to a map.
 func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "ikepolicy")
+	return build.RequestBodyMap(opts, "ikepolicy")
 }
 
 // Update allows IKE policies to be updated.

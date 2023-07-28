@@ -2,6 +2,7 @@ package attachinterfaces
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -52,7 +53,7 @@ type CreateOpts struct {
 
 // ToAttachInterfacesCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToAttachInterfacesCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "interfaceAttachment")
+	return build.RequestBodyMap(opts, "interfaceAttachment")
 }
 
 // Create requests the creation of a new interface attachment on the server.

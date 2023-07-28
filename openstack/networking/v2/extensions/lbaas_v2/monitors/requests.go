@@ -147,7 +147,7 @@ type CreateOpts struct {
 
 // ToMonitorCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToMonitorCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "healthmonitor")
+	b, err := build.RequestBodyMap(opts, "healthmonitor")
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ type UpdateOpts struct {
 
 // ToMonitorUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToMonitorUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "healthmonitor")
+	return build.RequestBodyMap(opts, "healthmonitor")
 }
 
 // Update is an operation which modifies the attributes of the specified

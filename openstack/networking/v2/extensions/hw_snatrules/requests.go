@@ -2,6 +2,7 @@ package hw_snatrules
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // CreateOptsBuilder is an interface must satisfy to be used as Create
@@ -23,7 +24,7 @@ type CreateOpts struct {
 // ToSnatRuleCreateMap allows CreateOpts to satisfy the CreateOptsBuilder
 // interface
 func (opts CreateOpts) ToSnatRuleCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "snat_rule")
+	return build.RequestBodyMap(opts, "snat_rule")
 }
 
 // Create is a method by which can create a new snat rule

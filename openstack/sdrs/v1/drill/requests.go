@@ -2,6 +2,7 @@ package drill
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -23,7 +24,7 @@ type CreateOpts struct {
 
 // ToDrillCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToDrillCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "disaster_recovery_drill")
+	return build.RequestBodyMap(opts, "disaster_recovery_drill")
 }
 
 // Create will create a new DR-Drill based on the values in CreateOpts.
@@ -52,7 +53,7 @@ type UpdateOpts struct {
 
 // ToDrillUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToDrillUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "disaster_recovery_drill")
+	return build.RequestBodyMap(opts, "disaster_recovery_drill")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a dr-drill.

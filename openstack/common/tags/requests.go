@@ -2,6 +2,7 @@ package tags
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -24,7 +25,7 @@ type ActionOpts struct {
 
 // ToTagsActionMap build the action request in json format
 func (opts ActionOpts) ToTagsActionMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 func doAction(client *golangsdk.ServiceClient, serviceType, id string, opts ActionOptsBuilder) (r ActionResult) {

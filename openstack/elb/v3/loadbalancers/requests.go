@@ -159,7 +159,7 @@ type Bandwidth struct {
 
 // ToLoadBalancerCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToLoadBalancerCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "loadbalancer")
+	return build.RequestBodyMap(opts, "loadbalancer")
 }
 
 // Create is an operation which provisions a new loadbalancer based on the
@@ -231,7 +231,7 @@ type UpdateOpts struct {
 
 // ToLoadBalancerUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToLoadBalancerUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "loadbalancer")
+	return build.RequestBodyMap(opts, "loadbalancer")
 }
 
 // Update is an operation which modifies the attributes of the specified

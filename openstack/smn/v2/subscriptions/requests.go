@@ -2,6 +2,7 @@ package subscriptions
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
@@ -22,7 +23,7 @@ type CreateOpts struct {
 }
 
 func (ops CreateOpts) ToSubscriptionCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(ops, "")
+	return build.RequestBodyMap(ops, "")
 }
 
 // Create a subscription with given parameters.

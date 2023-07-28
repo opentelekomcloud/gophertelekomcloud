@@ -2,6 +2,7 @@ package quotasets
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
 // Get returns public data about a previously created QuotaSet.
@@ -95,5 +96,5 @@ type UpdateOptsBuilder interface {
 // ToComputeQuotaUpdateMap builds the update options into a serializable
 // format.
 func (opts UpdateOpts) ToComputeQuotaUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "quota_set")
+	return build.RequestBodyMap(opts, "quota_set")
 }

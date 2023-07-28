@@ -26,7 +26,7 @@ type CreateOpts struct {
 
 // ToCertCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToCertCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create will create a new certificate based on the values in CreateOpts.
@@ -55,7 +55,7 @@ type UpdateOpts struct {
 
 // ToCertUpdateMap builds a update request body from UpdateOpts.
 func (opts UpdateOpts) ToCertUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a certificate.The response code from api is 200

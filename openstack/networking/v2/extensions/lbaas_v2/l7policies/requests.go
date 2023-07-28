@@ -71,7 +71,7 @@ type CreateOpts struct {
 
 // ToL7PolicyCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToL7PolicyCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "l7policy")
+	return build.RequestBodyMap(opts, "l7policy")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new l7policy.
@@ -191,7 +191,7 @@ type UpdateOpts struct {
 
 // ToL7PolicyUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToL7PolicyUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "l7policy")
+	b, err := build.RequestBodyMap(opts, "l7policy")
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +252,7 @@ type CreateRuleOpts struct {
 
 // ToRuleCreateMap builds a request body from CreateRuleOpts.
 func (opts CreateRuleOpts) ToRuleCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "rule")
+	return build.RequestBodyMap(opts, "rule")
 }
 
 // CreateRule will create and associate a Rule with a particular L7Policy.
@@ -365,7 +365,7 @@ type UpdateRuleOpts struct {
 
 // ToRuleUpdateMap builds a request body from UpdateRuleOpts.
 func (opts UpdateRuleOpts) ToRuleUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "rule")
+	b, err := build.RequestBodyMap(opts, "rule")
 	if err != nil {
 		return nil, err
 	}

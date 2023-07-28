@@ -68,7 +68,7 @@ type CreateOpts struct {
 
 // ToSecGroupCreateMap builds a request body from CreateOpts.
 func (opts CreateOpts) ToSecGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "security_group")
+	return build.RequestBodyMap(opts, "security_group")
 }
 
 // Create is an operation which provisions a new security group with default
@@ -101,7 +101,7 @@ type UpdateOpts struct {
 
 // ToSecGroupUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToSecGroupUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "security_group")
+	return build.RequestBodyMap(opts, "security_group")
 }
 
 // Update is an operation which updates an existing security group.

@@ -42,7 +42,7 @@ type CreateOpts struct {
 
 // ToStackCreateMap casts a CreateOpts struct to a map.
 func (opts CreateOpts) ToStackCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ type UpdateOpts struct {
 
 // ToStackUpdateMap casts a CreateOpts struct to a map.
 func (opts UpdateOpts) ToStackUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

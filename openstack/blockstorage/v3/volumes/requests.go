@@ -44,7 +44,7 @@ type CreateOpts struct {
 // ToVolumeCreateMap assembles a request body based on the contents of a
 // CreateOpts.
 func (opts CreateOpts) ToVolumeCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "volume")
+	return build.RequestBodyMap(opts, "volume")
 }
 
 // Create will create a new Volume based on the values in CreateOpts. To extract
@@ -161,7 +161,7 @@ type UpdateOpts struct {
 // ToVolumeUpdateMap assembles a request body based on the contents of an
 // UpdateOpts.
 func (opts UpdateOpts) ToVolumeUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "volume")
+	return build.RequestBodyMap(opts, "volume")
 }
 
 // Update will update the Volume with provided information. To extract the updated

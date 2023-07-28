@@ -133,7 +133,7 @@ type CreateOpts struct {
 
 // ToShareCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToShareCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "shared")
+	return build.RequestBodyMap(opts, "shared")
 }
 
 // Create will create a new Share based on the values in CreateOpts. To extract

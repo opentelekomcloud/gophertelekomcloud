@@ -26,7 +26,7 @@ type CreateOpts struct {
 
 // ToServiceCreateMap formats a CreateOpts into a create request.
 func (opts CreateOpts) ToServiceCreateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "service")
+	b, err := build.RequestBodyMap(opts, "service")
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ type UpdateOpts struct {
 
 // ToServiceUpdateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToServiceUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "service")
+	b, err := build.RequestBodyMap(opts, "service")
 	if err != nil {
 		return nil, err
 	}

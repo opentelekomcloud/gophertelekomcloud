@@ -2,6 +2,7 @@ package vaults
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -10,7 +11,7 @@ type DissociateResourcesOpts struct {
 }
 
 func DissociateResources(client *golangsdk.ServiceClient, vaultID string, opts DissociateResourcesOpts) ([]string, error) {
-	reqBody, err := golangsdk.BuildRequestBody(opts, "")
+	reqBody, err := build.RequestBodyMap(opts, "")
 	if err != nil {
 		return nil, err
 	}

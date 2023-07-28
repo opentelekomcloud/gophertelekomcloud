@@ -135,7 +135,7 @@ type CreateOpts struct {
 
 // ToSubnetPoolCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToSubnetPoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "subnetpool")
+	return build.RequestBodyMap(opts, "subnetpool")
 }
 
 // Create requests the creation of a new subnetpool on the server.
@@ -205,7 +205,7 @@ type UpdateOpts struct {
 
 // ToSubnetPoolUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToSubnetPoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "subnetpool")
+	return build.RequestBodyMap(opts, "subnetpool")
 }
 
 // Update accepts a UpdateOpts struct and updates an existing subnetpool using the

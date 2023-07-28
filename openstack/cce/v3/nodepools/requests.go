@@ -1,6 +1,7 @@
 package nodepools
 
 import (
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"reflect"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -129,7 +130,7 @@ type CreateOptsBuilder interface {
 
 // ToNodePoolCreateMap builds a create request body from CreateOpts.
 func (opts CreateOpts) ToNodePoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new
@@ -203,7 +204,7 @@ type UpdateMetadata struct {
 
 // ToNodePoolUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+	return build.RequestBodyMap(opts, "")
 }
 
 // Update allows node pools to be updated.

@@ -81,3 +81,15 @@ func RequestBody(opts interface{}, parent string) (*Body, error) {
 		Wrapped: opts,
 	}, nil
 }
+
+/*
+Deprecated: inline
+*/
+func RequestBodyMap(opts interface{}, parent string) (map[string]interface{}, error) {
+	body, err := RequestBody(opts, parent)
+	if err != nil {
+		return nil, err
+	}
+
+	return body.ToMap()
+}
