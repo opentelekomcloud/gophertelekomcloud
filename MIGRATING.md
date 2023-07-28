@@ -2,8 +2,8 @@
 
 ## Floating IPs
 
-* `github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingip` is
-  now `github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingips`
+* `github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingip`
+  is now `github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingips`
 * `floatingips.Associate` and `floatingips.Disassociate` have been removed.
 * `floatingips.DisassociateOpts` is now required to disassociate a Floating IP.
 
@@ -16,7 +16,7 @@
 
 * `servers.Reboot` now requires a `servers.RebootOpts` struct:
 
-  ```golang
+  ```
   rebootOpts := &servers.RebootOpts{
           Type: servers.SoftReboot,
   }
