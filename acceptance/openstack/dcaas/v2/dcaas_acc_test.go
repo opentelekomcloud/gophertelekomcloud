@@ -52,14 +52,14 @@ func TestDCAASLifecycle(t *testing.T) {
 
 	TenantId := clients.EnvOS.GetEnv("TENANT_ID")
 
-	DCEGCreateOpts := dc_endpoint_group.CreateOpts{
+	DCegCreateOpts := dc_endpoint_group.CreateOpts{
 		TenantId:  TenantId,
 		Name:      DCegName,
 		Endpoints: []string{"10.2.0.0/24", "10.3.0.0/24"},
 		Type:      "cidr",
 	}
 
-	dceg, err := dc_endpoint_group.Create(client, DCEGCreateOpts)
+	dceg, err := dc_endpoint_group.Create(client, DCegCreateOpts)
 	th.AssertNoErr(t, err)
 
 	// Create a virtual gateway
@@ -71,32 +71,36 @@ func TestDCAASLifecycle(t *testing.T) {
 		Type:                 "default",
 	}
 
-	VG, err := virtual_gateway.Create(client, VgCreateOpts)
+	vg, err := virtual_gateway.Create(client, VgCreateOpts)
 	th.AssertNoErr(t, err)
 
-	// Create a virtual interface fails with error
+	// Create a virtual interface
 	ViName := strings.ToLower(tools.RandomString("test-virtual-interface-", 5))
 	ViCreateOpts := virtual_interface.CreateOpts{
 		Name:              ViName,
 		DirectConnectID:   dc.ID,
-		VgwID:             VG.ID,
+		VgwID:             vg.ID,
 		Type:              "private",
 		ServiceType:       "vpc",
 		VLAN:              2511,
-		Bandwidth:         50,
+		Bandwidth:         100,
 		LocalGatewayV4IP:  "16.16.16.1/30",
 		RemoteGatewayV4IP: "16.16.16.2/30",
 		RouteMode:         "static",
-		RemoteEPGroupID:   "a2b81f07-826f-40b0-9e8d-17d1af5230cf",
+		RemoteEPGroupID:   dceg.ID,
+		AdminStateUp:      true,
 	}
 
-	Vi, err := virtual_interface.Create(client, ViCreateOpts)
+	vi, err := virtual_interface.Create(client, ViCreateOpts)
+	if err != nil {
+		t.Fatalf("Unable to create virtual interface: %v", err)
+	}
 	th.AssertNoErr(t, err)
 
 	// Cleanup
 	t.Cleanup(func() {
-		err = virtual_interface.Delete(client, Vi.ID)
-		err = virtual_gateway.Delete(client, VG.ID)
+		err = virtual_interface.Delete(client, vi.ID)
+		err = virtual_gateway.Delete(client, vg.ID)
 		err = dc_endpoint_group.Delete(client, dceg.ID)
 		err = direct_connect.Delete(client, dc.ID)
 		th.AssertNoErr(t, err)
