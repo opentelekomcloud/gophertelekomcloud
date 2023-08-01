@@ -67,12 +67,68 @@ type Host struct {
 	// Time a domain name is added to WAF
 	CreatedAt int `json:"timestamp"`
 	// Special domain name identifier, which is used to store additional domain name configurations
-	Flag *FlagResponse `json:"flag"`
+	Flag *FlagObject `json:"flag"`
 	// Alarm configuration page
 	BlockPage *BlockPageResponse `json:"block_page"`
 	// Extended attribute
-	Extend map[string]string `json:"extend"`
+	Extend *ExtendResponse `json:"extend"`
 	// WAF mode. The value is premium, indicating
 	// the dedicated WAF engine
 	WafType string `json:"waf_type"`
+	// Website name
+	WebTag string `json:"web_tag"`
+	// Traffic identifier
+	TrafficMark *TrafficMarkObject `json:"traffic_mark"`
+	// Circuit breaker configuration
+	CircuitBreaker *CircuitBreakerObject `json:"circuit_breaker"`
+	// Timeout settings
+	TimeoutConfig *TimeoutConfigObject `json:"timeout_config"`
+	// Description
+	Description string `json:"description"`
+}
+
+type TrafficMarkObject struct {
+	// IP tag. HTTP request header field of the original client IP address.
+	Sip []string `json:"sip"`
+	// Session tag. This tag is used by known attack source rules
+	// to block malicious attacks based on cookie attributes.
+	// This parameter must be configured in known attack source rules
+	// to block requests based on cookie attributes.
+	Cookie string `json:"cookie"`
+	// User tag. This tag is used by known attack source rules
+	// to block malicious attacks based on params attributes.
+	// This parameter must be configured to block requests based on the params attributes.
+	Params string `json:"params"`
+}
+
+type CircuitBreakerObject struct {
+	// Whether to enable connection protection.
+	// true: Enable connection protection.
+	// false: Disable the connection protection.
+	Switch bool `json:"switch"`
+	// 502/504 error threshold. 502/504 errors allowed for every 30 seconds.
+	DeadNum int `json:"dead_num"`
+	// A breakdown protection is triggered when
+	// the 502/504 error threshold and percentage threshold have been reached.
+	DeadRatio int `json:"dead_ratio"`
+	// Protection period upon the first breakdown.
+	// During this period, WAF stops forwarding client requests.
+	BlockTime int `json:"block_time"`
+	// The maximum multiplier you can use for consecutive breakdowns.
+	SuperpositionNum int `json:"superposition_num"`
+	// Threshold of the number of pending URL requests.
+	// Connection protection is triggered when the threshold has been reached.
+	SuspendNum int `json:"suspend_num"`
+	// Downtime duration after the connection protection is triggered.
+	// During this period, WAF stops forwarding website requests.
+	SusBlockTime int `json:"sus_block_time"`
+}
+
+type TimeoutConfigObject struct {
+	// Timeout for WAF to connect to the origin server.
+	ConnectionTimeout string `json:"connect_timeout"`
+	// Timeout for WAF to send requests to the origin server.
+	SendTimeout string `json:"send_timeout"`
+	// Timeout for WAF to receive responses from the origin server.
+	ReadTimeout string `json:"read_timeout"`
 }

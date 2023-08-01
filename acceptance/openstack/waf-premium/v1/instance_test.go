@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/instances"
@@ -22,13 +23,13 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 		t.Skip("OS_REGION_NAME, OS_AVAILABILITY_ZONE, OS_VPC_ID and OS_NETWORK_ID env vars is required for this test")
 	}
 
+	client, err := clients.NewWafdV1Client()
+	th.AssertNoErr(t, err)
+
 	architecture := "x86"
 	if region == "eu-ch2" {
 		architecture = "x86_64"
 	}
-
-	client, err := getWafdClient(t, region)
-	th.AssertNoErr(t, err)
 
 	opts := instances.CreateOpts{
 		Count:            1,
