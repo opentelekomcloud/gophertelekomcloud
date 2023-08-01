@@ -114,7 +114,7 @@ func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *conf
 		},
 		DataStore: configurations.DataStore{
 			Type:    "PostgreSQL",
-			Version: "14",
+			Version: "11",
 		},
 	}
 
