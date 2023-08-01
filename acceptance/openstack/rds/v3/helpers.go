@@ -110,12 +110,11 @@ func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *conf
 		Name:        configName,
 		Description: "some config description",
 		Values: map[string]string{
-			"max_connections": "10",
-			"autocommit":      "OFF",
+			"autocommit": "OFF",
 		},
 		DataStore: configurations.DataStore{
 			Type:    "PostgreSQL",
-			Version: "11",
+			Version: "14",
 		},
 	}
 
