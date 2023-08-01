@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/certificates"
@@ -18,7 +19,7 @@ func TestWafPremiumCertificateWorkflow(t *testing.T) {
 		t.Skip("OS_REGION_NAME, OS_VPC_ID env vars is required for this test")
 	}
 
-	client, err := getWafdClient(t, region)
+	client, err := clients.NewWafdV1Client()
 	th.AssertNoErr(t, err)
 
 	opts := certificates.CreateOpts{

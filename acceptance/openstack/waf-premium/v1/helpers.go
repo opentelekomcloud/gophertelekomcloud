@@ -2,12 +2,9 @@ package v1
 
 import (
 	"fmt"
-	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/instances"
-	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 const (
@@ -124,17 +121,4 @@ func waitForInstanceToBeDeleted(client *golangsdk.ServiceClient, secs int, id st
 		}
 		return false, nil
 	})
-}
-
-func getWafdClient(t *testing.T, region string) (*golangsdk.ServiceClient, error) {
-	var client *golangsdk.ServiceClient
-	var err error
-	if region == "eu-ch2" {
-		client, err = clients.NewWafdSwissV1Client()
-		th.AssertNoErr(t, err)
-	} else {
-		client, err = clients.NewWafdV1Client()
-		th.AssertNoErr(t, err)
-	}
-	return client, err
 }
