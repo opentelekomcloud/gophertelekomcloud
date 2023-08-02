@@ -145,6 +145,9 @@ func updateRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient, rdsCo
 		ConfigId:    rdsConfigID,
 		Name:        configName,
 		Description: "some updated description",
+		Values: map[string]string{
+			"autocommit": "ON",
+		},
 	}
 
 	err := configurations.Update(client, updateOpts)
