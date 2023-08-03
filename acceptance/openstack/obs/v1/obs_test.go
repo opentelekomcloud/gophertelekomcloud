@@ -42,7 +42,7 @@ func TestObsBucketLifecycle(t *testing.T) {
 	th.AssertEquals(t, bucketHead.Version, "3.0")
 }
 
-func TestObsObjectLifecycle(t *testing.T) {
+func TestObsBucketLifecyclePolicy(t *testing.T) {
 	client, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
 
@@ -76,6 +76,40 @@ func TestObsObjectLifecycle(t *testing.T) {
 		})
 		th.AssertNoErr(t, err)
 	})
+
+	_, err = client.SetBucketLifecycleConfiguration(
+		&obs.SetBucketLifecycleConfigurationInput{
+			Bucket: bucketName,
+			BucketLifecycleConfiguration: obs.BucketLifecycleConfiguration{
+				LifecycleRules: []obs.LifecycleRule{
+					{
+						Prefix: "path1/",
+						Status: "Enabled",
+						Transitions: []obs.Transition{
+							{
+								Days:         30,
+								StorageClass: "COLD",
+							},
+						},
+						Expiration: obs.Expiration{
+							Days: 60,
+						},
+					},
+				},
+			},
+		},
+	)
+	th.AssertNoErr(t, err)
+
+	config, err := client.GetBucketLifecycleConfiguration(bucketName)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, config.BucketLifecycleConfiguration.LifecycleRules[0].Expiration.Days, 60)
+
+	t.Cleanup(func() {
+		_, err := client.DeleteBucketLifecycleConfiguration(bucketName)
+		th.AssertNoErr(t, err)
+	})
+
 }
 
 func TestObsPolicyLifecycle(t *testing.T) {
