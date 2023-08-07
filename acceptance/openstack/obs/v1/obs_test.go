@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -181,5 +182,51 @@ func TestObsPolicyLifecycle(t *testing.T) {
 	})
 
 	_, err = client.GetBucketPolicy(bucketName)
+	th.AssertNoErr(t, err)
+}
+
+func TestObsReplicationLifecycle(t *testing.T) {
+	client, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	if os.Getenv("OS_AGENCY") == "" || os.Getenv("OS_DESTINATION_BUCKET") == "" {
+		t.Skip("Agency or bucket is not provided for the test.")
+	}
+
+	bucketName := strings.ToLower(tools.RandomString("obs-sdk-test", 5))
+	bucketNameDest := os.Getenv("OS_DESTINATION_BUCKET")
+	agencyName := os.Getenv("OS_AGENCY")
+
+	_, err = client.CreateBucket(&obs.CreateBucketInput{
+		Bucket: bucketName,
+	})
+	t.Cleanup(func() {
+		_, err = client.DeleteBucket(bucketName)
+		th.AssertNoErr(t, err)
+	})
+	th.AssertNoErr(t, err)
+
+	_, err = client.SetBucketReplication(
+		&obs.SetBucketReplicationInput{
+			Bucket: bucketName,
+			BucketReplicationConfiguration: obs.BucketReplicationConfiguration{
+				Agency: agencyName,
+				ReplicationRules: []obs.ReplicationRule{
+					{
+						Prefix:            "",
+						Status:            "Enabled",
+						DestinationBucket: bucketNameDest,
+					},
+				},
+			},
+		})
+	th.AssertNoErr(t, err)
+
+	replication, err := client.GetBucketReplication(bucketName)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, replication.StatusCode, 200)
+	th.AssertEquals(t, replication.Agency, agencyName)
+
+	_, err = client.DeleteBucketReplication(bucketName)
 	th.AssertNoErr(t, err)
 }
