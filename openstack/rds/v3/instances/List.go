@@ -142,6 +142,8 @@ type InstanceResponse struct {
 	Tags []tags.ResourceTag `json:"tags"`
 	// Indicates whether a DDM instance has been associated.
 	AssociatedWithDdm bool `json:"associated_with_ddm"`
+	// Indicates whether SSL is enabled for an instance
+	EnableSSL *bool `json:"enable_ssl,omitempty"`
 }
 
 type Nodes struct {
