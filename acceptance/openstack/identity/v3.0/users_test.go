@@ -51,11 +51,10 @@ func TestUserLifecycle(t *testing.T) {
 	th.AssertEquals(t, userGet.Email, user.Email)
 	th.AssertEquals(t, userGet.DomainID, user.DomainID)
 
-	updateOpts := users.CreateOpts{
+	updateOpts := users.UpdateOpts{
 		Enabled:  pointerto.Bool(false),
 		Name:     tools.RandomString("new-user-name-", 4),
 		Password: tools.RandomString("Hello-world-", 5),
-		DomainID: client.DomainID,
 	}
 
 	userUpdate, err := users.ModifyUser(client, user.ID, updateOpts)
