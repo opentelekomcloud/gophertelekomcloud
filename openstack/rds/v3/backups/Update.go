@@ -14,7 +14,7 @@ type UpdateOpts struct {
 	// NOTICE
 	// Once the automated backup policy is disabled, automated backups are no longer created and all incremental backups are deleted immediately. Operations related to the incremental backups, including downloads, replications, restorations, and rebuilds, may fail.
 	// Disabling Automated Backup Policy is not allowed for SQL Server Primary/Standby and Cluster instances. So "keep_days" cannot be set to 0 for SQL Server Primary/Standby and Cluster instances.
-	KeepDays int `json:"keep_days" required:"true"`
+	KeepDays *int `json:"keep_days" required:"true"`
 	// Specifies the backup time window. Automated backups will be triggered during the backup time window. This parameter is mandatory except that the automated backup policy is disabled.
 	// The value must be a valid value in the "hh:mm-HH:MM" format. The current time is in the UTC format.
 	// The HH value must be 1 greater than the hh value.
