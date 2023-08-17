@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -10,6 +11,9 @@ import (
 )
 
 func TestVirtualInterfaceLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 

@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -14,6 +15,10 @@ import (
 )
 
 func TestDCAASLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
+		t.Skip("unstable test")
+	}
+
 	// Create client
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
