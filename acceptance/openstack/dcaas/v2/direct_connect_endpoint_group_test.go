@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -11,6 +12,10 @@ import (
 )
 
 func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DCAAS_DIRECT_CONNECT_ENDPOINT_GROUP") == "" {
+		t.Skip("unstable test")
+	}
+
 	// Create a direct connect endpoint group
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)

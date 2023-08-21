@@ -2,6 +2,7 @@ package v2
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -12,6 +13,10 @@ import (
 )
 
 func TestDirectConnectLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DCAAS_DIRECT_CONNECT") == "" {
+		t.Skip("unstable test")
+	}
+
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 

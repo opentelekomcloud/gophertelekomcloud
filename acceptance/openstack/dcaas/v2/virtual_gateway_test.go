@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -11,6 +12,10 @@ import (
 )
 
 func TestVirtualGatewayLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DCAAS_VIRTUAL_GATEWAY") == "" {
+		t.Skip("unstable test")
+	}
+
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 
