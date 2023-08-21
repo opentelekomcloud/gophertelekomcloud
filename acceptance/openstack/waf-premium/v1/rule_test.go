@@ -50,6 +50,7 @@ func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
 	}
 	t.Logf("Attempting to create WAF Premium host")
 	host, err := hosts.Create(client, hostOpts)
+	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete WAF Premium host: %s", host.ID)
