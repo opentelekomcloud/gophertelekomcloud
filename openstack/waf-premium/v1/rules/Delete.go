@@ -104,8 +104,8 @@ func DeleteGeoIpRule(client *golangsdk.ServiceClient, policyId, ruleId string) (
 	return
 }
 
-// DeleteValueList is used to delete a reference table.
-func DeleteValueList(client *golangsdk.ServiceClient, tableId string) (err error) {
+// DeleteReferenceTable is used to delete a reference table.
+func DeleteReferenceTable(client *golangsdk.ServiceClient, tableId string) (err error) {
 	// DELETE /v1/{project_id}/waf/valuelist/{table_id}
 	_, err = client.Delete(client.ServiceURL("waf", "valuelist", tableId), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
