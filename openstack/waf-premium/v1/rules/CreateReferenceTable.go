@@ -57,7 +57,7 @@ type ReferenceTable struct {
 	// Type
 	Type string `json:"type"`
 	// Reference table timestamp.
-	CreatedAt string `json:"timestamp"`
+	CreatedAt int64 `json:"timestamp"`
 	// Value of the reference table.
 	Values []string `json:"values"`
 	// Reference table description.

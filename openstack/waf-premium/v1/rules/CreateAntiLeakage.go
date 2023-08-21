@@ -47,7 +47,7 @@ func CreateAntiLeakage(client *golangsdk.ServiceClient, policyId string, opts Cr
 
 type AntiLeakageRule struct {
 	// Rule ID.
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Policy ID.
 	PolicyId string `json:"policyid"`
 	// URL to which the rule applies.

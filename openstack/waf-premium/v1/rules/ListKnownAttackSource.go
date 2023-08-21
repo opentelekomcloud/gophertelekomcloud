@@ -15,7 +15,7 @@ type ListKnownAttackSourceOpts struct {
 }
 
 // ListKnownAttackSource is used to query the list of known attack source rules.
-func ListKnownAttackSource(client *golangsdk.ServiceClient, policyId string, opts ListPrivacyOpts) ([]KnownAttackSourceRule, error) {
+func ListKnownAttackSource(client *golangsdk.ServiceClient, policyId string, opts ListKnownAttackSourceOpts) ([]KnownAttackSourceRule, error) {
 	query, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err

@@ -13,7 +13,7 @@ type UpdateGeoIpOpts struct {
 	// 0: WAF blocks the requests that hit the rule.
 	// 1: WAF allows the requests that hit the rule.
 	// 2: WAF only logs the requests that hit the rule.
-	Action int `json:"white" required:"true"`
+	Action *int `json:"white" required:"true"`
 	// Name of the masked field
 	Name string `json:"name"`
 	// Rule description

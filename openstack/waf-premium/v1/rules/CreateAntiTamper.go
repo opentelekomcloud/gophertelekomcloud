@@ -41,7 +41,7 @@ func CreateAntiTamper(client *golangsdk.ServiceClient, policyId string, opts Cre
 
 type AntiTamperRule struct {
 	// Rule ID.
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Policy ID.
 	PolicyId string `json:"policyid"`
 	// Time the rule is created. The value is a 13-digit timestamp in ms.

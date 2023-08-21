@@ -25,7 +25,7 @@ type CreateCustomOpts struct {
 	Action *CustomActionObject `json:"action" required:"true"`
 	// Priority of a rule. A small value indicates a high priority. If two rules are assigned with the same priority,
 	// the rule added earlier has higher priority. Value range: 0 to 1000.
-	Priority int `json:"priority" required:"true"`
+	Priority *int `json:"priority" required:"true"`
 }
 
 type CustomConditionsObject struct {
@@ -94,7 +94,7 @@ func CreateCustom(client *golangsdk.ServiceClient, policyId string, opts CreateC
 
 type CustomRule struct {
 	// Rule ID.
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Policy ID.
 	PolicyId string `json:"policyid"`
 	// Rule description.

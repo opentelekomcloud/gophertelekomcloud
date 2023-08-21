@@ -20,7 +20,7 @@ type CreateKnownAttackSourceOpts struct {
 	// the value for block_time ranges from 301 to 1800.
 	// If prefix short is selected for the rule type,
 	// the value for block_time ranges from 0 to 300.
-	BlockTime int `json:"block_time" required:"true"`
+	BlockTime *int `json:"block_time" required:"true"`
 	// Rule description.
 	Description string `json:"description"`
 }
@@ -32,8 +32,8 @@ func CreateKnownAttackSource(client *golangsdk.ServiceClient, policyId string, o
 		return nil, err
 	}
 
-	// POST /v1/{project_id}/waf/policy/{policy_id}/privacy
-	raw, err := client.Post(client.ServiceURL("waf", "policy", policyId, "privacy"), b,
+	// POST /v1/{project_id}/waf/policy/{policy_id}/punishment
+	raw, err := client.Post(client.ServiceURL("waf", "policy", policyId, "punishment"), b,
 		nil, &golangsdk.RequestOpts{
 			OkCodes:     []int{200},
 			MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf8"},
@@ -49,7 +49,7 @@ func CreateKnownAttackSource(client *golangsdk.ServiceClient, policyId string, o
 
 type KnownAttackSourceRule struct {
 	// Rule ID.
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Policy ID.
 	PolicyId string `json:"policyid"`
 	// Time the rule is created. The value is a 13-digit timestamp in ms.

@@ -21,7 +21,7 @@ type UpdateBlacklistOpts struct {
 	// 0: WAF blocks the requests that hit the rule.
 	// 1: WAF allows the requests that hit the rule.
 	// 2: WAF only logs the requests that hit the rule.
-	Action string `json:"white" required:"true"`
+	Action *int `json:"white" required:"true"`
 	// ID of a known attack source rule. This parameter can be configured only when white is set to 0.
 	FollowedActionId string `json:"followed_action_id"`
 }

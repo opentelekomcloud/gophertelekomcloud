@@ -11,7 +11,7 @@ type CreateCcOpts struct {
 	// field in the Add CC Attack Protection Rule dialog box on the WAF console.
 	// 0: standard. Only the protected paths of domain names can be specified.
 	// 1: The path, IP address, cookie, header, and params fields can all be set.
-	Mode int `json:"mode" required:"true"`
+	Mode *int `json:"mode" required:"true"`
 	// Path to be protected in the CC attack protection rule.
 	// This parameter is mandatory when the CC attack protection rule is in standard mode (i.e. the value of mode is 0).
 	Url string `json:"url" required:"true"`
@@ -44,12 +44,12 @@ type CreateCcOpts struct {
 	LimitPeriod int64 `json:"limit_period" required:"true"`
 	// Allowable frequency based on the number of requests. The value ranges from 0 to 2,147,483,647.
 	// This parameter is required only when the protection action type is dynamic_block.
-	UnlockNum int `json:"unlock_num"`
+	UnlockNum int64 `json:"unlock_num"`
 	// Block duration, in seconds. The value ranges from 0 to 65,535.
 	// Specifies the period within which access is blocked. An error page is displayed in this period.
 	LockTime int `json:"lock_time"`
 	// Rule description.
-	Description int `json:"description"`
+	Description string `json:"description"`
 }
 
 type CcConditionsObject struct {

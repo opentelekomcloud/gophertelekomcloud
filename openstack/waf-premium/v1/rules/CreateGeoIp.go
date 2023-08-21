@@ -13,7 +13,7 @@ type CreateGeoIpOpts struct {
 	// 0: WAF blocks the requests that hit the rule.
 	// 1: WAF allows the requests that hit the rule.
 	// 2: WAF only logs the requests that hit the rule.
-	Action int `json:"white" required:"true"`
+	Action *int `json:"white" required:"true"`
 	// Rule name. Currently, the console does not support configuring
 	// names for geolocation access control rule. Ignore this parameter.
 	Name string `json:"name" required:"true"`
@@ -45,7 +45,7 @@ func CreateGeoIp(client *golangsdk.ServiceClient, policyId string, opts CreateGe
 
 type GeoIpRule struct {
 	// Rule ID.
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// Policy ID.
 	PolicyId string `json:"policyid"`
 	// Rule name.

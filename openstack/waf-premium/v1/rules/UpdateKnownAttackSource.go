@@ -10,7 +10,7 @@ type UpdateKnownAttackSourceOpts struct {
 	// Block duration, in seconds.
 	// If prefix long is selected for the rule type, the value for block_time ranges from 301 to 1800.
 	// If prefix short is selected for the rule type, the value for block_time ranges from 0 to 300.
-	BlockTime string `json:"block_time" required:"true"`
+	BlockTime *int `json:"block_time" required:"true"`
 	// Rule description
 	Description string `json:"description"`
 }
