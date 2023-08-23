@@ -29,7 +29,6 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
 
 	ipGroupOpts := ipgroups.IpGroupOption{
 		Ip:          "192.168.10.10",
@@ -92,8 +91,24 @@ func TestIpGroupsLifecycle(t *testing.T) {
 		},
 	}).Extract()
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	th.AssertEquals(t, *listener.IpGroup.Enable, true)
 
+	t.Logf("Attempting to create ELBv3 Listener with ipGroup association")
+	listenerUpdated, err := listeners.Update(client, listener.ID, listeners.UpdateOpts{
+		IpGroup: &listeners.IpGroupUpdate{
+			IpGroupId: ipGroup.ID,
+			Enable:    pointerto.Bool(false),
+		},
+	}).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, *listenerUpdated.IpGroup.Enable, false)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete ELBv3 Listener and Loadbalancer: %s", listener.ID)
+		deleteListener(t, client, listener.ID)
+		deleteLoadbalancer(t, client, loadbalancerID)
+		t.Logf("Deleted ELBv3 Listener: %s, Deleted ELBv3 Loadbalancer: %s", listener.ID, loadbalancerID)
+	})
 	updatedIpList, err := ipgroups.UpdateIpList(client, ipGroup.ID, ipgroups.UpdateOpts{
 		IpList: []ipgroups.IpGroupOption{
 			{
