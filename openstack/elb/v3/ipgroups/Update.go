@@ -12,7 +12,7 @@ type UpdateOpts struct {
 	// Provides supplementary information about the IP address group.
 	Description string `json:"description,omitempty"`
 	// Lists the IP addresses in the IP address group.
-	IpList []IpGroupOption `json:"ip_list,omitempty"`
+	IpList *[]IpGroupOption `json:"ip_list,omitempty"`
 }
 
 // Update is an operation which modifies the attributes of the specified

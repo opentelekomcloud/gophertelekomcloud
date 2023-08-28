@@ -29,7 +29,6 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	loadbalancerID := createLoadBalancer(t, client)
-	defer deleteLoadbalancer(t, client, loadbalancerID)
 
 	ipGroupOpts := ipgroups.IpGroupOption{
 		Ip:          "192.168.10.10",
@@ -39,12 +38,11 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	createOpts := ipgroups.CreateOpts{
 		Description: "some interesting description",
 		Name:        ipGroupName,
-		IpList:      []ipgroups.IpGroupOption{ipGroupOpts},
+		IpList:      &[]ipgroups.IpGroupOption{ipGroupOpts},
 	}
 	t.Logf("Attempting to create ELBv3 IpGroup")
 	ipGroup, err := ipgroups.Create(client, createOpts)
 	th.AssertNoErr(t, err)
-
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete ELBv3 IpGroup: %s", ipGroup.ID)
 		th.AssertNoErr(t, ipgroups.Delete(client, ipGroup.ID))
@@ -55,7 +53,7 @@ func TestIpGroupsLifecycle(t *testing.T) {
 	ipGroupNameUpdate := tools.RandomString("update-ip-group-", 3)
 	updateOpts := ipgroups.UpdateOpts{
 		Name: ipGroupNameUpdate,
-		IpList: []ipgroups.IpGroupOption{
+		IpList: &[]ipgroups.IpGroupOption{
 			{
 				Ip:          "192.168.10.12",
 				Description: "third",
@@ -92,10 +90,26 @@ func TestIpGroupsLifecycle(t *testing.T) {
 		},
 	}).Extract()
 	th.AssertNoErr(t, err)
-	defer deleteListener(t, client, listener.ID)
+	th.AssertEquals(t, *listener.IpGroup.Enable, true)
 
+	t.Logf("Attempting to create ELBv3 Listener with ipGroup association")
+	listenerUpdated, err := listeners.Update(client, listener.ID, listeners.UpdateOpts{
+		IpGroup: &listeners.IpGroupUpdate{
+			IpGroupId: ipGroup.ID,
+			Enable:    pointerto.Bool(false),
+		},
+	}).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, *listenerUpdated.IpGroup.Enable, false)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete ELBv3 Listener and Loadbalancer: %s", listener.ID)
+		deleteListener(t, client, listener.ID)
+		deleteLoadbalancer(t, client, loadbalancerID)
+		t.Logf("Deleted ELBv3 Listener: %s, Deleted ELBv3 Loadbalancer: %s", listener.ID, loadbalancerID)
+	})
 	updatedIpList, err := ipgroups.UpdateIpList(client, ipGroup.ID, ipgroups.UpdateOpts{
-		IpList: []ipgroups.IpGroupOption{
+		IpList: &[]ipgroups.IpGroupOption{
 			{
 				Ip:          "192.168.10.12",
 				Description: "third",
@@ -125,4 +139,11 @@ func TestIpGroupsLifecycle(t *testing.T) {
 		}})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(deletedIps.IpList))
+
+	t.Logf("Attempting to update ELBv3 ipGroup to empty ip list")
+	err = ipgroups.Update(client, ipGroup.ID, ipgroups.UpdateOpts{
+		Name:   "update",
+		IpList: &[]ipgroups.IpGroupOption{},
+	})
+	th.AssertNoErr(t, err)
 }

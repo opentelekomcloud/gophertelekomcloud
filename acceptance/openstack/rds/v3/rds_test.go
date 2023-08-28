@@ -373,7 +373,7 @@ func TestRdsBackupLifecycle(t *testing.T) {
 
 	err = backups.Update(client, backups.UpdateOpts{
 		InstanceId: rds.Id,
-		KeepDays:   policy.KeepDays - 1,
+		KeepDays:   pointerto.Int(policy.KeepDays - 1),
 		StartTime:  policy.StartTime,
 		Period:     "1,2,3,4",
 	})
@@ -415,4 +415,28 @@ func TestRdsBackupLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 		t.Logf("RDSv3 Read Replica instance deleted: %s", replica.Instance.Id)
 	})
+}
+
+func TestBackupKeepDays(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance")
+
+	// Create RDSv3 instance
+	rds := CreateRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	err = backups.Update(client, backups.UpdateOpts{
+		InstanceId: rds.Id,
+		KeepDays:   pointerto.Int(0),
+	})
+	th.AssertNoErr(t, err)
 }
