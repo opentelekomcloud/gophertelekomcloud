@@ -930,3 +930,8 @@ func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	serviceClient.ResourceBase = serviceClient.Endpoint
 	return serviceClient, err
 }
+
+// NewTMSV1 creates a ServiceClient that may be used to access the TMS service.
+func NewTMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "tms")
+}

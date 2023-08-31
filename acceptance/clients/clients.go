@@ -727,6 +727,18 @@ func NewSmnV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewTmsV1Client returns authenticated TMS v1.0 client
+func NewTmsV1Client() (client *golangsdk.ServiceClient, err error) {
+	iamClient, err := NewIdentityV3AdminClient()
+	if err != nil {
+		return nil, err
+	}
+
+	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "v3", "v1.0", 1)
+	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "iam", "tms", 1)
+	return iamClient, err
+}
+
 // NewCesV1Client returns authenticated CES v1 client
 func NewCesV1Client() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
