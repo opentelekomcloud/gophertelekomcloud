@@ -43,6 +43,6 @@ func TestTMSV1Lifecycle(t *testing.T) {
 	_, err = tags.BatchAction(client, "", deleteOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	listTags, err = tags.Get(client).Extract()
+	_, err = tags.Get(client).Extract()
 	th.AssertNoErr(t, err)
 }
