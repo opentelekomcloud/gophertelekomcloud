@@ -19,7 +19,7 @@ type CreateOpts struct {
 	ProjectId string `json:"project_id,omitempty"`
 
 	// Specifies the IP addresses or CIDR blocks in the IP address group. [] indicates any IP address.
-	IpList []IpGroupOption `json:"ip_list,omitempty"`
+	IpList *[]IpGroupOption `json:"ip_list,omitempty"`
 }
 
 type IpGroupOption struct {

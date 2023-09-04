@@ -37,6 +37,19 @@ type UpdateOpts struct {
 	ProtectStatus int `json:"protect_status"`
 	// Alarm configuration page.
 	BlockPage *BlockPage `json:"block_page"`
+	// Feature switch for configuring compliance certification
+	// checks for domain names protected with the dedicated WAF instance.
+	Flag *FlagObject `json:"flag"`
+	// Traffic identifier
+	TrafficMark *TrafficMarkObject `json:"traffic_mark"`
+	// Circuit breaker configuration
+	CircuitBreaker *CircuitBreakerObject `json:"circuit_breaker"`
+	// Timeout settings
+	TimeoutConfig *TimeoutConfigObject `json:"timeout_config"`
+	// Website name
+	WebTag string `json:"web_tag"`
+	// Description
+	Description string `json:"description"`
 }
 
 type BlockPage struct {

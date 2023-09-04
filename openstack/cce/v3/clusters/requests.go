@@ -229,6 +229,30 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	return
 }
 
+type DeleteOpts struct {
+	ErrorStatus string `q:"errorStatus"`
+	DeleteEfs   string `q:"delete_efs"`
+	DeleteENI   string `q:"delete_eni"`
+	DeleteEvs   string `q:"delete_evs"`
+	DeleteNet   string `q:"delete_net"`
+	DeleteObs   string `q:"delete_obs"`
+	DeleteSfs   string `q:"delete_sfs"`
+}
+
+func DeleteWithOpts(c *golangsdk.ServiceClient, id string, opts DeleteOpts) error {
+	url := resourceURL(c, id)
+	q, err := golangsdk.BuildQueryString(&opts)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.Delete(url+q.String(), &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+	})
+	return err
+}
+
 type UpdateIpOpts struct {
 	Action    string `json:"action" required:"true"`
 	Spec      IpSpec `json:"spec,omitempty"`

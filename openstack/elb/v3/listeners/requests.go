@@ -156,6 +156,7 @@ type UpdateOptsBuilder interface {
 
 type IpGroupUpdate struct {
 	IpGroupId string `json:"ipgroup_id,omitempty"`
+	Enable    *bool  `json:"enable_ipgroup,omitempty"`
 	Type      string `json:"type,omitempty"`
 }
 

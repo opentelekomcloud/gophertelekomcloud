@@ -603,3 +603,42 @@ func (obsClient ObsClient) getBucketNotificationS3(bucketName string) (output *G
 	output.TopicConfigurations = topicConfigurations
 	return
 }
+
+// SetBucketReplication sets the cross-region replication for a bucket.
+//
+// You can use this API to create or update the cross-region replication for a bucket.
+func (obsClient ObsClient) SetBucketReplication(input *SetBucketReplicationInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("SetBucketReplicationInput is nil")
+	}
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("SetBucketReplication", HTTP_PUT, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// GetBucketReplication gets the cross-region replication configuration of a bucket.
+//
+// You can use this API to obtain the cross-region replication configuration of a bucket.
+func (obsClient ObsClient) GetBucketReplication(bucketName string) (output *GetBucketReplicationOutput, err error) {
+	output = &GetBucketReplicationOutput{}
+	err = obsClient.doActionWithBucket("GetBucketReplication", HTTP_GET, bucketName, newSubResourceSerial(SubResourceReplication), output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// DeleteBucketReplication deletes the cross-region replication configuration of a bucket.
+//
+// You can use this API to delete the cross-region replication configuration of a bucket.
+func (obsClient ObsClient) DeleteBucketReplication(bucketName string) (output *BaseModel, err error) {
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("DeleteBucketReplication", HTTP_DELETE, bucketName, newSubResourceSerial(SubResourceReplication), output)
+	if err != nil {
+		output = nil
+	}
+	return
+}

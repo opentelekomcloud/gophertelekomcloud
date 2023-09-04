@@ -36,6 +36,10 @@ type CreateOpts struct {
 	PolicyId string `json:"policyid"`
 	// Server configuration in dedicated mode
 	Server []PremiumWafServer `json:"server" required:"true"`
+	// Website name
+	WebTag string `json:"web_tag"`
+	// Description
+	Description string `json:"description"`
 }
 
 type PremiumWafServer struct {
@@ -62,6 +66,8 @@ type PremiumWafServer struct {
 	// 1.Find the name of the VPC where the dedicated engine is located. The VPC name is in the VPC\Subnet column. Log in to the WAF console and choose Instance Management > Dedicated Engine > VPC\Subnet.
 	// Log in to the VPC console and click the VPC name. On the page displayed, copy the VPC ID in the VPC Information area.
 	VpcId string `json:"vpc_id" required:"true"`
+	// Weight can be ignored by now
+	Weight int `json:"weight"`
 }
 
 // Create will create a new Protected Domain Name on the values in CreateOpts.
@@ -114,13 +120,20 @@ type HostResponse struct {
 	// Origin server list
 	Server []ServerResponse `json:"server"`
 	// Special domain name identifier, which is used to store additional domain name configuration.
-	Flag *FlagResponse `json:"flag"`
+	Flag *FlagObject `json:"flag"`
 	// Alarm configuration page
 	BlockPage *BlockPageResponse `json:"block_page"`
 	// Not described
-	Extend map[string]string `json:"extend"`
+	Extend *ExtendResponse `json:"extend"`
 	// Creation time.
 	CreatedAt int `json:"timestamp"`
+	// Website name
+	WebTag string `json:"web_tag"`
+	// Description
+	Description string `json:"description"`
+	// This parameter is reserved, which will be used to freeze a domain name.
+	// Default: 0
+	Locked int `json:"locked"`
 }
 
 type ServerResponse struct {
@@ -147,9 +160,11 @@ type ServerResponse struct {
 	// 1.Find the name of the VPC where the dedicated engine is located. The VPC name is in the VPC\Subnet column. Log in to the WAF console and choose Instance Management > Dedicated Engine > VPC\Subnet.
 	// Log in to the VPC console and click the VPC name. On the page displayed, copy the VPC ID in the VPC Information area.
 	VpcId string `json:"vpc_id"`
+	// Weight can be ignored by now
+	Weight int `json:"weight"`
 }
 
-type FlagResponse struct {
+type FlagObject struct {
 	// Whether PCI 3DS certification check is enabled for the domain name. Currently, this function is not supported. The default value is false. You can ignore this parameter.
 	// true: PCI 3DS check is enabled.
 	// false: PCI 3DS check is disabled.
@@ -159,6 +174,7 @@ type FlagResponse struct {
 	// false: PCI DDS check is disabled.
 	PciDss string `json:"pci_dss"`
 }
+
 type BlockPageResponse struct {
 	// Template name
 	Template string `json:"template"`
@@ -172,4 +188,11 @@ type CustomPageResponse struct {
 	StatusCode  string `json:"status_code"`
 	ContentType string `json:"content_type"`
 	Content     string `json:"content"`
+}
+
+type ExtendResponse struct {
+	// Details about LTS configuration
+	LtsConfig string `json:"ltsInfo"`
+	// Timeout configuration details.
+	TimeoutConfig string `json:"extend"`
 }

@@ -87,7 +87,12 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 func DeleteCluster(t *testing.T, clusterID string) {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
-	clusters.Delete(client, clusterID)
+	err = clusters.DeleteWithOpts(client, clusterID, clusters.DeleteOpts{
+		DeleteEfs: "true",
+		DeleteObs: "true",
+		DeleteSfs: "true",
+	})
+	th.AssertNoErr(t, err)
 	th.AssertNoErr(t, waitForClusterToDelete(client, clusterID, 20*60))
 }
 

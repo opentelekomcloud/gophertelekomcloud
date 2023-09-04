@@ -690,6 +690,11 @@ func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 	return initClientOpts(client, eo, "antiddos")
 }
 
+// NewDCaaSV2 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
+func NewDCaaSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "dcaas")
+}
+
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
 func NewDMSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "dmsv1")
@@ -924,4 +929,9 @@ func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	serviceClient.Endpoint = strings.Replace(serviceClient.Endpoint, "smn", "swr-api", 1)
 	serviceClient.ResourceBase = serviceClient.Endpoint
 	return serviceClient, err
+}
+
+// NewTMSV1 creates a ServiceClient that may be used to access the TMS service.
+func NewTMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "tms")
 }

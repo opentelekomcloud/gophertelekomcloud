@@ -277,3 +277,15 @@ type GetBucketNotificationOutput struct {
 	BaseModel
 	BucketNotification
 }
+
+// SetBucketReplicationInput is the input parameter of SetBucketReplication function
+type SetBucketReplicationInput struct {
+	Bucket string `xml:"-"`
+	BucketReplicationConfiguration
+}
+
+// GetBucketReplicationOutput is the result of GetBucketReplication function
+type GetBucketReplicationOutput struct {
+	BaseModel
+	BucketReplicationConfiguration
+}
