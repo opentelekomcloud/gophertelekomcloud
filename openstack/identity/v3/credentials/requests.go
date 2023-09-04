@@ -156,11 +156,10 @@ func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]interfac
 		assumeRole := map[string]interface{}{
 			"agency_name": opts.AgencyName,
 		}
-		if opts.Duration != 0 {
-			assumeRole["duration_seconds"] = opts.Duration
-		}
 
 		switch {
+		case opts.Duration != 0:
+			assumeRole["duration_seconds"] = opts.Duration
 		case opts.DomainID != "":
 			assumeRole["domain_id"] = opts.DomainID
 		case opts.DomainName != "":
