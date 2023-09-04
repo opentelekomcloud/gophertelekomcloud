@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -16,7 +17,7 @@ type ListGeoIpOpts struct {
 
 // ListGeoIp is used to query the list of false alarm masking rules.
 func ListGeoIp(client *golangsdk.ServiceClient, policyId string, opts ListGeoIpOpts) ([]GeoIpRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

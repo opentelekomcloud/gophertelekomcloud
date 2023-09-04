@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -16,7 +17,7 @@ type ListAntiLeakageOpts struct {
 
 // ListAntiLeakage is used to query the list of information leakage prevention rules.
 func ListAntiLeakage(client *golangsdk.ServiceClient, policyId string, opts ListAntiLeakageOpts) ([]AntiLeakageRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

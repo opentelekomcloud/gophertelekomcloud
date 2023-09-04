@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -20,7 +21,7 @@ type ListAntiCrawlerOpts struct {
 
 // ListAntiCrawlers is used to query the list of JavaScript anti-crawler rules.
 func ListAntiCrawlers(client *golangsdk.ServiceClient, policyId string, opts ListAntiCrawlerOpts) ([]AntiCrawlerRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

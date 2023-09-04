@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -18,7 +19,7 @@ type ListBlacklistOpts struct {
 
 // ListBlacklists is used to query the list of blacklist and whitelist rules.
 func ListBlacklists(client *golangsdk.ServiceClient, policyId string, opts ListBlacklistOpts) ([]BlacklistRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

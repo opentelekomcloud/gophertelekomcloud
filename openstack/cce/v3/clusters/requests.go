@@ -241,7 +241,7 @@ type DeleteOpts struct {
 
 func DeleteWithOpts(c *golangsdk.ServiceClient, id string, opts DeleteOpts) error {
 	url := resourceURL(c, id)
-	q, err := golangsdk.BuildQueryString(&opts)
+	q, err := build.QueryString(&opts)
 	if err != nil {
 		return err
 	}

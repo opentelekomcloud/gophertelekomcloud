@@ -48,7 +48,7 @@ func (s *testNodes) TestNodeLifecycle() {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
-	privateIP := "192.168.1.12" // suppose used subnet is 192.168.0.0/16
+	privateIP := "10.0.1.20" // suppose used subnet is 10.0.0.0/16
 
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)

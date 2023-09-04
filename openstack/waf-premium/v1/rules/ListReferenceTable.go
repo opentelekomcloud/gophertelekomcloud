@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -18,7 +19,7 @@ type ListReferenceTableOpts struct {
 
 // ListReferenceTable is used to query the reference table list.
 func ListReferenceTable(client *golangsdk.ServiceClient, opts ListReferenceTableOpts) ([]ReferenceTable, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

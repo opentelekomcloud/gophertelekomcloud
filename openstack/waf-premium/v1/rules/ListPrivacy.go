@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -16,7 +17,7 @@ type ListPrivacyOpts struct {
 
 // ListPrivacy is used to query the data masking rule list.
 func ListPrivacy(client *golangsdk.ServiceClient, policyId string, opts ListPrivacyOpts) ([]PrivacyRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

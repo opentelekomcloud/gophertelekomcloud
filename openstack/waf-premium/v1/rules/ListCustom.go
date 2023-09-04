@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -16,7 +17,7 @@ type ListCustomOpts struct {
 
 // ListCustoms is used to query the list of CC attack protection rules.
 func ListCustoms(client *golangsdk.ServiceClient, policyId string, opts ListCustomOpts) ([]CustomRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}

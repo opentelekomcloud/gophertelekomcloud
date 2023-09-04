@@ -2,6 +2,7 @@ package rules
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -16,7 +17,7 @@ type ListAntiTamperOpts struct {
 
 // ListAntiTamper is used to query the list of web tamper protection rules.
 func ListAntiTamper(client *golangsdk.ServiceClient, policyId string, opts ListAntiTamperOpts) ([]AntiTamperRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	query, err := build.QueryString(opts)
 	if err != nil {
 		return nil, err
 	}
