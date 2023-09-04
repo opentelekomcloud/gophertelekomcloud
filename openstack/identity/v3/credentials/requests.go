@@ -110,7 +110,7 @@ type CreateTemporaryOpts struct {
 	// Validity period (in seconds) of an AK/SK and security token.
 	// The value ranges from 15 minutes to 24 hours.
 	// The default value is 15 minutes.
-	Duration int `json:"duration-seconds,omitempty"`
+	Duration int `json:"duration_seconds,omitempty"`
 
 	// Name or ID of the domain to which the delegating party belongs
 	DomainName string `json:"domain_name,omitempty"`
@@ -133,34 +133,35 @@ func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]interfac
 
 	method := opts.Methods[0]
 
-	authMap := map[string]interface{}{
-		"auth": map[string]interface{}{
-			"identity": map[string]interface{}{
-				"methods": opts.Methods,
-			},
-		},
-	}
+	var authMap map[string]interface{}
 
 	switch method {
 	case "token":
-		authMap["token"] = map[string]interface{}{
-			"id":               opts.Token,
-			"duration-seconds": opts.Duration,
+		authMap = map[string]interface{}{
+			"auth": map[string]interface{}{
+				"identity": map[string]interface{}{
+					"methods": opts.Methods,
+					"token": map[string]interface{}{
+						"id":               opts.Token,
+						"duration_seconds": opts.Duration,
+					},
+				},
+			},
 		}
 	case "assume_role":
-		role := map[string]interface{}{
-			"agency_name":      opts.AgencyName,
-			"duration-seconds": opts.Duration,
+		authMap = map[string]interface{}{
+			"auth": map[string]interface{}{
+				"identity": map[string]interface{}{
+					"methods": opts.Methods,
+					"assume_role": map[string]interface{}{
+						"agency_name":      opts.AgencyName,
+						"duration_seconds": opts.Duration,
+						"domain_id":        opts.DomainID,
+						"domain_name":      opts.DomainName,
+					},
+				},
+			},
 		}
-		switch {
-		case opts.DomainID != "":
-			role["domain_id"] = opts.DomainID
-		case opts.DomainName != "":
-			role["domain_name"] = opts.DomainName
-		default:
-			return nil, fmt.Errorf("you need to provide either delegating domain ID or Name")
-		}
-		authMap["assume_role"] = role
 	default:
 		return nil, fmt.Errorf("unknown auth method provided: %s", method)
 	}
