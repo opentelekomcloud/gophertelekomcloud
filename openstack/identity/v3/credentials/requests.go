@@ -137,28 +137,43 @@ func (opts CreateTemporaryOpts) ToTempCredentialCreateMap() (map[string]interfac
 
 	switch method {
 	case "token":
+		token := map[string]interface{}{
+			"id": opts.Token,
+		}
+		if opts.Duration != 0 {
+			token["duration_seconds"] = opts.Duration
+		}
+
 		authMap = map[string]interface{}{
 			"auth": map[string]interface{}{
 				"identity": map[string]interface{}{
 					"methods": opts.Methods,
-					"token": map[string]interface{}{
-						"id":               opts.Token,
-						"duration_seconds": opts.Duration,
-					},
+					"token":   token,
 				},
 			},
 		}
 	case "assume_role":
+		assumeRole := map[string]interface{}{
+			"agency_name": opts.AgencyName,
+		}
+		if opts.Duration != 0 {
+			assumeRole["duration_seconds"] = opts.Duration
+		}
+
+		switch {
+		case opts.DomainID != "":
+			assumeRole["domain_id"] = opts.DomainID
+		case opts.DomainName != "":
+			assumeRole["domain_name"] = opts.DomainName
+		default:
+			return nil, fmt.Errorf("you need to provide either delegating domain ID or Name")
+		}
+
 		authMap = map[string]interface{}{
 			"auth": map[string]interface{}{
 				"identity": map[string]interface{}{
-					"methods": opts.Methods,
-					"assume_role": map[string]interface{}{
-						"agency_name":      opts.AgencyName,
-						"duration_seconds": opts.Duration,
-						"domain_id":        opts.DomainID,
-						"domain_name":      opts.DomainName,
-					},
+					"methods":     opts.Methods,
+					"assume_role": assumeRole,
 				},
 			},
 		}
