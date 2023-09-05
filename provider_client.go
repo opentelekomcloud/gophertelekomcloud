@@ -387,14 +387,14 @@ func (client *ProviderClient) doRequest(method, url string, options *RequestOpts
 				state.hasReauthenticated = true
 				resp, err = client.doRequest(method, url, options, state)
 				if err != nil {
-					switch err.(type) {
+					switch v := err.(type) {
 					case *ErrUnexpectedResponseCode:
 						e := &ErrErrorAfterReauthentication{}
-						e.ErrOriginal = err.(*ErrUnexpectedResponseCode)
+						e.ErrOriginal = v
 						return nil, e
 					default:
 						e := &ErrErrorAfterReauthentication{}
-						e.ErrOriginal = err
+						e.ErrOriginal = v
 						return nil, e
 					}
 				}
