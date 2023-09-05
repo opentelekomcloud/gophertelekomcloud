@@ -2,6 +2,7 @@ package golangsdk
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,7 +15,10 @@ import (
 )
 
 // DefaultUserAgent is the default User-Agent string set in the request header.
-const DefaultUserAgent = "golangsdk/2.0.0"
+const (
+	DefaultUserAgent         = "golangsdk/2.0.0"
+	DefaultMaxBackoffRetries = 60
+)
 
 // UserAgent represents a User-Agent header.
 type UserAgent struct {
@@ -22,6 +26,14 @@ type UserAgent struct {
 	// All the strings to prepend are accumulated and prepended in the Join method.
 	prepend []string
 }
+
+type RetryBackoffFunc func(context.Context, *ErrUnexpectedResponseCode, error, uint) error
+
+// RetryFunc is a catch-all function for retrying failed API requests.
+// If it returns nil, the request will be retried.  If it returns an error,
+// the request method will exit with that error.  failCount is the number of
+// times the request has failed (starting at 1).
+type RetryFunc func(context context.Context, method, url string, options *RequestOpts, err error, failCount uint) error
 
 // Prepend prepends a user-defined string to the default User-Agent string. Users
 // may pass in one or more strings to prepend.
@@ -80,6 +92,19 @@ type ProviderClient struct {
 
 	// UserAgent represents the User-Agent header in the HTTP request.
 	UserAgent UserAgent
+
+	// Context is the context passed to the HTTP request.
+	Context context.Context
+
+	// Retry backoff func is called when rate limited.
+	RetryBackoffFunc RetryBackoffFunc
+
+	// MaxBackoffRetries set the maximum number of backoffs. When not set, defaults to DefaultMaxBackoffRetries
+	MaxBackoffRetries uint
+
+	// A general failed request handler method - this is always called in the end if a request failed. Leave as nil
+	// to abort when an error is encountered.
+	RetryFunc RetryFunc
 
 	// ReauthFunc is the function used to re-authenticate the user if the request
 	// fails with a 401 HTTP response code. This a needed because there may be multiple
@@ -169,14 +194,21 @@ type RequestOpts struct {
 	// This lets resources override default error messages based on the response status code.
 	ErrorContext error
 
-	// RetryCount specifies number of times retriable errors (502, 504) will be retried
+	// RetryCount specifies number of times retrievable errors (502, 504) will be retried
 	RetryCount *int
 	// RetryTimeout specifies time before next retry
 	RetryTimeout *time.Duration
-	// MaxBackoffRetries set the maximum number of backoffs. When not set, defaults to defaultMaxBackoffRetryLimit
-	MaxBackoffRetries *int
-	// BackoffRetryTimeout specifies time before next retry on 429. When not set, defaults to defaultBackoffTimeout
-	BackoffRetryTimeout *time.Duration
+}
+
+// requestState contains temporary state for a single ProviderClient.Request() call.
+type requestState struct {
+	// This flag indicates if we have reauthenticated during this request because of a 401 response.
+	// It ensures that we don't reauthenticate multiple times for a single request. If we
+	// reauthenticate, but keep getting 401 responses with the fresh token, reauthenticating some more
+	// will just get us into an infinite loop.
+	hasReauthenticated bool
+	// Retry-After backoff counter, increments during each backoff call
+	retries uint
 }
 
 var applicationJSON = "application/json"
@@ -184,6 +216,12 @@ var applicationJSON = "application/json"
 // Request performs an HTTP request using the ProviderClient's current HTTPClient. An authentication
 // header will automatically be provided.
 func (client *ProviderClient) Request(method, url string, options *RequestOpts) (*http.Response, error) {
+	return client.doRequest(method, url, options, &requestState{
+		hasReauthenticated: false,
+	})
+}
+
+func (client *ProviderClient) doRequest(method, url string, options *RequestOpts, state *requestState) (*http.Response, error) {
 	var body io.Reader
 	var contentType *string
 
@@ -262,9 +300,18 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	// Issue the request.
 	resp, err := client.HTTPClient.Do(req)
 	if err != nil {
+		if client.RetryFunc != nil {
+			var e error
+			state.retries = state.retries + 1
+			e = client.RetryFunc(client.Context, method, url, options, err, state.retries)
+			if e != nil {
+				return nil, e
+			}
+
+			return client.doRequest(method, url, options, state)
+		}
 		return nil, err
 	}
-
 	// Allow default OkCodes if none explicitly set
 	if options.OkCodes == nil {
 		options.OkCodes = defaultOkCodes(method)
@@ -278,16 +325,6 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	if options.RetryTimeout == nil {
 		defaultRetryTimeout := 500 * time.Millisecond
 		options.RetryTimeout = &defaultRetryTimeout
-	}
-
-	if options.MaxBackoffRetries == nil {
-		defaultMaxBackoffRetryLimit := 5
-		options.MaxBackoffRetries = &defaultMaxBackoffRetryLimit
-	}
-
-	if options.BackoffRetryTimeout == nil {
-		defaultBackoffTimeout := 120 * time.Second
-		options.BackoffRetryTimeout = &defaultBackoffTimeout
 	}
 
 	// Validate the HTTP response status.
@@ -318,7 +355,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 				err = error400er.Error400(respErr)
 			}
 		case http.StatusUnauthorized:
-			if client.ReauthFunc != nil {
+			if client.ReauthFunc != nil && !state.hasReauthenticated {
 				if client.mut != nil {
 					client.mut.Lock()
 					client.reauthmut.Lock()
@@ -347,11 +384,19 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 						}
 					}
 				}
-				resp, err = client.Request(method, url, options)
+				state.hasReauthenticated = true
+				resp, err = client.doRequest(method, url, options, state)
 				if err != nil {
-					e := &ErrErrorAfterReauthentication{}
-					e.ErrOriginal = err
-					return nil, e
+					switch err.(type) {
+					case *ErrUnexpectedResponseCode:
+						e := &ErrErrorAfterReauthentication{}
+						e.ErrOriginal = err.(*ErrUnexpectedResponseCode)
+						return nil, e
+					default:
+						e := &ErrErrorAfterReauthentication{}
+						e.ErrOriginal = err
+						return nil, e
+					}
 				}
 				return resp, nil
 			}
@@ -389,10 +434,21 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if error429er, ok := errType.(Err429er); ok {
 				err = error429er.Error429(respErr)
 			}
-			if *options.MaxBackoffRetries > 0 {
-				*options.MaxBackoffRetries -= 1
-				time.Sleep(*options.BackoffRetryTimeout)
-				return client.Request(method, url, options)
+			maxTries := client.MaxBackoffRetries
+			if maxTries == 0 {
+				maxTries = DefaultMaxBackoffRetries
+			}
+			if f := client.RetryBackoffFunc; f != nil && state.retries < maxTries {
+				var e error
+
+				state.retries = state.retries + 1
+				e = f(client.Context, &respErr, err, state.retries)
+
+				if e != nil {
+					return resp, e
+				}
+
+				return client.doRequest(method, url, options, state)
 			}
 		case http.StatusInternalServerError:
 			err = ErrDefault500{respErr}
@@ -414,6 +470,17 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 
 		if err == nil {
 			err = respErr
+		}
+
+		if err != nil && client.RetryFunc != nil {
+			var e error
+			state.retries = state.retries + 1
+			e = client.RetryFunc(client.Context, method, url, options, err, state.retries)
+			if e != nil {
+				return resp, e
+			}
+
+			return client.doRequest(method, url, options, state)
 		}
 
 		return resp, err
@@ -438,6 +505,16 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			*r = data
 		default:
 			if err := extract.Into(resp.Body, &r); err != nil {
+				if client.RetryFunc != nil {
+					var e error
+					state.retries = state.retries + 1
+					e = client.RetryFunc(client.Context, method, url, options, err, state.retries)
+					if e != nil {
+						return resp, e
+					}
+
+					return client.doRequest(method, url, options, state)
+				}
 				return nil, err
 			}
 		}
