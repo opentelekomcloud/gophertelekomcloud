@@ -109,7 +109,7 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 }
 
 func TestThrottlingSgs(t *testing.T) {
-	t.Skip("please run only manually, long test")
+	// t.Skip("please run only manually, long test")
 	clientNetworking, err := clients.NewNetworkV2Client()
 	if err != nil {
 		t.Fatalf("Unable to create a networking client: %v", err)
@@ -128,10 +128,10 @@ func TestThrottlingSgs(t *testing.T) {
 	sg, err := secgroups.Create(clientCompute, createSGOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	size := 15
+	size := 21
 	q := make(chan []string, size)
 	for i := 0; i < size; i++ {
-		go CreateMultipleSgsRules(clientNetworking, sg.ID, 47, i, q) // nolint
+		go CreateMultipleSgsRules(clientNetworking, sg.ID, 100, i, q) // nolint
 	}
 	for i := 0; i < size; i++ {
 		sgs := <-q
