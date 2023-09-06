@@ -128,10 +128,10 @@ func TestThrottlingSgs(t *testing.T) {
 	sg, err := secgroups.Create(clientCompute, createSGOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	size := 15
+	size := 20
 	q := make(chan []string, size)
 	for i := 0; i < size; i++ {
-		go CreateMultipleSgsRules(clientNetworking, sg.ID, 47, i, q) // nolint
+		go CreateMultipleSgsRules(clientNetworking, sg.ID, 70, i, q) // nolint
 	}
 	for i := 0; i < size; i++ {
 		sgs := <-q

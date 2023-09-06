@@ -137,18 +137,21 @@ func TestGatewayRetry(t *testing.T) {
 }
 
 func TestTooManyRequestsRetry(t *testing.T) {
-	t.Skip("please run only manually, long test")
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
 	code := http.StatusTooManyRequests
-
-	failHandler := &failHandler{ExpectedFailures: 5, ErrorCode: code}
+	retries := 2
+	timeout := 20 * time.Second
+	failHandler := &failHandler{ExpectedFailures: 1, ErrorCode: code}
 	th.Mux.Handle(fmt.Sprintf("/%d", code), failHandler)
 
 	codeURL := fmt.Sprintf("%d", code)
 	t.Run(codeURL, func(sub *testing.T) {
 		client := fake.ServiceClient()
+		client.MaxBackoffRetries = &retries
+		client.BackoffRetryTimeout = &timeout
+
 		_, err := client.Delete(client.ServiceURL(codeURL), &golangsdk.RequestOpts{
 			OkCodes: []int{200},
 		})
