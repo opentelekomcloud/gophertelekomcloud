@@ -280,7 +280,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	}
 
 	if client.MaxBackoffRetries == nil {
-		defaultMaxBackoffRetryLimit := 5
+		defaultMaxBackoffRetryLimit := 20
 		client.MaxBackoffRetries = &defaultMaxBackoffRetryLimit
 	}
 
