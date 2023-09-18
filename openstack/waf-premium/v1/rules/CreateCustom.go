@@ -13,14 +13,14 @@ type CreateCustomOpts struct {
 	Time *bool `json:"time" required:"true"`
 	// Timestamp (ms) when the precise protection rule takes effect.
 	// This parameter is returned only when time is true.
-	Start int64 `json:"start"`
+	Start int64 `json:"start,omitempty"`
 	// Timestamp (ms) when the precise protection rule expires.
 	// This parameter is returned only when time is true.
-	Terminal int64 `json:"terminal"`
+	Terminal int64 `json:"terminal,omitempty"`
 	// Rule description.
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 	// Match condition List.
-	Conditions []CustomConditionsObject `json:"conditions"`
+	Conditions []CustomConditionsObject `json:"conditions,omitempty"`
 	// Protective action of the precise protection rule.
 	Action *CustomActionObject `json:"action" required:"true"`
 	// Priority of a rule. A small value indicates a high priority. If two rules are assigned with the same priority,
@@ -30,7 +30,7 @@ type CreateCustomOpts struct {
 
 type CustomConditionsObject struct {
 	// Field type. The value can be url, ip, params, cookie, or header.
-	Category string `json:"category"`
+	Category string `json:"category,omitempty"`
 	// Logic for matching the condition.
 	// If the category is url, the optional operations are:
 	// `contain`, `not_contain`, `equal`, `not_equal`, `prefix`, `not_prefix`, `suffix`, `not_suffix`,
@@ -45,18 +45,18 @@ type CustomConditionsObject struct {
 	// `prefix_any`, `not_prefix_all`, `suffix_any`, `not_suffix_all`, `len_greater`, `len_less`,
 	// `len_equal`, `len_not_equal`, `num_greater`, `num_less`, `num_equal`, `num_not_equal`,
 	// `exist` and `not_exist`
-	LogicOperation string `json:"logic_operation"`
+	LogicOperation string `json:"logic_operation,omitempty"`
 	// Content of the conditions.
 	// This parameter is mandatory when the suffix of logic_operation is not any or all.
-	Contents []string `json:"contents"`
+	Contents []string `json:"contents,omitempty"`
 	// Reference table ID. It can be obtained by calling the API Querying the Reference Table List.
 	// This parameter is mandatory when the suffix of logic_operation is any or all.
 	// The reference table type must be the same as the category type.
-	ValueListId string `json:"value_list_id"`
+	ValueListId string `json:"value_list_id,omitempty"`
 	// Subfield. When category is set to params, cookie, or header,
 	// set this parameter based on site requirements.
 	// This parameter is mandatory.
-	Index string `json:"index"`
+	Index string `json:"index,omitempty"`
 }
 
 type CustomActionObject struct {
@@ -67,7 +67,7 @@ type CustomActionObject struct {
 	Category string `json:"category" required:"true"`
 	// ID of a known attack source rule.
 	// This parameter can be configured only when category is set to block.
-	FollowedActionId string `json:"followed_action_id"`
+	FollowedActionId string `json:"followed_action_id,omitempty"`
 }
 
 // CreateCustom will  create a precise protection rule on the values in CreateOpts.
@@ -100,11 +100,11 @@ type CustomRule struct {
 	// Rule description.
 	Description string `json:"description"`
 	// Rule status. The value can be 0 or 1.
-	Status string `json:"status"`
+	Status *int `json:"status"`
 	// List of matching conditions. All conditions must be met.
 	Conditions []CustomConditionsObject `json:"conditions"`
 	// Protective action of the precise protection rule.
-	Action []CustomActionObject `json:"action"`
+	Action *CustomActionObject `json:"action"`
 	// Priority of a rule. A small value indicates a high priority.
 	// If two rules are assigned with the same priority,
 	// the rule added earlier has higher priority. Value range: 0 to 1000.

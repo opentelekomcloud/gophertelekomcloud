@@ -64,7 +64,7 @@ type AntiLeakageRule struct {
 	// Rule status. The value can be:
 	// 0: The rule is disabled.
 	// 1: The rule is enabled.
-	Status int `json:"status"`
+	Status *int `json:"status"`
 	// Rule description.
 	Description string `json:"description"`
 }
