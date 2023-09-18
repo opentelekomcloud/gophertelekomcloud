@@ -21,6 +21,7 @@ func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
 	}
 
 	client, err := clients.NewWafdV1Client()
+	th.AssertNoErr(t, err)
 
 	policyName := tools.RandomString("waf-policy-", 3)
 	optsP := policies.CreateOpts{
