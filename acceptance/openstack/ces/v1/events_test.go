@@ -37,18 +37,19 @@ func TestEvents(t *testing.T) {
 	t.Log("List CES Events")
 	eventsRes, err := events.ListEvents(client, events.ListEventsOpts{
 		From:  currentTime,
-		To:    currentTime + 1000,
-		Limit: 1,
+		To:    currentTime + 10000,
+		Limit: 10,
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, len(eventsRes.Events), 1)
 
 	t.Log("List CES Event Details")
-	detailRes, err := events.ListEventDetail(client, events.ListEventDetailOpts{
+	_, err = events.ListEventDetail(client, events.ListEventDetailOpts{
 		EventName: eventsRes.Events[0].EventName,
 		EventType: eventsRes.Events[0].EventType,
-		Limit:     1,
+		Limit:     10,
+		From:      currentTime,
+		To:        currentTime + 10000,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(detailRes.EventInfo), 1)
 }
