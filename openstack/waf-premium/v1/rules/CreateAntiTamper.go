@@ -52,7 +52,7 @@ type AntiTamperRule struct {
 	// 0: The rule is disabled.
 	// 1: The rule is enabled.
 	// Rule description.
-	Status int `json:"status"`
+	Status *int `json:"status"`
 	// The domain name of the website protected with the web tamper protection rule.
 	// The domain name is in the format of xxx.xxx.com, such as www.example.com.
 	Hostname string `json:"hostname"`

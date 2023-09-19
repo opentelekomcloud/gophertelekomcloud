@@ -47,7 +47,7 @@ type CreateCcOpts struct {
 	UnlockNum int64 `json:"unlock_num"`
 	// Block duration, in seconds. The value ranges from 0 to 65,535.
 	// Specifies the period within which access is blocked. An error page is displayed in this period.
-	LockTime int `json:"lock_time"`
+	LockTime *int `json:"lock_time,omitempty"`
 	// Rule description.
 	Description string `json:"description"`
 }

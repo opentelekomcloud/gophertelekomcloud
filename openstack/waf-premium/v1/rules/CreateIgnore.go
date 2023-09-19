@@ -21,38 +21,38 @@ type CreateIgnoreOpts struct {
 	// This parameter is not included if all modules are bypassed.
 	Advanced []AdvancedIgnoreObject `json:"advanced"`
 	// Description of the rule
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 }
 
 type IgnoreCondition struct {
 	// Field type. The value can be url, ip, params, cookie, or header.
-	Category string `json:"category"`
+	Category string `json:"category,omitempty"`
 	// Content. The array length is limited to 1.
 	// The content format varies depending on the field type.
 	// For example, if the field type is ip, the value must be an IP address or IP address range.
 	// If the field type is url, the value must be in the standard URL format.
 	// IF the field type is params, cookie, or header, the content format is not limited.
-	Contents []string `json:"contents"`
+	Contents []string `json:"contents,omitempty"`
 	// The matching logic varies depending on the field type. For example,
 	// if the field type is ip, the logic can be equal or not_equal.
 	// If the field type is url, params, cookie, or header,
 	// the logic can be equal, not_equal, contain, not_contain, prefix, not_prefix,
 	// suffix, not_suffix.
-	LogicOperation string `json:"logic_operation"`
+	LogicOperation string `json:"logic_operation,omitempty"`
 	// If the field type is ip and the subfield is the client IP address,
 	// the index parameter is not required. If the subfield type is X-Forwarded-For,
 	// the value is x-forwarded-for; If the field type is params, header,
 	// or cookie, and the subfield is user-defined, the value of index is the user-defined subfield.
-	Index string `json:"index"`
+	Index string `json:"index,omitempty"`
 }
 
 type AdvancedIgnoreObject struct {
 	// Field type. The following field types are supported: Params, Cookie, Header, Body, and Multipart.
 	// When you select Params, Cookie, or Header, you can set this parameter to all or configure subfields as required.
 	// When you select Body or Multipart, set this parameter to all.
-	Index string `json:"index"`
+	Index string `json:"index,omitempty"`
 	// Subfield of the specified field type. The default value is all.
-	Contents []string `json:"contents"`
+	Contents []string `json:"contents,omitempty"`
 }
 
 // CreateIgnore will create a global protection whitelist (formerly false alarm masking) rule on the values in CreateOpts.

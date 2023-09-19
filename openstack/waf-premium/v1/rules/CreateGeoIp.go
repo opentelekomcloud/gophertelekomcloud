@@ -57,7 +57,7 @@ type GeoIpRule struct {
 	// Protective action.
 	Action int `json:"white"`
 	// Rule status.
-	Status int `json:"status"`
+	Status *int `json:"status"`
 	// Time the rule is created. The value is a 13-digit timestamp in ms.
 	CreatedAt int64 `json:"timestamp"`
 	// Rule description.

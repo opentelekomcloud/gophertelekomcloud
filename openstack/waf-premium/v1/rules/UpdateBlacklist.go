@@ -8,22 +8,22 @@ import (
 
 type UpdateBlacklistOpts struct {
 	// Rule name.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 	// Rule description.
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 	// IP addresses or an IP address range.
 	// IP addresses: IP addresses to be added to the blacklist or whitelist,
 	// for example, 192.x.x.3
 	// IP address range: IP address and subnet mask,
 	// for example, 10.x.x.0/24
-	Addresses string `json:"addr" required:"true"`
+	Addresses string `json:"addr,omitempty" required:"true"`
 	// Protective action. The value can be:
 	// 0: WAF blocks the requests that hit the rule.
 	// 1: WAF allows the requests that hit the rule.
 	// 2: WAF only logs the requests that hit the rule.
 	Action *int `json:"white" required:"true"`
 	// ID of a known attack source rule. This parameter can be configured only when white is set to 0.
-	FollowedActionId string `json:"followed_action_id"`
+	FollowedActionId string `json:"followed_action_id,omitempty"`
 }
 
 // UpdateBlacklist is used to update an IP address blacklist or whitelist rule.
