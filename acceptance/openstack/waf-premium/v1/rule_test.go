@@ -14,7 +14,6 @@ import (
 )
 
 func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
-	t.Skip("Failed to create rule: error_code: WAF.00022001 , error_msg: Resource not found")
 	region := os.Getenv("OS_REGION_NAME")
 	vpcID := os.Getenv("OS_VPC_ID")
 	if vpcID == "" && region == "" {
@@ -25,12 +24,12 @@ func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	policyName := tools.RandomString("waf-policy-", 3)
-	opts := policies.CreateOpts{
+	optsP := policies.CreateOpts{
 		Name: policyName,
 	}
 
 	t.Logf("Attempting to create WAF Premium policy: %s", policyName)
-	policy, err := policies.Create(client, opts)
+	policy, err := policies.Create(client, optsP)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, policy.Name, policyName)
 
@@ -69,9 +68,9 @@ func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
 	blacklist, err := rules.CreateBlacklist(client, policy.ID, blacklistOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, blacklist.Name, blacklistName)
-	th.AssertEquals(t, blacklist.Addresses, "10.1.1.0/24")
+	th.AssertEquals(t, blacklist.Addresses, "192.168.1.0/24")
 	th.AssertEquals(t, blacklist.Description, "desc")
-	th.AssertEquals(t, blacklist.Action, 2)
+	th.AssertEquals(t, *blacklist.Action, 0)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete WAF Premium blacklist rule: %s", blacklist.ID)
@@ -87,7 +86,7 @@ func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
 	}
 
 	t.Logf("Attempting to Update WAF Premium blacklist rule: %s", blacklist.ID)
-	updatedAntiCrawler, err := rules.UpdateBlacklist(client, policy.ID, blacklist.ID, rules.UpdateBlacklistOpts{
+	updatedBl, err := rules.UpdateBlacklist(client, policy.ID, blacklist.ID, rules.UpdateBlacklistOpts{
 		Name:        blacklistName + "-updated",
 		Description: "updated",
 		Addresses:   "10.1.100.0/24",
@@ -96,11 +95,11 @@ func TestWafPremiumBlacklistRuleWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Logf("Attempting to Get WAF Premium blacklist rule: %s", blacklist.ID)
-	getBlacklist, err := rules.GetBlacklist(client, policy.ID, updatedAntiCrawler.ID)
+	getBlacklist, err := rules.GetBlacklist(client, policy.ID, updatedBl.ID)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, blacklist.Addresses, "10.1.100.0/24")
-	th.AssertEquals(t, blacklist.Description, "updated")
-	th.AssertEquals(t, blacklist.Action, 2)
+	th.AssertEquals(t, getBlacklist.Addresses, "10.1.100.0/24")
+	th.AssertEquals(t, getBlacklist.Description, "updated")
+	th.AssertEquals(t, *getBlacklist.Action, 2)
 	th.AssertEquals(t, getBlacklist.Name, blacklistName+"-updated")
 }
 
@@ -180,7 +179,6 @@ func TestWafPremiumCcRuleWorkflow(t *testing.T) {
 }
 
 func TestWafPremiumCustomRuleWorkflow(t *testing.T) {
-	t.Skip("Failed to create rule: error message: {error_code: WAF.00021017, error_msg: Incorrect rule configuration")
 	region := os.Getenv("OS_REGION_NAME")
 	vpcID := os.Getenv("OS_VPC_ID")
 	if vpcID == "" && region == "" {
@@ -213,7 +211,7 @@ func TestWafPremiumCustomRuleWorkflow(t *testing.T) {
 			Contents:       []string{"test"},
 		}},
 		Action: &rules.CustomActionObject{
-			Category: "log",
+			Category: "block",
 		},
 		Priority: pointerto.Int(50),
 	}
@@ -238,11 +236,16 @@ func TestWafPremiumCustomRuleWorkflow(t *testing.T) {
 
 	t.Logf("Attempting to Update WAF Premium custom rule: %s", custom.ID)
 	updatedCustom, err := rules.UpdateCustom(client, policy.ID, custom.ID, rules.CreateCustomOpts{
-		Time:        pointerto.Bool(true),
+		Time:        pointerto.Bool(false),
 		Description: "updated",
 		Action: &rules.CustomActionObject{
 			Category: "pass",
 		},
+		Conditions: []rules.CustomConditionsObject{{
+			Category:       "url",
+			LogicOperation: "contain",
+			Contents:       []string{"test"},
+		}},
 		Priority: pointerto.Int(60),
 	})
 	th.AssertNoErr(t, err)
@@ -251,7 +254,7 @@ func TestWafPremiumCustomRuleWorkflow(t *testing.T) {
 	getCustom, err := rules.GetCustom(client, policy.ID, updatedCustom.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getCustom.Description, "updated")
-	th.AssertEquals(t, getCustom.Action[0].Category, "pass")
+	th.AssertEquals(t, getCustom.Action.Category, "pass")
 }
 
 func TestWafPremiumAntiCrawlerRuleWorkflow(t *testing.T) {
@@ -504,7 +507,7 @@ func TestWafPremiumWebTamperRuleWorkflow(t *testing.T) {
 	getAt, err := rules.GetAntiTamper(client, policy.ID, at.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getAt.Description, "desc")
-	th.AssertEquals(t, getAt.Status, 1)
+	th.AssertEquals(t, *getAt.Status, 1)
 }
 
 func TestWafPremiumInformationLeakageProtectionRuleWorkflow(t *testing.T) {
@@ -575,7 +578,6 @@ func TestWafPremiumInformationLeakageProtectionRuleWorkflow(t *testing.T) {
 }
 
 func TestWafPremiumAlarmMaskingRuleWorkflow(t *testing.T) {
-	t.Skip("Failed to create rule: error message: {error_code: WAF.00021017, error_msg: Incorrect rule configuration")
 	region := os.Getenv("OS_REGION_NAME")
 	vpcID := os.Getenv("OS_VPC_ID")
 	if vpcID == "" && region == "" {
@@ -606,7 +608,7 @@ func TestWafPremiumAlarmMaskingRuleWorkflow(t *testing.T) {
 			LogicOperation: "equal",
 		}},
 		Mode:        1,
-		Rule:        "091004",
+		Rule:        "all",
 		Description: "desc",
 	}
 	t.Logf("Attempting to Create WAF Premium alarm masking rule")

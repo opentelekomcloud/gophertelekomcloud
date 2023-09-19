@@ -8,9 +8,9 @@ import (
 
 type BlacklistCreateOpts struct {
 	// Rule name.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 	// Rule description.
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 	// IP addresses or an IP address range.
 	// IP addresses: IP addresses to be added to the blacklist or whitelist,
 	// for example, 192.x.x.3 -IP address range: IP address and subnet mask, for example, 10.x.x.0/24
@@ -21,7 +21,7 @@ type BlacklistCreateOpts struct {
 	// 2: WAF only logs the requests that hit the rule.
 	Action *int `json:"white" required:"true"`
 	// ID of a known attack source rule. This parameter can be configured only when white is set to 0.
-	FollowedActionId string `json:"followed_action_id"`
+	FollowedActionId string `json:"followed_action_id,omitempty"`
 }
 
 // CreateBlacklist will create a blacklist or whitelist rule on the values in WhitelistCreateOpts.
@@ -60,14 +60,14 @@ type BlacklistRule struct {
 	// Rule status. The value can be:
 	// 0: The rule is disabled.
 	// 1: The rule is enabled.
-	Status string `json:"status"`
+	Status *int `json:"status"`
 	// Blacklisted or whitelisted IP addresses
 	Addresses string `json:"addr"`
 	// Protective action. The value can be:
 	// 0: WAF blocks the requests that hit the rule.
 	// 1: WAF allows the requests that hit the rule.
 	// 2: WAF only logs the requests that hit the rule.
-	Action int `json:"white"`
+	Action *int `json:"white"`
 	// ID of the known attack source rule.
 	FollowedActionId string `json:"followed_action_id"`
 }

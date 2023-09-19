@@ -55,7 +55,7 @@ type PrivacyRule struct {
 	// Rule status. The value can be:
 	// 0: The rule is disabled.
 	// 1: The rule is enabled.
-	Status int `json:"status"`
+	Status *int `json:"status"`
 	// URL protected by the data masking rule.
 	Url string `json:"url"`
 	// Masked field.
