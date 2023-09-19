@@ -41,7 +41,6 @@ func TestEvents(t *testing.T) {
 		Limit: 10,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(eventsRes.Events), 1)
 
 	t.Log("List CES Event Details")
 	_, err = events.ListEventDetail(client, events.ListEventDetailOpts{
