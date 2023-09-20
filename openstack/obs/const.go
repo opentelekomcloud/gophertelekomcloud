@@ -170,6 +170,9 @@ const (
 	MIN_PART_SIZE     = 100 * 1024
 	DEFAULT_PART_SIZE = 9 * 1024 * 1024
 	MAX_PART_NUM      = 10000
+
+	// SubResourceReplication subResource value: replication
+	SubResourceReplication SubResourceType = "replication"
 )
 
 type SignatureType string
@@ -646,26 +649,28 @@ const (
 type SubResourceType string
 
 const (
-	SubResourceStoragePolicy SubResourceType = "storagePolicy"
-	SubResourceStorageClass  SubResourceType = "storageClass"
-	SubResourceQuota         SubResourceType = "quota"
-	SubResourceStorageInfo   SubResourceType = "storageinfo"
-	SubResourceLocation      SubResourceType = "location"
-	SubResourceAcl           SubResourceType = "acl"
-	SubResourcePolicy        SubResourceType = "policy"
-	SubResourceCors          SubResourceType = "cors"
-	SubResourceVersioning    SubResourceType = "versioning"
-	SubResourceWebsite       SubResourceType = "website"
-	SubResourceLogging       SubResourceType = "logging"
-	SubResourceLifecycle     SubResourceType = "lifecycle"
-	SubResourceNotification  SubResourceType = "notification"
-	SubResourceEncryption    SubResourceType = "encryption"
-	SubResourceTagging       SubResourceType = "tagging"
-	SubResourceDelete        SubResourceType = "delete"
-	SubResourceVersions      SubResourceType = "versions"
-	SubResourceUploads       SubResourceType = "uploads"
-	SubResourceRestore       SubResourceType = "restore"
-	SubResourceMetadata      SubResourceType = "metadata"
+	SubResourceStoragePolicy SubResourceType  = "storagePolicy"
+	SubResourceStorageClass  SubResourceType  = "storageClass"
+	SubResourceQuota         SubResourceType  = "quota"
+	SubResourceStorageInfo   SubResourceType  = "storageinfo"
+	SubResourceLocation      SubResourceType  = "location"
+	SubResourceAcl           SubResourceType  = "acl"
+	SubResourcePolicy        SubResourceType  = "policy"
+	SubResourceCors          SubResourceType  = "cors"
+	SubResourceVersioning    SubResourceType  = "versioning"
+	SubResourceWebsite       SubResourceType  = "website"
+	SubResourceLogging       SubResourceType  = "logging"
+	SubResourceLifecycle     SubResourceType  = "lifecycle"
+	SubResourceNotification  SubResourceType  = "notification"
+	SubResourceEncryption    SubResourceType  = "encryption"
+	SubResourceTagging       SubResourceType  = "tagging"
+	SubResourceDelete        SubResourceType  = "delete"
+	SubResourceVersions      SubResourceType  = "versions"
+	SubResourceUploads       SubResourceType  = "uploads"
+	SubResourceRestore       SubResourceType  = "restore"
+	SubResourceMetadata      SubResourceType  = "metadata"
+	storageClassStandardIA   StorageClassType = "STANDARD_IA"
+	storageClassGlacier      StorageClassType = "GLACIER"
 )
 
 type AclType string
@@ -787,3 +792,13 @@ const (
 	OBJECT BucketType = "OBJECT"
 	POSIX  BucketType = "POSIX"
 )
+
+const (
+	FSStatusEnabled  FSStatusType = "Enabled"
+	FSStatusDisabled FSStatusType = "Disabled"
+)
+
+type FSStatusType string
+
+// EnabledType defines a common status type
+type EnabledType string

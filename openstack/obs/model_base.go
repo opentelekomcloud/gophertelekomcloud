@@ -323,3 +323,21 @@ type Part struct {
 	LastModified time.Time `xml:"LastModified,omitempty"`
 	Size         int64     `xml:"Size,omitempty"`
 }
+
+// BucketReplicationConfiguration defines the bucket cross-region replication configuration
+type BucketReplicationConfiguration struct {
+	XMLName          xml.Name          `xml:"ReplicationConfiguration"`
+	Agency           string            `xml:"Agency"`
+	ReplicationRules []ReplicationRule `xml:"Rule"`
+}
+
+// ReplicationRule defines bucket cross-region replication rule
+type ReplicationRule struct {
+	ID                          string           `xml:"ID,omitempty"`
+	Prefix                      string           `xml:"Prefix"`
+	Status                      RuleStatusType   `xml:"Status"`
+	DestinationBucket           string           `xml:"Destination>Bucket"`
+	StorageClass                StorageClassType `xml:"Destination>StorageClass,omitempty"`
+	DeleteDate                  EnabledType      `xml:"Destination>DeleteDate,omitempty"`
+	HistoricalObjectReplication EnabledType      `xml:"HistoricalObjectReplication,omitempty"`
+}

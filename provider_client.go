@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"sync"
@@ -81,6 +80,10 @@ type ProviderClient struct {
 	// UserAgent represents the User-Agent header in the HTTP request.
 	UserAgent UserAgent
 
+	// MaxBackoffRetries set the maximum number of backoffs. When not set, defaults to defaultMaxBackoffRetryLimit
+	MaxBackoffRetries *int
+	// BackoffRetryTimeout specifies time before next retry on 429. When not set, defaults to defaultBackoffTimeout
+	BackoffRetryTimeout *time.Duration
 	// ReauthFunc is the function used to re-authenticate the user if the request
 	// fails with a 401 HTTP response code. This a needed because there may be multiple
 	// authentication functions for different Identity service versions.
@@ -173,10 +176,6 @@ type RequestOpts struct {
 	RetryCount *int
 	// RetryTimeout specifies time before next retry
 	RetryTimeout *time.Duration
-	// MaxBackoffRetries set the maximum number of backoffs. When not set, defaults to defaultMaxBackoffRetryLimit
-	MaxBackoffRetries *int
-	// BackoffRetryTimeout specifies time before next retry on 429. When not set, defaults to defaultBackoffTimeout
-	BackoffRetryTimeout *time.Duration
 }
 
 var applicationJSON = "application/json"
@@ -280,14 +279,14 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 		options.RetryTimeout = &defaultRetryTimeout
 	}
 
-	if options.MaxBackoffRetries == nil {
-		defaultMaxBackoffRetryLimit := 5
-		options.MaxBackoffRetries = &defaultMaxBackoffRetryLimit
+	if client.MaxBackoffRetries == nil {
+		defaultMaxBackoffRetryLimit := 20
+		client.MaxBackoffRetries = &defaultMaxBackoffRetryLimit
 	}
 
-	if options.BackoffRetryTimeout == nil {
-		defaultBackoffTimeout := 120 * time.Second
-		options.BackoffRetryTimeout = &defaultBackoffTimeout
+	if client.BackoffRetryTimeout == nil {
+		defaultBackoffTimeout := 60 * time.Second
+		client.BackoffRetryTimeout = &defaultBackoffTimeout
 	}
 
 	// Validate the HTTP response status.
@@ -300,7 +299,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	}
 
 	if !ok {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		_ = resp.Body.Close()
 		respErr := ErrUnexpectedResponseCode{
 			URL:      url,
@@ -389,9 +388,9 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if error429er, ok := errType.(Err429er); ok {
 				err = error429er.Error429(respErr)
 			}
-			if *options.MaxBackoffRetries > 0 {
-				*options.MaxBackoffRetries -= 1
-				time.Sleep(*options.BackoffRetryTimeout)
+			if *client.MaxBackoffRetries > 0 {
+				*client.MaxBackoffRetries -= 1
+				time.Sleep(*client.BackoffRetryTimeout)
 				return client.Request(method, url, options)
 			}
 		case http.StatusInternalServerError:
@@ -458,6 +457,8 @@ func defaultOkCodes(method string) []int {
 		return []int{200, 204}
 	case "DELETE":
 		return []int{202, 204}
+	case "HEAD":
+		return []int{204, 206}
 	}
 	return []int{}
 }

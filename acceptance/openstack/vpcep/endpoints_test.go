@@ -75,6 +75,21 @@ func TestEndpointLifecycle(t *testing.T) {
 
 	th.AssertNoErr(t, endpoints.WaitForEndpointStatus(client, created.ID, endpoints.StatusAccepted, 30))
 
+	batchUpdate := endpoints.BatchUpdateReq{
+		Permissions: []string{
+			"iam:domain::698f9bf85ca9437a9b2f41132ab3aa0e",
+		},
+		Action: "add",
+	}
+
+	whiteList, err := endpoints.BatchUpdateWhitelist(client, created.ServiceID, batchUpdate)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, whiteList.Permissions[0], batchUpdate.Permissions[0])
+
+	getWhitelist, err := endpoints.GetWhitelist(client, created.ServiceID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, getWhitelist.Permissions[0].Permission, batchUpdate.Permissions[0])
+
 	got, err := endpoints.Get(client, created.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, opts.PortIP, got.IP)

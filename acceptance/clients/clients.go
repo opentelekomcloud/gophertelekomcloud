@@ -145,6 +145,20 @@ func NewCTSV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDCaaSV2Client returns a *ServiceClient for making calls
+// to the OpenStack v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDCaaSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
@@ -530,6 +544,19 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 	return openstack.NewWAFV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
 }
 
+// NewWafdV1Client returns authenticated WAF premium v1 client
+func NewWafdV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	if cc.RegionName != "eu-ch2" {
+		return openstack.NewWAFDV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+	} else {
+		return openstack.NewWAFDSwissV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+	}
+}
+
 // NewCsbsV1Client returns authenticated CSBS v1 client
 func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -698,6 +725,18 @@ func NewSmnV2Client() (client *golangsdk.ServiceClient, err error) {
 	return openstack.NewSMNV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
+}
+
+// NewTmsV1Client returns authenticated TMS v1.0 client
+func NewTmsV1Client() (client *golangsdk.ServiceClient, err error) {
+	iamClient, err := NewIdentityV3AdminClient()
+	if err != nil {
+		return nil, err
+	}
+
+	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "v3", "v1.0", 1)
+	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "iam", "tms", 1)
+	return iamClient, err
 }
 
 // NewCesV1Client returns authenticated CES v1 client

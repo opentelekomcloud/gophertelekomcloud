@@ -690,6 +690,11 @@ func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 	return initClientOpts(client, eo, "antiddos")
 }
 
+// NewDCaaSV2 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
+func NewDCaaSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "dcaas")
+}
+
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
 func NewDMSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "dmsv1")
@@ -879,6 +884,26 @@ func NewWAFV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewWAFDSwissV1 creates a ServiceClient that may be used to access the premium WAF service.
+func NewWAFDSwissV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "waf")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/"
+	return sc, err
+}
+
+// NewWAFDV1 creates a ServiceClient that may be used to access the premium WAF service.
+func NewWAFDV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "premium-waf")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint
+	return sc, err
+}
+
 // NewRDSV3 creates a ServiceClient that may be used to access the RDS service.
 func NewRDSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "rdsv3")
@@ -906,7 +931,7 @@ func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return serviceClient, err
 }
 
-func NewGaussDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initCommonServiceClient(client, eo, "gaussdb", "mysql/v3")
-	return sc, err
+// NewTMSV1 creates a ServiceClient that may be used to access the TMS service.
+func NewTMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "tms")
 }

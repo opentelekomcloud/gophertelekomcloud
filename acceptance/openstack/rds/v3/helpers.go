@@ -49,6 +49,9 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 			Type:    "PostgreSQL",
 			Version: "11",
 		},
+		UnchangeableParam: &instances.Param{
+			LowerCaseTableNames: "0",
+		},
 	}
 
 	rds, err := instances.Create(client, createRdsOpts)
@@ -107,8 +110,7 @@ func createRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient) *conf
 		Name:        configName,
 		Description: "some config description",
 		Values: map[string]string{
-			"max_connections": "10",
-			"autocommit":      "OFF",
+			"autocommit": "OFF",
 		},
 		DataStore: configurations.DataStore{
 			Type:    "PostgreSQL",
@@ -143,6 +145,9 @@ func updateRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient, rdsCo
 		ConfigId:    rdsConfigID,
 		Name:        configName,
 		Description: "some updated description",
+		Values: map[string]string{
+			"autocommit": "ON",
+		},
 	}
 
 	err := configurations.Update(client, updateOpts)
