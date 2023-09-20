@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -14,6 +15,9 @@ import (
 )
 
 func TestGaussDBLifecycle(t *testing.T) {
+	if os.Getenv("RUN_GAUSS") == "" {
+		t.Skip("long test")
+	}
 	client, err := clients.NewGaussDBClient()
 	th.AssertNoErr(t, err)
 	createOpts := openstack.GetCloudServerCreateOpts(t)
@@ -94,9 +98,6 @@ func TestGaussDBLifecycle(t *testing.T) {
 	_, err = v3.WaitForGaussJob(client, updateResp.JobId, 1200)
 	th.AssertNoErr(t, err)
 
-	// err = waitForClusterToBeAvailable(client, id, 1200)
-	// th.AssertNoErr(t, err)
-
 	getInstance, err = instance.GetInstance(client, ins.Instance.Id)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getInstance.Name, name)
@@ -104,6 +105,9 @@ func TestGaussDBLifecycle(t *testing.T) {
 }
 
 func TestGaussDBReplicationLifecycle(t *testing.T) {
+	if os.Getenv("RUN_GAUSS") == "" {
+		t.Skip("long test")
+	}
 	client, err := clients.NewGaussDBClient()
 	th.AssertNoErr(t, err)
 	createOpts := openstack.GetCloudServerCreateOpts(t)
@@ -161,6 +165,9 @@ func TestGaussDBReplicationLifecycle(t *testing.T) {
 }
 
 func TestGaussDBBackupLifecycle(t *testing.T) {
+	if os.Getenv("RUN_GAUSS") == "" {
+		t.Skip("long test")
+	}
 	client, err := clients.NewGaussDBClient()
 	th.AssertNoErr(t, err)
 	createOpts := openstack.GetCloudServerCreateOpts(t)
