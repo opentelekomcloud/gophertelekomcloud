@@ -761,6 +761,15 @@ func NewLtsV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewGaussDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
