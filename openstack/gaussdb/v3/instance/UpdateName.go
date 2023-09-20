@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-type MysqlUpdateInstanceNameOpts struct {
+type UpdateNameOpts struct {
 	// Instance ID, which is compliant with the UUID format.
 	InstanceId string
 	// Instance name
@@ -15,13 +15,18 @@ type MysqlUpdateInstanceNameOpts struct {
 	Name string `json:"name"`
 }
 
-func UpdateGaussMySqlInstanceName(client *golangsdk.ServiceClient, opts MysqlUpdateInstanceNameOpts) (string, error) {
+func UpdateName(client *golangsdk.ServiceClient, opts UpdateNameOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// PUT https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/name
-	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "name"), b, nil, nil)
+	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "name"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 201},
+	})
+	if err != nil {
+		return nil, err
+	}
 	return extraJob(err, raw)
 }

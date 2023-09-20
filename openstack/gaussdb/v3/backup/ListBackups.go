@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ShowGaussMySqlBackupListOpts struct {
+type BackupListOpts struct {
 	// Instance ID
 	InstanceId string `q:"instance_id"`
 	// Backup ID
@@ -26,7 +26,7 @@ type ShowGaussMySqlBackupListOpts struct {
 	EndTime string `q:"end_time"`
 }
 
-func ShowGaussMySqlBackupList(client *golangsdk.ServiceClient, opts ShowGaussMySqlBackupListOpts) (*ShowGaussMySqlBackupListResponse, error) {
+func ListBackups(client *golangsdk.ServiceClient, opts BackupListOpts) (*BackupListResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -38,16 +38,16 @@ func ShowGaussMySqlBackupList(client *golangsdk.ServiceClient, opts ShowGaussMyS
 		return nil, err
 	}
 
-	var res ShowGaussMySqlBackupListResponse
+	var res BackupListResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type ShowGaussMySqlBackupListResponse struct {
+type BackupListResponse struct {
 	// Backup information
 	Backups []Backups `json:"backups"`
 	// Total number of backup files
-	TotalCount int64 `json:"total_count"`
+	TotalCount int `json:"total_count"`
 }
 
 type Backups struct {

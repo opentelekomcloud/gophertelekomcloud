@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ListGaussMySqlInstancesOpts struct {
+type ListInstancesOpts struct {
 	// Instance ID The asterisk (*) is reserved for the system. If the instance ID starts with *,
 	// it indicates that fuzzy match is performed based on the value following *.
 	// Otherwise, the exact match is performed based on the instance ID. The value cannot contain only asterisks (*).
@@ -30,17 +30,17 @@ type ListGaussMySqlInstancesOpts struct {
 	PrivateIp string `json:"private_ip,omitempty"`
 	// Index offset. If offset is set to N, the resource query starts from the N+1 piece of data.
 	// The default value is 0, indicating that the query starts from the first piece of data. The value must be a positive integer.
-	Offset int32 `json:"offset,omitempty"`
+	Offset int `json:"offset,omitempty"`
 	// Number of records to be queried. The default value is 100. The value must be a positive integer.
 	// The minimum value is 1 and the maximum value is 100.
-	Limit int32 `json:"limit,omitempty"`
+	Limit int `json:"limit,omitempty"`
 	// Query based on the instance tag key and value. {key} indicates the tag key, and {value} indicates the tag value.
 	// To query instances with multiple tag keys and values, separate key-value pairs with commas (,).
 	// The key must be unique. Multiple keys are in AND relationship.
 	Tags string `json:"tags,omitempty"`
 }
 
-func ListGaussMySqlInstances(client *golangsdk.ServiceClient, opts ListGaussMySqlInstancesOpts) (*ListGaussMySqlInstancesResponse, error) {
+func ListInstances(client *golangsdk.ServiceClient, opts ListInstancesOpts) (*ListInstancesResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -52,21 +52,25 @@ func ListGaussMySqlInstances(client *golangsdk.ServiceClient, opts ListGaussMySq
 		return nil, err
 	}
 
-	var res ListGaussMySqlInstancesResponse
+	var res ListInstancesResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type ListGaussMySqlInstancesResponse struct {
+type ListInstancesResponse struct {
 	// Instance list information.
-	Instances []MysqlInstanceListInfo `json:"instances"`
+	Instances []InstancesListInfo `json:"instances"`
 	// Total number of records.
-	TotalCount int32 `json:"total_count"`
+	TotalCount int `json:"total_count"`
 }
 
-type MysqlInstanceListInfo struct {
+type InstancesListInfo struct {
 	// Instance ID
 	Id string `json:"id"`
+	// Project ID of a tenant in a region
+	ProjectId string `json:"project_id"`
+	// The number of nodes.
+	NodeCount int `json:"node_count"`
 	// Instance name
 	Name string `json:"name"`
 	// Instance status
@@ -82,7 +86,9 @@ type MysqlInstanceListInfo struct {
 	// Region where the instance is deployed
 	Region string `json:"region"`
 	// Database information
-	Datastore MysqlDatastore `json:"datastore"`
+	Datastore Datastore `json:"datastore"`
+	// Used backup space in GB
+	BackupUsedSpace float64 `json:"backup_used_space"`
 	// Creation time in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time.
 	// Z indicates the time zone offset. For example, for French Winter Time (FWT), the time offset is shown as +0200.
@@ -91,6 +97,8 @@ type MysqlInstanceListInfo struct {
 	// Update time. The format is the same as that of the created field.
 	// The value is empty unless the instance creation is complete.
 	Updated string `json:"updated"`
+	// Private IP address for write
+	PrivateWriteIps []string `json:"private_write_ips"`
 	// Default username
 	DbUserName string `json:"db_user_name"`
 	// VPC ID
@@ -99,39 +107,47 @@ type MysqlInstanceListInfo struct {
 	SubnetId string `json:"subnet_id"`
 	// Security group ID
 	SecurityGroupId string `json:"security_group_id"`
+	// ID of the parameter template used for creating an instance or ID of the latest parameter template that is applied to an instance.
+	ConfigurationId string `json:"configuration_id"`
 	// Specification code
 	FlavorRef string `json:"flavor_ref"`
 	// Specification description
-	FlavorInfo MysqlFlavorInfo `json:"flavor_info"`
+	FlavorInfo FlavorInfo `json:"flavor_info"`
+	// AZ type. It can be single or multi.
+	AzMode string `json:"az_mode"`
+	// Primary AZ
+	MasterAzCode string `json:"master_az_code"`
+	// Maintenance window in the UTC format
+	MaintenanceWindow string `json:"maintenance_window"`
 	// Storage disk information
-	Volume MysqlVolumeInfo `json:"volume"`
+	Volume VolumeInfo `json:"volume"`
 	// Backup policy
-	BackupStrategy MysqlBackupStrategy `json:"backup_strategy"`
+	BackupStrategy BackupStrategy `json:"backup_strategy"`
 	// Time zone
 	TimeZone string `json:"time_zone"`
 	// Billing mode, which is yearly/monthly or pay-per-use (default setting).
-	ChargeInfo MysqlChargeInfo `json:"charge_info"`
+	ChargeInfo ChargeInfo `json:"charge_info"`
 	// Dedicated resource pool ID. This parameter is returned only when the instance belongs to a dedicated resource pool.
 	DedicatedResourceId string `json:"dedicated_resource_id"`
 	// Tag list
-	Tags []InstanceTagItem `json:"tags"`
+	Tags []TagItem `json:"tags"`
 }
 
-type MysqlFlavorInfo struct {
+type FlavorInfo struct {
 	// Number of vCPUs
 	Vcpus string `json:"vcpus"`
 	// Memory size in GB
 	Ram string `json:"ram"`
 }
 
-type MysqlVolumeInfo struct {
+type VolumeInfo struct {
 	// Disk type
 	Type string `json:"type"`
 	// Used disk size in GB
 	Size string `json:"size"`
 }
 
-type InstanceTagItem struct {
+type TagItem struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }

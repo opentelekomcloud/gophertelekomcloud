@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type MysqlCreateBackupOpts struct {
+type CreateBackupOpts struct {
 	// Instance ID, which is compliant with the UUID format.
 	InstanceId string `json:"instance_id"`
 	// Backup name
@@ -17,7 +17,7 @@ type MysqlCreateBackupOpts struct {
 	Description string `json:"description,omitempty"`
 }
 
-func CreateGaussMySqlBackup(client *golangsdk.ServiceClient, opts MysqlCreateBackupOpts) (*CreateGaussMySqlBackupResponse, error) {
+func CreateBackup(client *golangsdk.ServiceClient, opts CreateBackupOpts) (*CreateBackupResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -29,12 +29,12 @@ func CreateGaussMySqlBackup(client *golangsdk.ServiceClient, opts MysqlCreateBac
 		return nil, err
 	}
 
-	var res CreateGaussMySqlBackupResponse
+	var res CreateBackupResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type CreateGaussMySqlBackupResponse struct {
+type CreateBackupResponse struct {
 	Backup Backup `json:"backup"`
 	JobId  string `json:"job_id"`
 }

@@ -6,29 +6,29 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type MysqlInstanceOpts struct {
+type CreateInstanceOpts struct {
 	// Billing mode
-	ChargeInfo MysqlChargeInfo `json:"charge_info,omitempty"`
+	ChargeInfo *ChargeInfo `json:"charge_info,omitempty"`
 	// Region ID The value cannot be empty. To obtain this value, see Regions and Endpoints.
-	Region string `json:"region"`
+	Region string `json:"region" required:"true"`
 	// Instance name Instances of the same type can have same names under the same tenant.
 	// The name consists of 4 to 64 characters and starts with a letter.
 	// It is case-sensitive and can contain only letters, digits, hyphens (-), and underscores (_).
-	Name string `json:"name"`
+	Name string `json:"name" required:"true"`
 	// Database information
-	Datastore MysqlDatastore `json:"datastore"`
+	Datastore Datastore `json:"datastore" required:"true"`
 	// Instance type, which is case-insensitive. Currently, its value can only be Cluster.
-	Mode string `json:"mode"`
+	Mode string `json:"mode" required:"true"`
 	// Specification code. For details, see Querying Database Specifications.
-	FlavorRef string `json:"flavor_ref"`
+	FlavorRef string `json:"flavor_ref" required:"true"`
 	// VPC ID. To obtain this value, use either of the following methods:
 	// Method 1: Log in to the VPC console and view the VPC ID on the VPC details page.
 	// Method 2: See section "Querying VPCs" in the Virtual Private Cloud API Reference.
-	VpcId string `json:"vpc_id"`
+	VpcId string `json:"vpc_id" required:"true"`
 	// Network ID of the subnet. To obtain this value, use either of the following methods:
 	// Method 1: Log in to the VPC console and click the target subnet on the Subnets page to view the network ID on the displayed page.
 	// Method 2: See section "Querying Subnets" in the Virtual Private Cloud API Reference.
-	SubnetId string `json:"subnet_id"`
+	SubnetId string `json:"subnet_id" required:"true"`
 	// Security group ID If the network ACL is enabled for the subnet used by the created instance, this parameter is optional.
 	// If the network ACL is not enabled, this parameter is mandatory.
 	// Method 1: Log in to VPC console. Choose Access Control > Security Groups in the navigation pane on the left.
@@ -41,9 +41,9 @@ type MysqlInstanceOpts struct {
 	// uppercase letters, lowercase letters, digits, and special characters (~!@#%^*-_=+?).
 	// Enter a strong password to improve security, preventing security risks such as brute force cracking.
 	// If you enter a weak password, the system automatically determines that the password is invalid.
-	Password string `json:"password"`
+	Password string `json:"password" required:"true"`
 	// Automated backup policy
-	BackupStrategy MysqlBackupStrategy `json:"backup_strategy,omitempty"`
+	BackupStrategy *BackupStrategy `json:"backup_strategy,omitempty"`
 	// UTC time zone. l If this parameter is not specified, UTC is used by default.
 	// If this parameter is specified, the value ranges from UTC-12:00 to UTC+12:00 at the full hour.
 	// For example, the parameter can be UTC+08:00 rather than UTC+08:30.
@@ -53,9 +53,10 @@ type MysqlInstanceOpts struct {
 	// Primary AZ
 	MasterAvailabilityZone string `json:"master_availability_zone,omitempty"`
 	// Number of created read replicas. The value ranges from 1 to 9. An instance contains up to 15 read replicas.
-	SlaveCount int32 `json:"slave_count"`
+	SlaveCount *int `json:"slave_count"`
 	// Volume information.
-	Volume MysqlVolume `json:"volume,omitempty"`
+	// Missing in documentation
+	Volume *MysqlVolume `json:"volume,omitempty"`
 	// Tag list. Instances are created based on tag keys and values.
 	// {key} indicates the tag key. It must be unique and cannot be empty.
 	// {value} indicates the tag value, which can be empty. To create instances with multiple tag keys and values,
@@ -80,7 +81,7 @@ type MysqlTags struct {
 	Value string `json:"value"`
 }
 
-func CreateGaussMySqlInstance(client *golangsdk.ServiceClient, opts MysqlInstanceOpts) (*CreateGaussMySqlInstanceResponse, error) {
+func CreateInstance(client *golangsdk.ServiceClient, opts CreateInstanceOpts) (*CreateInstanceResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -92,21 +93,19 @@ func CreateGaussMySqlInstance(client *golangsdk.ServiceClient, opts MysqlInstanc
 		return nil, err
 	}
 
-	var res CreateGaussMySqlInstanceResponse
+	var res CreateInstanceResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type CreateGaussMySqlInstanceResponse struct {
+type CreateInstanceResponse struct {
 	// Instance information
-	Instance MysqlInstanceResponse `json:"instance"`
+	Instance InstResponse `json:"instance"`
 	// Instance creation task ID This parameter is returned only for the creation of pay-per-use instances.
 	JobId string `json:"job_id"`
-	// Order ID. This parameter is returned only for the creation of yearly/monthly instances.
-	OrderId string `json:"order_id"`
 }
 
-type MysqlInstanceResponse struct {
+type InstResponse struct {
 	// Instance ID
 	Id string `json:"id"`
 	// Instance name. Instances of the same type can have same names under the same tenant.
@@ -116,7 +115,7 @@ type MysqlInstanceResponse struct {
 	// Instance status Value: creating.
 	Status string `json:"status"`
 	// Database information
-	Datastore MysqlDatastore `json:"datastore"`
+	Datastore Datastore `json:"datastore"`
 	// Instance type. Currently, only the cluster type is supported.
 	Mode string `json:"mode"`
 	// Parameter template ID.
@@ -124,7 +123,7 @@ type MysqlInstanceResponse struct {
 	// Database port, which is the same as the request parameter.
 	Port string `json:"port"`
 	// Automated backup policy
-	BackupStrategy MysqlBackupStrategy `json:"backup_strategy"`
+	BackupStrategy BackupStrategy `json:"backup_strategy"`
 	// Region ID, which is the same as the request parameter.
 	Region string `json:"region"`
 	// AZ mode, which is the same as the request parameter.
@@ -140,17 +139,17 @@ type MysqlInstanceResponse struct {
 	// Specification code, which is the same as the request parameter.
 	FlavorRef string `json:"flavor_ref"`
 	// Billing mode, which is yearly/monthly or pay-per-use (default setting).
-	ChargeInfo MysqlChargeInfo `json:"charge_info"`
+	ChargeInfo ChargeInfo `json:"charge_info"`
 }
 
-type MysqlDatastore struct {
+type Datastore struct {
 	// DB engine. Currently, only gaussdb-mysql is supported.
-	Type string `json:"type"`
+	Type string `json:"type" required:"true"`
 	// DB engine version For details about supported database versions, see Querying Version Information About a DB Engine.
-	Version string `json:"version"`
+	Version string `json:"version" required:"true"`
 }
 
-type MysqlBackupStrategy struct {
+type BackupStrategy struct {
 	// Automated backup start time. The automated backup will be triggered within one hour after the time specified by this parameter.
 	// The value cannot be empty. It must be a valid value in the "hh:mm-HH:MM" format. The current time is in the UTC format.
 	// The HH value must be 1 greater than the hh value.
@@ -161,16 +160,9 @@ type MysqlBackupStrategy struct {
 	KeepDays string `json:"keep_days,omitempty"`
 }
 
-type MysqlChargeInfo struct {
+type ChargeInfo struct {
 	// Billing mode. Value: postPaid
 	ChargeMode string `json:"charge_mode"`
-	// Subscription period. Value range:
-	// month: The service is subscribed by month.
-	// year: The service is subscribed by year.
-	// NOTE This parameter is valid and mandatory only when charge_mode is set to prePaid.
-	PeriodType string `json:"period_type,omitempty"`
-	// Subscription period. This parameter is valid and mandatory if charge_mode is set to prePaid. Value range:
-	// When period_type is set to month, the parameter value ranges from 1 to 9.
-	// When period_type is set to year, the parameter value ranges from 1 to 3.
-	PeriodNum int32 `json:"period_num,omitempty"`
+	// Order ID
+	OrderId string `json:"order_id"`
 }

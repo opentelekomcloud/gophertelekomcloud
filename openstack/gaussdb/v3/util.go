@@ -10,7 +10,7 @@ func WaitForGaussJob(client *golangsdk.ServiceClient, jobId string, timeout int)
 	var res *GetJobInfoDetail
 
 	err := golangsdk.WaitFor(timeout, func() (bool, error) {
-		cur, err := ShowGaussJobInfo(client, jobId)
+		cur, err := ShowJobInfo(client, jobId)
 		if err != nil {
 			return false, err
 		}

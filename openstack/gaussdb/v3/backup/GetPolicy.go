@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ShowGaussMySqlBackupPolicy(client *golangsdk.ServiceClient, instanceId string) (*BackupPolicy, error) {
+func GetPolicy(client *golangsdk.ServiceClient, instanceId string) (*BackupPolicy, error) {
 	// GET https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/backups/policy
 	raw, err := client.Get(client.ServiceURL("instances", instanceId, "backups", "policy"), nil, nil)
 	if err != nil {

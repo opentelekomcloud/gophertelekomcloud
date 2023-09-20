@@ -6,20 +6,15 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type MysqlCreateReadonlyNodeOpts struct {
+type CreateNodeOpts struct {
 	// Instance ID, which is compliant with the UUID format.
 	InstanceId string
 	// Read replica failover priority ranging from 1 to 16.
 	// The total number of primary node and read replicas is less than or equal to 16.
-	Priorities []int32 `json:"priorities"`
-	// Whether the order will be automatically paid after yearly/monthly instances are created.
-	// This parameter does not affect the payment method of automatic renewal.
-	// true: The order will be automatically paid from your account. The default value is true.
-	// false: The order will be manually paid.
-	IsAutoPay string `json:"is_auto_pay,omitempty"`
+	Priorities []int `json:"priorities"`
 }
 
-func CreateGaussMySqlReadonlyNode(client *golangsdk.ServiceClient, opts MysqlCreateReadonlyNodeOpts) (*CreateGaussMySqlReadonlyNodeResponse, error) {
+func CreateReplica(client *golangsdk.ServiceClient, opts CreateNodeOpts) (*CreateNodeResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -31,12 +26,12 @@ func CreateGaussMySqlReadonlyNode(client *golangsdk.ServiceClient, opts MysqlCre
 		return nil, err
 	}
 
-	var res CreateGaussMySqlReadonlyNodeResponse
+	var res CreateNodeResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type CreateGaussMySqlReadonlyNodeResponse struct {
+type CreateNodeResponse struct {
 	// Instance ID
 	InstanceId string `json:"instance_id"`
 	// Node name list

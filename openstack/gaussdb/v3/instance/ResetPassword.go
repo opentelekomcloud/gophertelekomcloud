@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-type MysqlResetPasswordOpts struct {
+type ResetPwdOpts struct {
 	// Instance ID, which is compliant with the UUID format.
 	InstanceId string
 	// Database password.
@@ -17,13 +17,15 @@ type MysqlResetPasswordOpts struct {
 	Password string `json:"password"`
 }
 
-func ResetGaussMySqlPassword(client *golangsdk.ServiceClient, opts MysqlResetPasswordOpts) (err error) {
+func ResetPassword(client *golangsdk.ServiceClient, opts ResetPwdOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
 	}
 
 	// POST https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/password
-	_, err = client.Post(client.ServiceURL("instances", opts.InstanceId, "password"), b, nil, nil)
+	_, err = client.Post(client.ServiceURL("instances", opts.InstanceId, "password"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 201},
+	})
 	return err
 }

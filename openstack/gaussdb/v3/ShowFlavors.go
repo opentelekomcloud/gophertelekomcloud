@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ShowGaussMySqlFlavorsOpts struct {
+type ShowFlavorsOpts struct {
 	// DB engine.
 	DatabaseName string
 	// DB engine version. Currently, only MySQL 8.0 is supported.
@@ -16,7 +16,7 @@ type ShowGaussMySqlFlavorsOpts struct {
 	SpecCode string `q:"spec_code"`
 }
 
-func ShowGaussMySqlFlavors(client *golangsdk.ServiceClient, opts ShowGaussMySqlFlavorsOpts) ([]MysqlFlavorsInfo, error) {
+func ShowGaussMySqlFlavors(client *golangsdk.ServiceClient, opts ShowFlavorsOpts) ([]MysqlFlavorsInfo, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err

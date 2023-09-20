@@ -5,49 +5,50 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ShowGaussMySqlInstanceInfo(client *golangsdk.ServiceClient, instanceId string) (*MysqlInstanceInfoDetail, error) {
+func GetInstance(client *golangsdk.ServiceClient, id string) (*GetInstanceInfo, error) {
 	// GET https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}
-	raw, err := client.Get(client.ServiceURL("instances", instanceId), nil, nil)
+	raw, err := client.Get(client.ServiceURL("instances", id), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res MysqlInstanceInfoDetail
-	err = extract.IntoSlicePtr(raw.Body, &res, "instance")
-	return &res, err
+	var res struct {
+		Instance GetInstanceInfo `json:"instance"`
+	}
+	err = extract.Into(raw.Body, &res)
+	return &res.Instance, err
 }
 
-type MysqlInstanceInfoDetail struct {
+type GetInstanceInfo struct {
 	// Instance ID
 	Id string `json:"id"`
-	// Instance name
-	Name string `json:"name"`
 	// Project ID of a tenant in a region
 	ProjectId string `json:"project_id"`
-	// Instance status If the value is BUILD, the instance is being created.
-	// If the value is ACTIVE, the instance is normal. If the value is FAILED, the instance is abnormal.
-	// If the value is FROZEN, the instance is frozen. If the value is MODIFYING, the instance is being scaled up.
-	// If the value is REBOOTING, the instance is being rebooted. If the value is RESTORING, the instance is being restored.
-	// If the value is MODIFYING INSTANCE TYPE, the instance is changing from primary node to a read replica.
-	// If the value is SWITCHOVER, the primary/standby switchover or failover is being performed.
-	// If the value is MIGRATING, the instance is being migrated. If the value is BACKING UP, the instance is being backed up.
-	// If the value is MODIFYING DATABASE PORT, the database port is being changed.
-	// If the value is STORAGE FULL, the instance storage space is full.
+	// DB instance remarks
+	Alias string `json:"alias"`
+	// The number of nodes.
+	NodeCount int `json:"node_count"`
+	// Instance name
+	Name string `json:"name"`
+	// Instance status
 	Status string `json:"status"`
+	// Private IP address for write It is a blank string until an ECS is created.
+	PrivateIps []string `json:"private_ips"`
+	// Public IP address string
+	PublicIps string `json:"public_ips"`
 	// Database port
 	Port string `json:"port"`
 	// Instance type. The value is Cluster.
 	Type string `json:"type"`
-	// The number of nodes.
-	NodeCount int32 `json:"node_count"`
+	// Region where the instance is deployed
+	Region string `json:"region"`
 	// Database information
-	Datastore MysqlDatastore `json:"datastore"`
+	Datastore Datastore `json:"datastore"`
 	// Used backup space in GB
-	BackupUsedSpace int64 `json:"backup_used_space"`
+	BackupUsedSpace float64 `json:"backup_used_space"`
 	// Creation time in the "yyyy-mm-ddThh:mm:ssZ" format.
 	// T is the separator between the calendar and the hourly notation of time.
-	// Z indicates the time zone offset.
-	// For example, for French Winter Time (FWT), the time offset is shown as +0200.
+	// Z indicates the time zone offset. For example, for French Winter Time (FWT), the time offset is shown as +0200.
 	// The value is empty unless the instance creation is complete.
 	Created string `json:"created"`
 	// Update time. The format is the same as that of the created field.
@@ -55,8 +56,6 @@ type MysqlInstanceInfoDetail struct {
 	Updated string `json:"updated"`
 	// Private IP address for write
 	PrivateWriteIps []string `json:"private_write_ips"`
-	// Public IP address of the instance
-	PublicIps string `json:"public_ips"`
 	// Default username
 	DbUserName string `json:"db_user_name"`
 	// VPC ID
@@ -67,25 +66,41 @@ type MysqlInstanceInfoDetail struct {
 	SecurityGroupId string `json:"security_group_id"`
 	// ID of the parameter template used for creating an instance or ID of the latest parameter template that is applied to an instance.
 	ConfigurationId string `json:"configuration_id"`
-	// Backup policy
-	BackupStrategy MysqlBackupStrategy `json:"backup_strategy"`
+	// Specification code
+	FlavorRef string `json:"flavor_ref"`
+	// Specification description
+	FlavorInfo FlavorInfo `json:"flavor_info"`
 	// Node information
-	Nodes []MysqlInstanceNodeInfo `json:"nodes"`
-	// Time zone
-	TimeZone string `json:"time_zone"`
+	Nodes *[]NodeInfo `json:"nodes"`
 	// AZ type. It can be single or multi.
 	AzMode string `json:"az_mode"`
 	// Primary AZ
 	MasterAzCode string `json:"master_az_code"`
 	// Maintenance window in the UTC format
 	MaintenanceWindow string `json:"maintenance_window"`
-	// Tags for managing instances
-	Tags []MysqlTags `json:"tags"`
+	// Storage disk information
+	Volume VolumeInfo `json:"volume"`
+	// Backup policy
+	BackupStrategy BackupStrategy `json:"backup_strategy"`
+	// Time zone
+	TimeZone string `json:"time_zone"`
+	// Billing mode, which is yearly/monthly or pay-per-use (default setting).
+	ChargeInfo ChargeInfo `json:"charge_info"`
 	// Dedicated resource pool ID. This parameter is returned only when the instance belongs to a dedicated resource pool.
 	DedicatedResourceId string `json:"dedicated_resource_id"`
+	// Tag list
+	Tags []TagItem `json:"tags"`
+	// Proxy information
+	Proxies *[]Proxies `json:"proxies"`
 }
 
-type MysqlInstanceNodeInfo struct {
+type Proxies struct {
+	PoolId  string `json:"pool_id"`
+	Name    string `json:"name"`
+	Address string `json:"address"`
+}
+
+type NodeInfo struct {
 	// Instance ID
 	Id string `json:"id"`
 	// Node name
@@ -95,11 +110,11 @@ type MysqlInstanceNodeInfo struct {
 	// Node status
 	Status string `json:"status"`
 	// Database port
-	Port int32 `json:"port"`
+	Port int `json:"port"`
 	// Private IP address for read of the node
 	PrivateReadIps []string `json:"private_read_ips"`
 	// Storage disk information
-	Volume MysqlInstanceNodeVolumeInfo `json:"volume"`
+	Volume *NodeVolumeInfo `json:"volume"`
 	// AZ
 	AzCode string `json:"az_code"`
 	// Region where the instance is located
@@ -119,10 +134,10 @@ type MysqlInstanceNodeInfo struct {
 	// Whether to reboot the instance for the parameter modifications to take effect.
 	NeedRestart bool `json:"need_restart"`
 	// Failover priority
-	Priority int32 `json:"priority"`
+	Priority int `json:"priority"`
 }
 
-type MysqlInstanceNodeVolumeInfo struct {
+type NodeVolumeInfo struct {
 	// Disk type
 	Type string `json:"type"`
 	// Used disk size in GB

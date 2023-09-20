@@ -5,18 +5,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ListGaussMySqlConfigurationsOpts struct {
+type ListConfigOpts struct {
 	// Index offset. If offset is set to N, the resource query starts from the N+1 piece of data.
 	// The default value is 0, indicating that the query starts from the first piece of data.
 	// The value must be a positive integer
-	Offset int32 `q:"offset"`
+	Offset int `q:"offset"`
 	// Number of records to be queried. The default value is 100.
 	// The value must be a positive integer.
 	// The minimum value is 1 and the maximum value is 100.
-	Limit int32 `q:"limit"`
+	Limit int `q:"limit"`
 }
 
-func ListGaussMySqlConfigurations(client *golangsdk.ServiceClient, opts ListGaussMySqlConfigurationsOpts) (*ListGaussMySqlConfigurationsResponse, error) {
+func ListConfigurations(client *golangsdk.ServiceClient, opts ListConfigOpts) (*ListConfigResponse, error) {
 	q, err := golangsdk.BuildQueryString(opts)
 	if err != nil {
 		return nil, err
@@ -28,12 +28,12 @@ func ListGaussMySqlConfigurations(client *golangsdk.ServiceClient, opts ListGaus
 		return nil, err
 	}
 
-	var res ListGaussMySqlConfigurationsResponse
+	var res ListConfigResponse
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type ListGaussMySqlConfigurationsResponse struct {
+type ListConfigResponse struct {
 	// Parameter template information
 	Configurations []ConfigurationSummary `json:"configurations"`
 	// Total number of parameter templates

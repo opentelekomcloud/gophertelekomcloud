@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ShowGaussJobInfo(client *golangsdk.ServiceClient, taskId string) (*GetJobInfoDetail, error) {
+func ShowJobInfo(client *golangsdk.ServiceClient, taskId string) (*GetJobInfoDetail, error) {
 	// GET https://{Endpoint}/mysql/v3/{project_id}/jobs?id={id}
 	raw, err := client.Get(client.ServiceURL("jobs")+"?id="+taskId, nil, nil)
 	if err != nil {
