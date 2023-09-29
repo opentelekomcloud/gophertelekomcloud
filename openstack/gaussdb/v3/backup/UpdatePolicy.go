@@ -32,7 +32,9 @@ func UpdatePolicy(client *golangsdk.ServiceClient, opts UpdatePolicyOpts) (*Upda
 	if err != nil {
 		return nil, err
 	}
-	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "backups", "policy", "update"), b, nil, nil)
+	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "backups", "policy", "update"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200, 201},
+	})
 	if err != nil {
 		return nil, err
 	}
