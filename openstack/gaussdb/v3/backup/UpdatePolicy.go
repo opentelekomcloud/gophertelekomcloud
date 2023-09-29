@@ -2,6 +2,7 @@ package backup
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -30,7 +31,11 @@ type UpdateBackupPolicy struct {
 
 func UpdatePolicy(client *golangsdk.ServiceClient, opts UpdatePolicyOpts) (*UpdatepPolicyResponse, error) {
 	// PUT https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/backups/policy/update
-	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "backups", "policy", "update"), nil, nil, nil)
+	b, err := build.RequestBody(opts.BackupPolicy, "")
+	if err != nil {
+		return nil, err
+	}
+	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "backups", "policy", "update"), b, nil, nil)
 	if err != nil {
 		return nil, err
 	}
