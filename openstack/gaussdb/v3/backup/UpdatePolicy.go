@@ -24,14 +24,11 @@ type UpdateBackupPolicy struct {
 	// The value is a number separated by commas (,), indicating the days of the week.
 	// For example, the value 1,2,3,4 indicates that the backup period is every Monday, Tuesday,Wednesday, and Thursday.
 	Period string `json:"period"`
-	// Number of retained level-1 backups. The default value is 0. This parameter is valid when level-1 backup is enabled.
-	// Value: 0 / 1
-	RetentionNumBackupLevel1 int `json:"retention_num_backup_level1,omitempty"`
 }
 
 func UpdatePolicy(client *golangsdk.ServiceClient, opts UpdatePolicyOpts) (*UpdatepPolicyResponse, error) {
 	// PUT https://{Endpoint}/mysql/v3/{project_id}/instances/{instance_id}/backups/policy/update
-	b, err := build.RequestBody(opts.BackupPolicy, "")
+	b, err := build.RequestBody(opts.BackupPolicy, "backup_policy")
 	if err != nil {
 		return nil, err
 	}
