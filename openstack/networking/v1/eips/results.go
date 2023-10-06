@@ -30,6 +30,7 @@ type PublicIp struct {
 	BandwidthSize      int    `json:"bandwidth_size"`
 	BandwidthShareType string `json:"bandwidth_share_type"`
 	IpVersion          int    `json:"ip_version"`
+	Name               string `json:"alias"`
 }
 
 // GetResult is a return struct of get method

@@ -118,6 +118,9 @@ type ApplyOpts struct {
 type PublicIpOpts struct {
 	Type    string `json:"type" required:"true"`
 	Address string `json:"ip_address,omitempty"`
+	Version string `json:"ip_version,omitempty"`
+	PortID  string `json:"port_id,omitempty"`
+	Name    string `json:"alias,omitempty"`
 }
 
 type BandwidthOpts struct {
