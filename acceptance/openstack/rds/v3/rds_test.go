@@ -322,21 +322,6 @@ func TestRdsBackupLifecycle(t *testing.T) {
 		t.Fatalf("Status available wasn't present")
 	}
 
-	t.Log("RestorePITR")
-
-	pitr, err := backups.RestorePITR(client, backups.RestorePITROpts{
-		Source: backups.Source{
-			BackupID:   backupList[0].ID,
-			InstanceID: backupList[0].InstanceID,
-			Type:       "backup",
-		},
-		Target: backups.Target{
-			InstanceID: rds.Id,
-		},
-	})
-	th.AssertNoErr(t, err)
-	_ = instances.WaitForJobCompleted(client, 600, pitr)
-
 	t.Log("RestoreToNew")
 
 	toNew, err := backups.RestoreToNew(client, backups.RestoreToNewOpts{
@@ -439,4 +424,61 @@ func TestBackupKeepDays(t *testing.T) {
 		KeepDays:   pointerto.Int(0),
 	})
 	th.AssertNoErr(t, err)
+}
+
+func TestBackupRestorePointInTime(t *testing.T) {
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance")
+
+	// Create RDSv3 instance
+	rds := CreateRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	backup, err := backups.Create(client, backups.CreateOpts{
+		InstanceID: rds.Id,
+		Name:       tools.RandomString("rds-backup-test-", 5),
+	})
+	th.AssertNoErr(t, err)
+
+	t.Log("Backup creation started")
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	t.Cleanup(func() {
+		th.AssertNoErr(t, backups.Delete(client, backup.ID))
+		t.Log("Backup deleted")
+	})
+
+	err = backups.WaitForBackup(client, rds.Id, backup.ID, backups.StatusCompleted)
+	th.AssertNoErr(t, err)
+	t.Log("Backup creation complete")
+
+	backupList, err := backups.List(client, backups.ListOpts{InstanceID: rds.Id, BackupID: backup.ID})
+	th.AssertNoErr(t, err)
+
+	t.Log("RestorePITR")
+
+	pitr, err := backups.RestorePITR(client, backups.RestorePITROpts{
+		Source: backups.Source{
+			BackupID:   backupList[0].ID,
+			InstanceID: backupList[0].InstanceID,
+			Type:       "backup",
+		},
+		Target: backups.Target{
+			InstanceID: rds.Id,
+		},
+	})
+	th.AssertNoErr(t, err)
+	_ = instances.WaitForJobCompleted(client, 600, pitr)
 }
