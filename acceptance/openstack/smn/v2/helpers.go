@@ -39,10 +39,11 @@ func createTopic(t *testing.T, client *golangsdk.ServiceClient) string {
 	}
 	t.Logf("Attempting to create SMN topic tags: %s", tagOpts)
 	err = tags.Create(tagsClient, "smn_topic", topicName, tagOpts).ExtractErr()
+	th.AssertNoErr(t, err)
 
 	listTags, err := tags.Get(tagsClient, "smn_topic", topicName).Extract()
 	th.AssertNoErr(t, err)
-	if len(listTags) < 0 {
+	if len(listTags) < 1 {
 		t.Fatal("empty SMN topic tags list")
 	}
 	t.Logf("SMN topic tags: %s", listTags)
