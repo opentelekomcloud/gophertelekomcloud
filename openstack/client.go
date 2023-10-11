@@ -859,6 +859,15 @@ func NewSMNV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewSMNV2Tags creates a ServiceClient that may be used to access the SMN tags service.
+func NewSMNV2Tags(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "smnv2")
+	if err != nil {
+		return nil, err
+	}
+	return sc, err
+}
+
 // NewCCEv1 creates a ServiceClient that may be used to access the CCE k8s service.
 func NewCCEv1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "cce")
