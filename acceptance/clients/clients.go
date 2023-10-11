@@ -727,6 +727,17 @@ func NewSmnV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewSmnV2TagsClient returns authenticated SMN v2 tags client
+func NewSmnV2TagsClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewSMNV2Tags(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewTmsV1Client returns authenticated TMS v1.0 client
 func NewTmsV1Client() (client *golangsdk.ServiceClient, err error) {
 	iamClient, err := NewIdentityV3AdminClient()
