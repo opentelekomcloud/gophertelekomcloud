@@ -630,6 +630,17 @@ func NewVbsV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDataArtsV11Client returns authenticated DataArts v1.1 client
+func NewDataArtsV11Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDataArtsV11(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDdsV3Client returns authenticated DDS v3 client
 func NewDdsV3Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
