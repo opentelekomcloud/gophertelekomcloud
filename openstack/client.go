@@ -940,3 +940,7 @@ func NewGaussDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	sc, err := initCommonServiceClient(client, eo, "gaussdb", "mysql/v3")
 	return sc, err
 }
+
+func NewDataArtsV11(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initCommonServiceClient(client, eo, "cdm", "v1.1")
+}
