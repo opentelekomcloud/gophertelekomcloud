@@ -427,6 +427,10 @@ func TestBackupKeepDays(t *testing.T) {
 }
 
 func TestBackupRestorePointInTime(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
