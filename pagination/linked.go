@@ -1,6 +1,7 @@
 package pagination
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 
@@ -32,12 +33,12 @@ func (current LinkedPageBase) NextPageURL() (string, error) {
 		path = current.LinkPath
 	}
 
-	submap := make(map[string]interface{})
+	submap := make(map[string]any)
 
-	err := extract.Into(current.BodyReader(), &submap)
+	err := extract.Into(bytes.NewReader(current.Body), &submap)
 	if err != nil {
 		err := golangsdk.ErrUnexpectedType{}
-		err.Expected = "map[string]interface{}"
+		err.Expected = "map[string]any"
 		err.Actual = fmt.Sprintf("%v", reflect.TypeOf(current.Body))
 		return "", err
 	}
@@ -51,10 +52,10 @@ func (current LinkedPageBase) NextPageURL() (string, error) {
 		}
 
 		if len(path) > 0 {
-			submap, ok = value.(map[string]interface{})
+			submap, ok = value.(map[string]any)
 			if !ok {
 				err := golangsdk.ErrUnexpectedType{}
-				err.Expected = "map[string]interface{}"
+				err.Expected = "map[string]any"
 				err.Actual = fmt.Sprintf("%v", reflect.TypeOf(value))
 				return "", err
 			}

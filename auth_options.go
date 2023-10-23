@@ -1,5 +1,7 @@
 package golangsdk
 
+import "github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+
 /*
 AuthOptions stores information needed to authenticate to an OpenStack Cloud.
 You can populate one manually, or use a provider's AuthOptionsFromEnv() function
@@ -12,20 +14,20 @@ provider.
 
 An example of manually providing authentication information:
 
-  opts := golangsdk.AuthOptions{
-    IdentityEndpoint: "https://openstack.example.com:5000/v2.0",
-    Username: "{username}",
-    Password: "{password}",
-    TenantID: "{tenant_id}",
-  }
+	opts := golangsdk.AuthOptions{
+	  IdentityEndpoint: "https://openstack.example.com:5000/v2.0",
+	  Username: "{username}",
+	  Password: "{password}",
+	  TenantID: "{tenant_id}",
+	}
 
-  provider, err := openstack.AuthenticatedClient(opts)
+	provider, err := openstack.AuthenticatedClient(opts)
 
 An example of using AuthOptionsFromEnv(), where the environment variables can
 be read from a file, such as a standard openrc file:
 
-  opts, err := openstack.AuthOptionsFromEnv()
-  provider, err := openstack.AuthenticatedClient(opts)
+	opts, err := openstack.AuthOptionsFromEnv()
+	provider, err := openstack.AuthenticatedClient(opts)
 */
 type AuthOptions struct {
 	// IdentityEndpoint specifies the HTTP endpoint that is required to work with
@@ -264,7 +266,7 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 		}
 	}
 
-	b, err := BuildRequestBody(req, "")
+	b, err := build.RequestBodyMap(req, "")
 	if err != nil {
 		return nil, err
 	}
@@ -438,7 +440,7 @@ func (opts *AgencyAuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) 
 		DomainName: opts.AgencyDomainName,
 		AgencyName: opts.AgencyName,
 	}
-	r, err := BuildRequestBody(req, "auth")
+	r, err := build.RequestBodyMap(req, "auth")
 	if err != nil {
 		return r, err
 	}
