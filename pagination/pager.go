@@ -33,28 +33,6 @@ type Page interface {
 	GetBodyAsMap() (map[string]any, error)
 }
 
-// NewPage must be satisfied by the result type of any resource collection.
-// It allows clients to interact with the resource uniformly, regardless of whether or not or how it's paginated.
-// Generally, rather than implementing this interface directly, implementors should embed one of the concrete PageBase structs,
-// instead.
-// Depending on the pagination strategy of a particular resource, there may be an additional subinterface that the result type
-// will need to implement.
-type NewPage interface {
-	// NewNextPageURL generates the URL for the page of data that follows this collection.
-	// Return "" if no such page exists.
-	NewNextPageURL() (string, error)
-
-	// NewIsEmpty returns true if this Page has no items in it.
-	NewIsEmpty() (bool, error)
-
-	// NewGetBody returns the Page Body. This is used in the `AllPages` method.
-	NewGetBody() []byte
-	// NewGetBodyAsSlice tries to convert page body to a slice.
-	NewGetBodyAsSlice() ([]any, error)
-	// NewGetBodyAsMap tries to convert page body to a map.
-	NewGetBodyAsMap() (map[string]any, error)
-}
-
 // Pager knows how to advance through a specific resource collection, one page at a time.
 type Pager struct {
 	client *golangsdk.ServiceClient
@@ -94,64 +72,6 @@ func (p Pager) fetchNextPage(url string) (Page, error) {
 	}
 
 	return p.createPage(remembered), nil
-}
-
-func (p Pager) newFetchNextPage(url string) (NewPage, error) {
-	resp, err := Request(p.Client, p.Headers, url)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return p.CreatePage(NewPageResult{
-		Body:   rawBody,
-		Header: resp.Header,
-		URL:    *resp.Request.URL,
-	}), nil
-}
-
-// NewEachPage iterates over each page returned by a Pager, yielding one at a time to a handler function.
-// Return "false" from the handler to prematurely stop iterating.
-func (p Pager) NewEachPage(handler func(NewPage) (bool, error)) error {
-	if p.Err != nil {
-		return p.Err
-	}
-	currentURL := p.InitialURL
-	for {
-		currentPage, err := p.newFetchNextPage(currentURL)
-		if err != nil {
-			return err
-		}
-
-		empty, err := currentPage.NewIsEmpty()
-		if err != nil {
-			return err
-		}
-		if empty {
-			return nil
-		}
-
-		ok, err := handler(currentPage)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return nil
-		}
-
-		currentURL, err = currentPage.NewNextPageURL()
-		if err != nil {
-			return err
-		}
-		if currentURL == "" {
-			return nil
-		}
-	}
 }
 
 // EachPage iterates over each page returned by a Pager, yielding one at a time to a handler function.
@@ -314,6 +234,86 @@ func (p Pager) AllPages() (Page, error) {
 	// Type assert the page to a Page interface so that the type assertion in the
 	// `Extract*` methods will work.
 	return page.Elem().Interface().(Page), err
+}
+
+// NewPage must be satisfied by the result type of any resource collection.
+// It allows clients to interact with the resource uniformly, regardless of whether or not or how it's paginated.
+// Generally, rather than implementing this interface directly, implementors should embed one of the concrete PageBase structs,
+// instead.
+// Depending on the pagination strategy of a particular resource, there may be an additional subinterface that the result type
+// will need to implement.
+type NewPage interface {
+	// NewNextPageURL generates the URL for the page of data that follows this collection.
+	// Return "" if no such page exists.
+	NewNextPageURL() (string, error)
+
+	// NewIsEmpty returns true if this Page has no items in it.
+	NewIsEmpty() (bool, error)
+
+	// NewGetBody returns the Page Body. This is used in the `AllPages` method.
+	NewGetBody() []byte
+	// NewGetBodyAsSlice tries to convert page body to a slice.
+	NewGetBodyAsSlice() ([]any, error)
+	// NewGetBodyAsMap tries to convert page body to a map.
+	NewGetBodyAsMap() (map[string]any, error)
+}
+
+func (p Pager) newFetchNextPage(url string) (NewPage, error) {
+	resp, err := Request(p.Client, p.Headers, url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.CreatePage(NewPageResult{
+		Body:   rawBody,
+		Header: resp.Header,
+		URL:    *resp.Request.URL,
+	}), nil
+}
+
+// NewEachPage iterates over each page returned by a Pager, yielding one at a time to a handler function.
+// Return "false" from the handler to prematurely stop iterating.
+func (p Pager) NewEachPage(handler func(NewPage) (bool, error)) error {
+	if p.Err != nil {
+		return p.Err
+	}
+	currentURL := p.InitialURL
+	for {
+		currentPage, err := p.newFetchNextPage(currentURL)
+		if err != nil {
+			return err
+		}
+
+		empty, err := currentPage.NewIsEmpty()
+		if err != nil {
+			return err
+		}
+		if empty {
+			return nil
+		}
+
+		ok, err := handler(currentPage)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return nil
+		}
+
+		currentURL, err = currentPage.NewNextPageURL()
+		if err != nil {
+			return err
+		}
+		if currentURL == "" {
+			return nil
+		}
+	}
 }
 
 // NewAllPages returns all the pages from a `List` operation in a single page,

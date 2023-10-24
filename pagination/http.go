@@ -16,17 +16,6 @@ type PageResult struct {
 	url.URL
 }
 
-// NewPageResult stores the HTTP response that returned the current page of results.
-type NewPageResult struct {
-	// Body is the payload of the HTTP response from the server.
-	Body []byte
-
-	// Header contains the HTTP header structure from the original response.
-	Header http.Header
-
-	URL url.URL
-}
-
 func (r PageResult) GetBody() []byte {
 	return r.Body
 }
@@ -79,6 +68,17 @@ func Request(client *golangsdk.ServiceClient, headers map[string]string, url str
 	})
 }
 
+// NewPageResult stores the HTTP response that returned the current page of results.
+type NewPageResult struct {
+	// Body is the payload of the HTTP response from the server.
+	Body []byte
+
+	// Header contains the HTTP header structure from the original response.
+	Header http.Header
+
+	URL url.URL
+}
+
 func (r NewPageResult) NewGetBody() []byte {
 	return r.Body
 }
@@ -92,22 +92,6 @@ func (r NewPageResult) NewGetBodyAsMap() (map[string]any, error) {
 	}
 
 	return result, nil
-}
-
-// NewPageResultFrom parses an HTTP response as JSON and returns a PageResult containing the
-// results, interpreting it as JSON if the content type indicates.
-func NewPageResultFrom(resp *http.Response) (NewPageResult, error) {
-	defer resp.Body.Close()
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return NewPageResult{}, err
-	}
-
-	return NewPageResult{
-		Body:   rawBody,
-		Header: resp.Header,
-		URL:    *resp.Request.URL,
-	}, nil
 }
 
 // NewGetBodyAsSlice tries to convert page body to a slice, returning nil on fail
