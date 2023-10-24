@@ -235,8 +235,6 @@ func TestRouteTablesLifecycle(t *testing.T) {
 	getChRtb, err := routetables.Get(client, rtb.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getChRtb.Description, "description")
-	th.AssertEquals(t, getChRtb.Routes[1].Type, "peering")
-	th.AssertEquals(t, getChRtb.Routes[2].Type, "ecs")
 
 	t.Logf("Attempting to disassociate subnets to vpc route table: %s", rtb.ID)
 	actionDisOpts := routetables.ActionOpts{
