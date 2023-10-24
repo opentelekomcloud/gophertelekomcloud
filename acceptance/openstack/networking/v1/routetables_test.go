@@ -217,13 +217,13 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		}
 		addRouteEcsOpts := []routetables.RouteOpts{
 			{
-				Destination: "192.168.0.0/24",
+				Destination: "172.16.0.0/24",
 				Type:        "ecs",
 				NextHop:     ecs.ID,
 				Description: pointerto.String("route 2"),
 			},
 		}
-		routesEcsOpts["mod"] = addRouteEcsOpts
+		routesEcsOpts["add"] = addRouteEcsOpts
 		updateEcsOpts.Routes = routesEcsOpts
 		err = routetables.Update(client, rtb.ID, updateEcsOpts)
 		th.AssertNoErr(t, err)
