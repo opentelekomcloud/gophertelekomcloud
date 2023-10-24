@@ -1,13 +1,16 @@
 package v1
 
 import (
+	"log"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/routetables"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/peerings"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -26,6 +29,9 @@ func TestRouteTablesList(t *testing.T) {
 
 func TestRouteTablesLifecycle(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+
+	clientV2, err := clients.NewNetworkV2Client()
 	th.AssertNoErr(t, err)
 
 	// Create first vpc
@@ -99,6 +105,26 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		deleteVpc(t, client, vpc2.ID)
 	})
 
+	createOpts := peerings.CreateOpts{
+		Name: tools.RandomString("acc-peering-", 3),
+		RequestVpcInfo: peerings.VpcInfo{
+			VpcId: vpc1.ID,
+		},
+		AcceptVpcInfo: peerings.VpcInfo{
+			VpcId: vpc2.ID,
+		},
+	}
+	peering, err := peerings.Create(clientV2, createOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete vpc peering connection: %s", peering.ID)
+		err := peerings.Delete(clientV2, peering.ID).ExtractErr()
+		if err != nil {
+			t.Fatalf("Error deleting vpc peering connection: %v", err)
+		}
+	})
+
 	createRtbOpts := routetables.CreateOpts{
 		Name:        tools.RandomString("acc-rtb-", 3),
 		Description: "route table",
@@ -108,22 +134,42 @@ func TestRouteTablesLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		routetables.Delete(client, rtb.ID)
+		err = routetables.Delete(client, rtb.ID)
+		th.AssertNoErr(t, err)
 	})
 
 	getRtb, err := routetables.Get(client, rtb.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getRtb.Description, "route table")
 
-	// updateOpts := &vpcs.UpdateOpts{
-	// 	Name: tools.RandomString("acc-vpc-upd-", 3),
-	// }
-	//
-	// _, err = vpcs.Update(client, vpc.ID, updateOpts).Extract()
-	// th.AssertNoErr(t, err)
-	//
-	// newVpc, err := vpcs.Get(client, vpc.ID).Extract()
-	// th.AssertNoErr(t, err)
-	//
-	// tools.PrintResource(t, newVpc)
+	t.Logf("Attempting to associate subnets to vpc route table: %s", rtb.ID)
+	actionOpts := routetables.ActionOpts{
+		Subnets: routetables.ActionSubnetsOpts{
+			Associate: []string{subnet1.ID, subnet2.ID},
+		},
+	}
+	associate, err := routetables.Action(client, rtb.ID, actionOpts)
+	th.AssertNoErr(t, err)
+	if len(associate.Subnets) < 1 {
+		t.Fatalf("Number of associated subnet lower than expected")
+	}
+
+	log.Printf("Attempting to update VPC route table: %#v", rtb.ID)
+	routesOpts := map[string][]routetables.RouteOpts{}
+	updateOpts := routetables.UpdateOpts{
+		Name:        "First",
+		Description: pointerto.String("description"),
+	}
+	addRouteOpts := []routetables.RouteOpts{
+		{
+			Destination: "172.16.0.0/16",
+			Type:        "peering",
+			NextHop:     peering.ID,
+			Description: pointerto.String("route 1"),
+		},
+	}
+	routesOpts["add"] = addRouteOpts
+	updateOpts.Routes = routesOpts
+	err = routetables.Update(client, rtb.ID, updateOpts)
+	th.AssertNoErr(t, err)
 }
