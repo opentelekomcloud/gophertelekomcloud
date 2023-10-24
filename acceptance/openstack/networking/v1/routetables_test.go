@@ -85,7 +85,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		CIDR: "172.16.0.0/16",
 	}
 
-	t.Logf("Attempting to create first vpc: %s", createOpts2.Name)
+	t.Logf("Attempting to create second vpc: %s", createOpts2.Name)
 
 	vpc2, err := vpcs.Create(client, createOpts2).Extract()
 	th.AssertNoErr(t, err)
@@ -98,7 +98,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		GatewayIP:   "172.16.10.1",
 		VpcID:       vpc2.ID,
 	}
-	t.Logf("Attempting to create second subnet: %s", createSubnetOpts3.Name)
+	t.Logf("Attempting to create subnet for second vpc: %s", createSubnetOpts3.Name)
 
 	subnet3, err := subnets.Create(client, createSubnetOpts3).Extract()
 	th.AssertNoErr(t, err)
@@ -107,7 +107,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		deleteSubnet(t, client, subnet3.VpcID, subnet3.ID)
 		deleteVpc(t, client, vpc2.ID)
 	})
-
+	t.Logf("Attempting to create peering connection between first and second vpc")
 	createOpts := peerings.CreateOpts{
 		Name: tools.RandomString("acc-peering-", 3),
 		RequestVpcInfo: peerings.VpcInfo{
@@ -128,6 +128,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		}
 	})
 
+	t.Logf("Attempting to create route table")
 	createRtbOpts := routetables.CreateOpts{
 		Name:        tools.RandomString("acc-rtb-", 3),
 		Description: "route table",
@@ -141,6 +142,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
+	t.Logf("Attempting to get route table: %s", rtb.ID)
 	getRtb, err := routetables.Get(client, rtb.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getRtb.Description, "route table")
@@ -181,12 +183,13 @@ func TestRouteTablesLifecycle(t *testing.T) {
 	flavorId := os.Getenv("OS_FLAVOR_ID")
 	az := os.Getenv("OS_AVAILABILITY_ZONE")
 	if imageId != "" && flavorId != "" && az != "" {
+		sererName := tools.RandomString("acc-ecs-", 3)
 		clientCompute, err := clients.NewComputeV1Client()
 		th.AssertNoErr(t, err)
 		createEcsOpts := cloudservers.CreateOpts{
 			ImageRef:  imageId,
 			FlavorRef: flavorId,
-			Name:      tools.RandomString("acc-ecs-", 3),
+			Name:      sererName,
 			VpcId:     vpc1.ID,
 			Nics: []cloudservers.Nic{
 				{
@@ -204,6 +207,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 			},
 			AvailabilityZone: az,
 		}
+		t.Logf("Attempting to create cloud server: %s", sererName)
 		ecs := openstack.CreateCloudServer(t, clientCompute, createEcsOpts)
 		t.Cleanup(func() {
 			openstack.DeleteCloudServer(t, clientCompute, ecs.ID)
@@ -231,6 +235,8 @@ func TestRouteTablesLifecycle(t *testing.T) {
 	getChRtb, err := routetables.Get(client, rtb.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getChRtb.Description, "description")
+	th.AssertEquals(t, getChRtb.Routes[1].Type, "peering")
+	th.AssertEquals(t, getChRtb.Routes[2].Type, "ecs")
 
 	t.Logf("Attempting to disassociate subnets to vpc route table: %s", rtb.ID)
 	actionDisOpts := routetables.ActionOpts{

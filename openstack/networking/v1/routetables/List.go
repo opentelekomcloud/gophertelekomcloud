@@ -75,6 +75,8 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]RouteTable, error) 
 			return RouteTablePage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
-
+	if err != nil {
+		return nil, err
+	}
 	return ExtractRouteTables(pages)
 }
