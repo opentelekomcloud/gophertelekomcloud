@@ -2,11 +2,14 @@ package v1
 
 import (
 	"log"
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/routetables"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
@@ -154,7 +157,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 		t.Fatalf("Number of associated subnet lower than expected")
 	}
 
-	log.Printf("Attempting to update VPC route table: %#v", rtb.ID)
+	log.Printf("Attempting to update VPC route table with peering route: %#v", rtb.ID)
 	routesOpts := map[string][]routetables.RouteOpts{}
 	updateOpts := routetables.UpdateOpts{
 		Name:        "First",
@@ -172,4 +175,72 @@ func TestRouteTablesLifecycle(t *testing.T) {
 	updateOpts.Routes = routesOpts
 	err = routetables.Update(client, rtb.ID, updateOpts)
 	th.AssertNoErr(t, err)
+
+	// ECS
+	imageId := os.Getenv("OS_IMAGE_ID")
+	flavorId := os.Getenv("OS_FLAVOR_ID")
+	az := os.Getenv("OS_AVAILABILITY_ZONE")
+	if imageId != "" && flavorId != "" && az != "" {
+		clientCompute, err := clients.NewComputeV1Client()
+		th.AssertNoErr(t, err)
+		createEcsOpts := cloudservers.CreateOpts{
+			ImageRef:  imageId,
+			FlavorRef: flavorId,
+			Name:      tools.RandomString("acc-ecs-", 3),
+			VpcId:     vpc1.ID,
+			Nics: []cloudservers.Nic{
+				{
+					SubnetId: subnet1.NetworkID,
+				},
+			},
+			RootVolume: cloudservers.RootVolume{
+				VolumeType: "SSD",
+			},
+			DataVolumes: []cloudservers.DataVolume{
+				{
+					VolumeType: "SSD",
+					Size:       40,
+				},
+			},
+			AvailabilityZone: az,
+		}
+		ecs := openstack.CreateCloudServer(t, clientCompute, createEcsOpts)
+		t.Cleanup(func() {
+			openstack.DeleteCloudServer(t, clientCompute, ecs.ID)
+		})
+
+		log.Printf("Attempting to update VPC route table with ecs route: %#v", rtb.ID)
+		routesEcsOpts := map[string][]routetables.RouteOpts{}
+		updateEcsOpts := routetables.UpdateOpts{
+			Name:        "First",
+			Description: pointerto.String("description"),
+		}
+		addRouteEcsOpts := []routetables.RouteOpts{
+			{
+				Destination: "192.168.0.0/24",
+				Type:        "ecs",
+				NextHop:     ecs.ID,
+				Description: pointerto.String("route 2"),
+			},
+		}
+		routesEcsOpts["mod"] = addRouteEcsOpts
+		updateEcsOpts.Routes = routesEcsOpts
+		err = routetables.Update(client, rtb.ID, updateEcsOpts)
+		th.AssertNoErr(t, err)
+	}
+	getChRtb, err := routetables.Get(client, rtb.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, getChRtb.Description, "description")
+
+	t.Logf("Attempting to disassociate subnets to vpc route table: %s", rtb.ID)
+	actionDisOpts := routetables.ActionOpts{
+		Subnets: routetables.ActionSubnetsOpts{
+			Disassociate: []string{subnet1.ID, subnet2.ID},
+		},
+	}
+	disassociate, err := routetables.Action(client, rtb.ID, actionDisOpts)
+	th.AssertNoErr(t, err)
+	if len(disassociate.Subnets) > 1 {
+		t.Fatalf("Number of associated subnet higher than expected")
+	}
 }

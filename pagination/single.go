@@ -6,13 +6,18 @@ import (
 
 // SinglePageBase may be embedded in a Page that contains all the results from an operation at once.
 // Deprecated: use element slice as a return result.
-type SinglePageBase struct {
-	PageResult
+type SinglePageBase PageResult
+
+func (current SinglePageBase) GetBody() []byte {
+	return current.Body
 }
 
-// NewSinglePageBase may be embedded in a Page that contains all the results from an operation at once.
-type NewSinglePageBase struct {
-	NewPageResult
+func (current SinglePageBase) GetBodyAsSlice() ([]interface{}, error) {
+	return PageResult(current).GetBodyAsSlice()
+}
+
+func (current SinglePageBase) GetBodyAsMap() (map[string]interface{}, error) {
+	return PageResult(current).GetBodyAsMap()
 }
 
 // NextPageURL always returns "" to indicate that there are no more pages to return.
@@ -28,6 +33,11 @@ func (current SinglePageBase) IsEmpty() (bool, error) {
 	}
 
 	return len(body) == 0, nil
+}
+
+// NewSinglePageBase may be embedded in a Page that contains all the results from an operation at once.
+type NewSinglePageBase struct {
+	NewPageResult
 }
 
 // NewNextPageURL always returns "" to indicate that there are no more pages to return.
