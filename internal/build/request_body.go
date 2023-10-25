@@ -69,3 +69,24 @@ func RequestBody(opts interface{}, parent string) (*Body, error) {
 		Wrapped: opts,
 	}, nil
 }
+
+func (r Body) ToMap() (map[string]interface{}, error) {
+	var res map[string]interface{}
+
+	marshal, err := r.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(marshal, &res)
+	return res, err
+}
+
+func RequestBodyMap(opts interface{}, parent string) (map[string]interface{}, error) {
+	body, err := RequestBody(opts, parent)
+	if err != nil {
+		return nil, err
+	}
+
+	return body.ToMap()
+}
