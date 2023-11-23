@@ -46,6 +46,9 @@ type CreateOpts struct {
 	SecurityGroupsId []string `json:"security_group" required:"true"`
 	// Number of dedicated engines to be provisioned
 	Count int `json:"count" required:"true"`
+	// Whether to create a dedicated engine instance of the network interface type.
+	// Its value has to be true.
+	ResTenant *bool `json:"res_tenant" required:"true"`
 }
 
 // Create will create a new instance on the values in CreateOpts.

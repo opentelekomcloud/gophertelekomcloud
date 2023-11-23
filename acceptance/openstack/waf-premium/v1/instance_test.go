@@ -7,6 +7,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -41,6 +42,7 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 		Flavor:           "s3.2xlarge.2",
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
+		ResTenant:        pointerto.Bool(true),
 		SecurityGroupsId: []string{openstack.DefaultSecurityGroup(t)},
 	}
 
