@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -23,6 +24,19 @@ func TestCloudServerLifecycle(t *testing.T) {
 	// Create ECSv1 instance
 	ecs := openstack.CreateCloudServer(t, client, createOpts)
 	defer openstack.DeleteCloudServer(t, client, ecs.ID)
+
+	tagsList := []tags.ResourceTag{
+		{
+			Key:   "TestKey",
+			Value: "TestValue",
+		},
+		{
+			Key:   "empty",
+			Value: "",
+		},
+	}
+	err = tags.Create(client, "cloudservers", ecs.ID, tagsList).ExtractErr()
+	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, ecs)
 }
