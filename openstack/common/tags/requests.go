@@ -13,7 +13,7 @@ type ActionOptsBuilder interface {
 // ResourceTag is in key-value format
 type ResourceTag struct {
 	Key   string `json:"key" required:"true"`
-	Value string `json:"value,omitempty"`
+	Value string `json:"value"`
 }
 
 // ActionOpts is a struct contains the parameters of creating/deleting tags
