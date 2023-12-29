@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -11,6 +12,10 @@ import (
 )
 
 func TestVPCV3Listing(t *testing.T) {
+	region := os.Getenv("OS_REGION_NAME")
+	if region != "eu-ch2" {
+		t.Skip("Currently VPC V3 only works in SWISS region")
+	}
 	client, err := clients.NewVPCV3Client()
 	th.AssertNoErr(t, err)
 
@@ -24,6 +29,10 @@ func TestVPCV3Listing(t *testing.T) {
 }
 
 func TestVPCV3Lifecycle(t *testing.T) {
+	region := os.Getenv("OS_REGION_NAME")
+	if region != "eu-ch2" {
+		t.Skip("Currently VPC V3 only works in SWISS region")
+	}
 	clientV1, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
