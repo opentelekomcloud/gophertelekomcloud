@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -46,6 +47,7 @@ func TestSubnetsLifecycle(t *testing.T) {
 	updateOpts := &subnets.UpdateOpts{
 		Name:        tools.RandomString("acc-subnet-", 3),
 		Description: &emptyDescription,
+		EnableIpv6:  pointerto.Bool(true),
 	}
 	t.Logf("Attempting to update name of subnet to %s", updateOpts.Name)
 	_, err = subnets.Update(client, subnet.VpcID, subnet.ID, updateOpts).Extract()
@@ -56,4 +58,5 @@ func TestSubnetsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newSubnet.Name)
 	th.AssertEquals(t, emptyDescription, newSubnet.Description)
+	th.AssertEquals(t, true, newSubnet.EnableIpv6)
 }
