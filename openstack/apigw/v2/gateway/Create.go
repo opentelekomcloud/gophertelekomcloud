@@ -33,7 +33,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*GatewayResp, err
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("apigw/instances"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("apigw", "instances"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
 	if err != nil {

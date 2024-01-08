@@ -11,7 +11,7 @@ func UpdateEIP(client *golangsdk.ServiceClient, opts EipOpts) error {
 		return err
 	}
 
-	_, err = client.Put(client.ServiceURL("apigw/instances", opts.ID, "nat-eip"), b, nil, &golangsdk.RequestOpts{
+	_, err = client.Put(client.ServiceURL("apigw", "instances", opts.ID, "nat-eip"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

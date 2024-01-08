@@ -6,7 +6,7 @@ import (
 )
 
 func Get(client *golangsdk.ServiceClient, id string) (*Gateway, error) {
-	raw, err := client.Get(client.ServiceURL("apigw/instances", id), nil, nil)
+	raw, err := client.Get(client.ServiceURL("apigw", "instances", id), nil, nil)
 	if err != nil {
 		return nil, err
 	}

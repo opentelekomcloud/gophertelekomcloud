@@ -22,7 +22,7 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Gateway, error) 
 		return nil, err
 	}
 
-	raw, err := client.Put(client.ServiceURL("apigw/instances", opts.ID), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("apigw", "instances", opts.ID), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

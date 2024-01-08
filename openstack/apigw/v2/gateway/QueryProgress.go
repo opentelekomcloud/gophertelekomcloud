@@ -6,7 +6,7 @@ import (
 )
 
 func QueryProgress(client *golangsdk.ServiceClient, id string) (*Progress, error) {
-	raw, err := client.Get(client.ServiceURL("apigw/instances", id, "progress"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("apigw", "instances", id, "progress"), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -40,6 +40,9 @@ func TestGatewayLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, WaitForJob(client, createResp.InstanceID, 1800))
+	t.Cleanup(func() {
+		th.AssertNoErr(t, gateway.Delete(client, createResp.InstanceID))
+	})
 
 	updateOpts := gateway.UpdateOpts{
 		Description:   "it's not getting better",
@@ -70,8 +73,6 @@ func TestGatewayLifecycle(t *testing.T) {
 	}))
 
 	th.AssertNoErr(t, gateway.DisableEIP(client, createResp.InstanceID))
-
-	th.AssertNoErr(t, gateway.Delete(client, createResp.InstanceID))
 }
 
 func TestGatewayList(t *testing.T) {
