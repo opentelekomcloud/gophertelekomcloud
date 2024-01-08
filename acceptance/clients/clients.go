@@ -803,6 +803,17 @@ func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
 	return openstack.NewGaussDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
 }
 
+// NewAPIGWClient returns authenticated LTS v2 client
+func NewAPIGWClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewAPIGW(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
