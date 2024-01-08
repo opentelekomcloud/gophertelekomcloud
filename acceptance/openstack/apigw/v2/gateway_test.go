@@ -39,8 +39,6 @@ func TestGatewayLifecycle(t *testing.T) {
 	createResp, err := gateway.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	tools.PrintResource(t, createResp)
-
 	th.AssertNoErr(t, WaitForJob(client, createResp.InstanceID, 1800))
 
 	updateOpts := gateway.UpdateOpts{
@@ -80,9 +78,8 @@ func TestGatewayList(t *testing.T) {
 	client, err := clients.NewAPIGWClient()
 	th.AssertNoErr(t, err)
 
-	listResp, err := gateway.List(client, gateway.ListOpts{})
+	_, err = gateway.List(client, gateway.ListOpts{})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, listResp)
 }
 
 func WaitForJob(c *golangsdk.ServiceClient, id string, secs int) error {
