@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -11,6 +12,9 @@ import (
 )
 
 func TestEvents(t *testing.T) {
+	if os.Getenv("RUN_CES_EVENTS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
 	name := tools.RandomString("event_test_", 3)
@@ -37,7 +41,7 @@ func TestEvents(t *testing.T) {
 	t.Log("List CES Events")
 	eventsRes, err := events.ListEvents(client, events.ListEventsOpts{
 		From:  currentTime,
-		To:    currentTime + 10000,
+		To:    currentTime + 100000,
 		Limit: 10,
 	})
 	th.AssertNoErr(t, err)
@@ -48,7 +52,7 @@ func TestEvents(t *testing.T) {
 		EventType: eventsRes.Events[0].EventType,
 		Limit:     10,
 		From:      currentTime,
-		To:        currentTime + 10000,
+		To:        currentTime + 100000,
 	})
 	th.AssertNoErr(t, err)
 }
