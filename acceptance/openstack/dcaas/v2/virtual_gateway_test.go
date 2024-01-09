@@ -26,6 +26,9 @@ func TestVirtualGatewayListing(t *testing.T) {
 }
 
 func TestVirtualGatewayLifecycle(t *testing.T) {
+	if os.Getenv("OS_VPC_ID") == "" {
+		t.Skip("OS_VPC_ID necessary for this test")
+	}
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 
