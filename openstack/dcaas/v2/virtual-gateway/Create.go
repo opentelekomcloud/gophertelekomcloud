@@ -23,6 +23,8 @@ type CreateOpts struct {
 	RedundantDeviceId string `json:"redundant_device_id,omitempty"`
 	// Specifies the virtual gateway type. The value can only be default.
 	Type string `json:"type"`
+	// Specifies the project ID.
+	ProjectId string `json:"tenant_id,omitempty"`
 	// Specifies the administrative status of the virtual gateway.
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 }
