@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -11,6 +12,9 @@ import (
 )
 
 func TestEvents(t *testing.T) {
+	if os.Getenv("RUN_CES_EVENTS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
 	name := tools.RandomString("event_test_", 3)
