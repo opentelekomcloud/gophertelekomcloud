@@ -10,7 +10,7 @@ import (
 
 type ListOpts struct {
 	Limit        int    `q:"limit"`
-	InstanceID   string `json:"-"`
+	GatewayID    string `json:"-"`
 	InstanceName string `q:"instance_name"`
 	Status       string `q:"status"`
 }
@@ -22,7 +22,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]GroupResp, error) {
 	}
 	pages, err := pagination.Pager{
 		Client:     client,
-		InitialURL: client.ServiceURL("apigw", "instances", opts.InstanceID, "api-groups") + q.String(),
+		InitialURL: client.ServiceURL("apigw", "instances", opts.GatewayID, "api-groups") + q.String(),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
 			return GroupPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},

@@ -60,7 +60,7 @@ func TestGroupList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listResp, err := group.List(client, group.ListOpts{
-		InstanceID: gatewayId,
+		GatewayID: gatewayId,
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listResp)
