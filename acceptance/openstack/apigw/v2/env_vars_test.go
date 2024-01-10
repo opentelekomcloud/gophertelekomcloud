@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -10,9 +11,9 @@ import (
 )
 
 func TestEnvVarsLifecycle(t *testing.T) {
-	gatewayID := clients.EnvOS.GetEnv("GATEWAY_ID")
-	groupID := clients.EnvOS.GetEnv("GROUP_ID")
-	envID := clients.EnvOS.GetEnv("ENV_ID")
+	gatewayID := os.Getenv("GATEWAY_ID")
+	groupID := os.Getenv("GROUP_ID")
+	envID := os.Getenv("ENV_ID")
 
 	if gatewayID == "" || groupID == "" || envID == "" {
 		t.Skip("All of `GATEWAY_ID`, `GROUP_ID` and `ENV_ID` needs to be defined")
@@ -46,8 +47,8 @@ func TestEnvVarsLifecycle(t *testing.T) {
 }
 
 func TestEnvVarsList(t *testing.T) {
-	gatewayID := clients.EnvOS.GetEnv("GATEWAY_ID")
-	groupID := clients.EnvOS.GetEnv("GROUP_ID")
+	gatewayID := os.Getenv("GATEWAY_ID")
+	groupID := os.Getenv("GROUP_ID")
 
 	if gatewayID == "" || groupID == "" {
 		t.Skip("Both `GATEWAY_ID` and `GROUP_ID` needs to be defined")
