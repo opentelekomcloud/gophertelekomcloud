@@ -28,9 +28,9 @@ func TestVirtualInterfaceListing(t *testing.T) {
 }
 
 func TestVirtualInterfaceLifecycle(t *testing.T) {
-	if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
-		t.Skip("DIRECT_CONNECT_ID necessary for this test or run it only in test_terraform")
-	}
+	// if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
+	// 	t.Skip("DIRECT_CONNECT_ID necessary for this test or run it only in test_terraform")
+	// }
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 	dcId := os.Getenv("DIRECT_CONNECT_ID")
@@ -88,7 +88,7 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 	})
 
 	// Create a virtual interface
-	name := tools.RandomString("test-virtual-interface", 5)
+	name := tools.RandomString("test-virtual-interface-", 5)
 	createOpts := virtual_interface.CreateOpts{
 		Name:              name,
 		DirectConnectID:   dcId,
@@ -110,8 +110,8 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vi.RemoteEPGroupID, remoteEg.ID)
 
-	_ = virtual_interface.Update(client, created.ID, virtual_interface.UpdateOpts{
-		Name:        tools.RandomString(name, 3),
+	err = virtual_interface.Update(client, created.ID, virtual_interface.UpdateOpts{
+		Name:        name + "-updated",
 		Description: "New description",
 	})
 	th.AssertNoErr(t, err)
