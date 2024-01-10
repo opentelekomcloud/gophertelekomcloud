@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestGroupLifecycle(t *testing.T) {
-	gatewayId := clients.EnvOS.GetEnv("GATEWAY_ID")
+	gatewayId := os.Getenv("GATEWAY_ID")
 
 	if gatewayId == "" {
 		t.Skip("`GATEWAY_ID` need to be defined")
@@ -50,7 +51,7 @@ func TestGroupLifecycle(t *testing.T) {
 }
 
 func TestGroupList(t *testing.T) {
-	gatewayId := clients.EnvOS.GetEnv("GATEWAY_ID")
+	gatewayId := os.Getenv("GATEWAY_ID")
 
 	if gatewayId == "" {
 		t.Skip("`GATEWAY_ID` need to be defined")
