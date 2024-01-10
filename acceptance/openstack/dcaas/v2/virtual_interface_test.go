@@ -28,9 +28,9 @@ func TestVirtualInterfaceListing(t *testing.T) {
 }
 
 func TestVirtualInterfaceLifecycle(t *testing.T) {
-	// if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
-	// 	t.Skip("DIRECT_CONNECT_ID necessary for this test or run it only in test_terraform")
-	// }
+	if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
+		t.Skip("DIRECT_CONNECT_ID necessary for this test or run it only in test_terraform")
+	}
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 	dcId := os.Getenv("DIRECT_CONNECT_ID")
