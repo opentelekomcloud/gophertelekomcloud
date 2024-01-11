@@ -486,3 +486,33 @@ func TestBackupRestorePointInTime(t *testing.T) {
 	th.AssertNoErr(t, err)
 	_ = instances.WaitForJobCompleted(client, 600, pitr)
 }
+
+func TestRdsAutoScaling(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance")
+
+	// Create MySql RDSv3 instance
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+	th.AssertEquals(t, rds.Volume.Size, 100)
+
+	err = instances.ManageAutoScaling(client, rds.Id, instances.ScalingOpts{
+		SwitchOption:     true,
+		LimitSize:        pointerto.Int(40),
+		TriggerThreshold: pointerto.Int(20),
+	})
+	th.AssertNoErr(t, err)
+
+	scaling, err := instances.GetAutoScaling(client, rds.Id)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, scaling)
+}
