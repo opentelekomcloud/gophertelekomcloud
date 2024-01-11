@@ -12,6 +12,6 @@ func GetAutoScaling(client *golangsdk.ServiceClient, id string) (*ScalingOpts, e
 		return nil, err
 	}
 	var res ScalingOpts
-	err = extract.IntoStructPtr(raw.Body, &res, "backup")
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
