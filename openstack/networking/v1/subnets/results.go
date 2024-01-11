@@ -31,6 +31,9 @@ type Subnet struct {
 	// Specifies whether the DHCP function is enabled for the subnet.
 	EnableDHCP bool `json:"dhcp_enable"`
 
+	// Specifies whether an IPv6 subnet can be created.
+	EnableIpv6 bool `json:"ipv6_enable"`
+
 	// Specifies the IP address of DNS server 1 on the subnet.
 	PrimaryDNS string `json:"primary_dns"`
 

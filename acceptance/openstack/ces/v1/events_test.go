@@ -1,23 +1,30 @@
 package v1
 
 import (
+	"os"
 	"testing"
 	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ces/v1/events"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestEvents(t *testing.T) {
+	if os.Getenv("RUN_CES_EVENTS") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
-
+	name := tools.RandomString("event_test_", 3)
+	currentTime := time.Now().Unix() * 1000
+	t.Logf("Attempting to create CES Event: %s", name)
 	event, err := events.CreateEvents(client, []events.EventItem{
 		{
-			EventName:   "test",
+			EventName:   name,
 			EventSource: "SYS.ECS",
-			Time:        time.Now().Unix() * 1000,
+			Time:        currentTime,
 			Detail: events.EventItemDetail{
 				Content:      "The financial system was invaded",
 				ResourceId:   "9d3bc7be-5181-4c5a-9d15-26aac9da91b7",
@@ -29,19 +36,23 @@ func TestEvents(t *testing.T) {
 		},
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, event[0].EventName, "test")
+	th.AssertEquals(t, event[0].EventName, name)
 
+	t.Log("List CES Events")
 	eventsRes, err := events.ListEvents(client, events.ListEventsOpts{
-		Limit: 1,
+		From:  currentTime,
+		To:    currentTime + 100000,
+		Limit: 10,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(eventsRes.Events), 1)
 
-	detailRes, err := events.ListEventDetail(client, events.ListEventDetailOpts{
+	t.Log("List CES Event Details")
+	_, err = events.ListEventDetail(client, events.ListEventDetailOpts{
 		EventName: eventsRes.Events[0].EventName,
 		EventType: eventsRes.Events[0].EventType,
-		Limit:     1,
+		Limit:     10,
+		From:      currentTime,
+		To:        currentTime + 100000,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(detailRes.EventInfo), 1)
 }

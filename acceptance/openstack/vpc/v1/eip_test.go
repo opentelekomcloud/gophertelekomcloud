@@ -13,9 +13,11 @@ func TestEIPListing(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
+	eipName := tools.RandomString("eip-test-", 5)
 	eipCreateOpts := eips.ApplyOpts{
 		IP: eips.PublicIpOpts{
 			Type: "5_bgp",
+			Name: eipName,
 		},
 		Bandwidth: eips.BandwidthOpts{
 			ShareType: "PER",

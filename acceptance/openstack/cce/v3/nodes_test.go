@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -104,6 +105,10 @@ func (s *testNodes) TestNodeLifecycle() {
 				DockerBaseSize: 20,
 			},
 		},
+	}
+
+	if v := os.Getenv("OS_AGENCY_NAME"); v != "" {
+		opts.Spec.ExtendParam.AgencyName = v
 	}
 
 	node, err := nodes.Create(client, s.clusterID, opts).Extract()

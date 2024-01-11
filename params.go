@@ -15,7 +15,7 @@ BuildRequestBody builds a map[string]interface from the given `struct`. If
 parent is not an empty string, the final map[string]interface returned will
 encapsulate the built one.
 
-Deprecated: use `internal/params.BuildRequestBody` instead.
+Deprecated: use `build.RequestBody` instead.
 
 For example:
 

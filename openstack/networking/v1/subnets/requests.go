@@ -118,6 +118,7 @@ type CreateOpts struct {
 	Description      string         `json:"description,omitempty"`
 	CIDR             string         `json:"cidr" required:"true"`
 	DNSList          []string       `json:"dnsList,omitempty"`
+	EnableIpv6       *bool          `json:"ipv6_enable,omitempty"`
 	GatewayIP        string         `json:"gateway_ip" required:"true"`
 	EnableDHCP       *bool          `json:"dhcp_enable,omitempty"`
 	PrimaryDNS       string         `json:"primary_dns,omitempty"`
@@ -169,6 +170,7 @@ type UpdateOpts struct {
 	Name          string         `json:"name,omitempty"`
 	Description   *string        `json:"description,omitempty"`
 	EnableDHCP    *bool          `json:"dhcp_enable,omitempty"`
+	EnableIpv6    *bool          `json:"ipv6_enable,omitempty"`
 	PrimaryDNS    string         `json:"primary_dns,omitempty"`
 	SecondaryDNS  string         `json:"secondary_dns,omitempty"`
 	DNSList       []string       `json:"dnsList,omitempty"`

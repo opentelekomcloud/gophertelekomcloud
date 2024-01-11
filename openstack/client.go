@@ -669,6 +669,17 @@ func NewVpcEpV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*g
 	return sc, err
 }
 
+// NewVpcV3 creates a ServiceClient that may be used with the v3 VPC service
+func NewVpcV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "vpc")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "v3", 1)
+	sc.ResourceBase = sc.Endpoint + "vpc/"
+	return sc, err
+}
+
 // NewNatV2 creates a ServiceClient that may be used with the v2 nat package.
 func NewNatV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "nat")
@@ -688,6 +699,11 @@ func NewMapReduceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts)
 // package.
 func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "antiddos")
+}
+
+// NewDCaaSV2 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
+func NewDCaaSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "dcaas")
 }
 
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
@@ -854,6 +870,15 @@ func NewSMNV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewSMNV2Tags creates a ServiceClient that may be used to access the SMN tags service.
+func NewSMNV2Tags(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "smnv2")
+	if err != nil {
+		return nil, err
+	}
+	return sc, err
+}
+
 // NewCCEv1 creates a ServiceClient that may be used to access the CCE k8s service.
 func NewCCEv1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "cce")
@@ -876,6 +901,26 @@ func NewWAFV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 		return nil, err
 	}
 	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/waf/"
+	return sc, err
+}
+
+// NewWAFDSwissV1 creates a ServiceClient that may be used to access the premium WAF service.
+func NewWAFDSwissV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "waf")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "v1/" + client.ProjectID + "/"
+	return sc, err
+}
+
+// NewWAFDV1 creates a ServiceClient that may be used to access the premium WAF service.
+func NewWAFDV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "premium-waf")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint
 	return sc, err
 }
 
@@ -904,4 +949,23 @@ func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	serviceClient.Endpoint = strings.Replace(serviceClient.Endpoint, "smn", "swr-api", 1)
 	serviceClient.ResourceBase = serviceClient.Endpoint
 	return serviceClient, err
+}
+
+// NewTMSV1 creates a ServiceClient that may be used to access the TMS service.
+func NewTMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "tms")
+}
+
+func NewGaussDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "gaussdb", "mysql/v3")
+	return sc, err
+}
+
+func NewDataArtsV11(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initCommonServiceClient(client, eo, "cdm", "v1.1")
+}
+
+func NewAPIGW(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "apig", "v2")
+	return sc, err
 }

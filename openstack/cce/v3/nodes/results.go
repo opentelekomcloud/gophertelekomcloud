@@ -154,6 +154,8 @@ type VolumeSpec struct {
 type ExtendParam struct {
 	// Node charging mode, 0 is on-demand charging.
 	ChargingMode int `json:"chargingMode,omitempty"`
+	// Specifies the IAM agency name.
+	AgencyName string `json:"agency_name,omitempty"`
 	// Classification of cloud server specifications.
 	EcsPerformanceType string `json:"ecs:performancetype,omitempty"`
 	// Order ID, mandatory when the node payment type is the automatic payment package period type.

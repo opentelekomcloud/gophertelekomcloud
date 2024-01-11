@@ -1,7 +1,8 @@
 package pagination
 
 import (
-	"io/ioutil"
+	"bytes"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -15,11 +16,15 @@ type PageResult struct {
 	url.URL
 }
 
-// GetBodyAsSlice tries to convert page body to a slice, returning nil on fail
-func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
-	result := make([]interface{}, 0)
+func (r PageResult) GetBody() []byte {
+	return r.Body
+}
 
-	if err := extract.Into(r.BodyReader(), &result); err != nil {
+// GetBodyAsSlice tries to convert page body to a slice, returning nil on fail
+func (r PageResult) GetBodyAsSlice() ([]any, error) {
+	result := make([]any, 0)
+
+	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
 		return nil, err
 	}
 
@@ -27,10 +32,10 @@ func (r PageResult) GetBodyAsSlice() ([]interface{}, error) {
 }
 
 // GetBodyAsMap tries to convert page body to a map, returning nil on fail
-func (r PageResult) GetBodyAsMap() (map[string]interface{}, error) {
-	result := make(map[string]interface{}, 0)
+func (r PageResult) GetBodyAsMap() (map[string]any, error) {
+	result := make(map[string]any, 0)
 
-	if err := extract.Into(r.BodyReader(), &result); err != nil {
+	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
 		return nil, err
 	}
 
@@ -41,7 +46,7 @@ func (r PageResult) GetBodyAsMap() (map[string]interface{}, error) {
 // results, interpreting it as JSON if the content type indicates.
 func PageResultFrom(resp *http.Response) (PageResult, error) {
 	defer resp.Body.Close()
-	rawBody, err := ioutil.ReadAll(resp.Body)
+	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return PageResult{}, err
 	}
@@ -61,4 +66,41 @@ func Request(client *golangsdk.ServiceClient, headers map[string]string, url str
 		MoreHeaders: headers,
 		OkCodes:     []int{200, 204, 300},
 	})
+}
+
+// NewPageResult stores the HTTP response that returned the current page of results.
+type NewPageResult struct {
+	// Body is the payload of the HTTP response from the server.
+	Body []byte
+
+	// Header contains the HTTP header structure from the original response.
+	Header http.Header
+
+	URL url.URL
+}
+
+func (r NewPageResult) NewGetBody() []byte {
+	return r.Body
+}
+
+// NewGetBodyAsMap tries to convert page body to a map, returning nil on fail
+func (r NewPageResult) NewGetBodyAsMap() (map[string]any, error) {
+	result := make(map[string]any, 0)
+
+	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// NewGetBodyAsSlice tries to convert page body to a slice, returning nil on fail
+func (r NewPageResult) NewGetBodyAsSlice() ([]any, error) {
+	result := make([]any, 0)
+
+	if err := extract.Into(bytes.NewReader(r.Body), &result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

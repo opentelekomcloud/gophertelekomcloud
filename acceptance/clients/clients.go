@@ -145,6 +145,20 @@ func NewCTSV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDCaaSV2Client returns a *ServiceClient for making calls
+// to the OpenStack v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDCaaSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
@@ -301,6 +315,17 @@ func NewVPCEndpointV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewVpcEpV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewVPCV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewVpcV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
@@ -530,6 +555,19 @@ func NewWafV1Client() (*golangsdk.ServiceClient, error) {
 	return openstack.NewWAFV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
 }
 
+// NewWafdV1Client returns authenticated WAF premium v1 client
+func NewWafdV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	if cc.RegionName != "eu-ch2" {
+		return openstack.NewWAFDV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+	} else {
+		return openstack.NewWAFDSwissV1(cc.ProviderClient, golangsdk.EndpointOpts{Region: cc.RegionName})
+	}
+}
+
 // NewCsbsV1Client returns authenticated CSBS v1 client
 func NewCsbsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -599,6 +637,17 @@ func NewVbsV2Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 	return openstack.NewVBSServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDataArtsV11Client returns authenticated DataArts v1.1 client
+func NewDataArtsV11Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDataArtsV11(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
@@ -700,6 +749,29 @@ func NewSmnV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewSmnV2TagsClient returns authenticated SMN v2 tags client
+func NewSmnV2TagsClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewSMNV2Tags(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewTmsV1Client returns authenticated TMS v1.0 client
+func NewTmsV1Client() (client *golangsdk.ServiceClient, err error) {
+	iamClient, err := NewIdentityV3AdminClient()
+	if err != nil {
+		return nil, err
+	}
+
+	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "v3", "v1.0", 1)
+	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "iam", "tms", 1)
+	return iamClient, err
+}
+
 // NewCesV1Client returns authenticated CES v1 client
 func NewCesV1Client() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
@@ -718,6 +790,26 @@ func NewLtsV2Client() (client *golangsdk.ServiceClient, err error) {
 		return nil, err
 	}
 	return openstack.NewLTSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewGaussDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
+// NewAPIGWClient returns authenticated LTS v2 client
+func NewAPIGWClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewAPIGW(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }

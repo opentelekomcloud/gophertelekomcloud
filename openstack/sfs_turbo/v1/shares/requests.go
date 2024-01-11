@@ -43,6 +43,7 @@ type CreateOpts struct {
 // Metadata specifies the metadata information
 type Metadata struct {
 	CryptKeyID string `json:"crypt_key_id,omitempty"`
+	ExpandType string `json:"expand_type,omitempty"`
 }
 
 // ToShareCreateMap assembles a request body based on the contents of a
