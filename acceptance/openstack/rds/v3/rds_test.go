@@ -507,7 +507,7 @@ func TestRdsAutoScaling(t *testing.T) {
 
 	err = instances.ManageAutoScaling(client, rds.Id, instances.ScalingOpts{
 		SwitchOption:     true,
-		LimitSize:        pointerto.Int(40),
+		LimitSize:        pointerto.Int(200),
 		TriggerThreshold: pointerto.Int(20),
 	})
 	th.AssertNoErr(t, err)

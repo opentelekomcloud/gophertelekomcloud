@@ -17,7 +17,9 @@ func ManageAutoScaling(client *golangsdk.ServiceClient, id string, opts ScalingO
 		return err
 	}
 	// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/disk-auto-expansion
-	_, err = client.Put(client.ServiceURL("instances", id, "disk-auto-expansion"), b, nil, nil)
+	_, err = client.Put(client.ServiceURL("instances", id, "disk-auto-expansion"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return err
 	}
