@@ -7,8 +7,8 @@ import (
 
 type ScalingOpts struct {
 	SwitchOption     bool `json:"switch_option" required:"true"`
-	LimitSize        int  `json:"limit_size,omitempty"`
-	TriggerThreshold int  `json:"trigger_threshold,omitempty"`
+	LimitSize        *int `json:"limit_size,omitempty"`
+	TriggerThreshold *int `json:"trigger_threshold,omitempty"`
 }
 
 func ManageAutoScaling(client *golangsdk.ServiceClient, id string, opts ScalingOpts) error {
