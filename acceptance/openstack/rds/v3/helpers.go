@@ -63,6 +63,52 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 	return &rds.Instance
 }
 
+func CreateMySqlRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
+	t.Logf("Attempting to create RDSv3")
+
+	rdsName := tools.RandomString("rds-test-", 8)
+
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	}
+
+	createRdsOpts := instances.CreateRdsOpts{
+		Name:             rdsName,
+		Port:             "8635",
+		Password:         "acc-test-password1!",
+		FlavorRef:        "rds.mysql.c2.medium",
+		Region:           region,
+		AvailabilityZone: az,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
+
+		Volume: &instances.Volume{
+			Type: "COMMON",
+			Size: 100,
+		},
+		Datastore: &instances.Datastore{
+			Type:    "MySQL",
+			Version: "8.0",
+		},
+	}
+
+	rds, err := instances.Create(client, createRdsOpts)
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, rds.JobId)
+	th.AssertNoErr(t, err)
+	t.Logf("Created RDSv3: %s", rds.Instance.Id)
+
+	return &rds.Instance
+}
+
 func DeleteRDS(t *testing.T, client *golangsdk.ServiceClient, rdsID string) {
 	t.Logf("Attempting to delete RDSv3: %s", rdsID)
 
