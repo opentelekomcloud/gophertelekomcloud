@@ -105,7 +105,7 @@ type CreateOpts struct {
 	PortRangeMin *int `json:"port_range_min,omitempty"`
 
 	// The protocol that is matched by the security group rule. Valid values are
-	// "tcp", "udp", "icmp" or an empty string.
+	// The value can be icmp, tcp, icmpv6, or udp or an empty string.
 	Protocol RuleProtocol `json:"protocol,omitempty"`
 
 	// The remote group ID to be associated with this security group rule. You can
@@ -117,9 +117,9 @@ type CreateOpts struct {
 	// specified IP prefix as the source IP address of the IP packet.
 	RemoteIPPrefix string `json:"remote_ip_prefix,omitempty"`
 
-	// TenantID is the UUID of the project who owns the Rule.
+	// ProjectID is the UUID of the project who owns the Rule.
 	// Only administrative users can specify a project UUID other than their own.
-	TenantID string `json:"tenant_id,omitempty"`
+	ProjectID string `json:"tenant_id,omitempty"`
 }
 
 // Create is an operation which adds a new security group rule and associates it

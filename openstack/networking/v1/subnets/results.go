@@ -34,6 +34,12 @@ type Subnet struct {
 	// Specifies whether an IPv6 subnet can be created.
 	EnableIpv6 bool `json:"ipv6_enable"`
 
+	// Specifies the IPv6 subnet CIDR block. If the subnet is an IPv4 subnet, this parameter is not returned.
+	CidrV6 bool `json:"cidr_v6"`
+
+	// Specifies the IPv6 subnet gateway. If the subnet is an IPv4 subnet, this parameter is not returned.
+	GatewayIpV6 bool `json:"gateway_ip_v6"`
+
 	// Specifies the IP address of DNS server 1 on the subnet.
 	PrimaryDNS string `json:"primary_dns"`
 
