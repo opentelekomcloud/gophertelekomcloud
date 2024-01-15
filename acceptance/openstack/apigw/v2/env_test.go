@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/apigw/v2/env"
@@ -20,16 +21,7 @@ func TestEnvLifecycle(t *testing.T) {
 	client, err := clients.NewAPIGWClient()
 	th.AssertNoErr(t, err)
 
-	name := tools.RandomString("test_env_", 5)
-
-	createOpts := env.CreateOpts{
-		GatewayID:   gatewayID,
-		Description: "test env",
-		Name:        name,
-	}
-
-	createResp, err := env.Create(client, createOpts)
-	th.AssertNoErr(t, err)
+	createResp := CreateEnv(client, t, gatewayID)
 
 	t.Cleanup(func() {
 		th.AssertNoErr(t, env.Delete(client, gatewayID, createResp.ID))
@@ -39,7 +31,7 @@ func TestEnvLifecycle(t *testing.T) {
 		EnvID:       createResp.ID,
 		GatewayID:   gatewayID,
 		Description: "test env updated",
-		Name:        name + "_updated",
+		Name:        createResp.Name + "_updated",
 	}
 
 	updateResp, err := env.Update(client, updateOpts)
@@ -64,4 +56,17 @@ func TestEnvList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, listResp)
+}
+
+func CreateEnv(client *golangsdk.ServiceClient, t *testing.T, id string) *env.EnvResp {
+	name := tools.RandomString("test_env_", 5)
+	createOpts := env.CreateOpts{
+		GatewayID:   id,
+		Description: "test env",
+		Name:        name,
+	}
+
+	createResp, err := env.Create(client, createOpts)
+	th.AssertNoErr(t, err)
+	return createResp
 }

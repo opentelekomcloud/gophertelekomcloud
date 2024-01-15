@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/apigw/v2/group"
@@ -19,16 +20,7 @@ func TestGroupLifecycle(t *testing.T) {
 	client, err := clients.NewAPIGWClient()
 	th.AssertNoErr(t, err)
 
-	name := tools.RandomString("apigw_group-", 3)
-
-	createOpts := group.CreateOpts{
-		Name:        name,
-		Description: "test",
-		GatewayID:   gatewayId,
-	}
-
-	createResp, err := group.Create(client, createOpts)
-	th.AssertNoErr(t, err)
+	createResp := CreateGroup(client, t, gatewayId)
 
 	t.Cleanup(func() {
 		th.AssertNoErr(t, group.Delete(client, gatewayId, createResp.ID))
@@ -36,7 +28,7 @@ func TestGroupLifecycle(t *testing.T) {
 
 	updateOpts := group.UpdateOpts{
 		GroupID:     createResp.ID,
-		Name:        name + "-updated",
+		Name:        createResp.Name + "-updated",
 		Description: "test updated",
 		GatewayID:   gatewayId,
 	}
@@ -65,4 +57,18 @@ func TestGroupList(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listResp)
+}
+
+func CreateGroup(client *golangsdk.ServiceClient, t *testing.T, id string) *group.GroupResp {
+	name := tools.RandomString("apigw_group-", 3)
+
+	createOpts := group.CreateOpts{
+		Name:        name,
+		Description: "test",
+		GatewayID:   id,
+	}
+
+	createResp, err := group.Create(client, createOpts)
+	th.AssertNoErr(t, err)
+	return createResp
 }
