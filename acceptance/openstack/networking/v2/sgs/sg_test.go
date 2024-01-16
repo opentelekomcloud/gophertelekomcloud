@@ -108,6 +108,48 @@ func TestICMPSecurityGroupRules(t *testing.T) {
 	})
 }
 
+func TestICMPSecurityGroupRulesV6(t *testing.T) {
+	clientNetworking, err := clients.NewNetworkV2Client()
+	if err != nil {
+		t.Fatalf("Unable to create a networking client: %v", err)
+	}
+	clientCompute, err := clients.NewComputeV2Client()
+	if err != nil {
+		t.Fatalf("Unable to create a networking client: %v", err)
+	}
+
+	createSGOpts := secgroups.CreateOpts{
+		Name:        "sg-test-v6",
+		Description: "desc",
+	}
+	t.Logf("Attempting to create sg: %s", createSGOpts.Name)
+
+	sg, err := secgroups.Create(clientCompute, createSGOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	optsEchoReplyIpv6 := rules.CreateOpts{
+		Description:  "ICMPV6 echo reply",
+		SecGroupID:   sg.ID,
+		PortRangeMin: pointerto.Int(0),
+		PortRangeMax: pointerto.Int(0),
+		Direction:    "ingress",
+		EtherType:    "IPv6",
+		Protocol:     "ICMP",
+	}
+	log.Print("[DEBUG] Create OpenTelekomCloud Neutron ICMPV6 echo reply Security Group Rule")
+	ipv6, err := rules.Create(clientNetworking, optsEchoReplyIpv6).Extract()
+	th.AssertNoErr(t, err)
+
+	getV6EchoReply, err := rules.Get(clientNetworking, ipv6.ID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, *getV6EchoReply.PortRangeMin, 0)
+	th.AssertEquals(t, *getV6EchoReply.PortRangeMax, 0)
+
+	t.Cleanup(func() {
+		secgroups.Delete(clientCompute, sg.ID)
+	})
+}
+
 func TestThrottlingSgs(t *testing.T) {
 	t.Skip("please run only manually, long test")
 	clientNetworking, err := clients.NewNetworkV2Client()

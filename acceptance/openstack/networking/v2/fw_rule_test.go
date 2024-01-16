@@ -44,4 +44,19 @@ func TestFwRuleLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated FwaasV2: %s", rule.ID)
 	th.AssertEquals(t, updatedRule.Protocol, *updateOpts.Protocol)
+
+	t.Logf("Attempting to create Ipv6")
+	ipv6RuleName := tools.RandomString("ipv6-create", 3)
+	createIpv6Opts := rules.CreateOpts{
+		Protocol:             "tcp",
+		Action:               "deny",
+		Name:                 ipv6RuleName,
+		IPVersion:            6,
+		DestinationIPAddress: "2001:db8::",
+		Enabled:              pointerto.Bool(true),
+	}
+
+	rule6, err := rules.Create(client, createIpv6Opts).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, rule6.IPVersion, 6)
 }
