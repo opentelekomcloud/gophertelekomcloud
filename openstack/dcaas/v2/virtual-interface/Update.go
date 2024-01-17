@@ -7,8 +7,6 @@ import (
 
 // UpdateOpts represents options for updating a Virtual Interface.
 type UpdateOpts struct {
-	// Specifies the virtual interface ID.
-	ID string `json:"virtual_interface_id" required:"true"`
 	// Provides supplementary information about the virtual interface.
 	Description string `json:"description,omitempty"`
 	// Specifies the virtual interface name.

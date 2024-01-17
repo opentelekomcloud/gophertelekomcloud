@@ -319,6 +319,17 @@ func NewVPCEndpointV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewVPCV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewVpcV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewPeerNetworkV1Client returns a *ServiceClient for making calls to the
 // OpenStack Networking v1 API for VPC peer. An error will be returned if authentication
 // or client creation was not possible.
@@ -790,6 +801,17 @@ func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
 	}
 
 	return openstack.NewGaussDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
+// NewAPIGWClient returns authenticated LTS v2 client
+func NewAPIGWClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewAPIGW(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
 }
 
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {

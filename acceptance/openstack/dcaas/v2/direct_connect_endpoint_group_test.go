@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"os"
 	"strings"
 	"testing"
 
@@ -12,19 +11,13 @@ import (
 )
 
 func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
-	if os.Getenv("RUN_DCAAS_DIRECT_CONNECT_ENDPOINT_GROUP") == "" {
-		t.Skip("unstable test")
-	}
-
 	// Create a direct connect endpoint group
 	client, err := clients.NewDCaaSV2Client()
 	th.AssertNoErr(t, err)
 
-	name := strings.ToLower(tools.RandomString("test-direct-connect-endpoint-group", 5))
-	TenantId := clients.EnvOS.GetEnv("TENANT_ID")
-
+	name := strings.ToLower(tools.RandomString("test-acc-dc-eg-", 5))
 	createOpts := dc_endpoint_group.CreateOpts{
-		TenantId:  TenantId,
+		TenantId:  client.ProjectID,
 		Name:      name,
 		Endpoints: []string{"10.2.0.0/24", "10.3.0.0/24"},
 		Type:      "cidr",
@@ -40,7 +33,7 @@ func TestDirectConnectEndpointGroupLifecycle(t *testing.T) {
 	// Update a direct connect endpoint group
 	updateOpts := dc_endpoint_group.UpdateOpts{
 		Name:        tools.RandomString(name, 3),
-		Description: "test-direct-connect-endpoint-group-updated",
+		Description: "test-acc-dc-eg-updated",
 	}
 	_ = dc_endpoint_group.Update(client, created.ID, updateOpts)
 

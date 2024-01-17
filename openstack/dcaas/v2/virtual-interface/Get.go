@@ -6,13 +6,13 @@ import (
 )
 
 // Get retrieves a particular virtual gateway based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id string) (*VirtualInterface, error) {
-	raw, err := c.Get(c.ServiceURL("dcaas", "virtual-interfaces", id), nil, nil)
+func Get(client *golangsdk.ServiceClient, id string) (*VirtualInterface, error) {
+	raw, err := client.Get(client.ServiceURL("dcaas", "virtual-interfaces", id), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var res VirtualInterface
-	err = extract.IntoStructPtr(raw.Body, &res, "virtual_interfaces")
+	err = extract.IntoStructPtr(raw.Body, &res, "virtual_interface")
 	return &res, err
 }
