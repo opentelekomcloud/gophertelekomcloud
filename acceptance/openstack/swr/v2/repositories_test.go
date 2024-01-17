@@ -85,4 +85,19 @@ func TestRepositoryWorkflow(t *testing.T) {
 	th.AssertEquals(t, updateOpts.Description, updated.Description)
 	th.AssertEquals(t, updateOpts.Category, updated.Category)
 	th.AssertEquals(t, updateOpts.IsPublic, updated.IsPublic)
+
+	listTagsOpts := repositories.ListTagsOpts{
+		Namespace:   orgName,
+		Repository:  repoName,
+		Limit:       500,
+		OrderColumn: "updated_at",
+		OrderType:   "asc",
+		Offset:      pointerto.Int(0),
+	}
+	listTags, err := repositories.ListTags(client, listTagsOpts)
+	th.AssertNoErr(t, err)
+	if len(listTags) > 0 {
+		th.AssertEquals(t, listTags[0].RepoId, repo.ID)
+	}
+
 }
