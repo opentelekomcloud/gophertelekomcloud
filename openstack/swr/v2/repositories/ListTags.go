@@ -11,7 +11,7 @@ type ListTagsOpts struct {
 	// Image repository name.
 	Repository string `json:"-" required:"true"`
 	// Start index.
-	Offset int `q:"offset"`
+	Offset *int `q:"offset"`
 	// Number of responses.
 	Limit int `q:"limit"`
 	// Sorting by column. You can set this parameter to updated_at (sorting by update time).
