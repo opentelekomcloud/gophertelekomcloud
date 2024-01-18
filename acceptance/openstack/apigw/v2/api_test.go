@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/apigw/v2/api"
@@ -29,36 +30,13 @@ func TestApiLifecycle(t *testing.T) {
 
 	groupID := groupResp.ID
 
-	name := tools.RandomString("test_api_", 5)
+	createOpts, createResp := CreateAPI(client, t, gatewayID, groupID)
 
-	createOpts := api.CreateOpts{
-		GatewayID:   gatewayID,
-		Description: "test env",
-		Name:        name,
-		GroupID:     groupID,
-		Type:        2,
-		ReqProtocol: "HTTP",
-		ReqMethod:   "GET",
-		ReqUri:      "/test/http",
-		AuthType:    "IAM",
-		BackendType: "HTTP",
-		BackendApi: &api.BackendApi{
-			UrlDomain:   "192.168.189.156:12346",
-			ReqProtocol: "HTTP",
-			ReqMethod:   "GET",
-			ReqUri:      "/test/benchmark",
-			Timeout:     5000,
-			RetryCount:  "-1",
-		},
-	}
-
-	createResp, err := api.Create(client, createOpts)
-	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
 		th.AssertNoErr(t, api.Delete(client, gatewayID, createResp.ID))
 	})
 
-	createOpts.Name = name + "_updated"
+	createOpts.Name += "_updated"
 	createOpts.Type = 1
 	createOpts.ReqMethod = "POST"
 	createOpts.ReqProtocol = "HTTPS"
@@ -125,4 +103,34 @@ func TestApiList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, listResp)
+}
+
+func CreateAPI(client *golangsdk.ServiceClient, t *testing.T, gatewayID, groupID string) (api.CreateOpts, *api.ApiResp) {
+	name := tools.RandomString("test_api_", 5)
+
+	createOpts := api.CreateOpts{
+		GatewayID:   gatewayID,
+		Description: "test env",
+		Name:        name,
+		GroupID:     groupID,
+		Type:        2,
+		ReqProtocol: "HTTP",
+		ReqMethod:   "GET",
+		ReqUri:      "/test/http",
+		AuthType:    "IAM",
+		BackendType: "HTTP",
+		BackendApi: &api.BackendApi{
+			UrlDomain:   "192.168.189.156:12346",
+			ReqProtocol: "HTTP",
+			ReqMethod:   "GET",
+			ReqUri:      "/test/benchmark",
+			Timeout:     5000,
+			RetryCount:  "-1",
+		},
+	}
+
+	createResp, err := api.Create(client, createOpts)
+	th.AssertNoErr(t, err)
+
+	return createOpts, createResp
 }
