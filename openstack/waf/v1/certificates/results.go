@@ -15,9 +15,9 @@ type Certificate struct {
 	// Name of the certificate
 	Name string `json:"name"`
 	// ExpireTime - unix timestamp of certificate expiry
-	ExpireTime int `json:"expireTime"`
+	ExpireTime int64 `json:"expireTime"`
 
-	Timestamp int `json:"timestamp"`
+	Timestamp int64 `json:"timestamp"`
 }
 
 type commonResult struct {
