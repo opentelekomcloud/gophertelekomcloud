@@ -1,4 +1,4 @@
-package users
+package security
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -7,7 +7,7 @@ import (
 
 func ListUserMfaDevices(client *golangsdk.ServiceClient) ([]MfaDeviceResult, error) {
 	// GET /v3.0/OS-MFA/virtual-mfa-devices
-	raw, err := client.Get(v30(client.ServiceURL("OS-MFA", "virtual-mfa-devices")), nil, nil)
+	raw, err := client.Get(client.ServiceURL("OS-MFA", "virtual-mfa-devices"), nil, nil)
 	if err != nil {
 		return nil, err
 	}
