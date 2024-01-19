@@ -6,7 +6,12 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func UpdateOperationProtectionPolicy(client *golangsdk.ServiceClient, id string, opts ProtectionPolicy) (*ProtectionPolicy, error) {
+type UpdateProtectionPolicyOpts struct {
+	// Indicates whether operation protection has been enabled. The value can be true or false.
+	OperationProtection *bool `json:"operation_protection"`
+}
+
+func UpdateOperationProtectionPolicy(client *golangsdk.ServiceClient, id string, opts UpdateProtectionPolicyOpts) (*ProtectionPolicy, error) {
 	b, err := build.RequestBody(opts, "protect_policy")
 	if err != nil {
 		return nil, err
