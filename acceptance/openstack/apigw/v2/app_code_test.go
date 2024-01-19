@@ -46,6 +46,10 @@ func TestAppCodeLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, generatedCode)
 
+	getResp, err := app_code.Get(client, gatewayID, createAppResp.ID, generatedCode.ID)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, getResp)
+
 	listResp, err := app_code.List(client, app_code.ListOpts{
 		GatewayID: gatewayID,
 	})
