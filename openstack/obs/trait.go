@@ -143,6 +143,10 @@ func (input CreateBucketInput) trans(isObs bool) (params map[string]string, head
 		setHeaders(headers, HEADER_FS_FILE_INTERFACE, []string{"Enabled"}, true)
 	}
 
+	if input.ObjectLockEnabled {
+		setHeaders(headers, HEADER_OBJECT_LOCK_ENABLED, []string{"true"}, true)
+	}
+
 	if location := strings.TrimSpace(input.Location); location != "" {
 		input.Location = location
 
@@ -864,5 +868,11 @@ func (input SetBucketReplicationInput) trans(isObs bool) (params map[string]stri
 	params = map[string]string{string(SubResourceReplication): ""}
 	data, md5 := convertReplicationConfigurationToXml(input.BucketReplicationConfiguration, true, isObs)
 	headers = map[string][]string{HEADER_MD5_CAMEL: {md5}}
+	return
+}
+
+func (input SetWORMPolicyInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = map[string]string{string(SubResourceObjectLock): ""}
+	data, _ = ConvertObjectLockConfigurationToXml(input.BucketWormPolicy, false, isObs)
 	return
 }

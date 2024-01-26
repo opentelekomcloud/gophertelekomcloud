@@ -92,7 +92,8 @@ const (
 
 	HEADER_SUCCESS_ACTION_REDIRECT = "success_action_redirect"
 
-	HEADER_FS_FILE_INTERFACE = "fs-file-interface"
+	HEADER_FS_FILE_INTERFACE   = "fs-file-interface"
+	HEADER_OBJECT_LOCK_ENABLED = "bucket-object-lock-enabled"
 
 	HEADER_DATE_CAMEL                          = "Date"
 	HEADER_HOST_CAMEL                          = "Host"
@@ -237,6 +238,7 @@ var (
 		"deletebucket":                 true,
 		"delete":                       true,
 		"cors":                         true,
+		"object-lock":                  true,
 		"restore":                      true,
 		"encryption":                   true,
 		"tagging":                      true,
@@ -663,6 +665,7 @@ const (
 	SubResourceLifecycle     SubResourceType  = "lifecycle"
 	SubResourceNotification  SubResourceType  = "notification"
 	SubResourceEncryption    SubResourceType  = "encryption"
+	SubResourceObjectLock    SubResourceType  = "object-lock"
 	SubResourceTagging       SubResourceType  = "tagging"
 	SubResourceDelete        SubResourceType  = "delete"
 	SubResourceVersions      SubResourceType  = "versions"

@@ -33,6 +33,7 @@ type CreateBucketInput struct {
 	GrantFullControlDeliveredId string           `xml:"-"`
 	Epid                        string           `xml:"-"`
 	IsFSFileInterface           bool             `xml:"-"`
+	ObjectLockEnabled           bool             `xml:"-"`
 }
 
 // SetBucketStoragePolicyInput is the input parameter of SetBucketStoragePolicy function
@@ -288,4 +289,15 @@ type SetBucketReplicationInput struct {
 type GetBucketReplicationOutput struct {
 	BaseModel
 	BucketReplicationConfiguration
+}
+
+// SetWORMPolicyInput is the input parameter of SetWORMPolicy function
+type SetWORMPolicyInput struct {
+	Bucket string `xml:"-"`
+	BucketWormPolicy
+}
+
+type GetBucketWORMPolicyOutput struct {
+	BaseModel
+	BucketWormPolicy
 }

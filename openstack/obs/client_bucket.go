@@ -642,3 +642,30 @@ func (obsClient ObsClient) DeleteBucketReplication(bucketName string) (output *B
 	}
 	return
 }
+
+// SetWORMPolicy sets a default WORM policy for a bucket.
+//
+// You can use this API to configure the default WORM policy and a retention period.
+func (obsClient ObsClient) SetWORMPolicy(input *SetWORMPolicyInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("SetBucketWORMInput is nil")
+	}
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("SetWORMPolicy", HTTP_PUT, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// GetWORMPolicy gets a WORM policy for a bucket.
+//
+// You can use this API to retrieve the default WORM policy and a retention period.
+func (obsClient ObsClient) GetWORMPolicy(bucketName string) (output *GetBucketWORMPolicyOutput, err error) {
+	output = &GetBucketWORMPolicyOutput{}
+	err = obsClient.doActionWithBucket("GetWORMPolicy", HTTP_GET, bucketName, newSubResourceSerial(SubResourceObjectLock), output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
