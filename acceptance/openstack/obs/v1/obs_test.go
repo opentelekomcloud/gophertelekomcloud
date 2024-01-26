@@ -262,4 +262,9 @@ func TestOBSObjectLock(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, wormOpts.Days, getPolicy.Days)
+
+	// disable object lock
+	wormOpts.BucketWormPolicy = obs.BucketWormPolicy{}
+	_, err = client.SetWORMPolicy(&wormOpts)
+	th.AssertNoErr(t, err)
 }
