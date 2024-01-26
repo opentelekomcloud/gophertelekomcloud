@@ -341,3 +341,12 @@ type ReplicationRule struct {
 	DeleteDate                  EnabledType      `xml:"Destination>DeleteDate,omitempty"`
 	HistoricalObjectReplication EnabledType      `xml:"HistoricalObjectReplication,omitempty"`
 }
+
+// BucketWormPolicy defines bucket WORM policy rule
+type BucketWormPolicy struct {
+	XMLName           xml.Name `xml:"ObjectLockConfiguration"`
+	ObjectLockEnabled string   `xml:"ObjectLockEnabled,omitempty"`
+	Mode              string   `xml:"Rule>DefaultRetention>Mode,omitempty"`
+	Days              string   `xml:"Rule>DefaultRetention>Days,omitempty"`
+	Years             string   `xml:"Rule>DefaultRetention>Years,omitempty"`
+}

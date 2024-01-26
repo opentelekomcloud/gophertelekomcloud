@@ -936,3 +936,40 @@ func convertReplicationConfigurationToXml(input BucketReplicationConfiguration, 
 	}
 	return
 }
+
+// ConvertObjectLockConfigurationToXml converts BucketWormPolicy value to XML data and returns it
+func ConvertObjectLockConfigurationToXml(input BucketWormPolicy, returnMd5 bool, isObs bool) (data string, md5 string) {
+	xml := make([]string, 0, 7)
+	xml = append(xml, "<ObjectLockConfiguration>")
+
+	if input.ObjectLockEnabled != "" {
+		objectLock := XmlTranscoding(input.ObjectLockEnabled)
+		xml = append(xml, fmt.Sprintf("<ObjectLockEnabled>%s</ObjectLockEnabled><Rule><DefaultRetention>", objectLock))
+	}
+
+	if input.Days != "" {
+		days := XmlTranscoding(input.Days)
+		xml = append(xml, fmt.Sprintf("<Days>%s</Days>", days))
+	}
+
+	if input.Mode != "" {
+		mode := XmlTranscoding(input.Mode)
+		xml = append(xml, fmt.Sprintf("<Mode>%s</Mode>", mode))
+	}
+
+	if input.Years != "" {
+		years := XmlTranscoding(input.Years)
+		xml = append(xml, fmt.Sprintf("<Years>%s</Years>", years))
+	}
+
+	if input.ObjectLockEnabled != "" {
+		xml = append(xml, "</DefaultRetention></Rule>")
+	}
+
+	xml = append(xml, "</ObjectLockConfiguration>")
+	data = strings.Join(xml, "")
+	if returnMd5 {
+		md5 = Base64Md5([]byte(data))
+	}
+	return
+}
