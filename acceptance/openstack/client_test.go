@@ -38,11 +38,11 @@ func TestAuthenticatedClient(t *testing.T) {
 	}
 
 	// Find the storage service in the service catalog.
-	storage, err := openstack.NewObjectStorageV1(cc.ProviderClient, golangsdk.EndpointOpts{
+	storage, err := openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 	th.AssertNoErr(t, err)
-	t.Logf("Located a storage service at endpoint: [%s]", storage.Endpoint)
+	t.Logf("Located a compute service at endpoint: [%s]", storage.Endpoint)
 }
 
 func TestAuthTokenNoRegion(t *testing.T) {
@@ -185,7 +185,7 @@ func TestAuthTempAKSK(t *testing.T) {
 	}
 
 	// Find several services in the service catalog.
-	storage, err := openstack.NewObjectStorageV1(cc.ProviderClient, golangsdk.EndpointOpts{
+	storage, err := openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 	th.AssertNoErr(t, err)
