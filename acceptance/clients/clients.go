@@ -417,20 +417,6 @@ func NewPeerNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
-// NewObjectStorageV1Client returns a *ServiceClient for making calls to the
-// OpenStack Object Storage v1 API. An error will be returned if authentication
-// or client creation was not possible.
-func NewObjectStorageV1Client() (*golangsdk.ServiceClient, error) {
-	cc, err := CloudAndClient()
-	if err != nil {
-		return nil, err
-	}
-
-	return openstack.NewObjectStorageV1(cc.ProviderClient, golangsdk.EndpointOpts{
-		Region: cc.RegionName,
-	})
-}
-
 func NewOBSClient() (*obs.ObsClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {

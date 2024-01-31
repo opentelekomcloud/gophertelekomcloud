@@ -50,21 +50,3 @@ func Auth(c *golangsdk.ProviderClient, opts AuthOptsBuilder) (r GetAuthResult) {
 
 	return r
 }
-
-// NewObjectStorageV1 creates a Swauth-authenticated *golangsdk.ServiceClient
-// client that can issue ObjectStorage-based API calls.
-func NewObjectStorageV1(pc *golangsdk.ProviderClient, authOpts AuthOpts) (*golangsdk.ServiceClient, error) {
-	auth, err := Auth(pc, authOpts).Extract()
-	if err != nil {
-		return nil, err
-	}
-
-	swiftClient := &golangsdk.ServiceClient{
-		ProviderClient: pc,
-		Endpoint:       golangsdk.NormalizeURL(auth.StorageURL),
-	}
-
-	swiftClient.TokenID = auth.Token
-
-	return swiftClient, nil
-}

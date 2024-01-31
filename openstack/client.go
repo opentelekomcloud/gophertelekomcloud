@@ -498,12 +498,6 @@ func initCommonServiceClient(client *golangsdk.ProviderClient, eo golangsdk.Endp
 	return sc, err
 }
 
-// NewObjectStorageV1 creates a ServiceClient that may be used with the v1
-// object storage package.
-func NewObjectStorageV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	return initClientOpts(client, eo, "object-store")
-}
-
 // NewComputeV2 creates a ServiceClient that may be used with the v2 compute
 // package.
 func NewComputeV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {

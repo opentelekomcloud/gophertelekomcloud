@@ -338,7 +338,7 @@ type ReplicationRule struct {
 	Status                      RuleStatusType   `xml:"Status"`
 	DestinationBucket           string           `xml:"Destination>Bucket"`
 	StorageClass                StorageClassType `xml:"Destination>StorageClass,omitempty"`
-	DeleteDate                  EnabledType      `xml:"Destination>DeleteDate,omitempty"`
+	DeleteData                  EnabledType      `xml:"Destination>DeleteData,omitempty"`
 	HistoricalObjectReplication EnabledType      `xml:"HistoricalObjectReplication,omitempty"`
 }
 
