@@ -216,6 +216,7 @@ func TestObsReplicationLifecycle(t *testing.T) {
 						Prefix:            "",
 						Status:            "Enabled",
 						DestinationBucket: bucketNameDest,
+						DeleteData:        "Enabled",
 					},
 				},
 			},
@@ -226,6 +227,8 @@ func TestObsReplicationLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, replication.StatusCode, 200)
 	th.AssertEquals(t, replication.Agency, agencyName)
+	th.AssertEquals(t, replication.ReplicationRules[0].DeleteData, obs.EnabledType("Enabled"))
+	th.AssertEquals(t, replication.ReplicationRules[0].Status, obs.RuleStatusType("Enabled"))
 
 	_, err = client.DeleteBucketReplication(bucketName)
 	th.AssertNoErr(t, err)

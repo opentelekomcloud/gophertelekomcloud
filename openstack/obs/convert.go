@@ -914,8 +914,8 @@ func convertReplicationConfigurationToXml(input BucketReplicationConfiguration, 
 			}
 			xml = append(xml, fmt.Sprintf("<StorageClass>%s</StorageClass>", storageClass))
 		}
-		if rule.DeleteDate != "" {
-			xml = append(xml, fmt.Sprintf("<DeleteDate>%s</DeleteDate>", rule.DeleteDate))
+		if rule.DeleteData != "" {
+			xml = append(xml, fmt.Sprintf("<DeleteData>%s</DeleteData>", rule.DeleteData))
 		}
 		xml = append(xml, "</Destination>")
 
