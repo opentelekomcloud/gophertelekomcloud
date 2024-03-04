@@ -66,6 +66,10 @@ func newSubResourceSerial(subResource SubResourceType) *DefaultSerializable {
 	return &DefaultSerializable{map[string]string{string(subResource): ""}, nil, nil}
 }
 
+func newSubResourceSerialV2(subResource SubResourceType, value string) *DefaultSerializable {
+	return &DefaultSerializable{map[string]string{string(subResource): value}, nil, nil}
+}
+
 func trans(subResource SubResourceType, input interface{}) (params map[string]string, headers map[string][]string, data interface{}, err error) {
 	params = map[string]string{string(subResource): ""}
 	data, err = ConvertRequestToIoReader(input)
