@@ -301,3 +301,27 @@ type GetBucketWORMPolicyOutput struct {
 	BaseModel
 	BucketWormPolicy
 }
+
+// DeleteBucketCustomDomainInput is the input parameter of DeleteBucketCustomDomain function
+type DeleteBucketCustomDomainInput struct {
+	Bucket       string
+	CustomDomain string
+}
+
+// GetBucketCustomDomainOuput is the result of GetBucketCustomdomain function
+type GetBucketCustomDomainOuput struct {
+	BaseModel
+	Domains []Domain `xml:"Domains"`
+}
+
+// SetBucketCustomDomainInput is the input parameter of SetBucketCustomDomain function
+type SetBucketCustomDomainInput struct {
+	Bucket       string
+	CustomDomain string
+}
+
+// Domain defines the object content properties
+type Domain struct {
+	DomainName string `xml:"DomainName"`
+	CreateTime string `xml:"CreateTime"`
+}

@@ -666,6 +666,7 @@ const (
 	SubResourceNotification  SubResourceType  = "notification"
 	SubResourceEncryption    SubResourceType  = "encryption"
 	SubResourceObjectLock    SubResourceType  = "object-lock"
+	SubResourceCustomDomain  SubResourceType  = "customdomain"
 	SubResourceTagging       SubResourceType  = "tagging"
 	SubResourceDelete        SubResourceType  = "delete"
 	SubResourceVersions      SubResourceType  = "versions"
