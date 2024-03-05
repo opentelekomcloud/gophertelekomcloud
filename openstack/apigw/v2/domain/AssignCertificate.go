@@ -27,7 +27,7 @@ func AssignCertificate(client *golangsdk.ServiceClient, opts CreateCertOpts) (*D
 
 	// POST /v2/{project_id}/apigw/instances/{instance_id}/api-groups/{group_id}/domains/{domain_id}/certificate
 	raw, err := client.Post(client.ServiceURL("apigw", "instances", opts.GatewayID, "api-groups", opts.GroupID, "domains", opts.DomainID, "certificate"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
+		OkCodes: []int{201},
 	})
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ type DomainCertResp struct {
 	// Custom domain name.
 	UrlDomain string `json:"url_domain"`
 	// Domain ID.
-	ID string `json:"id"`
+	DomainId string `json:"id"`
 	// CNAME resolution status.
 	// 1: not resolved
 	// 2: resolving
@@ -60,7 +60,7 @@ type DomainCertResp struct {
 	// It is enabled by default if trusted_root_ca exists, and disabled if trusted_root_ca does not exist.
 	VerifiedClientCertificateEnabled bool `json:"verified_client_certificate_enabled"`
 	// Certificate name.
-	SslName string `json:"ssl_name"`
+	Name string `json:"ssl_name"`
 	// Certificate ID.
-	SslId string `json:"ssl_id"`
+	ID string `json:"ssl_id"`
 }

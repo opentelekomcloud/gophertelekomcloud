@@ -7,7 +7,7 @@ import (
 
 func GetCertificate(client *golangsdk.ServiceClient, opts CertificateOpts) (*Certificate, error) {
 	// GET /v2/{project_id}/apigw/instances/{instance_id}/api-groups/{group_id}/domains/{domain_id}/certificate/{certificate_id}
-	raw, err := client.Get(client.ServiceURL("apigw", "instances", opts.GatewayID, "api-groups", opts.GroupID, "domains", opts.DomainID, "certificate"), nil, nil)
+	raw, err := client.Get(client.ServiceURL("apigw", "instances", opts.GatewayID, "api-groups", opts.GroupID, "domains", opts.DomainID, "certificate", opts.CertificateID), nil, nil)
 	if err != nil {
 		return nil, err
 	}
