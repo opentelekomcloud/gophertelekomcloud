@@ -9,6 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/configs"
+	dcsTags "github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/whitelists"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -70,6 +71,22 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 	th.AssertEquals(t, len(instanceTags), 2)
 	th.AssertEquals(t, instanceTags[0].Key, "muh")
 	th.AssertEquals(t, instanceTags[0].Value, "kuh")
+
+	t.Logf("Updating instance tags")
+	err = updateDcsTags(client, dcsInstance.InstanceID, instanceTags,
+		[]tags.ResourceTag{
+			{
+				Key:   "muhUpdated",
+				Value: "kuhUpdated",
+			},
+		})
+	th.AssertNoErr(t, err)
+	t.Logf("Retrieving updated instance tags")
+	instanceTagsUpdated, err := tags.Get(client, "instances", dcsInstance.InstanceID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(instanceTagsUpdated), 1)
+	th.AssertEquals(t, instanceTagsUpdated[0].Key, "muhUpdated")
+	th.AssertEquals(t, instanceTagsUpdated[0].Value, "kuhUpdated")
 }
 
 // WaitForAWhitelistToBeRetrieved - wait until whitelist is retrieved
@@ -84,4 +101,22 @@ func WaitForAWhitelistToBeRetrieved(client *golangsdk.ServiceClient, id string, 
 		}
 		return false, nil
 	})
+}
+
+func updateDcsTags(client *golangsdk.ServiceClient, id string, old, new []tags.ResourceTag) error {
+	// remove old tags
+	if len(old) > 0 {
+		err := dcsTags.Delete(client, id, old)
+		if err != nil {
+			return err
+		}
+	}
+	// add new tags
+	if len(new) > 0 {
+		err := dcsTags.Create(client, id, new)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
