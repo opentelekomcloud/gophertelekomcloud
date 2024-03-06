@@ -4,6 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type CreateOps struct {
@@ -114,6 +115,8 @@ type CreateOps struct {
 	// true: indicates that a DCS instance can be accessed without a password.
 	// false: indicates that a DCS instance can be accessed only after password authentication.
 	NoPasswordAccess string `json:"no_password_access"`
+	// Tags
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
 type InstanceBackupPolicy struct {
