@@ -3,6 +3,7 @@ package v1
 import (
 	"testing"
 
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/others"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -69,6 +70,16 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *lifecycle
 		SpecCode:             specCode,
 		SecurityGroupID:      openstack.DefaultSecurityGroup(t),
 		InstanceBackupPolicy: &plan,
+		Tags: []tags.ResourceTag{
+			{
+				Key:   "muh",
+				Value: "kuh",
+			},
+			{
+				Key:   "muh2",
+				Value: "kuh2",
+			},
+		},
 	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {

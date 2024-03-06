@@ -1,11 +1,15 @@
 package v1
 
 import (
+	"fmt"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v1/configs"
+	dcsTags "github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/whitelists"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -53,8 +57,66 @@ func TestDcsConfigLifeCycle(t *testing.T) {
 	th.AssertDeepEquals(t, updateOpts.RedisConfigs[0].ParamName, configList.RedisConfigs[0].ParamName)
 
 	t.Logf("Retrieving whitelist configuration")
-	whitelistResp, err := whitelists.Get(client, dcsInstance.InstanceID)
+	err = WaitForAWhitelistToBeRetrieved(client, dcsInstance.InstanceID, 180)
+	if err == nil {
+		whitelistResp, err := whitelists.Get(client, dcsInstance.InstanceID)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, whitelistResp.InstanceID, dcsInstance.InstanceID)
+		th.AssertEquals(t, whitelistResp.Groups[0].GroupName, "test-group-1")
+	}
+
+	t.Logf("Retrieving instance tags")
+	instanceTags, err := tags.Get(client, "instances", dcsInstance.InstanceID).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, whitelistResp.InstanceID, dcsInstance.InstanceID)
-	th.AssertEquals(t, whitelistResp.Groups[0].GroupName, "test-group-1")
+	th.AssertEquals(t, len(instanceTags), 2)
+	th.AssertEquals(t, instanceTags[0].Key, "muh")
+	th.AssertEquals(t, instanceTags[0].Value, "kuh")
+
+	t.Logf("Updating instance tags")
+	err = updateDcsTags(client, dcsInstance.InstanceID, instanceTags,
+		[]tags.ResourceTag{
+			{
+				Key:   "muhUpdated",
+				Value: "kuhUpdated",
+			},
+		})
+	th.AssertNoErr(t, err)
+	t.Logf("Retrieving updated instance tags")
+	instanceTagsUpdated, err := tags.Get(client, "instances", dcsInstance.InstanceID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(instanceTagsUpdated), 1)
+	th.AssertEquals(t, instanceTagsUpdated[0].Key, "muhUpdated")
+	th.AssertEquals(t, instanceTagsUpdated[0].Value, "kuhUpdated")
+}
+
+// WaitForAWhitelistToBeRetrieved - wait until whitelist is retrieved
+func WaitForAWhitelistToBeRetrieved(client *golangsdk.ServiceClient, id string, timeoutSeconds int) error {
+	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
+		wl, err := whitelists.Get(client, id)
+		if err != nil {
+			return false, fmt.Errorf("error retriving whitelist: %w", err)
+		}
+		if wl.InstanceID != "" {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+func updateDcsTags(client *golangsdk.ServiceClient, id string, old, new []tags.ResourceTag) error {
+	// remove old tags
+	if len(old) > 0 {
+		err := dcsTags.Delete(client, id, old)
+		if err != nil {
+			return err
+		}
+	}
+	// add new tags
+	if len(new) > 0 {
+		err := dcsTags.Create(client, id, new)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
