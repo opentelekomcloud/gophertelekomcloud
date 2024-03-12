@@ -11,7 +11,7 @@ import (
 type ListOpts struct {
 	GatewayID string `json:"-"`
 	Limit     int    `q:"limit"`
-	Name      string `q:"Name"`
+	Name      string `q:"name"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]EnvResp, error) {
