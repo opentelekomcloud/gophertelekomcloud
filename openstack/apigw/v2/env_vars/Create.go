@@ -10,7 +10,6 @@ type CreateOpts struct {
 	GatewayID     string `json:"-"`
 	GroupID       string `json:"group_id" required:"true"`
 	EnvID         string `json:"env_id" required:"true"`
-	Name          string `json:"name" required:"true"`
 	VariableName  string `json:"variable_name" required:"true"`
 	VariableValue string `json:"variable_value" required:"true"`
 }

@@ -22,13 +22,10 @@ func TestEnvVarsLifecycle(t *testing.T) {
 	client, err := clients.NewAPIGWClient()
 	th.AssertNoErr(t, err)
 
-	name := tools.RandomString("test_var_env_", 5)
-
 	createOpts := env_vars.CreateOpts{
 		GatewayID:     gatewayID,
 		GroupID:       groupID,
 		EnvID:         envID,
-		Name:          name,
 		VariableName:  "test-name",
 		VariableValue: "test-value",
 	}
