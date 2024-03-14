@@ -75,7 +75,7 @@ type Traces struct {
 	// including letters, digits, hyphens (-), underscores (_), and periods (.). It must start with a letter.
 	TraceName string `json:"trace_name,omitempty"`
 	// Trace status. The value can be normal, warning, or incident.
-	TraceStatus string `q:"trace_status,omitempty"`
+	TraceStatus string `json:"trace_status,omitempty"`
 	// Trace source. The value can be ApiCall, ConsoleAction, or SystemAction.
 	TraceType string `json:"trace_type,omitempty"`
 	// Request of an operation on resources.
