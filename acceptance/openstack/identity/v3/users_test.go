@@ -99,3 +99,25 @@ func TestUserLifecycle(t *testing.T) {
 	}
 	th.AssertEquals(t, userUpdateExt.Email, extendedUpdateOpts.Email)
 }
+
+func TestRootUserChangePassword(t *testing.T) {
+	// Don't run this test unless you want to fix your password in clouds.yaml later
+	if os.Getenv("OS_TENANT_ADMIN_USER_ID") == "" {
+		t.Skip("Policy doesn't allow NewIdentityV3AdminClient() to be initialized.")
+	}
+	if os.Getenv("OS_TENANT_ADMIN_PASSWORD") == "" {
+		t.Skip("Password not provided.")
+	}
+	if os.Getenv("OS_NEW_TENANT_PASSWORD") == "" {
+		t.Skip("New password not provided.")
+	}
+	client, err := clients.NewIdentityV3AdminClient()
+	th.AssertNoErr(t, err)
+
+	err = users.ChangePassword(client, users.ChangePasswordOpts{
+		UserId:           os.Getenv("OS_TENANT_ADMIN_USER_ID"),
+		OriginalPassword: os.Getenv("OS_TENANT_ADMIN_PASSWORD"),
+		NewPassword:      os.Getenv("OS_NEW_TENANT_PASSWORD"),
+	})
+	th.AssertNoErr(t, err)
+}
