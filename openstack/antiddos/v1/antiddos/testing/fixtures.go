@@ -14,8 +14,8 @@ import (
 const CreateOutput string = `
 {
   "error_code": "10000000",
-  "error_description": "The task has been received and is being handled",
-  "task_id": "82463800-70fe-4cba-9a96-06175e246ab3"
+  "error_msg": "Ok",
+  "task_id": ""
 }
 `
 
@@ -29,14 +29,14 @@ const CreateRequest string = `
 }
 `
 
-var CreateResponse = antiddos.CreateResponse{
-	ErrorCode:        "10000000",
-	ErrorDescription: "The task has been received and is being handled",
-	TaskId:           "82463800-70fe-4cba-9a96-06175e246ab3",
+var CreateResponse = antiddos.TaskResponse{
+	ErrorCode:    "10000000",
+	ErrorMessage: "Ok",
+	TaskId:       "",
 }
 
 func HandleCreateSuccessfully(t *testing.T) {
-	th.Mux.HandleFunc("/antiddos/82abaa86-8518-47db-8d63-ddf152824635", func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/antiddos/default-config", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 		th.TestJSONRequest(t, r, CreateRequest)
@@ -46,22 +46,22 @@ func HandleCreateSuccessfully(t *testing.T) {
 	})
 }
 
-var DeleteResponse = antiddos.DeleteResponse{
-	ErrorCode:        "10000000",
-	ErrorDescription: "The task has been received and is being handled",
-	TaskId:           "f732e7f1-26b2-40f1-85e9-a8a4d3a43038",
+var DeleteResponse = antiddos.TaskResponse{
+	ErrorCode:    "10000000",
+	ErrorMessage: "Ok",
+	TaskId:       "",
 }
 
 const DeleteOutput string = `
 {
   "error_code": "10000000",
-  "error_description": "The task has been received and is being handled",
-  "task_id": "f732e7f1-26b2-40f1-85e9-a8a4d3a43038"
+  "error_msg": "Ok",
+  "task_id": ""
 }
 `
 
 func HandleDeleteSuccessfully(t *testing.T) {
-	th.Mux.HandleFunc("/antiddos/82abaa86-8518-47db-8d63-ddf152824635", func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/antiddos/default-config", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
 		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
 
@@ -70,7 +70,7 @@ func HandleDeleteSuccessfully(t *testing.T) {
 	})
 }
 
-var GetResponse = antiddos.GetResponse{
+var GetResponse = antiddos.ConfigOpts{
 	EnableL7:            true,
 	TrafficPosId:        1,
 	HttpRequestPosId:    2,
@@ -101,8 +101,8 @@ func HandleGetSuccessfully(t *testing.T) {
 const UpdateOutput string = `
 {
   "error_code": "10000000",
-  "error_description": "The task has been received and is being handled",
-  "task_id": "82463800-70fe-4cba-9a96-06175e246ab3"
+  "error_msg": "Ok",
+  "task_id": ""
 }
 `
 
@@ -116,10 +116,10 @@ const UpdateRequest string = `
 }
 `
 
-var UpdateResponse = antiddos.UpdateResponse{
-	ErrorCode:        "10000000",
-	ErrorDescription: "The task has been received and is being handled",
-	TaskId:           "82463800-70fe-4cba-9a96-06175e246ab3",
+var UpdateResponse = antiddos.TaskResponse{
+	ErrorCode:    "10000000",
+	ErrorMessage: "Ok",
+	TaskId:       "",
 }
 
 func HandleUpdateSuccessfully(t *testing.T) {
@@ -133,7 +133,7 @@ func HandleUpdateSuccessfully(t *testing.T) {
 	})
 }
 
-var ListStatusResponse = []antiddos.DdosStatus{
+var ListStatusResponse = []antiddos.DDosStatus{
 	{
 		FloatingIpId:      "4d60bba4-0791-4e82-8262-9bdffaeb1d14",
 		FloatingIpAddress: "49.4.4.36",
@@ -172,11 +172,7 @@ func HandleListStatusSuccessfully(t *testing.T) {
 }
 
 var ListConfigsResponse = antiddos.ListConfigsResponse{
-	TrafficLimitedList: []struct {
-		TrafficPosId     int `json:"traffic_pos_id,"`
-		TrafficPerSecond int `json:"traffic_per_second,"`
-		PacketPerSecond  int `json:"packet_per_second,"`
-	}{
+	TrafficLimitedList: []antiddos.TrafficLimited{
 		{
 			TrafficPosId:     1,
 			TrafficPerSecond: 10,
@@ -223,10 +219,7 @@ var ListConfigsResponse = antiddos.ListConfigsResponse{
 			PacketPerSecond:  70000,
 		},
 	},
-	HttpLimitedList: []struct {
-		HttpRequestPosId    int `json:"http_request_pos_id,"`
-		HttpPacketPerSecond int `json:"http_packet_per_second,"`
-	}{
+	HttpLimitedList: []antiddos.HttpLimited{
 		{
 			HttpRequestPosId:    1,
 			HttpPacketPerSecond: 100,
@@ -288,11 +281,7 @@ var ListConfigsResponse = antiddos.ListConfigsResponse{
 			HttpPacketPerSecond: 20000,
 		},
 	},
-	ConnectionLimitedList: []struct {
-		CleaningAccessPosId    int `json:"cleaning_access_pos_id,"`
-		NewConnectionLimited   int `json:"new_connection_limited,"`
-		TotalConnectionLimited int `json:"total_connection_limited,"`
-	}{
+	ConnectionLimitedList: []antiddos.ConnectionLimited{
 		{
 			CleaningAccessPosId:    1,
 			NewConnectionLimited:   10,
@@ -531,65 +520,62 @@ var WeeklyReportOutput = `
 `
 
 // init the loc
-var responsePeriodTime = time.Date(2018, 3, 1, 0, 0, 0, 0, time.UTC)
+var responsePeriodTime = time.Date(2018, 3, 1, 0, 0, 0, 0, time.UTC).UnixMilli()
 
-var WeeklyReportResponse = antiddos.WeeklyReportResponse{
-	DdosInterceptTimes: 0,
+var WeeklyReportResponse = antiddos.ListWeeklyReportsResponse{
+	DDosInterceptTimes: 0,
 	Weekdata: []antiddos.WeekData{
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 		{
-			DdosInterceptTimes: 0,
-			DdosBlackholeTimes: 0,
+			DDosInterceptTimes: 0,
+			DDosBlackholeTimes: 0,
 			MaxAttackBps:       0,
 			MaxAttackConns:     0,
 			PeriodStartDate:    responsePeriodTime,
 		},
 	},
-	Top10: []struct {
-		FloatingIpAddress string `json:"floating_ip_address,"`
-		Times             int    `json:"times,"`
-	}{},
+	Top10: []antiddos.Top10{},
 }
 
 func HandleWeeklyReportSuccessfully(t *testing.T) {
@@ -640,10 +626,6 @@ func HandleListLogsSuccessfully(t *testing.T) {
 }
 
 var GetStatusOutput = `{"status":"normal"}`
-
-var GetStatusResponse = antiddos.GetStatusResponse{
-	Status: "normal",
-}
 
 func HandleGetStatusSuccessfully(t *testing.T) {
 	th.Mux.HandleFunc("/antiddos/82abaa86-8518-47db-8d63-ddf152824635/status", func(w http.ResponseWriter, r *http.Request) {
@@ -738,7 +720,7 @@ var GetTaskOutput = `
 }
 `
 
-var GetTaskResponse = antiddos.GetTaskResponse{
+var GetTaskResponse = antiddos.ShowNewTaskStatusResponse{
 	TaskStatus: "running",
 	TaskMsg:    "ABC",
 }
