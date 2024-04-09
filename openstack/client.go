@@ -963,3 +963,8 @@ func NewAPIGW(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	sc, err := initCommonServiceClient(client, eo, "apig", "v2")
 	return sc, err
 }
+
+func NewFuncGraph(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "functiongraph", "v2")
+	return sc, err
+}
