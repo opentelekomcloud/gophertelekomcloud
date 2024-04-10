@@ -376,6 +376,61 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 	return nil, fmt.Errorf("options type is not a struct")
 }
 
+type URL struct {
+	u *url.URL
+}
+
+func (u *URL) String() string {
+	return u.u.String()
+}
+
+type URLBuilder struct {
+	endpoints []string
+	params    interface{}
+}
+
+func (ub *URLBuilder) WithEndpoints(endpoints ...string) *URLBuilder {
+	ub.endpoints = endpoints
+	return ub
+}
+
+func (ub *URLBuilder) WithQueryParams(params interface{}) *URLBuilder {
+	ub.params = params
+	return ub
+}
+
+func (ub *URLBuilder) Build() (*URL, error) {
+	var u url.URL
+
+	if ub.params != nil {
+		u1, err := BuildQueryString(ub.params)
+
+		if err != nil {
+			return nil, err
+		}
+
+		u = *u1
+	}
+
+	for _, e := range ub.endpoints {
+		if strings.ContainsAny(e, "/!?$#=&+_") {
+			return nil, fmt.Errorf("characters '/!?$#=&+_\"' are not possible in endpoints")
+		}
+	}
+
+	u.Path = strings.Join(ub.endpoints, "/")
+
+	if _, err := url.Parse(u.String()); err != nil {
+		return nil, err
+	}
+
+	return &URL{u: &u}, nil
+}
+
+func NewURLBuilder() *URLBuilder {
+	return &URLBuilder{}
+}
+
 /*
 BuildHeaders is an internal function to be used by request methods in
 individual resource packages.
