@@ -1,4 +1,4 @@
-package job
+package factory
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
