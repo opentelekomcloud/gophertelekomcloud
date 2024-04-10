@@ -29,21 +29,8 @@ def handler (event, context):
 func TestFunctionGraphLifecycle(t *testing.T) {
 	client, err := clients.NewFuncGraphClient()
 	th.AssertNoErr(t, err)
-	funcName := "funcgraph-" + tools.RandomString("acctest", 4)
 
-	createOpts := function.CreateOpts{
-		Name:       funcName,
-		Package:    "default",
-		Runtime:    "Python3.9",
-		Timeout:    200,
-		Handler:    "index.py",
-		MemorySize: 512,
-		CodeType:   "zip",
-		CodeURL:    "https://regr-func-graph.obs.eu-de.otc.t-systems.com/index.py",
-	}
-
-	createResp, err := function.Create(client, createOpts)
-	th.AssertNoErr(t, err)
+	createResp, funcName := createFunctionGraph(t, client)
 
 	funcUrn := strings.TrimSuffix(createResp.FuncURN, ":latest")
 
@@ -95,6 +82,10 @@ func TestFunctionGraphLifecycle(t *testing.T) {
 		})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateFuncInstance.StrategyConfig.Concurrency, 200)
+
+	// API not registered
+	// err = function.UpdateStatus(client, funcUrn, "true")
+	// th.AssertNoErr(t, err)
 }
 
 func TestFunctionGraphList(t *testing.T) {
@@ -104,4 +95,24 @@ func TestFunctionGraphList(t *testing.T) {
 	listOpts := function.ListOpts{}
 	_, err = function.List(client, listOpts)
 	th.AssertNoErr(t, err)
+}
+
+func createFunctionGraph(t *testing.T, client *golangsdk.ServiceClient) (*function.FuncGraph, string) {
+	funcName := "funcgraph-" + tools.RandomString("acctest", 4)
+
+	createOpts := function.CreateOpts{
+		Name:       funcName,
+		Package:    "default",
+		Runtime:    "Python3.9",
+		Timeout:    200,
+		Handler:    "index.py",
+		MemorySize: 512,
+		CodeType:   "zip",
+		CodeURL:    "https://regr-func-graph.obs.eu-de.otc.t-systems.com/index.py",
+	}
+
+	createResp, err := function.Create(client, createOpts)
+	th.AssertNoErr(t, err)
+
+	return createResp, funcName
 }
