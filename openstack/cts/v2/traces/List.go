@@ -47,13 +47,13 @@ type ListTracesOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, trackerName string, opts ListTracesOpts) (*ListTracesResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(trackerName, "trace").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2.0/{project_id}/{tracker_name}/trace
-	raw, err := client.Get(client.ServiceURL(trackerName, "trace")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -41,13 +41,13 @@ type ListInstancesOpts struct {
 }
 
 func ListInstances(client *golangsdk.ServiceClient, opts ListInstancesOpts) (*ListInstancesResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/mysql/v3/{project_id}/instances
-	raw, err := client.Get(client.ServiceURL("instances")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

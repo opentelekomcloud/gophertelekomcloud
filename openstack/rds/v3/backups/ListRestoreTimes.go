@@ -14,13 +14,13 @@ type ListRestoreTimesOpts struct {
 }
 
 func ListRestoreTimes(client *golangsdk.ServiceClient, opts ListRestoreTimesOpts) ([]RestoreTime, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", opts.InstanceId, "restore-time").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/restore-time
-	raw, err := client.Get(client.ServiceURL("instances", opts.InstanceId, "restore-time")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

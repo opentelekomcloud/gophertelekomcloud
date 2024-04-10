@@ -18,13 +18,13 @@ type ListSharedReposOpts struct {
 }
 
 func ListSharedReposDetails(client *golangsdk.ServiceClient, opts ListSharedReposOpts) ([]AccessDomain, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("manage", "shared-repositories").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/manage/shared-repositories
-	raw, err := client.Get(client.ServiceURL("manage", "shared-repositories")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

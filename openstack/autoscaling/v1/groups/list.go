@@ -27,12 +27,12 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingGroupsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("scaling_group").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("scaling_group")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

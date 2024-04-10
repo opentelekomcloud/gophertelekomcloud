@@ -18,12 +18,12 @@ type ListBackupOpts struct {
 }
 
 func ListBackupRecords(client *golangsdk.ServiceClient, instancesId string, opts ListBackupOpts) (*ListBackupRecordsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instancesId, "backups").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("instances", instancesId, "backups")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

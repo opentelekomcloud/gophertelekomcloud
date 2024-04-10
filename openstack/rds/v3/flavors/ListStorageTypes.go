@@ -16,13 +16,13 @@ type ListStorageTypesOpts struct {
 }
 
 func ListStorageTypes(client *golangsdk.ServiceClient, opts ListStorageTypesOpts) (*ListStorageTypesResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("storage-type", opts.DatabaseName).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/storage-type/{database_name}
-	raw, err := client.Get(client.ServiceURL("storage-type", opts.DatabaseName)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

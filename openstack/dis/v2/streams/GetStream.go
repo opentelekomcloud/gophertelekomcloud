@@ -20,13 +20,13 @@ type GetStreamOpts struct {
 }
 
 func GetStream(client *golangsdk.ServiceClient, opts GetStreamOpts) (*DescribeStreamResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("streams", opts.StreamName).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/streams/{stream_name}
-	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName)+q.String(), nil,
+	raw, err := client.Get(client.ServiceURL(url.String()), nil,
 		&golangsdk.RequestOpts{
 			MoreHeaders: map[string]string{"Content-Type": "application/json"}, JSONBody: nil,
 		})

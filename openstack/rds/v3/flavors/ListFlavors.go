@@ -24,12 +24,12 @@ type ListOpts struct {
 
 func ListFlavors(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
 	// GET https://{Endpoint}/v3/{project_id}/flavors/{database_name}
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("flavors", opts.DatabaseName).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("flavors", opts.DatabaseName)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

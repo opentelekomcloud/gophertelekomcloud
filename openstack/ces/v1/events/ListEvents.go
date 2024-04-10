@@ -22,13 +22,13 @@ type ListEventsOpts struct {
 }
 
 func ListEvents(client *golangsdk.ServiceClient, opts ListEventsOpts) (*ListEventsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("events").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /V1.0/{project_id}/events
-	raw, err := client.Get(client.ServiceURL("events")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

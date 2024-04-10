@@ -86,12 +86,13 @@ type ListOpts struct {
 // filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Server, error) {
 	c.Microversion = "2.26"
-	q, err := golangsdk.BuildQueryString(&opts)
+
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("servers", "detail").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	pages, err := pagination.NewPager(c, c.ServiceURL("servers", "detail")+q.String(),
+	pages, err := pagination.NewPager(c, c.ServiceURL(url.String()),
 		func(r pagination.PageResult) pagination.Page {
 			return ServerPage{pagination.LinkedPageBase{PageResult: r}}
 		}).AllPages()

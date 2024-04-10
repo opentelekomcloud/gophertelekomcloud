@@ -19,13 +19,13 @@ type ListAlarmsOpts struct {
 }
 
 func ListAlarms(client *golangsdk.ServiceClient, opts ListAlarmsOpts) (*ListAlarmsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("alarms").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /V1.0/{project_id}/alarms
-	raw, err := client.Get(client.ServiceURL("alarms")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

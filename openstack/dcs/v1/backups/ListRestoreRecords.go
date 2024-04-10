@@ -6,12 +6,12 @@ import (
 )
 
 func ListRestoreRecords(client *golangsdk.ServiceClient, instancesId string, opts ListBackupOpts) (*ListRestoreRecordsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instancesId, "restores").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("instances", instancesId, "restores")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

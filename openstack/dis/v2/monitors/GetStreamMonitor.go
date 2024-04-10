@@ -45,13 +45,13 @@ type GetStreamMonitorOpts struct {
 }
 
 func GetStreamMonitor(client *golangsdk.ServiceClient, opts GetStreamMonitorOpts) (*GetStreamMonitorResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("streams", opts.StreamName, "metrics").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/streams/{stream_name}/metrics
-	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName, "metrics")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

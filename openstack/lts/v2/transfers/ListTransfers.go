@@ -42,13 +42,13 @@ type ListTransfersOpts struct {
 }
 
 func ListTransfers(client *golangsdk.ServiceClient, opts ListTransfersOpts) ([]Transfer, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("transfers").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/transfers
-	raw, err := client.Get(client.ServiceURL("transfers")+q.String(), nil, &golangsdk.RequestOpts{
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
 	if err != nil {

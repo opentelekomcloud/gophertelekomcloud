@@ -42,12 +42,12 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Flavor, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("flavors", "detail").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	pages, err := pagination.NewPager(client, client.ServiceURL("flavors", "detail")+q.String(), func(r pagination.PageResult) pagination.Page {
+	pages, err := pagination.NewPager(client, client.ServiceURL(url.String()), func(r pagination.PageResult) pagination.Page {
 		return FlavorPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 	if err != nil {

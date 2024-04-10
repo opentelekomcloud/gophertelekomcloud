@@ -29,13 +29,13 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListScalingInstancesResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("scaling_group_instance", opts.ScalingGroupId, "list").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /autoscaling-api/v1/{project_id}/scaling_group_instance/{scaling_group_id}/list
-	raw, err := client.Get(client.ServiceURL("scaling_group_instance", opts.ScalingGroupId, "list")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

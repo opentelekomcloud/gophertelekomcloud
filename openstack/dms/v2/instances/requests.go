@@ -205,12 +205,12 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(listURL(client)).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(listURL(client)+q.String(), nil, nil)
+	raw, err := client.Get(url.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}

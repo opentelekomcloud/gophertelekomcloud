@@ -13,12 +13,12 @@ type StatusOpts struct {
 }
 
 func ListDCSStatus(client *golangsdk.ServiceClient, opts StatusOpts) (*ListNumberOfInstancesInDifferentStatusResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", "status").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("instances", "status")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}
