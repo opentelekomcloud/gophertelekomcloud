@@ -1,30 +1,25 @@
 package cluster
 
 import (
-	"net/http"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// Get is used to query cluster details.
+// Send request GET /v1.1/{project_id}/clusters/{cluster_id}
 func Get(client *golangsdk.ServiceClient, clusterId string) (*ClusterQuery, error) {
-	// GET /v1.1/{project_id}/clusters/{cluster_id}
 	raw, err := client.Get(client.ServiceURL("clusters", clusterId), nil, nil)
-	return extraResp(err, raw)
-}
-
-func extraResp(err error, raw *http.Response) (*ClusterQuery, error) {
 	if err != nil {
 		return nil, err
 	}
 
-	var res ClusterQuery
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	var res *ClusterQuery
+	err = extract.Into(raw.Body, res)
+	return res, err
 }
 
 type ClusterQuery struct {
-	PublicEndpoint           string               `json:"public_endpoint"`
+	PublicEndpoint           string               `json:"publicEndpoint"`
 	Instances                []DetailedInstances  `json:"instances"`
 	SecurityGroupId          string               `json:"security_group_id"`
 	SubnetId                 string               `json:"subnet_id"`
@@ -66,9 +61,9 @@ type DetailedInstances struct {
 	Volume        Volume         `json:"volume"`
 	Status        string         `json:"status"`
 	Actions       []string       `json:"actions"`
-	Type          string         `json:"string"`
-	Name          string         `json:"name"`
+	Type          string         `json:"type"`
 	Id            string         `json:"id"`
+	Name          string         `json:"name"`
 	IsFrozen      string         `json:"isFrozen"`
 	Components    string         `json:"components"`
 	ConfigStatus  string         `json:"config_status"`
@@ -115,7 +110,7 @@ type CustomerConfig struct {
 }
 
 type MaintainWindow struct {
-	Dat       string `json:"day"`
+	Day       string `json:"day"`
 	StartTime string `json:"startTime"`
 	EndTime   string `json:"endTime"`
 }
@@ -130,8 +125,8 @@ type FailedReasons struct {
 }
 
 type CreateFailed struct {
-	ErrorMsg  string `json:"errorMsg"`
 	ErrorCode string `json:"errorCode"`
+	ErrorMsg  string `json:"errorMsg"`
 }
 
 type ClusterLinks struct {
