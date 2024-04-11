@@ -17,12 +17,12 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]PolicyRef, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("security-policies").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("security-policies")+q.String(), nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	if err != nil {
 		return nil, err
 	}

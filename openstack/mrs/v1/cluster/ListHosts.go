@@ -19,13 +19,13 @@ type ListHostsOpts struct {
 }
 
 func ListHosts(client *golangsdk.ServiceClient, opts ListHostsOpts) (*ListHostsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("clusters", opts.ClusterId, "hosts").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v1.1/{project_id}/clusters/{cluster_id}/hosts
-	raw, err := client.Get(client.ServiceURL("clusters", opts.ClusterId, "hosts")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

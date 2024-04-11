@@ -23,13 +23,13 @@ type ListSessionOpts struct {
 }
 
 func ListSessions(client *golangsdk.ServiceClient, opts ListSessionOpts) (*ListSessionsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("nodes", opts.NodeId, "sessions").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/nodes/{node_id}/sessions
-	raw, err := client.Get(client.ServiceURL("nodes", opts.NodeId, "sessions")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

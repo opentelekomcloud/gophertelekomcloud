@@ -37,13 +37,13 @@ type CountOpts struct {
 }
 
 func CountBackups(client *golangsdk.ServiceClient, opts CountOpts) (*int, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("checkpoint_items", "count").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{endpoint}/v1/{project_id}/checkpoint_items/count
-	raw, err := client.Get(client.ServiceURL("checkpoint_items", "count")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

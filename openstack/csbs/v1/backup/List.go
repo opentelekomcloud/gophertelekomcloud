@@ -57,13 +57,13 @@ type ListOpts struct {
 // backups. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("checkpoint_items").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{endpoint}/v1/{project_id}/checkpoint_items
-	pages, err := pagination.NewPager(c, c.ServiceURL("checkpoint_items")+q.String(),
+	pages, err := pagination.NewPager(c, c.ServiceURL(url.String()),
 		func(r pagination.PageResult) pagination.Page {
 			return СsbsBackupPage{pagination.LinkedPageBase{PageResult: r}}
 		}).AllPages()

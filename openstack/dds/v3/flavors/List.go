@@ -21,13 +21,13 @@ type ListFlavorOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListFlavorOpts) (*ListResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("flavors").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3.1/{project_id}/flavors
-	raw, err := client.Get(client.ServiceURL("flavors")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

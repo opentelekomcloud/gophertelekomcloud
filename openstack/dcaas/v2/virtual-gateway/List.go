@@ -13,13 +13,13 @@ type ListOpts struct {
 
 // List is used to obtain the virtual gateway list
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]VirtualGateway, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("dcaas", "virtual-gateways").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v2.0/{project_id}/virtual-gateways
-	raw, err := client.Get(client.ServiceURL("dcaas", "virtual-gateways")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

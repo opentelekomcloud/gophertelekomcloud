@@ -167,13 +167,13 @@ type ListTagsOpts struct {
 }
 
 func ListTags(client *golangsdk.ServiceClient, opts ListTagsOpts) ([]string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("cloudimages", "tags").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v1/cloudimages/tags
-	raw, err := client.Get(client.ServiceURL("cloudimages", "tags")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -23,7 +23,7 @@ type BatchDeleteBody struct {
 }
 
 func BatchDelete(client *golangsdk.ServiceClient, opts BatchDeleteOpts) ([]BatchOpsResult, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func BatchDelete(client *golangsdk.ServiceClient, opts BatchDeleteOpts) ([]Batch
 		return nil, err
 	}
 
-	raw, err := client.DeleteWithBody(client.ServiceURL("instances")+q.String(), b, nil)
+	raw, err := client.DeleteWithBody(client.ServiceURL(url.String()), b, nil)
 	if err != nil {
 		return nil, err
 	}

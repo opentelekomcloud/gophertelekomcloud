@@ -25,13 +25,13 @@ type GetCheckpointOpts struct {
 }
 
 func GetCheckpoint(client *golangsdk.ServiceClient, opts GetCheckpointOpts) (*GetCheckpointResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("checkpoints").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/checkpoints
-	raw, err := client.Get(client.ServiceURL("checkpoints")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

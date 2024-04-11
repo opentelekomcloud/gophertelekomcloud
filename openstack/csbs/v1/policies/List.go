@@ -29,13 +29,13 @@ type ListOpts struct {
 // backup policies. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]BackupPolicy, error) {
-	query, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("policies").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{endpoint}/v1/{project_id}/policies
-	pages, err := pagination.NewPager(client, client.ServiceURL("policies")+query.String(),
+	pages, err := pagination.NewPager(client, client.ServiceURL(url.String()),
 		func(r pagination.PageResult) pagination.Page {
 			return BackupPolicyPage{pagination.LinkedPageBase{PageResult: r}}
 		}).AllPages()

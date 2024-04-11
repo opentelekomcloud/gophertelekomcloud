@@ -153,13 +153,13 @@ type ListImagesOpts struct {
 
 // ListImages This API is used to query images using search criteria and to display the images in a list.
 func ListImages(client *golangsdk.ServiceClient, opts ListImagesOpts) ([]ImageInfo, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("cloudimages").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/cloudimages
-	raw, err := client.Get(client.ServiceURL("cloudimages")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

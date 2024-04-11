@@ -17,13 +17,13 @@ type ListConfigOpts struct {
 }
 
 func ListConfigurations(client *golangsdk.ServiceClient, opts ListConfigOpts) (*ListConfigResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("configurations").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/mysql/v3/{project_id}/configurations
-	raw, err := client.Get(client.ServiceURL("configurations")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

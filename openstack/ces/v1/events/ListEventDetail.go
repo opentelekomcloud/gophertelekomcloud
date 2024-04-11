@@ -30,13 +30,13 @@ type ListEventDetailOpts struct {
 }
 
 func ListEventDetail(client *golangsdk.ServiceClient, opts ListEventDetailOpts) (*ListEventDetailResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("event", opts.EventName).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /V1.0/{project_id}/event/{event_name}
-	raw, err := client.Get(client.ServiceURL("event", opts.EventName)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

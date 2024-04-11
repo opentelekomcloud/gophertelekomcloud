@@ -43,13 +43,13 @@ type GetPartitionMonitorOpts struct {
 }
 
 func GetPartitionMonitor(client *golangsdk.ServiceClient, opts GetPartitionMonitorOpts) (*GetPartitionMonitorResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("streams", opts.StreamName, "partitions", opts.PartitionId, "metrics").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/streams/{stream_name}/partitions/{partition_id}/metrics
-	raw, err := client.Get(client.ServiceURL("streams", opts.StreamName, "partitions", opts.PartitionId, "metrics")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

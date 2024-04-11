@@ -27,13 +27,13 @@ type BackupListOpts struct {
 }
 
 func ListBackups(client *golangsdk.ServiceClient, opts BackupListOpts) (*BackupListResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("backups").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/mysql/v3/{project_id}/backups
-	raw, err := client.Get(client.ServiceURL("backups")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

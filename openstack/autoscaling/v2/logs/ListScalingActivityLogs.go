@@ -40,13 +40,13 @@ type ListScalingActivityLogsOpts struct {
 }
 
 func ListScalingActivityLogs(client *golangsdk.ServiceClient, opts ListScalingActivityLogsOpts) (*ListScalingActivityLogsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("scaling_activity_log", opts.ScalingGroupId).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /autoscaling-api/v2/{project_id}/scaling_activity_log/{scaling_group_id}
-	raw, err := client.Get(client.ServiceURL("scaling_activity_log", opts.ScalingGroupId)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

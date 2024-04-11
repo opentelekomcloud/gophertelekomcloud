@@ -17,13 +17,12 @@ type GetQuery struct {
 
 // Get returns 500 error, not usable
 func Get(client *golangsdk.ServiceClient, opts GetQuery) ([]Job, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("clusters", opts.ClusterId, "cdm", "job", opts.JobName).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	url := "clusters/" + opts.ClusterId + "/cdm/job/" + opts.JobName
-	pages, err := pagination.NewPager(client, client.ServiceURL(url)+q.String(),
+	pages, err := pagination.NewPager(client, client.ServiceURL(url.String()),
 		func(r pagination.PageResult) pagination.Page {
 			return JobPage{pagination.LinkedPageBase{PageResult: r}}
 		}).AllPages()

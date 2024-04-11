@@ -62,8 +62,8 @@ func TestTrackersLifecycle(t *testing.T) {
 	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
 
 	trackerList, err := tracker.List(client, ctsTracker.TrackerName)
-	trackerGet := trackerList[0]
 	th.AssertNoErr(t, err)
+	trackerGet := trackerList[0]
 	th.AssertEquals(t, trackerGet.TrackerType, "system")
 	th.AssertEquals(t, trackerGet.TrackerName, "system")
 	th.AssertEquals(t, trackerGet.Status, "enabled")

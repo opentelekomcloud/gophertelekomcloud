@@ -18,13 +18,13 @@ type GetRecordsOpts struct {
 }
 
 func GetRecords(client *golangsdk.ServiceClient, opts GetRecordsOpts) (*GetRecordsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("records").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/records
-	raw, err := client.Get(client.ServiceURL("records")+q.String(), nil, &golangsdk.RequestOpts{
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
 	if err != nil {
