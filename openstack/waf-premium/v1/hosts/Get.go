@@ -82,7 +82,7 @@ type Host struct {
 	// Circuit breaker configuration
 	CircuitBreaker *CircuitBreakerObject `json:"circuit_breaker"`
 	// Timeout settings
-	TimeoutConfig string `json:"timeout_config"`
+	TimeoutConfig *TimeoutConfigObject `json:"timeout_config"`
 	// Description
 	Description string `json:"description"`
 }
