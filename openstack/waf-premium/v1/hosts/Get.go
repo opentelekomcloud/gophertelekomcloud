@@ -82,7 +82,7 @@ type Host struct {
 	// Circuit breaker configuration
 	CircuitBreaker *CircuitBreakerObject `json:"circuit_breaker"`
 	// Timeout settings
-	TimeoutConfig *TimeoutConfigObject `json:"timeout_config"`
+	TimeoutConfig string `json:"timeout_config"`
 	// Description
 	Description string `json:"description"`
 }
@@ -126,9 +126,9 @@ type CircuitBreakerObject struct {
 
 type TimeoutConfigObject struct {
 	// Timeout for WAF to connect to the origin server.
-	ConnectionTimeout string `json:"connect_timeout"`
+	ConnectionTimeout int `json:"connect_timeout"`
 	// Timeout for WAF to send requests to the origin server.
-	SendTimeout string `json:"send_timeout"`
+	SendTimeout int `json:"send_timeout"`
 	// Timeout for WAF to receive responses from the origin server.
-	ReadTimeout string `json:"read_timeout"`
+	ReadTimeout int `json:"read_timeout"`
 }
