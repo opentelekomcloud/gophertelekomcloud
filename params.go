@@ -376,6 +376,7 @@ func BuildQueryString(opts interface{}) (*url.URL, error) {
 	return nil, fmt.Errorf("options type is not a struct")
 }
 
+// URL is a representation for the url.URL from the standard library
 type URL struct {
 	u *url.URL
 }
@@ -384,21 +385,34 @@ func (u *URL) String() string {
 	return u.u.String()
 }
 
+// URLBuilder provides ability to build custom url with query parameters.
 type URLBuilder struct {
 	endpoints []string
 	params    interface{}
 }
 
+// WithEndpoints accept strings and build url path
+// Example: WithEndpoints("foo", "bar") will be modified to url with path "foo/bar"
+// Characters /!?$#=&+_ are not allowed in the endpoints.
 func (ub *URLBuilder) WithEndpoints(endpoints ...string) *URLBuilder {
 	ub.endpoints = endpoints
 	return ub
 }
 
+// WithQueryParams accept a struct and build query parameters for url.
+// Example:
+//
+//	type exampleStruct struct {
+//		TaskID string `q:"task_id"`
+//	}
+//
+// WithQueryParams(&exampleStruct{TaskID: "12345"}) will be modified to query parameters "?task_id=12345"
 func (ub *URLBuilder) WithQueryParams(params interface{}) *URLBuilder {
 	ub.params = params
 	return ub
 }
 
+// Build constructs and return url.
 func (ub *URLBuilder) Build() (*URL, error) {
 	var u url.URL
 
@@ -413,7 +427,7 @@ func (ub *URLBuilder) Build() (*URL, error) {
 	}
 
 	for _, e := range ub.endpoints {
-		if strings.ContainsAny(e, "/!?$#=&+_") {
+		if strings.ContainsAny(e, "/!?$#=&+") {
 			return nil, fmt.Errorf("characters '/!?$#=&+_\"' are not possible in endpoints")
 		}
 	}
@@ -427,6 +441,7 @@ func (ub *URLBuilder) Build() (*URL, error) {
 	return &URL{u: &u}, nil
 }
 
+// NewURLBuilder is the constructor for a struct URLBuilder
 func NewURLBuilder() *URLBuilder {
 	return &URLBuilder{}
 }
