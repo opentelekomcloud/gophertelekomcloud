@@ -17,7 +17,7 @@ func TestGetToken(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	authOptions := tokens.AuthOptions{
-		UserID:     cc.AuthInfo.UserID,
+		UserID:     cc.ProviderClient.UserID,
 		Password:   cc.AuthInfo.Password,
 		DomainName: cc.AuthInfo.DomainName,
 		Passcode:   os.Getenv("OS_PASSCODE"),
