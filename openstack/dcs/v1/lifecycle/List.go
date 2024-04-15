@@ -34,13 +34,13 @@ type ListDcsInstanceOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListDcsInstanceOpts) (*ListDcsResponse, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v1.0/{project_id}/instances
-	raw, err := client.Get(client.ServiceURL("instances")+query.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

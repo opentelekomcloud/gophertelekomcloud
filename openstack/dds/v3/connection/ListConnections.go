@@ -14,13 +14,13 @@ type ListConnectionsOpts struct {
 }
 
 func ListConnections(client *golangsdk.ServiceClient, opts ListConnectionsOpts) (*ListConnectionsResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", opts.InstanceId, "conn-statistics").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/instances/{instance_id}/conn-statistics
-	raw, err := client.Get(client.ServiceURL("instances", opts.InstanceId, "conn-statistics")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

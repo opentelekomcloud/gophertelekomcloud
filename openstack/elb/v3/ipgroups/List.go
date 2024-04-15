@@ -20,13 +20,13 @@ type ListOpts struct {
 
 // List is used to obtain the parameter ipGroup list
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]IpGroup, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("ipgroups").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/backups
-	raw, err := client.Get(client.ServiceURL("ipgroups")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

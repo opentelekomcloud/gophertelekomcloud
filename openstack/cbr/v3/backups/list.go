@@ -29,12 +29,12 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("backups").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	pages, err := pagination.NewPager(client, client.ServiceURL("backups")+q.String(),
+	pages, err := pagination.NewPager(client, client.ServiceURL(url.String()),
 		func(r pagination.PageResult) pagination.Page {
 			return BackupPage{pagination.LinkedPageBase{PageResult: r}}
 		}).AllPages()

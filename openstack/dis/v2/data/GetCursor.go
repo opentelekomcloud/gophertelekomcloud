@@ -50,13 +50,13 @@ type GetCursorOpts struct {
 }
 
 func GetCursor(client *golangsdk.ServiceClient, opts GetCursorOpts) (*GetCursorResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("cursors").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/cursors
-	raw, err := client.Get(client.ServiceURL("cursors")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -11,13 +11,13 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Organization, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("manage", "namespaces").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/manage/namespaces
-	raw, err := client.Get(client.ServiceURL("manage", "namespaces")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -47,13 +47,13 @@ type VirtualInterface struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]VirtualInterface, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("dcaas", "virtual-interfaces").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v2.0/{project_id}/virtual-interfaces?id={id}
-	raw, err := client.Get(client.ServiceURL("dcaas", "virtual-interfaces")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

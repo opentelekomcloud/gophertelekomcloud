@@ -27,12 +27,13 @@ func (opts ListOpts) ToCredentialListQuery() (string, error) {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) (l ListResult) {
-	q, err := opts.ToCredentialListQuery()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(listURL(client)).WithQueryParams(&opts).Build()
 	if err != nil {
 		l.Err = err
 		return
 	}
-	_, l.Err = client.Get(listURL(client)+q, &l.Body, nil)
+
+	_, l.Err = client.Get(url.String(), &l.Body, nil)
 	return
 }
 

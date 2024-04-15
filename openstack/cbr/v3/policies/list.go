@@ -15,12 +15,12 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Policy, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("policies").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL("policies")+query.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

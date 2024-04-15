@@ -8,11 +8,11 @@ type DeleteOpts struct {
 }
 
 func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (err error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("scaling_group", opts.ScalingGroupId).WithQueryParams(&opts).Build()
 	if err != nil {
 		return
 	}
 
-	_, err = client.Delete(client.ServiceURL("scaling_group", opts.ScalingGroupId)+q.String(), nil)
+	_, err = client.Delete(client.ServiceURL(url.String()), nil)
 	return
 }

@@ -21,12 +21,12 @@ type DeleteCheckpointOpts struct {
 }
 
 func DeleteCheckpoint(client *golangsdk.ServiceClient, opts DeleteCheckpointOpts) (err error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("checkpoints").WithQueryParams(&opts).Build()
 	if err != nil {
 		return err
 	}
 
 	// DELETE /v2/{project_id}/checkpoints
-	_, err = client.Delete(client.ServiceURL("checkpoints")+q.String(), nil)
+	_, err = client.Delete(client.ServiceURL(url.String()), nil)
 	return
 }

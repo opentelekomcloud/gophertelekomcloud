@@ -18,13 +18,13 @@ type ListAppOpts struct {
 }
 
 func ListApps(client *golangsdk.ServiceClient, opts ListAppOpts) (*ListAppResponse, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("apps").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2/{project_id}/apps
-	raw, err := client.Get(client.ServiceURL("apps")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

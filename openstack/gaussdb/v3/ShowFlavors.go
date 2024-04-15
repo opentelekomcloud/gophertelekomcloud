@@ -17,13 +17,13 @@ type ShowFlavorsOpts struct {
 }
 
 func ShowGaussMySqlFlavors(client *golangsdk.ServiceClient, opts ShowFlavorsOpts) ([]MysqlFlavorsInfo, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("flavors", opts.DatabaseName).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/mysql/v3/{project_id}/flavors/{database_name}
-	raw, err := client.Get(client.ServiceURL("flavors", opts.DatabaseName)+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -35,13 +35,13 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("backups").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET https://{Endpoint}/v3/{project_id}/backups
-	raw, err := client.Get(client.ServiceURL("backups")+q.String(), nil, openstack.StdRequestOpts())
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, openstack.StdRequestOpts())
 	if err != nil {
 		return nil, err
 	}

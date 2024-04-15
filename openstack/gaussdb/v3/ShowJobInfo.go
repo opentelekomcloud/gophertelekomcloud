@@ -5,9 +5,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+type taskIdStr struct {
+	Id string `q:"id"`
+}
+
 func ShowJobInfo(client *golangsdk.ServiceClient, taskId string) (*GetJobInfoDetail, error) {
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("jobs").WithQueryParams(&taskIdStr{Id: taskId}).Build()
+	if err != nil {
+		return nil, err
+	}
+
 	// GET https://{Endpoint}/mysql/v3/{project_id}/jobs?id={id}
-	raw, err := client.Get(client.ServiceURL("jobs")+"?id="+taskId, nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

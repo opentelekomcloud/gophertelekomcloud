@@ -13,13 +13,13 @@ import (
 
 // List implements image list request.
 func List(c *golangsdk.ServiceClient, opts images.ListImagesOpts) pagination.Pager {
-	q, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("images").WithQueryParams(&opts).Build()
 	if err != nil {
 		return pagination.Pager{Err: err}
 	}
 
 	// GET /v2/images
-	return pagination.NewPager(c, c.ServiceURL("images")+q.String(), func(r pagination.PageResult) pagination.Page {
+	return pagination.NewPager(c, c.ServiceURL(url.String()), func(r pagination.PageResult) pagination.Page {
 		return ImagePage{
 			serviceURL:     c.ServiceURL(),
 			LinkedPageBase: pagination.LinkedPageBase{PageResult: r},

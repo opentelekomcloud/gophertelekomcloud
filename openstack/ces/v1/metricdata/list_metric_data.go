@@ -55,13 +55,13 @@ type ShowMetricDataOpts struct {
 }
 
 func ShowMetricData(client *golangsdk.ServiceClient, opts ShowMetricDataOpts) (*MetricData, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("metric-data").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /V1.0/{project_id}/metric-data
-	raw, err := client.Get(client.ServiceURL("metric-data")+q.String(), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}
