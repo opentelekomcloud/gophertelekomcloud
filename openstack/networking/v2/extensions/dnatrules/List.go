@@ -6,14 +6,13 @@ import (
 )
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]DnatRule, error) {
-	query, err := golangsdk.BuildQueryString(opts)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("dnat_rules").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
 	// GET /v2.0/dnat_rules
-	url := client.ServiceURL("dnat_rules") + query.String()
-	raw, err := client.Get(url, nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

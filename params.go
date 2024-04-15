@@ -393,7 +393,7 @@ type URLBuilder struct {
 
 // WithEndpoints accept strings and build url path
 // Example: WithEndpoints("foo", "bar") will be modified to url with path "foo/bar"
-// Characters /!?$#=&+_ are not allowed in the endpoints.
+// Characters /!?$#=&+ are not allowed in the endpoints.
 func (ub *URLBuilder) WithEndpoints(endpoints ...string) *URLBuilder {
 	ub.endpoints = endpoints
 	return ub

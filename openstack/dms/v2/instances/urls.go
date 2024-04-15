@@ -25,10 +25,6 @@ func getURL(client *golangsdk.ServiceClient, id string) string {
 	return client.ServiceURL(resourcePath, id)
 }
 
-func listURL(client *golangsdk.ServiceClient) string {
-	return client.ServiceURL(resourcePath)
-}
-
 func changePasswordURL(client *golangsdk.ServiceClient, id string) string {
 	return client.ServiceURL(resourcePath, id, "password")
 }
