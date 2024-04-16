@@ -26,7 +26,10 @@ type CreateOpts struct {
 	ResultFailureSample string            `json:"result_failure_sample,omitempty"`
 	AuthorizerID        string            `json:"authorizer_id,omitempty"`
 	Tags                []string          `json:"tags,omitempty"`
+	RomaAppId           string            `json:"roma_app_id,omitempty"`
+	DomainName          string            `json:"domain_name,omitempty"`
 	ResponseID          string            `json:"response_id,omitempty"`
+	ContentType         string            `json:"content_type,omitempty"`
 	MockInfo            *MockInfo         `json:"mock_info,omitempty"`
 	FuncInfo            *FuncInfo         `json:"func_info,omitempty"`
 	ReqParams           []ReqParams       `json:"req_params,omitempty"`
@@ -38,14 +41,14 @@ type CreateOpts struct {
 }
 
 type AuthOpt struct {
-	AppCodeAuthType string `json:"policy_https" required:"true"`
+	AppCodeAuthType string `json:"app_code_auth_type" required:"true"`
 }
 
 type MockInfo struct {
-	Description   string `json:"remark,omitempty"`
-	ResultContent string `json:"result_content,omitempty"`
-	Version       string `json:"version,omitempty"`
-	AuthorizerID  string `json:"authorizer_id,omitempty"`
+	Description  string `json:"remark,omitempty"`
+	Response     string `json:"result_content,omitempty"`
+	Version      string `json:"version,omitempty"`
+	AuthorizerID string `json:"authorizer_id,omitempty"`
 }
 
 type FuncInfo struct {
@@ -56,6 +59,7 @@ type FuncInfo struct {
 	Version        string `json:"version,omitempty"`
 	AliasUrn       string `json:"alias_urn,omitempty"`
 	Timeout        int    `json:"timeout" required:"true"`
+	AuthorizerID   string `json:"authorizer_id,omitempty"`
 }
 
 type ReqParams struct {
@@ -77,20 +81,21 @@ type ReqParams struct {
 	JsonSchema   string `json:"json_schema,omitempty"`
 }
 
+type PolicyMocks struct {
+	Response      string          `json:"result_content,omitempty"`
+	EffectMode    string          `json:"effect_mode" required:"true"`
+	Name          string          `json:"name" required:"true"`
+	BackendParams []BackendParams `json:"backend_params,omitempty"`
+	Conditions    []Conditions    `json:"conditions" required:"true"`
+	AuthorizerID  string          `json:"authorizer_id,omitempty"`
+}
+
 type BackendParams struct {
 	Origin      string `json:"origin" required:"true"`
 	Name        string `json:"name" required:"true"`
 	Description string `json:"remark,omitempty"`
 	Location    string `json:"location" required:"true"`
 	Value       string `json:"value" required:"true"`
-}
-
-type PolicyMocks struct {
-	ResultContent string          `json:"result_content,omitempty"`
-	EffectMode    string          `json:"effect_mode" required:"true"`
-	Name          string          `json:"name" required:"true"`
-	BackendParams []BackendParams `json:"backend_params,omitempty"`
-	Conditions    []Conditions    `json:"conditions" required:"true"`
 }
 
 type Conditions struct {
@@ -189,6 +194,10 @@ type ApiResp struct {
 	AuthorizerID        string            `json:"authorizer_id"`
 	Tags                []string          `json:"tags"`
 	ResponseID          string            `json:"response_id"`
+	RomaAppId           string            `json:"roma_app_id"`
+	RomaAppName         string            `json:"roma_app_name"`
+	DomainName          string            `json:"domain_name"`
+	ContentType         string            `json:"content_type"`
 	ID                  string            `json:"id"`
 	Status              int               `json:"status"`
 	ArrangeNecessary    int               `json:"arrange_necessary"`
@@ -200,6 +209,7 @@ type ApiResp struct {
 	RunEnvName          string            `json:"run_env_name"`
 	PublishID           string            `json:"publish_id"`
 	PublishTime         string            `json:"publish_time"`
+	CustomApiId         string            `json:"ld_api_id"`
 	BackendApi          *BackendApi       `json:"backend_api"`
 	ApiGroupInfo        *ApiGroupInfo     `json:"api_group_info"`
 	FuncInfo            *FuncInfo         `json:"func_info"`

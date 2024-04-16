@@ -19,7 +19,7 @@ type ListOpts struct {
 	PreciseSearch string `q:"precise_search"`
 	EnvID         string `q:"env_id"`
 	Type          int    `q:"type"`
-	Name          string `q:"mame,"`
+	Name          string `q:"name"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]ApiResp, error) {
