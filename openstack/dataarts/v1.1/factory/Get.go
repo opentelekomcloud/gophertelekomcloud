@@ -1,4 +1,4 @@
-package job
+package factory
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
