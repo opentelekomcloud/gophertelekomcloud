@@ -53,7 +53,7 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 		},
 	}
 
-	createResp, err := cluster.Create(client, createOpts)
+	createResp, err := cluster.Create(client, createOpts, "en")
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, createResp)
 
@@ -86,7 +86,7 @@ func waitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID
 func deleteDataArts(t *testing.T, client *golangsdk.ServiceClient, instanceId string) {
 	t.Logf("Attempting to delete DataArts instance: %s", instanceId)
 
-	err := cluster.Delete(client, instanceId)
+	_, err := cluster.Delete(client, instanceId, nil)
 	th.AssertNoErr(t, err)
 
 	t.Logf("DataArts instance deleted: %s", instanceId)

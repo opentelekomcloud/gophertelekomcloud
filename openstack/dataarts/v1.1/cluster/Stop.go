@@ -40,5 +40,9 @@ func Stop(client *golangsdk.ServiceClient, clusterId string, opts StopOpts) (*Jo
 		&golangsdk.RequestOpts{
 			MoreHeaders: map[string]string{HeaderContentType: ApplicationJson},
 		})
+	if err != nil {
+		return nil, err
+	}
+
 	return respToJobId(raw)
 }
