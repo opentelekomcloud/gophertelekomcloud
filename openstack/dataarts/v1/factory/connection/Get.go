@@ -7,19 +7,19 @@ import (
 
 // Get is used to query configuration details of a specific connection.
 // Send request GET /v1/{project_id}/connections/{connection_name}
-func Get(client *golangsdk.ServiceClient, connectionName string, workspace string) (*Config, error) {
+func Get(client *golangsdk.ServiceClient, connectionName string, workspace string) (*Connection, error) {
 	var opts *golangsdk.RequestOpts
 	if workspace != "" {
 		opts = &golangsdk.RequestOpts{
 			MoreHeaders: map[string]string{HeaderWorkspace: workspace},
 		}
 	}
-	raw, err := client.Get(client.ServiceURL("clusters", connectionName), nil, opts)
+	raw, err := client.Get(client.ServiceURL(connectionsUrl, connectionName), nil, opts)
 	if err != nil {
 		return nil, err
 	}
 
-	var res *Config
+	var res *Connection
 	err = extract.Into(raw.Body, res)
 	return res, err
 }

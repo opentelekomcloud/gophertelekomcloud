@@ -79,14 +79,14 @@ type ExtendedProp struct {
 
 // Create is used to create a cluster.
 // Send request POST /v1.1/{project_id}/clusters
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*ClusterResp, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts, xLang string) (*ClusterResp, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("clusters"), b, nil, &golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{"Content-Type": "application/json", HeaderXLanguage: RequestedLang},
+	raw, err := client.Post(client.ServiceURL(clustersURL), b, nil, &golangsdk.RequestOpts{
+		MoreHeaders: map[string]string{HeaderContentType: ApplicationJson, HeaderXLanguage: xLang},
 	})
 
 	if err != nil {

@@ -6,8 +6,9 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
+
+const connectionsUrl = "connections"
 
 const (
 	TypeDWS        = "DWS"
@@ -26,13 +27,13 @@ const (
 
 const HeaderWorkspace = "workspace"
 
-type Config struct {
+type Connection struct {
 	// Connection name. The name contains a maximum of 100 characters, including only letters, numbers, hyphens (-), and underscores (_).
 	// The connection name must be unique.
 	Name string `json:"name" required:"true"`
 	// Connection type. Should be one of: DWS, DLI, SparkSQL, HIVE, RDS, CloudTable, HOST.
 	Type string `json:"type" required:"true"`
-	// Connection configuration item. The configuration item varies with the connection type.
+	// Config connection configuration. The configuration item varies with the connection type.
 	// You do not need to set the config parameter for DLI connections.
 	// For other types of connections, see the description of connection configuration items.
 	Config interface{} `json:"config,omitempty"`
@@ -40,7 +41,7 @@ type Config struct {
 	Description string `json:"description,omitempty"`
 }
 
-func (c *Config) UnmarshalJSON(data []byte) error {
+func (c *Connection) UnmarshalJSON(data []byte) error {
 	var obj map[string]json.RawMessage
 
 	if err := json.Unmarshal(data, &obj); err != nil {
@@ -212,33 +213,24 @@ type HOSTConfig struct {
 
 // Create is used to create a connection. The supported connection types include DWS, DLI, Spark SQL, RDS, CloudTable, and Hive.
 // Send request  /v1/{project_id}/connections
-func Create(client *golangsdk.ServiceClient, opts Config, workspace string) (*CreateResp, error) {
+func Create(client *golangsdk.ServiceClient, opts Connection, workspace string) error {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var reqOpts *golangsdk.RequestOpts
+	reqOpts := &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	}
+
 	if workspace != "" {
-		reqOpts = &golangsdk.RequestOpts{
-			MoreHeaders: map[string]string{HeaderWorkspace: workspace},
-		}
+		reqOpts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Post(client.ServiceURL("connections"), b, nil, reqOpts)
-
+	_, err = client.Post(client.ServiceURL(connectionsUrl), b, nil, reqOpts)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var res *CreateResp
-	err = extract.Into(raw.Body, res)
-	return res, err
-}
-
-type CreateResp struct {
-	// Error code
-	ErrorCode string `json:"error_code,omitempty"`
-	// Error message
-	ErrorMsg string `json:"error_msg,omitempty"`
+	return nil
 }

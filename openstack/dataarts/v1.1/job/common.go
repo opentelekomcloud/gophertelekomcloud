@@ -1,4 +1,4 @@
-package cluster
+package job
 
 import (
 	"net/http"
@@ -13,9 +13,11 @@ const (
 	ApplicationJson = "application/json"
 )
 
-const clustersURL = "clusters"
-
-const actionEndpoint = "action"
+const (
+	clustersEndpoint = "clusters"
+	jobEndpoint      = "job"
+	cdmEndpoint      = "cdm"
+)
 
 type JobId struct {
 	JobId string `json:"jobId"`

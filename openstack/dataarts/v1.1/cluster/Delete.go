@@ -11,7 +11,7 @@ type DeleteOpts struct {
 	KeepBackup int `json:"keep_last_manual_backup"`
 }
 
-// Delete is used to create a cluster.
+// Delete is used to delete a cluster.
 // Send request DELETE /v1.1/{project_id}/clusters/{cluster_id}
 func Delete(client *golangsdk.ServiceClient, id string, jsonOpts DeleteOpts) (*JobId, error) {
 	b, err := build.RequestBody(jsonOpts, "")
@@ -19,7 +19,10 @@ func Delete(client *golangsdk.ServiceClient, id string, jsonOpts DeleteOpts) (*J
 		return nil, err
 	}
 
-	r, err := client.DeleteWithBody(client.ServiceURL("clusters", id), b, nil)
+	r, err := client.DeleteWithBody(client.ServiceURL(clustersURL, id), b, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	var resp *JobId
 	err = extract.Into(r.Body, resp)

@@ -34,11 +34,11 @@ func Stop(client *golangsdk.ServiceClient, clusterId string, opts StopOpts) (*Jo
 	}
 
 	raw, err := client.Post(
-		client.ServiceURL("clusters", clusterId, "action"),
+		client.ServiceURL(clustersURL, clusterId, actionEndpoint),
 		b,
 		nil,
 		&golangsdk.RequestOpts{
-			MoreHeaders: map[string]string{"Content-Type": "application/json", HeaderXLanguage: RequestedLang},
+			MoreHeaders: map[string]string{HeaderContentType: ApplicationJson},
 		})
 	return respToJobId(raw)
 }
