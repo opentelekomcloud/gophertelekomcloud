@@ -101,6 +101,7 @@ func TestFunctionGraphExports(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
+	t.Logf("Attempting to EXPORT FUNCGRAPH")
 	err = function.Export(client, funcUrn, function.ExportOpts{
 		Type: "code",
 	})

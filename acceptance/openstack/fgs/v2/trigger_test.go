@@ -74,15 +74,18 @@ func TestFunctionTriggerLifecycle(t *testing.T) {
 		},
 	}
 
+	t.Logf("Attempting to CREATE FUNCGRAPH TRIGGER")
 	createTriggerResp, err := trigger.Create(client, createTriggerOpts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, createTriggerResp)
 
 	defer func(client *golangsdk.ServiceClient, urn, triggerType, id string) {
+		t.Logf("Attempting to DELETE FUNCGRAPH TRIGGER")
 		err = trigger.Delete(client, urn, triggerType, id)
 		th.AssertNoErr(t, err)
 	}(client, funcUrn, "LTS", createTriggerResp.TriggerId)
 
+	t.Logf("Attempting to GET FUNCGRAPH TRIGGER")
 	getTriggerResp, err := trigger.Get(client, funcUrn, "LTS", createTriggerResp.TriggerId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createTriggerResp.TriggerId, getTriggerResp.TriggerId)
@@ -96,6 +99,7 @@ func TestFunctionTriggerLifecycle(t *testing.T) {
 		TriggerStatus:   "DISABLED",
 	}
 
+	t.Logf("Attempting to UPDATE FUNCGRAPH TRIGGER")
 	updateTriggerResp, err := trigger.Update(client, updateTriggerOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateTriggerResp.TriggerStatus, "DISABLED")

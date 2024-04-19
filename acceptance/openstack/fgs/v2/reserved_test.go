@@ -16,10 +16,12 @@ func TestFunctionGraphListReserved(t *testing.T) {
 	client, err := clients.NewFuncGraphClient()
 	th.AssertNoErr(t, err)
 
+	t.Logf("Attempting to LIST FUNCGRAPH RESERVED INSTANCE CONFIGURATION")
 	listReservedConfigs, err := reserved.ListReservedInstConfigs(client, reserved.ListConfigOpts{})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listReservedConfigs)
 
+	t.Logf("Attempting to LIST FUNCGRAPH RESERVED INSTANCES")
 	listReserved, err := reserved.ListReservedInst(client, reserved.ListOpts{})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listReserved)
@@ -38,6 +40,7 @@ func TestFunctionGraphReservedLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
+	t.Logf("Attempting to UPDATE FUNCGRAPH RESERVED INSTANCES")
 	updateResp, err := reserved.Update(client, reserved.UpdateOpts{
 		FuncUrn: funcUrn,
 		Count:   1,
