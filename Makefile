@@ -26,3 +26,6 @@ test-unit:
 test-acc:
 	@echo "Starting acceptance tests..."
 	@go test ./acceptance/... -race -covermode=atomic -coverprofile=coverage.txt -timeout 20m -v
+
+test-case:
+	go test -v github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/$(scope) -run $(case)
