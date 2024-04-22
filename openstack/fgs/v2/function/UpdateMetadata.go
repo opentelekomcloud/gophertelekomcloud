@@ -23,6 +23,7 @@ type UpdateFuncMetadataOpts struct {
 	MountConfig          *MountConfig          `json:"mount_config,omitempty"`
 	StrategyConfig       *StrategyConfig       `json:"strategy_config,omitempty"`
 	CustomImage          *CustomImage          `json:"custom_image,omitempty"`
+	Package              string                `json:"package"`
 	ExtendConfig         string                `json:"extend_config,omitempty"`
 	InitHandler          string                `json:"initializer_handler,omitempty"`
 	InitTimeout          *int                  `json:"initializer_timeout,omitempty"`
