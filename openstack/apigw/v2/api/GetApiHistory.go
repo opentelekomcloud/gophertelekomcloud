@@ -16,16 +16,13 @@ type ListHistoryOpts struct {
 }
 
 func GetHistory(client *golangsdk.ServiceClient, gatewayID, apiID string, opts ListHistoryOpts) ([]VersionResp, error) {
-	url, err := golangsdk.NewURLBuilder().
-		WithEndpoints("apigw", "instances", gatewayID, "apis", "publish", apiID).
-		WithQueryParams(&opts).Build()
+	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return nil, err
 	}
-
 	pages, err := pagination.Pager{
 		Client:     client,
-		InitialURL: url.String(),
+		InitialURL: client.ServiceURL("apigw", "instances", gatewayID, "apis", "publish", apiID) + q.String(),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
 			return VersionPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
