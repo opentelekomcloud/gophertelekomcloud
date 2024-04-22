@@ -11,7 +11,7 @@ type ListOpts struct {
 	FuncUrn string `q:"urn"`
 }
 
-func ListReservedInst(client *golangsdk.ServiceClient, opts ListOpts) (*FuncReservedResp, error) {
+func ListReservedInst(client *golangsdk.ServiceClient, opts ListOpts) (*FuncReservedInstResp, error) {
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("fgs", "functions", "reservedinstances").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
@@ -22,7 +22,18 @@ func ListReservedInst(client *golangsdk.ServiceClient, opts ListOpts) (*FuncRese
 		return nil, err
 	}
 
-	var res FuncReservedResp
+	var res FuncReservedInstResp
 	err = extract.Into(raw.Body, &res)
 	return &res, err
+}
+
+type FuncReservedInstResp struct {
+	ReservedInstances []FuncReservedResp `json:"reserved_instances"`
+	PageInfo          *PageInfo          `json:"page_info"`
+	Count             int                `json:"count"`
+}
+
+type FuncReservedResp struct {
+	FuncUrn string `json:"func_urn"`
+	Count   int    `json:"count"`
 }

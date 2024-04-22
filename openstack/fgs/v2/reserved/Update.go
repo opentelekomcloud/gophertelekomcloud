@@ -24,7 +24,7 @@ type CronConfig struct {
 	ExpiredTime int    `json:"expired_time,omitempty"`
 }
 
-func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*FuncReservedResp, error) {
+func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*FuncReservedRespUpdate, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -37,6 +37,12 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*FuncReservedResp
 		return nil, err
 	}
 
-	var res FuncReservedResp
+	var res FuncReservedRespUpdate
 	return &res, extract.Into(raw.Body, &res)
+}
+
+type FuncReservedRespUpdate struct {
+	TacticsConfig *TacticsConfig `json:"tactics_config"`
+	IdleMode      bool           `json:"idle_mode"`
+	Count         int            `json:"count"`
 }
