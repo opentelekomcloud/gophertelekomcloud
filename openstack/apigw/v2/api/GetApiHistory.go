@@ -27,7 +27,7 @@ func GetHistory(client *golangsdk.ServiceClient, gatewayID, apiID string, opts L
 		Client:     client,
 		InitialURL: url.String(),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return EnvPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return VersionPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
 
