@@ -12,7 +12,7 @@ type VersionApiOpts struct {
 	VersionID string `json:"version_id" required:"true"`
 }
 
-func SwitchVersion(client *golangsdk.ServiceClient, opts ManageOpts) (*ManageApiResp, error) {
+func SwitchVersion(client *golangsdk.ServiceClient, opts VersionApiOpts) (*ManageApiResp, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
