@@ -9,10 +9,10 @@ import (
 )
 
 type ListHistoryOpts struct {
-	Offset  int64 `q:"offset"`
-	Limit   int   `q:"limit"`
-	EnvID   int   `q:"env_id"`
-	EnvName int   `q:"env_name"`
+	Offset  int64  `q:"offset"`
+	Limit   int    `q:"limit"`
+	EnvID   string `q:"env_id"`
+	EnvName string `q:"env_name"`
 }
 
 func GetHistory(client *golangsdk.ServiceClient, gatewayID, apiID string, opts ListHistoryOpts) ([]VersionResp, error) {
