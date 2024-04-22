@@ -78,6 +78,12 @@ func TestApiLifecycle(t *testing.T) {
 	th.AssertEquals(t, manageResp.EnvID, envResp.ID)
 	th.AssertEquals(t, manageResp.Description, manageOpts.Description)
 
+	history, err := api.GetHistory(client, gatewayID, createResp.ID, api.ListHistoryOpts{
+		EnvID: envResp.ID,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(history), 1)
+
 	getResp, err := api.Get(client, gatewayID, createResp.ID)
 	th.AssertNoErr(t, err)
 
