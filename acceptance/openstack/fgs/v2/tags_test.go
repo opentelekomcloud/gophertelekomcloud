@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	rstag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/function"
@@ -20,11 +19,10 @@ func TestFunctionGraphTags(t *testing.T) {
 	createResp, _ := createFunctionGraph(t, client)
 
 	funcUrn := strings.TrimSuffix(createResp.FuncURN, ":latest")
-
-	defer func(client *golangsdk.ServiceClient, id string) {
-		err = function.Delete(client, id)
+	t.Cleanup(func() {
+		err = function.Delete(client, funcUrn)
 		th.AssertNoErr(t, err)
-	}(client, funcUrn)
+	})
 
 	createTagsOpts := tags.TagsActionOpts{
 		Id:     funcUrn,
