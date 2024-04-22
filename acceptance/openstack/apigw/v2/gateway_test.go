@@ -9,6 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/apigw/v2/gateway"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -33,14 +34,28 @@ func TestGatewayLifecycle(t *testing.T) {
 			"eu-de-01",
 			"eu-de-02",
 		},
-		LoadbalancerProvider: "elb",
-		Description:          "All Work And No Play Makes Jack A Dull Boy",
+		LoadBalancerProvider:         "elb",
+		Description:                  "All Work And No Play Makes Jack A Dull Boy",
+		IngressBandwidthChargingMode: "bandwidth",
+		IngressBandwidthSize:         pointerto.Int(5),
+		// Tags: []tags.ResourceTag{
+		// 	{
+		// 		Key:   "TestKey",
+		// 		Value: "TestValue",
+		// 	},
+		// 	{
+		// 		Key:   "empty",
+		// 		Value: "",
+		// 	},
+		// },
 	}
+	t.Logf("Attempting to CREATE APIGW Gateway")
 	createResp, err := gateway.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, WaitForJob(client, createResp.InstanceID, 1800))
 	t.Cleanup(func() {
+		t.Logf("Attempting to DELETE APIGW Gateway: %s", createResp.InstanceID)
 		th.AssertNoErr(t, gateway.Delete(client, createResp.InstanceID))
 	})
 
@@ -52,26 +67,63 @@ func TestGatewayLifecycle(t *testing.T) {
 		ID:            createResp.InstanceID,
 	}
 
+	t.Logf("Attempting to UPDATE APIGW Gateway: %s", createResp.InstanceID)
 	_, err = gateway.Update(client, updateOpts)
 	th.AssertNoErr(t, err)
 
+	t.Logf("Attempting to GET APIGW Gateway: %s", createResp.InstanceID)
 	getResp, err := gateway.Get(client, createResp.InstanceID)
 	th.AssertNoErr(t, err)
 
 	tools.PrintResource(t, getResp)
 
+	// API not published yet
+	// t.Logf("Attempting to UPDATE APIGW Gateway tags: %s", createResp.InstanceID)
+	// err = gateway.UpdateTags(client, &gateway.TagsUpdateOpts{
+	// 	InstanceId: createResp.InstanceID,
+	// 	Action:     "create",
+	// 	Tags: []tags.ResourceTag{
+	// 		{
+	// 			Key:   "NewKey",
+	// 			Value: "NewValue",
+	// 		},
+	// 	},
+	// })
+	// th.AssertNoErr(t, err)
+
+	// t.Logf("Attempting to GET APIGW Gateway tags list: %s", createResp.InstanceID)
+	// getTags, err := gateway.GetTags(client, createResp.InstanceID)
+	// th.AssertNoErr(t, err)
+	// th.CheckEquals(t, 3, len(getTags))
+
+	// t.Logf("Attempting to DISABLE APIGW Gateway ELB ingress access: %s", createResp.InstanceID)
+	// err = gateway.DisableElbIngressAccess(client, createResp.InstanceID)
+	// th.AssertNoErr(t, err)
+	//
+	// optsIngressAccess := gateway.ElbIngressAccessOpts{
+	// 	InstanceId:                  createResp.InstanceID,
+	// 	IngressBandwithSize:         10,
+	// 	IngressBandwithChargingMode: "traffic",
+	// }
+	// t.Logf("Attempting to ENABLE APIGW Gateway ELB ingress access: %s", createResp.InstanceID)
+	// updateIngress, err := gateway.EnableElbIngressAccess(client, optsIngressAccess)
+	// th.AssertNoErr(t, WaitForJob(client, updateIngress.InstanceID, 1800))
+
+	t.Logf("Attempting to ENABLE APIGW Gateway EIP: %s", createResp.InstanceID)
 	th.AssertNoErr(t, gateway.EnableEIP(client, gateway.EipOpts{
 		ID:                    createResp.InstanceID,
 		BandwidthChargingMode: "traffic",
 		BandwidthSize:         "5",
 	}))
 
+	t.Logf("Attempting to UPDATE APIGW Gateway EIP: %s", createResp.InstanceID)
 	th.AssertNoErr(t, gateway.UpdateEIP(client, gateway.EipOpts{
 		ID:                    createResp.InstanceID,
 		BandwidthChargingMode: "traffic",
 		BandwidthSize:         "10",
 	}))
 
+	t.Logf("Attempting to DISABLE APIGW Gateway EIP: %s", createResp.InstanceID)
 	th.AssertNoErr(t, gateway.DisableEIP(client, createResp.InstanceID))
 }
 

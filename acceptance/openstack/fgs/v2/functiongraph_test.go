@@ -88,6 +88,38 @@ func TestFunctionGraphLifecycle(t *testing.T) {
 	// th.AssertNoErr(t, err)
 }
 
+func TestFunctionGraphExports(t *testing.T) {
+	client, err := clients.NewFuncGraphClient()
+	th.AssertNoErr(t, err)
+
+	createResp, _ := createFunctionGraph(t, client)
+
+	funcUrn := strings.TrimSuffix(createResp.FuncURN, ":latest")
+
+	defer func(client *golangsdk.ServiceClient, id string) {
+		err = function.Delete(client, id)
+		th.AssertNoErr(t, err)
+	}(client, funcUrn)
+
+	t.Logf("Attempting to EXPORT FUNCGRAPH")
+	err = function.Export(client, funcUrn, function.ExportOpts{
+		Type: "code",
+	})
+	th.AssertNoErr(t, err)
+
+	// Import fails with any given filecode
+	// importOpts := function.ImportOpts{
+	// 	FuncName: createResp.FuncName,
+	// 	FileName: "index.zip",
+	// 	FileType: "zip",
+	// 	FileCode: base64.StdEncoding.EncodeToString([]byte("1")),
+	// }
+	//
+	// importResp, err := function.Import(client, importOpts)
+	// th.AssertNoErr(t, err)
+	// tools.PrintResource(t, importResp)
+}
+
 func TestFunctionGraphList(t *testing.T) {
 	client, err := clients.NewFuncGraphClient()
 	th.AssertNoErr(t, err)

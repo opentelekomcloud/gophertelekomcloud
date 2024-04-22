@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -48,4 +49,16 @@ func TestFunctionGraphStatList(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listStats)
+}
+
+func TestFunctionGraphTemplate(t *testing.T) {
+	t.Skip("API not published")
+	templateID := os.Getenv("TEMPLATE_ID")
+
+	client, err := clients.NewFuncGraphClient()
+	th.AssertNoErr(t, err)
+
+	templateResp, err := util.GetFuncTemplate(client, templateID)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, templateResp)
 }

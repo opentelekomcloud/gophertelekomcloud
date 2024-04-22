@@ -19,12 +19,14 @@ type CreateOpts struct {
 	SecGroupID                   string             `json:"security_group_id" required:"true"`
 	AvailableZoneIDs             []string           `json:"available_zone_ids" required:"true"`
 	BandwidthSize                *int               `json:"bandwidth_size,omitempty"`
-	BandwidthCharging            string             `json:"bandwidth_charging_mode,omitempty"`
-	LoadbalancerProvider         string             `json:"loadbalancer_provider" required:"true"`
+	BandwidthChargingMode        string             `json:"bandwidth_charging_mode,omitempty"`
+	LoadBalancerProvider         string             `json:"loadbalancer_provider" required:"true"`
 	Tags                         []tags.ResourceTag `json:"tags"`
 	VpcepServiceName             string             `json:"vpcep_service_name,omitempty"`
 	IngressBandwidthSize         *int               `json:"ingress_bandwidth_size,omitempty"`
-	IngressBandwidthChargingMode string             `json:"ingress_bandwidth_charging_mode"`
+	IngressBandwidthChargingMode string             `json:"ingress_bandwidth_charging_mode,omitempty"`
+	EipId                        string             `json:"eip_id,omitempty"`
+	Ipv6Enable                   bool               `json:"ipv6_enable,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*GatewayResp, error) {
