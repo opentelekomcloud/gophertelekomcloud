@@ -8,7 +8,7 @@ import (
 
 type UpdateOpts struct {
 	FuncUrn       string         `json:"-"`
-	Count         int            `json:"count" required:"true"`
+	Count         *int           `json:"count" required:"true"`
 	IdleMode      *bool          `json:"idle_mode"`
 	TacticsConfig *TacticsConfig `json:"tactics_config"`
 }
@@ -19,7 +19,7 @@ type TacticsConfig struct {
 type CronConfig struct {
 	Name        string `json:"name,omitempty"`
 	Cron        string `json:"cron,omitempty"`
-	Count       string `json:"count,omitempty"`
+	Count       int    `json:"count,omitempty"`
 	StartTime   int    `json:"start_time,omitempty"`
 	ExpiredTime int    `json:"expired_time,omitempty"`
 }
