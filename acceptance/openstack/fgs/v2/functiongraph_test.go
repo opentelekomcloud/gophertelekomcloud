@@ -46,7 +46,7 @@ func TestFunctionGraphLifecycle(t *testing.T) {
 	updateFuncOpts := function.UpdateFuncCodeOpts{
 		FuncUrn:  funcUrn,
 		CodeType: "inline",
-		FuncCode: function.FuncCode{
+		FuncCode: &function.FuncCode{
 			File: base64.StdEncoding.EncodeToString([]byte(appCode)),
 		},
 	}

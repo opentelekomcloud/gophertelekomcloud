@@ -8,7 +8,7 @@ import (
 
 type UpdateFuncInstancesOpts struct {
 	FuncUrn        string `json:"-"`
-	MaxInstanceNum int    `json:"max_instance_num" required:"true"`
+	MaxInstanceNum int    `json:"max_instance_num,omitempty"`
 }
 
 func UpdateMaxInstances(client *golangsdk.ServiceClient, opts UpdateFuncInstancesOpts) (*FuncGraph, error) {
