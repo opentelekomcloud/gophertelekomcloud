@@ -7,6 +7,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/function"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/reserved"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -43,7 +44,7 @@ func TestFunctionGraphReservedLifecycle(t *testing.T) {
 	t.Logf("Attempting to UPDATE FUNCGRAPH RESERVED INSTANCES")
 	updateResp, err := reserved.Update(client, reserved.UpdateOpts{
 		FuncUrn: funcUrn,
-		Count:   1,
+		Count:   pointerto.Int(1),
 	})
 	th.AssertNoErr(t, err)
 
