@@ -14,7 +14,7 @@ func GetExecutionResult(client *golangsdk.ServiceClient, scriptName, instanceId,
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(scriptsURL, scriptName, instancesURL, instanceId), nil, opts)
+	raw, err := client.Get(client.ServiceURL(scriptsEndpoint, scriptName, instancesEndpoint, instanceId), nil, opts)
 	if err != nil {
 		return nil, err
 	}

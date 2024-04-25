@@ -4,7 +4,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-const stopURL = "stop"
+const stopEndpoint = "stop"
 
 // Stop is used to stop executing a script instance.
 // Send request POST /v1/{project_id}/scripts/{script_name}/instances/{instance_id}/stop
@@ -17,7 +17,7 @@ func Stop(client *golangsdk.ServiceClient, scriptName, instanceId, workspace str
 		reqOpts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	_, err := client.Post(client.ServiceURL(scriptsURL, scriptName, instancesURL, instanceId, stopURL), nil, nil, reqOpts)
+	_, err := client.Post(client.ServiceURL(scriptsEndpoint, scriptName, instancesEndpoint, instanceId, stopEndpoint), nil, nil, reqOpts)
 	if err != nil {
 		return err
 	}

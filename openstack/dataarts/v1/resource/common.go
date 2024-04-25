@@ -1,4 +1,4 @@
-package script
+package resource
 
 const (
 	HeaderWorkspace   = "workspace"
@@ -7,6 +7,4 @@ const (
 	ApplicationJson = "application/json"
 )
 
-const instancesEndpoint = "instances"
-
-const scriptsEndpoint = "scripts"
+const resourcesEndpoint = "instances"

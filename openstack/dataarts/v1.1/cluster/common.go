@@ -13,7 +13,7 @@ const (
 	ApplicationJson = "application/json"
 )
 
-const clustersURL = "clusters"
+const clustersEndpoint = "clusters"
 
 const actionEndpoint = "action"
 

@@ -56,7 +56,7 @@ func Create(client *golangsdk.ServiceClient, opts Script, workspace string) erro
 		reqOpts.MoreHeaders[HeaderWorkspace] = workspace
 	}
 
-	_, err = client.Post(client.ServiceURL(scriptsURL), b, nil, reqOpts)
+	_, err = client.Post(client.ServiceURL(scriptsEndpoint), b, nil, reqOpts)
 	if err != nil {
 		return err
 	}

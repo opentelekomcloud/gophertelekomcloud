@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-const executeURL = "execute"
+const executeEndpoint = "execute"
 
 type ExecuteReq struct {
 	Params map[string]string `json:"params,omitempty"`
@@ -36,7 +36,7 @@ func Execute(client *golangsdk.ServiceClient, scriptName, workspace string, opts
 		reqOpts.MoreHeaders[HeaderWorkspace] = workspace
 	}
 
-	raw, err := client.Post(client.ServiceURL(scriptsURL, scriptName, executeURL), b, nil, reqOpts)
+	raw, err := client.Post(client.ServiceURL(scriptsEndpoint, scriptName, executeEndpoint), b, nil, reqOpts)
 	if err != nil {
 		return nil, err
 	}

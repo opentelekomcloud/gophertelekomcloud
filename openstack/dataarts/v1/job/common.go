@@ -1,4 +1,4 @@
-package script
+package job
 
 const (
 	HeaderWorkspace   = "workspace"
@@ -7,6 +7,8 @@ const (
 	ApplicationJson = "application/json"
 )
 
-const instancesEndpoint = "instances"
-
-const scriptsEndpoint = "scripts"
+const (
+	jobsEndpoint      = "jobs"
+	instancesEndpoint = "instances"
+	stopEndpoint      = "stop"
+)

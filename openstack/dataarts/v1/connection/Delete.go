@@ -18,7 +18,7 @@ func Delete(client *golangsdk.ServiceClient, connName, workspace string) error {
 		}
 	}
 
-	_, err := client.Delete(client.ServiceURL(connectionsUrl, connName), reqOpts)
+	_, err := client.Delete(client.ServiceURL(connectionsEndpoint, connName), reqOpts)
 
 	return err
 }

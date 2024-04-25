@@ -1,4 +1,4 @@
-package script
+package resource
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -6,15 +6,15 @@ import (
 )
 
 type ListOpts struct {
-	Offset     int    `q:"offset"`
-	Limit      int    `q:"limit"`
-	ScriptName string `q:"scriptName"`
+	Offset       int    `q:"offset"`
+	Limit        int    `q:"limit"`
+	ResourceName string `q:"resourceName"`
 }
 
-// List is used to query the script list. A maximum of 1000 scripts can be returned for each query.
-// Send request GET /v1/{project_id}/scripts?offset={offset}&limit={limit}&scriptName={scriptName}
+// List is used to query a resource list. During the query, you can specify the page number and the maximum number of records on each page.
+// Send request GET /v1/{project_id}/resources?offset={offset}&limit={limit}&resourceName={resourceName}
 func List(client *golangsdk.ServiceClient, opts *ListOpts, workspace string) (*ListResp, error) {
-	url, err := golangsdk.NewURLBuilder().WithEndpoints(scriptsEndpoint).WithQueryParams(&opts).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(resourcesEndpoint).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func List(client *golangsdk.ServiceClient, opts *ListOpts, workspace string) (*L
 	}
 
 	var res *ListResp
-	err = extract.Into(raw.Body, &res)
+	err = extract.Into(raw.Body, res)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +39,8 @@ func List(client *golangsdk.ServiceClient, opts *ListOpts, workspace string) (*L
 }
 
 type ListResp struct {
-	// Total is the total number of scripts.
+	// Total is the total number of resources.
 	Total int `json:"total"`
-	// Scripts is a list of scripts.
-	Scripts []*Script `json:"scripts"`
+	// Resources is a list of resources.
+	Resources []*Resource `json:"resources"`
 }

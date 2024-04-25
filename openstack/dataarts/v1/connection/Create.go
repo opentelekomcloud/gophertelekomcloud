@@ -8,7 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-const connectionsUrl = "connections"
+const connectionsEndpoint = "connections"
 
 const (
 	TypeDWS        = "DWS"
@@ -227,7 +227,7 @@ func Create(client *golangsdk.ServiceClient, opts Connection, workspace string) 
 		reqOpts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	_, err = client.Post(client.ServiceURL(connectionsUrl), b, nil, reqOpts)
+	_, err = client.Post(client.ServiceURL(connectionsEndpoint), b, nil, reqOpts)
 	if err != nil {
 		return err
 	}

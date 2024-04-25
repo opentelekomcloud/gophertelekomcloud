@@ -23,7 +23,7 @@ func Update(client *golangsdk.ServiceClient, scriptName, workspace string, scrip
 		reqOpts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	_, err = client.Put(client.ServiceURL(scriptsURL, scriptName), b, nil, reqOpts)
+	_, err = client.Put(client.ServiceURL(scriptsEndpoint, scriptName), b, nil, reqOpts)
 	if err != nil {
 		return err
 	}

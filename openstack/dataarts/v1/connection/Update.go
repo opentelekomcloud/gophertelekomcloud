@@ -14,7 +14,7 @@ type UpdateOpts struct {
 // Send request PUT /v1/{project_id}/connections/{connection_name}?ischeck=true
 func Update(client *golangsdk.ServiceClient, conn Connection, opts UpdateOpts, workspace string) error {
 
-	url, err := golangsdk.NewURLBuilder().WithEndpoints(connectionsUrl, conn.Name).WithQueryParams(&opts).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(connectionsEndpoint, conn.Name).WithQueryParams(&opts).Build()
 	if err != nil {
 		return err
 	}

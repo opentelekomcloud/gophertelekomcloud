@@ -8,7 +8,7 @@ import (
 // Get is used to query cluster details.
 // Send request GET /v1.1/{project_id}/clusters/{cluster_id}
 func Get(client *golangsdk.ServiceClient, clusterId string) (*ClusterQuery, error) {
-	raw, err := client.Get(client.ServiceURL(clustersURL, clusterId), nil, nil)
+	raw, err := client.Get(client.ServiceURL(clustersEndpoint, clusterId), nil, nil)
 	if err != nil {
 		return nil, err
 	}

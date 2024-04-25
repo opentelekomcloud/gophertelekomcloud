@@ -21,7 +21,7 @@ type ListResp struct {
 // List is used to query a connection list.
 // Send request GET /v1/{project_id}/connections?offset={offset}&limit={limit}&connectionName={connectionName}
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListResp, error) {
-	url, err := golangsdk.NewURLBuilder().WithEndpoints(connectionsUrl).WithQueryParams(&opts).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(connectionsEndpoint).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}

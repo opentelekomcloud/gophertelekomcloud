@@ -21,7 +21,7 @@ func Start(client *golangsdk.ServiceClient, clusterId string, startOpts *StartOp
 	}
 
 	resp, err := client.Post(
-		client.ServiceURL(clustersURL, clusterId, actionEndpoint),
+		client.ServiceURL(clustersEndpoint, clusterId, actionEndpoint),
 		b,
 		nil,
 		&golangsdk.RequestOpts{

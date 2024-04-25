@@ -9,7 +9,7 @@ import (
 // Send request GET /v1.1/{project_id}/clusters
 func List(client *golangsdk.ServiceClient) ([]*ClusterQuery, error) {
 
-	raw, err := client.Get(client.ServiceURL(clustersURL), nil, nil)
+	raw, err := client.Get(client.ServiceURL(clustersEndpoint), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -85,7 +85,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts, xLang string) (*Cl
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL(clustersURL), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL(clustersEndpoint), b, nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{HeaderContentType: ApplicationJson, HeaderXLanguage: xLang},
 	})
 

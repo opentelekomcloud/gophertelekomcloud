@@ -32,7 +32,7 @@ func Delete(client *golangsdk.ServiceClient, scriptName, workspace string, opts 
 		reqOpts.MoreHeaders[HeaderWorkspace] = workspace
 	}
 
-	_, err = client.DeleteWithBody(client.ServiceURL(scriptsURL, scriptName), b, reqOpts)
+	_, err = client.DeleteWithBody(client.ServiceURL(scriptsEndpoint, scriptName), b, reqOpts)
 	if err != nil {
 		return err
 	}

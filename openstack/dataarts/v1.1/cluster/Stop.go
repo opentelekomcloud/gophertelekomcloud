@@ -34,7 +34,7 @@ func Stop(client *golangsdk.ServiceClient, clusterId string, opts StopOpts) (*Jo
 	}
 
 	raw, err := client.Post(
-		client.ServiceURL(clustersURL, clusterId, actionEndpoint),
+		client.ServiceURL(clustersEndpoint, clusterId, actionEndpoint),
 		b,
 		nil,
 		&golangsdk.RequestOpts{

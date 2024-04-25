@@ -14,7 +14,7 @@ func Get(client *golangsdk.ServiceClient, connectionName string, workspace strin
 			MoreHeaders: map[string]string{HeaderWorkspace: workspace},
 		}
 	}
-	raw, err := client.Get(client.ServiceURL(connectionsUrl, connectionName), nil, opts)
+	raw, err := client.Get(client.ServiceURL(connectionsEndpoint, connectionName), nil, opts)
 	if err != nil {
 		return nil, err
 	}

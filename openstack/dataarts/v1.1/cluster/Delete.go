@@ -19,7 +19,7 @@ func Delete(client *golangsdk.ServiceClient, id string, jsonOpts *DeleteOpts) (*
 		return nil, err
 	}
 
-	r, err := client.DeleteWithBody(client.ServiceURL(clustersURL, id), b, nil)
+	r, err := client.DeleteWithBody(client.ServiceURL(clustersEndpoint, id), b, nil)
 	if err != nil {
 		return nil, err
 	}

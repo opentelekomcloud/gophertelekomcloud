@@ -47,7 +47,7 @@ func Restart(client *golangsdk.ServiceClient, clusterId string, opts RestartOpts
 	}
 
 	resp, err := client.Post(
-		client.ServiceURL(clustersURL, clusterId, actionEndpoint),
+		client.ServiceURL(clustersEndpoint, clusterId, actionEndpoint),
 		b,
 		nil,
 		&golangsdk.RequestOpts{
