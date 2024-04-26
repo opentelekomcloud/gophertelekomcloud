@@ -53,19 +53,32 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 		},
 	}
 
-	createResp, err := cluster.Create(client, createOpts)
+	t.Log("starting to create a DataArts cluster")
+	createResp, err := cluster.Create(client, createOpts, "en")
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, createResp)
 
-	th.AssertNoErr(t, waitForStateAvailable(client, 1200, createResp.Id))
+	t.Log("check cluster status, should be normal")
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "200"))
 	t.Cleanup(func() { deleteDataArts(t, client, createResp.Id) })
 
+	t.Log("get cluster details")
 	getCluster, err := cluster.Get(client, createResp.Id)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, getCluster)
+
+	t.Log("stop cluster")
+	_, err = cluster.Stop(client, getCluster.Id, cluster.StopOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "900"))
+
+	t.Log("start cluster")
+	_, err = cluster.Start(client, getCluster.Id, cluster.StartOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "200"))
 }
 
-func waitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
+func waitForState(client *golangsdk.ServiceClient, secs int, instanceID string, status string) error {
 	jobClient := *client
 	jobClient.ResourceBase = jobClient.Endpoint
 
@@ -75,7 +88,7 @@ func waitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID
 			return false, err
 		}
 
-		if resp.Status == "200" {
+		if resp.Status == status {
 			return true, nil
 		}
 
@@ -86,7 +99,8 @@ func waitForStateAvailable(client *golangsdk.ServiceClient, secs int, instanceID
 func deleteDataArts(t *testing.T, client *golangsdk.ServiceClient, instanceId string) {
 	t.Logf("Attempting to delete DataArts instance: %s", instanceId)
 
-	err := cluster.Delete(client, instanceId)
+	jobId, err := cluster.Delete(client, instanceId, nil)
+	t.Logf(jobId.JobId)
 	th.AssertNoErr(t, err)
 
 	t.Logf("DataArts instance deleted: %s", instanceId)
