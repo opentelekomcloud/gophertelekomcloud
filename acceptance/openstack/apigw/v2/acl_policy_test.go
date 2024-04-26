@@ -200,9 +200,6 @@ func CreateGateway(client *golangsdk.ServiceClient, t *testing.T) *gateway.Gatew
 		t.Skip("Both `VPC_ID` and `NETWORK_ID` need to be defined")
 	}
 
-	client, err := clients.NewAPIGWClient()
-	th.AssertNoErr(t, err)
-
 	createOpts := gateway.CreateOpts{
 		VpcID:        vpcID,
 		SubnetID:     subnetID,
