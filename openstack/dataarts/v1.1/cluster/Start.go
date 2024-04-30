@@ -2,20 +2,34 @@ package cluster
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-func Start(client *golangsdk.ServiceClient, id string) (*JobId, error) {
-	type Start struct {
-		Start *EmptyObj `json:"start"`
-	}
-
-	// POST /v1.1/{project_id}/clusters/{cluster_id}/action
-	raw, err := client.Post(client.ServiceURL("clusters", id, "action"), Start{}, nil, &golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en"},
-	})
-	return extraJob(err, raw)
+type StartOpts struct {
+	// Start Starting a cluster. This parameter is an empty object.
+	Start EmptyStruct `json:"start"`
 }
 
-type EmptyObj struct {
-	Obj *string `json:"-"`
+// Start is used to start a cluster.
+// Send request POST /v1.1/{project_id}/clusters/{cluster_id}/action
+func Start(client *golangsdk.ServiceClient, clusterId string, startOpts StartOpts) (*JobId, error) {
+	b, err := build.RequestBody(startOpts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Post(
+		client.ServiceURL(clustersEndpoint, clusterId, actionEndpoint),
+		b,
+		nil,
+		&golangsdk.RequestOpts{
+			MoreHeaders: map[string]string{HeaderContentType: ApplicationJson},
+			OkCodes:     []int{200},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return respToJobId(resp)
 }

@@ -1,45 +1,49 @@
 package cluster
 
 import (
-	"net/http"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+)
+
+const (
+	StopImmediately = "IMMEDIATELY"
+	StopGracefully  = "GRACEFULLY"
 )
 
 type StopOpts struct {
-	Id   string     `json:"-"`
-	Stop StopStruct `json:"stop" required:"true"`
+	// Stop Cluster stop operation, which defines the parameters for stopping a cluster.
+	Stop StopStruct `json:"stop"`
 }
 
 type StopStruct struct {
-	StopMode  string `json:"stopMode,omitempty"`
-	DelayTime string `json:"delayTime,omitempty"`
+	// StopMode should be StopImmediately or StopGracefully
+	StopMode string `json:"stopMode,omitempty"`
+	// DelayTime Stop delay, in seconds.
+	// This parameter is valid only when stopMode is set to GRACEFULLY.
+	// If the value of this parameter is set to -1, the system waits for all jobs to complete and stops accepting new jobs.
+	// If the value of this parameter is greater than 0, the system stops the cluster after the specified time and stops accepting new jobs.
+	DelayTime int `json:"delayTime,omitempty"`
 }
 
-func Stop(client *golangsdk.ServiceClient, opts StopOpts) (*JobId, error) {
-	b, err := build.RequestBody(opts, "")
-	if err != nil {
-		return nil, err
-	}
-	// POST /v1.1/{project_id}/clusters/{cluster_id}/action
-	raw, err := client.Post(client.ServiceURL("clusters", opts.Id, "action"), b, nil, &golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en"},
-	})
-	return extraJob(err, raw)
-}
-
-type JobId struct {
-	JobId []string `json:"jobId"`
-}
-
-func extraJob(err error, raw *http.Response) (*JobId, error) {
+// Stop is used to stop a cluster.
+// Send request POST /v1.1/{project_id}/clusters/{cluster_id}/action
+func Stop(client *golangsdk.ServiceClient, clusterId string, opts StopOpts) (*JobId, error) {
+	b, err := build.RequestBody(opts, "stop")
 	if err != nil {
 		return nil, err
 	}
 
-	var res JobId
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	raw, err := client.Post(
+		client.ServiceURL(clustersEndpoint, clusterId, actionEndpoint),
+		b,
+		nil,
+		&golangsdk.RequestOpts{
+			MoreHeaders: map[string]string{HeaderContentType: ApplicationJson},
+			OkCodes:     []int{200},
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	return respToJobId(raw)
 }
