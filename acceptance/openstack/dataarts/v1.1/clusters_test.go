@@ -18,7 +18,7 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	}
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
-	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	subnetID := clients.EnvOS.GetEnv("SUBNET_ID")
 	secGroupId := clients.EnvOS.GetEnv("SECURITY_GROUP_ID")
 
 	client, err := clients.NewDataArtsV11Client()
@@ -26,11 +26,11 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 
 	dataStore := cluster.Datastore{
 		Type:    "cdm",
-		Version: "2.9.1.200",
+		Version: "2.10.0.100",
 	}
 	instance := cluster.Instance{
 		AZ:        "eu-de-01",
-		FlavorRef: "a79fd5ae-1833-448a-88e8-3ea2b913e1f6",
+		FlavorRef: "5ddb1071-c5d7-40e0-a874-8a032e81a697",
 		Type:      "cdm",
 		Nics: []cluster.Nic{
 			{
@@ -41,6 +41,7 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	}
 
 	createOpts := cluster.CreateOpts{
+		XLang: "en",
 		Cluster: cluster.Cluster{
 			// setting this parameter to true results in 400 error
 			IsScheduleBootOff: pointerto.Bool(false),
@@ -54,13 +55,16 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	}
 
 	t.Log("starting to create a DataArts cluster")
-	createResp, err := cluster.Create(client, createOpts, "en")
+	createResp, err := cluster.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, createResp)
+	t.Log("DataArts cluster was created")
+
+	t.Log("schedule clusters cleanup")
+	t.Cleanup(func() { deleteCluster(t, client, createResp.Id) })
 
 	t.Log("check cluster status, should be normal")
-	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "200"))
-	t.Cleanup(func() { deleteDataArts(t, client, createResp.Id) })
+	th.AssertNoErr(t, waitForState(client, 1200, createResp.Id, "200"))
 
 	t.Log("get cluster details")
 	getCluster, err := cluster.Get(client, createResp.Id)
@@ -96,12 +100,11 @@ func waitForState(client *golangsdk.ServiceClient, secs int, instanceID string, 
 	})
 }
 
-func deleteDataArts(t *testing.T, client *golangsdk.ServiceClient, instanceId string) {
-	t.Logf("Attempting to delete DataArts instance: %s", instanceId)
+func deleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
+	t.Logf("Attempting to delete DataArts instance: %s", clusterId)
 
-	jobId, err := cluster.Delete(client, instanceId, nil)
-	t.Logf(jobId.JobId)
+	jobId, err := cluster.Delete(client, clusterId, cluster.DeleteOpts{})
 	th.AssertNoErr(t, err)
 
-	t.Logf("DataArts instance deleted: %s", instanceId)
+	t.Logf("DataArts instance deleted: %s, jobId: %s", clusterId, jobId.JobId)
 }

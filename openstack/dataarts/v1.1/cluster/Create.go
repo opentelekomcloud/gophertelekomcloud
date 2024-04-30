@@ -17,6 +17,8 @@ type CreateOpts struct {
 	PhoneNum string `json:"phone_num,omitempty"`
 	// Email address for receiving notifications.
 	Email string `json:"email,omitempty"`
+	// Request language.
+	XLang string `json:"-"`
 }
 
 type Cluster struct {
@@ -79,14 +81,14 @@ type ExtendedProp struct {
 
 // Create is used to create a cluster.
 // Send request POST /v1.1/{project_id}/clusters
-func Create(client *golangsdk.ServiceClient, reqOpts CreateOpts, xLang string) (*ClusterResp, error) {
+func Create(client *golangsdk.ServiceClient, reqOpts CreateOpts) (*ClusterResp, error) {
 	b, err := build.RequestBody(reqOpts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	opts := &golangsdk.RequestOpts{
-		MoreHeaders: map[string]string{HeaderContentType: ApplicationJson, HeaderXLanguage: xLang},
+		MoreHeaders: map[string]string{HeaderContentType: ApplicationJson, HeaderXLanguage: reqOpts.XLang},
 		OkCodes:     []int{202},
 	}
 

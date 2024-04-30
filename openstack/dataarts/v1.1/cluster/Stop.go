@@ -12,7 +12,7 @@ const (
 
 type StopOpts struct {
 	// Stop Cluster stop operation, which defines the parameters for stopping a cluster.
-	Stop StopStruct `json:"stop" required:"true"`
+	Stop StopStruct `json:"stop"`
 }
 
 type StopStruct struct {
@@ -28,7 +28,7 @@ type StopStruct struct {
 // Stop is used to stop a cluster.
 // Send request POST /v1.1/{project_id}/clusters/{cluster_id}/action
 func Stop(client *golangsdk.ServiceClient, clusterId string, opts StopOpts) (*JobId, error) {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "stop")
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +39,7 @@ func Stop(client *golangsdk.ServiceClient, clusterId string, opts StopOpts) (*Jo
 		nil,
 		&golangsdk.RequestOpts{
 			MoreHeaders: map[string]string{HeaderContentType: ApplicationJson},
+			OkCodes:     []int{200},
 		})
 	if err != nil {
 		return nil, err

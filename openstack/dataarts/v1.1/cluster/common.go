@@ -18,7 +18,7 @@ const clustersEndpoint = "clusters"
 const actionEndpoint = "action"
 
 type JobId struct {
-	JobId string `json:"jobId"`
+	JobId []string `json:"jobId"`
 }
 
 func respToJobId(r *http.Response) (*JobId, error) {

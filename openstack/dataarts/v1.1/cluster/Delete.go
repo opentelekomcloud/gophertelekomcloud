@@ -13,7 +13,7 @@ type DeleteOpts struct {
 
 // Delete is used to delete a cluster.
 // Send request DELETE /v1.1/{project_id}/clusters/{cluster_id}
-func Delete(client *golangsdk.ServiceClient, id string, reqOpts *DeleteOpts) (*JobId, error) {
+func Delete(client *golangsdk.ServiceClient, id string, reqOpts DeleteOpts) (*DeleteResp, error) {
 	b, err := build.RequestBody(reqOpts, "")
 	if err != nil {
 		return nil, err
@@ -24,8 +24,12 @@ func Delete(client *golangsdk.ServiceClient, id string, reqOpts *DeleteOpts) (*J
 		return nil, err
 	}
 
-	var resp JobId
+	var resp DeleteResp
 	err = extract.Into(r.Body, &resp)
 
 	return &resp, err
+}
+
+type DeleteResp struct {
+	JobId string `json:"jobId"`
 }
