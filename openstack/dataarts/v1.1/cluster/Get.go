@@ -74,11 +74,8 @@ type ClusterQuery struct {
 	// Cluster status: normal
 	StatusDetail string `json:"statusDetail"`
 	// Cluster configuration status
-	//
 	//    In-Sync: The configuration has been synchronized.
-	//
 	//    Applying: The configuration is in progress.
-	//
 	//    Sync-Failure: The configuration fails.
 	ConfigStatus string `json:"config_status"`
 	// Cluster operation progress, which consists of a key and a value.
@@ -96,21 +93,13 @@ type ClusterQuery struct {
 	// Cluster update time in ISO 8601 format: YYYY-MM-DDThh:mm:ssZ
 	Updated string `json:"updated"`
 	// Cluster status
-	//
 	//    100: creating
-	//
 	//    200: normal
-	//
 	//    300: failed
-	//
 	//    303: failed to be created
-	//
 	//    800: frozen
-	//
 	//    900: stopped
-	//
 	//    910: stopping
-	//
 	//    920: starting
 	Status string `json:"status"`
 }
@@ -121,25 +110,16 @@ type DetailedInstances struct {
 	// Disk information of a node. For details, see the descriptions of volume parameters.
 	Volume Volume `json:"volume"`
 	// Node status
-	//
 	//    100: creating
-	//
 	//    200: normal
-	//
 	//    300: failed
-	//
 	//    303: failed to be created
-	//
 	//    400: deleted
-	//
 	//    800: frozen
 	Status string `json:"status"`
 	// Node operation status
-	//
 	//    REBOOTING: restarting
-	//
 	//    RESTORING: restoring
-	//
 	//    REBOOT_FAILURE: failed to restart
 	Actions []string `json:"actions"`
 	// Node type. Currently, only cdm is available.
@@ -153,11 +133,8 @@ type DetailedInstances struct {
 	// Component
 	Components string `json:"components"`
 	// Node configuration status. The value is null when the cluster list is queried.
-	//
 	//    In-Sync: The configuration has been synchronized.
-	//
 	//    Applying: The configuration is in progress.
-	//
 	//    Sync-Failure: The configuration fails.
 	ConfigStatus string `json:"config_status"`
 	// Instance role

@@ -17,6 +17,8 @@ const clustersEndpoint = "clusters"
 
 const actionEndpoint = "action"
 
+type EmptyStruct struct{}
+
 type JobId struct {
 	JobId []string `json:"jobId"`
 }
