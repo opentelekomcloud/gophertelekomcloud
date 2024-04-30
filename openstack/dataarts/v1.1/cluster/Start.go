@@ -10,8 +10,6 @@ type StartOpts struct {
 	Start EmptyStruct `json:"start"`
 }
 
-type EmptyStruct struct{}
-
 // Start is used to start a cluster.
 // Send request POST /v1.1/{project_id}/clusters/{cluster_id}/action
 func Start(client *golangsdk.ServiceClient, clusterId string, startOpts StartOpts) (*JobId, error) {
