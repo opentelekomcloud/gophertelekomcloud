@@ -7,7 +7,7 @@ import (
 
 type StartOpts struct {
 	// Start Starting a cluster. This parameter is an empty object.
-	Start *EmptyStruct `json:"start"`
+	Start EmptyStruct `json:"start"`
 }
 
 // Start is used to start a cluster.
@@ -24,6 +24,7 @@ func Start(client *golangsdk.ServiceClient, clusterId string, startOpts StartOpt
 		nil,
 		&golangsdk.RequestOpts{
 			MoreHeaders: map[string]string{HeaderContentType: ApplicationJson},
+			OkCodes:     []int{200},
 		},
 	)
 	if err != nil {
