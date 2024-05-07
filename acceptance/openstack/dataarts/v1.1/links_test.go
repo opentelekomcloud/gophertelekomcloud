@@ -27,7 +27,28 @@ func TestDataArtsLinksLifecycle(t *testing.T) {
 
 	t.Log("create cluster's links")
 
-	createOpts := link.CreateOpts{Links: []*link.Link{
+	createOpts := createLinkOpts(ak, sk)
+
+	l, err := link.Create(client, c.Id, createOpts, &link.CreateQuery{})
+	th.AssertNoErr(t, err)
+
+	t.Log("schedule link cleanup")
+	t.Cleanup(func() {
+		t.Logf("attempting to delete link: %s", l.Name)
+		err := link.Delete(client, c.Id, l.Name)
+		th.AssertNoErr(t, err)
+		t.Logf("link is deleted: %s", l.Name)
+	})
+
+	t.Log("get cluster's links")
+
+	storedLink, err := link.Get(client, c.Id, l.Name)
+	tools.PrintResource(t, storedLink)
+	th.AssertNoErr(t, err)
+}
+
+func createLinkOpts(ak, sk string) link.CreateOpts {
+	return link.CreateOpts{Links: []*link.Link{
 		{
 			Name:          linkName,
 			ConnectorName: "obs-connector",
@@ -64,7 +85,6 @@ func TestDataArtsLinksLifecycle(t *testing.T) {
 							{
 								Name:  "linkConfig.accessKey",
 								Value: ak,
-								// Value: ak,
 							},
 							{
 								Name:  "linkConfig.securityKey",
@@ -76,21 +96,4 @@ func TestDataArtsLinksLifecycle(t *testing.T) {
 			},
 		},
 	}}
-
-	l, err := link.Create(client, c.Id, createOpts, &link.CreateQuery{})
-	th.AssertNoErr(t, err)
-
-	t.Log("schedule link cleanup")
-	t.Cleanup(func() {
-		t.Logf("attempting to delete link: %s", l.Name)
-		err := link.Delete(client, c.Id, l.Name)
-		th.AssertNoErr(t, err)
-		t.Logf("link is deleted: %s", l.Name)
-	})
-
-	t.Log("get cluster's links")
-
-	storedLink, err := link.Get(client, c.Id, l.Name)
-	tools.PrintResource(t, storedLink)
-	th.AssertNoErr(t, err)
 }
