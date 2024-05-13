@@ -19,12 +19,12 @@ func List(client *golangsdk.ServiceClient, opts ListOpts, workspace string) (*Li
 		return nil, err
 	}
 
-	var reqOpts *golangsdk.RequestOpts
+	var reqOpts golangsdk.RequestOpts
 	if workspace != "" {
 		reqOpts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(url.String()), nil, reqOpts)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, &reqOpts)
 	if err != nil {
 		return nil, err
 	}

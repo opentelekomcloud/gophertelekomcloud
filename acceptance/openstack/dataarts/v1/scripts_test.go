@@ -1,6 +1,7 @@
 package v1_1
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -16,6 +17,8 @@ func TestDataArtsScriptsLifecycle(t *testing.T) {
 	client, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
+	workspace := os.Getenv("AWS_WORKSPACE")
+
 	t.Log("create a script")
 
 	createOpts := script.Script{
@@ -25,16 +28,14 @@ func TestDataArtsScriptsLifecycle(t *testing.T) {
 		ConnectionName: "anyConnection",
 	}
 
-	// st, err := script.Get(client, scriptName, "")
-	// tools.PrintResource(t, st)
-
 	err = script.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	t.Log("schedule script cleanup")
 	t.Cleanup(func() {
 		t.Logf("attempting to delete script: %s", scriptName)
-		err := script.Delete(client, scriptName, nil)
+		opts := script.DeleteReq{Workspace: workspace}
+		err := script.Delete(client, scriptName, opts)
 		th.AssertNoErr(t, err)
 		t.Logf("script is deleted: %s", scriptName)
 	})
@@ -43,12 +44,7 @@ func TestDataArtsScriptsLifecycle(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Log("get script")
 
-	// TODO: remove this block before a merge request.
-	storedScripts, err := script.List(client, script.ListOpts{}, "")
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, storedScripts)
-
-	storedScript, err := script.Get(client, scriptName, "")
+	storedScript, err := script.Get(client, scriptName, workspace)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, storedScript)
 
@@ -61,7 +57,7 @@ func TestDataArtsScriptsLifecycle(t *testing.T) {
 
 	t.Log("get script")
 
-	storedScript, err = script.Get(client, scriptName, "")
+	storedScript, err = script.Get(client, scriptName, workspace)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, storedScript)
 	th.CheckEquals(t, "echo 123456789", storedScript.Content)

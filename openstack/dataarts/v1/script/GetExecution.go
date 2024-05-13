@@ -9,12 +9,12 @@ import (
 // Send request GET /v1/{project_id}/scripts/{script_name}/instances/{instance_id}
 func GetExecutionResult(client *golangsdk.ServiceClient, scriptName, instanceId, workspace string) (*Script, error) {
 
-	var opts *golangsdk.RequestOpts
+	var opts golangsdk.RequestOpts
 	if workspace != "" {
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(scriptsEndpoint, scriptName, instancesEndpoint, instanceId), nil, opts)
+	raw, err := client.Get(client.ServiceURL(scriptsEndpoint, scriptName, instancesEndpoint, instanceId), nil, &opts)
 	if err != nil {
 		return nil, err
 	}
