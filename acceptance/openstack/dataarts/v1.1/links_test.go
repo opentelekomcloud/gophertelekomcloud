@@ -27,12 +27,12 @@ func TestDataArtsLinksLifecycle(t *testing.T) {
 
 	t.Log("create cluster's links")
 
-	createOpts := link.CreateOpts{Links: []*link.Link{
+	createOpts := link.CreateOpts{Links: []link.Link{
 		{
 			Name:          linkName,
 			ConnectorName: "obs-connector",
 			LinkConfigValues: &link.ConfigValues{
-				Configs: []*link.Config{
+				Configs: []link.Config{
 					{
 						Name: "linkConfig",
 						Inputs: []*link.Input{

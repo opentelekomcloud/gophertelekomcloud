@@ -7,7 +7,7 @@ import (
 )
 
 type UpdateOpts struct {
-	Links []*Link `json:"links" required:"true"`
+	Links []Link `json:"links" required:"true"`
 }
 
 // Update is used to modify a link.
@@ -24,13 +24,13 @@ func Update(client *golangsdk.ServiceClient, clusterId, linkName string, opts *U
 		return nil, err
 	}
 
-	var resp *UpdateResp
-	err = extract.Into(raw.Body, resp)
-	return resp, err
+	var resp UpdateResp
+	err = extract.Into(raw.Body, &resp)
+	return &resp, err
 
 }
 
 type UpdateResp struct {
 	// Submissions is an array of LinkValidationResult objects.
-	ValidationResult []*LinkValidationResult `json:"validation-result"`
+	ValidationResult []LinkValidationResult `json:"validation-result"`
 }
