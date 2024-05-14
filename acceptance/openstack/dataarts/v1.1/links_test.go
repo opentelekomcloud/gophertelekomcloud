@@ -48,12 +48,12 @@ func TestDataArtsLinksLifecycle(t *testing.T) {
 }
 
 func createLinkOpts(ak, sk string) link.CreateOpts {
-	return link.CreateOpts{Links: []*link.Link{
+	return link.CreateOpts{Links: []link.Link{
 		{
 			Name:          linkName,
 			ConnectorName: "obs-connector",
 			LinkConfigValues: &link.ConfigValues{
-				Configs: []*link.Config{
+				Configs: []link.Config{
 					{
 						Name: "linkConfig",
 						Inputs: []*link.Input{

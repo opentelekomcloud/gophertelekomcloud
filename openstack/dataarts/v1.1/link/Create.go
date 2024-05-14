@@ -7,11 +7,11 @@ import (
 )
 
 type CreateOpts struct {
-	Links []*Link `json:"links" required:"true"`
+	Links []Link `json:"links" required:"true"`
 }
 
 type CreateQuery struct {
-	// Email address for receiving notifications.
+	// When the parameter is set to true, the API only validates whether the parameters are correctly configured, but does not create any link.
 	Validate bool `json:"validate,omitempty"`
 }
 
@@ -46,7 +46,7 @@ type Link struct {
 
 type ConfigValues struct {
 	// Array of configuration objects
-	Configs []*Config `json:"configs" required:"true"`
+	Configs []Config `json:"configs" required:"true"`
 
 	// Extended configurations (optional)
 	ExtendedConfigs *ExtendedConfigs `json:"extended-configs,omitempty"`
@@ -119,7 +119,7 @@ type CreateResp struct {
 	Name string `json:"name"`
 	// ValidationResult is an array of ValidationResult objects. If a link fails to be created, the failure cause is returned.
 	// If a link is successfully created, an empty list is returned.
-	ValidationResult []*LinkValidationResult `json:"validation-result"`
+	ValidationResult []LinkValidationResult `json:"validation-result"`
 }
 
 type LinkValidationResult struct {
