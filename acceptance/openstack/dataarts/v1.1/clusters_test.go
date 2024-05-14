@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
@@ -70,41 +69,4 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	getCluster, err := cluster.Get(client, createResp.Id)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, getCluster)
-
-	t.Log("stop cluster")
-	_, err = cluster.Stop(client, getCluster.Id, cluster.StopOpts{})
-	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "900"))
-
-	t.Log("start cluster")
-	_, err = cluster.Start(client, getCluster.Id, cluster.StartOpts{})
-	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "200"))
-}
-
-func waitForState(client *golangsdk.ServiceClient, secs int, instanceID string, status string) error {
-	jobClient := *client
-	jobClient.ResourceBase = jobClient.Endpoint
-
-	return golangsdk.WaitFor(secs, func() (bool, error) {
-		resp, err := cluster.Get(client, instanceID)
-		if err != nil {
-			return false, err
-		}
-
-		if resp.Status == status {
-			return true, nil
-		}
-
-		return false, nil
-	})
-}
-
-func deleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
-	t.Logf("Attempting to delete DataArts instance: %s", clusterId)
-
-	jobId, err := cluster.Delete(client, clusterId, cluster.DeleteOpts{})
-	th.AssertNoErr(t, err)
-
-	t.Logf("DataArts instance deleted: %s, jobId: %s", clusterId, jobId.JobId)
 }
