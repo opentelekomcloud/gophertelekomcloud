@@ -7,7 +7,7 @@ import (
 )
 
 type UpdateOpts struct {
-	Jobs []*Job `json:"jobs" required:"true"`
+	Jobs []Job `json:"jobs" required:"true"`
 }
 
 // Update is used to modify a job.
@@ -32,5 +32,5 @@ func Update(client *golangsdk.ServiceClient, clusterId, jobName string, opts *Up
 
 type UpdateResp struct {
 	// Submissions is an array of StartJobSubmission objects.
-	ValidationResult []*JobValidationResult `json:"validation-result"`
+	ValidationResult []JobValidationResult `json:"validation-result"`
 }

@@ -31,7 +31,7 @@ func GetHistory(client *golangsdk.ServiceClient, clusterId string, opts *History
 
 type HistoryResp struct {
 	// Submissions is an array of StartJobSubmission objects.
-	Submissions []*StatusJobSubmission `json:"submissions"`
+	Submissions []StatusJobSubmission `json:"submissions"`
 	// Total is a number of historical records for a job.
 	Total int `json:"total"`
 	// PageNumber is a page number.
