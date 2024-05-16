@@ -26,7 +26,7 @@ func GetStatus(client *golangsdk.ServiceClient, clusterId, jobName string, opts 
 
 type StatusResp struct {
 	// Submissions is an array of StartJobSubmission objects.
-	Submissions []*StatusJobSubmission `json:"submissions"`
+	Submissions []StatusJobSubmission `json:"submissions"`
 }
 
 type StatusJobSubmission struct {

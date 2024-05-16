@@ -156,7 +156,7 @@ type Job struct {
 
 type ConfigValues struct {
 	// Configs The data structures of source link parameters, destination link parameters, and job parameters are the same. However, the inputs parameter varies.
-	Configs []*Config `json:"configs" required:"true"`
+	Configs []Config `json:"configs" required:"true"`
 
 	// ExtendedConfigs is extended configuration.
 	ExtendedConfigs *ExtendedConfigs `json:"extended-configs,omitempty"`
@@ -168,7 +168,7 @@ type Config struct {
 	// For details, see section "Source Job Parameters" in the Cloud Data Migration User Guide. In the to-cofig-values data structure, the value of this parameter varies with the destination link type.
 	// For details, see section "Destination Job Parameters" in the Cloud Data Migration User Guide.
 	// For details about the inputs parameter in the driver-config-values data structure, see the job parameter descriptions.
-	Inputs []*Input `json:"inputs" required:"true"`
+	Inputs []Input `json:"inputs" required:"true"`
 
 	// Name is a configuration name. The value is fromJobConfig for a source job, toJobConfig for a destination job, and linkConfig for a link.
 	Name string `json:"name"  required:"true"`
@@ -196,7 +196,7 @@ type ExtendedConfigs struct {
 // Response holds job running information
 type JobResp struct {
 	// Submissions is an array of StartJobSubmission objects.
-	Submissions []*StartJobSubmission `json:"submissions"`
+	Submissions []StartJobSubmission `json:"submissions"`
 }
 
 // StartJobSubmission represents a job submission

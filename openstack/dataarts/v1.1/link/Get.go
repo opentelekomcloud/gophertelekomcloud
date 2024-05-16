@@ -20,7 +20,7 @@ func Get(client *golangsdk.ServiceClient, clusterId, linkName string) (*GetQuery
 
 type GetQueryResp struct {
 	// Links is a list of Link.
-	Links []*Link `json:"links"`
+	Links []Link `json:"links"`
 	// FromToUnMapping is a Source and destination data sources not supported by table/file migration.
 	FromToUnMapping string `json:"fromTo-unMapping"`
 	// PageSize is a source and destination data sources supported by entire DB migration.

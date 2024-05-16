@@ -42,7 +42,7 @@ type SpecificResp struct {
 	// Name is a job name.
 	Name string `json:"name"`
 	// ValidationResult is an array of ValidationResult objects.
-	ValidationResult []*JobValidationResult `json:"validation-result"`
+	ValidationResult []JobValidationResult `json:"validation-result"`
 }
 
 type JobValidationResult struct {
