@@ -1,6 +1,9 @@
 package snapshots
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import (
+	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+)
 
 type UpdateConfigurationOpts struct {
 	// OBS bucket used for index data backup.
@@ -8,12 +11,14 @@ type UpdateConfigurationOpts struct {
 	Bucket string `json:"bucket" required:"true"`
 	// IAM agency used to access OBS.
 	Agency string `json:"agency" required:"true"`
+	// IAM agency used to access OBS.
+	BasePath string `json:"basePath" required:"true"`
 	// Key ID used for snapshot encryption.
 	SnapshotCmkID string `json:"snapshotCmkId,omitempty"`
 }
 
 func UpdateConfiguration(client *golangsdk.ServiceClient, clusterID string, opts UpdateConfigurationOpts) (err error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return
 	}
