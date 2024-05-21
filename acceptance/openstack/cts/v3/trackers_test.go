@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -11,6 +12,9 @@ import (
 )
 
 func TestTrackersLifecycle(t *testing.T) {
+	if os.Getenv("RUN_CTS_TRACKER") == "" {
+		t.Skip("unstable test")
+	}
 	client, err := clients.NewCTSV3Client()
 	th.AssertNoErr(t, err)
 
