@@ -23,6 +23,9 @@ func ListAppCodesOfApp(client *golangsdk.ServiceClient, opts ListAppsOpts) ([]Co
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("apigw", "instances", opts.GatewayID, "apps", opts.AppID, "app-codes").
 		WithQueryParams(&opts).Build()
+	if err != nil {
+		return nil, err
+	}
 	pages, err := pagination.Pager{
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
