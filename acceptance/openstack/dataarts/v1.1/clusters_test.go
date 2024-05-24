@@ -69,4 +69,14 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	getCluster, err := cluster.Get(client, createResp.Id)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, getCluster)
+
+	t.Log("stop cluster")
+	_, err = cluster.Stop(client, getCluster.Id, cluster.StopOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "900"))
+
+	t.Log("start cluster")
+	_, err = cluster.Start(client, getCluster.Id, cluster.StartOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "200"))
 }

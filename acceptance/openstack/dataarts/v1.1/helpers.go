@@ -72,7 +72,7 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) (*cluster.Clus
 			// setting this parameter to true results in 400 error
 			IsScheduleBootOff: pointerto.Bool(false),
 			VpcId:             vpcID,
-			Name:              tools.RandomString("test-dataarts", 5),
+			Name:              tools.RandomString(clusterTestName, 5),
 			DataStore:         &dataStore,
 			Instances: []cluster.Instance{
 				instance,

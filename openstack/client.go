@@ -955,6 +955,10 @@ func NewGaussDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+func NewDataArtsV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initCommonServiceClient(client, eo, "dayu-dlf", "v1")
+}
+
 func NewDataArtsV11(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initCommonServiceClient(client, eo, "cdm", "v1.1")
 }
