@@ -13,9 +13,9 @@ import (
 const linkName = "testLink"
 
 func TestDataArtsLinksLifecycle(t *testing.T) {
-	// if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
-	// 	t.Skip("too slow to run in zuul")
-	// }
+	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
 
 	ak := os.Getenv("AWS_ACCESS_KEY")
 	sk := os.Getenv("AWS_SECRET_KEY")
