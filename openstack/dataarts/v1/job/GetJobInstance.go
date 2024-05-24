@@ -9,12 +9,12 @@ import (
 // Send request GET /v1/{project_id}/jobs/{job_name}/instances/{instance_id}
 func GetJobInstance(client *golangsdk.ServiceClient, jobName, instanceId, workspace string) (*JobInstanceResp, error) {
 
-	var opts *golangsdk.RequestOpts
+	var opts golangsdk.RequestOpts
 	if workspace != "" {
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(jobsEndpoint, jobName, instancesEndpoint, instanceId), nil, opts)
+	raw, err := client.Get(client.ServiceURL(jobsEndpoint, jobName, instancesEndpoint, instanceId), nil, &opts)
 	if err != nil {
 		return nil, err
 	}

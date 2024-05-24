@@ -13,12 +13,12 @@ const statusEndpoint = "status"
 // Send request GET /v1/{project_id}/jobs/{job_name}/status
 func GetRunningStatus(client *golangsdk.ServiceClient, jobName, workspace string) (*RunningStatusResp, error) {
 
-	var opts *golangsdk.RequestOpts
+	var opts golangsdk.RequestOpts
 	if workspace != "" {
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(jobsEndpoint, jobName, statusEndpoint), nil, opts)
+	raw, err := client.Get(client.ServiceURL(jobsEndpoint, jobName, statusEndpoint), nil, &opts)
 	if err != nil {
 		return nil, err
 	}

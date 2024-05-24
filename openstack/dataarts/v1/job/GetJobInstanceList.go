@@ -58,12 +58,12 @@ func GetJobInstanceList(client *golangsdk.ServiceClient, reqOpts GetJobInstanceL
 	if err != nil {
 		return nil, err
 	}
-	var opts *golangsdk.RequestOpts
+	var opts golangsdk.RequestOpts
 	if reqOpts.Workspace != "" {
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: reqOpts.Workspace}
 	}
 
-	raw, err := client.Get(url.String(), nil, opts)
+	raw, err := client.Get(url.String(), nil, &opts)
 
 	if err != nil {
 		return nil, err

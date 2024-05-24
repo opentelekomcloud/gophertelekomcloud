@@ -23,7 +23,7 @@ func TestDataArtsLinksLifecycle(t *testing.T) {
 	client, err := clients.NewDataArtsV11Client()
 	th.AssertNoErr(t, err)
 
-	c := getTestCluster(t, client)
+	c := GetTestCluster(t, client)
 
 	t.Log("create cluster's links")
 

@@ -14,18 +14,18 @@ type ListOpts struct {
 
 // List is used to query a list of batch or real-time jobs. A maximum of 100 jobs can be returned for each query.
 // Send request GET /v1/{project_id}/jobs?jobType={jobType}&offset={offset}&limit={limit}&jobName={jobName}
-func List(client *golangsdk.ServiceClient, opts *ListOpts, workspace string) (*ListResp, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts, workspace string) (*ListResp, error) {
 	url, err := golangsdk.NewURLBuilder().WithEndpoints(jobsEndpoint).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	var reqOpts *golangsdk.RequestOpts
+	var reqOpts golangsdk.RequestOpts
 	if workspace != "" {
 		reqOpts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(url.String()), nil, reqOpts)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, &reqOpts)
 	if err != nil {
 		return nil, err
 	}

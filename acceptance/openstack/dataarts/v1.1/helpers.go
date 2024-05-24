@@ -25,7 +25,7 @@ const (
 
 const clusterTestName = "testAllCases"
 
-func getTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.ClusterQuery {
+func GetTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.ClusterQuery {
 	t.Log("check if test cluster is created")
 
 	clusters, err := cluster.List(client)

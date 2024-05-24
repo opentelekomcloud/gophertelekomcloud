@@ -12,7 +12,9 @@ const exportEndpoint = "export"
 // Send request POST /v1/{project_id}/jobs/{job_name}/export
 func ExportJob(client *golangsdk.ServiceClient, jobName, workspace string) (io.ReadCloser, error) {
 
-	opts := &golangsdk.RequestOpts{}
+	opts := &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	}
 	if workspace != "" {
 		opts.MoreHeaders[HeaderWorkspace] = workspace
 	}

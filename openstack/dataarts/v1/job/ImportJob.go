@@ -1,9 +1,9 @@
 package job
 
 import (
-	"io"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 const importEndpoint = "import"
@@ -40,18 +40,30 @@ type JobParamImported struct {
 
 // ImportJob is used to import one or more job files from OBS to DLF.
 // Send request POST /v1/{project_id}/jobs/import
-func ImportJob(client *golangsdk.ServiceClient, reqOpts ImportReq) (io.ReadCloser, error) {
-
-	opts := &golangsdk.RequestOpts{}
-	if reqOpts.Workspace != "" {
-		opts.MoreHeaders[HeaderWorkspace] = reqOpts.Workspace
-	}
-	raw, err := client.Post(client.ServiceURL(jobsEndpoint, importEndpoint), nil, nil, opts)
+func ImportJob(client *golangsdk.ServiceClient, reqOpts ImportReq) (*ImportResp, error) {
+	b, err := build.RequestBody(reqOpts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	return raw.Body, err
+	opts := &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	}
+	if reqOpts.Workspace != "" {
+		opts.MoreHeaders[HeaderWorkspace] = reqOpts.Workspace
+	}
+	raw, err := client.Post(client.ServiceURL(jobsEndpoint, importEndpoint), b, nil, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	var res ImportResp
+	err = extract.Into(raw.Body, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
 type ImportResp struct {

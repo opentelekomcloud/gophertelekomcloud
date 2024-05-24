@@ -11,12 +11,12 @@ const systemTasksEndpoint = "system-tasks"
 // Send request GET /v1/{project_id}/system-tasks/{task_id}
 func GetSystemTask(client *golangsdk.ServiceClient, taskId, workspace string) (*SystemTaskResp, error) {
 
-	var opts *golangsdk.RequestOpts
+	var opts golangsdk.RequestOpts
 	if workspace != "" {
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(systemTasksEndpoint, taskId), nil, opts)
+	raw, err := client.Get(client.ServiceURL(systemTasksEndpoint, taskId), nil, &opts)
 	if err != nil {
 		return nil, err
 	}
