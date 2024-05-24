@@ -13,9 +13,9 @@ import (
 const linkName = "testLink"
 
 func TestDataArtsLinksLifecycle(t *testing.T) {
-	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
-	}
+	// if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+	// 	t.Skip("too slow to run in zuul")
+	// }
 
 	ak := os.Getenv("AWS_ACCESS_KEY")
 	sk := os.Getenv("AWS_SECRET_KEY")
@@ -96,21 +96,4 @@ func createLinkOpts(ak, sk string) link.CreateOpts {
 			},
 		},
 	}}
-
-	l, err := link.Create(client, c.Id, createOpts, &link.CreateQuery{})
-	th.AssertNoErr(t, err)
-
-	t.Log("schedule link cleanup")
-	t.Cleanup(func() {
-		t.Logf("attempting to delete link: %s", l.Name)
-		err := link.Delete(client, c.Id, l.Name)
-		th.AssertNoErr(t, err)
-		t.Logf("link is deleted: %s", l.Name)
-	})
-
-	t.Log("get cluster's links")
-
-	storedLink, err := link.Get(client, c.Id, l.Name)
-	tools.PrintResource(t, storedLink)
-	th.AssertNoErr(t, err)
 }
