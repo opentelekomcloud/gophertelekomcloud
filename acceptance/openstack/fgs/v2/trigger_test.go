@@ -68,9 +68,9 @@ func TestFunctionTriggerLifecycle(t *testing.T) {
 		FuncUrn:         funcUrn,
 		TriggerTypeCode: "LTS",
 		TriggerStatus:   "ACTIVE",
-		EventData: &trigger.EventData{
-			LogGroupID: logId,
-			LogTopicID: streamId,
+		EventData: map[string]interface{}{
+			"log_group_id": logId,
+			"log_topic_id": streamId,
 		},
 	}
 

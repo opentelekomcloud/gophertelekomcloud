@@ -14,6 +14,10 @@ import (
 const scriptName = "testScript"
 
 func TestDataArtsScriptsLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
 	client, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
