@@ -6,7 +6,6 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/async_config"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/function"
@@ -14,30 +13,10 @@ import (
 )
 
 func TestAsyncInvokeLifecycle(t *testing.T) {
-	// agency := os.Getenv("AGENCY")
-	// if agency == "" {
-	// 	t.Skip("`AGENCY`needs to be defined to run this test")
-	// }
 	client, err := clients.NewFuncGraphClient()
 	th.AssertNoErr(t, err)
 
-	funcName := "funcgraph-" + tools.RandomString("acctest", 4)
-
-	createOpts := function.CreateOpts{
-		Name:       funcName,
-		Package:    "default",
-		Runtime:    "Python2.7",
-		Timeout:    200,
-		Handler:    "index.py",
-		MemorySize: 512,
-		CodeType:   "inline",
-		// Xrole:      agency,
-		FuncCode: &function.FuncCode{
-			File: "e42a37a22f4988ba7a681e3042e5c7d13c04e6c1"},
-	}
-
-	createResp, err := function.Create(client, createOpts)
-	th.AssertNoErr(t, err)
+	createResp, _ := createFunctionGraph(t, client)
 
 	funcUrn := strings.TrimSuffix(createResp.FuncURN, ":latest")
 
