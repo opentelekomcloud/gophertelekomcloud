@@ -3,6 +3,7 @@ package v1_1
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -19,6 +20,10 @@ const bucketName = "dataart-test-bucket"
 const fileName = "testFile.txt"
 
 func TestDataArtsResourcesLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
 	client, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
