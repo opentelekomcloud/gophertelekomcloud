@@ -29,13 +29,15 @@ type ListMembersOpts struct {
 }
 
 func ListMembers(client *golangsdk.ServiceClient, opts ListMembersOpts) ([]MemberResp, error) {
-	q, err := golangsdk.BuildQueryString(&opts)
+	url, err := golangsdk.NewURLBuilder().
+		WithEndpoints("apigw", "instances", opts.GatewayID, "vpc-channels", opts.ChannelID, "members").
+		WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
 	pages, err := pagination.Pager{
 		Client:     client,
-		InitialURL: client.ServiceURL("apigw", "instances", opts.GatewayID, "vpc-channels", opts.ChannelID, "members") + q.String(),
+		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
 			return MemberPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
