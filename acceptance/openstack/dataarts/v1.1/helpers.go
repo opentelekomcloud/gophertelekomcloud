@@ -97,7 +97,7 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) (*cluster.Clus
 	return getCluster, err
 }
 
-func deleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
+func DeleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
 	t.Logf("Attempting to delete DataArts instance: %s", clusterId)
 
 	jobId, err := cluster.Delete(client, clusterId, cluster.DeleteOpts{})
