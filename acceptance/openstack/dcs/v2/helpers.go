@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"fmt"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -10,6 +11,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/instance"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/others"
+	dcsTags "github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/whitelists"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -62,7 +65,7 @@ func createDCSInstance(t *testing.T, client *golangsdk.ServiceClient) *instance.
 		Name:            tools.RandomString("dcs-instance-", 3),
 		Description:     "some test DCSv2 instance",
 		Engine:          "Redis",
-		EngineVersion:   "5.0",
+		EngineVersion:   "6.0",
 		Capacity:        0.125,
 		Password:        "Qwerty123!",
 		VpcId:           vpcID,
@@ -139,6 +142,38 @@ func waitForInstanceDeleted(client *golangsdk.ServiceClient, secs int, instanceI
 			return false, err
 		}
 
+		return false, nil
+	})
+}
+
+func updateDcsTags(client *golangsdk.ServiceClient, id string, old, new []tags.ResourceTag) error {
+	// remove old tags
+	if len(old) > 0 {
+		err := dcsTags.Delete(client, id, old)
+		if err != nil {
+			return err
+		}
+	}
+	// add new tags
+	if len(new) > 0 {
+		err := dcsTags.Create(client, id, new)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// WaitForAWhitelistToBeRetrieved - wait until whitelist is retrieved
+func WaitForAWhitelistToBeRetrieved(client *golangsdk.ServiceClient, id string, timeoutSeconds int) error {
+	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
+		wl, err := whitelists.Get(client, id)
+		if err != nil {
+			return false, fmt.Errorf("error retriving whitelist: %w", err)
+		}
+		if wl.InstanceID != "" {
+			return true, nil
+		}
 		return false, nil
 	})
 }

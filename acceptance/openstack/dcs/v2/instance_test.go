@@ -8,7 +8,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/instance"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcs/v2/whitelists"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -36,10 +38,39 @@ func TestDcsInstanceV2LifeCycle(t *testing.T) {
 			},
 		},
 	}
+
+	t.Logf("Attempting to update whitelist configuration")
+	err = whitelists.Put(client, dcsInstance.InstanceID, whitelists.WhitelistOpts{
+		Enable: pointerto.Bool(true),
+		Groups: []whitelists.WhitelistGroupOpts{
+			{
+				GroupName: "test-group-1",
+				IPList: []string{
+					"10.10.10.1", "10.10.10.2",
+				},
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+
 	t.Logf("Attempting to update DCSv2 instance")
 	err = instance.Update(client, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated DCSv2 instance")
+
+	// No way to check if password was reset, refer to HC
+	// t.Logf("Attempting to update DCSv2 password")
+	// pwd, err := instance.UpdatePassword(client, instance.UpdatePasswordOpts{
+	// 	InstanceId:  dcsInstance.InstanceID,
+	// 	OldPassword: "Qwerty123!",
+	// 	NewPassword: "Qwerty123!New-TEst!@",
+	// })
+	// th.AssertNoErr(t, err)
+	// th.AssertEquals(t, pwd.Result, "success")
+	//
+	// err = waitForInstanceAvailable(client, 100, dcsInstance.InstanceID)
+	// th.AssertNoErr(t, err)
+	// t.Logf("Updated DCSv2 instance password")
 
 	configList, err := instance.List(client, instance.ListDcsInstanceOpts{
 		InstanceId: dcsInstance.InstanceID,
@@ -72,4 +103,47 @@ func TestDcsInstanceV2LifeCycle(t *testing.T) {
 
 	th.AssertEquals(t, ins.SpecCode, resizeOpts.SpecCode)
 	th.AssertEquals(t, capacity, resizeOpts.NewCapacity)
+
+	t.Logf("Retrieving whitelist configuration")
+	err = WaitForAWhitelistToBeRetrieved(client, dcsInstance.InstanceID, 180)
+	if err == nil {
+		whitelistResp, err := whitelists.Get(client, dcsInstance.InstanceID)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, whitelistResp.InstanceID, dcsInstance.InstanceID)
+		th.AssertEquals(t, whitelistResp.Groups[0].GroupName, "test-group-1")
+	}
+
+	t.Logf("Retrieving instance tags")
+	instanceTags, err := tags.Get(client, "instances", dcsInstance.InstanceID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(instanceTags), 2)
+	th.AssertEquals(t, instanceTags[0].Key, "muh")
+	th.AssertEquals(t, instanceTags[0].Value, "kuh")
+
+	t.Logf("Updating instance tags")
+	err = updateDcsTags(client, dcsInstance.InstanceID, instanceTags,
+		[]tags.ResourceTag{
+			{
+				Key:   "muhUpdated",
+				Value: "kuhUpdated",
+			},
+		})
+	th.AssertNoErr(t, err)
+	t.Logf("Retrieving updated instance tags")
+	instanceTagsUpdated, err := tags.Get(client, "instances", dcsInstance.InstanceID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(instanceTagsUpdated), 1)
+	th.AssertEquals(t, instanceTagsUpdated[0].Key, "muhUpdated")
+	th.AssertEquals(t, instanceTagsUpdated[0].Value, "kuhUpdated")
+
+	_, err = instance.Restart(client, instance.ChangeInstanceStatusOpts{
+		Instances: []string{
+			dcsInstance.InstanceID,
+		},
+		Action: "restart",
+	})
+	th.AssertNoErr(t, err)
+
+	err = waitForInstanceAvailable(client, 100, dcsInstance.InstanceID)
+	th.AssertNoErr(t, err)
 }
