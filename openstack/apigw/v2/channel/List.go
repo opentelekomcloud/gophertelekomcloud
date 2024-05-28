@@ -41,7 +41,9 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]ChannelResp, error)
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("apigw", "instances", opts.GatewayID, "vpc-channels").
 		WithQueryParams(&opts).Build()
-
+	if err != nil {
+		return nil, err
+	}
 	pages, err := pagination.Pager{
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),

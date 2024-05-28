@@ -107,6 +107,7 @@ func CreateChannel(client *golangsdk.ServiceClient, t *testing.T, id string) *ch
 	t.Logf("Attempting to Create member for VPC Channel")
 	ecsClient, err := clients.NewComputeV2Client()
 	ecs := CreateServer(ecsClient, t)
+	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
 		th.AssertNoErr(t, servers.Delete(ecsClient, ecs.ID).ExtractErr())
