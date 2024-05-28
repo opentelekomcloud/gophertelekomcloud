@@ -25,7 +25,7 @@ const (
 
 const clusterTestName = "testAllCases"
 
-func getTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.ClusterQuery {
+func GetTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.ClusterQuery {
 	t.Log("check if test cluster is created")
 
 	clusters, err := cluster.List(client)
@@ -97,7 +97,7 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) (*cluster.Clus
 	return getCluster, err
 }
 
-func deleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
+func DeleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
 	t.Logf("Attempting to delete DataArts instance: %s", clusterId)
 
 	jobId, err := cluster.Delete(client, clusterId, cluster.DeleteOpts{})
