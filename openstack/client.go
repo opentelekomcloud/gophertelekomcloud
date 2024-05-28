@@ -730,6 +730,17 @@ func NewDCSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	return sc, err
 }
 
+// NewDCSServiceV2 creates a ServiceClient that may be used to access the v2 Distributed Cache Service.
+func NewDCSServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "network")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "vpc", "dcs", 1)
+	sc.ResourceBase = sc.Endpoint + "v2/" + client.ProjectID + "/"
+	return sc, err
+}
+
 // NewDDSServiceV3 creates a ServiceClient that may be used to access the Document Database Service.
 func NewDDSServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "ddsv3")
