@@ -10,7 +10,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
-	v1_1 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/dataarts/v1.1"
+	dataartsV11 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/dataarts/v1.1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/keypairs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
@@ -30,6 +30,10 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 		t.Skip("too slow to run in zuul")
 	}
 
+	workspace := os.Getenv("AWS_WORKSPACE")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	kms := clients.EnvOS.GetEnv("KMS_ID")
+
 	clientV1, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
@@ -39,12 +43,9 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 	clientOBS, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
 
-	workspace := os.Getenv("AWS_WORKSPACE")
-	vpcID := clients.EnvOS.GetEnv("VPC_ID")
-
-	cluster := v1_1.GetTestCluster(t, clientV11)
+	cluster := dataartsV11.GetTestCluster(t, clientV11)
 	t.Cleanup(func() {
-		v1_1.DeleteCluster(t, clientV11, cluster.Id)
+		dataartsV11.DeleteCluster(t, clientV11, cluster.Id)
 	})
 
 	kp, clientSSH := getSSHKeys(t)
@@ -75,7 +76,7 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 			Port:        "22",
 			Username:    "linux",
 			AgentName:   cluster.Name,
-			KMSKey:      "8f5c04ea-0170-4888-9672-92b21445a2f3",
+			KMSKey:      kms,
 			KeyLocation: fmt.Sprintf("obs://%s/%s.pem", bucketName, keyPairName),
 		},
 	}
@@ -117,6 +118,7 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 func getSSHKeys(t *testing.T) (*keypairs.KeyPair, *golangsdk.ServiceClient) {
 	t.Helper()
 
+	t.Log("create a ssh key pair")
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
 
@@ -135,7 +137,11 @@ func getSSHKeys(t *testing.T) (*keypairs.KeyPair, *golangsdk.ServiceClient) {
 }
 
 func uploadSSHKey(t *testing.T, client *obs.ObsClient, kp *keypairs.KeyPair) {
-	uploadFile(t, client, fmt.Sprintf("%s.pem", keyPairName), strings.NewReader(kp.PrivateKey))
+	t.Helper()
+
+	f := fmt.Sprintf("%s.pem", keyPairName)
+	t.Log(fmt.Sprintf("upload ssh key %s to obs bucket: %s", f, bucketName))
+	uploadFile(t, client, f, strings.NewReader(kp.PrivateKey))
 }
 
 func getECInstance(t *testing.T) (*cloudservers.CloudServer, *golangsdk.ServiceClient) {
@@ -170,7 +176,6 @@ func getECInstance(t *testing.T) (*cloudservers.CloudServer, *golangsdk.ServiceC
 	createOpts.Name = ecsName
 	createOpts.KeyName = keyPairName
 
-	// Create ECSv1 instance
 	ecs := openstack.CreateCloudServer(t, clientV1, createOpts)
 
 	return ecs, clientV1
