@@ -3,6 +3,7 @@ package tracker
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type CreateOpts struct {
@@ -25,9 +26,10 @@ type ObsInfo struct {
 	FilePrefixName string `json:"file_prefix_name,omitempty"`
 	// Whether the OBS bucket is automatically created by the tracker.
 	IsObsCreated *bool `json:"is_obs_created,omitempty"`
-	// Duration that traces are stored in the OBS bucket. When tracker_type is set to system,
-	// the default value is 0, indicating permanent storage.
-	BucketLifecycle *int `json:"bucket_lifecycle,omitempty"`
+	// Compression type. The value can be JSON (no compression) or GZIP (compression). The default format is GZIP.
+	CompressType string `json:"compress_type,omitempty"`
+	// Whether to sort the path by cloud service. If this option is enabled, the cloud service name is added to the transfer file path.
+	IsSortByService *bool `json:"is_sort_by_service,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Tracker, error) {
@@ -38,5 +40,43 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Tracker, error) 
 
 	// POST /3/{project_id}/tracker
 	raw, err := client.Post(client.ServiceURL("tracker"), b, nil, nil)
-	return extra(err, raw)
+	if err != nil {
+		return nil, err
+	}
+
+	var res Tracker
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
+
+type Tracker struct {
+	// Unique tracker ID.
+	Id string `json:"id"`
+	// Timestamp when the tracker was created.
+	CreateTime int64 `json:"create_time"`
+	// Trace analysis
+	Lts Lts `json:"lts"`
+	// Tracker type
+	TrackerType string `json:"tracker_type"`
+	// Account ID
+	DomainId string `json:"domain_id"`
+	// Project id
+	ProjectId string `json:"project_id"`
+	// Tracker name
+	TrackerName string `json:"tracker_name"`
+	// Tracker status
+	Status string `json:"status"`
+	// This parameter is returned only when the tracker status is error.
+	Detail string `json:"detail"`
+	// Tracker type
+	ObsInfo ObsInfo `json:"obs_info"`
+}
+
+type Lts struct {
+	// Whether trace analysis is enabled.
+	IsLtsEnabled bool `json:"is_lts_enabled"`
+	// Name of the Log Tank Service (LTS) log group.
+	LogGroupName string `json:"log_group_name"`
+	// Name of the LTS log stream.
+	LogTopicName string `json:"log_topic_name"`
 }

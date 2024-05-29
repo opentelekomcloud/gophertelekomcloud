@@ -181,6 +181,7 @@ func DryRunCloudServerConfig(t *testing.T, client *golangsdk.ServiceClient, crea
 }
 
 func CreateCloudServer(t *testing.T, client *golangsdk.ServiceClient, createOpts cloudservers.CreateOpts) *cloudservers.CloudServer {
+	t.Helper()
 	t.Logf("Attempting to create ECSv1")
 
 	jobResponse, err := cloudservers.Create(client, createOpts).ExtractJobResponse()

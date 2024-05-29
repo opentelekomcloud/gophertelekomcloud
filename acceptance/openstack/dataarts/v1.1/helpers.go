@@ -26,8 +26,9 @@ const (
 const clusterTestName = "testAllCases"
 
 func GetTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.ClusterQuery {
-	t.Log("check if test cluster is created")
+	t.Helper()
 
+	t.Log("check if test cluster is created")
 	clusters, err := cluster.List(client)
 	th.AssertNoErr(t, err)
 
@@ -37,7 +38,7 @@ func GetTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.Clus
 		}
 	}
 
-	t.Log("create a test cluster")
+	t.Log("test cluster is not found, create it")
 	c, err := createCluster(t, client)
 	th.AssertNoErr(t, err)
 
@@ -45,6 +46,7 @@ func GetTestCluster(t *testing.T, client *golangsdk.ServiceClient) *cluster.Clus
 }
 
 func createCluster(t *testing.T, client *golangsdk.ServiceClient) (*cluster.ClusterQuery, error) {
+	t.Helper()
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("SUBNET_ID")
@@ -72,7 +74,7 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) (*cluster.Clus
 			// setting this parameter to true results in 400 error
 			IsScheduleBootOff: pointerto.Bool(false),
 			VpcId:             vpcID,
-			Name:              tools.RandomString("test-dataarts", 5),
+			Name:              tools.RandomString(clusterTestName, 5),
 			DataStore:         &dataStore,
 			Instances: []cluster.Instance{
 				instance,
@@ -98,6 +100,8 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) (*cluster.Clus
 }
 
 func DeleteCluster(t *testing.T, client *golangsdk.ServiceClient, clusterId string) {
+	t.Helper()
+
 	t.Logf("Attempting to delete DataArts instance: %s", clusterId)
 
 	jobId, err := cluster.Delete(client, clusterId, cluster.DeleteOpts{})

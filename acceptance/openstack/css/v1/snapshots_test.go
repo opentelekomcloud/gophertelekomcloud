@@ -28,8 +28,9 @@ func TestSnapshotWorkflow(t *testing.T) {
 	defer deleteBucket(t, bucketName)
 
 	basicOpts := snapshots.UpdateConfigurationOpts{
-		Bucket: bucketName,
-		Agency: agencyID,
+		Bucket:   bucketName,
+		Agency:   agencyID,
+		BasePath: "css_repository/css-test",
 	}
 	err = snapshots.UpdateConfiguration(client, clusterID, basicOpts)
 	th.AssertNoErr(t, err)
@@ -111,11 +112,15 @@ func createCluster(t *testing.T, client *golangsdk.ServiceClient) string {
 				SubnetID:        subnetID,
 				SecurityGroupID: sgID,
 			},
-			AvailabilityZone: "eu-de-02",
+			AvailabilityZone: "eu-de-01",
 		},
 		InstanceNum: 1,
 		DiskEncryption: &clusters.DiskEncryption{
 			Encrypted: "0",
+		},
+		Datastore: &clusters.Datastore{
+			Version: "Opensearch_1.3.6",
+			Type:    "elasticsearch",
 		},
 	}
 	created, err := clusters.Create(client, opts)

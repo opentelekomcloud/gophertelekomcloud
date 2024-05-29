@@ -37,8 +37,8 @@ type Datastore struct {
 	// The default value is 7.6.2.
 	Version string `json:"version" required:"true"`
 	// Type - Engine type.
-	// The default value is `elasticsearch`.
-	Type string `json:"type,omitempty"`
+	// The value is `elasticsearch` or 'opensearch'.
+	Type string `json:"type" required:"true"`
 }
 
 type Instance struct {

@@ -7,18 +7,11 @@ import (
 )
 
 type UpdateOpts struct {
-	FuncUrn         string            `json:"-"`
-	TriggerId       string            `json:"-"`
-	TriggerTypeCode string            `json:"-"`
-	TriggerStatus   string            `json:"trigger_status,omitempty"`
-	EventData       []UpdateEventData `json:"event_data,omitempty"`
-}
-
-type UpdateEventData struct {
-	IsSerial        *bool `json:"is_serial,omitempty"`
-	MaxFetchBytes   *int  `json:"max_fetch_bytes,omitempty"`
-	PollingInterval *int  `json:"polling_interval,omitempty"`
-	PollingUnit     *int  `json:"polling_unit,omitempty"`
+	FuncUrn         string                 `json:"-"`
+	TriggerId       string                 `json:"-"`
+	TriggerTypeCode string                 `json:"-"`
+	TriggerStatus   string                 `json:"trigger_status,omitempty"`
+	EventData       map[string]interface{} `json:"event_data,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*TriggerFuncResp, error) {
