@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/keypairs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dataarts/v1.1/cluster"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dataarts/v1/connection"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
@@ -37,34 +39,7 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 	clientV1, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
-	clientV11, err := clients.NewDataArtsV11Client()
-	th.AssertNoErr(t, err)
-
-	clientOBS, err := clients.NewOBSClient()
-	th.AssertNoErr(t, err)
-
-	cluster := dataartsV11.GetTestCluster(t, clientV11)
-	t.Cleanup(func() {
-		dataartsV11.DeleteCluster(t, clientV11, cluster.Id)
-	})
-
-	kp, clientSSH := getSSHKeys(t)
-	t.Cleanup(func() {
-		_ = keypairs.Delete(clientSSH, keyPairName).ExtractErr()
-	})
-	tools.PrintResource(t, kp)
-
-	prepareTestBucket(t, clientOBS)
-	uploadSSHKey(t, clientOBS, kp)
-	t.Cleanup(func() {
-		defer cleanupBucket(t, clientOBS)
-	})
-
-	ec, clientEC := getECInstance(t)
-	t.Cleanup(func() {
-		defer openstack.DeleteCloudServer(t, clientEC, ec.ID)
-	})
-	tools.PrintResource(t, ec)
+	ec, c := prepareEnv(t)
 
 	t.Log("create a connection")
 
@@ -75,7 +50,7 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 			IP:          ec.Addresses[vpcID][0].Addr,
 			Port:        "22",
 			Username:    "linux",
-			AgentName:   cluster.Name,
+			AgentName:   c.Name,
 			KMSKey:      kms,
 			KeyLocation: fmt.Sprintf("obs://%s/%s.pem", bucketName, keyPairName),
 		},
@@ -115,40 +90,103 @@ func TestDataArtsConnectionsLifecycle(t *testing.T) {
 	th.CheckEquals(t, "newDescription", storedConnection.Description)
 }
 
-func getSSHKeys(t *testing.T) (*keypairs.KeyPair, *golangsdk.ServiceClient) {
+func prepareEnv(t *testing.T) (*cloudservers.CloudServer, *cluster.ClusterQuery) {
 	t.Helper()
 
-	t.Log("create a ssh key pair")
-	client, err := clients.NewComputeV2Client()
+	clientV11, err := clients.NewDataArtsV11Client()
 	th.AssertNoErr(t, err)
 
+	clientOBS, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
+	clientSSH, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
+	clientComputeV1, err := clients.NewComputeV1Client()
+	th.AssertNoErr(t, err)
+
+	var wg sync.WaitGroup
+	var c *cluster.ClusterQuery
+	var kp *keypairs.KeyPair
+	var ec *cloudservers.CloudServer
+
+	kpChan := make(chan *keypairs.KeyPair)
+
+	wg.Add(3)
+
+	go func() {
+		defer wg.Done()
+		c = dataartsV11.GetTestCluster(t, clientV11)
+		t.Cleanup(func() {
+			t.Log("clean up test cluster")
+			dataartsV11.DeleteCluster(t, clientV11, c.Id)
+		})
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		kp = getSSHKeys(t, clientSSH)
+		kpChan <- kp
+
+		prepareTestBucket(t, clientOBS)
+		uploadSSHKey(t, clientOBS, kp)
+		t.Cleanup(func() {
+			t.Log("clean up test key pair")
+			_ = keypairs.Delete(clientSSH, keyPairName).ExtractErr()
+		})
+		t.Cleanup(func() {
+			t.Log("clean up test bucket")
+			defer cleanupBucket(t, clientOBS)
+		})
+	}()
+
+	go func() {
+		defer wg.Done()
+		ec = getECInstance(t, clientComputeV1, kpChan)
+		t.Cleanup(func() {
+			defer openstack.DeleteCloudServer(t, clientComputeV1, ec.ID)
+		})
+	}()
+
+	wg.Wait()
+
+	return ec, c
+}
+
+func getSSHKeys(t *testing.T, client *golangsdk.ServiceClient) *keypairs.KeyPair {
+	t.Helper()
+
+	t.Log("trying to get a ssh key pair")
 	kp, _ := keypairs.Get(client, keyPairName).Extract()
 	if kp != nil {
-		return kp, client
+		return kp
 	}
+
+	t.Log("key pair not found, create one")
 	opts := keypairs.CreateOpts{
 		Name: keyPairName,
 	}
 
-	kp, err = keypairs.Create(client, opts).Extract()
+	kp, err := keypairs.Create(client, opts).Extract()
 	th.AssertNoErr(t, err)
 
-	return kp, client
+	return kp
 }
 
 func uploadSSHKey(t *testing.T, client *obs.ObsClient, kp *keypairs.KeyPair) {
 	t.Helper()
 
 	f := fmt.Sprintf("%s.pem", keyPairName)
-	t.Log(fmt.Sprintf("upload ssh key %s to obs bucket: %s", f, bucketName))
+	t.Logf("upload ssh key %s to obs bucket: %s", f, bucketName)
 	uploadFile(t, client, f, strings.NewReader(kp.PrivateKey))
 }
 
-func getECInstance(t *testing.T) (*cloudservers.CloudServer, *golangsdk.ServiceClient) {
+func getECInstance(t *testing.T, clientV1 *golangsdk.ServiceClient, kpCh chan *keypairs.KeyPair) *cloudservers.CloudServer {
 	t.Helper()
+	t.Log("trying to get ec instance")
 
-	clientV1, err := clients.NewComputeV1Client()
-	th.AssertNoErr(t, err)
+	<-kpCh
 
 	clientV2, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
@@ -167,9 +205,11 @@ func getECInstance(t *testing.T) (*cloudservers.CloudServer, *golangsdk.ServiceC
 		if server.Name == ecsName {
 			ec, err := cloudservers.Get(clientV1, server.ID).Extract()
 			th.AssertNoErr(t, err)
-			return ec, clientV1
+			return ec
 		}
 	}
+
+	t.Log("ec instance not found, create one")
 
 	createOpts := openstack.GetCloudServerCreateOpts(t)
 
@@ -178,5 +218,5 @@ func getECInstance(t *testing.T) (*cloudservers.CloudServer, *golangsdk.ServiceC
 
 	ecs := openstack.CreateCloudServer(t, clientV1, createOpts)
 
-	return ecs, clientV1
+	return ecs
 }
