@@ -10,8 +10,6 @@ const detailEndpoint = "detail"
 type GetJobInstanceListReq struct {
 	// Workspace ID.
 	Workspace string `json:"-"`
-	// Project ID.
-	ProjectId string `q:"project_id" required:"true"`
 	// Job name.
 	//    If you want to query the instance list of a specific batch job, jobName is the batch job name.
 	//    If you want to query sub-jobs associated with a node in a real-time job, the jobName format is real-time job name _ node name.
@@ -63,7 +61,7 @@ func GetJobInstanceList(client *golangsdk.ServiceClient, reqOpts GetJobInstanceL
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: reqOpts.Workspace}
 	}
 
-	raw, err := client.Get(url.String(), nil, &opts)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, &opts)
 
 	if err != nil {
 		return nil, err
@@ -90,7 +88,7 @@ type NodeStatusListResp struct {
 	// When you view the subjobs associated with a node in a real-time job, jobName is in format of real-time job name_node name.
 	JobName string `json:"jobName"`
 	// Job ID
-	JobId string `json:"jobId,omitempty"`
+	JobId int `json:"jobId,omitempty"`
 	// Name of a job instance recorded by the log, rather than the name defined during job creation
 	JobInstanceName string `json:"jobInstanceName"`
 	// Job instance ID, which is used to query job instance details.
@@ -132,5 +130,5 @@ type NodeStatusListResp struct {
 	// Default value: false
 	IgnoreSuccess bool `json:"ignoreSuccess,omitempty"`
 	// Job instance version
-	Version bool `json:"version,omitempty"`
+	Version int `json:"version,omitempty"`
 }

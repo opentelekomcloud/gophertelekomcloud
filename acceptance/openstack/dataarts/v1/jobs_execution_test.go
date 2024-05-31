@@ -1,138 +1,143 @@
 package v1_1
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
-	dataartsV11 "github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/dataarts/v1.1"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/keypairs"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dataarts/v1/connection"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dataarts/v1/job"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dataarts/v1/script"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-const keyPairName = "dataarts-test"
-const ecsName = "dataarts-ecs-test"
-
 func TestDataArtsJobExecution(t *testing.T) {
-	// if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
-	// 	t.Skip("too slow to run in zuul")
-	// }
+	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
 
 	workspace := os.Getenv("AWS_WORKSPACE")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	kms := clients.EnvOS.GetEnv("KMS_ID")
 
 	clientV1, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
-	clientV11, err := clients.NewDataArtsV11Client()
-	th.AssertNoErr(t, err)
+	ec, c := prepareEnv(t)
 
-	_ = dataartsV11.GetTestCluster(t, clientV11)
-	// defer dataartsV11.DeleteCluster(t, clientV11, cluster.Id)
+	t.Log("create a connection")
 
-	kp, _ := getSSHKeys(t)
-	// defer deleteSSHKeys(t, clientSSH)
-	tools.PrintResource(t, kp)
+	getConnection(t, clientV1, ec, c.Name, kms, vpcID)
+	t.Cleanup(func() {
+		t.Logf("attempting to delete connection: %s", connectionName)
+		err := connection.Delete(clientV1, connectionName, workspace)
+		th.AssertNoErr(t, err)
+		t.Logf("connection is deleted: %s", connectionName)
+	})
 
-	ec, _ := getECInstance(t)
-	// defer openstack.DeleteCloudServer(t, clientEC, ec.ID)
-	tools.PrintResource(t, ec)
+	getScript(t, clientV1, connectionName, workspace)
+	t.Cleanup(func() {
+		t.Logf("attempting to delete script: %s", scriptName)
+		opts := script.DeleteReq{Workspace: workspace}
+		err := script.Delete(clientV1, scriptName, opts)
+		th.AssertNoErr(t, err)
+		t.Logf("script is deleted: %s", scriptName)
+	})
 
-	s := getScript(t, clientV1, workspace)
-	tools.PrintResource(t, s)
+	t.Log("create a job")
 
-	c := getConnection(t, clientV1, workspace)
-
-	// client, err := clients.NewDataArtsV1Client()
-	// th.AssertNoErr(t, err)
-	//
-	// workspace := ""
-	//
-	// t.Log("create a job")
-	//
-	// createOpts := &job.Job{
-	// 	Name: jobName,
-	// 	Schedule: job.Schedule{
-	// 		Type: "EXECUTE_ONCE",
-	// 	},
-	// 	ProcessType: "BATCH",
-	// }
-	//
-	// err = job.Create(client, *createOpts)
-	// th.AssertNoErr(t, err)
-	//
-	// t.Log("schedule job cleanup")
-	// t.Cleanup(func() {
-	// 	jobCleanup(t, client)
-	// })
-}
-
-func getSSHKeys(t *testing.T) (*keypairs.KeyPair, *golangsdk.ServiceClient) {
-	t.Helper()
-
-	client, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
-	kp, err := keypairs.Get(client, keyPairName).Extract()
-	if kp != nil {
-		return kp, client
-	}
-	opts := keypairs.CreateOpts{
-		Name: keyPairName,
-	}
-
-	kp, err = keypairs.Create(client, opts).Extract()
-	th.AssertNoErr(t, err)
-
-	return kp, client
-}
-
-func deleteSSHKeys(t *testing.T, client *golangsdk.ServiceClient) {
-	th.AssertNoErr(t, keypairs.Delete(client, keyPairName).ExtractErr())
-}
-
-func getECInstance(t *testing.T) (*cloudservers.CloudServer, *golangsdk.ServiceClient) {
-	t.Helper()
-
-	clientV1, err := clients.NewComputeV1Client()
-	th.AssertNoErr(t, err)
-
-	clientV2, err := clients.NewComputeV2Client()
-	th.AssertNoErr(t, err)
-
-	listOpts := servers.ListOpts{
-		Name: ecsName,
+	createOpts := &job.Job{
+		Name: jobName,
+		Nodes: []job.Node{
+			{
+				Name: "testNode",
+				Type: "Shell",
+				Location: job.Location{
+					X: -332,
+					Y: -150,
+				},
+				PollingInterval:  20,
+				MaxExecutionTime: 360,
+				RetryTimes:       0,
+				RetryInterval:    120,
+				FailPolicy:       "FAIL_CHILD",
+				Properties: []*job.Property{
+					{
+						Name:  "scriptName",
+						Value: "testScript",
+					},
+					{
+						Name:  "connectionName",
+						Value: "testConnection",
+					},
+					{
+						Name:  "statementOrScript",
+						Value: "SCRIPT",
+					},
+					{
+						Name:  "emptyRunningJob",
+						Value: "0",
+					},
+				},
+			},
+		},
+		Schedule: job.Schedule{
+			Type: "EXECUTE_ONCE",
+		},
+		Params:       nil,
+		ProcessType:  "BATCH",
+		LogPath:      "",
+		TargetStatus: "",
+		Approvers:    nil,
 	}
 
-	p, err := servers.List(clientV2, listOpts).AllPages()
-	ss, err := servers.ExtractServers(p)
+	err = job.Create(clientV1, *createOpts)
+	th.AssertNoErr(t, err)
 
-	for _, server := range ss {
-		if server.Name == ecsName {
-			ec, err := cloudservers.Get(clientV1, server.ID).Extract()
-			th.AssertNoErr(t, err)
-			return ec, clientV1
+	t.Log("schedule job cleanup")
+	t.Cleanup(func() {
+		jobCleanup(t, clientV1)
+	})
+
+	t.Log("execute a job")
+
+	_, err = job.ExecuteImmediately(clientV1, jobName, nil)
+	th.AssertNoErr(t, err)
+
+	t.Log("get job's running status")
+	resp, err := job.GetRunningStatus(clientV1, jobName, "")
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "STOPPED", resp.Status)
+
+	opts := job.GetJobInstanceListReq{
+		JobName: jobName,
+	}
+
+	t.Log("trying to get job results in 60 seconds")
+
+	err = golangsdk.WaitFor(120, func() (bool, error) {
+		list, err := job.GetJobInstanceList(clientV1, opts)
+		if err != nil {
+			return false, err
 		}
-	}
 
-	createOpts := openstack.GetCloudServerCreateOpts(t)
+		for _, j := range list.Instances {
+			if j.Status == "success" {
+				return true, nil
+			}
+		}
 
-	createOpts.Name = ecsName
-	createOpts.KeyName = keyPairName
-
-	// Create ECSv1 instance
-	ecs := openstack.CreateCloudServer(t, clientV1, createOpts)
-
-	return ecs, clientV1
+		return false, nil
+	})
+	th.AssertNoErr(t, err)
 }
 
-func getScript(t *testing.T, client *golangsdk.ServiceClient, workspace string) *script.Script {
+func getScript(t *testing.T, client *golangsdk.ServiceClient, conn, workspace string) *script.Script {
 	t.Helper()
 
 	s, err := script.Get(client, scriptName, workspace)
@@ -153,7 +158,7 @@ func getScript(t *testing.T, client *golangsdk.ServiceClient, workspace string) 
 		Name:           scriptName,
 		Type:           "Shell",
 		Content:        "echo 123456",
-		ConnectionName: "anyConnection",
+		ConnectionName: conn,
 	}
 
 	err = script.Create(client, createOpts)
@@ -167,18 +172,32 @@ func getScript(t *testing.T, client *golangsdk.ServiceClient, workspace string) 
 	return s
 }
 
-func getConnection(t *testing.T, client *golangsdk.ServiceClient, workspace string) {
+func getConnection(t *testing.T, client *golangsdk.ServiceClient, ec *cloudservers.CloudServer, clusterName, kms, vpcID string) {
 	t.Helper()
 
-	s, err := connection..Get(client, scriptName, workspace)
-	if err == nil {
-		return s
+	t.Log("try to get connection")
+	c, err := connection.Get(client, connectionName, "")
+	if c != nil && err == nil {
+		t.Log("connection is found")
+		tools.PrintResource(t, c)
+		return
 	}
 
-	errNew, ok := err.(golangsdk.ErrDefault400)
-	th.AssertEquals(t, true, ok)
+	t.Log("create a connection")
 
-	if errNew.Actual != 400 {
-		th.AssertNoErr(t, err)
+	createOpts := connection.Connection{
+		Name: connectionName,
+		Type: "HOST",
+		Config: connection.HOSTConfig{
+			IP:          ec.Addresses[vpcID][0].Addr,
+			Port:        "22",
+			Username:    "linux",
+			AgentName:   clusterName,
+			KMSKey:      kms,
+			KeyLocation: fmt.Sprintf("obs://%s/%s.pem", bucketName, keyPairName),
+		},
 	}
+
+	err = connection.Create(client, createOpts)
+	th.AssertNoErr(t, err)
 }

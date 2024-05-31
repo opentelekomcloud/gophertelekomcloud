@@ -34,8 +34,10 @@ func ExecuteImmediately(client *golangsdk.ServiceClient, jobName string, reqOpts
 		return nil, err
 	}
 
-	opts := &golangsdk.RequestOpts{}
-	if reqOpts.Workspace != "" {
+	opts := &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	}
+	if reqOpts != nil && reqOpts.Workspace != "" {
 		opts.MoreHeaders[HeaderWorkspace] = reqOpts.Workspace
 	}
 	raw, err := client.Post(client.ServiceURL(jobsEndpoint, jobName, executeImmediatelyEndpoint), b, nil, opts)

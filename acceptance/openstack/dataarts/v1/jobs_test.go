@@ -103,6 +103,8 @@ func TestDataArtsJobsImportExport(t *testing.T) {
 	defer storedFile.Close()
 
 	f, err := os.Create("jobTest.zip")
+	th.AssertNoErr(t, err)
+
 	defer f.Close()
 
 	th.AssertNoErr(t, err)
@@ -112,6 +114,8 @@ func TestDataArtsJobsImportExport(t *testing.T) {
 	t.Log("import job")
 
 	clientOBS, err := clients.NewOBSClient()
+	th.AssertNoErr(t, err)
+
 	prepareTestBucket(t, clientOBS)
 	t.Cleanup(func() {
 		cleanupBucket(t, clientOBS)
