@@ -24,7 +24,7 @@ jobs:
           version: v1.53.3
   vet:
     name: check vet
-    runs-on: ubuntu-jammy
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -33,7 +33,7 @@ jobs:
       - run: make vet
   unit_tests:
     name: run unit tests
-    runs-on: ubuntu-jammy
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
