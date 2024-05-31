@@ -1,3 +1,5 @@
+name: run acceptance tests
+
 on:
   label:
     types:
