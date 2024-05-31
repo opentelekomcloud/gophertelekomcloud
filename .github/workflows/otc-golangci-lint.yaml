@@ -1,0 +1,34 @@
+name: Run golangci-lint
+
+on:
+  pull_request:
+    types:
+      - opened
+      - closed
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.20
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.53.3
+  vet:
+    name: check vet
+    runs-on: ubuntu-jammy
+    steps:
+      - run: make vet
+  unit_tests:
+    name: run unit tests
+    runs-on: ubuntu-jammy
+    steps:
+      - run: make test
