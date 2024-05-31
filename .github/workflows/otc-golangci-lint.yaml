@@ -1,4 +1,4 @@
-name: Run golangci-lint
+name: Check code quality
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   lint:
-    name: golangci-lint
+    name: run golangci-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
         with:
           version: v1.53.3
   vet:
-    name: check vet
+    name: run go vet
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
