@@ -16,6 +16,10 @@ import (
 const jobName = "testJob"
 
 func TestDataArtsJobsLifecycle(t *testing.T) {
+	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
 	client, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
@@ -76,6 +80,10 @@ func TestDataArtsJobsLifecycle(t *testing.T) {
 	// th.AssertEquals(t, 1, len(storedFile.Scripts))
 }
 func TestDataArtsJobsImportExport(t *testing.T) {
+	if os.Getenv("RUN_DATAART_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
 	client, err := clients.NewDataArtsV1Client()
 	th.AssertNoErr(t, err)
 
