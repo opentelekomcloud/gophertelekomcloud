@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -967,6 +968,59 @@ func ConvertObjectLockConfigurationToXml(input BucketWormPolicy, returnMd5 bool,
 	}
 
 	xml = append(xml, "</ObjectLockConfiguration>")
+	data = strings.Join(xml, "")
+	if returnMd5 {
+		md5 = Base64Md5([]byte(data))
+	}
+	return
+}
+
+// ConvertInventoryConfigurationToXml converts BucketInventoryConfiguration value to XML data and returns it
+func ConvertInventoryConfigurationToXml(input BucketInventoryConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
+	xml := make([]string, 0, 6)
+	xml = append(xml, "<InventoryConfiguration>")
+
+	id := XmlTranscoding(input.Id)
+	xml = append(xml, fmt.Sprintf("<Id>%s</Id>", id))
+
+	isEnabled := XmlTranscoding(strconv.FormatBool(input.IsEnabled))
+	xml = append(xml, fmt.Sprintf("<IsEnabled>%s</IsEnabled>", isEnabled))
+
+	if input.Filter.Prefix != "" {
+		filter := XmlTranscoding(input.Filter.Prefix)
+		xml = append(xml, fmt.Sprintf("<Filter><Prefix>%s</Prefix></Filter>", filter))
+	}
+
+	if input.Destination.Bucket != "" && input.Destination.Format != "" {
+		xml = append(xml, "<Destination>")
+		bucket := XmlTranscoding(input.Destination.Bucket)
+		format := XmlTranscoding(input.Destination.Format)
+		xml = append(xml, fmt.Sprintf("<Format>%s</Format>", format))
+		xml = append(xml, fmt.Sprintf("<Bucket>%s</Bucket>", bucket))
+
+		if input.Destination.Prefix != "" {
+			prefix := XmlTranscoding(input.Destination.Prefix)
+			xml = append(xml, fmt.Sprintf("<Prefix>%s</Prefix>", prefix))
+		}
+		xml = append(xml, "</Destination>")
+	}
+
+	schedule := XmlTranscoding(input.Schedule.Frequency)
+	xml = append(xml, fmt.Sprintf("<Schedule><Frequency>%s</Frequency></Schedule>", schedule))
+
+	inclVersions := XmlTranscoding(input.IncludedObjectVersions)
+	xml = append(xml, fmt.Sprintf("<IncludedObjectVersions>%s</IncludedObjectVersions>", inclVersions))
+
+	if len(input.OptionalFields) > 0 {
+		xml = append(xml, "<OptionalFields>")
+		for _, field := range input.OptionalFields {
+			xml = append(xml, fmt.Sprintf("<Field>%s</Field>", XmlTranscoding(field.Field)))
+		}
+		xml = append(xml, "</OptionalFields>")
+	}
+
+	xml = append(xml, "</InventoryConfiguration>")
+
 	data = strings.Join(xml, "")
 	if returnMd5 {
 		md5 = Base64Md5([]byte(data))

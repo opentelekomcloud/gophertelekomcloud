@@ -704,3 +704,38 @@ func (obsClient ObsClient) GetBucketCustomDomain(bucketName string) (output *Get
 	}
 	return
 }
+
+func (obsClient ObsClient) SetBucketInventory(input *SetBucketInventoryInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("SetBucketInventoryInput is nil")
+	}
+
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("SetBucketInventory", HTTP_PUT, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) DeleteBucketInventory(input *DeleteBucketInventoryInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("DeleteBucketInventoryInput is nil")
+	}
+
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("DeleteBucketInventory", HTTP_DELETE, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) GetBucketInventory(input GetBucketInventoryInput) (output *GetBucketInventoryOutput, err error) {
+	output = &GetBucketInventoryOutput{}
+	err = obsClient.doActionWithBucket("GetBucketInventory", HTTP_GET, input.BucketName, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}

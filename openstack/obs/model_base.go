@@ -350,3 +350,33 @@ type BucketWormPolicy struct {
 	Days              string   `xml:"Rule>DefaultRetention>Days,omitempty"`
 	Years             string   `xml:"Rule>DefaultRetention>Years,omitempty"`
 }
+
+// BucketInventoryConfiguration defines the bucket inventory configuration
+type BucketInventoryConfiguration struct {
+	XMLName                xml.Name                  `xml:"InventoryConfiguration"`
+	Id                     string                    `xml:"Id"`
+	IsEnabled              bool                      `xml:"IsEnabled"`
+	Filter                 InventoryFilter           `xml:"Filter,omitempty"`
+	Schedule               InventorySchedule         `xml:"Schedule"`
+	Destination            InventoryDestination      `xml:"Destination"`
+	IncludedObjectVersions string                    `xml:"IncludedObjectVersions"`
+	OptionalFields         []InventoryOptionalFields `xml:"OptionalFields,omitempty"`
+}
+
+type InventoryFilter struct {
+	Prefix string `xml:"Prefix,omitempty"`
+}
+
+type InventorySchedule struct {
+	Frequency string `xml:"Frequency,omitempty"`
+}
+
+type InventoryDestination struct {
+	Format string `xml:"Format,omitempty"`
+	Bucket string `xml:"Bucket,omitempty"`
+	Prefix string `xml:"Prefix,omitempty"`
+}
+
+type InventoryOptionalFields struct {
+	Field string `xml:"Field"`
+}
