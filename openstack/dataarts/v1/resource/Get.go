@@ -9,12 +9,12 @@ import (
 // Send request GET /v1/{project_id}/resources/{resource_id}
 func Get(client *golangsdk.ServiceClient, resourceId, workspace string) (*Resource, error) {
 
-	var opts *golangsdk.RequestOpts
+	var opts golangsdk.RequestOpts
 	if workspace != "" {
 		opts.MoreHeaders = map[string]string{HeaderWorkspace: workspace}
 	}
 
-	raw, err := client.Get(client.ServiceURL(resourcesEndpoint, resourceId), nil, opts)
+	raw, err := client.Get(client.ServiceURL(resourcesEndpoint, resourceId), nil, &opts)
 	if err != nil {
 		return nil, err
 	}
