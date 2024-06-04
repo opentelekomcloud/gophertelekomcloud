@@ -4,9 +4,7 @@ on:
   pull_request:
     types:
       - opened
-      - closed
       - edited
-      - reopened
       - synchronize
 
 jobs:
