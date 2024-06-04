@@ -3,6 +3,7 @@ package v1_1
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"testing"
@@ -36,6 +37,7 @@ func TestDataArtsResourcesLifecycle(t *testing.T) {
 	t.Cleanup(func() {
 		cleanupBucket(t, clientOBS)
 	})
+	uploadFile(t, clientOBS, fileName, strings.NewReader("testData"))
 
 	t.Log("create a resource")
 
@@ -94,11 +96,9 @@ func prepareTestBucket(t *testing.T, client *obs.ObsClient) {
 		})
 		th.AssertNoErr(t, err)
 	}
-
-	uploadFile(t, client)
 }
 
-func uploadFile(t *testing.T, client *obs.ObsClient) {
+func uploadFile(t *testing.T, client *obs.ObsClient, fileName string, data io.Reader) {
 	_, err := client.GetObjectMetadata(&obs.GetObjectMetadataInput{
 		Bucket: bucketName,
 		Key:    fileName,
@@ -117,17 +117,30 @@ func uploadFile(t *testing.T, client *obs.ObsClient) {
 				Key:    fileName,
 			},
 		},
-		Body: strings.NewReader("testData"),
+		Body: data,
 	})
 	th.AssertNoErr(t, err)
 }
 
 func cleanupBucket(t *testing.T, client *obs.ObsClient) {
-	_, err := client.DeleteObject(&obs.DeleteObjectInput{
+	objs, err := client.ListObjects(&obs.ListObjectsInput{
 		Bucket: bucketName,
-		Key:    fileName,
 	})
 	th.AssertNoErr(t, err)
+
+	toDelete := make([]obs.ObjectToDelete, 0, len(objs.Contents))
+	for _, obj := range objs.Contents {
+		toDelete = append(toDelete, obs.ObjectToDelete{
+			Key: obj.Key,
+		})
+	}
+
+	_, err = client.DeleteObjects(&obs.DeleteObjectsInput{
+		Bucket:  bucketName,
+		Objects: toDelete,
+	})
+	th.AssertNoErr(t, err)
+
 	_, err = client.DeleteBucket(bucketName)
 	th.AssertNoErr(t, err)
 }

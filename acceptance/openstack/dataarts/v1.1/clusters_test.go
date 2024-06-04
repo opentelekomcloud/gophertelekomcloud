@@ -60,7 +60,7 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	t.Log("DataArts cluster was created")
 
 	t.Log("schedule clusters cleanup")
-	t.Cleanup(func() { deleteCluster(t, client, createResp.Id) })
+	t.Cleanup(func() { DeleteCluster(t, client, createResp.Id) })
 
 	t.Log("check cluster status, should be normal")
 	th.AssertNoErr(t, waitForState(client, 1200, createResp.Id, "200"))

@@ -241,6 +241,7 @@ var (
 		"object-lock":                  true,
 		"restore":                      true,
 		"encryption":                   true,
+		"inventory":                    true,
 		"tagging":                      true,
 		"append":                       true,
 		"position":                     true,
@@ -667,6 +668,7 @@ const (
 	SubResourceEncryption    SubResourceType  = "encryption"
 	SubResourceObjectLock    SubResourceType  = "object-lock"
 	SubResourceCustomDomain  SubResourceType  = "customdomain"
+	SubResourceInventory     SubResourceType  = "inventory"
 	SubResourceTagging       SubResourceType  = "tagging"
 	SubResourceDelete        SubResourceType  = "delete"
 	SubResourceVersions      SubResourceType  = "versions"
