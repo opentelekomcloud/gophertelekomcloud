@@ -18,9 +18,9 @@ jobs:
       - run: env
 #      - run: make acceptance
         env:
-          AUTH_URL: ${{ secrets.AUTH_URL }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          USERNAME: ${{ secrets.USERNAME }}
-          USER_DOMAIN_NAME: ${{ secrets.USER_DOMAIN_NAME }}
-          FUNCTEST_PROJECT_NAME: ${{ secrets.FUNCTEST_PROJECT_NAME }}
+          AUTH_URL: '${{ secrets.AUTH_URL }}'
+          PASSWORD: '${{ secrets.PASSWORD }}'
+          USERNAME: '${{ secrets.USERNAME }}'
+          USER_DOMAIN_NAME: '${{ secrets.USER_DOMAIN_NAME }}'
+          FUNCTEST_PROJECT_NAME: '${{ secrets.FUNCTEST_PROJECT_NAME }}'
 
