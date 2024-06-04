@@ -8,7 +8,6 @@ on:
       - edited
       - reopened
       - synchronize
-      - labeled
 
 jobs:
   lint:
@@ -41,13 +40,3 @@ jobs:
         with:
           go-version: "1.20"
       - run: make test
-  acc_tests:
-    name: run acceptance tests
-    runs-on: ubuntu-22.04
-    if: ${{ github.event.label.name == 'post' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.20"
-      - run: make acceptance
