@@ -1,6 +1,9 @@
 name: check code quality
 
 on:
+  pull_request:
+    types:
+      - opened
   label:
     types:
       - created
