@@ -4,11 +4,24 @@ on:
   pull_request:
     types:
       - opened
+      - closed
+      - edited
+      - reopened
+      - synchronize
   label:
     types:
       - created
 
 jobs:
+  unit_tests:
+    name: run unit tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.20"
+      - run: make test
   acc_tests:
     name: run acceptance tests
     runs-on: ubuntu-22.04
