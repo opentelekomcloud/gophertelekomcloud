@@ -3,7 +3,7 @@ name: run acceptance tests
 on:
   label:
     types:
-      - post
+      - created
 
 jobs:
   acc_tests:
