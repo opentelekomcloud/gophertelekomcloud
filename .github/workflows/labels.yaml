@@ -33,8 +33,13 @@ jobs:
     if: ${{ github.event.label.name == 'gate' && success() }}
     steps:
       - uses: actions/checkout@v4
+      - uses: kattecon/gh-app-access-token-gen@v1
+        id: gen_token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_KEY }}
       - uses: devmasx/merge-branch@master
         with:
           label_name: 'gate'
           target_branch: 'github-actions-1'
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ steps.gen_token.outputs.token }}
