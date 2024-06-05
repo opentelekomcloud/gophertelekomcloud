@@ -1,40 +1,36 @@
 name: check code quality
+#inputs:
+#  who-to-greet:  # id of input
+#    description: 'Who to greet'
+#    required: true
+#    default: 'World'
+#outputs:
+#  random-number:
+#    description: "Random number"
+#    value: ${{ steps.random-number-generator.outputs.random-number }}
+runs:
+  using: "composite"
+  steps:
 
-on:
-  pull_request:
-    types:
-      - opened
-      - edited
-      - synchronize
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version: "1.20"
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: v1.53.3
 
-jobs:
-  lint:
-    name: run golangci-lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.20"
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: v1.53.3
-  vet:
-    name: run go vet
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.20"
-      - run: make vet
-  unit_tests:
-    name: run unit tests
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.20"
-      - run: make test
+    - name: run go vet
+      uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version: "1.20"
+    - run: make vet
+
+    - name: run unit tests
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version: "1.20"
+    - run: make test
