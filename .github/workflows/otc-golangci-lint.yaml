@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: run checks
-        uses: .github/actions/code-quality
+        uses: ./.github/actions/code-quality
 
 #  lint:
 #    name: run golangci-lint
