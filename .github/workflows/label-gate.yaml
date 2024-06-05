@@ -1,4 +1,4 @@
-name: run tests
+name: merge branch
 
 on:
   pull_request:
