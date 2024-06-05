@@ -41,5 +41,5 @@ jobs:
       - uses: devmasx/merge-branch@master
         with:
           label_name: 'gate'
-          target_branch: 'github-actions-1'
+          target_branch: 'devel'
           github_token: ${{ steps.gen_token.outputs.token }}
