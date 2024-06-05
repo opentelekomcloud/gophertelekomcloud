@@ -9,6 +9,7 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     name: merge branch into devel
+    environment: github
     if: ${{ github.event.label.name == 'gate' && github.event.review.state == 'APPROVED' }}
     steps:
       - uses: actions/checkout@v4
