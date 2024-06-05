@@ -6,6 +6,11 @@ on:
       - labeled
 
 jobs:
+  run-checks:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'gate' }}
+    steps:
+      - uses: ./.github/workflows/otc-golangci-lint.yaml
   merge:
     runs-on: ubuntu-latest
     name: merge branch into devel
@@ -13,8 +18,6 @@ jobs:
     if: ${{ github.event.label.name == 'gate' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/otc-golangci-lint.yaml
-      - uses: ./.github/workflows/otc-run-acc-tests.yaml
       - uses: devmasx/merge-branch@master
         with:
           label_name: 'gate'
