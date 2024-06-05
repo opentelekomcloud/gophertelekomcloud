@@ -1,0 +1,21 @@
+name: run tests
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    name: merge branch into devel
+    if: ${{ github.event.label.name == 'gate' && github.event.review.state == 'APPROVED' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/otc-golangci-lint.yaml
+      - uses: ./.github/workflows/otc-run-acc-tests.yaml
+      - uses: devmasx/merge-branch@master
+        with:
+          label_name: 'gate'
+          target_branch: 'devel'
+          github_token: ${{ secrets.TOKEN }}
