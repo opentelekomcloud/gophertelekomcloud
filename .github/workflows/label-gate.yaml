@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: merge branch into devel
     environment: github
-    if: ${{ github.event.label.name == 'gate' && github.event.review.state == 'APPROVED' }}
+    if: ${{ github.event.label.name == 'gate' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/otc-golangci-lint.yaml
