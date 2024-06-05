@@ -10,7 +10,8 @@ jobs:
     name: acceptance tests
     runs-on: ubuntu-22.04
     environment: tests
-    if: ${{ github.event.label.name == 'post' }}
+    if: ${{ contains(fromJSON('["post", "gate"]'),  github.event.label.name) }}
+#    if: ${{ github.event.label.name == 'post' || github.event.label.name == 'gate'}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -24,3 +25,17 @@ jobs:
           OS_USERNAME: ${{ secrets.USERNAME }}
           OS_PROJECT_NAME: ${{ vars.FUNCTEST_PROJECT_NAME }}
           OS_REGION: "eu-de"
+  merge:
+    runs-on: ubuntu-latest
+    name: merge branch into devel
+    environment: github
+    needs:
+      - acc_tests
+    if: ${{ github.event.label.name == 'gate' && success() }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: devmasx/merge-branch@master
+        with:
+          label_name: 'gate'
+          target_branch: 'github-actions-1'
+          github_token: ${{ secrets.TOKEN }}
