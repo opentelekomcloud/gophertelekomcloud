@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-22.04
     environment: tests
     if: ${{ contains(fromJSON('["post", "gate"]'),  github.event.label.name) }}
-#    if: ${{ github.event.label.name == 'post' || github.event.label.name == 'gate'}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
