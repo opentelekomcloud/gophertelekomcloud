@@ -71,6 +71,8 @@ type Spec struct {
 	KubernetesSvcIpRange string `json:"kubernetesSvcIpRange,omitempty"`
 	// KubeProxyMode Service forwarding mode. One of `iptables`, `ipvs`
 	KubeProxyMode string `json:"kubeProxyMode,omitempty"`
+	// The system disks and data disks of the master nodes in the cluster are encrypted.
+	EnableMasterVolumeEncryption *bool `json:"enableMasterVolumeEncryption,omitempty"`
 }
 
 // Node network parameters

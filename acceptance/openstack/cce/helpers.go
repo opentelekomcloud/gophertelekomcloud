@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/keypairs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -37,7 +38,11 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 				Mode:                "rbac",
 				AuthenticatingProxy: make(map[string]string),
 			},
-			KubernetesSvcIpRange: "10.247.0.0/16",
+			KubernetesSvcIpRange:         "10.247.0.0/16",
+			EnableMasterVolumeEncryption: pointerto.Bool(true),
+			ExtendParam: map[string]string{
+				"kubernetes.io/cpuManagerPolicy": "static",
+			},
 		},
 	}).Extract()
 	th.AssertNoErr(t, err)
