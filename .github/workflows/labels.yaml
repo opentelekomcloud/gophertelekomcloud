@@ -5,6 +5,10 @@ on:
     types:
       - labeled
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   acc_tests:
     name: acceptance tests
