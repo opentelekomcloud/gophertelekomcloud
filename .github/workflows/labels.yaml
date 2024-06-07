@@ -54,4 +54,4 @@ jobs:
             -H "Authorization: ${{ steps.gen_token.outputs.token }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/owner/repo/merges \
-            -d "{\"base\":\"devel\",\"head\":\"${{ BRANCH_NAME }}\"}"
+            -d "{\"base\":\"devel\",\"head\":\"${BRANCH_NAME}\"}"
