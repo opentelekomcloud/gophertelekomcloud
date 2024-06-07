@@ -6,16 +6,16 @@
     check:
       jobs:
         - noop
-#        - otc-golangci-lint
-#        - golang-make-vet
-#        - golang-make-test
+        - otc-golangci-lint
+        - golang-make-vet
+        - golang-make-test
     check-post:
       jobs:
         - golang-make-functional
     gate:
       jobs:
         - noop
-#        - otc-golangci-lint
-#        - golang-make-vet
-#        - golang-make-test
-#        - golang-make-functional
+        - otc-golangci-lint
+        - golang-make-vet
+        - golang-make-test
+        - golang-make-functional
