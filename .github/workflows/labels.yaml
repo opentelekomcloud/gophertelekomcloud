@@ -43,8 +43,6 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_KEY }}
           installation_id: ${{ secrets.INSTALLATION_ID }}
-      - uses: devmasx/merge-branch@master
+      - uses: guardian/actions-merge-release-changes-to-protected-branch@v1.3.1
         with:
-          label_name: 'gate'
-          target_branch: 'devel'
-          github_token: ${{ steps.gen_token.outputs.token }}
+          github-token: ${{ steps.gen_token.outputs.token }}
