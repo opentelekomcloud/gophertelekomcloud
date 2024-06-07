@@ -50,7 +50,7 @@ jobs:
             | jq -r '.head_branch')
           echo "branch_name=$BRANCH_NAME"
           echo "Perform merge to devel"
-          URL="https://api.github.com/repos/opentelekomcloud/${{ github.repository }}/merges"
+          URL="https://api.github.com/repos/${{ github.repository }}/merges"
           echo "url=$URL"
           curl -X POST \
             -H "Authorization: ${{ steps.gen_token.outputs.token }}" \
