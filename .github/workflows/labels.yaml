@@ -44,13 +44,12 @@ jobs:
           private_key: ${{ secrets.APP_KEY }}
           installation_id: ${{ secrets.INSTALLATION_ID }}
       - run: |
-          # Extract the branch name from GITHUB_REF
+          echo "Get current branch"
           BRANCH_NAME=$(curl -s -H "Authorization: token ${{ steps.gen_token.outputs.token }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             | jq -r '.head_branch')
           echo "branch_name=$BRANCH_NAME"
-
-          # Perform the merge
+          echo "Perform merge to devel"
           curl -X POST \
             -H "Authorization: ${{ steps.gen_token.outputs.token }}" \
             -H "Accept: application/vnd.github.v3+json" \
