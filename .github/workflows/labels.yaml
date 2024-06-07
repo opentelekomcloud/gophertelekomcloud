@@ -43,9 +43,7 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_KEY }}
           installation_id: ${{ secrets.INSTALLATION_ID }}
-
-      - name: Merge PR
-        run: |
+      - run: |
           # Extract the branch name from GITHUB_REF
           BRANCH_NAME=$(curl -s -H "Authorization: token ${{ steps.gen_token.outputs.token }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
