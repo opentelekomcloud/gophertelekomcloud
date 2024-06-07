@@ -43,8 +43,17 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_KEY }}
           installation_id: ${{ secrets.INSTALLATION_ID }}
-      - uses: devmasx/merge-branch@master
-        with:
-          label_name: 'gate'
-          target_branch: 'devel'
-          github_token: ${{ steps.gen_token.outputs.token }}
+      - run: |
+          echo "Get current branch"
+          BRANCH_NAME=$(curl -s -H "Authorization: token ${{ steps.gen_token.outputs.token }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            | jq -r '.head_branch')
+          echo "branch_name=$BRANCH_NAME"
+          echo "Perform merge to devel"
+          URL="https://api.github.com/repos/${{ github.repository }}/merges"
+          echo "url=$URL"
+          curl -X POST \
+            -H "Authorization: ${{ steps.gen_token.outputs.token }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            $URL \
+            -d "{\"base\":\"devel\",\"head\":\"${BRANCH_NAME}\"}"
