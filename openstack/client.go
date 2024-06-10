@@ -976,3 +976,11 @@ func NewFuncGraph(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	sc, err := initCommonServiceClient(client, eo, "functiongraph", "v2")
 	return sc, err
 }
+
+func NewERServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "er", "v3")
+	if err != nil {
+		return nil, err
+	}
+	return sc, nil
+}
