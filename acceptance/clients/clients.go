@@ -833,6 +833,17 @@ func NewFuncGraphClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewERClient returns authenticated Enterprise Router v3 client
+func NewERClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewERServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
