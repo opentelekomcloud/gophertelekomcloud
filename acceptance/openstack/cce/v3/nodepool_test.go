@@ -54,6 +54,38 @@ func (s *testNodes) TestNodePoolLifecycle() {
 					},
 				},
 				Count: 1,
+				Storage: &nodes.Storage{
+					StorageSelectors: []nodes.StorageSelector{
+						{
+							Name:        "cceUse",
+							StorageType: "evs",
+							MatchLabels: &nodes.MatchLabels{
+								Size:       "100",
+								VolumeType: "SSD",
+								Count:      "1",
+							},
+						},
+					},
+					StorageGroups: []nodes.StorageGroup{
+						{
+							Name:       "vgpaas",
+							CceManaged: true,
+							SelectorNames: []string{
+								"cceUse",
+							},
+							VirtualSpaces: []nodes.VirtualSpace{
+								{
+									Name: "runtime",
+									Size: "90%",
+								},
+								{
+									Name: "kubernetes",
+									Size: "10%",
+								},
+							},
+						},
+					},
+				},
 			},
 			InitialNodeCount: 1,
 		},
