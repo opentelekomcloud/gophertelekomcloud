@@ -85,7 +85,7 @@ func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
 }
 
 // NewComputeV2Client returns a *ServiceClient for making calls
-// to the OpenStack Compute v2 API. An error will be returned
+// to the OpenStack Compute v2.1 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -93,9 +93,14 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 
-	return openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
+	client, err := openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
+	if err != nil {
+		return nil, err
+	}
+	client.Microversion = "2.55"
+	return client, err
 }
 
 // NewComputeV1Client returns a *ServiceClient for making calls
@@ -840,6 +845,17 @@ func NewERClient() (client *golangsdk.ServiceClient, err error) {
 		return nil, err
 	}
 	return openstack.NewERServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewHssClient returns authenticated HSS v5 client
+func NewHssClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewHssV5(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }

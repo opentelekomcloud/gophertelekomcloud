@@ -17,7 +17,6 @@ import (
 func TestServerList(t *testing.T) {
 	client, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
-
 	listOpts := servers.ListOpts{}
 	allServerPages, err := servers.List(client, listOpts).AllPages()
 	th.AssertNoErr(t, err)
@@ -57,7 +56,7 @@ func TestServerLifecycle(t *testing.T) {
 
 	flavorID, err := flavors.IDFromName(client, "s2.large.2")
 	th.AssertNoErr(t, err)
-
+	ecsDescription := "my description"
 	createOpts := servers.CreateOpts{
 		Name:      ecsName,
 		ImageRef:  image[0].Id,
@@ -71,6 +70,7 @@ func TestServerLifecycle(t *testing.T) {
 				UUID: networkID,
 			},
 		},
+		Description: ecsDescription,
 	}
 
 	ecs, err := servers.Create(client, createOpts).Extract()
@@ -83,6 +83,7 @@ func TestServerLifecycle(t *testing.T) {
 	ecs, err = servers.Get(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, ecsName, ecs.Name)
+	th.AssertEquals(t, ecsDescription, ecs.Description)
 
 	nicInfo, err := servers.GetNICs(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
@@ -114,16 +115,16 @@ func TestServerLifecycle(t *testing.T) {
 
 	ecsName = tools.RandomString("update-ecs-", 3)
 	updateOpts := servers.UpdateOpts{
-		Name: ecsName,
+		Name:        ecsName,
+		Description: ecsDescription + " update",
 	}
 
 	_, err = servers.Update(client, ecs.ID, updateOpts).Extract()
-	th.AssertNoErr(t, err)
-
 	t.Logf("ECSv2 successfully updated: %s", ecs.ID)
 	th.AssertNoErr(t, err)
 
 	newECS, err := servers.Get(client, ecs.ID).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, ecsName, newECS.Name)
+	th.AssertEquals(t, ecsDescription+" update", newECS.Description)
 }
