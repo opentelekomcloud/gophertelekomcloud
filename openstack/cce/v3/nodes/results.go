@@ -57,6 +57,8 @@ type Spec struct {
 	RootVolume VolumeSpec `json:"rootVolume" required:"true"`
 	// The data disk parameter of the node must currently be a disk
 	DataVolumes []VolumeSpec `json:"dataVolumes" required:"true"`
+	// Disk initialization management parameter.
+	Storage *Storage `json:"storage,omitempty"`
 	// Elastic IP parameters of the node
 	PublicIP PublicIPSpec `json:"publicIP,omitempty"`
 	// The billing mode of the node: the value is 0 (on demand)
@@ -178,6 +180,70 @@ type ExtendParam struct {
 	DockerBaseSize int `json:"dockerBaseSize,omitempty"`
 	// ConfigMap of the Docker data disk.
 	DockerLVMConfigOverride string `json:"DockerLVMConfigOverride,omitempty"`
+}
+
+type Storage struct {
+	// Disk selection. Matched disks are managed according to matchLabels and storageType.
+	StorageSelectors []StorageSelector `json:"storageSelectors" required:"true"`
+	// A storage group consists of multiple storage devices. It is used to divide storage space.
+	StorageGroups []StorageGroup `json:"storageGroups" required:"true"`
+}
+
+type StorageSelector struct {
+	// Selector name, used as the index of selectorNames in storageGroup.
+	Name string `json:"name" required:"true"`
+	// Specifies the storage type. Currently, only evs (EVS volumes) and local (local volumes) are supported.
+	StorageType string `json:"storageType" required:"true"`
+	// Matching field of an EVS volume.
+	MatchLabels *MatchLabels `json:"matchLabels,omitempty"`
+}
+
+type MatchLabels struct {
+	// Matched disk size.
+	Size string `json:"size,omitempty"`
+	// EVS disk type.
+	VolumeType string `json:"volumeType,omitempty"`
+	// Disk encryption identifier.
+	MetadataEncrypted string `json:"metadataEncrypted,omitempty"`
+	// Customer master key ID of an encrypted disk.
+	MetadataCmkid string `json:"metadataCmkid,omitempty"`
+	// Number of disks to be selected.
+	Count string `json:"count,omitempty"`
+}
+
+type StorageGroup struct {
+	// Name of a virtual storage group, which must be unique.
+	Name string `json:"name" required:"true"`
+	// Storage space for Kubernetes and runtime components.
+	CceManaged bool `json:"cceManaged,omitempty"`
+	// This parameter corresponds to name in storageSelectors.
+	SelectorNames []string `json:"selectorNames" required:"true"`
+	// Detailed management of space configuration in a group.
+	VirtualSpaces []VirtualSpace `json:"virtualSpaces" required:"true"`
+}
+
+type VirtualSpace struct {
+	// Name of a virtualSpace.
+	Name string `json:"name" required:"true"`
+	// Size of a virtualSpace. The value must be an integer in percentage.
+	Size string `json:"size" required:"true"`
+	// LVM configurations, applicable to kubernetes and user spaces.
+	LvmConfig *LvmConfig `json:"lvmConfig,omitempty"`
+	// runtime configurations, applicable to the runtime space.
+	RuntimeConfig *RuntimeConfig `json:"runtimeConfig,omitempty"`
+}
+type LvmConfig struct {
+	// LVM write mode. linear indicates the linear mode. striped indicates the striped mode,
+	// in which multiple disks are used to form a strip to improve disk performance.
+	LvType string `json:"lvType" required:"true"`
+	// Path to which the disk is attached.
+	Path string `json:"path,omitempty"`
+}
+
+type RuntimeConfig struct {
+	// LVM write mode. linear indicates the linear mode. striped indicates the striped mode,
+	// in which multiple disks are used to form a strip to improve disk performance.
+	LvType string `json:"lvType" required:"true"`
 }
 
 type PublicIPSpec struct {
