@@ -1,0 +1,48 @@
+name: automerge
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  status: {}
+
+jobs:
+  acc_test:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'gate')
+    steps:
+      - name: Run synthetic acceptance test
+        run: |
+          echo "Starting synthetic acceptance test..."
+          sleep 15
+          echo "Synthetic acceptance test completed successfully."
+
+  automerge:
+    needs: acc_test
+    runs-on: ubuntu-latest
+    if: >
+      contains(github.event.pull_request.labels.*.name, 'gate') &&
+      needs.acc_test.result == 'success'
+    steps:
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.3"
+        permissions:
+          contents: write
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: "gate"
+          MERGE_METHOD: "squash"
