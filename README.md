@@ -108,3 +108,5 @@ See the [contributing guide](./.github/CONTRIBUTING.md).
 
 If you're struggling with something or have spotted a potential bug, feel free to submit an issue to
 our [bug tracker](https://github.com/opentelekomcloud/gophertelekomcloud/issues).
+
+## Test automerge
