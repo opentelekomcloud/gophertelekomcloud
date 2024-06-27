@@ -1,0 +1,42 @@
+name: automerge
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  status: {}
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    if: >
+      contains(github.event.pull_request.labels.*.name, 'gate')
+    environment: github
+    steps:
+      - name: Create GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_KEY }}
+
+      - id: automerge
+        name: automerge
+        uses: pascalgn/automerge-action@v0.16.3
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          MERGE_LABELS: "gate"
+          MERGE_METHOD: "squash"
