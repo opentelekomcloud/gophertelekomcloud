@@ -105,7 +105,8 @@ type GetPasswordResult struct {
 // If privateKey != nil the password is decrypted with the private key.
 // If privateKey == nil the encrypted password is returned and can be decrypted
 // with:
-//   echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
+//
+//	echo '<pwd>' | base64 -D | openssl rsautl -decrypt -inkey <private_key>
 func (r GetPasswordResult) ExtractPassword(privateKey *rsa.PrivateKey) (string, error) {
 	var s struct {
 		Password string `json:"password"`
@@ -222,7 +223,14 @@ type Server struct {
 	Fault Fault `json:"fault"`
 
 	// VolumeAttached includes the volumes that attached to the server.
-	VolumesAttached []map[string]string `json:"os-extended-volumes:volumes_attached"`
+	VolumesAttached []VolumesDetails `json:"os-extended-volumes:volumes_attached"`
+
+	Description string `json:"description"`
+}
+
+type VolumesDetails struct {
+	DeleteOnTermination bool   `json:"delete_on_termination"`
+	ID                  string `json:"id"`
 }
 
 type Fault struct {

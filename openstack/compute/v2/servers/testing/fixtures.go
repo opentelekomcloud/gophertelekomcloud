@@ -80,6 +80,7 @@ const ServerListBody = `
 			"OS-DCF:diskConfig": "MANUAL",
 			"os-extended-volumes:volumes_attached": [
 				{
+					"delete_on_termination": true,
 					"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e"
 				}
 			],
@@ -154,6 +155,7 @@ const ServerListBody = `
 			"OS-DCF:diskConfig": "MANUAL",
 			"os-extended-volumes:volumes_attached": [
 				{
+					"delete_on_termination": true,
 					"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e"
 				}
 			],
@@ -220,6 +222,7 @@ const ServerListBody = `
 		"OS-DCF:diskConfig": "MANUAL",
 		"os-extended-volumes:volumes_attached": [
 			{
+				"delete_on_termination": true,
 				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e"
 			}
 		],
@@ -301,6 +304,7 @@ const SingleServerBody = `
 		"OS-DCF:diskConfig": "MANUAL",
 		"os-extended-volumes:volumes_attached": [
 			{
+				"delete_on_termination": true,
 				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e"
 			}
 		],
@@ -382,6 +386,7 @@ const FaultyServerBody = `
 		"OS-DCF:diskConfig": "MANUAL",
 		"os-extended-volumes:volumes_attached": [
 			{
+				"delete_on_termination": true,
 				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e"
 			}
 		],
@@ -468,9 +473,10 @@ var (
 				"name": "default",
 			},
 		},
-		VolumesAttached: []map[string]string{
+		VolumesAttached: []servers.VolumesDetails{
 			{
-				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
+				DeleteOnTermination: true,
+				ID:                  "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
 			},
 		},
 	}
@@ -531,9 +537,10 @@ var (
 				"name": "default",
 			},
 		},
-		VolumesAttached: []map[string]string{
+		VolumesAttached: []servers.VolumesDetails{
 			{
-				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
+				DeleteOnTermination: true,
+				ID:                  "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
 			},
 		},
 	}
@@ -588,9 +595,10 @@ var (
 				"name": "default",
 			},
 		},
-		VolumesAttached: []map[string]string{
+		VolumesAttached: []servers.VolumesDetails{
 			{
-				"id": "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
+				DeleteOnTermination: true,
+				ID:                  "cfb68a5e-203f-446d-9fd7-74b7e1f9722e",
 			},
 		},
 	}
