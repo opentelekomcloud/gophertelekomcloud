@@ -192,6 +192,8 @@ type CreateOpts struct {
 	// ServiceClient will allow calls to be made to retrieve an image or
 	// flavor ID by name.
 	ServiceClient *golangsdk.ServiceClient `json:"-"`
+
+	Description string `json:"description,omitempty"`
 }
 
 // ToServerCreateMap assembles a request body based on the contents of a
@@ -338,6 +340,8 @@ type UpdateOpts struct {
 
 	// AccessIPv6 provides a new IPv6 address for the instance.
 	AccessIPv6 string `json:"accessIPv6,omitempty"`
+
+	Description string `json:"description,omitempty"`
 }
 
 // ToServerUpdateMap formats an UpdateOpts structure into a request body.

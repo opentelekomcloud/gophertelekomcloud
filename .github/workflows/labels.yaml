@@ -37,12 +37,11 @@ jobs:
     if: ${{ github.event.label.name == 'gate' && success() }}
     steps:
       - uses: actions/checkout@v4
-      - uses: kattecon/gh-app-access-token-gen@v1
+      - uses: actions/create-github-app-token@v1
         id: gen_token
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_KEY }}
-          installation_id: ${{ secrets.INSTALLATION_ID }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_KEY }}
       - run: |
           echo "Get current branch"
           BRANCH_NAME=$(curl -s -H "Authorization: token ${{ steps.gen_token.outputs.token }}" \
