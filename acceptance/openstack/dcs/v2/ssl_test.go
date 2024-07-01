@@ -40,6 +40,11 @@ func TestDcsInstanceSSLV2LifeCycle(t *testing.T) {
 
 	t.Logf("SSL settings retrieved")
 
+	t.Logf("Attempting to download SSL Cert")
+	_, err = ssl.DownloadCert(client, dcsInstance.InstanceID)
+	th.AssertNoErr(t, err)
+	t.Logf("DCS SSL Cert download successful")
+
 	t.Logf("Attempting to disable SSL for DCSv2 instance")
 
 	sslOpts.Enabled = pointerto.Bool(false)
