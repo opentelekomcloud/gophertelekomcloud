@@ -7,10 +7,10 @@ import (
 )
 
 type UpdateOpts struct {
-	RouterID        string `json:"-"`
-	VpcAttachmentID string `json:"-"`
-	Description     string `json:"description,omitempty"`
-	Name            string `json:"name,omitempty"`
+	RouterID        string  `json:"-"`
+	VpcAttachmentID string  `json:"-"`
+	Description     *string `json:"description,omitempty"`
+	Name            string  `json:"name,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*VpcAttachmentDetails, error) {
