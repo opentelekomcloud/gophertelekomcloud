@@ -92,7 +92,7 @@ func TestVPCAttachmentsLifeCycle(t *testing.T) {
 	updateOpts := vpc.UpdateOpts{
 		RouterID:        createResp.Instance.ID,
 		VpcAttachmentID: createVpcResp.ID,
-		Description:     description + "_new",
+		Description:     pointerto.String(description + "_new"),
 		Name:            vpcName + "_new",
 	}
 
