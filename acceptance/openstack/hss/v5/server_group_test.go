@@ -51,18 +51,17 @@ func TestServerWorkflow(t *testing.T) {
 
 	t.Logf("Attempting to Create Server group")
 	name := tools.RandomString("hss-group-", 3)
-	createResp, err := hss.Create(client, hss.CreateOpts{
+	err = hss.Create(client, hss.CreateOpts{
 		Name: name,
 		HostIds: []string{
 			ecs.ID,
 		},
 	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, createResp)
 
 	t.Logf("Attempting to Obtain Server group")
 	getResp, err := hss.List(client, hss.ListOpts{
-		Name: createResp.Name,
+		Name: name,
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name, getResp[0].Name)
@@ -75,16 +74,18 @@ func TestServerWorkflow(t *testing.T) {
 	})
 
 	t.Logf("Attempting to Update Server group")
-	updateResp, err := hss.Update(client, hss.UpdateOpts{
+	err = hss.Update(client, hss.UpdateOpts{
 		Name: name + "update",
 		ID:   getResp[0].ID,
+		HostIds: []string{
+			ecs.ID,
+		},
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, name+"update", updateResp.Name)
 
-	t.Logf("Attempting to Obtain Server group")
+	t.Logf("Attempting to Obtain Server group after update")
 	getUpdResp, err := hss.List(client, hss.ListOpts{
-		Name: createResp.Name,
+		Name: name,
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name+"update", getUpdResp[0].Name)

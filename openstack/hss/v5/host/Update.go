@@ -3,7 +3,6 @@ package hss
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type UpdateOpts struct {
@@ -18,23 +17,19 @@ type UpdateOpts struct {
 	HostIds []string `json:"host_id_list,omitempty"`
 }
 
-func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*GroupResp, error) {
+func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (err error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// PUT /v5/{project_id}/host-management/groups
-	raw, err := client.Put(client.ServiceURL("host-management", "groups"), b, nil, &golangsdk.RequestOpts{
+	_, err = client.Put(client.ServiceURL("host-management", "groups"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"region": client.RegionID},
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	var res GroupResp
-
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	return
 }
