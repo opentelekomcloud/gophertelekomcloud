@@ -977,6 +977,11 @@ func NewFuncGraph(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+func NewHssV5(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "hss", "v5")
+	return sc, err
+}
+
 func NewERServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initCommonServiceClient(client, eo, "er", "v3")
 	if err != nil {

@@ -9,9 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/apigw/v2/channel"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -106,7 +104,11 @@ func CreateChannel(client *golangsdk.ServiceClient, t *testing.T, id string) *ch
 
 	t.Logf("Attempting to Create member for VPC Channel")
 	ecsClient, err := clients.NewComputeV2Client()
-	ecs := CreateServer(ecsClient, t)
+	ecs := openstack.CreateServer(t, ecsClient,
+		tools.RandomString("hss_group-member-", 3),
+		"Standard_Debian_10_latest",
+		"s2.large.2",
+	)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
@@ -141,54 +143,4 @@ func CreateChannel(client *golangsdk.ServiceClient, t *testing.T, id string) *ch
 	createResp, err := channel.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	return createResp
-}
-
-func CreateServer(client *golangsdk.ServiceClient, t *testing.T) *servers.Server {
-	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
-	if networkID == "" {
-		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
-	}
-	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
-	if az == "" {
-		az = "eu-de-01"
-	}
-
-	name := tools.RandomString("apigw_channel-member-", 3)
-	imageV2Client, err := clients.NewIMSV2Client()
-	th.AssertNoErr(t, err)
-
-	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
-		Name: "Standard_Debian_10_latest",
-	})
-	th.AssertNoErr(t, err)
-
-	flavorID, err := flavors.IDFromName(client, "s2.large.2")
-	th.AssertNoErr(t, err)
-
-	createOpts := servers.CreateOpts{
-		Name:      name,
-		ImageRef:  image[0].Id,
-		FlavorRef: flavorID,
-		SecurityGroups: []string{
-			openstack.DefaultSecurityGroup(t),
-		},
-		AvailabilityZone: az,
-		Networks: []servers.Network{
-			{
-				UUID: networkID,
-			},
-		},
-	}
-
-	ecs, err := servers.Create(client, createOpts).Extract()
-	th.AssertNoErr(t, err)
-
-	err = servers.WaitForStatus(client, ecs.ID, "ACTIVE", 1200)
-	th.AssertNoErr(t, err)
-	t.Logf("Created ECSv2: %s", ecs.ID)
-
-	server, err := servers.Get(client, ecs.ID).Extract()
-	th.AssertNoErr(t, err)
-
-	return server
 }
