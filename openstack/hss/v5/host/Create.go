@@ -24,7 +24,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*GroupResp, error
 
 	// POST /v5/{project_id}/host-management/groups
 	raw, err := client.Post(client.ServiceURL("host-management", "groups"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"region": client.RegionID},
 	})
 	if err != nil {
 		return nil, err

@@ -31,7 +31,8 @@ func ChangeProtectionStatus(client *golangsdk.ServiceClient, opts ProtectionOpts
 
 	// POST /v5/{project_id}/host-management/protection
 	raw, err := client.Post(client.ServiceURL("host-management", "protection"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"region": client.RegionID},
 	})
 	if err != nil {
 		return nil, err

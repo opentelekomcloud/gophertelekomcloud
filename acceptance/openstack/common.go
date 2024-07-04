@@ -13,6 +13,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
@@ -235,4 +237,53 @@ func ValidIP(t *testing.T, networkID string) string {
 	singleIP[len(singleIP)-1] += 3
 	th.AssertEquals(t, true, nw.Contains(singleIP))
 	return singleIP.String()
+}
+
+func CreateServer(t *testing.T, client *golangsdk.ServiceClient, ecsName, imageName, flavorId string) *servers.Server {
+	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if networkID == "" {
+		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
+	}
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	imageV2Client, err := clients.NewIMSV2Client()
+	th.AssertNoErr(t, err)
+
+	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
+		Name: imageName,
+	})
+	th.AssertNoErr(t, err)
+
+	flavorID, err := flavors.IDFromName(client, flavorId)
+	th.AssertNoErr(t, err)
+
+	createOpts := servers.CreateOpts{
+		Name:      ecsName,
+		ImageRef:  image[0].Id,
+		FlavorRef: flavorID,
+		SecurityGroups: []string{
+			DefaultSecurityGroup(t),
+		},
+		AvailabilityZone: az,
+		Networks: []servers.Network{
+			{
+				UUID: networkID,
+			},
+		},
+	}
+
+	ecs, err := servers.Create(client, createOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	err = servers.WaitForStatus(client, ecs.ID, "ACTIVE", 1200)
+	th.AssertNoErr(t, err)
+	t.Logf("Created ECSv2: %s", ecs.ID)
+
+	server, err := servers.Get(client, ecs.ID).Extract()
+	th.AssertNoErr(t, err)
+
+	return server
 }

@@ -70,11 +70,9 @@ type ListHostOpts struct {
 	// on_demand: pay-per-use
 	ChargingMode string `q:"charging_mode"`
 	// Whether to forcibly synchronize servers from ECSs
-	Refresh *bool `q:"refresh"`
+	Refresh bool `q:"refresh"`
 	// Whether to return all the versions later than the current version
-	AboveVersion *bool `q:"above_version"`
-	// Whether a server is a non-cloud server
-	OutsideHost *bool `q:"outside_host"`
+	AboveVersion bool `q:"above_version"`
 	// Asset importance. Its value can be:
 	// important
 	// common
@@ -99,8 +97,9 @@ func ListHost(client *golangsdk.ServiceClient, opts ListHostOpts) ([]HostResp, e
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return HostGroupPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return HostPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
+		Headers: map[string]string{"region": client.RegionID},
 	}.NewAllPages()
 
 	if err != nil {
@@ -188,7 +187,7 @@ type HostResp struct {
 	// Cloud service resource instance ID (UUID)
 	ResourceId string `json:"resource_id"`
 	// Whether a server is a non-cloud server
-	OutsideHost string `json:"outside_host"`
+	OutsideHost bool `json:"outside_host"`
 	// Server group ID
 	GroupId string `json:"group_id"`
 	// Server group name

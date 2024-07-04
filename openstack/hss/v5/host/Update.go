@@ -26,7 +26,8 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*GroupResp, error
 
 	// PUT /v5/{project_id}/host-management/groups
 	raw, err := client.Put(client.ServiceURL("host-management", "groups"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"region": client.RegionID},
 	})
 	if err != nil {
 		return nil, err

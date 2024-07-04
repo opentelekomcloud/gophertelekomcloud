@@ -34,6 +34,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]HostGroupResp, erro
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
 			return HostGroupPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
+		Headers: map[string]string{"region": client.RegionID},
 	}.NewAllPages()
 
 	if err != nil {
