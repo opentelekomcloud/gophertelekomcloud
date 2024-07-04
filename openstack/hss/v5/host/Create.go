@@ -26,8 +26,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (err error) {
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"region": client.RegionID},
 	})
-	if err != nil {
-		return err
-	}
-	return
+	return err
 }

@@ -28,8 +28,5 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (err error) {
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"region": client.RegionID},
 	})
-	if err != nil {
-		return err
-	}
-	return
+	return err
 }
