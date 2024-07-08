@@ -607,6 +607,10 @@ func TestWafPremiumAlarmMaskingRuleWorkflow(t *testing.T) {
 			Contents:       []string{"/login"},
 			LogicOperation: "equal",
 		}},
+		Advanced: rules.AdvancedIgnoreObject{
+			Index:    "header",
+			Contents: []string{"content-type"},
+		},
 		Mode:        1,
 		Rule:        "all",
 		Description: "desc",
@@ -637,6 +641,10 @@ func TestWafPremiumAlarmMaskingRuleWorkflow(t *testing.T) {
 			Contents:       []string{"192.168.1.1"},
 			LogicOperation: "equal",
 		}},
+		Advanced: rules.AdvancedIgnoreObject{
+			Index:    "header",
+			Contents: []string{"content-type"},
+		},
 		Mode:        1,
 		Rule:        "all",
 		Description: "updated",

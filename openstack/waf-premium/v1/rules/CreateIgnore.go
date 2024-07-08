@@ -19,7 +19,7 @@ type CreateIgnoreOpts struct {
 	// To ignore attacks of a specific field, specify the field in the Advanced settings area.
 	// After you add the rule, WAF will stop blocking attacks of the specified field.
 	// This parameter is not included if all modules are bypassed.
-	Advanced []AdvancedIgnoreObject `json:"advanced"`
+	Advanced AdvancedIgnoreObject `json:"advanced"`
 	// Description of the rule
 	Description string `json:"description,omitempty"`
 }
@@ -97,7 +97,7 @@ type IgnoreRule struct {
 	// Condition list.
 	Conditions []IgnoreCondition `json:"conditions"`
 	// Advanced settings.
-	Advanced []AdvancedIgnoreObject `json:"advanced"`
+	Advanced AdvancedIgnoreObject `json:"advanced"`
 	// Domain names.
 	Domains []string `json:"domain"`
 }
