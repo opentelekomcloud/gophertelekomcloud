@@ -6,6 +6,7 @@ import (
 )
 
 type ListOpts struct {
+	RouterId string `json:"-"`
 	// ID of the last enterprise router on the previous page. If this parameter is left blank, the first page is queried.
 	// This parameter must be used together with limit.
 	Marker string `q:"marker"`
@@ -24,7 +25,7 @@ type ListOpts struct {
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListVpcAttachmentDetails, error) {
-	url, err := golangsdk.NewURLBuilder().WithEndpoints("enterprise-router", "instances").WithQueryParams(&opts).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("enterprise-router", opts.RouterId, "vpc-attachments").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}

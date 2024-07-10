@@ -87,6 +87,7 @@ func TestVPCAttachmentsLifeCycle(t *testing.T) {
 		err = vpc.Delete(client, erId, vpcId)
 		th.AssertNoErr(t, err)
 		err = waitForVpcAttachmentsDeleted(client, 500, erId, vpcId)
+		th.AssertNoErr(t, err)
 	}(client, createResp.Instance.ID, createVpcResp.ID)
 
 	updateOpts := vpc.UpdateOpts{
@@ -101,17 +102,16 @@ func TestVPCAttachmentsLifeCycle(t *testing.T) {
 	updateResp, err := vpc.Update(client, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, updateResp.Name)
-	th.AssertEquals(t, updateOpts.Description, updateResp.Description)
+	th.AssertEquals(t, *updateOpts.Description, updateResp.Description)
 
-	t.Logf("Attempting to update vpc attachemnt")
-}
+	t.Logf("Attempting to list vpc attachemnt")
 
-func TestVPCAttachmentsList(t *testing.T) {
-	client, err := clients.NewERClient()
+	listResp, err := vpc.List(client, vpc.ListOpts{
+		RouterId: createResp.Instance.ID,
+	})
 	th.AssertNoErr(t, err)
 
-	_, err = vpc.List(client, vpc.ListOpts{})
-	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updateOpts.Name, listResp.VpcAttachments[0].Name)
 }
 
 func waitForVpcAttachmentsAvailable(client *golangsdk.ServiceClient, secs int, erId, vpcId string) error {
