@@ -44,12 +44,12 @@ func TestRouteTableLifeCycle(t *testing.T) {
 	err = waitForInstanceAvailable(client, 100, createResp.Instance.ID)
 	th.AssertNoErr(t, err)
 
-	defer func(client *golangsdk.ServiceClient, id string) {
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete enterprise router")
-		err = instance.Delete(client, id)
+		err = instance.Delete(client, createResp.Instance.ID)
 		th.AssertNoErr(t, err)
 		err = waitForInstanceDeleted(client, 500, createResp.Instance.ID)
-	}(client, createResp.Instance.ID)
+	})
 
 	createRouteTableOpts := route_table.CreateOpts{
 		Name:        rtName,
@@ -76,12 +76,12 @@ func TestRouteTableLifeCycle(t *testing.T) {
 	err = waitForRouteTableAvailable(client, 300, createResp.Instance.ID, createRtResp.ID)
 	th.AssertNoErr(t, err)
 
-	defer func(client *golangsdk.ServiceClient, erId, rtId string) {
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete route table")
-		err = route_table.Delete(client, erId, rtId)
+		err = route_table.Delete(client, createResp.Instance.ID, createRtResp.ID)
 		th.AssertNoErr(t, err)
-		err = waitForRouteTableDeleted(client, 500, erId, rtId)
-	}(client, createResp.Instance.ID, createRtResp.ID)
+		err = waitForRouteTableDeleted(client, 500, createResp.Instance.ID, createRtResp.ID)
+	})
 
 	t.Logf("Attempting to update route table")
 	updateRtResp, err := route_table.Update(client, route_table.UpdateOpts{
