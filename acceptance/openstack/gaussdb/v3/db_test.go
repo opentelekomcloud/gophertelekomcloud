@@ -46,6 +46,7 @@ func TestGaussDBLifecycle(t *testing.T) {
 		SlaveCount:      pointerto.Int(1),
 		SecurityGroupId: openstack.DefaultSecurityGroup(t),
 	})
+	th.AssertNoErr(t, err)
 	id := ins.Instance.Id
 
 	t.Cleanup(func() {
@@ -100,7 +101,7 @@ func TestGaussDBLifecycle(t *testing.T) {
 
 	getInstance, err = instance.GetInstance(client, ins.Instance.Id)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, getInstance.Name, name)
+	th.AssertEquals(t, getInstance.Name, nameOpts.Name)
 
 }
 

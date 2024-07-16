@@ -955,7 +955,7 @@ func NewTMSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 }
 
 func NewGaussDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initCommonServiceClient(client, eo, "gaussdb", "mysql/v3")
+	sc, err := initCommonServiceClient(client, eo, "gaussdb-mysql", "v3")
 	return sc, err
 }
 
