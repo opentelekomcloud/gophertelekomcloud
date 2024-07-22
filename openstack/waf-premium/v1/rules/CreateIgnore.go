@@ -19,7 +19,7 @@ type CreateIgnoreOpts struct {
 	// To ignore attacks of a specific field, specify the field in the Advanced settings area.
 	// After you add the rule, WAF will stop blocking attacks of the specified field.
 	// This parameter is not included if all modules are bypassed.
-	Advanced AdvancedIgnoreObject `json:"advanced"`
+	Advanced *AdvancedIgnoreObject `json:"advanced"`
 	// Description of the rule
 	Description string `json:"description,omitempty"`
 }
@@ -52,7 +52,7 @@ type AdvancedIgnoreObject struct {
 	// When you select Body or Multipart, set this parameter to all.
 	Index string `json:"index,omitempty"`
 	// Subfield of the specified field type. The default value is all.
-	Contents []string `json:"contents,omitempty"`
+	Contents *[]string `json:"contents,omitempty"`
 }
 
 // CreateIgnore will create a global protection whitelist (formerly false alarm masking) rule on the values in CreateOpts.
