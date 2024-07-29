@@ -19,7 +19,12 @@ type UpdateOpts struct {
 	// Protection level
 	Level int `json:"level"`
 	// Detection mode in the precise protection rule
-	FullDetection *bool `json:"full_detection"`
+	FullDetection *bool         `json:"full_detection"`
+	Extend        *ExtendParams `json:"extend,omitempty"`
+}
+
+type ExtendParams struct {
+	Extend string `json:"extend"`
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Policy, error) {
