@@ -72,6 +72,8 @@ func TestRouteTableLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createRouteTableOpts.Name, createRtResp.Name)
 	th.AssertEquals(t, *createRouteTableOpts.Description, createRtResp.Description)
+	th.AssertEquals(t, createRtResp.IsDefaultAssociation, false)
+	th.AssertEquals(t, createRtResp.IsDefaultPropagation, false)
 
 	err = waitForRouteTableAvailable(client, 300, createResp.Instance.ID, createRtResp.ID)
 	th.AssertNoErr(t, err)
