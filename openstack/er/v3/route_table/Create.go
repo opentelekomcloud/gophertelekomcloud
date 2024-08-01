@@ -43,6 +43,7 @@ type RouteTable struct {
 	Name                 string             `json:"name"`
 	Description          string             `json:"description"`
 	IsDefaultAssociation bool               `json:"is_default_association"`
+	IsDefaultPropagation bool               `json:"is_default_propagation"`
 	State                string             `json:"state"`
 	Tags                 []tags.ResourceTag `json:"tags"`
 	BgpOptions           *BgpOptions        `json:"bgp_options"`
