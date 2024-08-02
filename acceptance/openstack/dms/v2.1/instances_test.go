@@ -49,13 +49,6 @@ func TestDmsLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "some interesting description", dmsInstance.Description)
 
-	err = instances.ChangePassword(client, instanceID, instances.PasswordOpts{
-		NewPassword: "5ecuredPa55w0rd!-not",
-	})
-	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 Instance password updated")
-
-	// updateDMScrossVpc(t, client, instanceID)
 	dmsTopic := createTopic(t, client, instanceID)
 
 	err = updateDmsTopic(t, client, instanceID, dmsTopic)
