@@ -10,7 +10,7 @@ const configsEndpoint = "configs"
 // GetInstanceConf is used to obtain instance configurations.
 // Send GET /v2/{project_id}/instances/{instance_id}/configs
 func GetInstanceConf(client *golangsdk.ServiceClient, id string) (*InstanceConfs, error) {
-	raw, err := client.Get(client.ServiceURL(resourcePath, id, configsEndpoint), nil, nil)
+	raw, err := client.Get(client.ServiceURL(ResourcePath, id, configsEndpoint), nil, nil)
 	if err != nil {
 		return nil, err
 	}

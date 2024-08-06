@@ -1,4 +1,4 @@
 package instances
 
 // endpoint/instances
-const resourcePath = "instances"
+const ResourcePath = "instances"

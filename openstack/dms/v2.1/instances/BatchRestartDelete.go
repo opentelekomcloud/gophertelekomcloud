@@ -27,7 +27,7 @@ func BatchRestartDelete(client *golangsdk.ServiceClient, opts CreateOpts) (*Batc
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL(resourcePath, actionEdnpoint), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL(ResourcePath, actionEdnpoint), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 204},
 	})
 	if err != nil {

@@ -40,7 +40,7 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) error {
 		return err
 	}
 
-	_, err = client.Put(client.ServiceURL(resourcePath, id), body, nil, &golangsdk.RequestOpts{
+	_, err = client.Put(client.ServiceURL(ResourcePath, id), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 	return err

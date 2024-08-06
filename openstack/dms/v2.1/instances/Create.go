@@ -202,7 +202,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*InstanceIDResp, 
 	// For all requests we use schema /v2/{project_id}/instances
 	// But for a creation             /v2/{engine}/{project_id}/instances
 	paths := strings.SplitN(client.Endpoint, "v2", 2)
-	url := fmt.Sprintf("%sv2/%s%s%s", paths[0], opts.Engine, paths[1], resourcePath)
+	url := fmt.Sprintf("%sv2/%s%s%s", paths[0], opts.Engine, paths[1], ResourcePath)
 
 	raw, err := client.Post(url, b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
