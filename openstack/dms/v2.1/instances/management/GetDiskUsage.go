@@ -12,17 +12,17 @@ const (
 
 type GetDiskUsageOpts struct {
 	// Querying partitions by the used disk space. Options: 1 KB, 1 MB and 1 GB. Default value: 1 GB.
-	MinSize int `json:"minSize,omitempty"`
+	MinSize int `q:"minSize,omitempty"`
 	// Querying partitions by top disk usage.
-	Top string `json:"top,omitempty"`
+	Top string `q:"top,omitempty"`
 	// Querying partitions by the percentage of the used disk space.
-	Percentage string `json:"percentage,omitempty"`
+	Percentage string `q:"percentage,omitempty"`
 }
 
 // GetDiskUsageStatusOfTopics is used to query the broker disk usage of topics.
 // Send GET /v2/{project_id}/instances/{instance_id}/topics/diskusage
-func GetDiskUsageStatusOfTopics(client *golangsdk.ServiceClient, id string, opts *GetDiskUsageOpts) (*GetDiskUsageStatusOfTopicsResp, error) {
-	url, err := golangsdk.NewURLBuilder().WithEndpoints(instances.ResourcePath, id, topicPath, diskUsagePath).WithQueryParams(&opts).Build()
+func GetDiskUsageStatusOfTopics(client *golangsdk.ServiceClient, instanceId string, opts GetDiskUsageOpts) (*GetDiskUsageStatusOfTopicsResp, error) {
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(instances.ResourcePath, instanceId, topicPath, diskUsagePath).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
@@ -67,5 +67,5 @@ type DiskUsageTopic struct {
 	// Partition.
 	TopicPartition string `json:"topic_partition"`
 	// Percentage of used disk space.
-	Percentage int64 `json:"percentage"`
+	Percentage float64 `json:"percentage"`
 }

@@ -9,7 +9,7 @@ import (
 // GetConsumerGroup is used to query a specific consumer group.
 // Send GET /v2/{project_id}/instances/{instance_id}/groups/{group}
 func GetConsumerGroup(client *golangsdk.ServiceClient, instanceId, groupId string) (*GetConsumerGropusResp, error) {
-	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, instanceId, groupPath, groupId), nil, nil)
+	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, instanceId, groupsPath, groupId), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -21,5 +21,5 @@ func GetConsumerGroup(client *golangsdk.ServiceClient, instanceId, groupId strin
 
 type GetConsumerGropusResp struct {
 	// Consumer group information.
-	Group []*Group `json:"group"`
+	Group Group `json:"group"`
 }

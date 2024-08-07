@@ -14,14 +14,14 @@ type PasswordOpts struct {
 
 // ResetPassword is used to reset the password for an instance with SSL enabled.
 // Send POST to /v2/{project_id}/instances/{instance_id}/password
-func ResetPassword(client *golangsdk.ServiceClient, id string, opts PasswordOpts) error {
+func ResetPassword(client *golangsdk.ServiceClient, instanceId string, opts PasswordOpts) error {
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Post(client.ServiceURL(instances.ResourcePath, id, passwordPath), body, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
+	_, err = client.Post(client.ServiceURL(instances.ResourcePath, instanceId, passwordPath), body, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
 	})
 
 	return err

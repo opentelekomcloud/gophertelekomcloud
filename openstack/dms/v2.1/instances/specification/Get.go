@@ -1,4 +1,4 @@
-package management
+package specification
 
 import (
 	"fmt"
@@ -12,10 +12,10 @@ import (
 
 type GetSpecOpts struct {
 	// Message engine.
-	Engine string `json:"-" required:"true"`
+	Engine string
 	// Product edition.
 	//    advanced: premium edition
-	Type string `json:"minSize" required:"true"`
+	Type string `q:"type,omitempty"`
 }
 
 // GetSpec is used to query the product information for instance specification modification.
@@ -26,10 +26,12 @@ func GetSpec(client *golangsdk.ServiceClient, instanceId string, opts GetSpecOpt
 		return nil, err
 	}
 
+	urlS := client.ServiceURL(url.String())
+
 	// Here we should patch a client, because for an increasing url path is different.
 	// For all requests we use schema	/v2/{project_id}/instances
 	// But for these					/v2/{engine}/{project_id}/instances
-	paths := strings.SplitN(url.String(), "v2", 2)
+	paths := strings.SplitN(urlS, "v2", 2)
 	urlStr := fmt.Sprintf("%sv2/%s%s", paths[0], opts.Engine, paths[1])
 
 	var raw *http.Response
@@ -63,7 +65,7 @@ type ExtendProductInfo struct {
 	// Supported CPU architectures.
 	ArchTypes []string `json:"arch_types"`
 	// Supported billing modes.
-	ChargingMode string `json:"charging_mode"`
+	ChargingMode []string `json:"charging_mode"`
 	// Disk I/O information.
 	IOS []*ExtendProductIOS `json:"ios"`
 	// Supported features.

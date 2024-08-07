@@ -8,17 +8,17 @@ import (
 
 type ListConsumerGroupsOpts struct {
 	// Offset, which is the position where the query starts. The value must be greater than or equal to 0.
-	Offset string `json:"offset,omitempty"`
+	Offset string `q:"offset,omitempty"`
 	// Querying partitions by top disk usage.
-	Top string `json:"top,omitempty"`
+	Top string `q:"top,omitempty"`
 	// Querying partitions by the percentage of the used disk space.
-	Percentage string `json:"percentage,omitempty"`
+	Percentage string `q:"percentage,omitempty"`
 }
 
 // ListConsumerGroups is used to query all consumer groups.
 // Send GET /v2/{project_id}/instances/{instance_id}/groups
-func ListConsumerGroups(client *golangsdk.ServiceClient, instanceId string, opts *ListConsumerGroupsOpts) (*ListConsumerGropusResp, error) {
-	url, err := golangsdk.NewURLBuilder().WithEndpoints(instances.ResourcePath, instanceId, groupPath).WithQueryParams(&opts).Build()
+func ListConsumerGroups(client *golangsdk.ServiceClient, instanceId string, opts ListConsumerGroupsOpts) (*ListConsumerGropusResp, error) {
+	url, err := golangsdk.NewURLBuilder().WithEndpoints(instances.ResourcePath, instanceId, groupsPath).WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ type GroupInfo struct {
 	//    Stable: Members in the consumer group can consume messages. "
 	State string `json:"state"`
 	// Coordinator ID.
-	CoordinatorId string `json:"coordinator_id"`
+	CoordinatorId int `json:"coordinator_id"`
 	// Coordinator ID.
 	Description string `json:"group_desc"`
 	// Number of accumulated messages.

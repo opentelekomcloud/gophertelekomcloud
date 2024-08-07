@@ -7,13 +7,14 @@ import (
 )
 
 const (
-	groupPath = "groups"
+	groupsPath = "groups"
+	groupPath  = "group"
 )
 
 // GetConsumerGroupDetails is used to query consumer group details.
 // Send GET /v2/{project_id}/instances/{instance_id}/management/groups/{group}
 func GetConsumerGroupDetails(client *golangsdk.ServiceClient, instanceId, groupId string) (*ConsumerGroupResp, error) {
-	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, instanceId, managementPath, groupPath, groupId), nil, nil)
+	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, instanceId, managementPath, groupsPath, groupId), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -7,13 +7,13 @@ import (
 )
 
 const (
-	coordinatorsPath = "cluster"
+	coordinatorsPath = "coordinators"
 )
 
-// GetCoordinatorDetails is used to query coordinator details of a Kafka instance.
+// GetCoordinator is used to query coordinator details of a Kafka instance.
 // Send GET /v2/{project_id}/instances/{instance_id}/management/coordinators
-func GetCoordinatorDetails(client *golangsdk.ServiceClient, id string) (*GetCoordinatorResp, error) {
-	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, id, managementPath, coordinatorsPath), nil, nil)
+func GetCoordinator(client *golangsdk.ServiceClient, instanceId string) (*GetCoordinatorResp, error) {
+	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, instanceId, managementPath, coordinatorsPath), nil, nil)
 	if err != nil {
 		return nil, err
 	}

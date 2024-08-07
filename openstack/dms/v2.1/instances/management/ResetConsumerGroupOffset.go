@@ -35,7 +35,7 @@ func ResetconsumerGroupOffset(client *golangsdk.ServiceClient, instanceId, group
 		return err
 	}
 
-	_, err = client.Post(client.ServiceURL(instances.ResourcePath, instanceId, managementPath, groupPath, groupId, resetMessageOffsetPath), body, nil, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL(instances.ResourcePath, instanceId, managementPath, groupsPath, groupId, resetMessageOffsetPath), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
 

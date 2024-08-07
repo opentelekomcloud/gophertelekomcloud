@@ -13,8 +13,8 @@ const (
 
 // GetMetadata is used to query Kafka cluster metadata.
 // Send GET /v2/{project_id}/instances/{instance_id}/management/cluster
-func GetMetadata(client *golangsdk.ServiceClient, id string) (*GetMetadataResp, error) {
-	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, id, managementPath, clusterPath), nil, nil)
+func GetMetadata(client *golangsdk.ServiceClient, instanceId string) (*GetMetadataResp, error) {
+	raw, err := client.Get(client.ServiceURL(instances.ResourcePath, instanceId, managementPath, clusterPath), nil, nil)
 	if err != nil {
 		return nil, err
 	}

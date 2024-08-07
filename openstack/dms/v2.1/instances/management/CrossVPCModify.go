@@ -18,13 +18,13 @@ type CrossVPCModifyOpts struct {
 
 // CrossVPCModify is used to modify the private IP address for cross-VPC access.
 // Send POST to /v2/{project_id}/instances/{instance_id}/crossvpc/modify
-func CrossVPCModify(client *golangsdk.ServiceClient, id string, opts PasswordOpts) (*CrossVPCModifyResp, error) {
+func CrossVPCModify(client *golangsdk.ServiceClient, instanceId string, opts PasswordOpts) (*CrossVPCModifyResp, error) {
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL(instances.ResourcePath, id, crossVPCPath, modifyPath), body, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL(instances.ResourcePath, instanceId, crossVPCPath, modifyPath), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {

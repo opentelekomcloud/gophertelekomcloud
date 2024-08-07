@@ -14,14 +14,14 @@ type ConfAutoTopicCreationOpts struct {
 
 // ConfAutoTopicCreation is used to enable or disable automatic topic creation.
 // Send POST /v2/{project_id}/instances/{instance_id}/autotopic
-func ConfAutoTopicCreation(client *golangsdk.ServiceClient, id string, opts ConfAutoTopicCreationOpts) error {
+func ConfAutoTopicCreation(client *golangsdk.ServiceClient, instanceId string, opts ConfAutoTopicCreationOpts) error {
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Post(client.ServiceURL(instances.ResourcePath, id, confAutoTopicCreationPath), body, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
+	_, err = client.Post(client.ServiceURL(instances.ResourcePath, instanceId, confAutoTopicCreationPath), body, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
 	})
 
 	return err
