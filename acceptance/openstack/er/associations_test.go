@@ -9,20 +9,18 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	tag "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/association"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/instance"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/route_table"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/vpc"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-var (
-	rtName        = tools.RandomString("acctest_route-table-", 4)
-	descriptionRt = "test vpc attachment"
-)
-
-func TestRouteTableLifeCycle(t *testing.T) {
+func TestERAssociationsLifeCycle(t *testing.T) {
 	if os.Getenv("RUN_ER_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
 	}
+
 	client, err := clients.NewERClient()
 	th.AssertNoErr(t, err)
 
@@ -70,10 +68,6 @@ func TestRouteTableLifeCycle(t *testing.T) {
 	t.Logf("Attempting to create route table")
 	createRtResp, err := route_table.Create(client, createRouteTableOpts)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, createRouteTableOpts.Name, createRtResp.Name)
-	th.AssertEquals(t, *createRouteTableOpts.Description, createRtResp.Description)
-	th.AssertEquals(t, createRtResp.IsDefaultAssociation, false)
-	th.AssertEquals(t, createRtResp.IsDefaultPropagation, false)
 
 	err = waitForRouteTableAvailable(client, 300, createResp.Instance.ID, createRtResp.ID)
 	th.AssertNoErr(t, err)
@@ -85,46 +79,81 @@ func TestRouteTableLifeCycle(t *testing.T) {
 		err = waitForRouteTableDeleted(client, 500, createResp.Instance.ID, createRtResp.ID)
 	})
 
-	t.Logf("Attempting to update route table")
-	updateRtResp, err := route_table.Update(client, route_table.UpdateOpts{
-		RouterID:     createResp.Instance.ID,
-		RouteTableId: createRtResp.ID,
-		Name:         rtName + "-updated",
-	})
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, updateRtResp.Name, rtName+"-updated")
+	t.Logf("Attempting to create vpc attachemnt")
 
-	t.Logf("Attempting to list route table")
-	listResp, err := route_table.List(client, route_table.ListOpts{
-		RouterId: createResp.Instance.ID,
-	})
+	createVpcOpts := vpc.CreateOpts{
+		Name:                vpcName,
+		RouterID:            createResp.Instance.ID,
+		VpcId:               vpcId,
+		SubnetId:            networkId,
+		Description:         description,
+		AutoCreateVpcRoutes: true,
+		Tags: []tag.ResourceTag{
+			{
+				Key:   "muh",
+				Value: "muh",
+			},
+			{
+				Key:   "test",
+				Value: "test",
+			},
+		},
+	}
+
+	createVpcResp, err := vpc.Create(client, createVpcOpts)
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, listResp)
+
+	err = waitForVpcAttachmentsAvailable(client, 100, createResp.Instance.ID, createVpcResp.ID)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete vpc attachemnt")
+		err = vpc.Delete(client, createResp.Instance.ID, createVpcResp.ID)
+		th.AssertNoErr(t, err)
+		err = waitForVpcAttachmentsDeleted(client, 500, createResp.Instance.ID, createVpcResp.ID)
+		th.AssertNoErr(t, err)
+	})
+
+	t.Logf("Attempting to associate route table with vpc attachemnt")
+
+	associateOpts := association.CreateOpts{
+		RouterID:     createResp.Instance.ID,
+		RouteTableID: createRtResp.ID,
+		AttachmentID: createVpcResp.ID,
+	}
+
+	associationResp, err := association.Create(client, associateOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, associateOpts.RouteTableID, associationResp.RouteTableID)
+	th.AssertEquals(t, associationResp.State, "pending")
+
+	err = waitForVpcAssociationAvailable(client, 100, createResp.Instance.ID, createRtResp.ID)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to dissasociate vpc attachemnt")
+		err = association.Delete(client, association.DeleteOpts{
+			RouterID:     createResp.Instance.ID,
+			RouteTableID: createRtResp.ID,
+			AttachmentID: createVpcResp.ID,
+		})
+		th.AssertNoErr(t, err)
+	})
+
 }
 
-func waitForRouteTableAvailable(client *golangsdk.ServiceClient, secs int, erId, routeTableId string) error {
+func waitForVpcAssociationAvailable(client *golangsdk.ServiceClient, secs int, erId, rtId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		rtInstance, err := route_table.Get(client, erId, routeTableId)
+		listAssotiationResp, err := association.List(client, association.ListOpts{
+			RouterId:     erId,
+			RouteTableId: rtId,
+		})
 		if err != nil {
 			return false, err
 		}
-		if rtInstance.State == "available" {
+		if listAssotiationResp.Associations[0].State == "available" {
 			return true, nil
 		}
-		return false, nil
-	})
-}
-
-func waitForRouteTableDeleted(client *golangsdk.ServiceClient, secs int, erId, rtId string) error {
-	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := route_table.Get(client, erId, rtId)
-		if err != nil {
-			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				return true, nil
-			}
-			return false, err
-		}
-
 		return false, nil
 	})
 }
