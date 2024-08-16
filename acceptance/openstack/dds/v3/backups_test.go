@@ -38,9 +38,9 @@ func TestDdsBackupLifeCycle(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete DDSv3 backup: %s", backup.BackupId)
-		delJob, err := backups.Delete(client, backup.BackupId)
+		delJob, errDel := backups.Delete(client, backup.BackupId)
 		err = waitForJobCompleted(client, 600, delJob.JobId)
-		th.AssertNoErr(t, err)
+		th.AssertNoErr(t, errDel)
 		t.Logf("Deleted DDSv3 backup: %s", backup.BackupId)
 	})
 
