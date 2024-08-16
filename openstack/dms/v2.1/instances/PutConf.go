@@ -27,7 +27,7 @@ func UpdateInstanceConf(client *golangsdk.ServiceClient, id string, opts UpdateI
 		return err
 	}
 
-	_, err = client.Put(client.ServiceURL(resourcePath, id, configsEndpoint), body, nil, &golangsdk.RequestOpts{
+	_, err = client.Put(client.ServiceURL(ResourcePath, id, configsEndpoint), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	return err

@@ -163,7 +163,7 @@ type Instance struct {
 // Get an instance with detailed information by id
 // Send GET /v2/{project_id}/instances/{instance_id}
 func Get(client *golangsdk.ServiceClient, id string) (*Instance, error) {
-	raw, err := client.Get(client.ServiceURL(resourcePath, id), nil, nil)
+	raw, err := client.Get(client.ServiceURL(ResourcePath, id), nil, nil)
 	if err != nil {
 		return nil, err
 	}

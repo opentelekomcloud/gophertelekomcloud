@@ -53,7 +53,7 @@ func TestDmsLifeCycle(t *testing.T) {
 
 	err = updateDmsTopic(t, client, instanceID, dmsTopic)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 Topic updated")
+	t.Logf("DMSv2.1 Topic updated")
 
 	listTopics, err := topics.List(client, instanceID)
 	th.AssertNoErr(t, err)
@@ -73,7 +73,7 @@ func TestDmsLifeCycle(t *testing.T) {
 }
 
 func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
-	t.Logf("Attempting to create DMSv2 instance")
+	t.Logf("Attempting to create DMSv2.1 instance")
 	dmsName := tools.RandomString("dms-acc-", 8)
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
@@ -117,24 +117,24 @@ func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
 	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, dmsInstance.InstanceID)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 instance successfully created: %s", dmsInstance.InstanceID)
+	t.Logf("DMSv2.1 instance successfully created: %s", dmsInstance.InstanceID)
 
 	return dmsInstance.InstanceID
 }
 
 func deleteDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
-	t.Logf("Attempting to delete DMSv2 instance: %s", instanceID)
+	t.Logf("Attempting to delete DMSv2.1 instance: %s", instanceID)
 
 	err := instances.Delete(client, instanceID)
 	th.AssertNoErr(t, err)
 
 	err = waitForInstanceDelete(client, 600, instanceID)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv1 instance deleted successfully: %s", instanceID)
+	t.Logf("DMSv2.1 instance deleted successfully: %s", instanceID)
 }
 
 func updateDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
-	t.Logf("Attempting to update DMSv2 instance: %s", instanceID)
+	t.Logf("Attempting to update DMSv2.1 instance: %s", instanceID)
 
 	emptyDescription := ""
 	updateOpts := instances.UpdateOpts{
@@ -144,7 +144,7 @@ func updateDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID
 	err := instances.Update(client, instanceID, updateOpts)
 	th.AssertNoErr(t, err)
 
-	t.Logf("DMSv2 instance updated successfully: %s", instanceID)
+	t.Logf("DMSv2.1 instance updated successfully: %s", instanceID)
 }
 
 func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient, engine string) *products.EngineProduct {
@@ -194,7 +194,7 @@ func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceID
 }
 
 func createTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string) string {
-	t.Logf("Attempting to create DMSv2 Topic")
+	t.Logf("Attempting to create DMSv2.1 Topic")
 	topicName := tools.RandomString("dms-topic-", 8)
 
 	createOpts := topics.CreateOpts{
@@ -207,13 +207,13 @@ func createTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId strin
 	}
 	dmsTopic, err := topics.Create(client, instanceId, createOpts)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 Topic successfully created: %s", dmsTopic.Name)
+	t.Logf("DMSv2.1 Topic successfully created: %s", dmsTopic.Name)
 
 	return dmsTopic.Name
 }
 
 func updateDmsTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string, topicName string) error {
-	t.Logf("Attempting to update DMSv2 Topic")
+	t.Logf("Attempting to update DMSv2.1 Topic")
 	partition := 12
 	retention := 70
 	updateOpts := topics.UpdateOpts{
@@ -229,14 +229,14 @@ func updateDmsTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId st
 }
 
 func deleteTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string, name string) *topics.DeleteResponse {
-	t.Logf("Attempting to delete DMSv2 Topic")
+	t.Logf("Attempting to delete DMSv2.1 Topic")
 	dmsTopic, err := topics.Delete(client, instanceId, []string{
 		name,
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, dmsTopic.Topics[0].Success)
 
-	t.Logf("DMSv2 Topic successfully deleted")
+	t.Logf("DMSv2.1 Topic successfully deleted")
 
 	return dmsTopic
 }
