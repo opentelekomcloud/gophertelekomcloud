@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -33,9 +32,9 @@ func TestServerList(t *testing.T) {
 }
 
 func TestServerLifecycle(t *testing.T) {
-	if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
-	}
+	// if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
+	// 	t.Skip("too slow to run in zuul")
+	// }
 	client, err := clients.NewHssClient()
 	th.AssertNoErr(t, err)
 

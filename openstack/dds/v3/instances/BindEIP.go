@@ -20,5 +20,5 @@ func BindEIP(client *golangsdk.ServiceClient, opts BindEIPOpts) (*string, error)
 	raw, err := client.Post(client.ServiceURL("nodes", opts.NodeId, "bind-eip"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }

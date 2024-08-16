@@ -9,5 +9,5 @@ func UnBindEIP(client *golangsdk.ServiceClient, nodeId string) (*string, error) 
 		OkCodes:     []int{200, 202},
 		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }
