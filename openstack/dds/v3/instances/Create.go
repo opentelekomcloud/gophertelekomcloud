@@ -11,7 +11,6 @@ import (
 
 type CreateOpts struct {
 	// Specifies the DB instance name. Instance name, which can be the same as an existing name.
-	//
 	// The instance name must contain 4 to 64 characters and must start with a letter. It is case sensitive and can contain letters, digits, hyphens (-), and underscores (_). It cannot contain other special characters.
 	Name string `json:"name" required:"true"`
 	// Specifies the database information.
@@ -39,9 +38,7 @@ type CreateOpts struct {
 	// If this parameter is not transferred, disk encryption is not performed.
 	DiskEncryptionId string `json:"disk_encryption_id,omitempty"`
 	// Specifies the instance type. Cluster, replica set, and single node instances are supported.
-	//
 	// Valid value:
-	//
 	// Sharding
 	// ReplicaSet
 	// Single
@@ -51,9 +48,7 @@ type CreateOpts struct {
 	// Specifies the advanced backup policy.
 	BackupStrategy BackupStrategy `json:"backup_strategy" required:"true"`
 	// Specifies whether to enable or disable SSL.
-	//
 	// Valid value:
-	//
 	// The value 0 indicates that SSL is disabled by default.
 	// The value 1 indicates that SSL is enabled by default.
 	// If this parameter is not transferred, SSL is enabled by default.
@@ -69,7 +64,6 @@ type DataStore struct {
 	// Specifies the database version. Versions 4.2, 4.0, and 3.4 are supported. The value can be 4.2, 4.0, or 3.4.
 	Version string `json:"version" required:"true"`
 	// Specifies the storage engine. DDS supports the WiredTiger and RocksDB storage engines.
-	//
 	// If the database version is 4.2 and the storage engine is RocksDB, the value is rocksDB.
 	// If the database version is 4.0 or 3.4 and the storage engine is WiredTiger, the value is wiredTiger.
 	StorageEngine string `json:"storage_engine" required:"true"`
@@ -77,17 +71,13 @@ type DataStore struct {
 
 type Flavor struct {
 	// Specifies the node type.
-	//
 	// Valid value:
-	//
 	// For a cluster instance, the value can be mongos, shard, or config.
 	// For a replica set instance, the value is replica.
 	// For a single node instance, the value is single.
 	Type string `json:"type" required:"true"`
 	// Specifies node quantity.
-	//
 	// Valid value:
-	//
 	// mongos: The value ranges from 2 to 32.
 	// mongos: The value ranges from 2 to 32.
 	// config: The value is 1.
@@ -95,47 +85,44 @@ type Flavor struct {
 	// single: The value is 1.
 	Num int `json:"num" required:"true"`
 	// Specifies the disk type.
-	//
 	// Valid value: ULTRAHIGH, which indicates the type SSD.
-	//
 	// This parameter is valid for the shard and config nodes of a cluster instance, replica set instances, and single node instances. This parameter is invalid for mongos nodes. Therefore, you do not need to specify the storage space for mongos nodes.
 	Storage string `json:"storage,omitempty"`
 	// Specifies the disk size.
-	//
 	// This parameter is mandatory for all nodes except mongos. This parameter is invalid for the mongos nodes.
-	//
 	// The value must be a multiple of 10. The unit is GB.
-	//
 	// For a cluster instance, the storage space of a shard node can be 10 to 2000 GB, and the config storage space is 20 GB. This parameter is invalid for mongos nodes. Therefore, you do not need to specify the storage space for mongos nodes.
 	// For a replica set instance, the value ranges from 10 to 2000.
 	// For a single node instance, the value ranges from 10 to 1000.
 	Size int `json:"size,omitempty"`
 	// Specifies the resource specification code. For details about how to obtain the value, see the response values of spec_code in Querying Database Specifications.
-	//
 	// In a cluster instance, multiple specifications need to be specified. All specifications must be of the same series, that is, general-purpose (s6), enhanced (c3), or enhanced II (c6).
 	SpecCode string `json:"spec_code" required:"true"`
 }
 
 type BackupStrategy struct {
 	// Specifies the backup time window. Automated backups will be triggered during the backup time window.
-	//
 	// The value cannot be empty. It must be a valid value in the "hh:mm-HH:MM" format. The current time is in the UTC format.
-	//
 	// The HH value must be 1 greater than the hh value.
 	// The values of mm and MM must be the same and must be set to 00.
 	// If this parameter is not transferred, the default backup time window is set to 00:00-01:00.
 	// Example value:
-	//
 	//23:00-00:00
 	StartTime string `json:"start_time" required:"true"`
-	//
 	// Specifies the number of days to retain the generated backup files.
-	//
 	// The value range is from 0 to 732.
-	//
 	// If this parameter is set to 0, the automated backup policy is not set.
 	// If this parameter is not transferred, the automated backup policy is enabled by default. Backup files are stored for seven days by default.
-	KeepDays int `json:"keep_days,omitempty"`
+	KeepDays *int `json:"keep_days,omitempty"`
+	// Specifies the backup cycle configuration. Data will be automatically backed up on the selected days every week.
+	// Value range: The value is a number separated by DBS case commas (,). The number indicates the week.
+	// The restrictions on the backup retention period are as follows:
+	// This parameter is not transferred if its value is set to 0.
+	// If you set the retention period to 1 to 6 days, data is automatically backed up each day of the week.
+	// Set the parameter value to 1,2,3,4,5,6,7.
+	// If you set the retention period to 7 to 732 days, select at least one day of the week for the backup cycle.
+	// Example value: 1,2,3,4
+	Period string `json:"period,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Instance, error) {
@@ -204,63 +191,37 @@ type Instance struct {
 
 type FlavorOpt struct {
 	// Specifies the node type.
-	//
 	// Valid value:
-	//
 	// For a cluster instance, the value can be mongos, shard, or config.
 	// For a replica set instance, the value is replica.
 	// For a single node instance, the value is single.
 	Type string `json:"type" required:"true"`
 	// Specifies node quantity.
-	//
 	// Valid value:
-	//
 	// mongos: The value ranges from 2 to 32.
 	// mongos: The value ranges from 2 to 32.
 	// config: The value is 1.
 	// replica: The number of nodes can be 3, 5, or 7.
 	// single: The value is 1.
 	Num string `json:"num" required:"true"`
-	//
 	// Specifies the disk type.
-	//
 	// Valid value: ULTRAHIGH, which indicates the type SSD.
-	//
 	// This parameter is valid for the shard and config nodes of a cluster instance, replica set instances, and single node instances. This parameter is invalid for mongos nodes. Therefore, you do not need to specify the storage space for mongos nodes.
 	Storage string `json:"storage,omitempty"`
 	// Specifies the disk size.
-	//
 	// This parameter is mandatory for all nodes except mongos. This parameter is invalid for the mongos nodes.
-	//
 	// The value must be a multiple of 10. The unit is GB.
-	//
 	// For a cluster instance, the storage space of a shard node can be 10 to 2000 GB, and the config storage space is 20 GB. This parameter is invalid for mongos nodes. Therefore, you do not need to specify the storage space for mongos nodes.
 	// For a replica set instance, the value ranges from 10 to 2000.
 	// For a single node instance, the value ranges from 10 to 1000.
 	Size string `json:"size,omitempty"`
 	// Specifies the resource specification code. For details about how to obtain the value, see the response values of spec_code in Querying Database Specifications.
-	//
 	// In a cluster instance, multiple specifications need to be specified. All specifications must be of the same series, that is, general-purpose (s6), enhanced (c3), or enhanced II (c6).
 	SpecCode string `json:"spec_code" required:"true"`
 }
 
 type BackupStrategyOpt struct {
-	// Specifies the backup time window. Automated backups will be triggered during the backup time window.
-	//
-	// The value cannot be empty. It must be a valid value in the "hh:mm-HH:MM" format. The current time is in the UTC format.
-	//
-	// The HH value must be 1 greater than the hh value.
-	// The values of mm and MM must be the same and must be set to 00.
-	// If this parameter is not transferred, the default backup time window is set to 00:00-01:00.
-	// Example value:
-	//
-	//23:00-00:00
 	StartTime string `json:"start_time" required:"true"`
-	// Specifies the number of days to retain the generated backup files.
-	//
-	// The value range is from 0 to 732.
-	//
-	// If this parameter is set to 0, the automated backup policy is not set.
-	// If this parameter is not transferred, the automated backup policy is enabled by default. Backup files are stored for seven days by default.
-	KeepDays string `json:"keep_days,omitempty"`
+	KeepDays  string `json:"keep_days,omitempty"`
+	Period    string `json:"period,omitempty"`
 }

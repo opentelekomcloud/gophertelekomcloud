@@ -4,7 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"fmt"
 	mrand "math/rand"
+	"strings"
 	"testing"
 	"time"
 )
@@ -70,4 +72,28 @@ func Elide(value string) string {
 func PrintResource(t *testing.T, resource interface{}) {
 	b, _ := json.MarshalIndent(resource, "", "  ")
 	t.Logf(string(b))
+}
+
+// ExtractNetworkAddress removes the mask from the CIDR block
+func ExtractNetworkAddress(cidr string) string {
+	parts := strings.Split(cidr, "/")
+	if len(parts) != 2 {
+		return ""
+	}
+	return parts[0]
+}
+
+// SetLastOctet changes the last octet of the IP address to the specified value
+func SetLastOctet(ip string, newLastOctet int) string {
+	// Split IP into its components
+	parts := strings.Split(ip, ".")
+	if len(parts) != 4 {
+		return ip
+	}
+
+	// Replace the last octet with the new value
+	parts[3] = fmt.Sprintf("%d", newLastOctet)
+
+	// Reassemble the IP address
+	return strings.Join(parts, ".")
 }
