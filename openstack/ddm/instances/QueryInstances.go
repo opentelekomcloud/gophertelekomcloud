@@ -26,8 +26,6 @@ func QueryInstances(client *golangsdk.ServiceClient, opts QueryInstancesOpts) ([
 		return nil, err
 	}
 
-	// GET https://{Endpoint}/v3/{project_id}/instances
-
 	pages, err := pagination.Pager{
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
