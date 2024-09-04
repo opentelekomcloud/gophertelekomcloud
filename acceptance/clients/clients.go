@@ -178,6 +178,34 @@ func NewDDMV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDDMV2Client returns a *ServiceClient for making calls
+// to the OpenStack DDM v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDDMV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDDMV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDDMV3Client returns a *ServiceClient for making calls
+// to the OpenStack DDM v3 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDDMV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDDMV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
 // if authentication or client creation was not possible.
