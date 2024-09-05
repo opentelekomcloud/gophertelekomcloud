@@ -5,6 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// This API is used to query details about a DDM instance.
 func QueryInstanceDetails(client *golangsdk.ServiceClient, instanceId string) (*QueryInstanceDetailsResponse, error) {
 
 	// GET /v1/{project_id}/instances/{instance_id}

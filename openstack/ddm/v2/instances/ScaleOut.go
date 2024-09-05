@@ -17,6 +17,7 @@ type ScaleOutOpts struct {
 	IsAutoPay bool `json:"is_auto_pay,omitempty"`
 }
 
+// This function is used to scale out a specified DDM instance.
 func ScaleOut(client *golangsdk.ServiceClient, instanceId string, opts ScaleOutOpts) (*ScaleOutResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

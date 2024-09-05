@@ -43,6 +43,7 @@ type CreateInstanceDetail struct {
 	AdminUserPassword string `json:"admin_user_password,omitempty"`
 }
 
+// This function is used to create a DDM instance
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Instance, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

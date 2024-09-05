@@ -14,6 +14,7 @@ type ModifyNameOpts struct {
 	Name string `json:"name" required:"true"`
 }
 
+// This function is used to modify the name of a DDM instance.
 func ModifyName(client *golangsdk.ServiceClient, instanceId string, opts ModifyNameOpts) (*ModifyNameResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

@@ -11,6 +11,7 @@ type ModifySecurityGroupOpts struct {
 	SecurityGroupId string `json:"security_group_id" required:"true"`
 }
 
+// This function is used to modify the security group of a DDM instance.
 func ModifySecurityGroup(client *golangsdk.ServiceClient, instanceId string, opts ModifySecurityGroupOpts) (*ModifySecurityGroupResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

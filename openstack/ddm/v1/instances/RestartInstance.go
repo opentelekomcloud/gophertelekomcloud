@@ -21,6 +21,8 @@ type RestartInstanceInfo struct {
 	Type string `json:"type,omitempty"`
 }
 
+// This function is used to restart a DDM instance.
+// Specify Restart in the RestartOpts for proper result.
 func RestartInstance(client *golangsdk.ServiceClient, instanceId string, opts RestartOpts) (*ResponseInstance, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
