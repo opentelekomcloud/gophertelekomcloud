@@ -17,14 +17,14 @@ type ScaleOutOpts struct {
 	IsAutoPay bool `json:"is_auto_pay,omitempty"`
 }
 
-func ScaleOut(client *golangsdk.ServiceClient, opts ScaleOutOpts) (*ScaleOutResponse, error) {
+func ScaleOut(client *golangsdk.ServiceClient, instanceId string, opts ScaleOutOpts) (*ScaleOutResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v2/{project_id}/instances/{instance_id}/action/enlarge
-	raw, err := client.Post(client.ServiceURL("instances"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances", instanceId, "action", "enlarge"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
