@@ -13,9 +13,9 @@ type QueryNodesOpts struct {
 	// The query starts from the next piece of data indexed by this parameter. The value is 0 by default.
 	// The value must be a positive integer.
 	Offset int `q:"offset"`
-	// A maximum of instances to be queried.
+	// A maximum of nodes to be queried.
 	// Value range: 1 to 128.
-	// If the parameter value is not specified, 10 DDM instances are queried by default.
+	// If the parameter value is not specified, 10 nodes are queried by default.
 	Limit int `q:"limit"`
 }
 
@@ -42,7 +42,7 @@ func QueryNodes(client *golangsdk.ServiceClient, instanceId string, opts QueryNo
 
 func ExtractNodes(r pagination.NewPage) ([]NodeList, error) {
 	var queryNodesResponse QueryNodesResponse
-	err := extract.Into(bytes.NewReader((r.(InstancesPage)).Body), &queryNodesResponse)
+	err := extract.Into(bytes.NewReader((r.(NodesPage)).Body), &queryNodesResponse)
 	return queryNodesResponse.Nodes, err
 }
 
