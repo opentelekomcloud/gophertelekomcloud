@@ -2,6 +2,7 @@ package vaults
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -66,8 +67,6 @@ type CreateOpts struct {
 	// The list can contain up to 10 keys.
 	// Keys in this list must be unique.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
-	// Enterprise project ID. The default value is 0.
-	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 	// Whether automatic association is supported
 	AutoBind bool `json:"auto_bind,omitempty"`
 	// Rules for automatic association
@@ -78,7 +77,7 @@ type CreateOpts struct {
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Vault, error) {
-	reqBody, err := golangsdk.BuildRequestBody(opts, "vault")
+	reqBody, err := build.RequestBody(opts, "vault")
 	if err != nil {
 		return nil, err
 	}

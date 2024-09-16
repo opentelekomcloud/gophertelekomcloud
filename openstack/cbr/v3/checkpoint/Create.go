@@ -2,6 +2,7 @@ package checkpoint
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -36,11 +37,17 @@ type Resource struct {
 	Name string `json:"name,omitempty"`
 	// Type of the resource to be backed up
 	// OS::Nova::Server | OS::Cinder::Volume
-	Type string `json:"type,omitempty"`
+	Type      string             `json:"type,omitempty"`
+	ExtraInfo *ResourceExtraInfo `json:"extra_info,omitempty"`
+}
+
+type ResourceExtraInfo struct {
+	// IDs of the disks that will not be backed up.
+	ExcludeVolumes []string `json:"exclude_volumes,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Checkpoint, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "checkpoint")
+	b, err := build.RequestBody(opts, "checkpoint")
 	if err != nil {
 		return nil, err
 	}
