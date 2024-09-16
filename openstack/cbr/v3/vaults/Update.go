@@ -2,6 +2,7 @@ package vaults
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -24,7 +25,7 @@ type UpdateOpts struct {
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Vault, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "vault")
+	b, err := build.RequestBody(opts, "vault")
 	if err != nil {
 		return nil, err
 	}
