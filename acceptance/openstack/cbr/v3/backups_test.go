@@ -14,6 +14,9 @@ import (
 )
 
 func TestBackupLifecycle(t *testing.T) {
+	if os.Getenv("RUN_CBR") == "" {
+		t.Skip("too long to run in ci")
+	}
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
@@ -132,6 +135,9 @@ func TestBackupListing(t *testing.T) {
 }
 
 func TestBackupSharingLifecycle(t *testing.T) {
+	if os.Getenv("RUN_CBR") == "" {
+		t.Skip("too long to run in ci")
+	}
 	destProjectID := os.Getenv("OS_PROJECT_ID_2")
 	if destProjectID == "" {
 		t.Skip("OS_PROJECT_ID_2 are mandatory for this test!")
