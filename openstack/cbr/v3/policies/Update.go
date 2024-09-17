@@ -2,6 +2,7 @@ package policies
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
@@ -22,10 +23,12 @@ type PolicyODCreate struct {
 	MaxBackups            int    `json:"max_backups,omitempty"`
 	RetentionDurationDays int    `json:"retention_duration_days,omitempty"`
 	Timezone              string `json:"timezone,omitempty"`
+	DestinationProjectId  string `json:"destination_project_id,omitempty"`
+	DestinationRegion     string `json:"destination_region,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Policy, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "policy")
+	b, err := build.RequestBody(opts, "policy")
 	if err != nil {
 		return nil, err
 	}

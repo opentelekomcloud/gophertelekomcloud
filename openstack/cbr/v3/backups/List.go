@@ -11,21 +11,27 @@ import (
 // the API. Filtering is achieved by passing in struct field values that map to
 // the flavor attributes you want to see returned.
 type ListOpts struct {
-	ID           string
-	CheckpointID string `q:"checkpoint_id"`
-	ImageType    string `q:"image_type"`
-	Limit        string `q:"limit"`
-	Marker       string `q:"marker"`
-	Name         string `q:"name"`
-	Offset       string `q:"offset"`
-	ParentID     string `q:"parent_id"`
-	ResourceAZ   string `q:"resource_az"`
-	ResourceID   string `q:"resource_id"`
-	ResourceName string `q:"resource_name"`
-	ResourceType string `q:"resource_type"`
-	Sort         string `q:"sort"`
-	Status       string `q:"status"`
-	VaultID      string `q:"vault_id"`
+	ID             string
+	CheckpointID   string `q:"checkpoint_id"`
+	DedicatedCloud bool   `q:"dec"`
+	EndTime        string `q:"end_time"`
+	ImageType      string `q:"image_type"`
+	Limit          string `q:"limit"`
+	Marker         string `q:"marker"`
+	MemberStatus   string `q:"member_status"`
+	Name           string `q:"name"`
+	Offset         string `q:"offset"`
+	OwningType     string `q:"own_type"`
+	ParentID       string `q:"parent_id"`
+	ResourceAZ     string `q:"resource_az"`
+	ResourceID     string `q:"resource_id"`
+	ResourceName   string `q:"resource_name"`
+	ResourceType   string `q:"resource_type"`
+	Sort           string `q:"sort"`
+	StartTime      string `q:"start_time"`
+	Status         string `q:"status"`
+	UsedPercent    string `q:"used_percent"`
+	VaultID        string `q:"vault_id"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
