@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type updateOpts struct {
+type UpdateOpts struct {
 	BackupID string `json:"_"`
 	// Status of a shared backup
 	Status string `json:"status" required:"true"`
@@ -14,7 +14,7 @@ type updateOpts struct {
 	VaultId string `json:"vault_id,omitempty"`
 }
 
-func UpdateSharingMember(client *golangsdk.ServiceClient, memberID string, opts updateOpts) (*Member, error) {
+func UpdateSharingMember(client *golangsdk.ServiceClient, memberID string, opts UpdateOpts) (*Member, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

@@ -14,9 +14,6 @@ import (
 )
 
 func TestBackupLifecycle(t *testing.T) {
-	if os.Getenv("RUN_CBR") == "" {
-		t.Skip("unstable test")
-	}
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
@@ -51,9 +48,6 @@ func TestBackupLifecycle(t *testing.T) {
 }
 
 func TestBackupListing(t *testing.T) {
-	if os.Getenv("RUN_CBR") == "" {
-		t.Skip("unstable test")
-	}
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
@@ -135,4 +129,87 @@ func TestBackupListing(t *testing.T) {
 	errBack := backups.Delete(client, allBackups[0].ID)
 	th.AssertNoErr(t, errBack)
 	th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
+}
+
+func TestBackupSharingLifecycle(t *testing.T) {
+	destProjectID := os.Getenv("OS_PROJECT_ID_2")
+	if destProjectID == "" {
+		t.Skip("OS_PROJECT_ID_2 are mandatory for this test!")
+	}
+	client, err := clients.NewCbrV3Client()
+	th.AssertNoErr(t, err)
+
+	vault, aOpts, optsVault, checkp := CreateCBR(t, client)
+	th.AssertEquals(t, vault.ID, checkp.Vault.ID)
+	th.AssertEquals(t, optsVault.Parameters.Description, checkp.ExtraInfo.Description)
+	th.AssertEquals(t, optsVault.Parameters.Name, checkp.ExtraInfo.Name)
+	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
+
+	checkpointGet, err := checkpoint.Get(client, checkp.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "available", checkpointGet.Status)
+	th.AssertEquals(t, vault.ID, checkpointGet.Vault.ID)
+	th.AssertEquals(t, aOpts.Resources[0].Type, checkp.Vault.Resources[0].Type)
+
+	allBackups, err := backups.List(client, backups.ListOpts{VaultID: vault.ID})
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		err = backups.Delete(client, allBackups[0].ID)
+		th.AssertNoErr(t, err)
+		th.AssertNoErr(t, waitForBackupDelete(client, 600, allBackups[0].ID))
+	})
+
+	member, err := backups.AddSharingMember(client, allBackups[0].ID, backups.MembersOpts{
+		Members: []string{destProjectID},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, member[0].DestProjectId, destProjectID)
+
+	members, err := backups.ListSharingMembers(client, allBackups[0].ID, backups.ListMemberOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(members))
+
+	t.Cleanup(func() {
+		err = backups.DeleteSharingMember(client, allBackups[0].ID, destProjectID)
+		th.AssertNoErr(t, err)
+	})
+
+	newCloud := os.Getenv("OS_CLOUD_2")
+	if newCloud != "" {
+		err = os.Setenv("OS_CLOUD", newCloud)
+		th.AssertNoErr(t, err)
+		_, err := clients.EnvOS.Cloud(newCloud)
+		th.AssertNoErr(t, err)
+		newClient, err := clients.NewCbrV3Client()
+		th.AssertNoErr(t, err)
+
+		// Create Vault for further accept member
+		vault2Opts := vaults.CreateOpts{
+			Billing: &vaults.BillingCreate{
+				ConsistentLevel: "crash_consistent",
+				ObjectType:      "disk",
+				ProtectType:     "backup",
+				Size:            100,
+			},
+			Description: "gophertelemocloud testing vault",
+			Name:        tools.RandomString("cbr-test-", 5),
+			Resources:   []vaults.ResourceCreate{},
+		}
+		vault2, err := vaults.Create(client, vault2Opts)
+		th.AssertNoErr(t, err)
+		t.Cleanup(func() {
+			th.AssertNoErr(t, vaults.Delete(client, vault2.ID))
+		})
+
+		_, err = backups.UpdateSharingMember(newClient, destProjectID, backups.UpdateOpts{
+			BackupID: allBackups[0].ID,
+			Status:   "accepted",
+			VaultId:  vault2.ID,
+		})
+		th.AssertNoErr(t, err)
+
+		newShare, err := backups.GetSharingMember(client, allBackups[0].ID, destProjectID)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, "accepted", newShare.Status)
+	}
 }

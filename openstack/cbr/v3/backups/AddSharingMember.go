@@ -11,20 +11,22 @@ type MembersOpts struct {
 	Members []string `json:"members" required:"true"`
 }
 
-func AddSharingMember(client *golangsdk.ServiceClient, backupID string, opts MembersOpts) (*Members, error) {
+func AddSharingMember(client *golangsdk.ServiceClient, backupID string, opts MembersOpts) ([]Members, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /v3/{project_id}/backups/{backup_id}/members
-	raw, err := client.Post(client.ServiceURL("backups", backupID, "members"), b, nil, nil)
+	raw, err := client.Post(client.ServiceURL("backups", backupID, "members"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return nil, err
 	}
-	var res Members
-	err = extract.IntoStructPtr(raw.Body, &res, "members")
-	return &res, err
+	var res []Members
+	err = extract.IntoSlicePtr(raw.Body, &res, "members")
+	return res, err
 }
 
 type Members struct {

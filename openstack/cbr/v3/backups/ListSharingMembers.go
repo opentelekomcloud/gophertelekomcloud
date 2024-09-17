@@ -32,7 +32,7 @@ type ListMemberOpts struct {
 	VaultID        string `q:"vault_id"`
 }
 
-func ListSharingMembers(client *golangsdk.ServiceClient, backupId string, opts ListOpts) ([]Member, error) {
+func ListSharingMembers(client *golangsdk.ServiceClient, backupId string, opts ListMemberOpts) ([]Member, error) {
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("backups", backupId, "members").WithQueryParams(&opts).Build()
 	if err != nil {
 		return nil, err
