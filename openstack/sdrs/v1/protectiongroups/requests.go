@@ -1,50 +1,9 @@
 package protectiongroups
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
-
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToGroupCreateMap() (map[string]interface{}, error)
-}
-
-// CreateOpts contains all the values needed to create a new group.
-type CreateOpts struct {
-	// Group Name
-	Name string `json:"name" required:"true"`
-	// Group Description
-	Description string `json:"description,omitempty"`
-	// The source AZ of a protection group
-	SourceAZ string `json:"source_availability_zone" required:"true"`
-	// The target AZ of a protection group
-	TargetAZ string `json:"target_availability_zone" required:"true"`
-	// An active-active domain
-	DomainID string `json:"domain_id" required:"true"`
-	// ID of the source VPC
-	SourceVpcID string `json:"source_vpc_id" required:"true"`
-	// Deployment model
-	DrType string `json:"dr_type,omitempty"`
-}
-
-// ToGroupCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server_group")
-}
-
-// Create will create a new Group based on the values in CreateOpts.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
-	b, err := opts.ToGroupCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, reqOpt)
-	return
-}
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.

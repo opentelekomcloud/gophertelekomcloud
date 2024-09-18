@@ -18,7 +18,7 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 		t.Skip("OS_VPC_ID env var is missing but SDRS group test requires")
 	}
 
-	createOpts := protectiongroups.CreateOpts{
+	serverGroup := protectiongroups.ServerGroupInfo{
 		Name:        tools.RandomString("sdrs-group-", 3),
 		Description: "some interesting description",
 		SourceAZ:    "eu-de-02",
@@ -27,14 +27,18 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 		SourceVpcID: vpcID,
 	}
 
-	job, err := protectiongroups.Create(client, createOpts).ExtractJobResponse()
+	createOpts := protectiongroups.CreateOpts{
+		ServerGroup: serverGroup,
+	}
+
+	job, err := protectiongroups.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Waiting for SDRS group job %s", job)
-	err = protectiongroups.WaitForJobSuccess(client, 600, job.JobID)
+	err = protectiongroups.WaitForJobSuccess(client, 600, job.JobId)
 	th.AssertNoErr(t, err)
 
-	jobEntity, err := protectiongroups.GetJobEntity(client, job.JobID, "server_group_id")
+	jobEntity, err := protectiongroups.GetJobEntity(client, job.JobId, "server_group_id")
 	th.AssertNoErr(t, err)
 
 	group, err := protectiongroups.Get(client, jobEntity.(string)).Extract()
