@@ -53,5 +53,5 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateProtection
 
 type CreateProtectionGroupResponse struct {
 	// 	Specifies the job ID.
-	JobId string `json:"job_id"`
+	JobID string `json:"job_id"`
 }

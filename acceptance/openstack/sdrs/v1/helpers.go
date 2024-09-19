@@ -35,10 +35,10 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 	th.AssertNoErr(t, err)
 
 	t.Logf("Waiting for SDRS group job %s", job)
-	err = protectiongroups.WaitForJobSuccess(client, 600, job.JobId)
+	err = protectiongroups.WaitForJobSuccess(client, 600, job.JobID)
 	th.AssertNoErr(t, err)
 
-	jobEntity, err := protectiongroups.GetJobEntity(client, job.JobId, "server_group_id")
+	jobEntity, err := protectiongroups.GetJobEntity(client, job.JobID, "server_group_id")
 	th.AssertNoErr(t, err)
 
 	group, err := protectiongroups.Get(client, jobEntity.(string)).Extract()
