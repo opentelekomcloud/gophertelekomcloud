@@ -52,7 +52,7 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 func deleteSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, groupID string) {
 	t.Logf("Attempting to delete SDRS protection group: %s", groupID)
 
-	job, err := protectiongroups.Delete(client, groupID).ExtractJobResponse()
+	job, err := protectiongroups.Delete(client, groupID)
 	th.AssertNoErr(t, err)
 
 	err = protectiongroups.WaitForJobSuccess(client, 600, job.JobID)
