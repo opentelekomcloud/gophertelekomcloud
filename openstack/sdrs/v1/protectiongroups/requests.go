@@ -18,29 +18,6 @@ func Delete(c *golangsdk.ServiceClient, id string) (r JobResult) {
 	return
 }
 
-// EnableOpts contains all the values needed to enable protection for a Group.
-type EnableOpts struct {
-	// Empty
-}
-
-// ToGroupEnableMap builds a create request body from EnableOpts.
-func (opts EnableOpts) ToGroupEnableMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "start-server-group")
-}
-
-// Enable will enable protection for a protection Group.
-func Enable(c *golangsdk.ServiceClient, id string) (r JobResult) {
-	opts := EnableOpts{}
-	b, err := opts.ToGroupEnableMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Post(actionURL(c, id), b, &r.Body, reqOpt)
-	return
-}
-
 // DisableOpts contains all the values needed to disable protection for a Group.
 type DisableOpts struct {
 	// Empty
