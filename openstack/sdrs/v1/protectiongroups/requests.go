@@ -5,35 +5,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 )
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToGroupUpdateMap() (map[string]interface{}, error)
-}
-
-// UpdateOpts contains all the values needed to update a Group.
-type UpdateOpts struct {
-	// Group name
-	Name string `json:"name" required:"true"`
-}
-
-// ToGroupUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToGroupUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "server_group")
-}
-
-// Update accepts a UpdateOpts struct and uses the values to update a Group.The response code from api is 200
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToGroupUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200}}
-	_, r.Err = c.Put(resourceURL(c, id), b, nil, reqOpt)
-	return
-}
-
 // Get retrieves a particular Group based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
