@@ -10,7 +10,7 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID string) *protectiongroups.Group {
+func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID string) *protectiongroups.ServerGroupResponseInfo {
 	t.Logf("Attempting to create SDRS protection group")
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
@@ -41,7 +41,7 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 	jobEntity, err := protectiongroups.GetJobEntity(client, job.JobID, "server_group_id")
 	th.AssertNoErr(t, err)
 
-	group, err := protectiongroups.Get(client, jobEntity.(string)).Extract()
+	group, err := protectiongroups.Get(client, jobEntity.(string))
 	th.AssertNoErr(t, err)
 
 	t.Logf("Created SDRS protection group: %s", group.Id)
