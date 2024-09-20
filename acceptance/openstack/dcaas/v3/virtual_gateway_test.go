@@ -28,6 +28,7 @@ func TestVirtualGatewayListing(t *testing.T) {
 }
 
 func TestVirtualGatewayLifecycle(t *testing.T) {
+	t.Skip("This API only available in eu-ch2 region for now")
 	vpcID := os.Getenv("OS_VPC_ID")
 	if vpcID == "" {
 		t.Skip("OS_VPC_ID necessary for this test")
