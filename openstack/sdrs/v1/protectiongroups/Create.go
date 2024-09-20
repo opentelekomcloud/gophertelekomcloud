@@ -7,13 +7,8 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type CreateOpts struct {
-	// Specifies the information about a protection group.
-	ServerGroup ServerGroupInfo `json:"server_group" required:"true"`
-}
-
 // ServerGroupInfo contains all the values needed to create a new group.
-type ServerGroupInfo struct {
+type CreateOpts struct {
 	// Group Name
 	Name string `json:"name" required:"true"`
 	// Group Description
@@ -32,7 +27,7 @@ type ServerGroupInfo struct {
 
 // Create will create a new Group based on the values in CreateOpts.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateProtectionGroupResponse, error) {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "server_group")
 	if err != nil {
 		return nil, err
 	}

@@ -6,20 +6,15 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// UpdateOpts contains server_group info
 type UpdateOpts struct {
-	// Specifies the information about a protection group.
-	ServerGroup ServerGroupUpdateInfo `json:"server_group" required:"true"`
-}
-
-// UpdateOpts contains all the values needed to update a Group.
-type ServerGroupUpdateInfo struct {
 	// Group name
 	Name string `json:"name" required:"true"`
 }
 
 // Update accepts a UpdateOpts struct and uses the values to update a Group.The response code from api is 200
 func Update(client *golangsdk.ServiceClient, ServerGroupId string, opts UpdateOpts) (*ServerGroupResponseInfo, error) {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "server_group")
 	if err != nil {
 		return nil, err
 	}
