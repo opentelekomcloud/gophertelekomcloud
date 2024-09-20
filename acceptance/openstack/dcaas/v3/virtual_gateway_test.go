@@ -10,6 +10,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcaas/v3/virtual-gateway"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -27,19 +28,24 @@ func TestVirtualGatewayListing(t *testing.T) {
 }
 
 func TestVirtualGatewayLifecycle(t *testing.T) {
-	if os.Getenv("OS_VPC_ID") == "" {
+	vpcID := os.Getenv("OS_VPC_ID")
+	if vpcID == "" {
 		t.Skip("OS_VPC_ID necessary for this test")
 	}
 	client, err := clients.NewDCaaSV3Client()
 	th.AssertNoErr(t, err)
 
+	clientNet, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+	vpc, err := vpcs.Get(clientNet, vpcID).Extract()
+	th.AssertNoErr(t, err)
 	// Create a virtual gateway
-	name := strings.ToLower(tools.RandomString("test-virtual-gateway", 5))
+	name := strings.ToLower(tools.RandomString("acc-virtual-gateway-v3-", 5))
 	createOpts := virtual_gateway.CreateOpts{
 		Name:         name,
-		VpcId:        os.Getenv("OS_VPC_ID"),
-		Description:  "test-virtual-gateway-v3",
-		LocalEpGroup: []string{""},
+		VpcId:        vpcID,
+		Description:  "acc-virtual-gateway-v3",
+		LocalEpGroup: []string{vpc.CIDR},
 		Tags: []tags.ResourceTag{
 			{
 				Key:   "TestKey",
@@ -51,19 +57,23 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	created, err := virtual_gateway.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	_, err = virtual_gateway.Get(client, created.ID)
+	vgw, err := virtual_gateway.Get(client, created.ID)
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, name, vgw.Name)
 
+	nameUpdated := strings.ToLower(tools.RandomString("acc-virtual-gateway-v3-up", 5))
 	updateOpts := virtual_gateway.UpdateOpts{
-		Name:        tools.RandomString(name, 3),
-		Description: pointerto.String("test-virtual-gateway-v3-updated"),
+		Name:        nameUpdated,
+		Description: pointerto.String("acc-virtual-gateway-v3-updated"),
 	}
-	_ = virtual_gateway.Update(client, created.ID, updateOpts)
+	updated, err := virtual_gateway.Update(client, created.ID, updateOpts)
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, nameUpdated, updated.Name)
 
 	opts := virtual_gateway.ListOpts{}
-	_, err = virtual_gateway.List(client, opts)
+	gateways, err := virtual_gateway.List(client, opts)
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(gateways))
 
 	t.Cleanup(func() {
 		err = virtual_gateway.Delete(client, created.ID)

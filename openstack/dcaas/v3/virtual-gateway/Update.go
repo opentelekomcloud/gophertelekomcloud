@@ -3,12 +3,13 @@ package virtual_gateway
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type UpdateOpts struct {
 	// The list of IPv4 subnets from the virtual gateway to access cloud services, which is usually the CIDR block of
 	// the VPC.
-	LocalEpGroup []string `json:"local_ep_group" required:"true"`
+	LocalEpGroup []string `json:"local_ep_group,omitempty"`
 	// The list of IPv6 subnets from the virtual gateway to access cloud services, which is usually the CIDR block of
 	// the VPC.
 	LocalEpGroupIpv6 []string `json:"local_ep_group_ipv6,omitempty"`
@@ -24,15 +25,19 @@ type UpdateOpts struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (err error) {
+func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (*VirtualGateway, error) {
 	b, err := build.RequestBody(opts, "virtual_gateway")
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	_, err = c.Put(c.ServiceURL("dcaas", "virtual-gateways", id), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Put(c.ServiceURL("dcaas", "virtual-gateways", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	var res VirtualGateway
+	err = extract.IntoStructPtr(raw.Body, &res, "virtual_gateway")
+	return &res, err
 }
