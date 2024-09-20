@@ -4,12 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
-
-type JobResponse struct {
-	JobID string `json:"job_id"`
-}
 
 type JobStatus struct {
 	Status     string    `json:"status"`
@@ -24,22 +20,6 @@ type JobStatus struct {
 
 type JobEntity struct {
 	GroupID string `json:"server_group_id"`
-}
-
-type JobResult struct {
-	golangsdk.Result
-}
-
-func (r JobResult) ExtractJobResponse() (*JobResponse, error) {
-	job := new(JobResponse)
-	err := r.ExtractInto(job)
-	return job, err
-}
-
-func (r JobResult) ExtractJobStatus() (*JobStatus, error) {
-	job := new(JobStatus)
-	err := r.ExtractInto(job)
-	return job, err
 }
 
 func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) error {

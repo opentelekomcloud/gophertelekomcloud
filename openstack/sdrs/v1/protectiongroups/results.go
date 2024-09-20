@@ -1,9 +1,5 @@
 package protectiongroups
 
-import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-)
-
 type ServerGroupResponseInfo struct {
 	// ID specifies the ID of a protection group.
 	Id string `json:"id"`
@@ -55,31 +51,4 @@ type ServerGroupResponseInfo struct {
 	ProtectionType string `json:"protection_type"`
 	// ReplicationModel specifies the protection mode.
 	ReplicationModel string `json:"replication_model"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a group.
-func (r commonResult) Extract() (*ServerGroupResponseInfo, error) {
-	var response ServerGroupResponseInfo
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "server_group")
-}
-
-// UpdateResult represents the result of a update operation. Call its Extract
-// method to interpret it as a Group.
-type UpdateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Group.
-type GetResult struct {
-	commonResult
 }
