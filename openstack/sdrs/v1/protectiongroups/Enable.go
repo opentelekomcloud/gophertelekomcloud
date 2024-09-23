@@ -9,18 +9,12 @@ import (
 // EnableOpts contains all the values needed to enable protection for a Group.
 type EnableOpts struct {
 	// Enables protection for a protection group. The StartServerGroup is an empty object.
-	StartServerGroup StartServerGroupInfo `json:"start-server-group" required:"true"`
-}
-
-type StartServerGroupInfo struct {
-	// Empty
+	StartServerGroup map[string]interface{} `json:"start-server-group" required:"true"`
 }
 
 // Enable will enable protection for a protection Group.
 func Enable(client *golangsdk.ServiceClient, ServerGroupId string) (*EnableResponse, error) {
-	opts := EnableOpts{
-		StartServerGroup: StartServerGroupInfo{},
-	}
+	opts := EnableOpts{StartServerGroup: map[string]interface{}{}}
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

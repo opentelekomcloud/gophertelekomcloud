@@ -9,18 +9,12 @@ import (
 // DisableOpts contains all the values needed to disable protection for a Group.
 type DisableOpts struct {
 	// Disables protection for a protection group. The StopServerGroup is an empty object.
-	StopServerGroup StopServerGroupInfo `json:"stop-server-group" required:"true"`
-}
-
-type StopServerGroupInfo struct {
-	// Empty
+	StopServerGroup map[string]interface{} `json:"stop-server-group" required:"true"`
 }
 
 // Disable will Disable protection for a protection Group.
 func Disable(client *golangsdk.ServiceClient, ServerGroupId string) (*DisableResponse, error) {
-	opts := DisableOpts{
-		StopServerGroup: StopServerGroupInfo{},
-	}
+	opts := DisableOpts{StopServerGroup: map[string]interface{}{}}
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

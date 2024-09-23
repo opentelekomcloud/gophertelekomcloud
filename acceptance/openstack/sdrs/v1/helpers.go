@@ -14,6 +14,7 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 	t.Logf("Attempting to create SDRS protection group")
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
 	if vpcID == "" {
 		t.Skip("OS_VPC_ID env var is missing but SDRS group test requires")
 	}
@@ -21,7 +22,7 @@ func createSDRSGroup(t *testing.T, client *golangsdk.ServiceClient, domainID str
 	createOpts := protectiongroups.CreateOpts{
 		Name:        tools.RandomString("sdrs-group-", 3),
 		Description: "some interesting description",
-		SourceAZ:    "eu-de-02",
+		SourceAZ:    az,
 		TargetAZ:    "eu-de-01",
 		DomainID:    domainID,
 		SourceVpcID: vpcID,

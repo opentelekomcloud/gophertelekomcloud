@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/domains"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/protectedinstances"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/protectiongroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -87,4 +88,27 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	th.AssertEquals(t, createDescription, instance.Description)
 
 	t.Logf("Created SDRS protected instance: %s", instance.ID)
+
+	jobEnable, err := protectiongroups.Enable(client, group.Id)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Waiting for SDRS group enabling job %s", jobEnable.JobID)
+	err = protectiongroups.WaitForJobSuccess(client, 600, jobEnable.JobID)
+	th.AssertNoErr(t, err)
+
+	getEnablePg, err := protectiongroups.Get(client, group.Id)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "protected", getEnablePg.Status)
+
+	jobDisable, err := protectiongroups.Disable(client, group.Id)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Waiting for SDRS group disabling job %s", jobDisable.JobID)
+	err = protectiongroups.WaitForJobSuccess(client, 600, jobDisable.JobID)
+	th.AssertNoErr(t, err)
+
+	getDisabledPg, err := protectiongroups.Get(client, group.Id)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "available", getDisabledPg.Status)
+
 }

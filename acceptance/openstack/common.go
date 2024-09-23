@@ -112,7 +112,7 @@ func DeleteVolume(t *testing.T, id string) {
 }
 
 const (
-	imageName = "Standard_Debian_10_latest"
+	imageName = "Standard_Debian_11_latest"
 	flavorID  = "s3.large.2"
 )
 
@@ -138,7 +138,9 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		Name: imageName,
 	})
 	th.AssertNoErr(t, err)
-
+	if len(image) == 0 {
+		t.Skip("Change image query filter, no results returned")
+	}
 	if vpcID == "" || subnetID == "" || az == "" {
 		t.Skip("One of OS_VPC_ID, OS_NETWORK_ID or OS_AVAILABILITY_ZONE env vars is missing but ECSv1 test requires")
 	}
