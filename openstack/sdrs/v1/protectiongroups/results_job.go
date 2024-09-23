@@ -66,5 +66,5 @@ func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (
 		}
 	}
 
-	return nil, fmt.Errorf("Unexpected conversion error in GetJobEntity.")
+	return nil, fmt.Errorf("unexpected conversion error in GetJobEntity")
 }
