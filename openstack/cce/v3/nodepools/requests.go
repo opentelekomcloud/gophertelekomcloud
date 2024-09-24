@@ -120,7 +120,7 @@ type CreateSpec struct {
 	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
 }
 
-// Create accepts a CreateOpts struct and uses the values to create a new
+// CreateOptsBuilder Create accepts a CreateOpts struct and uses the values to create a new
 // logical Node Pool. When it is created, the Node Pool does not have an internal
 // interface
 type CreateOptsBuilder interface {
