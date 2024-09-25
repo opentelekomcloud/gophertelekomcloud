@@ -9,23 +9,22 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/availablezones"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/instances"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/instances/lifecycle"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/products"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/topics"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestDmsList(t *testing.T) {
-	client, err := clients.NewDmsV2Client()
-	th.AssertNoErr(t, err)
+const (
+	dmsEngine        = "kafka"
+	dmsEngineVersion = "2.7"
+	dmsUser          = "root"
+	dmsUserPassword  = "5ecuredPa55w0rd!"
 
-	listOpts := instances.ListOpts{}
-	dmsInstances, err := instances.List(client, listOpts)
-	th.AssertNoErr(t, err)
-	for _, val := range dmsInstances.Instances {
-		tools.PrintResource(t, val)
-	}
-}
+	kafkaClusterSmall = "cluster.small"
+
+	dmsTargetStatus = "RUNNING"
+)
 
 func TestDmsLifeCycle(t *testing.T) {
 	client, err := clients.NewDmsV2Client()
@@ -34,22 +33,15 @@ func TestDmsLifeCycle(t *testing.T) {
 	instanceID := createDmsInstance(t, client)
 	defer deleteDmsInstance(t, client, instanceID)
 
-	dmsInstance, err := instances.Get(client, instanceID)
+	dmsInstance, err := lifecycle.Get(client, instanceID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "some interesting description", dmsInstance.Description)
 
-	err = instances.ChangePassword(client, instanceID, instances.PasswordOpts{
-		NewPassword: "5ecuredPa55w0rd!-not",
-	})
-	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 Instance password updated")
-
-	// updateDMScrossVpc(t, client, instanceID)
 	dmsTopic := createTopic(t, client, instanceID)
 
 	err = updateDmsTopic(t, client, instanceID, dmsTopic)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 Topic updated")
+	t.Logf("DMSv2.1 Topic updated")
 
 	listTopics, err := topics.List(client, instanceID)
 	th.AssertNoErr(t, err)
@@ -60,16 +52,16 @@ func TestDmsLifeCycle(t *testing.T) {
 	th.AssertEquals(t, dmsTopic, getTopic.Name)
 
 	delTopic := deleteTopic(t, client, instanceID, dmsTopic)
-	th.AssertEquals(t, delTopic.Name, dmsTopic)
+	th.AssertEquals(t, delTopic.Topics[0].Name, dmsTopic)
 
 	updateDmsInstance(t, client, instanceID)
-	dmsInstance, err = instances.Get(client, instanceID)
+	dmsInstance, err = lifecycle.Get(client, instanceID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "", dmsInstance.Description)
 }
 
 func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
-	t.Logf("Attempting to create DMSv2 instance")
+	t.Logf("Attempting to create DMSv2.1 instance")
 	dmsName := tools.RandomString("dms-acc-", 8)
 
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
@@ -79,103 +71,80 @@ func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
 	}
 
 	defaultSgID := openstack.DefaultSecurityGroup(t)
-	details := getDmsInstanceSpecification(t, client)
+	details := getDmsInstanceSpecification(t, client, dmsEngine)
+	if details == nil {
+		t.Fatalf("product type %s not found", kafkaClusterSmall)
+	}
 	az := getDmsInstanceAz(t, client)
-	partitionNum, _ := strconv.Atoi(details.PartitionNum)
-	storage, _ := strconv.Atoi(details.Storage)
+	minBroker, _ := strconv.Atoi(details.Properties.MinBroker)
+	storageSpace, _ := strconv.Atoi(details.Properties.MinStoragePerNode)
+	storageSpec := details.IOS[0].IOSpec
 
 	sslEnable := true
 
-	createOpts := instances.CreateOpts{
+	createOpts := lifecycle.CreateOpts{
 		Name:            dmsName,
 		Description:     "some interesting description",
-		Engine:          "kafka",
-		EngineVersion:   "2.3.0",
-		StorageSpace:    storage,
-		Password:        "5ecuredPa55w0rd!",
-		AccessUser:      "root",
+		Engine:          dmsEngine,
+		EngineVersion:   dmsEngineVersion,
+		StorageSpace:    storageSpace * 3,
+		StorageSpecCode: storageSpec,
+		BrokerNum:       minBroker,
+		AccessUser:      dmsUser,
+		Password:        dmsUserPassword,
 		VpcID:           vpcID,
 		SecurityGroupID: defaultSgID,
 		SubnetID:        subnetID,
 		AvailableZones:  []string{az},
-		ProductID:       details.ProductID,
-		PartitionNum:    partitionNum,
+		ProductID:       details.ProductId,
 		SslEnable:       &sslEnable,
-		Specification:   details.VMSpecification,
-		StorageSpecCode: details.IOs[0].StorageSpecCode,
 	}
-	dmsInstance, err := instances.Create(client, createOpts)
+
+	dmsInstance, err := lifecycle.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	err = waitForInstanceAvailable(client, 600, dmsInstance.InstanceID)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 instance successfully created: %s", dmsInstance.InstanceID)
+	t.Logf("DMSv2.1 instance successfully created: %s", dmsInstance.InstanceID)
 
 	return dmsInstance.InstanceID
 }
 
 func deleteDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
-	t.Logf("Attempting to delete DMSv2 instance: %s", instanceID)
+	t.Logf("Attempting to delete DMSv2.1 instance: %s", instanceID)
 
-	err := instances.Delete(client, instanceID)
+	err := lifecycle.Delete(client, instanceID)
 	th.AssertNoErr(t, err)
 
 	err = waitForInstanceDelete(client, 600, instanceID)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv1 instance deleted successfully: %s", instanceID)
+	t.Logf("DMSv2.1 instance deleted successfully: %s", instanceID)
 }
 
 func updateDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
-	t.Logf("Attempting to update DMSv2 instance: %s", instanceID)
+	t.Logf("Attempting to update DMSv2.1 instance: %s", instanceID)
 
 	emptyDescription := ""
-	updateOpts := instances.UpdateOpts{
+	updateOpts := lifecycle.UpdateOpts{
 		Description: &emptyDescription,
 	}
 
-	_, err := instances.Update(client, instanceID, updateOpts)
+	_, err := lifecycle.Update(client, instanceID, updateOpts)
 	th.AssertNoErr(t, err)
 
-	t.Logf("DMSv2 instance updated successfully: %s", instanceID)
+	t.Logf("DMSv2.1 instance updated successfully: %s", instanceID)
 }
 
-// func updateDMScrossVpc(t *testing.T, client *golangsdk.ServiceClient, instanceID string) {
-// 	t.Logf("Attempting to modify crossVPC for DMSv2 instance: %s", instanceID)
-//
-// 	crossVpcOpts := instances.CrossVpcUpdateOpts{
-// 		Contents: map[string]string{
-// 			"192.168.1.27":  "192.168.1.27",
-// 			"192.168.1.238": "192.168.1.238",
-// 			"192.168.1.11":  "192.168.1.12",
-// 		},
-// 	}
-//
-// 	crossVpc, err := instances.UpdateCrossVpc(client, instanceID, crossVpcOpts)
-// 	th.AssertNoErr(t, err)
-// 	th.AssertEquals(t, true, crossVpc.Success)
-//
-// 	t.Logf("DMSv2 instance crossVPC modified successfully: %s", instanceID)
-// }
-
-func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient) products.Detail {
-	v, err := products.Get(client, "kafka")
+func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient, engine string) *products.EngineProduct {
+	pd, err := products.Get(client, engine)
 	th.AssertNoErr(t, err)
-	productList := v.Hourly
 
-	var filteredPd []products.Detail
-	for _, pd := range productList {
-		if pd.Version != "2.3.0" {
-			continue
-		}
-		for _, value := range pd.Values {
-			if value.Name != "cluster" {
-				continue
-			}
-
-			filteredPd = append(filteredPd, value.Details...)
+	for _, v := range pd.Products {
+		if v.Type == kafkaClusterSmall {
+			return &v
 		}
 	}
 
-	return filteredPd[0]
+	return nil
 }
 
 func getDmsInstanceAz(t *testing.T, client *golangsdk.ServiceClient) string {
@@ -187,11 +156,11 @@ func getDmsInstanceAz(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		dmsInstance, err := instances.Get(client, instanceID)
+		dmsInstance, err := lifecycle.Get(client, instanceID)
 		if err != nil {
 			return false, err
 		}
-		if dmsInstance.Status == "RUNNING" {
+		if dmsInstance.Status == dmsTargetStatus {
 			return true, nil
 		}
 		return false, nil
@@ -200,7 +169,7 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 
 func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := instances.Get(client, instanceID)
+		_, err := lifecycle.Get(client, instanceID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
@@ -212,7 +181,7 @@ func waitForInstanceDelete(client *golangsdk.ServiceClient, secs int, instanceID
 }
 
 func createTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string) string {
-	t.Logf("Attempting to create DMSv2 Topic")
+	t.Logf("Attempting to create DMSv2.1 Topic")
 	topicName := tools.RandomString("dms-topic-", 8)
 
 	createOpts := topics.CreateOpts{
@@ -225,21 +194,21 @@ func createTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId strin
 	}
 	dmsTopic, err := topics.Create(client, instanceId, createOpts)
 	th.AssertNoErr(t, err)
-	t.Logf("DMSv2 Topic successfully created: %s", dmsTopic.Name)
+	t.Logf("DMSv2.1 Topic successfully created: %s", dmsTopic.Name)
 
 	return dmsTopic.Name
 }
 
 func updateDmsTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string, topicName string) error {
-	t.Logf("Attempting to update DMSv2 Topic")
+	t.Logf("Attempting to update DMSv2.1 Topic")
 	partition := 12
 	retention := 70
 	updateOpts := topics.UpdateOpts{
 		Topics: []topics.UpdateItem{
 			{
-				Name:          topicName,
-				Partition:     &partition,
-				RetentionTime: &retention,
+				Name:                topicName,
+				NewPartitionNumbers: &partition,
+				RetentionTime:       &retention,
 			},
 		},
 	}
@@ -247,14 +216,14 @@ func updateDmsTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId st
 }
 
 func deleteTopic(t *testing.T, client *golangsdk.ServiceClient, instanceId string, name string) *topics.DeleteResponse {
-	t.Logf("Attempting to delete DMSv2 Topic")
+	t.Logf("Attempting to delete DMSv2.1 Topic")
 	dmsTopic, err := topics.Delete(client, instanceId, []string{
 		name,
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, dmsTopic.Success, true)
+	th.AssertEquals(t, true, dmsTopic.Topics[0].Success)
 
-	t.Logf("DMSv2 Topic successfully deleted")
+	t.Logf("DMSv2.1 Topic successfully deleted")
 
 	return dmsTopic
 }
