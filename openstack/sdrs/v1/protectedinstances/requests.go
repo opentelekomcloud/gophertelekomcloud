@@ -1,61 +1,10 @@
 package protectedinstances
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToInstanceCreateMap() (map[string]interface{}, error)
-}
-
-// CreateOpts contains all the values needed to create a new instance.
-type CreateOpts struct {
-	// Group ID
-	GroupID string `json:"server_group_id" required:"true"`
-	// Server ID
-	ServerID string `json:"server_id" required:"true"`
-	// Instance Name
-	Name string `json:"name" required:"true"`
-	// Instance Description
-	Description string `json:"description,omitempty"`
-	// Cluster ID
-	ClusterID string `json:"cluster_id,omitempty"`
-	// Subnet ID
-	SubnetID string `json:"primary_subnet_id,omitempty"`
-	// IP Address
-	IpAddress string `json:"primary_ip_address,omitempty"`
-	// Flavor ID of the DR site server
-	Flavor string `json:"flavorRef,omitempty"`
-	// Tags list
-	Tags []Tags `json:"tags,omitempty"`
-}
-
-type Tags struct {
-	Key   string `json:"key,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
-// ToInstanceCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToInstanceCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protected_instance")
-}
-
-// Create will create a new Instance based on the values in CreateOpts.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
-	b, err := opts.ToInstanceCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.

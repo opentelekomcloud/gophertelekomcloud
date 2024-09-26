@@ -52,14 +52,17 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	t.Logf("Attempting to create SDRS protected instance")
 	createName := tools.RandomString("sdrs-instance-", 3)
 	createDescription := "some description"
-	createOpts := protectedinstances.CreateOpts{
+	protectedInstance := protectedinstances.ProtectedInstance{
 		GroupID:     group.Id,
 		ServerID:    ecs.ID,
 		Name:        createName,
 		Description: createDescription,
 	}
+	createOpts := protectedinstances.CreateOpts{
+		ProtectedInstance: protectedInstance,
+	}
 
-	jobCreate, err := protectedinstances.Create(client, createOpts).ExtractJobResponse()
+	jobCreate, err := protectedinstances.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	err = protectedinstances.WaitForJobSuccess(client, 600, jobCreate.JobID)
 	th.AssertNoErr(t, err)

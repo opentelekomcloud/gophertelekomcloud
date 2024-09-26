@@ -1,7 +1,7 @@
 package protectedinstances
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -34,6 +34,11 @@ type Instance struct {
 	Tags []Tags `json:"tags"`
 	// Metadata
 	Metadata map[string]string `json:"metadata"`
+}
+
+type Tags struct {
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type Attachment struct {
