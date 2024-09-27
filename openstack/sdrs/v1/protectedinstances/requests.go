@@ -6,36 +6,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToInstanceUpdateMap() (map[string]interface{}, error)
-}
-
-// UpdateOpts contains all the values needed to update an Instance.
-type UpdateOpts struct {
-	// Instance name
-	Name string `json:"name" required:"true"`
-}
-
-// ToInstanceUpdateMap builds a update request body from UpdateOpts.
-func (opts UpdateOpts) ToInstanceUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "protected_instance")
-}
-
-// Update accepts a UpdateOpts struct and uses the values to update an Instance.The response code from api is 200
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToInstanceUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Put(resourceURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // Get retrieves a particular Instance based on its unique ID.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
