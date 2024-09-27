@@ -29,7 +29,7 @@ type UpdateOpts struct {
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Gateway, error) {
-	b, err := build.RequestBody(opts, "instance")
+	b, err := build.RequestBody(opts, "vpn_gateway")
 	if err != nil {
 		return nil, err
 	}
@@ -42,5 +42,5 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Gateway, error) 
 	}
 
 	var res Gateway
-	return &res, extract.Into(raw.Body, &res)
+	return &res, extract.IntoStructPtr(raw.Body, &res, "vpn_gateway")
 }

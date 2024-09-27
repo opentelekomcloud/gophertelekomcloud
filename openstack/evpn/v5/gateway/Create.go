@@ -35,7 +35,7 @@ type CreateOpts struct {
 	// Specifies the BGP AS number of the VPN gateway.
 	// The value ranges from 1 to 4294967295.
 	// The default value is 64512.
-	BgpAsn int `json:"bgp_asn,omitempty"`
+	BgpAsn *int `json:"bgp_asn,omitempty"`
 	// Specifies the specifications of the VPN gateway.
 	// For the value range, see the Specification parameter on the page for creating a VPN gateway on the VPN console.
 	// Value range:
@@ -120,7 +120,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Gateway, error) 
 	}
 
 	raw, err := client.Post(client.ServiceURL("vpn-gateways"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
+		OkCodes: []int{202, 201},
 	})
 	if err != nil {
 		return nil, err

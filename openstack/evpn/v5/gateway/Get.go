@@ -12,6 +12,6 @@ func Get(client *golangsdk.ServiceClient, gatewayId string) (*Gateway, error) {
 	}
 
 	var res Gateway
-	err = extract.Into(raw.Body, &res)
+	err = extract.IntoStructPtr(raw.Body, &res, "vpn_gateway")
 	return &res, err
 }
