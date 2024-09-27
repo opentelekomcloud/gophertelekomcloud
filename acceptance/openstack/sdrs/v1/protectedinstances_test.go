@@ -70,7 +70,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	jobEntity, err := protectedinstances.GetJobEntity(client, jobCreate.JobID, "protected_instance_id")
 	th.AssertNoErr(t, err)
 
-	instance, err := protectedinstances.Get(client, jobEntity.(string)).Extract()
+	instance, err := protectedinstances.Get(client, jobEntity.(string))
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to delete SDRS protected instance: %s", instance.ID)

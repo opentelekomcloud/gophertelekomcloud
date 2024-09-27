@@ -2,15 +2,8 @@ package protectedinstances
 
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
-
-// Get retrieves a particular Instance based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, openstack.StdRequestOpts())
-	return
-}
 
 // DeleteOptsBuilder allows extensions to add additional parameters to the
 // Delete request.
