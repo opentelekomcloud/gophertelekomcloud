@@ -871,6 +871,17 @@ func NewHssClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewEVPNClient returns authenticated HSS v5 client
+func NewEVPNClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewEVPNServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
