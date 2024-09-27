@@ -8,16 +8,26 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+type ListOpts struct {
+	Engine string `q:"-"`
+	// The product ID.
+	ProductId string `q:"product_id"`
+}
+
 // Get products
-func Get(client *golangsdk.ServiceClient, engine string) (*GetResp, error) {
-	if len(engine) == 0 {
+func List(client *golangsdk.ServiceClient, opts ListOpts) (*GetResp, error) {
+	if len(opts.Engine) == 0 {
 		return nil, fmt.Errorf("the parameter \"engine\" cannot be empty, it is required")
 	}
 
 	paths := strings.SplitN(client.Endpoint, "v2", 2)
-	url := fmt.Sprintf("%sv2/%s/%s", paths[0], engine, "products")
+	q, err := golangsdk.BuildQueryString(opts)
+	if err != nil {
+		return nil, err
+	}
+	url := fmt.Sprintf("%sv2/%s/%s", paths[0], opts.Engine, "products")
 
-	raw, err := client.Get(url, nil, nil)
+	raw, err := client.Get(url+q.String(), nil, nil)
 	if err != nil {
 		return nil, err
 	}

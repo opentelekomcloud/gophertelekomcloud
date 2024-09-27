@@ -71,7 +71,7 @@ func createDmsInstance(t *testing.T, client *golangsdk.ServiceClient) string {
 	}
 
 	defaultSgID := openstack.DefaultSecurityGroup(t)
-	details := getDmsInstanceSpecification(t, client, dmsEngine)
+	details := getDmsInstanceSpecification(t, client)
 	if details == nil {
 		t.Fatalf("product type %s not found", kafkaClusterSmall)
 	}
@@ -134,8 +134,8 @@ func updateDmsInstance(t *testing.T, client *golangsdk.ServiceClient, instanceID
 	t.Logf("DMSv2.1 instance updated successfully: %s", instanceID)
 }
 
-func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient, engine string) *products.EngineProduct {
-	pd, err := products.Get(client, engine)
+func getDmsInstanceSpecification(t *testing.T, client *golangsdk.ServiceClient) *products.EngineProduct {
+	pd, err := products.List(client, products.ListOpts{Engine: dmsEngine})
 	th.AssertNoErr(t, err)
 
 	for _, v := range pd.Products {
