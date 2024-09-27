@@ -21,6 +21,7 @@ const (
 )
 
 func TestDmsManagement(t *testing.T) {
+	t.Skip("DMS Creation takes too long to complete")
 	client, err := clients.NewDmsV2Client()
 	th.AssertNoErr(t, err)
 

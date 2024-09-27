@@ -22,7 +22,9 @@ func UpdateCrossVpc(client *golangsdk.ServiceClient, instanceId string, opts Cro
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("instances", instanceId, "crossvpc", "modify"), body, nil, nil)
+	raw, err := client.Post(client.ServiceURL("instances", instanceId, "crossvpc", "modify"), body, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return nil, err
 	}
