@@ -79,7 +79,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 			DeleteTargetServer: &deleteServer,
 		}
 
-		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts).ExtractJobResponse()
+		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts)
 		th.AssertNoErr(t, err)
 
 		err = protectedinstances.WaitForJobSuccess(client, 600, jobDelete.JobID)
