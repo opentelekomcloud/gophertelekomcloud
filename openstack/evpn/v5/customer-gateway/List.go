@@ -30,6 +30,9 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]CustomerGateway, er
 			return GwPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
+	if err != nil {
+		return nil, err
+	}
 	return ExtractGateways(pages)
 }
 
