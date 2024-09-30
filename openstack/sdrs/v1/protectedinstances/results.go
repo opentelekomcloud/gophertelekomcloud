@@ -1,10 +1,5 @@
 package protectedinstances
 
-import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
-)
-
 type Instance struct {
 	// Instance ID
 	ID string `json:"id"`
@@ -48,44 +43,8 @@ type Attachment struct {
 	Device string `json:"device"`
 }
 
-type commonResult struct {
-	golangsdk.Result
-}
-
-// UpdateResult represents the result of a update operation. Call its Extract
-// method to interpret it as a Instance.
-type UpdateResult struct {
-	commonResult
-}
-
-// Extract is a function that accepts a result and extracts a instance.
-func (r commonResult) Extract() (*Instance, error) {
-	response := new(Instance)
-	err := r.ExtractIntoStructPtr(response, "protected_instance")
-	return response, err
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Instance.
-type GetResult struct {
-	commonResult
-}
-
-// InstancePage is a struct which can do the page function
-type InstancePage struct {
-	pagination.SinglePageBase
-}
-
 // IsEmpty determines whether or not a InstancePage is empty.
 func (r InstancePage) IsEmpty() (bool, error) {
-	instances, err := ExtractInstances(r)
+	instances, err := ExtractProtectedInstances(r)
 	return len(instances) == 0, err
-}
-
-// ExtractInstances interprets the results of a single page from
-// a List() API call, producing a slice of []Instance structures.
-func ExtractInstances(r pagination.Page) ([]Instance, error) {
-	var s []Instance
-	err := (r.(InstancePage)).ExtractIntoSlicePtr(&s, "protected_instances")
-	return s, err
 }

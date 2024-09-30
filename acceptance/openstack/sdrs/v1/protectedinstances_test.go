@@ -17,10 +17,7 @@ func TestSDRSInstanceList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := protectedinstances.ListOpts{}
-	allPages, err := protectedinstances.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	sdrsInstances, err := protectedinstances.ExtractInstances(allPages)
+	sdrsInstances, err := protectedinstances.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, instance := range sdrsInstances {
