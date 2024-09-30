@@ -6,12 +6,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// CreateOpts contains all the values needed to create a new instance.
 type CreateOpts struct {
-	ProtectedInstance ProtectedInstance `json:"protected_instance" required:"true"`
-}
-
-// ProtectedInstance contains all the values needed to create a new instance.
-type ProtectedInstance struct {
 	// Group ID
 	GroupID string `json:"server_group_id" required:"true"`
 	// Server ID
@@ -30,7 +26,7 @@ type ProtectedInstance struct {
 
 // Create will create a new Instance based on the values in CreateOpts.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateProtectedInstanceResponse, error) {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "protected_instance")
 	if err != nil {
 		return nil, err
 	}
