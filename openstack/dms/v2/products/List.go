@@ -9,7 +9,7 @@ import (
 )
 
 type ListOpts struct {
-	Engine string `q:"-"`
+	Engine string `json:"-"`
 	// The product ID.
 	ProductId string `q:"product_id"`
 }
