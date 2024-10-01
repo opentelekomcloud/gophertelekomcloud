@@ -16,7 +16,7 @@ type UpdateOpts struct {
 
 // Update accepts a UpdateOpts struct and uses the values to update an Instance.The response code from api is 200
 func Update(client *golangsdk.ServiceClient, instanceId string, opts UpdateOpts) (*Instance, error) {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "protected_instance")
 	if err != nil {
 		return nil, err
 	}
