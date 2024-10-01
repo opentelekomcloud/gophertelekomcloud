@@ -66,6 +66,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 
 	instance, err := protectedinstances.Get(client, jobEntity.(string))
 	th.AssertNoErr(t, err)
+
 	defer func() {
 		t.Logf("Attempting to delete SDRS protected instance: %s", instance.ID)
 		deleteServer := false
@@ -83,6 +84,14 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	}()
 	th.AssertEquals(t, createName, instance.Name)
 	th.AssertEquals(t, createDescription, instance.Description)
+
+	updatedName := tools.RandomString("sdrs-instance-", 4)
+	updateOpts := protectedinstances.UpdateOpts{
+		Name: updatedName,
+	}
+	instance, err = protectedinstances.Update(client, instance.ID, updateOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updatedName, instance.Name)
 
 	t.Logf("Created SDRS protected instance: %s", instance.ID)
 
