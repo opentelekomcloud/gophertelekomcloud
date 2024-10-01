@@ -17,10 +17,7 @@ func TestSDRSInstanceList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := protectedinstances.ListOpts{}
-	allPages, err := protectedinstances.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	sdrsInstances, err := protectedinstances.ExtractInstances(allPages)
+	sdrsInstances, err := protectedinstances.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, instance := range sdrsInstances {
@@ -59,7 +56,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 		Description: createDescription,
 	}
 
-	jobCreate, err := protectedinstances.Create(client, createOpts).ExtractJobResponse()
+	jobCreate, err := protectedinstances.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	err = protectedinstances.WaitForJobSuccess(client, 600, jobCreate.JobID)
 	th.AssertNoErr(t, err)
@@ -67,7 +64,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	jobEntity, err := protectedinstances.GetJobEntity(client, jobCreate.JobID, "protected_instance_id")
 	th.AssertNoErr(t, err)
 
-	instance, err := protectedinstances.Get(client, jobEntity.(string)).Extract()
+	instance, err := protectedinstances.Get(client, jobEntity.(string))
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to delete SDRS protected instance: %s", instance.ID)
@@ -76,7 +73,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 			DeleteTargetServer: &deleteServer,
 		}
 
-		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts).ExtractJobResponse()
+		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts)
 		th.AssertNoErr(t, err)
 
 		err = protectedinstances.WaitForJobSuccess(client, 600, jobDelete.JobID)
