@@ -46,7 +46,7 @@ func TestConnectionLifecycle(t *testing.T) {
 	subnet, err := subnets.Get(clientNetV2, subnetId).Extract()
 	th.AssertNoErr(t, err)
 
-	gw := createEvpnGateway(t, err, subnet, vpcId, client)
+	gw := createEvpnGateway(t, subnet, vpcId, client)
 	customerGw := createEvpnCustomerGateway(t, client)
 
 	name := tools.RandomString("acc_evpn_connection_", 3)
@@ -132,7 +132,7 @@ func createEvpnCustomerGateway(t *testing.T, client *golangsdk.ServiceClient) *c
 	})
 	return gw
 }
-func createEvpnGateway(t *testing.T, err error, subnet *subnets.Subnet, vpcId string, client *golangsdk.ServiceClient) *gateway.Gateway {
+func createEvpnGateway(t *testing.T, subnet *subnets.Subnet, vpcId string, client *golangsdk.ServiceClient) *gateway.Gateway {
 	clientNetV1, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
