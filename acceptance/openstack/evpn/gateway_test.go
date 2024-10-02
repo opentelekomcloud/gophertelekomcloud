@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -82,6 +83,9 @@ func TestGatewayVPCLifecycle(t *testing.T) {
 			ID: eip2.ID,
 		},
 	}
+	// seems eip unavailable for a second after creation so need to wait,
+	// otherwise fails with 500 error
+	time.Sleep(1 * time.Second)
 	t.Logf("Attempting to CREATE Enterprise VPN Gateway: %s", name)
 	gw, err := gateway.Create(client, cOpts)
 	th.AssertNoErr(t, err)
