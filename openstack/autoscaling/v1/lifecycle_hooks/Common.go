@@ -15,7 +15,7 @@ type LifecycleHook struct {
 	// Specifies the topic name in SMN.
 	NotificationTopicName string `json:"notification_topic_name"`
 	// Specifies the notification message.
-	NotificationMetadata string `json:"notification_metadata,omitempty"`
+	NotificationMetadata string `json:"notification_metadata"`
 	// Specifies the UTC-compliant time when the lifecycle hook is created.
 	CreateTime string `json:"create_time"`
 }
