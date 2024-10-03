@@ -34,7 +34,7 @@ func TestGatewaysAZsList(t *testing.T) {
 }
 
 func TestGatewayVPCLifecycle(t *testing.T) {
-	t.Skip("unstable creation of gateway")
+	// t.Skip("unstable creation of gateway")
 	subnetId := os.Getenv("OS_SUBNET_ID")
 	vpcId := os.Getenv("OS_VPC_ID")
 

@@ -140,7 +140,7 @@ type Gateway struct {
 	// Specifies the association mode.
 	AttachmentType string `json:"attachment_type"`
 	// Specifies the AZ where the VPN gateway is deployed.
-	AvailabilityZoneIds string `json:"availability_zone_ids"`
+	AvailabilityZoneIds []string `json:"availability_zone_ids"`
 	// Specifies the ID of the enterprise router instance to which the VPN gateway connects.
 	// This parameter is available only when attachment_type is set to er.
 	ErId string `json:"er_id"`
@@ -212,7 +212,7 @@ type IkePolicyResp struct {
 	// Specifies an authentication algorithm.
 	AuthenticationAlgorithm string `json:"authentication_algorithm,omitempty"`
 	// Specifies the SA lifetime. When the lifetime expires, an IKE SA is automatically updated.
-	LifetimeSeconds string `json:"lifetime_seconds,omitempty"`
+	LifetimeSeconds *int `json:"lifetime_seconds,omitempty"`
 }
 
 type IpsecPolicyResp struct {
@@ -223,7 +223,7 @@ type IpsecPolicyResp struct {
 	// Specifies an authentication algorithm.
 	AuthenticationAlgorithm string `json:"authentication_algorithm,omitempty"`
 	// Specifies the lifetime of a tunnel established over an IPsec connection.
-	LifetimeSeconds string `json:"lifetime_seconds,omitempty"`
+	LifetimeSeconds *int `json:"lifetime_seconds,omitempty"`
 }
 
 type EipResp struct {
