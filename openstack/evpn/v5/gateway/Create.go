@@ -139,6 +139,8 @@ type Gateway struct {
 	NetworkType string `json:"network_type"`
 	// Specifies the association mode.
 	AttachmentType string `json:"attachment_type"`
+	// Specifies the AZ where the VPN gateway is deployed.
+	AvailabilityZoneIds string `json:"availability_zone_ids"`
 	// Specifies the ID of the enterprise router instance to which the VPN gateway connects.
 	// This parameter is available only when attachment_type is set to er.
 	ErId string `json:"er_id"`
