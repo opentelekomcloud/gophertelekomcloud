@@ -12,8 +12,11 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/connection"
+	cm "github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/connection-monitoring"
 	cgw "github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/customer-gateway"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/gateway"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/quota"
+	vpntags "github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/eips"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -73,7 +76,6 @@ func TestConnectionLifecycle(t *testing.T) {
 		t.Logf("Attempting to DELETE Enterprise VPN Connection: %s", gw.ID)
 		th.AssertNoErr(t, connection.Delete(client, conn.ID))
 		th.AssertNoErr(t, WaitForConnectionDeleted(client, conn.ID, 800))
-
 	})
 
 	t.Logf("Attempting to GET Enterprise VPN Connection: %s", conn.ID)
@@ -106,6 +108,52 @@ func TestConnectionLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(connList))
+
+	t.Logf("Attempting to CREATE Enterprise VPN Connection Monitoring")
+	monitoring, err := cm.Create(client, cm.CreateOpts{ConnectionID: conn.ID})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, WaitForConnectionMonitoringActive(client, monitoring.ID, 800))
+	th.AssertEquals(t, conn.ID, monitoring.ConnectionId)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to DELETE Enterprise VPN Connection Monitoring: %s", monitoring.ID)
+		th.AssertNoErr(t, cm.Delete(client, monitoring.ID))
+		th.AssertNoErr(t, WaitForConnectionMonitoringDeleted(client, monitoring.ID, 800))
+	})
+
+	t.Logf("Attempting to GET Enterprise VPN Connection Monitor: %s", monitoring.ID)
+	monitor, err := cm.Get(client, monitoring.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "ACTIVE", monitor.Status)
+
+	t.Logf("Attempting to LIST Enterprise VPN Connection Monitor: %s", monitoring.ID)
+	monitorList, err := cm.List(client, cm.ListOpts{ConnectionId: conn.ID})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(monitorList))
+
+	t.Logf("Attempting to GET Enterprise VPN Quotas: %s", monitoring.ID)
+	quotas, err := quota.Get(client)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 3, len(quotas.Resources))
+
+	extraTag := []tags.ResourceTag{
+		{
+			Key:   "One",
+			Value: "gopher",
+		},
+	}
+	t.Logf("Attempting to CREATE Enterprise VPN Connection Tag: %s", extraTag)
+	err = vpntags.Create(client, "vpn-connection", conn.ID, vpntags.TagsOpts{Tags: extraTag})
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to DELETE Enterprise VPN Connection Tag: %s", extraTag)
+		th.AssertNoErr(t, vpntags.Delete(client, "vpn-connection", conn.ID, vpntags.TagsOpts{Tags: extraTag}))
+	})
+	t.Logf("Attempting to LIST Enterprise VPN Connection Tags: %s", conn.ID)
+	tagList, err := vpntags.List(client, "vpn-connection", conn.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 2, len(tagList))
 }
 
 func createEvpnCustomerGateway(t *testing.T, client *golangsdk.ServiceClient) *cgw.CustomerGateway {
@@ -132,6 +180,7 @@ func createEvpnCustomerGateway(t *testing.T, client *golangsdk.ServiceClient) *c
 	})
 	return gw
 }
+
 func createEvpnGateway(t *testing.T, subnet *subnets.Subnet, vpcId string, client *golangsdk.ServiceClient) *gateway.Gateway {
 	clientNetV1, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
@@ -205,6 +254,33 @@ func WaitForConnectionActive(c *golangsdk.ServiceClient, id string, secs int) er
 		}
 
 		if current.Status == "ACTIVE" || current.Status == "DOWN" {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+func WaitForConnectionMonitoringDeleted(c *golangsdk.ServiceClient, id string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		_, err := cm.Get(c, id)
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, fmt.Errorf("error retriving connection status: %w", err)
+		}
+		return false, nil
+	})
+}
+
+func WaitForConnectionMonitoringActive(c *golangsdk.ServiceClient, id string, secs int) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		current, err := cm.Get(c, id)
+		if err != nil {
+			return false, err
+		}
+
+		if current.Status == "ACTIVE" {
 			return true, nil
 		}
 		return false, nil
