@@ -11,8 +11,6 @@ import (
 )
 
 func TestLifecycleHooksLifecycle(t *testing.T) {
-	client, err := clients.NewAutoscalingV1Client()
-	th.AssertNoErr(t, err)
 
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
@@ -20,10 +18,10 @@ func TestLifecycleHooksLifecycle(t *testing.T) {
 		t.Skip("OS_NETWORK_ID or OS_VPC_ID env vars are missing but are required for AS Lifecycle Hooks test")
 	}
 
+	client, err := clients.NewAutoscalingV1Client()
+	th.AssertNoErr(t, err)
+
 	groupID := autoscaling.CreateAutoScalingGroup(t, client, networkID, vpcID, tools.RandomString("as-group-create-", 3))
-	t.Cleanup(func() {
-		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
-	})
 
 	topicName := tools.RandomString("as-lifecycle-hooks-topic-", 3)
 	t.Logf("Attempting to create Topic: %s", topicName)
@@ -31,7 +29,6 @@ func TestLifecycleHooksLifecycle(t *testing.T) {
 	if err != nil {
 		t.Logf("Error while creating the notification topic: %s", topicName)
 	}
-	defer autoscaling.DeleteTopic(t, topicURN)
 	lifecycleHookName := tools.RandomString("as-lifecycle-hook-create-", 3)
 	createOpts := lifecyclehooks.CreateOpts{
 		LifecycleHookName:    lifecycleHookName,
@@ -66,8 +63,13 @@ func TestLifecycleHooksLifecycle(t *testing.T) {
 		tools.PrintResource(t, lifecycleHook)
 	}
 
-	t.Logf("Attempting to delete Lifecycle Hook")
-	err = lifecyclehooks.Delete(client, groupID, lifecycleHookName)
-	th.AssertNoErr(t, err)
-	t.Logf("Deleted Lifecycle Hook: %s", lifecycleHookName)
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete Lifecycle Hook")
+		err = lifecyclehooks.Delete(client, groupID, lifecycleHookName)
+		th.AssertNoErr(t, err)
+		t.Logf("Deleted Lifecycle Hook: %s", lifecycleHookName)
+
+		autoscaling.DeleteTopic(t, topicURN)
+		autoscaling.DeleteAutoScalingGroup(t, client, groupID)
+	})
 }
