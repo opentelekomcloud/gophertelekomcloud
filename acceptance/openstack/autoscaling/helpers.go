@@ -4,18 +4,31 @@ import (
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/configurations"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/autoscaling/v1/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/smn/v2/topics"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, networkID, vpcID, asName string) string {
 	defaultSGID := openstack.DefaultSecurityGroup(t)
 
+	asCreateName := tools.RandomString("as-create-", 3)
+	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
+	imageID := clients.EnvOS.GetEnv("IMAGE_ID")
+	if keyPairName == "" || imageID == "" {
+		t.Skip("OS_KEYPAIR_NAME or OS_IMAGE_ID env vars is missing but AS Configuration test requires")
+	}
+
+	configID := CreateASConfig(t, client, asCreateName, imageID, keyPairName)
+
 	createOpts := groups.CreateOpts{
-		Name: asName,
+		Name:            asName,
+		ConfigurationID: configID,
 		Networks: []groups.ID{
 			{
 				ID: networkID,
@@ -41,12 +54,17 @@ func CreateAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, netwo
 }
 
 func DeleteAutoScalingGroup(t *testing.T, client *golangsdk.ServiceClient, groupID string) {
+	group, err := groups.Get(client, groupID)
+	th.AssertNoErr(t, err)
+	configID := group.ConfigurationID
 	t.Logf("Attempting to delete AutoScaling Group")
-	err := groups.Delete(client, groups.DeleteOpts{
+	err = groups.Delete(client, groups.DeleteOpts{
 		ScalingGroupId: groupID,
 	})
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted AutoScaling Group: %s", groupID)
+
+	DeleteASConfig(t, client, configID)
 }
 
 func CreateASConfig(t *testing.T, client *golangsdk.ServiceClient, asCreateName string, imageID string, keyPairName string) string {
@@ -86,4 +104,23 @@ func DeleteASConfig(t *testing.T, client *golangsdk.ServiceClient, configID stri
 	err := configurations.Delete(client, configID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted AutoScaling Configuration: %s", configID)
+}
+
+func GetNotificationTopicURN(topicName string) (string, error) {
+	client, _ := clients.NewSmnV2Client()
+
+	opts := topics.CreateOps{
+		Name: topicName,
+	}
+	topic, err := topics.Create(client, opts).Extract()
+
+	return topic.TopicUrn, err
+}
+
+func DeleteTopic(t *testing.T, topicURN string) {
+	client, _ := clients.NewSmnV2Client()
+	err := topics.Delete(client, topicURN).ExtractErr()
+	if err != nil {
+		t.Logf("Error while deleting the topic: %s", topicURN)
+	}
 }
