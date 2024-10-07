@@ -119,8 +119,10 @@ func GetNotificationTopicURN(topicName string) (string, error) {
 
 func DeleteTopic(t *testing.T, topicURN string) {
 	client, _ := clients.NewSmnV2Client()
+	t.Logf("Attempting to Delete Topic: %s", topicURN)
 	err := topics.Delete(client, topicURN).ExtractErr()
 	if err != nil {
 		t.Logf("Error while deleting the topic: %s", topicURN)
 	}
+	t.Logf("Deleted Topic: %s", topicURN)
 }

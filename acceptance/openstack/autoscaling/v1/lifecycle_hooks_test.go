@@ -26,12 +26,13 @@ func TestLifecycleHooksLifecycle(t *testing.T) {
 	})
 
 	topicName := tools.RandomString("as-lifecycle-hooks-topic-", 3)
-	lifecycleHookName := tools.RandomString("as-lifecycle-hook-create-", 3)
+	t.Logf("Attempting to create Topic: %s", topicName)
 	topicURN, err := autoscaling.GetNotificationTopicURN(topicName)
 	if err != nil {
 		t.Logf("Error while creating the notification topic: %s", topicName)
 	}
 	defer autoscaling.DeleteTopic(t, topicURN)
+	lifecycleHookName := tools.RandomString("as-lifecycle-hook-create-", 3)
 	createOpts := lifecyclehooks.CreateOpts{
 		LifecycleHookName:    lifecycleHookName,
 		LifecycleHookType:    "INSTANCE_LAUNCHING",
@@ -41,7 +42,7 @@ func TestLifecycleHooksLifecycle(t *testing.T) {
 	t.Logf("Attempting to create Lifecycle Hook")
 	lifecycleHook, err := lifecyclehooks.Create(client, createOpts, groupID)
 	th.AssertNoErr(t, err)
-	t.Logf("Ceate Lifecycle Hook: %s", lifecycleHook.LifecycleHookName)
+	t.Logf("Created Lifecycle Hook: %s", lifecycleHook.LifecycleHookName)
 
 	requestedLifecycleHook, err := lifecyclehooks.Get(client, groupID, lifecycleHookName)
 	th.AssertNoErr(t, err)
@@ -57,6 +58,13 @@ func TestLifecycleHooksLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOpts.LifecycleHookType, lifecycleHook.LifecycleHookType)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated Lifecycle Hook: %s", lifecycleHookName)
+
+	t.Logf("Listing all Lifecycle Hooks")
+	lifecycleHooks, err := lifecyclehooks.List(client, groupID)
+	th.AssertNoErr(t, err)
+	for _, lifecycleHook := range lifecycleHooks {
+		tools.PrintResource(t, lifecycleHook)
+	}
 
 	t.Logf("Attempting to delete Lifecycle Hook")
 	err = lifecyclehooks.Delete(client, groupID, lifecycleHookName)
