@@ -27,8 +27,6 @@ func TestGroupsList(t *testing.T) {
 }
 
 func TestGroupLifecycle(t *testing.T) {
-	client, err := clients.NewAutoscalingV1Client()
-	th.AssertNoErr(t, err)
 
 	asGroupCreateName := tools.RandomString("as-group-create-", 3)
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
@@ -36,6 +34,9 @@ func TestGroupLifecycle(t *testing.T) {
 	if networkID == "" {
 		t.Skip("OS_NETWORK_ID or OS_VPC_ID env vars are missing but AS Group test requires")
 	}
+
+	client, err := clients.NewAutoscalingV1Client()
+	th.AssertNoErr(t, err)
 
 	secGroupID := openstack.CreateSecurityGroup(t)
 	t.Cleanup(func() {

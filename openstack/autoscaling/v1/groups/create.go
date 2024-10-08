@@ -1,7 +1,7 @@
 package groups
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -10,7 +10,7 @@ type CreateOpts struct {
 	// Specifies the AS group name. The name contains only letters, digits, underscores (_), and hyphens (-), and cannot exceed 64 characters.
 	Name string `json:"scaling_group_name" required:"true"`
 	// Specifies the AS configuration ID, which can be obtained using the API for querying AS configurations.
-	ConfigurationID string `json:"scaling_configuration_id,omitempty"`
+	ConfigurationID string `json:"scaling_configuration_id" required:"true"`
 	// Specifies the expected number of instances. The default value is the minimum number of instances.
 	// The value ranges from the minimum number of instances to the maximum number of instances.
 	DesireInstanceNumber int `json:"desire_instance_number,omitempty"`
