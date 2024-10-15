@@ -6,17 +6,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type ModifyNameOpts struct {
-	// Name of a DDM instance, which:
-	// Can include 4 to 64 characters.
-	// Must start with a letter.
-	// Can contain only letters, digits, and hyphens (-).
-	Name string `json:"name" required:"true"`
-}
-
 // This function is used to modify the name of a DDM instance.
-func ModifyName(client *golangsdk.ServiceClient, instanceId string, opts ModifyNameOpts) (*ModifyNameResponse, error) {
-	b, err := build.RequestBody(opts, "")
+// name is the name of a DDM instance, which:
+// Can include 4 to 64 characters.
+// Must start with a letter.
+// Can contain only letters, digits, and hyphens (-).
+func Rename(client *golangsdk.ServiceClient, instanceId string, name string) (*string, error) {
+	b, err := build.RequestBody(name, "name")
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +26,8 @@ func ModifyName(client *golangsdk.ServiceClient, instanceId string, opts ModifyN
 	}
 
 	var res ModifyNameResponse
-	return &res, extract.Into(raw.Body, &res)
+	err = extract.Into(raw.Body, &res)
+	return &res.Name, err
 }
 
 type ModifyNameResponse struct {
