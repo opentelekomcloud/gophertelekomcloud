@@ -6,11 +6,11 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type deleteQueryParams struct {
+type DeleteQueryParams struct {
 	// Query param: ?delete_rds_data
 	// This specifies whether data stored on the associated DB instances is deleted.
 	// Default value: delete_rds_data=false.
-	deleteRdsData string `q:"delete_rds_data"`
+	DeleteRdsData string `q:"delete_rds_data"`
 }
 
 // This function is used to delete a DDM instance to release all its resources.
@@ -21,12 +21,15 @@ func Delete(client *golangsdk.ServiceClient, instanceId string, deleteRdsData bo
 		deleteData = "true"
 	}
 	// DELETE https://{Endpoint}/v1/{project_id}/instances/{instance_id}?delete_rds_data=false(OR true)
-	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId).WithQueryParams(&deleteQueryParams{deleteRdsData: deleteData}).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId).WithQueryParams(&DeleteQueryParams{DeleteRdsData: deleteData}).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Delete(client.ServiceURL(url.String()), nil)
+	raw, err := client.Delete(client.ServiceURL(url.String()), &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+	})
 
 	if err != nil {
 		return nil, err
