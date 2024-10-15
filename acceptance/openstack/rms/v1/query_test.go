@@ -10,6 +10,7 @@ import (
 )
 
 func TestSpecificResourceTypeList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -26,6 +27,7 @@ func TestSpecificResourceTypeList(t *testing.T) {
 }
 
 func TestRecorderResourceList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -54,6 +56,7 @@ func TestServicesList(t *testing.T) {
 }
 
 func TestGetSpecificByIdResource(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -80,6 +83,7 @@ func TestGetSpecificByIdResource(t *testing.T) {
 }
 
 func TestRecordedResourcesTagsList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -94,6 +98,7 @@ func TestRecordedResourcesTagsList(t *testing.T) {
 }
 
 func TestRecordedResourcesSummaryList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -108,6 +113,7 @@ func TestRecordedResourcesSummaryList(t *testing.T) {
 }
 
 func TestAllResourcesList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -122,6 +128,7 @@ func TestAllResourcesList(t *testing.T) {
 }
 
 func TestAnyResourceById(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -144,6 +151,7 @@ func TestAnyResourceById(t *testing.T) {
 }
 
 func TestGetTagsFromAnyResource(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -158,6 +166,7 @@ func TestGetTagsFromAnyResource(t *testing.T) {
 }
 
 func TestGetCountResources(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -172,6 +181,7 @@ func TestGetCountResources(t *testing.T) {
 }
 
 func TestResourcesSummaryList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
