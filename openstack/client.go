@@ -1002,3 +1002,7 @@ func NewEVPNServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpt
 	}
 	return sc, nil
 }
+
+func NewRmsServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "rms")
+}
