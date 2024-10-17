@@ -6,10 +6,8 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 
-	// common "github.com/opentelekomcloud/gophertelekomcloud/openstack/ddm/v1"
 	ddminstances "github.com/opentelekomcloud/gophertelekomcloud/openstack/ddm/v1/instances"
 	rdsinstances "github.com/opentelekomcloud/gophertelekomcloud/openstack/rds/v3/instances"
 
@@ -29,20 +27,21 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *rd
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
 	kmsID := clients.EnvOS.GetEnv("KMS_ID")
-	if vpcID == "" || subnetID == "" {
-		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	secGroupId := clients.EnvOS.GetEnv("SECURITY_GROUP")
+	if vpcID == "" || subnetID == "" || secGroupId == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID or OS_SECURITY_GROUP env vars is missing but RDS test requires using existing network")
 	}
 
 	createRdsOpts := rdsinstances.CreateRdsOpts{
 		Name:             rdsName,
-		Port:             "8635",
+		Port:             "3306",
 		Password:         "acc-test-password1!",
-		FlavorRef:        "rds.pg.c2.medium",
+		FlavorRef:        "rds.mysql.c2.medium",
 		Region:           region,
 		AvailabilityZone: az,
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
-		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
+		SecurityGroupId:  secGroupId,
 		DiskEncryptionId: kmsID,
 
 		Volume: &rdsinstances.Volume{
@@ -50,11 +49,11 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *rd
 			Size: 100,
 		},
 		Datastore: &rdsinstances.Datastore{
-			Type:    "PostgreSQL",
-			Version: "11",
+			Type:    "MySQL",
+			Version: "8.0",
 		},
 		UnchangeableParam: &rdsinstances.Param{
-			LowerCaseTableNames: "0",
+			LowerCaseTableNames: "1",
 		},
 	}
 
@@ -62,6 +61,7 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *rd
 	th.AssertNoErr(t, err)
 	err = rdsinstances.WaitForJobCompleted(client, 1200, rds.JobId)
 	th.AssertNoErr(t, err)
+
 	t.Logf("Created RDSv3: %s", rds.Instance.Id)
 
 	return &rds.Instance
