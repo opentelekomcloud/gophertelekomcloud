@@ -32,10 +32,10 @@ type CreateDatabaseDetail struct {
 	// The value ranges from 1 (min) to 64 (max) if the schema is sharded.
 	ShardUnit int `json:"shard_unit,omitempty"`
 	// RDS instances associated with the schema
-	UsedRds []DatabaseInstabcesParam `json:"used_rds" required:"true"`
+	UsedRds []DatabaseInstancesParam `json:"used_rds" required:"true"`
 }
 
-type DatabaseInstabcesParam struct {
+type DatabaseInstancesParam struct {
 	// ID of the RDS instance associated with the schema
 	Id string `json:"id" required:"true"`
 	// Username for logging in to the associated RDS instance

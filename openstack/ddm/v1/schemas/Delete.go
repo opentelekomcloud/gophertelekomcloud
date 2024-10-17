@@ -15,15 +15,15 @@ type deleteQueryParams struct {
 }
 
 // This function  is used to delete a schema to release all its resources.
-// databaseName is the name of the schema to be queried, which is case-insensitive
-func DeleteSchema(client *golangsdk.ServiceClient, instanceId string, databaseName string, deleteRdsData bool) (*string, error) {
+// schemaName is the name of the schema to be queried, which is case-insensitive
+func DeleteSchema(client *golangsdk.ServiceClient, instanceId string, schemaName string, deleteRdsData bool) (*string, error) {
 
 	deleteData := "false"
 	if deleteRdsData {
 		deleteData = "true"
 	}
 	// DELETE /v1/{project_id}/instances/{instance_id}/databases/{ddm_dbname}?delete_rds_data={delete_rds_data}
-	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "databases", databaseName).WithQueryParams(&deleteQueryParams{deleteRdsData: deleteData}).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "databases", schemaName).WithQueryParams(&deleteQueryParams{deleteRdsData: deleteData}).Build()
 	if err != nil {
 		return nil, err
 	}

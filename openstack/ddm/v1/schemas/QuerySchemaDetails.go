@@ -6,11 +6,11 @@ import (
 )
 
 // This API is used to query details about a schema.
-// databaseName is the name of the schema to be queried, which is case-insensitive
-func QuerySchemaDetails(client *golangsdk.ServiceClient, instanceId string, databaseName string) (*QuerySchemaDetailsResponse, error) {
+// schemaName is the name of the schema to be queried, which is case-insensitive
+func QuerySchemaDetails(client *golangsdk.ServiceClient, instanceId string, schemaName string) (*QuerySchemaDetailsResponse, error) {
 
 	// GET /v1/{project_id}/instances/{instance_id}/databases/{ddm_dbname}
-	raw, err := client.Get(client.ServiceURL("instances", instanceId, "databases", databaseName), nil, nil)
+	raw, err := client.Get(client.ServiceURL("instances", instanceId, "databases", schemaName), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func QuerySchemaDetails(client *golangsdk.ServiceClient, instanceId string, data
 }
 
 type QuerySchemaDetailsResponse struct {
-	Database []GetDatabaseResponseBean `json:"database"`
+	Database GetDatabaseResponseBean `json:"database"`
 }
 
 // GetDatabaseResponseBean represents the response for database details
