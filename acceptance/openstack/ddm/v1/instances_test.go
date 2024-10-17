@@ -5,8 +5,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-
-	// common "github.com/opentelekomcloud/gophertelekomcloud/openstack/ddm/v1"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ddm/v1/instances"
 
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"

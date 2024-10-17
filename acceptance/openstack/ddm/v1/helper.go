@@ -108,7 +108,7 @@ func CreateDDMInstance(t *testing.T, client *golangsdk.ServiceClient) *ddminstan
 	t.Logf("Creating DDM Instance: %s", instanceName)
 	ddmInstance, err := ddminstances.Create(client, createOpts)
 	th.AssertNoErr(t, err)
-	golangsdk.WaitFor(1200, func() (bool, error) {
+	err = golangsdk.WaitFor(1200, func() (bool, error) {
 		instanceDetails, err := ddminstances.QueryInstanceDetails(client, ddmInstance.Id)
 		if err != nil {
 			return false, err
@@ -120,6 +120,7 @@ func CreateDDMInstance(t *testing.T, client *golangsdk.ServiceClient) *ddminstan
 		}
 		return false, nil
 	})
+	th.AssertNoErr(t, err)
 	t.Logf("Created DDM Instance: %s\nDDM instance ID: %s", instanceName, ddmInstance.Id)
 	return ddmInstance
 }
