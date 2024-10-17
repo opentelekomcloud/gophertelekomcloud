@@ -29,11 +29,11 @@ type GetDatabaseResponseBean struct {
 	// Schema name
 	Name string `json:"name"`
 	// Time when the schema is created
-	Created string `json:"created"`
+	Created uint64 `json:"created"`
 	// Schema status
 	Status string `json:"status"`
 	// Time when the DDM instance is last updated
-	Updated string `json:"updated"`
+	Updated uint64 `json:"updated"`
 	// Sharding information of the schema
 	Databases []GetDatabases `json:"databases"`
 	// Sharding mode of the schema
@@ -59,9 +59,9 @@ type GetDatabases struct {
 	// Shard status
 	Status string `json:"status"`
 	// Time when the shard is created
-	Created string `json:"created"`
+	Created uint64 `json:"created"`
 	// Time when the shard is last updated
-	Updated string `json:"updated"`
+	Updated uint64 `json:"updated"`
 	// ID of the RDS instance where the shard is located
 	Id string `json:"id"`
 	// Name of the RDS instance where the shard is located
