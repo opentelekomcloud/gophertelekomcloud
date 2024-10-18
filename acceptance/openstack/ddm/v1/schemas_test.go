@@ -97,3 +97,18 @@ func TestDDMSchemasLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted DDM Schema: %s", schemaName)
 }
+
+func TestDDMQueryAvailableDbInstances(t *testing.T) {
+	// CREATE CLIENT
+	client, err := clients.NewDDMV1Client()
+	th.AssertNoErr(t, err)
+
+	ddmInstance := CreateDDMInstance(t, client)
+	t.Cleanup(func() {
+		DeleteDDMInstance(t, client, ddmInstance.Id)
+	})
+
+	queryAvailableDbOpts := schemas.QueryAvailableDbOpts{}
+	_, err = schemas.QueryAvailableDb(client, ddmInstance.Id, queryAvailableDbOpts)
+	th.AssertNoErr(t, err)
+}
