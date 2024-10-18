@@ -11,6 +11,7 @@ import (
 )
 
 func TestAllPoliciesList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -25,6 +26,7 @@ func TestAllPoliciesList(t *testing.T) {
 }
 
 func TestComplianceList(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
@@ -62,6 +64,7 @@ func TestComplianceList(t *testing.T) {
 }
 
 func TestComplianceLifecycle(t *testing.T) {
+	t.Skip("You are not authorized with rms:resources:list impossible to run within CI")
 	client, err := clients.NewRMSClient()
 	th.AssertNoErr(t, err)
 
