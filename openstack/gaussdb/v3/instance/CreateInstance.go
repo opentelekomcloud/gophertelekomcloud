@@ -54,9 +54,6 @@ type CreateInstanceOpts struct {
 	MasterAvailabilityZone string `json:"master_availability_zone,omitempty"`
 	// Number of created read replicas. The value ranges from 1 to 9. An instance contains up to 15 read replicas.
 	SlaveCount *int `json:"slave_count"`
-	// Volume information.
-	// Missing in documentation
-	Volume *MysqlVolume `json:"volume,omitempty"`
 	// Tag list. Instances are created based on tag keys and values.
 	// {key} indicates the tag key. It must be unique and cannot be empty.
 	// {value} indicates the tag value, which can be empty. To create instances with multiple tag keys and values,
@@ -64,12 +61,6 @@ type CreateInstanceOpts struct {
 	Tags []MysqlTags `json:"tags,omitempty"`
 	// Dedicated resource pool ID. This parameter can be displayed only after the dedicated resource pool is enabled.
 	DedicatedResourceId string `json:"dedicated_resource_id,omitempty"`
-}
-
-type MysqlVolume struct {
-	// Storage space. The default value is 40 in GB.
-	// The value ranges from 40 GB to 128,000 GB and must be a multiple of 10.
-	Size string `json:"size"`
 }
 
 type MysqlTags struct {
