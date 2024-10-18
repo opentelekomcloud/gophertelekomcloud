@@ -7,7 +7,7 @@ import (
 
 type QueryNodeClassesOpts struct {
 	// Engine ID, which can be obtained by calling the API for querying DDM engine information.
-	EngineId string `q:"engine_id"`
+	EngineId string `q:"engine_id" required:"true"`
 	// Specifies the Index offset.
 	// The query starts from the next piece of data indexed by this parameter. The value is 0 by default.
 	// The value must be a positive integer.
