@@ -138,3 +138,17 @@ func DeleteDDMInstance(t *testing.T, client *golangsdk.ServiceClient, instanceId
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted DDM Instance with ID: %s", instanceId)
 }
+
+func WaitForInstanceInRunningState(client *golangsdk.ServiceClient, ddmInstanceId string) error {
+	return golangsdk.WaitFor(1200, func() (bool, error) {
+		instanceDetails, err := ddminstances.QueryInstanceDetails(client, ddmInstanceId)
+		if err != nil {
+			return false, err
+		}
+		time.Sleep(5 * time.Second)
+		if instanceDetails.Status == "RUNNING" {
+			return true, nil
+		}
+		return false, nil
+	})
+}
