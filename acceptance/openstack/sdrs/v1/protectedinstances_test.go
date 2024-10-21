@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/domains"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/protectedinstances"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/sdrs/v1/protectiongroups"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -16,10 +17,7 @@ func TestSDRSInstanceList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := protectedinstances.ListOpts{}
-	allPages, err := protectedinstances.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	sdrsInstances, err := protectedinstances.ExtractInstances(allPages)
+	sdrsInstances, err := protectedinstances.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, instance := range sdrsInstances {
@@ -58,7 +56,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 		Description: createDescription,
 	}
 
-	jobCreate, err := protectedinstances.Create(client, createOpts).ExtractJobResponse()
+	jobCreate, err := protectedinstances.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	err = protectedinstances.WaitForJobSuccess(client, 600, jobCreate.JobID)
 	th.AssertNoErr(t, err)
@@ -66,8 +64,9 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	jobEntity, err := protectedinstances.GetJobEntity(client, jobCreate.JobID, "protected_instance_id")
 	th.AssertNoErr(t, err)
 
-	instance, err := protectedinstances.Get(client, jobEntity.(string)).Extract()
+	instance, err := protectedinstances.Get(client, jobEntity.(string))
 	th.AssertNoErr(t, err)
+
 	defer func() {
 		t.Logf("Attempting to delete SDRS protected instance: %s", instance.ID)
 		deleteServer := false
@@ -75,7 +74,7 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 			DeleteTargetServer: &deleteServer,
 		}
 
-		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts).ExtractJobResponse()
+		jobDelete, err := protectedinstances.Delete(client, instance.ID, deleteOpts)
 		th.AssertNoErr(t, err)
 
 		err = protectedinstances.WaitForJobSuccess(client, 600, jobDelete.JobID)
@@ -86,5 +85,36 @@ func TestSDRSInstanceLifecycle(t *testing.T) {
 	th.AssertEquals(t, createName, instance.Name)
 	th.AssertEquals(t, createDescription, instance.Description)
 
+	updatedName := tools.RandomString("sdrs-instance-", 4)
+	updateOpts := protectedinstances.UpdateOpts{
+		Name: updatedName,
+	}
+	instance, err = protectedinstances.Update(client, instance.ID, updateOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updatedName, instance.Name)
+
 	t.Logf("Created SDRS protected instance: %s", instance.ID)
+
+	jobEnable, err := protectiongroups.Enable(client, group.Id)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Waiting for SDRS group enabling job %s", jobEnable.JobID)
+	err = protectiongroups.WaitForJobSuccess(client, 600, jobEnable.JobID)
+	th.AssertNoErr(t, err)
+
+	getEnablePg, err := protectiongroups.Get(client, group.Id)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "protected", getEnablePg.Status)
+
+	jobDisable, err := protectiongroups.Disable(client, group.Id)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Waiting for SDRS group disabling job %s", jobDisable.JobID)
+	err = protectiongroups.WaitForJobSuccess(client, 600, jobDisable.JobID)
+	th.AssertNoErr(t, err)
+
+	getDisabledPg, err := protectiongroups.Get(client, group.Id)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "available", getDisabledPg.Status)
+
 }

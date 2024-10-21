@@ -6,8 +6,9 @@ import (
 )
 
 type CreateOpts struct {
-	UserName   string `json:"user_name,omitempty"`
-	UserPasswd string `json:"user_passwd,omitempty"`
+	UserName    string `json:"user_name,omitempty"`
+	UserPasswd  string `json:"user_passwd,omitempty"`
+	Description string `json:"user_desc,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, instanceId string, opts CreateOpts) error {
