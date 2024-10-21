@@ -29,9 +29,11 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (*HostedConn
 	raw, err := c.Put(c.ServiceURL("dcaas", "hosted-connects", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res HostedConnect
-
 	err = extract.IntoStructPtr(raw.Body, &res, "hosted_connect")
 	return &res, err
 }
