@@ -63,3 +63,23 @@ func TestDDMInstancesV2Scaling(t *testing.T) {
 
 }
 
+// MANUAL TEST
+func TestDDMInstancesV2ModifyReadPolicy(t *testing.T) {
+	t.Skip("Impossible to run with CI")
+
+	// CREATE V2 ClIENT
+	ddmv2client, err := clients.NewDDMV2Client()
+	th.AssertNoErr(t, err)
+
+	ddmInstanceId := "6f24dd2d4f83469b870fcf9fbc7a5180in09"
+	modifyDbReadPolicyOpts := instances.ModifyDbReadPolicyOpts{
+		ReadWeight: map[string]int{
+			"55d93e249b77461b81f990fa805db3f3in01": 60,
+		},
+	}
+
+	modifyDbReadPolicy, err := instances.ModifyDbReadPolicy(ddmv2client, ddmInstanceId, modifyDbReadPolicyOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, modifyDbReadPolicy.Success, true)
+
+}
