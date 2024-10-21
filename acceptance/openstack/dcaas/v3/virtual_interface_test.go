@@ -9,7 +9,6 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	direct_connect "github.com/opentelekomcloud/gophertelekomcloud/openstack/dcaas/v2/direct-connect"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcaas/v3/virtual-gateway"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dcaas/v3/virtual-interface"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
@@ -17,6 +16,7 @@ import (
 )
 
 func TestVirtualInterfaceListing(t *testing.T) {
+	t.Skip("This API only available in eu-ch2 region for now")
 	client, err := clients.NewDCaaSV3Client()
 	th.AssertNoErr(t, err)
 
@@ -31,28 +31,13 @@ func TestVirtualInterfaceListing(t *testing.T) {
 }
 
 func TestVirtualInterfaceLifecycle(t *testing.T) {
-	if os.Getenv("RUN_DCAAS_VIRTUAL_INTERFACE") == "" {
-		t.Skip("DIRECT_CONNECT_ID necessary for this test or run it only in test_terraform")
-	}
+	t.Skip("This API only available in eu-ch2 region for now")
+	dcID := os.Getenv("DIRECT_CONNECT_ID")
 	vpcID := os.Getenv("OS_VPC_ID")
-	if vpcID == "" {
-		t.Skip("OS_VPC_ID necessary for this test")
+	if vpcID == "" && dcID == "" {
+		t.Skip("DIRECT_CONNECT_ID and OS_VPC_ID necessary for this test")
 	}
-	clientV2, err := clients.NewDCaaSV2Client()
-	th.AssertNoErr(t, err)
-	clientV3, err := clients.NewDCaaSV3Client()
-	th.AssertNoErr(t, err)
-
-	name := strings.ToLower(tools.RandomString("acc-direct-connect", 5))
-	createOpts := direct_connect.CreateOpts{
-		Name:      name,
-		PortType:  "1G",
-		Bandwidth: 100,
-		Location:  "Biere",
-		Provider:  "OTC",
-	}
-
-	dc, err := direct_connect.Create(clientV2, createOpts)
+	client, err := clients.NewDCaaSV3Client()
 	th.AssertNoErr(t, err)
 
 	clientNet, err := clients.NewNetworkV1Client()
@@ -60,10 +45,10 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 	vpc, err := vpcs.Get(clientNet, vpcID).Extract()
 	th.AssertNoErr(t, err)
 
-	// Create a virtual gateway
-	nameVgw := strings.ToLower(tools.RandomString("acc-virtual-gateway-v3-", 5))
-	vgOpts := virtual_gateway.CreateOpts{
-		Name:         nameVgw,
+	t.Logf("Attempting to create DCaaSv3 virtual gateway")
+	name := strings.ToLower(tools.RandomString("acc-virtual-gateway-v3-", 5))
+	createOpts := virtual_gateway.CreateOpts{
+		Name:         name,
 		VpcId:        vpcID,
 		Description:  "acc-virtual-gateway-v3",
 		LocalEpGroup: []string{vpc.CIDR},
@@ -74,20 +59,19 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 			},
 		},
 	}
-
-	vg, err := virtual_gateway.Create(clientV3, vgOpts)
+	vg, err := virtual_gateway.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = virtual_gateway.Delete(clientV3, vg.ID)
+		err = virtual_gateway.Delete(client, vg.ID)
 		th.AssertNoErr(t, err)
 	})
 
-	// Create a virtual interface
+	t.Logf("Attempting to create DCaaSv3 virtual interface")
 	nameVi := tools.RandomString("acc-virtual-interface-", 5)
 	viOpts := virtual_interface.CreateOpts{
 		Name:              nameVi,
-		DirectConnectID:   dc.ID,
+		DirectConnectID:   dcID,
 		VgwId:             vg.ID,
 		Type:              "private",
 		ServiceType:       "vpc",
@@ -96,26 +80,33 @@ func TestVirtualInterfaceLifecycle(t *testing.T) {
 		LocalGatewayV4IP:  "16.16.16.1/30",
 		RemoteGatewayV4IP: "16.16.16.2/30",
 		RouteMode:         "static",
-		RemoteEpGroup:     []string{vpc.CIDR},
+		RemoteEpGroup:     []string{"16.16.16.0/30"},
 	}
-
-	created, err := virtual_interface.Create(clientV3, viOpts)
+	created, err := virtual_interface.Create(client, viOpts)
 	th.AssertNoErr(t, err)
 
-	vi, err := virtual_interface.Get(clientV3, created.ID)
+	t.Logf("Attempting to obtain DCaaSv3 virtual interface: %s", created.ID)
+	vi, err := virtual_interface.Get(client, created.ID)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, vi.RemoteEpGroup[0], vpc.CIDR)
+	th.AssertEquals(t, "16.16.16.0/30", vi.RemoteEpGroup[0])
 
-	updated, err := virtual_interface.Update(clientV3, created.ID, virtual_interface.UpdateOpts{
+	t.Logf("Attempting to update DCaaSv3 virtual interface: %s", created.ID)
+	updated, err := virtual_interface.Update(client, created.ID, virtual_interface.UpdateOpts{
 		Name:        name + "-updated",
 		Description: pointerto.String("New description"),
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name+"-updated", updated.Name)
+	th.AssertEquals(t, "New description", updated.Description)
 
-	// Cleanup
+	t.Logf("Attempting to obtain list of DCaaSv3 virtual interfaces")
+	viList, err := virtual_interface.List(client, virtual_interface.ListOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(viList))
+
 	t.Cleanup(func() {
-		err = virtual_interface.Delete(clientV3, created.ID)
+		t.Logf("Attempting to delete DCaaSv3 virtual interface: %s", created.ID)
+		err = virtual_interface.Delete(client, created.ID)
 		th.AssertNoErr(t, err)
 	})
 }

@@ -15,6 +15,7 @@ import (
 )
 
 func TestVirtualGatewayListing(t *testing.T) {
+	t.Skip("This API only available in eu-ch2 region for now")
 	client, err := clients.NewDCaaSV3Client()
 	th.AssertNoErr(t, err)
 
@@ -40,7 +41,8 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	vpc, err := vpcs.Get(clientNet, vpcID).Extract()
 	th.AssertNoErr(t, err)
-	// Create a virtual gateway
+
+	t.Logf("Attempting to create DCaaSv3 virtual gateway")
 	name := strings.ToLower(tools.RandomString("acc-virtual-gateway-v3-", 5))
 	createOpts := virtual_gateway.CreateOpts{
 		Name:         name,
@@ -58,10 +60,12 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	created, err := virtual_gateway.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
+	t.Logf("Attempting to obtain DCaaSv3 virtual gateway: %s", created.ID)
 	vgw, err := virtual_gateway.Get(client, created.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name, vgw.Name)
 
+	t.Logf("Attempting to update DCaaSv3 virtual gateway: %s", created.ID)
 	nameUpdated := strings.ToLower(tools.RandomString("acc-virtual-gateway-v3-up", 5))
 	updateOpts := virtual_gateway.UpdateOpts{
 		Name:        nameUpdated,
@@ -71,12 +75,15 @@ func TestVirtualGatewayLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, nameUpdated, updated.Name)
 
-	opts := virtual_gateway.ListOpts{}
-	gateways, err := virtual_gateway.List(client, opts)
+	t.Logf("Attempting to obtain list of DCaaSv3 virtual gateways: %s", created.ID)
+	gateways, err := virtual_gateway.List(client, virtual_gateway.ListOpts{
+		VpcId: vpcID,
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(gateways))
 
 	t.Cleanup(func() {
+		t.Logf("Attempting to delete DCaaSv3 virtual gateway: %s", created.ID)
 		err = virtual_gateway.Delete(client, created.ID)
 		th.AssertNoErr(t, err)
 	})

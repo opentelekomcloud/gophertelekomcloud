@@ -66,7 +66,7 @@ type HostedConnect struct {
 }
 
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*HostedConnect, error) {
-	b, err := build.RequestBody(opts, "direct_connect")
+	b, err := build.RequestBody(opts, "hosted_connect")
 	if err != nil {
 		return nil, err
 	}
