@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	mrand "math/rand"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -96,4 +97,31 @@ func SetLastOctet(ip string, newLastOctet int) string {
 
 	// Reassemble the IP address
 	return strings.Join(parts, ".")
+}
+
+// logFatal is a helper function to log fatal errors during the test.
+func logFatal(t *testing.T, message string) {
+	t.Helper()
+	t.Fatal(message)
+}
+
+// AssertLengthGreaterThan checks if the length of the provided list is greater than the specified number.
+// If the condition fails, it logs a fatal error and fails the test.
+func AssertLengthGreaterThan(t *testing.T, list interface{}, threshold int) {
+	t.Helper()
+
+	// Use reflection to get the length of the list
+	listValue := reflect.ValueOf(list)
+
+	// Ensure the list is a slice or array
+	if listValue.Kind() != reflect.Slice && listValue.Kind() != reflect.Array {
+		logFatal(t, fmt.Sprintf("expected a slice or array, but got %s", listValue.Kind().String()))
+		return
+	}
+
+	// Check if the length is greater than the threshold
+	listLen := listValue.Len()
+	if listLen <= threshold {
+		logFatal(t, fmt.Sprintf("expected length to be greater than %d, but got %d", threshold, listLen))
+	}
 }

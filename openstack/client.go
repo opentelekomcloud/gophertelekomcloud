@@ -700,6 +700,16 @@ func NewDCaaSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*g
 	return initClientOpts(client, eo, "dcaas")
 }
 
+// NewDCaaSV3 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
+func NewDCaaSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "dcaas")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v2.0", "v3/"+client.ProjectID, 1)
+	return sc, err
+}
+
 // NewDMSServiceV1 creates a ServiceClient that may be used to access the v1 Distributed Message Service.
 func NewDMSServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "dmsv1")
@@ -1016,4 +1026,8 @@ func NewEVPNServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpt
 		return nil, err
 	}
 	return sc, nil
+}
+
+func NewRmsServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "rms")
 }

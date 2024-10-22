@@ -151,7 +151,7 @@ func NewCTSV3Client() (*golangsdk.ServiceClient, error) {
 }
 
 // NewDCaaSV2Client returns a *ServiceClient for making calls
-// to the OpenStack v2 API. An error will be returned
+// to the OpenStack DCaaS v2 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -160,6 +160,20 @@ func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewDCaaSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDCaaSV3Client returns a *ServiceClient for making calls
+// to the OpenStack DCaaS v3 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDCaaSV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+  
+	return openstack.NewDCaaSV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
@@ -205,6 +219,7 @@ func NewDDMV3Client() (*golangsdk.ServiceClient, error) {
 		Region: cc.RegionName,
 	})
 }
+
 
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
@@ -920,6 +935,17 @@ func NewEVPNClient() (client *golangsdk.ServiceClient, err error) {
 		return nil, err
 	}
 	return openstack.NewEVPNServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewRMSClient returns authenticated RMS v1 client
+func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewRmsServiceV1(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
