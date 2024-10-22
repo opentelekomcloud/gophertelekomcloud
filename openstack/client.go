@@ -836,6 +836,21 @@ func NewCTSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewDDMV1 creates a ServiceClient that may be used to access the DDM service.
+func NewDDMV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "ddmv1")
+}
+
+// NewDDMV2 creates a ServiceClient that may be used to access the DDM service.
+func NewDDMV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "ddmv2")
+}
+
+// NewDDMV3 creates a ServiceClient that may be used to access the DDM service.
+func NewDDMV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "ddmv3")
+}
+
 // NewELBV1 creates a ServiceClient that may be used to access the ELB service.
 func NewELBV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "elbv1")
