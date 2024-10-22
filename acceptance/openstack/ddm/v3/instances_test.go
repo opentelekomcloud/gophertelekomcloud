@@ -45,7 +45,7 @@ func TestDDMInstancesTestV3(t *testing.T) {
 	}
 	_, err = instances.ChangeNodeClass(ddmv3client, ddmInstance.Id, changeNodeClassOpts)
 	th.AssertNoErr(t, err)
-	ddmhelper.WaitForInstanceInRunningState(ddmv1client, ddmInstance.Id)
+	err = ddmhelper.WaitForInstanceInRunningState(ddmv1client, ddmInstance.Id)
 	th.AssertNoErr(t, err)
 	t.Logf("Modified node class for DDM instance  %s", ddmInstance.Id)
 }
