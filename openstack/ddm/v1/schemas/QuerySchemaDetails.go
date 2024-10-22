@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// This API is used to query details about a schema.
+// QuerySchemaDetails is used to query details about a schema.
 // schemaName is the name of the schema to be queried, which is case-insensitive
 func QuerySchemaDetails(client *golangsdk.ServiceClient, instanceId string, schemaName string) (*QuerySchemaDetailsResponse, error) {
 

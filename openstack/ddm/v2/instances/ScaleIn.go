@@ -13,7 +13,7 @@ type ScaleInOpts struct {
 	GroupId string `json:"group_id,omitempty"`
 }
 
-// This function is used to remove nodes from a specified DDM instance.
+// ScaleIn is used to remove nodes from a specified DDM instance.
 func ScaleIn(client *golangsdk.ServiceClient, instanceId string, opts ScaleInOpts) (*ScaleInResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

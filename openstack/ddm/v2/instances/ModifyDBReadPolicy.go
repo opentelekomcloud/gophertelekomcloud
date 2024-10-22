@@ -12,7 +12,7 @@ type ModifyDbReadPolicyOpts struct {
 	ReadWeight map[string]int `json:"read_weight" required:"true"`
 }
 
-// This function is used to modify the read policy of the DB instance associated with a DDM instance.
+// ModifyDbReadPolicy is used to modify the read policy of the DB instance associated with a DDM instance.
 func ModifyDbReadPolicy(client *golangsdk.ServiceClient, instanceId string, opts ModifyDbReadPolicyOpts) (*ModifyDbReadPolicyResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

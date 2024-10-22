@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// This function is used to modify the name of a DDM instance.
+// Rename function is used to modify the name of a DDM instance.
 // name is the name of a DDM instance, which:
 // Can include 4 to 64 characters.
 // Must start with a letter.

@@ -18,7 +18,7 @@ type QueryNodeClassesOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function is used to query DDM node classes available in an AZ.
+// QueryNodeClasses is used to query DDM node classes available in an AZ.
 func QueryNodeClasses(client *golangsdk.ServiceClient, opts QueryNodeClassesOpts) (*QueryNodeClassesResponse, error) {
 	// GET /v2/{project_id}/flavors?engine_id={engine_id}?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("flavors").WithQueryParams(&opts).Build()

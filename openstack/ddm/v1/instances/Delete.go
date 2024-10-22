@@ -13,7 +13,7 @@ type DeleteQueryParams struct {
 	DeleteRdsData string `q:"delete_rds_data"`
 }
 
-// This function is used to delete a DDM instance to release all its resources.
+// Delete function is used to delete a DDM instance to release all its resources.
 func Delete(client *golangsdk.ServiceClient, instanceId string, deleteRdsData bool) (*string, error) {
 
 	deleteData := "false"

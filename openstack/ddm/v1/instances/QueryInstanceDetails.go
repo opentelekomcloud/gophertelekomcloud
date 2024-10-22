@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// This API is used to query details about a DDM instance.
+// QueryInstanceDetails is used to query details about a DDM instance.
 func QueryInstanceDetails(client *golangsdk.ServiceClient, instanceId string) (*QueryInstanceDetailsResponse, error) {
 
 	// GET /v1/{project_id}/instances/{instance_id}
@@ -60,12 +60,12 @@ type QueryInstanceDetailsResponse struct {
 	// Engine version (core instance version)
 	EngineVersion string `json:"engine_version"`
 	// Node information
-	Nodes []GetDetailfNodesInfo `json:"nodes"`
+	Nodes []GetDetailNodesInfo `json:"nodes"`
 	// Username of the administrator. The username: Can include 1 to 32 characters. Must start with a letter. Can contain only letters, digits, and underscores (_).
 	AdminUserName string `json:"admin_user_name"`
 }
 
-type GetDetailfNodesInfo struct {
+type GetDetailNodesInfo struct {
 	// Status of the DDM instance node. For details, see Status Description at
 	// https://docs.otc.t-systems.com/distributed-database-middleware/api-ref/appendix/status_description.html
 	Status string `json:"status"`

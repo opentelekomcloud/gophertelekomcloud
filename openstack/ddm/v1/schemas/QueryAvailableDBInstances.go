@@ -19,7 +19,7 @@ type QueryAvailableDbOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function is used to query DB instances that can be used for creating a schema.
+// QueryAvailableDb is used to query DB instances that can be used for creating a schema.
 func QueryAvailableDb(client *golangsdk.ServiceClient, instanceId string, opts QueryAvailableDbOpts) ([]QueryAvailableRdsList, error) {
 	// GET /v1/{project_id}/instances/{instance_id}/rds?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "rds").WithQueryParams(&opts).Build()

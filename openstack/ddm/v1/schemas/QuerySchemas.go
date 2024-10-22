@@ -19,7 +19,7 @@ type QuerySchemasOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function  is used to query schemas of a DDM instance.
+// QuerySchemas is used to query schemas of a DDM instance.
 func QuerySchemas(client *golangsdk.ServiceClient, instanceId string, opts QuerySchemasOpts) ([]GetDatabaseInfo, error) {
 	// GET /v1/{project_id}/instances/{instance_id}/databases?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "databases").WithQueryParams(&opts).Build()

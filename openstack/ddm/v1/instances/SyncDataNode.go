@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// This API is used to synchronize configuration information of all data nodes that are associated with a DDM instance.
+// SyncDataNodesInfo is used to synchronize configuration information of all data nodes that are associated with a DDM instance.
 func SyncDataNodesInfo(client *golangsdk.ServiceClient, instanceId string) (*SyncDataNodesInfoResponse, error) {
 
 	// POST /v1/{project_id}/instances/{instance_id}/rds/sync

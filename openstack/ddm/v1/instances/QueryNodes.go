@@ -19,7 +19,7 @@ type QueryNodesOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function is used to query nodes of a DDM instance.
+// QueryNodes function is used to query nodes of a DDM instance.
 func QueryNodes(client *golangsdk.ServiceClient, instanceId string, opts QueryNodesOpts) ([]NodeList, error) {
 	// GET /v1/{project_id}/instances/{instance_id}/nodes?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "nodes").WithQueryParams(&opts).Build()

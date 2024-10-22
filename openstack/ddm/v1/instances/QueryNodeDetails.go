@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// This API  is used to query details of a DDM instance node.
+// QueryNodeDetails is used to query details of a DDM instance node.
 func QueryNodeDetails(client *golangsdk.ServiceClient, instanceId string, nodeId string) (*QueryNodeDetailsResponse, error) {
 
 	// GET /v1/{project_id}/instances/{instance_id}/nodes/{node_id}

@@ -14,7 +14,7 @@ type DeleteQueryParams struct {
 	DeleteRdsData string `q:"delete_rds_data"`
 }
 
-// This function  is used to delete a schema to release all its resources.
+// DeleteSchema is used to delete a schema to release all its resources.
 // schemaName is the name of the schema to be queried, which is case-insensitive
 func DeleteSchema(client *golangsdk.ServiceClient, instanceId string, schemaName string, deleteRdsData bool) (*string, error) {
 

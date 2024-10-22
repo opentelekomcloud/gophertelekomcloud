@@ -19,7 +19,7 @@ type QueryParametersOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function is used to query parameters of a specified DDM instance.
+// QueryParameters is used to query parameters of a specified DDM instance.
 func QueryParameters(client *golangsdk.ServiceClient, instanceId string, opts QueryParametersOpts) ([]ConfigurationParameterList, error) {
 	// GET /v3/{project_id}/instances/{instance_id}/configurations?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "configurations").WithQueryParams(&opts).Build()

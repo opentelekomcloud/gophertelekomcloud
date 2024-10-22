@@ -19,7 +19,7 @@ type ManageAdminPassOpts struct {
 	Password string `json:"password" required:"true"`
 }
 
-// This function is used to manage the password of the DDM instance administrator.
+// ManageAdminPass is used to manage the password of the DDM instance administrator.
 // If it is the first time to call this API, it is used to create an administrator and reset its password for a DDM instance.
 // Then this API can only be used to update the administrator password.
 func ManageAdminPass(client *golangsdk.ServiceClient, instanceId string, opts ManageAdminPassOpts) (*ManageAdminPassResponse, error) {

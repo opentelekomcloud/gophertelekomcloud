@@ -14,9 +14,8 @@ import (
 func TestDDMSchemasLifecycle(t *testing.T) {
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
-	secGroupId := clients.EnvOS.GetEnv("SECURITY_GROUP")
-	if subnetID == "" || vpcID == "" || secGroupId == "" {
-		t.Skip("OS_NETWORK_ID or OS_VPC_ID or OS_SECURITY_GROUP env vars are missing but are required for DDM instances test")
+	if subnetID == "" || vpcID == "" {
+		t.Skip("OS_NETWORK_ID or OS_VPC_ID env vars are missing but are required for DDM instances test")
 	}
 
 	// CREATE DDM CLIENT
@@ -26,14 +25,11 @@ func TestDDMSchemasLifecycle(t *testing.T) {
 	rdsclient, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
-	cc, err := clients.CloudAndClient()
-	th.AssertNoErr(t, err)
-
 	// CREATE DDM INSTANCE
 	ddmInstance := CreateDDMInstance(t, client)
 	// CREATE RDS INSTANCE
 	// RDS INSTANCE MUST BE MYSQL 5.7, 8.0 WITH LowerCaseTableNames SET TO 1
-	rdsInstance := CreateRDS(t, rdsclient, cc.RegionName)
+	rdsInstance := CreateRDS(t, rdsclient, client.RegionID)
 
 	// CLEANUP
 	t.Cleanup(func() {

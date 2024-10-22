@@ -10,22 +10,22 @@ import (
 )
 
 func TestDDMInstancesTestV3(t *testing.T) {
-	//CREATE V1 CLIENT
-	ddmv1client, err := clients.NewDDMV1Client()
+	// CREATE V1 CLIENT
+	ddmV1Client, err := clients.NewDDMV1Client()
 	th.AssertNoErr(t, err)
-	// CREATE V3 ClIENT
-	ddmv3client, err := clients.NewDDMV3Client()
+	// CREATE V3 CLIENT
+	ddmV3Client, err := clients.NewDDMV3Client()
 	th.AssertNoErr(t, err)
 
 	// CREATE DDM INSTANCE
-	ddmInstance := ddmhelper.CreateDDMInstance(t, ddmv1client)
+	ddmInstance := ddmhelper.CreateDDMInstance(t, ddmV1Client)
 	t.Cleanup(func() {
-		ddmhelper.DeleteDDMInstance(t, ddmv1client, ddmInstance.Id)
+		ddmhelper.DeleteDDMInstance(t, ddmV1Client, ddmInstance.Id)
 	})
 
 	// QUERY PARAMETERS
 	t.Logf("Listing parameters for DDM instance  %s", ddmInstance.Id)
-	_, err = instances.QueryParameters(ddmv3client, ddmInstance.Id, instances.QueryParametersOpts{})
+	_, err = instances.QueryParameters(ddmV3Client, ddmInstance.Id, instances.QueryParametersOpts{})
 	th.AssertNoErr(t, err)
 
 	// MODIFY PARAMETERS
@@ -35,7 +35,7 @@ func TestDDMInstancesTestV3(t *testing.T) {
 			MaxConnections: "30000",
 		},
 	}
-	_, err = instances.ModifyParameters(ddmv3client, ddmInstance.Id, modifyParametersOpts)
+	_, err = instances.ModifyParameters(ddmV3Client, ddmInstance.Id, modifyParametersOpts)
 	th.AssertNoErr(t, err)
 
 	// CHANGING NODE CLASS
@@ -43,9 +43,9 @@ func TestDDMInstancesTestV3(t *testing.T) {
 	changeNodeClassOpts := instances.ChangeNodeClassOpts{
 		SpecCode: "ddm.8xlarge.2",
 	}
-	_, err = instances.ChangeNodeClass(ddmv3client, ddmInstance.Id, changeNodeClassOpts)
+	_, err = instances.ChangeNodeClass(ddmV3Client, ddmInstance.Id, changeNodeClassOpts)
 	th.AssertNoErr(t, err)
-	err = ddmhelper.WaitForInstanceInRunningState(ddmv1client, ddmInstance.Id)
+	err = ddmhelper.WaitForInstanceInRunningState(ddmV1Client, ddmInstance.Id)
 	th.AssertNoErr(t, err)
 	t.Logf("Modified node class for DDM instance  %s", ddmInstance.Id)
 }

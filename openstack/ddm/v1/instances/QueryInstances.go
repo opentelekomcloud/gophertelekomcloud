@@ -19,7 +19,7 @@ type QueryInstancesOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function is used to query DDM instances.
+// QueryInstances function is used to query DDM instances.
 func QueryInstances(client *golangsdk.ServiceClient, opts QueryInstancesOpts) ([]ShowInstanceBeanResponse, error) {
 	// GET /v1/{project_id}/instances?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances").WithQueryParams(&opts).Build()

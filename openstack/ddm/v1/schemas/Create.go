@@ -44,7 +44,7 @@ type DatabaseInstancesParam struct {
 	AdminPassword string `json:"adminPassword" required:"true"`
 }
 
-// This function is used to create a schema.
+// CreateSchema function is used to create a schema.
 // Before creating a schema, ensure that you have associated RDS instances with your DDM instance and that the RDS instances are not associated with other DDM instances.
 func CreateSchema(client *golangsdk.ServiceClient, instanceId string, opts CreateSchemaOpts) (*CreateSchemaResponse, error) {
 	b, err := build.RequestBody(opts, "")

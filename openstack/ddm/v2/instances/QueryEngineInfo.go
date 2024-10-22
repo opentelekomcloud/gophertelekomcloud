@@ -19,7 +19,7 @@ type QueryEngineOpts struct {
 	Limit int `q:"limit"`
 }
 
-// This function is used to query DDM instances.
+// QueryEngineInfo is used to query DDM instances.
 func QueryEngineInfo(client *golangsdk.ServiceClient, opts QueryEngineOpts) ([]EngineGroupsInfo, error) {
 	// GET /v2/{project_id}/engines?offset={offset}&limit={limit}
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("engines").WithQueryParams(&opts).Build()
