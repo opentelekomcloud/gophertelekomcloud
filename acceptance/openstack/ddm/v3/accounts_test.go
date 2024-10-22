@@ -35,15 +35,13 @@ func TestDDMAccountsTestV3(t *testing.T) {
 	_, err = accounts.ManageAdminPass(ddmV3Client, ddmInstance.Id, manageAdminOpts)
 	th.AssertNoErr(t, err)
 	err = golangsdk.WaitFor(600, func() (bool, error) {
-		instanceDetails, err := ddminstancesv1.QueryInstanceDetails(ddmV1Client, ddmInstance.Id)
-		if err != nil {
-			return false, err
-		}
+		instanceDetails, errP := ddminstancesv1.QueryInstanceDetails(ddmV1Client, ddmInstance.Id)
+		th.AssertNoErr(t, errP)
 		time.Sleep(5 * time.Second)
 		if instanceDetails.Status == "RUNNING" {
 			return true, nil
 		}
 		return false, nil
 	})
-
+	th.AssertNoErr(t, err)
 }
