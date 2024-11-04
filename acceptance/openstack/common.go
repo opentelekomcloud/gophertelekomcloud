@@ -172,7 +172,7 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 				},
 			},
 		},
-		AvailabilityZone: az,
+		AvailabilityZone: &az,
 	}
 
 	return createOpts
