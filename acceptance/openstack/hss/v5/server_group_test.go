@@ -132,6 +132,7 @@ func TestServerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	hs, err := host.ListHost(client, host.ListHostOpts{HostID: ecs.ID})
+	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "closed", hs[0].ProtectStatus)
 
 	t.Logf("Attempting to Change server Protection Status to enterprise")
@@ -153,14 +154,16 @@ func TestServerLifecycle(t *testing.T) {
 			},
 		},
 	})
-
+	th.AssertNoErr(t, err)
 	hs, err = host.ListHost(client, host.ListHostOpts{HostID: ecs.ID})
+	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "opened", hs[0].ProtectStatus)
 
 	t.Logf("Attempting to get used quota details")
 	q, err := quota.List(client, quota.ListOpts{
 		HostName: ecs.Name,
 	})
+	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "used", q[0].UsedStatus)
 	th.AssertEquals(t, "hss.version.enterprise", q[0].Version)
 }
