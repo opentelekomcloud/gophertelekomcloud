@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
@@ -48,12 +47,12 @@ func TestEnterpriseRouterLifeCycle(t *testing.T) {
 	th.AssertEquals(t, *createOpts.EnableDefaultAssociation, createResp.Instance.EnableDefaultAssociation)
 	th.AssertEquals(t, *createOpts.AutoAcceptSharedAttachments, createResp.Instance.AutoAcceptSharedAttachments)
 
-	defer func(client *golangsdk.ServiceClient, id string) {
+	t.Cleanup(func() {
 		t.Logf("Attempting to delete enterprise router")
-		err = instance.Delete(client, id)
+		err = instance.Delete(client, createResp.Instance.ID)
 		th.AssertNoErr(t, err)
 		err = waitForInstanceDeleted(client, 500, createResp.Instance.ID)
-	}(client, createResp.Instance.ID)
+	})
 
 	updateOpts := instance.UpdateOpts{
 		InstanceID:                  createResp.Instance.ID,

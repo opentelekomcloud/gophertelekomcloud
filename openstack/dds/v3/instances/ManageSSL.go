@@ -19,5 +19,5 @@ func SwitchSSL(client *golangsdk.ServiceClient, opts SSLOpt) (*string, error) {
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "switch-ssl"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }

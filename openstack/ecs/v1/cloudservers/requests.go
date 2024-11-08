@@ -49,7 +49,7 @@ type CreateOpts struct {
 	SecurityGroups []SecurityGroup `json:"security_groups,omitempty"`
 
 	// AvailabilityZone specifies name of the AZ where the ECS is located.
-	AvailabilityZone string `json:"availability_zone" required:"true"`
+	AvailabilityZone *string `json:"availability_zone,omitempty"`
 
 	// ExtendParam provides the supplementary information about the ECS to be created.
 	ExtendParam *ServerExtendParam `json:"extendparam,omitempty"`
@@ -64,6 +64,9 @@ type CreateOpts struct {
 	Tags []string `json:"tags,omitempty"`
 
 	ServerTags []ServerTags `json:"server_tags,omitempty"`
+
+	// Specifies whether ECSs can be deployed in multiple random AZs. The default value is false.
+	CreateInMultiAz *bool `json:"batch_create_in_multi_az,omitempty"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

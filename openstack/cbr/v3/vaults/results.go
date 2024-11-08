@@ -41,12 +41,9 @@ type Vault struct {
 	ProviderID  string             `json:"provider_id"`
 	Resources   []ResourceResp     `json:"resources"`
 	Tags        []tags.ResourceTag `json:"tags"`
-
-	EnterpriseProjectID string `json:"enterprise_project_id"`
-
-	AutoBind   bool           `json:"auto_bind"`
-	BindRules  VaultBindRules `json:"bind_rules"`
-	UserID     string         `json:"user_id"`
-	CreatedAt  string         `json:"created_at"`
-	AutoExpand bool           `json:"auto_expand"`
+	AutoBind    bool               `json:"auto_bind"`
+	BindRules   VaultBindRules     `json:"bind_rules"`
+	UserID      string             `json:"user_id"`
+	CreatedAt   string             `json:"created_at"`
+	AutoExpand  bool               `json:"auto_expand"`
 }

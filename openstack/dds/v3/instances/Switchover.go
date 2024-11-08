@@ -6,5 +6,5 @@ func Switchover(client *golangsdk.ServiceClient, instanceId string) (*string, er
 	raw, err := client.Post(client.ServiceURL("instances", instanceId, "switchover"), nil, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }

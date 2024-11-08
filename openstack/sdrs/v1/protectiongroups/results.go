@@ -1,51 +1,54 @@
 package protectiongroups
 
-import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
-)
-
-type Group struct {
-	// Group ID
+type ServerGroupResponseInfo struct {
+	// ID specifies the ID of a protection group.
 	Id string `json:"id"`
-	// Group Name
+	// Name specifies the name of a protection group.
 	Name string `json:"name"`
-	// Group Description
+	// Description specifies the description of a protection group.
 	Description string `json:"description"`
-	// The source AZ of a protection group
-	SourceAZ string `json:"source_availability_zone"`
-	// The target AZ of a protection group
-	TargetAZ string `json:"target_availability_zone"`
-	// An active-active domain
+	// Status specifies the status of a protection group.
+	Status string `json:"status"`
+	// Progress specifies the synchronization progress of a protection group. Unit %
+	Progress int `json:"progress"`
+	// SourceAvailabilityZone specifies the production site AZ configured when a protection group is created.
+	SourceAvailabilityZone string `json:"source_availability_zone"`
+	// TargetAvailabilityZone specifies the DR site AZ configured when a protection group is created.
+	TargetAvailabilityZone string `json:"target_availability_zone"`
+	// DomainID specifies the ID of an active-active domain.
 	DomainID string `json:"domain_id"`
-	// ID of the source VPC
-	SourceVpcID string `json:"source_vpc_id"`
-	// Deployment model
-	DrType string `json:"dr_type"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a group.
-func (r commonResult) Extract() (*Group, error) {
-	var response Group
-	err := r.ExtractInto(&response)
-	return &response, err
-}
-
-func (r commonResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "server_group")
-}
-
-// UpdateResult represents the result of a update operation. Call its Extract
-// method to interpret it as a Group.
-type UpdateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Group.
-type GetResult struct {
-	commonResult
+	// DomainName specifies the name of an active-active domain.
+	DomainName string `json:"domain_name"`
+	// ProtectedStatus specifies whether protection is enabled or not.
+	ProtectedStatus string `json:"protected_status"`
+	// ReplicationStatus specifies the data synchronization status.
+	ReplicationStatus string `json:"replication_status"`
+	// HealthStatus specifies the health status of a protection group.
+	HealthStatus string `json:"health_status"`
+	// PriorityStation specifies the current production site of a protection group.
+	PriorityStation string `json:"priority_station"`
+	// ProtectedInstanceNum specifies the number of protected instances in a protection group.
+	ProtectedInstanceNum int `json:"protected_instance_num"`
+	// ReplicationNum specifies the number of replication pairs in a protection group.
+	ReplicationNum int `json:"replication_num"`
+	// DisasterRecoveryDrillNum specifies the number of DR drills in a protection group.
+	DisasterRecoveryDrillNum int `json:"disaster_recovery_drill_num"`
+	// SourceVPCID specifies the ID of the VPC for the production site.
+	SourceVPCID string `json:"source_vpc_id"`
+	// TargetVPCID specifies the ID of the VPC for the DR site.
+	TargetVPCID string `json:"target_vpc_id"`
+	// TestVPCID specifies the ID of the VPC used for a DR drill.
+	TestVPCID string `json:"test_vpc_id"`
+	// DRType specifies the deployment model. The default value is migration, indicating migration within a VPC.
+	DRType string `json:"dr_type"`
+	// ServerType specifies the type of managed servers.
+	ServerType string `json:"server_type"`
+	// CreatedAt specifies the time when a protection group was created. Format: yyyy-MM-dd HH:mm:ss.S
+	CreatedAt string `json:"created_at"`
+	// UpdatedAt specifies the time when a protection group was updated. Format: yyyy-MM-dd HH:mm:ss.S
+	UpdatedAt string `json:"updated_at"`
+	// ProtectionType specifies the protection mode.
+	ProtectionType string `json:"protection_type"`
+	// ReplicationModel specifies the protection mode.
+	ReplicationModel string `json:"replication_model"`
 }

@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+env:
+  GO_VERSION: '1.20'
+
+jobs:
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.53.3
+
+  vet:
+    name: vet
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: make vet
+
+  unit_tests:
+    name: unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: make test
+
+  acc_tests:
+    name: acceptance tests
+    runs-on: ubuntu-latest
+    environment: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: make acceptance
+        env:
+          OS_AUTH_URL: ${{ secrets.AUTH_URL }}
+          OS_DOMAIN_NAME: ${{ secrets.USER_DOMAIN_NAME }}
+          OS_PASSWORD: ${{ secrets.PASSWORD }}
+          OS_USERNAME: ${{ secrets.USERNAME }}
+          OS_PROJECT_NAME: ${{ vars.FUNCTEST_PROJECT_NAME }}
+          OS_REGION: "eu-de"
+
+  eco_check:
+    name: eco/check
+    if: always()
+    needs: [lint, vet, unit_tests, acc_tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}

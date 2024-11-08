@@ -173,9 +173,9 @@ type ExtendParam struct {
 	// Script required after the installation.
 	PostInstall string `json:"alpha.cce/postInstall,omitempty"`
 	// Whether auto-renew is enabled.
-	IsAutoRenew *bool `json:"isAutoRenew,omitempty"`
+	IsAutoRenew string `json:"isAutoRenew,omitempty"`
 	// Whether to deduct fees automatically.
-	IsAutoPay *bool `json:"isAutoPay,omitempty"`
+	IsAutoPay string `json:"isAutoPay,omitempty"`
 	// Available disk space of a single Docker container on the node using the device mapper.
 	DockerBaseSize int `json:"dockerBaseSize,omitempty"`
 	// ConfigMap of the Docker data disk.

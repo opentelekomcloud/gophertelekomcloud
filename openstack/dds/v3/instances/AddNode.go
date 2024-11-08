@@ -26,5 +26,5 @@ func AddNode(client *golangsdk.ServiceClient, opts AddNodeOpts) (*string, error)
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "enlarge"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }

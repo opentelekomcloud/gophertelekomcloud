@@ -21,5 +21,5 @@ func ModifySpec(client *golangsdk.ServiceClient, opts ModifySpecOpt) (*string, e
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "resize"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }

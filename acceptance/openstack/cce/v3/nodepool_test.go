@@ -30,6 +30,11 @@ func (s *testNodes) TestNodePoolLifecycle() {
 		Spec: nodepools.CreateSpec{
 			Type: "vm",
 			NodeTemplate: nodes.Spec{
+				ExtendParam: nodes.ExtendParam{
+					MaxPods:     55,
+					IsAutoRenew: "false",
+					IsAutoPay:   "false",
+				},
 				Flavor: "s2.large.2",
 				Az:     "eu-de-01",
 				Os:     "EulerOS 2.5",
@@ -108,8 +113,12 @@ func (s *testNodes) TestNodePoolLifecycle() {
 		return false, nil
 	}))
 
-	_, err = nodepools.Get(client, clusterId, nodeId).Extract()
+	pool, err := nodepools.Get(client, clusterId, nodeId).Extract()
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 55, pool.Spec.NodeTemplate.ExtendParam.MaxPods)
+	// Not supported params by now
+	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoPay)
+	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoRenew)
 
 	th.AssertNoErr(t, nodepools.Delete(client, clusterId, nodeId).ExtractErr())
 

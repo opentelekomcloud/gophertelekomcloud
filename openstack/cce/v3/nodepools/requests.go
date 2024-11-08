@@ -118,9 +118,11 @@ type CreateSpec struct {
 	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
 	// Node management parameters
 	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
+	// Custom security group settings for a node pool
+	CustomSecurityGroupIds []string `json:"customSecurityGroups,omitempty"`
 }
 
-// Create accepts a CreateOpts struct and uses the values to create a new
+// CreateOptsBuilder Create accepts a CreateOpts struct and uses the values to create a new
 // logical Node Pool. When it is created, the Node Pool does not have an internal
 // interface
 type CreateOptsBuilder interface {

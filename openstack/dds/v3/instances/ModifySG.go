@@ -19,5 +19,5 @@ func ModifySG(client *golangsdk.ServiceClient, opts ModifySGOpt) (*string, error
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "modify-security-group"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
-	return extractJob(err, raw)
+	return ExtractJob(err, raw)
 }

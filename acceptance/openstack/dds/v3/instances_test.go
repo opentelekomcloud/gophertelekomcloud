@@ -13,6 +13,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
 	ddsjob "github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/job"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -132,6 +133,9 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	netClient, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
+	sn, err := subnets.Get(netClient, instance.SubnetId).Extract()
+	th.AssertNoErr(t, err)
+
 	elasticIP := networking.CreateEip(t, netClient, 100)
 	t.Cleanup(func() {
 		networking.DeleteEip(t, netClient, elasticIP.ID)
@@ -169,7 +173,7 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	t.Log("Modify instance internal IP")
 	job, err = instances.ModifyInternalIp(client, instances.ModifyInternalIpOpts{
 		InstanceId: instance.Id,
-		NewIp:      "192.168.1.42",
+		NewIp:      tools.SetLastOctet(tools.ExtractNetworkAddress(sn.CIDR), 100),
 		NodeId:     instance.Groups[0].Nodes[0].Id,
 	})
 	th.AssertNoErr(t, err)
