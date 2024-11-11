@@ -22,7 +22,7 @@ func TestKmsKeysLifecycle(t *testing.T) {
 		KeyAlias:       kmsID,
 		KeyDescription: "some description",
 	}
-	createKey, err := keys.Create(client, createOpts).ExtractKeyInfo()
+	createKey, err := keys.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	defer func() {
@@ -30,43 +30,40 @@ func TestKmsKeysLifecycle(t *testing.T) {
 			KeyID:       createKey.KeyID,
 			PendingDays: "7",
 		}
-		_, err := keys.Delete(client, deleteOpts).Extract()
+		err = keys.Delete(client, deleteOpts)
 		th.AssertNoErr(t, err)
 	}()
 
-	keyGet, err := keys.Get(client, createKey.KeyID).ExtractKeyInfo()
+	keyGet, err := keys.Get(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.KeyAlias, keyGet.KeyAlias)
-	th.AssertEquals(t, keyGet.KeyState, "2")
+	th.AssertEquals(t, keyGet.KeyState, "3")
 
 	deleteOpts := keys.DeleteOpts{
 		KeyID:       createKey.KeyID,
 		PendingDays: "7",
 	}
-	_, err = keys.Delete(client, deleteOpts).Extract()
+	err = keys.Delete(client, deleteOpts)
 	th.AssertNoErr(t, err)
 
-	keyGetDeleted, err := keys.Get(client, createKey.KeyID).ExtractKeyInfo()
+	keyGetDeleted, err := keys.Get(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, keyGetDeleted.KeyState, "4")
 
-	cancelDeleteOpts := keys.CancelDeleteOpts{
-		KeyID: createKey.KeyID,
-	}
-	_, err = keys.CancelDelete(client, cancelDeleteOpts).Extract()
+	err = keys.CancelDeletion(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 
-	_, err = keys.EnableKey(client, createKey.KeyID).Extract()
+	err = keys.EnableKey(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 
-	keyGetEnabled, err := keys.Get(client, createKey.KeyID).ExtractKeyInfo()
+	keyGetEnabled, err := keys.Get(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, keyGetEnabled.KeyState, "2")
 
-	_, err = keys.DisableKey(client, createKey.KeyID).Extract()
+	err = keys.DisableKey(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 
-	keyGetDisabled, err := keys.Get(client, createKey.KeyID).ExtractKeyInfo()
+	keyGetDisabled, err := keys.Get(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, keyGetDisabled.KeyState, "3")
 }
