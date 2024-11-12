@@ -17,7 +17,9 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListKey, error) {
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
+	raw, err := client.Post(client.ServiceURL(url.String()), nil, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return nil, err
 	}
