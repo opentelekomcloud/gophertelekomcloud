@@ -172,7 +172,7 @@ func NewDCaaSV3Client() (*golangsdk.ServiceClient, error) {
 	if err != nil {
 		return nil, err
 	}
-  
+
 	return openstack.NewDCaaSV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})

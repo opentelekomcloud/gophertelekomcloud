@@ -5,16 +5,17 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-type KeyRotationOpts struct {
-	// ID of a CMK
-	KeyID string `json:"key_id" required:"true"`
-	// Rotation interval of a CMK
-	Interval int `json:"rotation_interval"`
-	// 36-byte serial number of a request message
-	Sequence string `json:"sequence,omitempty"`
+type RotationOptsBuilder interface {
+	ToKeyRotationMap() (map[string]interface{}, error)
 }
 
-func EnableKeyRotation(client *golangsdk.ServiceClient, opts KeyRotationOpts) error {
+func EnableKeyRotation(client *golangsdk.ServiceClient, keyID string) error {
+	opts := struct {
+		KeyID string `json:"key_id"`
+	}{
+		KeyID: keyID,
+	}
+
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

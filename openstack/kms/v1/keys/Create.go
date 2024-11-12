@@ -26,11 +26,13 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Key, error) {
 	raw, err := client.Post(client.ServiceURL("kms", "create-key"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
 	var res Key
+
 	err = extract.IntoStructPtr(raw.Body, &res, "key_info")
 	return &res, err
 }

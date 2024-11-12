@@ -1,4 +1,4 @@
-package hss
+package host
 
 import (
 	"bytes"

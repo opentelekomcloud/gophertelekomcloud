@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func DisableKey(client *golangsdk.ServiceClient, keyID string) (*UpdateKeyState, error) {
+func CancelDelete(client *golangsdk.ServiceClient, keyID string) (*Key, error) {
 	opts := struct {
 		KeyID string `json:"key_id"`
 	}{
@@ -18,15 +18,15 @@ func DisableKey(client *golangsdk.ServiceClient, keyID string) (*UpdateKeyState,
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("kms", "disable-key"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("kms", "cancel-key-deletion"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var res UpdateKeyState
+	var res Key
 
-	err = extract.IntoStructPtr(raw.Body, &res, "key_info")
+	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

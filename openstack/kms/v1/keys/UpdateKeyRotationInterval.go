@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts KeyRotationOpts) error {
+func UpdateKeyRotationInterval(client *golangsdk.ServiceClient, opts RotationOpts) error {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

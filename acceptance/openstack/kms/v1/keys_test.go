@@ -30,37 +30,26 @@ func TestKmsKeysLifecycle(t *testing.T) {
 			KeyID:       createKey.KeyID,
 			PendingDays: "7",
 		}
-		err = keys.Delete(client, deleteOpts)
+		_, err := keys.Delete(client, deleteOpts)
 		th.AssertNoErr(t, err)
 	}()
 
 	keyGet, err := keys.Get(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.KeyAlias, keyGet.KeyAlias)
-	th.AssertEquals(t, keyGet.KeyState, "3")
+	th.AssertEquals(t, keyGet.KeyState, "4")
 
-	deleteOpts := keys.DeleteOpts{
-		KeyID:       createKey.KeyID,
-		PendingDays: "7",
-	}
-	err = keys.Delete(client, deleteOpts)
+	_, err = keys.CancelDelete(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 
-	keyGetDeleted, err := keys.Get(client, createKey.KeyID)
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, keyGetDeleted.KeyState, "4")
-
-	err = keys.CancelDeletion(client, createKey.KeyID)
-	th.AssertNoErr(t, err)
-
-	err = keys.EnableKey(client, createKey.KeyID)
+	_, err = keys.EnableKey(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 
 	keyGetEnabled, err := keys.Get(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, keyGetEnabled.KeyState, "2")
 
-	err = keys.DisableKey(client, createKey.KeyID)
+	_, err = keys.DisableKey(client, createKey.KeyID)
 	th.AssertNoErr(t, err)
 
 	keyGetDisabled, err := keys.Get(client, createKey.KeyID)

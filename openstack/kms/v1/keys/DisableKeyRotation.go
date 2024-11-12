@@ -5,7 +5,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-func DisableKeyRotation(client *golangsdk.ServiceClient, opts KeyRotationOpts) error {
+func DisableKeyRotation(client *golangsdk.ServiceClient, keyID string) error {
+	opts := struct {
+		KeyID string `json:"key_id"`
+	}{
+		KeyID: keyID,
+	}
+
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

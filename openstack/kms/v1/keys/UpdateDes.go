@@ -6,33 +6,33 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type UpdateAliasOpts struct {
+type UpdateDesOpts struct {
 	// ID of a CMK
 	KeyID string `json:"key_id" required:"true"`
 	// CMK description
-	KeyAlias string `json:"key_alias" required:"true"`
+	KeyDescription string `json:"key_description" required:"true"`
 }
 
-func UpdateAlias(client *golangsdk.ServiceClient, opts UpdateAliasOpts) (*UpdateKeyAlias, error) {
+func UpdateDes(client *golangsdk.ServiceClient, opts UpdateDesOpts) (*UpdateKeyDes, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("kms", "update-key-alias"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("kms", "update-key-description"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var res UpdateKeyAlias
+	var res UpdateKeyDes
 
 	err = extract.IntoStructPtr(raw.Body, &res, "key_info")
 	return &res, err
 }
 
-type UpdateKeyAlias struct {
+type UpdateKeyDes struct {
 	KeyID    string `json:"key_id"`
-	KeyAlias string `json:"key_alias"`
+	KeyState string `json:"key_state"`
 }

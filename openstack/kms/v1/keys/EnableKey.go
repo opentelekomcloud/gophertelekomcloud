@@ -3,9 +3,10 @@ package keys
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func EnableKey(client *golangsdk.ServiceClient, keyID string) error {
+func EnableKey(client *golangsdk.ServiceClient, keyID string) (*UpdateKeyState, error) {
 	opts := struct {
 		KeyID string `json:"key_id"`
 	}{
@@ -14,11 +15,18 @@ func EnableKey(client *golangsdk.ServiceClient, keyID string) error {
 
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = client.Post(client.ServiceURL("kms", "enable-key"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("kms", "enable-key"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	var res UpdateKeyState
+
+	err = extract.IntoStructPtr(raw.Body, &res, "key_info")
+	return &res, err
 }
