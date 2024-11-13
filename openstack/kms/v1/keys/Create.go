@@ -15,6 +15,8 @@ type CreateOpts struct {
 	Realm string `json:"realm,omitempty"`
 	// Purpose of a CMK (The default value is Encrypt_Decrypt)
 	KeyUsage string `json:"key_usage,omitempty"`
+	// Origin of a CMK. The default value is kms. Possible values: `kms` / `external`
+	Origin string `json:"origin,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Key, error) {
