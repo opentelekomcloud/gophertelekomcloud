@@ -7,14 +7,14 @@ import (
 
 type ReassignReplicasOpts struct {
 	// Assignment of replicas of the partition after the change.
-	Partitions []*Partition `json:"partitions"`
+	Partitions []*Partition `json:"partitions,omitempty"`
 }
 
 type Partition struct {
 	// Partition ID.
-	PartitionID int `json:"partition"`
+	PartitionID int `json:"partition,omitempty"`
 	// ID of the broker where the replica is expected to reside. The first integer in the array represents the leader replica broker ID. All partitions must have the same number of replicas. The number of replicas cannot be larger than the number of brokers.
-	Replicas []int `json:"replicas"`
+	Replicas []int `json:"replicas,omitempty"`
 }
 
 // ReassignReplicas is used to reassign replicas of a topic for a Kafka instance.

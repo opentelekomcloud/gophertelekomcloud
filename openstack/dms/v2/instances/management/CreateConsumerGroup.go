@@ -11,7 +11,7 @@ type CreateConsumerGroupOpts struct {
 	// Consumer group description.
 	// Minimum: 0
 	// Maximum: 200
-	Description string `json:"group_desc"`
+	Description string `json:"group_desc,omitempty"`
 }
 
 // CreateConsumerGroup is used to create a consumer group.

@@ -10,32 +10,32 @@ type InitPartitionReassigningOpts struct {
 	// Reassignment plan.
 	Reassignments []PartitionReassign `json:"reassignments" required:"true"`
 	// Reassignment threshold.
-	Throttle int `json:"throttle"`
+	Throttle int `json:"throttle,omitempty"`
 	// Indicates whether the task is scheduled. If no, is_schedule and execute_at can be left blank. If yes, is_schedule is true and execute_at must be specified.
-	IsSchedule bool `json:"is_schedule"`
+	IsSchedule bool `json:"is_schedule,omitempty"`
 	// Schedule time. The value is a UNIX timestamp, in ms.
-	ExecuteAt int64 `json:"execute_at"`
+	ExecuteAt int64 `json:"execute_at,omitempty"`
 	// Set true to perform time estimation tasks and false to perform rebalancing tasks.
 	// Default: false
-	TimeEstimate bool `json:"time_estimate" required:"true"`
+	TimeEstimate bool `json:"time_estimate,omitempty"`
 }
 
 type PartitionReassign struct {
 	// Topic name.
 	Topic string `json:"topic" required:"true"`
 	// List of brokers to which partitions are reassigned. This parameter is mandatory in automatic assignment.
-	Brokers []int `json:"brokers"`
+	Brokers []int `json:"brokers,omitempty"`
 	// Replication factor, which can be specified in automatic assignment.
-	ReplicationFactor int `json:"replication_factor"`
+	ReplicationFactor int `json:"replication_factor,omitempty"`
 	// Manually specified assignment plan. The brokers parameter and this parameter cannot be empty at the same time.
-	Assignment []*TopicAssignment `json:"assignment"`
+	Assignment []*TopicAssignment `json:"assignment,omitempty"`
 }
 
 type TopicAssignment struct {
 	// Partition number in manual assignment.
-	Partition int `json:"partition"`
+	Partition int `json:"partition,omitempty"`
 	// List of brokers to be assigned to a partition in manual assignment.
-	PartitionBrokers []int `json:"partition_brokers"`
+	PartitionBrokers []int `json:"partition_brokers,omitempty"`
 }
 
 // InitPartitionReassigning is used to submit a partition rebalancing task to a Kafka instance or calculate estimated rebalancing time.
