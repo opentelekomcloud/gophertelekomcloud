@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"testing"
 	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -11,12 +12,15 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func (s *testNodes) TestNodePoolLifecycle() {
-	t := s.T()
+func TestNodePoolLifecycle(t *testing.T) {
+
+	clusterId := clients.EnvOS.GetEnv("CLUSTER_ID")
+	if clusterId == "" {
+		t.Skip("OS_CLUSTER_ID is required for this test")
+	}
+
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
-
-	clusterId := s.clusterID
 
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)
@@ -119,6 +123,30 @@ func (s *testNodes) TestNodePoolLifecycle() {
 	// Not supported params by now
 	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoPay)
 	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoRenew)
+
+	updateOpts := nodepools.UpdateOpts{
+		Metadata: nodepools.UpdateMetaData{
+			Name: "nodepool-test-updated",
+		},
+		Spec: nodepools.UpdateSpec{
+			InitialNodeCount: 1,
+			NodeTemplate:     nodepools.UpdateNodeTemplate{},
+		},
+	}
+	updatedPool, err := nodepools.Update(client, clusterId, nodeId, updateOpts).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "nodepool-test-updated", updatedPool.Metadata.Name)
+	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
+		n, err := nodepools.Get(client, clusterId, nodeId).Extract()
+		if err != nil {
+			return false, err
+		}
+		if n.Status.Phase == "" {
+			return true, nil
+		}
+		time.Sleep(10 * time.Second)
+		return false, nil
+	}))
 
 	th.AssertNoErr(t, nodepools.Delete(client, clusterId, nodeId).ExtractErr())
 
