@@ -3,7 +3,8 @@ package nodepools
 import (
 	"reflect"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
 
@@ -156,18 +157,8 @@ func Get(c *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult)
 	return
 }
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToNodePoolUpdateMap() (map[string]interface{}, error)
-}
-
 // UpdateOpts contains all the values needed to update a new node pool
 type UpdateOpts struct {
-	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
 	// Metadata required to update a Node Pool
 	Metadata UpdateMetaData `json:"metadata" required:"true"`
 	// specifications to update a Node Pool
@@ -182,14 +173,12 @@ type UpdateMetaData struct {
 
 // UpdateSpec describes Node pools update specification
 type UpdateSpec struct {
-	// Node type. Currently, only VM nodes are supported.
-	Type string `json:"type,omitempty"`
 	// Node template
-	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate,omitempty"`
+	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate" required:"true"`
 	// Initial number of expected nodes
-	InitialNodeCount int `json:"initialNodeCount"`
+	InitialNodeCount int `json:"initialNodeCount" required:"true"`
 	// Auto scaling parameters
-	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
+	Autoscaling UpdateAutoscalingSpec `json:"autoscaling,omitempty"`
 }
 
 type UpdateNodeTemplate struct {
@@ -199,18 +188,22 @@ type UpdateNodeTemplate struct {
 	Taints []nodes.TaintSpec `json:"taints,omitempty"`
 }
 
-type UpdateMetadata struct {
-	Name string `json:"name,omitempty"`
-}
-
-// ToNodePoolUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToNodePoolUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
+type UpdateAutoscalingSpec struct {
+	// Whether to enable auto scaling
+	Enable bool `json:"enable,omitempty"`
+	// Minimum number of nodes allowed if auto scaling is enabled
+	MinNodeCount int `json:"minNodeCount,omitempty"`
+	// This value must be greater than or equal to the value of minNodeCount
+	MaxNodeCount int `json:"maxNodeCount,omitempty"`
+	// Interval between two scaling operations, in minutes
+	ScaleDownCooldownTime int `json:"scaleDownCooldownTime,omitempty"`
+	// Weight of a node pool
+	Priority int `json:"priority,omitempty"`
 }
 
 // Update allows node pools to be updated.
-func Update(c *golangsdk.ServiceClient, clusterid, nodepoolid string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToNodePoolUpdateMap()
+func Update(c *golangsdk.ServiceClient, clusterid, nodepoolid string, opts UpdateOpts) (r UpdateResult) {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		r.Err = err
 		return
