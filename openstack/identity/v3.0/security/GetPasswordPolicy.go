@@ -34,4 +34,6 @@ type PasswordPolicy struct {
 	PasswordRequirements string `json:"password_requirements"`
 	// Password validity period (days).
 	PasswordValidityPeriod int `json:"password_validity_period"`
+	// Minimum number of character types that a password must contain. Value range: 2-4.
+	PasswordCharCombination int `json:"password_char_combination"`
 }

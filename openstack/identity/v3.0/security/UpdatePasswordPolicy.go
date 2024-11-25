@@ -19,6 +19,8 @@ type UpdatePasswordPolicyOpts struct {
 	PasswordNotUsernameOrInvert *bool `json:"password_not_username_or_invert,omitempty"`
 	// Password validity period (days).
 	PasswordValidityPeriod *int `json:"password_validity_period,omitempty"`
+	// Minimum number of character types that a password must contain. Value range: 2-4.
+	PasswordCharCombination *int `json:"password_char_combination,omitempty"`
 }
 
 func UpdatePasswordPolicy(client *golangsdk.ServiceClient, id string, opts UpdatePasswordPolicyOpts) (*PasswordPolicy, error) {
