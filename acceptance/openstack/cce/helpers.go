@@ -103,7 +103,7 @@ func DeleteCluster(t *testing.T, clusterID string) {
 
 func waitForClusterToActivate(client *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		cluster, err := clusters.Get(client, id).Extract()
+		cluster, err := clusters.Get(client, id)
 		if err != nil {
 			return false, err
 		}
@@ -119,7 +119,7 @@ func waitForClusterToActivate(client *golangsdk.ServiceClient, id string, secs i
 
 func waitForClusterToDelete(client *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := clusters.Get(client, id).Extract()
+		_, err := clusters.Get(client, id)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

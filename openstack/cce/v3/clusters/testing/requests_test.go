@@ -22,7 +22,7 @@ func TestGetV3Cluster(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Extract()
+	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -41,7 +41,7 @@ func TestGetV3ClusterOTC(t *testing.T) {
 		_, _ = fmt.Fprint(w, OutputOTC)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Extract()
+	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 	expected := ExpectedOTC
 	th.AssertDeepEquals(t, expected, actual)

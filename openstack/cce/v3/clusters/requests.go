@@ -105,15 +105,6 @@ func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) 
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// Get retrieves a particular cluster based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 // GetCert retrieves a particular cluster certificate based on its unique ID.
 func GetCert(c *golangsdk.ServiceClient, id string) (r GetCertResult) {
 	_, r.Err = c.Get(certificateURL(c, id), &r.Body, &golangsdk.RequestOpts{
