@@ -4,10 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json"},
-}
-
 type ExpirationOptsBuilder interface {
 	ToExpirationGetMap() (map[string]interface{}, error)
 }
@@ -24,7 +20,7 @@ func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) 
 func GetCert(c *golangsdk.ServiceClient, id string) (r GetCertResult) {
 	_, r.Err = c.Get(certificateURL(c, id), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders,
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
 	return
 }
@@ -39,7 +35,7 @@ func GetCertWithExpiration(c *golangsdk.ServiceClient, id string, opts Expiratio
 
 	_, r.Err = c.Post(certificateURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders,
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
 	return
 }
@@ -82,7 +78,8 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r Up
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = c.Delete(resourceURL(c, id), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		JSONBody:    nil,
 	})
 	return
 }
@@ -106,7 +103,8 @@ func DeleteWithOpts(c *golangsdk.ServiceClient, id string, opts DeleteOpts) erro
 
 	_, err = c.Delete(url+q.String(), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		JSONBody:    nil,
 	})
 	return err
 }

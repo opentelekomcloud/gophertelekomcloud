@@ -19,7 +19,8 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Clusters, error) {
 	// GET /api/v3/projects/{project_id}/clusters
 	raw, err := client.Get(client.ServiceURL("clusters"), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		JSONBody:    nil,
 	})
 	if err != nil {
 		return nil, err

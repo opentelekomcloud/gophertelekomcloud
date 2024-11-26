@@ -10,7 +10,8 @@ func Get(client *golangsdk.ServiceClient, clusterId string) (*Clusters, error) {
 	// GET /api/v3/projects/{project_id}/clusters/{cluster_id}
 	raw, err := client.Get(client.ServiceURL("clusters", clusterId), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		JSONBody:    nil,
 	})
 	if err != nil {
 		return nil, err
