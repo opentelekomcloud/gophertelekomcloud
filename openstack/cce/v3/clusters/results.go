@@ -102,23 +102,6 @@ func (r *Status) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a cluster.
-func (r commonResult) Extract() (*Clusters, error) {
-	var s Clusters
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Cluster.
-type UpdateResult struct {
-	commonResult
-}
-
 // DeleteResult represents the result of a delete operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {

@@ -261,7 +261,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 	options := clusters.UpdateOpts{Spec: clusters.UpdateSpec{Description: "new description"}}
-	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options).Extract()
+	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)

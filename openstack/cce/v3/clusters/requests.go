@@ -40,40 +40,6 @@ func GetCertWithExpiration(c *golangsdk.ServiceClient, id string, opts Expiratio
 	return
 }
 
-// UpdateOpts contains all the values needed to update a new cluster
-type UpdateOpts struct {
-	Spec UpdateSpec `json:"spec" required:"true"`
-}
-
-type UpdateSpec struct {
-	// Cluster description
-	Description string `json:"description,omitempty"`
-}
-
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToClusterUpdateMap() (map[string]interface{}, error)
-}
-
-// ToClusterUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToClusterUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Update allows clusters to update description.
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToClusterUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Put(resourceURL(c, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // Delete will permanently delete a particular cluster based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	_, r.Err = c.Delete(resourceURL(c, id), &golangsdk.RequestOpts{
