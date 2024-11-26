@@ -6,15 +6,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-type ListCluster struct {
-	// API type, fixed value Cluster
-	Kind string `json:"kind"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion"`
-	// all Clusters
-	Clusters []Clusters `json:"items"`
-}
-
 type Certificate struct {
 	// API type, fixed value Config
 	Kind string `json:"kind"`
@@ -122,19 +113,6 @@ func (r commonResult) Extract() (*Clusters, error) {
 	return &s, err
 }
 
-// ExtractCluster is a function that accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
-func (r commonResult) ExtractClusters() ([]Clusters, error) {
-	var s ListCluster
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.Clusters, nil
-
-}
-
 // UpdateResult represents the result of an update operation. Call its Extract
 // method to interpret it as a Cluster.
 type UpdateResult struct {
@@ -145,12 +123,6 @@ type UpdateResult struct {
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
 	golangsdk.ErrResult
-}
-
-// ListResult represents the result of a list operation. Call its ExtractCluster
-// method to interpret it as a Cluster.
-type ListResult struct {
-	commonResult
 }
 
 type GetCertResult struct {
