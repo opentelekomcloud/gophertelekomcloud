@@ -8,10 +8,6 @@ const (
 	masterIpPath = "mastereip"
 )
 
-func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(rootPath, id)
-}
-
 func certificateURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL(rootPath, id, certPath)
 }
