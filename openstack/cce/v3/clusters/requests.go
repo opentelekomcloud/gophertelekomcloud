@@ -40,41 +40,6 @@ func GetCertWithExpiration(c *golangsdk.ServiceClient, id string, opts Expiratio
 	return
 }
 
-// Delete will permanently delete a particular cluster based on its unique ID.
-func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, id), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
-		JSONBody:    nil,
-	})
-	return
-}
-
-type DeleteOpts struct {
-	ErrorStatus string `q:"errorStatus"`
-	DeleteEfs   string `q:"delete_efs"`
-	DeleteENI   string `q:"delete_eni"`
-	DeleteEvs   string `q:"delete_evs"`
-	DeleteNet   string `q:"delete_net"`
-	DeleteObs   string `q:"delete_obs"`
-	DeleteSfs   string `q:"delete_sfs"`
-}
-
-func DeleteWithOpts(c *golangsdk.ServiceClient, id string, opts DeleteOpts) error {
-	url := resourceURL(c, id)
-	q, err := golangsdk.BuildQueryString(&opts)
-	if err != nil {
-		return err
-	}
-
-	_, err = c.Delete(url+q.String(), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
-		JSONBody:    nil,
-	})
-	return err
-}
-
 type UpdateIpOpts struct {
 	Action    string `json:"action" required:"true"`
 	Spec      IpSpec `json:"spec,omitempty"`
