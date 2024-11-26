@@ -129,3 +129,60 @@ type Endpoints struct {
 	// Endpoint of the cluster to be accessed through API Gateway - OTC
 	ExternalOTC string `json:"external_otc"`
 }
+
+type Certificate struct {
+	// API type, fixed value Config
+	Kind string `json:"kind"`
+	// API version, fixed value v1
+	ApiVersion string `json:"apiVersion"`
+	// Cluster list
+	Clusters []CertClusters `json:"clusters"`
+	// User list
+	Users []CertUsers `json:"users"`
+	// Context list
+	Contexts []CertContexts `json:"contexts"`
+	// The current context
+	CurrentContext string `json:"current-context"`
+}
+
+type CertClusters struct {
+	// Cluster name
+	Name string `json:"name"`
+	// Cluster information
+	Cluster CertCluster `json:"cluster"`
+}
+
+type CertCluster struct {
+	// Server IP address
+	Server string `json:"server"`
+	// Certificate data
+	CertAuthorityData string `json:"certificate-authority-data,omitempty"`
+}
+
+type CertUsers struct {
+	// User name
+	Name string `json:"name"`
+	// Cluster information
+	User CertUser `json:"user"`
+}
+
+type CertUser struct {
+	// Client certificate
+	ClientCertData string `json:"client-certificate-data"`
+	// Client key data
+	ClientKeyData string `json:"client-key-data"`
+}
+
+type CertContexts struct {
+	// Context name
+	Name string `json:"name"`
+	// Context information
+	Context CertContext `json:"context"`
+}
+
+type CertContext struct {
+	// Cluster name
+	Cluster string `json:"cluster"`
+	// User name
+	User string `json:"user"`
+}
