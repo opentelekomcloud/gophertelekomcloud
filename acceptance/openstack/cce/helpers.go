@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
@@ -44,7 +44,7 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 				"kubernetes.io/cpuManagerPolicy": "static",
 			},
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
@@ -82,7 +82,7 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 			},
 			KubernetesSvcIpRange: "10.247.0.0/16",
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))

@@ -158,7 +158,7 @@ func TestCreateV3Cluster(t *testing.T) {
 				AuthenticatingProxy: make(map[string]string)},
 		},
 	}
-	actual, err := clusters.Create(fake.ServiceClient(), options).Extract()
+	actual, err := clusters.Create(fake.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -231,7 +231,7 @@ func TestCreateV3TurboCluster(t *testing.T) {
 				AuthenticatingProxy: make(map[string]string)},
 		},
 	}
-	actual, err := clusters.Create(fake.ServiceClient(), options).Extract()
+	actual, err := clusters.Create(fake.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)

@@ -3,7 +3,7 @@ package clusters
 import (
 	"reflect"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 var RequestOpts = golangsdk.RequestOpts{
@@ -93,39 +93,6 @@ func GetStructNestedField(v *Clusters, field string, structDriller []string) str
 	return f1.String()
 }
 
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToClusterCreateMap() (map[string]interface{}, error)
-}
-
-// CreateOpts contains all the values needed to create a new cluster
-type CreateOpts struct {
-	// API type, fixed value Cluster
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
-	// Metadata required to create a cluster
-	Metadata CreateMetaData `json:"metadata" required:"true"`
-	// specifications to create a cluster
-	Spec Spec `json:"spec" required:"true"`
-}
-
-// Metadata required to create a cluster
-type CreateMetaData struct {
-	// Cluster unique name
-	Name string `json:"name" required:"true"`
-	// Cluster tag, key/value pair format
-	Labels map[string]string `json:"labels,omitempty"`
-	// Cluster annotation, key/value pair format
-	Annotations map[string]string `json:"annotations,omitempty"`
-}
-
-// ToClusterCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToClusterCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
 type ExpirationOptsBuilder interface {
 	ToExpirationGetMap() (map[string]interface{}, error)
 }
@@ -136,19 +103,6 @@ type ExpirationOpts struct {
 
 func (opts ExpirationOpts) ToExpirationGetMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical cluster.
-func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToClusterCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c), b, &r.Body, reqOpt)
-	return
 }
 
 // Get retrieves a particular cluster based on its unique ID.
