@@ -23,7 +23,7 @@ type AddNode struct {
 	ServerID string `json:"serverID" required:"true"`
 	// Node reinstallation configuration parameters.
 	// Currently, accepted nodes cannot be added into node pools.
-	Spec ReinstallNodeSpec `json:"spec" required:"true"`
+	Spec *ReinstallNodeSpec `json:"spec" required:"true"`
 }
 
 // ReinstallNodeSpec defines the parameters for node reinstallation.
@@ -40,27 +40,27 @@ type ReinstallNodeSpec struct {
 	// and not ending with a hyphen (-). Only lowercase letters, digits, and hyphens (-) are allowed.
 	Name string `json:"name,omitempty"`
 	// Server configuration.
-	ServerConfig ReinstallServerConfig `json:"serverConfig,omitempty"`
+	ServerConfig *ReinstallServerConfig `json:"serverConfig,omitempty"`
 	// Volume management configuration.
-	VolumeConfig ReinstallVolumeConfig `json:"volumeConfig,omitempty"`
+	VolumeConfig *ReinstallVolumeConfig `json:"volumeConfig,omitempty"`
 	// Container runtime configuration.
-	RuntimeConfig ReinstallRuntimeConfig `json:"runtimeConfig,omitempty"`
+	RuntimeConfig *ReinstallRuntimeConfig `json:"runtimeConfig,omitempty"`
 	// Kubernetes node configuration.
-	K8sOptions ReinstallK8sOptionsConfig `json:"k8sOptions,omitempty"`
+	K8sOptions *ReinstallK8sOptionsConfig `json:"k8sOptions,omitempty"`
 	// Customized lifecycle configuration of a node.
-	Lifecycle NodeLifecycleConfig `json:"lifecycle,omitempty"`
+	Lifecycle *NodeLifecycleConfig `json:"lifecycle,omitempty"`
 	// Custom initialization flags.
 	// Before CCE nodes are initialized, they are tainted with `node.cloudprovider.kubernetes.io/Uninitialized`
 	// to prevent pods from being scheduled to them. Maximum 20 characters and 2 flags allowed.
 	InitializedConditions []string `json:"initializedConditions,omitempty"`
 	// Extended reinstallation parameter, which is discarded.
-	ExtendParam ReinstallExtendParam `json:"extendParam,omitempty"`
+	ExtendParam *ReinstallExtendParam `json:"extendParam,omitempty"`
 }
 
 // Login defines the parameters for node login mode.
 type Login struct {
 	// Name of the key pair used for login.
-	SSHKey string `json:"sshKey,omitempty"`
+	SSHKey string `json:"sshKey" required:"true"`
 	// Password used for node login.
 	// This field is not supported for the current version.
 	UserPassword string `json:"userPassword,omitempty"`
@@ -73,7 +73,7 @@ type ReinstallServerConfig struct {
 	// In the region that supports the least number of labels, you can still create up to 5 labels for a cloud server.
 	UserTags []UserTag `json:"userTags,omitempty"`
 	// System disk configurations used in reinstallation.
-	RootVolume ReinstallVolumeSpec `json:"rootVolume,omitempty"`
+	RootVolume *ReinstallVolumeSpec `json:"rootVolume,omitempty"`
 }
 
 // UserTag defines the key-value pair for a cloud server label.
@@ -133,7 +133,7 @@ type StorageSelector struct {
 	// Therefore, only one storageSelector of the local type is allowed.
 	StorageType string `json:"storageType" required:"true"`
 	// Matching field of an EVS volume. The size, volumeType, metadataEncrypted, metadataCmkid, and count fields are supported.
-	MatchLabels MatchLabels `json:"matchLabels,omitempty"`
+	MatchLabels *MatchLabels `json:"matchLabels,omitempty"`
 }
 
 // MatchLabels defines the matching criteria for EVS disks.
