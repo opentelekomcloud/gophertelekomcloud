@@ -23,6 +23,7 @@ func Update(client *golangsdk.ServiceClient, clusterId string, opts UpdateOpts) 
 		return nil, err
 	}
 
+	// PUT /api/v3/projects/{project_id}/clusters/{cluster_id}
 	raw, err := client.Put(client.ServiceURL("clusters", clusterId), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
