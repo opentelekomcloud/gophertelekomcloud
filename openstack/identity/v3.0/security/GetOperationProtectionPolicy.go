@@ -11,9 +11,13 @@ type ProtectionPolicy struct {
 	// Specifies whether a person is designated for verification.
 	AdminCheck string `json:"admin_check"`
 	// The verification method
-	Scene string `json:"scene,omitempty"`
+	Scene string `json:"scene"`
 	// The IAM attributes which user can modify
 	AllowUser *AllowUser `json:"allow_user"`
+	// Specifies mobile number used for verification
+	Mobile string `json:"mobile"`
+	// Specifies email address used for verification
+	Email string `json:"email"`
 }
 
 func GetOperationProtectionPolicy(client *golangsdk.ServiceClient, id string) (*ProtectionPolicy, error) {
