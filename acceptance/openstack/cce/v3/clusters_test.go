@@ -50,6 +50,5 @@ func TestCluster(t *testing.T) {
 
 	if clusterID != "" {
 		cce.DeleteCluster(t, clusterID)
-		clusterID = ""
 	}
 }
