@@ -5,39 +5,43 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
-	"github.com/stretchr/testify/suite"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-type testCluster struct {
-	suite.Suite
+func TestListCluster(t *testing.T) {
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
 
-	vpcID       string
-	subnetID    string
-	clusterID   string
-	eniSubnetID string
-	eniCidr     string
+	_, err = clusters.List(client, clusters.ListOpts{})
+	th.AssertNoErr(t, err)
 }
 
 func TestCluster(t *testing.T) {
-	suite.Run(t, new(testCluster))
-}
-
-func (s *testCluster) SetupSuite() {
-	t := s.T()
-	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
-	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	s.eniSubnetID = clients.EnvOS.GetEnv("ENI_SUBNET_ID")
-	s.eniCidr = "10.0.0.0/14"
-	if s.vpcID == "" || s.subnetID == "" || s.eniSubnetID == "" {
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	eniSubnetID := clients.EnvOS.GetEnv("ENI_SUBNET_ID")
+	eniCidr := clients.EnvOS.GetEnv("ENI_SUBNET_CIDR")
+	if vpcID == "" || subnetID == "" || eniSubnetID == "" {
 		t.Skip("OS_VPC_ID, OS_NETWORK_ID and OS_ENI_SUBNET_ID are required for this test")
 	}
-	s.clusterID = cce.CreateTurboCluster(t, s.vpcID, s.subnetID, s.eniSubnetID, s.eniCidr)
-}
+	if eniCidr == "" {
+		eniCidr = "192.168.0.0/24"
+	}
 
-func (s *testCluster) TearDownSuite() {
-	t := s.T()
-	if s.clusterID != "" {
-		cce.DeleteCluster(t, s.clusterID)
-		s.clusterID = ""
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
+
+	cluster := cce.CreateTurboCluster(t, vpcID, subnetID, eniSubnetID, eniCidr)
+
+	clusterID := cluster.Metadata.Id
+
+	clusterGet, err := clusters.Get(client, clusterID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, cluster.Metadata.Name, clusterGet.Metadata.Name)
+
+	if clusterID != "" {
+		cce.DeleteCluster(t, clusterID)
+		clusterID = ""
 	}
 }

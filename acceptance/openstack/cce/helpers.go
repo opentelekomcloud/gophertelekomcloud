@@ -51,7 +51,7 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 	return cluster.Metadata.Id
 }
 
-func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string, eniCidr string) string {
+func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string, eniCidr string) *clusters.Clusters {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
@@ -86,7 +86,7 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
-	return cluster.Metadata.Id
+	return cluster
 }
 
 func DeleteCluster(t *testing.T, clusterID string) {
