@@ -162,7 +162,7 @@ func TestGatewayFeaturesLifecycle(t *testing.T) {
 	gw, err := gateway.List(client, gateway.ListOpts{
 		InstanceName: accInstanceName,
 	})
-	if err != nil {
+	if len(gw) == 0 {
 		t.Skipf("Instance: %s, must exist for this test", accInstanceName)
 	}
 	gatewayID := gw[0].ID
@@ -175,7 +175,7 @@ func TestGatewayFeaturesLifecycle(t *testing.T) {
 	if len(features) < 1 {
 		t.Error("no features found for selected Gateway")
 	}
-
+	t.Logf("Attempting to Configure APIGW Gateway Route Feature for: %s", gatewayID)
 	routeFeature, err := gateway.ConfigureFeature(client, gateway.FeatureOpts{
 		GatewayID: gatewayID,
 		Name:      "route",
@@ -185,6 +185,7 @@ func TestGatewayFeaturesLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "{\"user_routes\":[\"172.16.128.0/20\",\"172.16.0.0/20\"]}", routeFeature.Config)
 
+	t.Logf("Attempting to Configure APIGW Gateway Ratelimit Feature for: %s", gatewayID)
 	rateLimitFeature, err := gateway.ConfigureFeature(client, gateway.FeatureOpts{
 		GatewayID: gatewayID,
 		Name:      "ratelimit",
