@@ -96,9 +96,9 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 		}
 		xml = append(xml, "</Grantee>")
 	} else {
-		if !isObs {
-			xml = append(xml, fmt.Sprintf("<Grant><Grantee xsi:type=\"%s\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">", grant.Grantee.Type))
-			xml = append(xml, prepareGrantURI(grant))
+		if grant.Grantee.URI == GroupLogDelivery {
+			xml = append(xml, "<Grant><Grantee>")
+			xml = append(xml, "<Canned>LogDelivery</Canned>")
 			xml = append(xml, "</Grantee>")
 		} else if grant.Grantee.URI == GroupAllUsers {
 			xml = append(xml, "<Grant><Grantee>")
@@ -110,7 +110,7 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	}
 
 	xml = append(xml, fmt.Sprintf("<Permission>%s</Permission>", grant.Permission))
-	if isObs && isBucket {
+	if isObs && isBucket && grant.Grantee.URI != GroupLogDelivery {
 		xml = append(xml, fmt.Sprintf("<Delivered>%t</Delivered>", grant.Delivered))
 	}
 	xml = append(xml, "</Grant>")
