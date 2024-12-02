@@ -66,16 +66,6 @@ func ParseStringToStorageClassType(value string) (ret StorageClassType) {
 	return
 }
 
-func prepareGrantURI(grant Grant) string {
-	if grant.Grantee.URI == GroupAllUsers || grant.Grantee.URI == GroupAuthenticatedUsers {
-		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/global/", grant.Grantee.URI)
-	}
-	if grant.Grantee.URI == GroupLogDelivery {
-		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/s3/", grant.Grantee.URI)
-	}
-	return fmt.Sprintf("<URI>%s</URI>", grant.Grantee.URI)
-}
-
 func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	xml := make([]string, 0, 4)
 	if !isObs {
