@@ -218,8 +218,7 @@ func (obsClient ObsClient) SetBucketAcl(input *SetBucketAclInput) (output *BaseM
 
 func (obsClient ObsClient) getBucketACLObs(bucketName string) (output *GetBucketAclOutput, err error) {
 	output = &GetBucketAclOutput{}
-	var outputObs *getBucketACLOutputObs
-	outputObs = &getBucketACLOutputObs{}
+	outputObs := &getBucketACLOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketAcl", HTTP_GET, bucketName, newSubResourceSerial(SubResourceAcl), outputObs)
 	if err != nil {
 		output = nil
