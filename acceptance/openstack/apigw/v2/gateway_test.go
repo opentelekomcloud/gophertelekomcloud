@@ -162,6 +162,7 @@ func TestGatewayFeaturesLifecycle(t *testing.T) {
 	gw, err := gateway.List(client, gateway.ListOpts{
 		InstanceName: accInstanceName,
 	})
+	th.AssertNoErr(t, err)
 	if len(gw) == 0 {
 		t.Skipf("Instance: %s, must exist for this test", accInstanceName)
 	}
