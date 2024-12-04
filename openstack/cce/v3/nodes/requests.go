@@ -85,12 +85,3 @@ type FilterStruct struct {
 	Value   string
 	Driller []string
 }
-
-// GetJobDetails retrieves a particular job based on its unique ID
-func GetJobDetails(c *golangsdk.ServiceClient, jobID string) (r GetResult) {
-	_, r.Err = c.Get(getJobURL(c, jobID), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}

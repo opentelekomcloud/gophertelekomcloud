@@ -268,7 +268,7 @@ func TestGetV3Job(t *testing.T) {
 		_, _ = fmt.Fprint(w, JobOutput)
 	})
 
-	actual, err := nodes.GetJobDetails(fake.ServiceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f").ExtractJob()
+	actual, err := nodes.GetJobDetails(fake.ServiceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f")
 	th.AssertNoErr(t, err)
 	expected := ExpectedJob
 	th.AssertDeepEquals(t, expected, actual)
