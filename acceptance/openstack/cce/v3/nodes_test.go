@@ -132,6 +132,26 @@ func (s *testNodes) TestNodeLifecycle() {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
+	updatedNode, err := nodes.Update(client, s.clusterID, nodeID, nodes.UpdateOpts{
+		Metadata: nodes.UpdateMetadata{
+			Name: "node-updated",
+		},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "node-updated", updatedNode.Metadata.Name)
+
+	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
+		n, err := nodes.Get(client, s.clusterID, nodeID)
+		if err != nil {
+			return false, err
+		}
+		if n.Status.Phase == "Active" {
+			return true, nil
+		}
+		time.Sleep(10 * time.Second)
+		return false, nil
+	}))
+
 	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
 
 	err = golangsdk.WaitFor(1800, func() (bool, error) {
