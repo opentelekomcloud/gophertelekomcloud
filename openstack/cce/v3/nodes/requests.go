@@ -86,39 +86,6 @@ type FilterStruct struct {
 	Driller []string
 }
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToNodeUpdateMap() (map[string]interface{}, error)
-}
-
-// UpdateOpts contains all the values needed to update a new node
-type UpdateOpts struct {
-	Metadata UpdateMetadata `json:"metadata,omitempty"`
-}
-
-type UpdateMetadata struct {
-	Name string `json:"name,omitempty"`
-}
-
-// ToNodeUpdateMap builds an update body based on UpdateOpts.
-func (opts UpdateOpts) ToNodeUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Update allows nodes to be updated.
-func Update(c *golangsdk.ServiceClient, clusterID, nodeID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToNodeUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Put(resourceURL(c, clusterID, nodeID), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // Delete will permanently delete a particular node based on its unique ID and cluster ID.
 func Delete(c *golangsdk.ServiceClient, clusterID, nodeID string) (r DeleteResult) {
 	_, r.Err = c.Delete(resourceURL(c, clusterID, nodeID), &golangsdk.RequestOpts{
