@@ -3,7 +3,7 @@ package nodes
 import (
 	"reflect"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 var RequestOpts = golangsdk.RequestOpts{
@@ -84,52 +84,6 @@ func GetStructNestedField(v *Nodes, field string, structDriller []string) string
 type FilterStruct struct {
 	Value   string
 	Driller []string
-}
-
-// CreateOpts is a struct contains the parameters of creating Node
-type CreateOpts struct {
-	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Metadata required to create a Node
-	Metadata CreateMetaData `json:"metadata"`
-	// specifications to create a Node
-	Spec Spec `json:"spec" required:"true"`
-}
-
-// CreateMetaData required to create a Node
-type CreateMetaData struct {
-	// Node name
-	Name string `json:"name,omitempty"`
-	// Node tag, key value pair format
-	Labels map[string]string `json:"labels,omitempty"`
-	// Node annotation, key value pair format
-	Annotations map[string]string `json:"annotations,omitempty"`
-}
-
-// CreateOptsBuilder allows extensions to add additional parameters to the
-// Create request.
-type CreateOptsBuilder interface {
-	ToNodeCreateMap() (map[string]interface{}, error)
-}
-
-// ToNodeCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical node.
-func Create(c *golangsdk.ServiceClient, clusterID string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToNodeCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, clusterID), b, &r.Body, reqOpt)
-	return
 }
 
 // Get retrieves a particular nodes based on its unique ID and cluster ID.

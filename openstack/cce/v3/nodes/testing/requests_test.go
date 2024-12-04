@@ -206,7 +206,7 @@ func TestCreateV3Node(t *testing.T) {
 			},
 		},
 	}
-	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options).Extract()
+	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)

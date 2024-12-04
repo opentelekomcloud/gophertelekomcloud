@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/opentelekomcloud/gophertelekomcloud"
+import golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 
 const (
 	rootPath     = "clusters"
@@ -8,11 +8,11 @@ const (
 )
 
 func rootURL(c *golangsdk.ServiceClient, clusterid string) string {
-	return c.ServiceURL(rootPath, clusterid, resourcePath)
+	return c.ServiceURL("clusters", clusterid, "nodes")
 }
 
 func resourceURL(c *golangsdk.ServiceClient, clusterid, nodeid string) string {
-	return c.ServiceURL(rootPath, clusterid, resourcePath, nodeid)
+	return c.ServiceURL("clusters", clusterid, "nodes", nodeid)
 }
 
 func getJobURL(c *golangsdk.ServiceClient, jobid string) string {

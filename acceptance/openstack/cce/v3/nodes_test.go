@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
@@ -111,7 +111,7 @@ func (s *testNodes) TestNodeLifecycle() {
 		opts.Spec.ExtendParam.AgencyName = v
 	}
 
-	node, err := nodes.Create(client, s.clusterID, opts).Extract()
+	node, err := nodes.Create(client, s.clusterID, opts)
 	th.AssertNoErr(t, err)
 
 	nodeID := node.Metadata.Id
