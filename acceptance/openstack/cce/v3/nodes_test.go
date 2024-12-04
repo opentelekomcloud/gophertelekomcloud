@@ -152,7 +152,7 @@ func (s *testNodes) TestNodeLifecycle() {
 		return false, nil
 	}))
 
-	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
+	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID))
 
 	err = golangsdk.WaitFor(1800, func() (bool, error) {
 		_, err := nodes.Get(client, s.clusterID, nodeID)

@@ -86,15 +86,6 @@ type FilterStruct struct {
 	Driller []string
 }
 
-// Delete will permanently delete a particular node based on its unique ID and cluster ID.
-func Delete(c *golangsdk.ServiceClient, clusterID, nodeID string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, clusterID, nodeID), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 // GetJobDetails retrieves a particular job based on its unique ID
 func GetJobDetails(c *golangsdk.ServiceClient, jobID string) (r GetResult) {
 	_, r.Err = c.Get(getJobURL(c, jobID), &r.Body, &golangsdk.RequestOpts{
