@@ -117,7 +117,7 @@ func (s *testNodes) TestNodeLifecycle() {
 	nodeID := node.Metadata.Id
 
 	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
-		n, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+		n, err := nodes.Get(client, s.clusterID, nodeID)
 		if err != nil {
 			return false, err
 		}
@@ -128,14 +128,14 @@ func (s *testNodes) TestNodeLifecycle() {
 		return false, nil
 	}))
 
-	state, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+	state, err := nodes.Get(client, s.clusterID, nodeID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
 	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
 
 	err = golangsdk.WaitFor(1800, func() (bool, error) {
-		_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+		_, err := nodes.Get(client, s.clusterID, nodeID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

@@ -86,15 +86,6 @@ type FilterStruct struct {
 	Driller []string
 }
 
-// Get retrieves a particular nodes based on its unique ID and cluster ID.
-func Get(c *golangsdk.ServiceClient, clusterID, nodeID string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, clusterID, nodeID), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
