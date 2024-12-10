@@ -8,52 +8,29 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
 
-type testKubeConfig struct {
-	suite.Suite
-
-	routerID  string
-	subnetID  string
-	clusterID string
-}
-
 func TestKubeConfig(t *testing.T) {
-	suite.Run(t, new(testKubeConfig))
-}
-
-func (s *testKubeConfig) SetupSuite() {
-	t := s.T()
-	s.routerID = clients.EnvOS.GetEnv("VPC_ID", "ROUTER_ID")
-	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	if s.routerID == "" || s.subnetID == "" {
+	routerID := clients.EnvOS.GetEnv("VPC_ID", "ROUTER_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if routerID == "" || subnetID == "" {
 		t.Skip("OS_ROUTER_ID and OS_NETWORK_ID are required for this test")
 	}
-	s.clusterID = cce.CreateCluster(t, s.routerID, s.subnetID)
-}
-
-func (s *testKubeConfig) TearDownSuite() {
-	t := s.T()
-	if s.clusterID != "" {
-		cce.DeleteCluster(t, s.clusterID)
-		s.clusterID = ""
-	}
-}
-
-func (s *testKubeConfig) TestKubeConfigReading() {
-	t := s.T()
-
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
-	kubeConfig, err := clusters.GetCert(client, s.clusterID).ExtractMap()
+	clusterID := cce.CreateCluster(t, routerID, subnetID)
+	t.Cleanup(func() {
+		cce.DeleteCluster(t, clusterID)
+	})
+
+	kubeConfig, err := clusters.GetCert(client, clusterID)
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfig)
 
-	kubeConfigExp, err := clusters.GetCertWithExpiration(client, s.clusterID, clusters.ExpirationOpts{
+	kubeConfigExp, err := clusters.GetCertWithExpiration(client, clusterID, clusters.ExpirationOpts{
 		Duration: 5,
-	}).ExtractMap()
+	})
 	th.AssertNoErr(t, err)
 	require.NotEmpty(t, kubeConfigExp)
 }

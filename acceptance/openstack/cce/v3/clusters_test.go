@@ -5,39 +5,50 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
-	"github.com/stretchr/testify/suite"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-type testCluster struct {
-	suite.Suite
+func TestListCluster(t *testing.T) {
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
 
-	vpcID       string
-	subnetID    string
-	clusterID   string
-	eniSubnetID string
-	eniCidr     string
+	_, err = clusters.List(client, clusters.ListOpts{})
+	th.AssertNoErr(t, err)
 }
 
 func TestCluster(t *testing.T) {
-	suite.Run(t, new(testCluster))
-}
-
-func (s *testCluster) SetupSuite() {
-	t := s.T()
-	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
-	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	s.eniSubnetID = clients.EnvOS.GetEnv("ENI_SUBNET_ID")
-	s.eniCidr = "10.0.0.0/14"
-	if s.vpcID == "" || s.subnetID == "" || s.eniSubnetID == "" {
-		t.Skip("OS_VPC_ID, OS_NETWORK_ID and OS_ENI_SUBNET_ID are required for this test")
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	if vpcID == "" {
+		t.Skip("OS_VPC_ID is required for this test")
 	}
-	s.clusterID = cce.CreateTurboCluster(t, s.vpcID, s.subnetID, s.eniSubnetID, s.eniCidr)
-}
 
-func (s *testCluster) TearDownSuite() {
-	t := s.T()
-	if s.clusterID != "" {
-		cce.DeleteCluster(t, s.clusterID)
-		s.clusterID = ""
+	clientNet, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+
+	listOpts := subnets.ListOpts{
+		VpcID: vpcID,
+	}
+	subnetsList, err := subnets.List(clientNet, listOpts)
+	th.AssertNoErr(t, err)
+
+	if len(subnetsList) < 1 {
+		t.Skip("no subnets found in selected VPC")
+	}
+
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
+
+	cluster := cce.CreateTurboCluster(t, vpcID, subnetsList[0].NetworkID, subnetsList[0].SubnetID, subnetsList[0].CIDR)
+
+	clusterID := cluster.Metadata.Id
+
+	clusterGet, err := clusters.Get(client, clusterID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, cluster.Metadata.Name, clusterGet.Metadata.Name)
+
+	if clusterID != "" {
+		cce.DeleteCluster(t, clusterID)
 	}
 }

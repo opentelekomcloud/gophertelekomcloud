@@ -131,6 +131,24 @@ func (obsClient ObsClient) GetObjectAcl(input *GetObjectAclInput) (output *GetOb
 	if err != nil {
 		output = nil
 	} else {
+		grants := make([]Grant, 0, len(output.Grants))
+
+		for _, valGrant := range output.Grants {
+			tempOutput := Grant{}
+			tempOutput.Delivered = valGrant.Delivered
+			tempOutput.Permission = valGrant.Permission
+			tempOutput.Grantee.DisplayName = valGrant.Grantee.DisplayName
+			tempOutput.Grantee.ID = valGrant.Grantee.ID
+			if valGrant.Grantee.ID != "" {
+				tempOutput.Grantee.Type = GranteeUser
+			} else {
+				tempOutput.Grantee.Type = GranteeGroup
+				tempOutput.Grantee.URI = GroupAllUsers
+			}
+
+			grants = append(grants, tempOutput)
+		}
+		output.Grants = grants
 		if versionId, ok := output.ResponseHeaders[HEADER_VERSION_ID]; ok {
 			output.VersionId = versionId[0]
 		}

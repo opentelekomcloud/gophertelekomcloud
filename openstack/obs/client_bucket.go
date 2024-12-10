@@ -218,7 +218,7 @@ func (obsClient ObsClient) SetBucketAcl(input *SetBucketAclInput) (output *BaseM
 
 func (obsClient ObsClient) getBucketACLObs(bucketName string) (output *GetBucketAclOutput, err error) {
 	output = &GetBucketAclOutput{}
-	var outputObs = &GetBucketAclOutput{}
+	outputObs := &getBucketACLOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketAcl", HTTP_GET, bucketName, newSubResourceSerial(SubResourceAcl), outputObs)
 	if err != nil {
 		output = nil
@@ -232,8 +232,20 @@ func (obsClient ObsClient) getBucketACLObs(bucketName string) (output *GetBucket
 			tempOutput.Permission = valGrant.Permission
 			tempOutput.Grantee.DisplayName = valGrant.Grantee.DisplayName
 			tempOutput.Grantee.ID = valGrant.Grantee.ID
-			tempOutput.Grantee.Type = valGrant.Grantee.Type
-			tempOutput.Grantee.URI = GroupAllUsers
+			if valGrant.Grantee.Canned == "" {
+				tempOutput.Grantee.Type = GranteeUser
+				tempOutput.Grantee.URI = GroupAllUsers
+			} else {
+				tempOutput.Grantee.Type = GranteeGroup
+				switch valGrant.Grantee.Canned {
+				case "LogDelivery":
+					tempOutput.Grantee.URI = GroupLogDelivery
+				case "AuthenticatedUsers":
+					tempOutput.Grantee.URI = GroupAuthenticatedUsers
+				default:
+					tempOutput.Grantee.URI = GroupAllUsers
+				}
+			}
 
 			output.Grants = append(output.Grants, tempOutput)
 		}

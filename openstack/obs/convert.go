@@ -66,16 +66,6 @@ func ParseStringToStorageClassType(value string) (ret StorageClassType) {
 	return
 }
 
-func prepareGrantURI(grant Grant) string {
-	if grant.Grantee.URI == GroupAllUsers || grant.Grantee.URI == GroupAuthenticatedUsers {
-		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/global/", grant.Grantee.URI)
-	}
-	if grant.Grantee.URI == GroupLogDelivery {
-		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/s3/", grant.Grantee.URI)
-	}
-	return fmt.Sprintf("<URI>%s</URI>", grant.Grantee.URI)
-}
-
 func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	xml := make([]string, 0, 4)
 	if !isObs {
@@ -96,9 +86,9 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 		}
 		xml = append(xml, "</Grantee>")
 	} else {
-		if !isObs {
-			xml = append(xml, fmt.Sprintf("<Grant><Grantee xsi:type=\"%s\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">", grant.Grantee.Type))
-			xml = append(xml, prepareGrantURI(grant))
+		if grant.Grantee.URI == GroupLogDelivery {
+			xml = append(xml, "<Grant><Grantee>")
+			xml = append(xml, "<Canned>LogDelivery</Canned>")
 			xml = append(xml, "</Grantee>")
 		} else if grant.Grantee.URI == GroupAllUsers {
 			xml = append(xml, "<Grant><Grantee>")
@@ -110,7 +100,7 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	}
 
 	xml = append(xml, fmt.Sprintf("<Permission>%s</Permission>", grant.Permission))
-	if isObs && isBucket {
+	if isObs && isBucket && grant.Grantee.URI != GroupLogDelivery {
 		xml = append(xml, fmt.Sprintf("<Delivered>%t</Delivered>", grant.Delivered))
 	}
 	xml = append(xml, "</Grant>")

@@ -1,19 +1,6 @@
 package clusters
 
-import (
-	"encoding/json"
-
-	"github.com/opentelekomcloud/gophertelekomcloud"
-)
-
-type ListCluster struct {
-	// API type, fixed value Cluster
-	Kind string `json:"kind"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion"`
-	// all Clusters
-	Clusters []Clusters `json:"items"`
-}
+import "encoding/json"
 
 type Clusters struct {
 	// API type, fixed value Cluster
@@ -75,6 +62,19 @@ type Spec struct {
 	EnableMasterVolumeEncryption *bool `json:"enableMasterVolumeEncryption,omitempty"`
 }
 
+type Status struct {
+	// The state of the cluster
+	Phase string `json:"phase"`
+	// The ID of the Job that is operating asynchronously in the cluster
+	JobID string `json:"jobID"`
+	// Reasons for the cluster to become current
+	Reason string `json:"reason"`
+	// The status of each component in the cluster
+	Conditions Conditions `json:"conditions"`
+	// Kube-apiserver access address in the cluster
+	Endpoints []Endpoints `json:"-"`
+}
+
 // Node network parameters
 type HostNetworkSpec struct {
 	// The ID of the VPC used to create the node
@@ -108,19 +108,6 @@ type AuthenticationSpec struct {
 	// Authentication mode: rbac , x509 or authenticating_proxy
 	Mode                string            `json:"mode" required:"true"`
 	AuthenticatingProxy map[string]string `json:"authenticatingProxy" required:"true"`
-}
-
-type Status struct {
-	// The state of the cluster
-	Phase string `json:"phase"`
-	// The ID of the Job that is operating asynchronously in the cluster
-	JobID string `json:"jobID"`
-	// Reasons for the cluster to become current
-	Reason string `json:"reason"`
-	// The status of each component in the cluster
-	Conditions Conditions `json:"conditions"`
-	// Kube-apiserver access address in the cluster
-	Endpoints []Endpoints `json:"-"`
 }
 
 type Conditions struct {
@@ -171,7 +158,7 @@ type CertCluster struct {
 	// Server IP address
 	Server string `json:"server"`
 	// Certificate data
-	CertAuthorityData string `json:"certificate-authority-data"`
+	CertAuthorityData string `json:"certificate-authority-data,omitempty"`
 }
 
 type CertUsers struct {
@@ -239,82 +226,4 @@ func (r *Status) UnmarshalJSON(b []byte) error {
 	r.Endpoints = s.Endpoints
 
 	return err
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a cluster.
-func (r commonResult) Extract() (*Clusters, error) {
-	var s Clusters
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-
-// ExtractCluster is a function that accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
-func (r commonResult) ExtractClusters() ([]Clusters, error) {
-	var s ListCluster
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.Clusters, nil
-
-}
-
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a Cluster.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Cluster.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Cluster.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult represents the result of a delete operation. Call its ExtractErr
-// method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-// ListResult represents the result of a list operation. Call its ExtractCluster
-// method to interpret it as a Cluster.
-type ListResult struct {
-	commonResult
-}
-
-type GetCertResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a cluster.
-func (r GetCertResult) Extract() (*Certificate, error) {
-	var s Certificate
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-
-// ExtractMap is a function that accepts a result and extracts a kubeconfig.
-func (r GetCertResult) ExtractMap() (map[string]interface{}, error) {
-	var s map[string]interface{}
-	err := r.ExtractInto(&s)
-	return s, err
-}
-
-// UpdateIpResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Cluster.
-type UpdateIpResult struct {
-	golangsdk.ErrResult
 }

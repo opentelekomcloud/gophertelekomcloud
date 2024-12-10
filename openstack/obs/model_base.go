@@ -106,10 +106,25 @@ type Grantee struct {
 	URI         GroupUriType `xml:"URI,omitempty"`
 }
 
+type granteeObs struct {
+	XMLName     xml.Name    `xml:"Grantee"`
+	Type        GranteeType `xml:"type,attr"`
+	ID          string      `xml:"ID,omitempty"`
+	DisplayName string      `xml:"DisplayName,omitempty"`
+	Canned      string      `xml:"Canned,omitempty"`
+}
+
 // Grant defines grant properties
 type Grant struct {
 	XMLName    xml.Name       `xml:"Grant"`
 	Grantee    Grantee        `xml:"Grantee"`
+	Permission PermissionType `xml:"Permission"`
+	Delivered  bool           `xml:"Delivered"`
+}
+
+type grantObs struct {
+	XMLName    xml.Name       `xml:"Grant"`
+	Grantee    granteeObs     `xml:"Grantee"`
 	Permission PermissionType `xml:"Permission"`
 	Delivered  bool           `xml:"Delivered"`
 }
@@ -120,6 +135,12 @@ type AccessControlPolicy struct {
 	Owner     Owner    `xml:"Owner"`
 	Grants    []Grant  `xml:"AccessControlList>Grant"`
 	Delivered string   `xml:"Delivered,omitempty"`
+}
+
+type accessControlPolicyObs struct {
+	XMLName xml.Name   `xml:"AccessControlPolicy"`
+	Owner   Owner      `xml:"Owner"`
+	Grants  []grantObs `xml:"AccessControlList>Grant"`
 }
 
 // CorsRule defines the CORS rules

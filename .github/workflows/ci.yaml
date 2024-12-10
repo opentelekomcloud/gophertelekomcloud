@@ -4,8 +4,8 @@ on:
   pull_request:
     types:
       - opened
-      - edited
       - synchronize
+  workflow_dispatch:
 
 env:
   GO_VERSION: '1.20'
