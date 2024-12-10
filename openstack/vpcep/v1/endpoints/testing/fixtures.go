@@ -115,7 +115,7 @@ var expected = &endpoints.Endpoint{
 	ServiceType: services.ServiceTypeInterface,
 	MarkerID:    322312312312,
 	Status:      endpoints.StatusCreating,
-	RouterID:    "84758cf5-9c62-43ae-a778-3dbd8370c0a4",
+	VpcID:       "84758cf5-9c62-43ae-a778-3dbd8370c0a4",
 	EnableDNS:   true,
 	ServiceName: "test123",
 	ServiceID:   "e0c748b7-d982-47df-ba06-b9c8c7650c1a",

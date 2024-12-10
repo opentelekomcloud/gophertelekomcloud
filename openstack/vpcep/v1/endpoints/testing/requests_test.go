@@ -28,12 +28,12 @@ func TestCreateRequest(t *testing.T) {
 	opts := endpoints.CreateOpts{
 		NetworkID: "68bfbcc1-dff2-47e4-a9d4-332b9bc1b8de",
 		ServiceID: expected.ServiceID,
-		RouterID:  expected.RouterID,
+		VpcId:     expected.VpcID,
 		EnableDNS: true,
 		Tags:      []tags.ResourceTag{{Key: "test1", Value: "test1"}},
 	}
 
-	ep, err := endpoints.Create(client.ServiceClient(), opts).Extract()
+	ep, err := endpoints.Create(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, ep)
 }
@@ -52,7 +52,7 @@ func TestGetRequest(t *testing.T) {
 		_, _ = fmt.Fprint(w, createResponse)
 	})
 
-	ep, err := endpoints.Get(client.ServiceClient(), id).Extract()
+	ep, err := endpoints.Get(client.ServiceClient(), id)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expected, ep)
 }
@@ -71,12 +71,9 @@ func TestListRequest(t *testing.T) {
 	})
 
 	opts := endpoints.ListOpts{
-		RouterID: "84758cf5-9c62-43ae-a778-3dbd8370c0a4",
+		VpcID: "84758cf5-9c62-43ae-a778-3dbd8370c0a4",
 	}
-	pages, err := endpoints.List(client.ServiceClient(), opts).AllPages()
-	th.AssertNoErr(t, err)
-
-	eps, err := endpoints.ExtractEndpoints(pages)
+	eps, err := endpoints.List(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, 2, len(eps))
@@ -95,5 +92,5 @@ func TestDeleteRequest(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	th.AssertNoErr(t, endpoints.Delete(client.ServiceClient(), id).ExtractErr())
+	th.AssertNoErr(t, endpoints.Delete(client.ServiceClient(), id))
 }

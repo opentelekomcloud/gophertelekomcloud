@@ -25,9 +25,9 @@ func TestCreateRequest(t *testing.T) {
 	})
 
 	iFalse := false
-	opts := &services.CreateOpts{
+	opts := services.CreateOpts{
 		PortID:          "4189d3c2-8882-4871-a3c2-d380272eed88",
-		RouterID:        "4189d3c2-8882-4871-a3c2-d380272eed80",
+		VpcId:           "4189d3c2-8882-4871-a3c2-d380272eed80",
 		ApprovalEnabled: &iFalse,
 		ServiceType:     services.ServiceTypeInterface,
 		ServerType:      services.ServerTypeVM,
@@ -45,9 +45,9 @@ func TestCreateRequest(t *testing.T) {
 		},
 	}
 
-	created, err := services.Create(client.ServiceClient(), opts).Extract()
+	created, err := services.Create(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, created.RouterID, opts.RouterID)
+	th.AssertEquals(t, created.VpcID, opts.VpcId)
 }
 
 func TestGetRequest(t *testing.T) {
@@ -64,9 +64,9 @@ func TestGetRequest(t *testing.T) {
 		_, _ = fmt.Fprint(w, createResponse)
 	})
 
-	svc, err := services.Get(client.ServiceClient(), id).Extract()
+	svc, err := services.Get(client.ServiceClient(), id)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, id, svc.RouterID)
+	th.AssertEquals(t, id, svc.VpcID)
 }
 
 func TestUpdateRequest(t *testing.T) {
@@ -85,7 +85,7 @@ func TestUpdateRequest(t *testing.T) {
 	})
 
 	iTrue := true
-	opts := &services.UpdateOpts{
+	opts := services.UpdateOpts{
 		ServiceName:     "test",
 		ApprovalEnabled: &iTrue,
 		Ports: []services.PortMapping{
@@ -102,7 +102,7 @@ func TestUpdateRequest(t *testing.T) {
 		},
 	}
 
-	updated, err := services.Update(client.ServiceClient(), id, opts).Extract()
+	updated, err := services.Update(client.ServiceClient(), id, opts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updated.ApprovalEnabled, *opts.ApprovalEnabled)
 	th.AssertDeepEquals(t, updated.Ports, opts.Ports)
@@ -127,9 +127,7 @@ func TestListRequest(t *testing.T) {
 	opts := services.ListOpts{
 		Name: name,
 	}
-	pages, err := services.List(client.ServiceClient(), opts).AllPages()
-	th.AssertNoErr(t, err)
-	list, err := services.ExtractServices(pages)
+	list, err := services.List(client.ServiceClient(), opts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(list))
 	th.AssertEquals(t, name, list[0].ServiceName)
