@@ -55,8 +55,6 @@ func TestListPublicServices(t *testing.T) {
 }
 
 func TestGetQuota(t *testing.T) {
-	t.Parallel()
-
 	client, err := clients.NewVPCEndpointV1Client()
 	th.AssertNoErr(t, err)
 	t.Log("Attempting to Get VPCEP endpoint_service quota")
