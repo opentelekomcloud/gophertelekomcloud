@@ -1,6 +1,7 @@
 package bucket
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -11,7 +12,10 @@ import (
 )
 
 func TestObsObjectAclLifecycle(t *testing.T) {
-	domainId := ""
+	domainId := os.Getenv("OS_DOMAIN_ID")
+	if domainId == "" {
+		t.Skip("OS_DOMAIN_ID is mandatory for this test")
+	}
 	client, err := clients.NewOBSClient()
 	th.AssertNoErr(t, err)
 
