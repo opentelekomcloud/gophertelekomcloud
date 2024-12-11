@@ -100,6 +100,10 @@ func TestNodePoolLifecycle(t *testing.T) {
 		},
 	}
 
+	existingNodepools, err := nodepools.List(client, clusterId, nodepools.ListOpts{})
+	th.AssertNoErr(t, err)
+	numExistingNodepools := len(existingNodepools)
+
 	nodePool, err := nodepools.Create(client, clusterId, createOpts)
 	th.AssertNoErr(t, err)
 
@@ -116,6 +120,10 @@ func TestNodePoolLifecycle(t *testing.T) {
 		time.Sleep(10 * time.Second)
 		return false, nil
 	}))
+
+	nodepoolList, err := nodepools.List(client, clusterId, nodepools.ListOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, numExistingNodepools+1, len(nodepoolList))
 
 	pool, err := nodepools.Get(client, clusterId, nodeId)
 	th.AssertNoErr(t, err)
