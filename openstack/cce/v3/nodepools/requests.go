@@ -88,15 +88,6 @@ type FilterStruct struct {
 	Driller []string
 }
 
-// Get retrieves a particular node pool based on its unique ID and cluster ID.
-func Get(c *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, clusterid, nodepoolid), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 // UpdateOpts contains all the values needed to update a new node pool
 type UpdateOpts struct {
 	// Metadata required to update a Node Pool
