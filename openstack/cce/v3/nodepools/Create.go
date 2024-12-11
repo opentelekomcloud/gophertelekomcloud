@@ -44,14 +44,14 @@ type CreateSpec struct {
 
 // Create accepts a CreateOpts struct and uses the values to create a new
 // logical node pool.
-func Create(client *golangsdk.ServiceClient, clusterid string, opts CreateOpts) (*NodePool, error) {
+func Create(client *golangsdk.ServiceClient, clusterId string, opts CreateOpts) (*NodePool, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// POST /api/v3/projects/{project_id}/clusters/{cluster_id}/nodepools
-	raw, err := client.Post(client.ServiceURL("clusters", clusterid, "nodepools"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("clusters", clusterId, "nodepools"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{201},
 	})
 	if err != nil {
