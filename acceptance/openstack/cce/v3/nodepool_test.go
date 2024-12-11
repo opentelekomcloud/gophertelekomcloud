@@ -100,7 +100,7 @@ func TestNodePoolLifecycle(t *testing.T) {
 		},
 	}
 
-	nodePool, err := nodepools.Create(client, clusterId, createOpts).Extract()
+	nodePool, err := nodepools.Create(client, clusterId, createOpts)
 	th.AssertNoErr(t, err)
 
 	nodeId := nodePool.Metadata.Id

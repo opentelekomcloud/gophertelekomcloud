@@ -88,66 +88,6 @@ type FilterStruct struct {
 	Driller []string
 }
 
-// CreateOpts allows extensions to add additional parameters to the
-// Create request.
-type CreateOpts struct {
-	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
-	// Metadata required to create a Node Pool
-	Metadata CreateMetaData `json:"metadata" required:"true"`
-	// specifications to create a Node Pool
-	Spec CreateSpec `json:"spec" required:"true"`
-}
-
-// CreateMetaData required to create a Node Pool
-type CreateMetaData struct {
-	// Name of the node pool.
-	Name string `json:"name" required:"true"`
-}
-
-// CreateSpec describes Node pools specification
-type CreateSpec struct {
-	// Node pool type. Currently, only `vm`(ECSs) are supported.
-	Type string `json:"type" required:"true"`
-	// Node template
-	NodeTemplate nodes.Spec `json:"nodeTemplate" required:"true"`
-	// Initial number of expected nodes
-	InitialNodeCount int `json:"initialNodeCount"`
-	// Auto scaling parameters
-	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
-	// Node management parameters
-	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
-	// Custom security group settings for a node pool
-	CustomSecurityGroupIds []string `json:"customSecurityGroups,omitempty"`
-}
-
-// CreateOptsBuilder Create accepts a CreateOpts struct and uses the values to create a new
-// logical Node Pool. When it is created, the Node Pool does not have an internal
-// interface
-type CreateOptsBuilder interface {
-	ToNodePoolCreateMap() (map[string]interface{}, error)
-}
-
-// ToNodePoolCreateMap builds a create request body from CreateOpts.
-func (opts CreateOpts) ToNodePoolCreateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical node pool.
-func Create(c *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToNodePoolCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	_, r.Err = c.Post(rootURL(c, clusterid), b, &r.Body, reqOpt)
-	return
-}
-
 // Get retrieves a particular node pool based on its unique ID and cluster ID.
 func Get(c *golangsdk.ServiceClient, clusterid, nodepoolid string) (r GetResult) {
 	_, r.Err = c.Get(resourceURL(c, clusterid, nodepoolid), &r.Body, &golangsdk.RequestOpts{
