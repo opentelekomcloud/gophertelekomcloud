@@ -133,7 +133,7 @@ func TestNodePoolLifecycle(t *testing.T) {
 			NodeTemplate:     nodepools.UpdateNodeTemplate{},
 		},
 	}
-	updatedPool, err := nodepools.Update(client, clusterId, nodeId, updateOpts).Extract()
+	updatedPool, err := nodepools.Update(client, clusterId, nodeId, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "nodepool-test-updated", updatedPool.Metadata.Name)
 	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
