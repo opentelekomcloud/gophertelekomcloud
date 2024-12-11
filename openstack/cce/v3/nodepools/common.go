@@ -1,19 +1,8 @@
 package nodepools
 
 import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 )
-
-// ListNodePool - Describes the Node Pool Structure of cluster
-type ListNodePool struct {
-	// API type, fixed value "List"
-	Kind string `json:"kind"`
-	// API version, fixed value "v3"
-	Apiversion string `json:"apiVersion"`
-	// all Node Pools
-	NodePools []NodePool `json:"items"`
-}
 
 // NodePool - Individual node pools of the cluster
 type NodePool struct {
@@ -79,56 +68,4 @@ type AutoscalingSpec struct {
 type NodeManagementSpec struct {
 	// ECS group ID
 	ServerGroupReference string `json:"serverGroupReference"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a node pool.
-func (r commonResult) Extract() (*NodePool, error) {
-	var s NodePool
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-
-// ExtractNodePool is a function that accepts a ListOpts struct, which allows you to filter and sort
-// the returned collection for greater efficiency.
-func (r commonResult) ExtractNodePool() ([]NodePool, error) {
-	var s ListNodePool
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return nil, err
-	}
-	return s.NodePools, nil
-}
-
-// ListResult represents the result of a list operation. Call its ExtractNode
-// method to interpret it as a Node Pool.
-type ListResult struct {
-	commonResult
-}
-
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a Node Pool.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Node Pool.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Node Pool.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult represents the result of a delete operation. Call its ExtractErr
-// method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
 }
