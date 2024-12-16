@@ -1,7 +1,7 @@
 package addons
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type Addon struct {
@@ -56,6 +56,10 @@ type Status struct {
 	Message string `json:"message"`
 	// The target versions of the addon
 	TargetVersions []string `json:"targetVersions"`
+}
+
+type ClusterIdQueryParam struct {
+	ClusterId string `q:"cluster_id"`
 }
 
 type commonResult struct {

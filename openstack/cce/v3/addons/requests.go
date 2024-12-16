@@ -10,14 +10,6 @@ var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
 
-// Get retrieves a particular addon based on its unique ID.
-func Get(c *golangsdk.ServiceClient, id, clusterId string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, id, clusterId), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
@@ -121,7 +113,7 @@ func ListAddonInstances(c *golangsdk.ServiceClient, clusterID string) (r ListIns
 // WaitForAddonRunning - wait until addon status is `running`
 func WaitForAddonRunning(client *golangsdk.ServiceClient, id, clusterID string, timeoutSeconds int) error {
 	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
-		addon, err := Get(client, id, clusterID).Extract()
+		addon, err := Get(client, id, clusterID)
 		if err != nil {
 			return false, fmt.Errorf("error retriving addon status: %w", err)
 		}
@@ -135,7 +127,7 @@ func WaitForAddonRunning(client *golangsdk.ServiceClient, id, clusterID string, 
 // WaitForAddonDeleted - wait until addon is deleted
 func WaitForAddonDeleted(client *golangsdk.ServiceClient, id, clusterID string, timeoutSeconds int) error {
 	return golangsdk.WaitFor(timeoutSeconds, func() (bool, error) {
-		_, err := Get(client, id, clusterID).Extract()
+		_, err := Get(client, id, clusterID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

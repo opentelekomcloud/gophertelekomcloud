@@ -94,7 +94,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, a.clusterID, 600))
 	}()
 
-	getAddon, err := addons.Get(client, addonID, a.clusterID).Extract()
+	getAddon, err := addons.Get(client, addonID, a.clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
 	th.AssertEquals(t, "1.17.2", getAddon.Spec.Version)
@@ -127,7 +127,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 	_, err = addons.Update(client, addonID, a.clusterID, uOpts).Extract()
 	th.AssertNoErr(t, err)
 
-	getAddon2, err := addons.Get(client, addonID, a.clusterID).Extract()
+	getAddon2, err := addons.Get(client, addonID, a.clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, false, getAddon2.Spec.Values.Advanced["scaleDownEnabled"])
 	th.AssertEquals(t, 11.0, getAddon2.Spec.Values.Advanced["scaleDownDelayAfterAdd"])
@@ -162,7 +162,7 @@ func (a *testAddons) TestListAddonInstances() {
 
 	th.AssertEquals(t, len(list.Items), 3)
 	// check if listed addon exists
-	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID).Extract()
+	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID)
 	th.AssertNoErr(t, err)
 }
 
