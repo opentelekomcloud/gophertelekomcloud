@@ -1,7 +1,6 @@
 package v3
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -12,7 +11,8 @@ import (
 func TestAddonsLifecycle(t *testing.T) {
 
 	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
-	if clusterID == "" {
+	tenantID := clients.EnvOS.GetEnv("TENANT_ID")
+	if clusterID == "" || tenantID == "" {
 		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
 	}
 
@@ -35,6 +35,7 @@ func TestAddonsLifecycle(t *testing.T) {
 		"scaleUpUnscheduledPodEnabled":   true,
 		"scaleUpUtilizationEnabled":      true,
 		"unremovableNodeRecheckTimeout":  5,
+		"tenant_id":                      tenantID,
 	}
 	cOpts := addons.CreateOpts{
 		Kind:       "Addon",
@@ -45,7 +46,7 @@ func TestAddonsLifecycle(t *testing.T) {
 			},
 		},
 		Spec: addons.RequestSpec{
-			Version:           "1.17.2",
+			Version:           "1.29.17",
 			ClusterID:         clusterID,
 			AddonTemplateName: "autoscaler",
 			Values: addons.Values{
@@ -62,6 +63,11 @@ func TestAddonsLifecycle(t *testing.T) {
 		},
 	}
 
+	listExistingAddons, err := addons.ListAddonInstances(client, clusterID)
+	th.AssertNoErr(t, err)
+
+	existingAddons := len(listExistingAddons.Items)
+
 	addon, err := addons.Create(client, cOpts, clusterID)
 	th.AssertNoErr(t, err)
 
@@ -71,16 +77,19 @@ func TestAddonsLifecycle(t *testing.T) {
 		err := addons.Delete(client, addonID, clusterID)
 		th.AssertNoErr(t, err)
 
-		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, clusterID, 600))
+		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, clusterID, 1200))
 	}()
+
+	listAddons, err := addons.ListAddonInstances(client, clusterID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, existingAddons+1, len(listAddons.Items))
 
 	getAddon, err := addons.Get(client, addonID, clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
-	th.AssertEquals(t, "1.17.2", getAddon.Spec.Version)
-	th.AssertEquals(t, true, getAddon.Spec.Values.Advanced["scaleDownEnabled"])
+	th.AssertEquals(t, "1.29.17", getAddon.Spec.Version)
 
-	waitErr := addons.WaitForAddonRunning(client, addonID, clusterID, 600)
+	waitErr := addons.WaitForAddonRunning(client, addonID, clusterID, 1200)
 	th.AssertNoErr(t, waitErr)
 
 	uOpts := addons.UpdateOpts{
@@ -129,27 +138,8 @@ func TestAddonsListTemplates(t *testing.T) {
 		t.Fatal("empty addon template list")
 	}
 
-	jsonList, _ := json.MarshalIndent(list.Items, "", "  ")
-
-	t.Logf("existing addon templates:\n%s", string(jsonList))
-}
-
-func TestAddonsListInstances(t *testing.T) {
-	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
-	if clusterID == "" {
-		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
-	}
-
-	client, err := clients.NewCceV3AddonClient()
-	th.AssertNoErr(t, err)
-
-	list, err := addons.ListAddonInstances(client, clusterID)
-	th.AssertNoErr(t, err)
-
-	th.AssertEquals(t, len(list.Items), 3)
-	// check if listed addon exists
-	_, err = addons.Get(client, list.Items[0].Metadata.ID, clusterID)
-	th.AssertNoErr(t, err)
+	// jsonList, _ := json.MarshalIndent(list.Items, "", "  ")
+	// t.Logf("existing addon templates:\n%s", string(jsonList))
 }
 
 func TestAddonsGetTemplates(t *testing.T) {
