@@ -51,8 +51,10 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts, clusterId string) 
 	if err != nil {
 		return nil, err
 	}
-	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{201}}
-	raw, err := client.Post(CCEServiceURL(client, clusterId, "addons"), b, nil, reqOpt)
+	// POST /api/v3/addons
+	raw, err := client.Post(CCEServiceURL(client, clusterId, "addons"), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{201},
+	})
 	if err != nil {
 		return nil, err
 	}
