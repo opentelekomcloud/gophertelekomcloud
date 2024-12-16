@@ -139,7 +139,7 @@ func (a *testAddons) TestListAddonTemplates() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListTemplates(client, a.clusterID, nil).Extract()
+	list, err := addons.ListTemplates(client, a.clusterID, addons.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	if len(list.Items) == 0 {
