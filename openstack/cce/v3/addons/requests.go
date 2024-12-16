@@ -10,15 +10,6 @@ var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
 
-// Delete will permanently delete a particular addon based on its unique ID.
-func Delete(c *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, id, clusterId), &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-	return
-}
-
 type ListOptsBuilder interface {
 	ToAddonListQuery() (string, error)
 }
