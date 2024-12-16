@@ -82,7 +82,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 		},
 	}
 
-	addon, err := addons.Create(client, cOpts, a.clusterID).Extract()
+	addon, err := addons.Create(client, cOpts, a.clusterID)
 	th.AssertNoErr(t, err)
 
 	addonID := addon.Metadata.Id

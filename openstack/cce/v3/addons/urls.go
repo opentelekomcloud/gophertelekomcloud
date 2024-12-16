@@ -4,20 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
-
-const (
-	rootPath      = "addons"
-	templatesPath = "addontemplates"
-)
-
-func rootURL(client *golangsdk.ServiceClient, clusterID string) string {
-	return CCEServiceURL(client, clusterID, rootPath)
-}
 
 func resourceURL(client *golangsdk.ServiceClient, id, clusterID string) string {
-	return CCEServiceURL(client, clusterID, rootPath, id+"?cluster_id="+clusterID)
+	return CCEServiceURL(client, clusterID, "addons", id+"?cluster_id="+clusterID)
 }
 
 func CCEServiceURL(client *golangsdk.ServiceClient, clusterID string, parts ...string) string {
@@ -26,14 +17,14 @@ func CCEServiceURL(client *golangsdk.ServiceClient, clusterID string, parts ...s
 }
 
 func templatesURL(client *golangsdk.ServiceClient, clusterID string) string {
-	return CCEServiceURL(client, clusterID, templatesPath)
+	return CCEServiceURL(client, clusterID, "addontemplates")
 }
 
 func instanceURL(client *golangsdk.ServiceClient, clusterID string) string {
-	return fmt.Sprintf("%s?cluster_id=%s", CCEServiceURL(client, clusterID, rootPath), clusterID)
+	return fmt.Sprintf("%s?cluster_id=%s", CCEServiceURL(client, clusterID, "addons"), clusterID)
 }
 
 // GET /api/v3/addontemplates
 func addonTemplatesURL(client *golangsdk.ServiceClient) string {
-	return client.ServiceURL(templatesPath)
+	return client.ServiceURL("addontemplates")
 }
