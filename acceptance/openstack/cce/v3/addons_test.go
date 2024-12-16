@@ -124,7 +124,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 	uOpts.Spec.Values.Advanced["scaleDownEnabled"] = false
 	uOpts.Spec.Values.Advanced["scaleDownDelayAfterAdd"] = 11
 
-	_, err = addons.Update(client, addonID, a.clusterID, uOpts).Extract()
+	_, err = addons.Update(client, addonID, a.clusterID, uOpts)
 	th.AssertNoErr(t, err)
 
 	getAddon2, err := addons.Get(client, addonID, a.clusterID)

@@ -10,51 +10,6 @@ var RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToAddonUpdateMap() (map[string]interface{}, error)
-}
-
-type UpdateMetadata struct {
-	// Add-on annotations in the format of key-value pairs.
-	// For add-on upgrade, the value is fixed at {"addon.upgrade/type":"upgrade"}.
-	Annotations UpdateAnnotations `json:"annotations" required:"true"`
-	// Add-on labels in the format of key-value pairs.
-	Labels map[string]string `json:"metadata,omitempty"`
-}
-
-type UpdateAnnotations struct {
-	AddonUpdateType string `json:"addon.upgrade/type" required:"true"`
-}
-
-type UpdateOpts struct {
-	// API type, fixed value Addon
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Metadata required to create an addon
-	Metadata UpdateMetadata `json:"metadata" required:"true"`
-	// specifications to create an addon
-	Spec RequestSpec `json:"spec" required:"true"`
-}
-
-func (opts UpdateOpts) ToAddonUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "")
-}
-
-func Update(c *golangsdk.ServiceClient, id, clusterId string, opts UpdateOpts) (r UpdateResult) {
-	b, err := opts.ToAddonUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = c.Put(resourceURL(c, id, clusterId), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // Delete will permanently delete a particular addon based on its unique ID.
 func Delete(c *golangsdk.ServiceClient, id, clusterId string) (r DeleteResult) {
 	_, r.Err = c.Delete(resourceURL(c, id, clusterId), &golangsdk.RequestOpts{
