@@ -157,7 +157,7 @@ func (a *testAddons) TestListAddonInstances() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListAddonInstances(client, a.clusterID).Extract()
+	list, err := addons.ListAddonInstances(client, a.clusterID)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, len(list.Items), 3)
