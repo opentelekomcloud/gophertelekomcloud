@@ -4,37 +4,17 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/stretchr/testify/suite"
-
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/addons"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-type testAddons struct {
-	suite.Suite
+func TestAddonsLifecycle(t *testing.T) {
 
-	vpcID     string
-	subnetID  string
-	clusterID string
-}
-
-func TestAddons(t *testing.T) {
-	suite.Run(t, new(testAddons))
-}
-
-func (a *testAddons) SetupSuite() {
-	t := a.T()
-	a.vpcID = clients.EnvOS.GetEnv("VPC_ID")
-	a.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	a.clusterID = clients.EnvOS.GetEnv("CLUSTER_ID")
-	if a.vpcID == "" || a.subnetID == "" {
+	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
+	if clusterID == "" {
 		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
 	}
-}
-
-func (a *testAddons) TestAddonsLifecycle() {
-	t := a.T()
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
@@ -66,7 +46,7 @@ func (a *testAddons) TestAddonsLifecycle() {
 		},
 		Spec: addons.RequestSpec{
 			Version:           "1.17.2",
-			ClusterID:         a.clusterID,
+			ClusterID:         clusterID,
 			AddonTemplateName: "autoscaler",
 			Values: addons.Values{
 				Basic: map[string]interface{}{
@@ -82,25 +62,25 @@ func (a *testAddons) TestAddonsLifecycle() {
 		},
 	}
 
-	addon, err := addons.Create(client, cOpts, a.clusterID)
+	addon, err := addons.Create(client, cOpts, clusterID)
 	th.AssertNoErr(t, err)
 
 	addonID := addon.Metadata.Id
 
 	defer func() {
-		err := addons.Delete(client, addonID, a.clusterID)
+		err := addons.Delete(client, addonID, clusterID)
 		th.AssertNoErr(t, err)
 
-		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, a.clusterID, 600))
+		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, clusterID, 600))
 	}()
 
-	getAddon, err := addons.Get(client, addonID, a.clusterID)
+	getAddon, err := addons.Get(client, addonID, clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
 	th.AssertEquals(t, "1.17.2", getAddon.Spec.Version)
 	th.AssertEquals(t, true, getAddon.Spec.Values.Advanced["scaleDownEnabled"])
 
-	waitErr := addons.WaitForAddonRunning(client, addonID, a.clusterID, 600)
+	waitErr := addons.WaitForAddonRunning(client, addonID, clusterID, 600)
 	th.AssertNoErr(t, waitErr)
 
 	uOpts := addons.UpdateOpts{
@@ -124,22 +104,25 @@ func (a *testAddons) TestAddonsLifecycle() {
 	uOpts.Spec.Values.Advanced["scaleDownEnabled"] = false
 	uOpts.Spec.Values.Advanced["scaleDownDelayAfterAdd"] = 11
 
-	_, err = addons.Update(client, addonID, a.clusterID, uOpts)
+	_, err = addons.Update(client, addonID, clusterID, uOpts)
 	th.AssertNoErr(t, err)
 
-	getAddon2, err := addons.Get(client, addonID, a.clusterID)
+	getAddon2, err := addons.Get(client, addonID, clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, false, getAddon2.Spec.Values.Advanced["scaleDownEnabled"])
 	th.AssertEquals(t, 11.0, getAddon2.Spec.Values.Advanced["scaleDownDelayAfterAdd"])
 }
 
-func (a *testAddons) TestListAddonTemplates() {
-	t := a.T()
+func TestAddonsListTemplates(t *testing.T) {
+	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
+	if clusterID == "" {
+		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
+	}
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListTemplates(client, a.clusterID, addons.ListOpts{})
+	list, err := addons.ListTemplates(client, clusterID, addons.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	if len(list.Items) == 0 {
@@ -151,23 +134,25 @@ func (a *testAddons) TestListAddonTemplates() {
 	t.Logf("existing addon templates:\n%s", string(jsonList))
 }
 
-func (a *testAddons) TestListAddonInstances() {
-	t := a.T()
+func TestAddonsListInstances(t *testing.T) {
+	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
+	if clusterID == "" {
+		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
+	}
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListAddonInstances(client, a.clusterID)
+	list, err := addons.ListAddonInstances(client, clusterID)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, len(list.Items), 3)
 	// check if listed addon exists
-	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID)
+	_, err = addons.Get(client, list.Items[0].Metadata.ID, clusterID)
 	th.AssertNoErr(t, err)
 }
 
-func (a *testAddons) TestGetAddonTemplates() {
-	t := a.T()
+func TestAddonsGetTemplates(t *testing.T) {
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
