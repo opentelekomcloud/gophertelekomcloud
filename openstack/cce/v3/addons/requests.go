@@ -6,13 +6,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
-func GetTemplates(c *golangsdk.ServiceClient) (r ListTemplateResult) {
-	_, r.Err = c.Get(addonTemplatesURL(c), &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 func ListAddonInstances(c *golangsdk.ServiceClient, clusterID string) (r ListInstanceResult) {
 	_, r.Err = c.Get(instanceURL(c, clusterID), &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{200},

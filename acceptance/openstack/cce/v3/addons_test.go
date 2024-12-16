@@ -172,7 +172,7 @@ func (a *testAddons) TestGetAddonTemplates() {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	templates, err := addons.GetTemplates(client).Extract()
+	templates, err := addons.GetTemplates(client)
 	th.AssertNoErr(t, err)
 	if len(templates.Items) == 0 {
 		t.Fatal("empty addon templates list")
