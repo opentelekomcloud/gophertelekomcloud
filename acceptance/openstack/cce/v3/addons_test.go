@@ -19,25 +19,7 @@ func TestAddonsLifecycle(t *testing.T) {
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	custom := map[string]interface{}{
-		"coresTotal":                     32000,
-		"maxEmptyBulkDeleteFlag":         10,
-		"maxNodesTotal":                  1000,
-		"memoryTotal":                    128000,
-		"scaleDownDelayAfterAdd":         10,
-		"scaleDownDelayAfterDelete":      10,
-		"scaleDownDelayAfterFailure":     3,
-		"scaleDownEnabled":               true,
-		"scaleDownUnneededTime":          10,
-		"scaleDownUtilizationThreshold":  0.25,
-		"scaleUpCpuUtilizationThreshold": 0.8,
-		"scaleUpMemUtilizationThreshold": 0.8,
-		"scaleUpUnscheduledPodEnabled":   true,
-		"scaleUpUtilizationEnabled":      true,
-		"unremovableNodeRecheckTimeout":  5,
-		"tenant_id":                      tenantID,
-	}
-	cOpts := addons.CreateOpts{
+	createOpts := addons.CreateOpts{
 		Kind:       "Addon",
 		ApiVersion: "v3",
 		Metadata: addons.CreateMetadata{
@@ -46,19 +28,38 @@ func TestAddonsLifecycle(t *testing.T) {
 			},
 		},
 		Spec: addons.RequestSpec{
-			Version:           "1.29.17",
+			Version:           "1.19.1",
 			ClusterID:         clusterID,
-			AddonTemplateName: "autoscaler",
+			AddonTemplateName: "npd",
 			Values: addons.Values{
 				Basic: map[string]interface{}{
-					"cceEndpoint":     "https://cce.eu-de.otc.t-systems.com",
-					"ecsEndpoint":     "https://ecs.eu-de.otc.t-systems.com",
-					"euleros_version": "2.5",
-					"region":          "eu-de",
-					"swr_addr":        "100.125.7.25:20202",
-					"swr_user":        "hwofficial",
+					"image_version": "1.19.1",
+					"swr_addr":      "100.125.7.25:20202",
+					"swr_user":      "cce-addons",
 				},
-				Advanced: custom,
+				Advanced: map[string]interface{}{
+					"multiAZBalance":         false,
+					"multiAZEnabled":         false,
+					"feature_gates":          "",
+					"node_match_expressions": []interface{}{},
+					"npc": map[string]interface{}{
+						"maxTaintedNode": "10%",
+					},
+					"tolerations": []map[string]interface{}{
+						{
+							"effect":            "NoExecute",
+							"key":               "node.kubernetes.io/not-ready",
+							"operator":          "Exists",
+							"tolerationSeconds": 60,
+						},
+						{
+							"effect":            "NoExecute",
+							"key":               "node.kubernetes.io/unreachable",
+							"operator":          "Exists",
+							"tolerationSeconds": 60,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -68,7 +69,7 @@ func TestAddonsLifecycle(t *testing.T) {
 
 	existingAddons := len(listExistingAddons.Items)
 
-	addon, err := addons.Create(client, cOpts, clusterID)
+	addon, err := addons.Create(client, createOpts, clusterID)
 	th.AssertNoErr(t, err)
 
 	addonID := addon.Metadata.Id
@@ -86,13 +87,13 @@ func TestAddonsLifecycle(t *testing.T) {
 
 	getAddon, err := addons.Get(client, addonID, clusterID)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
-	th.AssertEquals(t, "1.29.17", getAddon.Spec.Version)
+	th.AssertEquals(t, "npd", getAddon.Spec.AddonTemplateName)
+	th.AssertEquals(t, "1.19.1", getAddon.Spec.Version)
 
 	waitErr := addons.WaitForAddonRunning(client, addonID, clusterID, 1200)
 	th.AssertNoErr(t, waitErr)
 
-	uOpts := addons.UpdateOpts{
+	updateOpts := addons.UpdateOpts{
 		Kind:       "Addon",
 		ApiVersion: "v3",
 		Metadata: addons.UpdateMetadata{
@@ -101,25 +102,27 @@ func TestAddonsLifecycle(t *testing.T) {
 			},
 		},
 		Spec: addons.RequestSpec{
-			Version:           cOpts.Spec.Version,
-			ClusterID:         cOpts.Spec.ClusterID,
-			AddonTemplateName: cOpts.Spec.AddonTemplateName,
+			Version:           createOpts.Spec.Version,
+			ClusterID:         createOpts.Spec.ClusterID,
+			AddonTemplateName: createOpts.Spec.AddonTemplateName,
 			Values: addons.Values{
-				Basic:    cOpts.Spec.Values.Basic,
-				Advanced: cOpts.Spec.Values.Advanced,
+				Basic:    createOpts.Spec.Values.Basic,
+				Advanced: createOpts.Spec.Values.Advanced,
 			},
 		},
 	}
-	uOpts.Spec.Values.Advanced["scaleDownEnabled"] = false
-	uOpts.Spec.Values.Advanced["scaleDownDelayAfterAdd"] = 11
 
-	_, err = addons.Update(client, addonID, clusterID, uOpts)
+	updateOpts.Spec.Values.Basic["rbac_enabled"] = true
+
+	getAddon2, err := addons.Update(client, addonID, clusterID, updateOpts)
 	th.AssertNoErr(t, err)
 
-	getAddon2, err := addons.Get(client, addonID, clusterID)
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, false, getAddon2.Spec.Values.Advanced["scaleDownEnabled"])
-	th.AssertEquals(t, 11.0, getAddon2.Spec.Values.Advanced["scaleDownDelayAfterAdd"])
+	// USE THIS TO DEBUG
+	// addonJson, _ := json.MarshalIndent(getAddon2, "", "  ")
+	// t.Logf("existing addon templates:\n%s", string(addonJson))
+	th.AssertEquals(t, true, getAddon2.Spec.Values.Basic["rbac_enabled"])
+	waitErr = addons.WaitForAddonRunning(client, addonID, clusterID, 1200)
+	th.AssertNoErr(t, waitErr)
 }
 
 func TestAddonsListTemplates(t *testing.T) {
