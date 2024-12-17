@@ -22,3 +22,14 @@ func ListAddonInstances(client *golangsdk.ServiceClient, clusterId string) (*Add
 	var res AddonInstanceList
 	return &res, extract.Into(raw.Body, &res)
 }
+
+type AddonInstanceList struct {
+	// API type, fixed value Addon
+	Kind string `json:"kind" required:"true"`
+	// API version, fixed value v3
+	ApiVersion string `json:"apiVersion" required:"true"`
+	// Metadata - Basic information about the add-on. A collection of attributes.
+	Metadata string `json:"metadata"`
+	// Add-on template list
+	Items []Addon `json:"items" required:"true"`
+}

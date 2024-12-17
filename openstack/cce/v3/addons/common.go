@@ -27,9 +27,13 @@ type MetaData struct {
 	// Addon unique Id
 	Id string `json:"uid"`
 	// Addon tag, key/value pair format
-	Labels map[string]string `json:"lables"`
+	Labels map[string]string `json:"labels"`
 	// Addon annotation, key/value pair format
 	Annotations map[string]string `json:"annotaions"`
+	// Time when the add-on instance was updated.
+	UpdateTimestamp string `json:"updateTimestamp"`
+	// Time when the add-on instance was created.
+	CreationTimestamp string `json:"creationTimestamp"`
 }
 
 // Specifications to create an addon
@@ -43,7 +47,7 @@ type Spec struct {
 	// Addon Template Type.
 	AddonTemplateType string `json:"addonTemplateType" required:"true"`
 	// Addon Template Labels.
-	AddonTemplateLables []string `json:"addonTemplateLables,omitempty"`
+	AddonTemplateLabels []string `json:"addonTemplateLabels,omitempty"`
 	// Addon Description.
 	Description string `json:"description" required:"true"`
 	// Addon Parameters
@@ -59,10 +63,36 @@ type Status struct {
 	Message string `json:"message"`
 	// The target versions of the addon
 	TargetVersions []string `json:"targetVersions"`
+	// Current add-on version.
+	CurrentVersion Version `json:"currentVersion"`
 }
 
-type ClusterIdQueryParam struct {
-	ClusterId string `q:"cluster_id"`
+type Values struct {
+	Basic    map[string]interface{} `json:"basic" required:"true"`
+	Advanced map[string]interface{} `json:"custom,omitempty"`
+	Flavor   map[string]interface{} `json:"flavor,omitempty"`
+}
+
+type Version struct {
+	// Add-on version
+	Version string `json:"version"`
+	// Add-on installation parameters
+	Input Input `json:"input"`
+	// Whether the add-on version is a stable release
+	Stable bool `json:"stable"`
+	// Translation information used by the GUI.
+	Translate map[string]interface{} `json:"translate"`
+	// Cluster versions that support the add-on template
+	SupportVersions []SupportVersion `json:"supportVersions"`
+	// Creation time of the add-on instance
+	CreationTimestamp string `json:"creationTimestamp"`
+	// Time when the add-on instance was updated
+	UpdateTimestamp string `json:"updateTimestamp"`
+}
+
+type Input struct {
+	Basic      map[string]interface{} `json:"basic"`
+	Parameters map[string]interface{} `json:"parameters"`
 }
 
 type SupportVersion struct {
@@ -73,22 +103,31 @@ type SupportVersion struct {
 	ClusterVersion []string `json:"clusterVersion"`
 }
 
-type Version struct {
-	// Add-on version
-	Version string `json:"version"`
-	// Add-on installation parameters
-	Input map[string]interface{} `json:"input"`
-	// Whether the add-on version is a stable release
-	Stable bool `json:"stable"`
-	// Cluster versions that support the add-on template
-	SupportVersions []SupportVersion `json:"supportVersions"`
-	// Creation time of the add-on instance
-	CreationTimestamp string `json:"creationTimestamp"`
-	// Time when the add-on instance was updated
-	UpdateTimestamp string `json:"updateTimestamp"`
+type ClusterIdQueryParam struct {
+	ClusterId string `q:"cluster_id"`
 }
 
-type AddonSpec struct {
+type AddonTemplateList struct {
+	// API type, fixed value Addon
+	Kind string `json:"kind" required:"true"`
+	// API version, fixed value v3
+	ApiVersion string `json:"apiVersion" required:"true"`
+	// Add-on template list
+	Items []AddonTemplate `json:"items" required:"true"`
+}
+
+type AddonTemplate struct {
+	// API type, fixed value Addon
+	Kind string `json:"kind" required:"true"`
+	// API version, fixed value v3
+	ApiVersion string `json:"apiVersion" required:"true"`
+	// Metadata of an Addon
+	Metadata MetaData `json:"metadata" required:"true"`
+	// Specifications of an Addon
+	Spec AddonTemplateSpec `json:"spec" required:"true"`
+}
+
+type AddonTemplateSpec struct {
 	// Template type (helm or static).
 	Type string `json:"type" required:"true"`
 	// Whether the add-on is installed by default
@@ -103,86 +142,6 @@ type AddonSpec struct {
 	Description string `json:"description" required:"true"`
 	// Template version details
 	Versions []Version `json:"versions" required:"true"`
-}
-
-type AddonTemplate struct {
-	// API type, fixed value Addon
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Metadata of an Addon
-	Metadata MetaData `json:"metadata" required:"true"`
-	// Specifications of an Addon
-	Spec AddonSpec `json:"spec" required:"true"`
-}
-
-type AddonTemplateList struct {
-	// API type, fixed value Addon
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Add-on template list
-	Items []AddonTemplate `json:"items" required:"true"`
-}
-
-type InstanceMetadata struct {
-	ID                string            `json:"uid"`
-	Name              string            `json:"name"`
-	Labels            map[string]string `json:"labels"`
-	Annotations       map[string]string `json:"annotations"`
-	UpdateTimestamp   string            `json:"updateTimestamp"`
-	CreationTimestamp string            `json:"creationTimestamp"`
-}
-
-type AddonInstanceSpec struct {
-	ClusterID      string                 `json:"clusterID"`
-	Version        string                 `json:"version"`
-	TemplateName   string                 `json:"addonTemplateName"`
-	TemplateType   string                 `json:"addonTemplateType"`
-	TemplateLabels []string               `json:"addonTemplateLabels"`
-	Descrition     string                 `json:"descrition"`
-	Values         map[string]interface{} `json:"values"`
-}
-
-type Versions struct {
-	Version           string                 `json:"version"`
-	Input             map[string]interface{} `json:"input"`
-	Stable            bool                   `json:"stable"`
-	Translate         map[string]interface{} `json:"translate"`
-	UpdateTimestamp   string                 `json:"updateTimestamp"`
-	CreationTimestamp string                 `json:"creationTimestamp"`
-}
-
-type InstanceStatus struct {
-	Status         string   `json:"status"`
-	Reason         string   `json:"Reason"`
-	Message        string   `json:"message"`
-	TargetVersions []string `json:"targetVersions"`
-	CurrentVersion Versions `json:"currentVersion"`
-}
-
-type AddonInstance struct {
-	// API type, fixed value Addon
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Metadata of an Addon
-	Metadata InstanceMetadata `json:"metadata" required:"true"`
-	// Specifications of an Addon
-	Spec AddonInstanceSpec `json:"spec" required:"true"`
-	// Status of an Addon
-	Status InstanceStatus `json:"status"`
-}
-
-type AddonInstanceList struct {
-	// API type, fixed value Addon
-	Kind string `json:"kind" required:"true"`
-	// API version, fixed value v3
-	ApiVersion string `json:"apiVersion" required:"true"`
-	// Metadata - Basic information about the add-on. A collection of attributes.
-	Metadata string `json:"metadata"`
-	// Add-on template list
-	Items []AddonInstance `json:"items" required:"true"`
 }
 
 func CCEServiceURL(client *golangsdk.ServiceClient, clusterID string, parts ...string) string {

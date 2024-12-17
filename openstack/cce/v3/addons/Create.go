@@ -38,12 +38,6 @@ type RequestSpec struct {
 	Values Values `json:"values" required:"true"`
 }
 
-type Values struct {
-	Basic    map[string]interface{} `json:"basic" required:"true"`
-	Advanced map[string]interface{} `json:"custom,omitempty"`
-	Flavor   map[string]interface{} `json:"flavor,omitempty"`
-}
-
 // Create accepts a CreateOpts struct and uses the values to create a new
 // addon.
 func Create(client *golangsdk.ServiceClient, opts CreateOpts, clusterId string) (*Addon, error) {
