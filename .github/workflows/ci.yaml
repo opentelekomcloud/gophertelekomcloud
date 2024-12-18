@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
+    types: [opened, synchronize]
+  pull_request_target:
+    types: [opened, synchronize]
   workflow_dispatch:
 
 env:
@@ -46,6 +46,7 @@ jobs:
 
   acc_tests:
     name: acceptance tests
+    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     environment: tests
     steps:
@@ -64,7 +65,7 @@ jobs:
 
   eco_check:
     name: eco/check
-    if: always()
+    if: github.event_name == 'pull_request_target' && always()
     needs: [lint, vet, unit_tests, acc_tests]
     runs-on: ubuntu-latest
     steps:
