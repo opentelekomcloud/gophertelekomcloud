@@ -46,7 +46,9 @@ jobs:
 
   acc_tests:
     name: acceptance tests
-    if: github.event_name == 'pull_request_target'
+    if: >
+      github.event_name == 'pull_request_target' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
     runs-on: ubuntu-latest
     environment: tests
     steps:
@@ -65,7 +67,12 @@ jobs:
 
   eco_check:
     name: eco/check
-    if: github.event_name == 'pull_request_target' && always()
+    if: >
+      always() &&
+      (
+        github.event_name == 'pull_request_target' ||
+        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
+      )
     needs: [lint, vet, unit_tests, acc_tests]
     runs-on: ubuntu-latest
     steps:
