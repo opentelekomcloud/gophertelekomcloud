@@ -15,6 +15,15 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
+const userDataHssAgent = `#!/bin/bash
+curl -O 'https://hss-agent-podlb.eu-de.otc.t-systems.com:10180/package/agent/linux/x86/hostguard.x86_64.deb'
+echo 'MASTER_IP=hss-agent-podlb.eu-de.otc.t-systems.com:10180' > hostguard_setup_config.conf
+echo 'SLAVE_IP=hss-agent-slave.eu-de.otc-tsi.de:10180' >> hostguard_setup_config.conf
+echo 'ORG_ID=' >> hostguard_setup_config.conf
+dpkg -i hostguard.x86_64.deb
+rm -f hostguard_setup_config.conf
+rm -f hostguard.x86_64.deb`
+
 func TestEventsLifecycle(t *testing.T) {
 	// if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
 	// 	t.Skip("too slow to run in zuul")
