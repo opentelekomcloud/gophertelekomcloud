@@ -1,13 +1,13 @@
 package v2
 
 import (
+	"os"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/hss/v5/event"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/hss/v5/host"
@@ -25,9 +25,9 @@ rm -f hostguard_setup_config.conf
 rm -f hostguard.x86_64.deb`
 
 func TestEventsLifecycle(t *testing.T) {
-	// if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
-	// 	t.Skip("too slow to run in zuul")
-	// }
+	if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
 	client, err := clients.NewHssClient()
 	th.AssertNoErr(t, err)
 
@@ -52,8 +52,10 @@ func TestEventsLifecycle(t *testing.T) {
 			return false, err
 		}
 
-		if len(h) == 1 {
-			return true, nil
+		if len(h) > 0 {
+			if h[0].AgentStatus == "online" {
+				return true, nil
+			}
 		}
 
 		return false, nil
@@ -88,16 +90,6 @@ func TestEventsLifecycle(t *testing.T) {
 		HostIds: []string{
 			ecs.ID,
 		},
-		Tags: []tags.ResourceTag{
-			{
-				Key:   "muh",
-				Value: "kuh",
-			},
-			{
-				Key:   "muh2",
-				Value: "kuh2",
-			},
-		},
 	})
 	th.AssertNoErr(t, err)
 
@@ -107,16 +99,6 @@ func TestEventsLifecycle(t *testing.T) {
 		ChargingMode: "on_demand",
 		HostIds: []string{
 			ecs.ID,
-		},
-		Tags: []tags.ResourceTag{
-			{
-				Key:   "muh",
-				Value: "kuh",
-			},
-			{
-				Key:   "muh2",
-				Value: "kuh2",
-			},
 		},
 	})
 	th.AssertNoErr(t, err)
@@ -134,7 +116,7 @@ func TestEventsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listEventsResp)
 
-	t.Logf("Attempting to get host events")
+	t.Logf("Attempting to get alarm whitelist")
 	listWhitelistsResp, err := event.ListAlarmWhitelist(client, event.ListAlarmWhitelistOpts{})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, listWhitelistsResp)

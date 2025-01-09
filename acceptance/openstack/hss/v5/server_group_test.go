@@ -47,7 +47,7 @@ func TestServerLifecycle(t *testing.T) {
 		tools.RandomString("hss-group-member-", 3),
 		"Standard_Debian_11_latest",
 		"s2.large.2",
-		"",
+		userDataHssAgent,
 	)
 	th.AssertNoErr(t, err)
 
@@ -62,8 +62,10 @@ func TestServerLifecycle(t *testing.T) {
 			return false, err
 		}
 
-		if len(h) == 1 {
-			return true, nil
+		if len(h) > 0 {
+			if h[0].AgentStatus == "online" {
+				return true, nil
+			}
 		}
 
 		return false, nil
