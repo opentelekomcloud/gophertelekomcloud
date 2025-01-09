@@ -37,6 +37,7 @@ func TestEventsLifecycle(t *testing.T) {
 		tools.RandomString("hss-group-member-", 3),
 		"Standard_Debian_11_latest",
 		"s2.large.2",
+		userDataHssAgent,
 	)
 	th.AssertNoErr(t, err)
 
