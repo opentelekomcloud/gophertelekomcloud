@@ -241,7 +241,7 @@ func ValidIP(t *testing.T, networkID string) string {
 	return singleIP.String()
 }
 
-func CreateServer(t *testing.T, client *golangsdk.ServiceClient, ecsName, imageName, flavorId string) *servers.Server {
+func CreateServer(t *testing.T, client *golangsdk.ServiceClient, ecsName, imageName, flavorId, userData string) *servers.Server {
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
 	if networkID == "" {
 		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
@@ -275,6 +275,7 @@ func CreateServer(t *testing.T, client *golangsdk.ServiceClient, ecsName, imageN
 				UUID: networkID,
 			},
 		},
+		UserData: []byte(userData),
 	}
 
 	ecs, err := servers.Create(client, createOpts).Extract()

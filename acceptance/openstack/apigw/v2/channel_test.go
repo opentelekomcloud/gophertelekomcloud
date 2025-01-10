@@ -108,6 +108,7 @@ func CreateChannel(client *golangsdk.ServiceClient, t *testing.T, id string) *ch
 		tools.RandomString("hss_group-member-", 3),
 		"Standard_Debian_10_latest",
 		"s2.large.2",
+		"",
 	)
 	th.AssertNoErr(t, err)
 

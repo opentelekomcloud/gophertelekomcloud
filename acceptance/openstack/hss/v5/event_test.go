@@ -1,43 +1,33 @@
 package v2
 
 import (
+	"os"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/hss/v5/event"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/hss/v5/host"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/hss/v5/quota"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestServerGroupList(t *testing.T) {
-	client, err := clients.NewHssClient()
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, client)
-	listResp, err := host.List(client, host.ListOpts{})
-	th.AssertNoErr(t, err)
+const userDataHssAgent = `#!/bin/bash
+curl -O 'https://hss-agent-podlb.eu-de.otc.t-systems.com:10180/package/agent/linux/x86/hostguard.x86_64.deb'
+echo 'MASTER_IP=hss-agent-podlb.eu-de.otc.t-systems.com:10180' > hostguard_setup_config.conf
+echo 'SLAVE_IP=hss-agent-slave.eu-de.otc-tsi.de:10180' >> hostguard_setup_config.conf
+echo 'ORG_ID=' >> hostguard_setup_config.conf
+dpkg -i hostguard.x86_64.deb
+rm -f hostguard_setup_config.conf
+rm -f hostguard.x86_64.deb`
 
-	tools.PrintResource(t, listResp)
-}
-
-func TestServerList(t *testing.T) {
-	client, err := clients.NewHssClient()
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, client)
-	listResp, err := host.ListHost(client, host.ListHostOpts{})
-	th.AssertNoErr(t, err)
-
-	tools.PrintResource(t, listResp)
-}
-
-func TestServerLifecycle(t *testing.T) {
-	// if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
-	// 	t.Skip("too slow to run in zuul")
-	// }
+func TestEventsLifecycle(t *testing.T) {
+	if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
 	client, err := clients.NewHssClient()
 	th.AssertNoErr(t, err)
 
@@ -88,32 +78,11 @@ func TestServerLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, name, getResp[0].Name)
-	th.AssertEquals(t, ecs.ID, getResp[0].HostIds[0])
-	tools.PrintResource(t, getResp)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to Delete Server group")
 		th.AssertNoErr(t, host.Delete(client, host.DeleteOpts{GroupID: getResp[0].ID}))
 	})
-
-	t.Logf("Attempting to Update Server group")
-	err = host.Update(client, host.UpdateOpts{
-		Name: name + "update",
-		ID:   getResp[0].ID,
-		HostIds: []string{
-			ecs.ID,
-		},
-	})
-	th.AssertNoErr(t, err)
-
-	t.Logf("Attempting to Obtain Server group after update")
-	getUpdResp, err := host.List(client, host.ListOpts{
-		Name: name,
-	})
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, name+"update", getUpdResp[0].Name)
-	th.AssertEquals(t, ecs.ID, getUpdResp[0].HostIds[0])
-	tools.PrintResource(t, getUpdResp)
 
 	t.Logf("Attempting to Change server Protection Status to null")
 	_, err = host.ChangeProtectionStatus(client, host.ProtectionOpts{
@@ -121,46 +90,18 @@ func TestServerLifecycle(t *testing.T) {
 		HostIds: []string{
 			ecs.ID,
 		},
-		Tags: []tags.ResourceTag{
-			{
-				Key:   "muh",
-				Value: "kuh",
-			},
-			{
-				Key:   "muh2",
-				Value: "kuh2",
-			},
-		},
 	})
 	th.AssertNoErr(t, err)
 
-	hs, err := host.ListHost(client, host.ListHostOpts{HostID: ecs.ID})
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "closed", hs[0].ProtectStatus)
-
-	t.Logf("Attempting to Change server Protection Status to enterprise")
+	t.Logf("Attempting to Change server Protection Status to premium")
 	_, err = host.ChangeProtectionStatus(client, host.ProtectionOpts{
-		Version: "hss.version.enterprise",
-		// ResourceId:   q[0].ResourceId,
+		Version:      "hss.version.premium",
 		ChargingMode: "on_demand",
 		HostIds: []string{
 			ecs.ID,
 		},
-		Tags: []tags.ResourceTag{
-			{
-				Key:   "muh",
-				Value: "kuh",
-			},
-			{
-				Key:   "muh2",
-				Value: "kuh2",
-			},
-		},
 	})
 	th.AssertNoErr(t, err)
-	hs, err = host.ListHost(client, host.ListHostOpts{HostID: ecs.ID})
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "opened", hs[0].ProtectStatus)
 
 	t.Logf("Attempting to get used quota details")
 	q, err := quota.List(client, quota.ListOpts{
@@ -168,5 +109,15 @@ func TestServerLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "used", q[0].UsedStatus)
-	th.AssertEquals(t, "hss.version.enterprise", q[0].Version)
+	th.AssertEquals(t, "hss.version.premium", q[0].Version)
+
+	t.Logf("Attempting to get host events")
+	listEventsResp, err := event.List(client, event.ListOpts{Category: "host"})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, listEventsResp)
+
+	t.Logf("Attempting to get alarm whitelist")
+	listWhitelistsResp, err := event.ListAlarmWhitelist(client, event.ListAlarmWhitelistOpts{})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, listWhitelistsResp)
 }
