@@ -253,7 +253,7 @@ type EventResp struct {
 	// Remarks. This API is available only for handled alarms.
 	Handler string `json:"handler"`
 	// Supported processing operation
-	OperateAcceptList string `json:"operate_accept_list"`
+	OperateAcceptList []string `json:"operate_accept_list"`
 	// Operation details list (not displayed on the page)
 	OperateDetailList []OperateDetailList `json:"operate_detail_list"`
 	// Attack information, in JSON format.
