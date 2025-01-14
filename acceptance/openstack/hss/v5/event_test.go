@@ -24,6 +24,16 @@ dpkg -i hostguard.x86_64.deb
 rm -f hostguard_setup_config.conf
 rm -f hostguard.x86_64.deb`
 
+func TestEventsList(t *testing.T) {
+	client, err := clients.NewHssClient()
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, client)
+	listResp, err := event.List(client, event.ListOpts{Category: "host"})
+	th.AssertNoErr(t, err)
+
+	tools.PrintResource(t, listResp)
+}
+
 func TestEventsLifecycle(t *testing.T) {
 	if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
