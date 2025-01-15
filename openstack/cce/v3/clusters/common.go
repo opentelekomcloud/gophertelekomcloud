@@ -159,6 +159,8 @@ type CertCluster struct {
 	Server string `json:"server"`
 	// Certificate data
 	CertAuthorityData string `json:"certificate-authority-data,omitempty"`
+	// Whether to skip the server certificate verification. If the cluster type is externalCluster, the value is true.
+	InsecureSkipTLSVerify bool `json:"insecure-skip-tls-verify,omitempty"`
 }
 
 type CertUsers struct {
