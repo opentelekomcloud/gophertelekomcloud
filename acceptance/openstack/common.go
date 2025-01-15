@@ -3,9 +3,17 @@
 package openstack
 
 import (
+	"bytes"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
 	"fmt"
+	"math/big"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -289,4 +297,51 @@ func CreateServer(t *testing.T, client *golangsdk.ServiceClient, ecsName, imageN
 	th.AssertNoErr(t, err)
 
 	return server
+}
+
+// GenerateTestCertKeyPair generates a test certificate and private key pair
+func GenerateTestCertKeyPair(domain string) (string, string, error) {
+	pk, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return "", "", err
+	}
+
+	template := x509.Certificate{
+		SerialNumber: big.NewInt(time.Now().Unix()),
+		Subject: pkix.Name{
+			Organization: []string{"Test Organization"},
+			CommonName:   domain,
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().AddDate(1, 0, 0), // Valid for 1 year
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: true,
+		DNSNames:              []string{domain},
+	}
+
+	certBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &pk.PublicKey, pk)
+	if err != nil {
+		return "", "", err
+	}
+
+	certBuffer := new(bytes.Buffer)
+	err = pem.Encode(certBuffer, &pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: certBytes,
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	keyBuffer := new(bytes.Buffer)
+	err = pem.Encode(keyBuffer, &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(pk),
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	return certBuffer.String(), keyBuffer.String(), nil
 }
