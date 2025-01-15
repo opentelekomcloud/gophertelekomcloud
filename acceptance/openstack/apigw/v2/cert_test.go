@@ -65,7 +65,7 @@ func TestCertificateLifecycle(t *testing.T) {
 		th.AssertNoErr(t, cert.Delete(client, createResp.ID))
 	})
 
-	newCert, newPk, err := openstack.GenerateTestCertKeyPair(dom.UrlDomain)
+	newCert, newPk, _ := openstack.GenerateTestCertKeyPair(dom.UrlDomain)
 
 	updateOpts := cert.UpdateOpts{
 		Name:        createResp.Name + "_updated",
@@ -136,7 +136,7 @@ func TestCertificateList(t *testing.T) {
 }
 
 func CreateTestCertificate(client *golangsdk.ServiceClient, t *testing.T, gatewayID, domainName string) *cert.CertificateResp {
-	certificate, privateKey, err := openstack.GenerateTestCertKeyPair(domainName)
+	certificate, privateKey, _ := openstack.GenerateTestCertKeyPair(domainName)
 
 	opts := cert.CreateOpts{
 		Name:        tools.RandomString("cert_", 5),
