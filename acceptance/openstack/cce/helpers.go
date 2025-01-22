@@ -81,6 +81,11 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 				AuthenticatingProxy: make(map[string]string),
 			},
 			KubernetesSvcIpRange: "10.247.0.0/16",
+			Masters: []clusters.MasterSpec{
+				{
+					AvailabilityZone: "eu-de-01",
+				},
+			},
 		},
 	})
 	th.AssertNoErr(t, err)
