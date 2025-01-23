@@ -3,8 +3,10 @@ name: CI
 on:
   pull_request:
     types: [opened, synchronize]
+    branches-ignore: [ 'main' ]
   pull_request_target:
     types: [opened, synchronize]
+    branches: ['main']
   workflow_dispatch:
 
 env:
