@@ -46,7 +46,9 @@ func InitPartitionReassigning(client *golangsdk.ServiceClient, instanceId string
 		return nil, err
 	}
 
-	raw, err := client.Post(client.ServiceURL("instances", instanceId, "reassign"), body, nil, &golangsdk.RequestOpts{})
+	raw, err := client.Post(client.ServiceURL("kafka", "instances", instanceId, "reassign"), body, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -82,6 +82,24 @@ func TestDmsManagement(t *testing.T) {
 	t.Logf("DMSv2.1 get specification is done")
 }
 
+func TestDmsInitPartitionReassigning(t *testing.T) {
+	t.Skip("Needs prior extensive set up. Not suitable for CI")
+	client, err := clients.NewDmsV2Client()
+	th.AssertNoErr(t, err)
+
+	instanceId := "b56c8421-7711-4fc8-83cb-ab3714772899"
+	initOpts := management.InitPartitionReassigningOpts{
+		Reassignments: []management.PartitionReassign{
+			{
+				Topic:   "test-topic-dms",
+				Brokers: []int{0, 1, 2},
+			},
+		},
+	}
+	_, err = management.InitPartitionReassigning(client, instanceId, &initOpts)
+	th.AssertNoErr(t, err)
+}
+
 func resetPass(t *testing.T, client *golangsdk.ServiceClient, instanceId string) error {
 	t.Helper()
 	opts := management.PasswordOpts{NewPassword: dmsUserPasswordNew}
