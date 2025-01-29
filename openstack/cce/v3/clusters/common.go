@@ -60,6 +60,8 @@ type Spec struct {
 	KubeProxyMode string `json:"kubeProxyMode,omitempty"`
 	// The system disks and data disks of the master nodes in the cluster are encrypted.
 	EnableMasterVolumeEncryption *bool `json:"enableMasterVolumeEncryption,omitempty"`
+	// Advanced configurations of the master node.
+	Masters []MasterSpec `json:"masters,omitempty"`
 }
 
 type Status struct {
@@ -189,6 +191,10 @@ type CertContext struct {
 	Cluster string `json:"cluster"`
 	// User name
 	User string `json:"user"`
+}
+
+type MasterSpec struct {
+	AvailabilityZone string `json:"availabilityZone"`
 }
 
 // UnmarshalJSON helps to unmarshal Status fields into needed values.
