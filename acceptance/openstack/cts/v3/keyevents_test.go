@@ -52,6 +52,16 @@ func TestKeyEventLifecycle(t *testing.T) {
 				TraceNames:   []string{"deleteBucket"},
 			},
 		},
+		Filter: &keyevent.Filter{
+			IsSupportFilter: true,
+			Condition:       "OR",
+			Rule: []string{
+				"code != 200",
+				"api_version = v1.0",
+				"trace_rating = normal",
+				"trace_type != ApiCall",
+			},
+		},
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, update)
