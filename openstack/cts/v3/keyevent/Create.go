@@ -25,6 +25,14 @@ type CreateNotificationOpts struct {
 	// To obtain the topic_urn, call the SMN API for querying topics.
 	// Example URN: urn:smn:regionId:f96188c7ccaf4ffba0c9aa149ab2bd57:test_topic_v2
 	TopicId string `json:"topic_id,omitempty"`
+	// Advanced filter of key event notifications.
+	Filter *Filter `json:"filter,omitempty"`
+}
+
+type Filter struct {
+	Condition       string   `json:"condition"`
+	IsSupportFilter bool     `json:"is_support_filter"`
+	Rule            []string `json:"rule"`
 }
 
 type Operations struct {
