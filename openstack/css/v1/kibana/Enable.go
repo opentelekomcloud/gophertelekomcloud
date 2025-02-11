@@ -1,8 +1,6 @@
 package kibana
 
 import (
-	"strings"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
@@ -28,10 +26,7 @@ func Enable(client *golangsdk.ServiceClient, opts ManageOpts) error {
 		return err
 	}
 
-	url := client.ServiceURL("clusters", opts.ClusterId, "publickibana", "open")
-	convertedURL := strings.Replace(url, "v1.0", "v1.0/extend", 1)
-
-	_, err = client.Post(convertedURL, b, nil, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL("clusters", opts.ClusterId, "publickibana", "open"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 		MoreHeaders: map[string]string{
 			"Content-Type": "application/json",
