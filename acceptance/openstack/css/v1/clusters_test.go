@@ -100,3 +100,88 @@ func TestClusterWorkflow(t *testing.T) {
 
 	th.AssertNoErr(t, clusters.WaitForClusterToExtend(client, created.ID, timeout))
 }
+
+func TestClusterPublicAccess(t *testing.T) {
+	client, err := clients.NewCssV1Client()
+	th.AssertNoErr(t, err)
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+
+	if vpcID == "" || subnetID == "" {
+		t.Skip("Both `VPC_ID` and `NETWORK_ID` need to be defined")
+	}
+
+	sgID := openstack.DefaultSecurityGroup(t)
+
+	opts := clusters.CreateOpts{
+		Name: tools.RandomString("css-cluster-", 4),
+		Instance: &clusters.InstanceSpec{
+			Flavor: "css.medium.8",
+
+			Volume: &clusters.Volume{
+				Type: "COMMON",
+				Size: 40,
+			},
+			Nics: &clusters.Nics{
+				VpcID:           vpcID,
+				SubnetID:        subnetID,
+				SecurityGroupID: sgID,
+			},
+			AvailabilityZone: "eu-de-02",
+		},
+		InstanceNum: 1,
+		DiskEncryption: &clusters.DiskEncryption{
+			Encrypted: "0",
+		},
+		HttpsEnabled:     "true",
+		AuthorityEnabled: true,
+		AdminPassword:    "Test123!@#",
+		Datastore: &clusters.Datastore{
+			Version: "7.6.2",
+			Type:    "elasticsearch",
+		},
+	}
+	created, err := clusters.Create(client, opts)
+	th.AssertNoErr(t, err)
+
+	defer func() {
+		err = clusters.Delete(client, created.ID)
+		th.AssertNoErr(t, err)
+	}()
+
+	got, err := clusters.Get(client, created.ID)
+	th.AssertNoErr(t, err)
+
+	log.Printf("Creating cluster, ID: %s", got.ID)
+	th.AssertEquals(t, created.ID, got.ID)
+	th.AssertEquals(t, created.Name, got.Name)
+
+	th.CheckNoErr(t, clusters.WaitForClusterOperationSucces(client, created.ID, timeout))
+
+	managePublicOpts := clusters.ManagePublicAccessOpts{
+		ClusterId: got.ID,
+		Size:      5,
+	}
+
+	res, err := clusters.EnablePublicAccess(client, managePublicOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, res, "bindZone")
+
+	err = clusters.WaitForCluster(client, managePublicOpts.ClusterId, timeout)
+	th.AssertNoErr(t, err)
+
+	managePublicOpts.Size = 10
+	err = clusters.UpdatePublicAccess(client, managePublicOpts)
+	th.AssertNoErr(t, err)
+
+	err = clusters.WaitForCluster(client, managePublicOpts.ClusterId, timeout)
+	th.AssertNoErr(t, err)
+
+	res, err = clusters.DisablePublicAccess(client, managePublicOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, res, "unbindZone")
+
+	err = clusters.WaitForCluster(client, managePublicOpts.ClusterId, timeout)
+	th.AssertNoErr(t, err)
+}
