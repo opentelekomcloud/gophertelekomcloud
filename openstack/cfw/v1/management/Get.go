@@ -9,29 +9,27 @@ import (
 
 // GetQueryParameters represents the query parameters for the firewall instance list.
 type GetQueryParameters struct {
-	// Offset for the first record to return (required)
+	// Offset, which specifies the start position of the record to be returned. The value must be a number no less than 0. The default value is 0.
 	Offset int `q:"offset" required:"true"`
-	// Maximum number of records to return (required)
+	// Number of records displayed on each page. The value ranges from 1 to 1024.
 	Limit int `q:"limit" required:"true"`
-	// Firewall protection type (required)
+	// Service type. Currently, only 0 (Internet protection) is supported.
 	ServiceType int `q:"service_type" required:"true"`
-	// Enterprise project ID (required)
+	// Enterprise project ID
 	EnterpriseProjectID string `q:"enterprise_project_id,omitempty"`
-	// Firewall instance ID (required)
+	// Firewall instance ID. This field is required if Name is not provided.
 	FwInstanceID string `q:"fw_instance_id,omitempty"`
-	// Firewall name (required)
+	// Firewall name. This field is required if FwInstanceID is not provided.
 	Name string `q:"name,omitempty"`
 }
 
 // Get is used to query details about a Firewall instance.
-func Get(client *golangsdk.ServiceClient, firewallName string, serviceType int) (*GetFirewallInstanceResponseRecord, error) {
+func Get(client *golangsdk.ServiceClient, opts GetQueryParameters) (*GetFirewallInstanceResponseRecord, error) {
+	if opts.FwInstanceID == "" && opts.Name == "" {
+		return nil, errors.New("one of the two i.e name or firewall instance id, is required in opts")
+	}
 	// GET /v1/{project_id}/firewall/exist
-	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "exist").WithQueryParams(&GetQueryParameters{
-		Offset:      0,
-		Limit:       1024,
-		ServiceType: serviceType,
-		Name:        firewallName,
-	}).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "exist").WithQueryParams(opts).Build()
 	if err != nil {
 		return nil, err
 	}
@@ -46,12 +44,8 @@ func Get(client *golangsdk.ServiceClient, firewallName string, serviceType int) 
 	if err != nil {
 		return nil, err
 	}
-	for _, firewallInstance := range res.Data.Records {
-		if firewallInstance.Name == firewallName {
-			return &firewallInstance, nil
-		}
-	}
-	return nil, errors.New("firewall not found")
+	firewallInstance := res.Data.Records[0]
+	return &firewallInstance, err
 }
 
 type GetResponse struct {

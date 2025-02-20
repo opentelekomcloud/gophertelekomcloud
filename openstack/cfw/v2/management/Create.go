@@ -14,20 +14,12 @@ type CreateOpts struct {
 	// https://docs.otc.t-systems.com/cloud-firewall/api-ref/appendix/obtaining_an_enterprise_project_id.html
 	// If the enterprise project function is not enabled, the value is 0.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
-	// Specifies the number of nodes
+	// List of service resource tags. After tags are added to firewall resources, you can query resources and combine CDRs by key and value.
 	Tags []CreateTags `json:"tags,omitempty"`
 	// Specifies the firewall specifications.
 	Flavor CreateFlavor `json:"flavor" required:"true"`
 	// Specifies the billing type, which can be yearly/monthly or pay-per-use (default setting).
 	ChargeInfo ChargeInfo `json:"charge_info" required:"true"`
-}
-
-type CreateTags struct {
-	// Resource tag key.
-	Key string `json:"key,omitempty"`
-
-	// Resource tag value.
-	Value string `json:"value,omitempty"`
 }
 
 type CreateFlavor struct {
