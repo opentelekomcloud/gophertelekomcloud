@@ -36,7 +36,7 @@ type AssociatedSubnet struct {
 	SubnetName string `json:"subnet_name" required:"true"`
 }
 
-// Create function is used to create an east-west firewall
+// This function is used to create an east-west firewall
 func CreateEWFirewall(client *golangsdk.ServiceClient, firewallId string, opts CreateEWFirewallOpts) (*CreateEWFirewallResp, error) {
 	// POST /v1/{project_id}/firewall/east-west?fw_instance_id=XXXXX&enterprise_project_id=default
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "east-west").WithQueryParams(&EWFirewallQueryParams{

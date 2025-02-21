@@ -23,7 +23,7 @@ type GetQueryParameters struct {
 	Name string `q:"name,omitempty"`
 }
 
-// Get is used to query details about a Firewall instance.
+// This function is used to query details about a Firewall instance.
 func Get(client *golangsdk.ServiceClient, opts GetQueryParameters) (*GetFirewallInstanceResponseRecord, error) {
 	if opts.FwInstanceID == "" && opts.Name == "" {
 		return nil, errors.New("one of the two i.e name or firewall instance id, is required in opts")

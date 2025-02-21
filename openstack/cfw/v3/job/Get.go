@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// Get is used to obtain the status of a CFW task.
+// This function is used to obtain the status of a CFW task.
 func Get(client *golangsdk.ServiceClient, jobId string) (*GetCreateFirewallJobResponseData, error) {
 	// GET /v3/{project_id}/jobs/{job_id}
 	raw, err := client.Get(client.ServiceURL("jobs", jobId), nil, nil)

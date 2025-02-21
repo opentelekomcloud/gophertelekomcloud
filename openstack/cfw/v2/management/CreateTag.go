@@ -10,7 +10,7 @@ type CreateTagOpts struct {
 	Tags []CreateTags `json:"tags,omitempty"`
 }
 
-// Create function is used to create a tag
+// This function is used to create a tag
 func CreateTag(client *golangsdk.ServiceClient, firewallId string, opts CreateTagOpts) error {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

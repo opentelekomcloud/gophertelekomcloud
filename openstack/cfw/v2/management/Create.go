@@ -32,7 +32,7 @@ type ChargeInfo struct {
 	ChargeMode string `json:"charge_mode" required:"true"`
 }
 
-// Create function is used to create a firewall
+// This function is used to create a firewall
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {

@@ -33,7 +33,7 @@ type ListTags struct {
 	Values []string `json:"values,omitempty"`
 }
 
-// Create function is used to create a firewall
+// This function function is used to retrieve list of firewalls.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]FirewallInstanceVO, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
