@@ -45,7 +45,7 @@ func Get(client *golangsdk.ServiceClient, opts GetQueryParameters) (*GetFirewall
 		return nil, err
 	}
 	firewallInstance := res.Data.Records[0]
-	return &firewallInstance, err
+	return &firewallInstance, nil
 }
 
 type GetResponse struct {
