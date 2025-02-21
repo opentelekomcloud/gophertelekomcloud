@@ -84,6 +84,48 @@ func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewCFWV1Client returns a *ServiceClient for making calls
+// to the OpenStack CFW v1 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewCFWV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCFWV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewCFWV2Client returns a *ServiceClient for making calls
+// to the OpenStack CFW v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewCFWV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCFWV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewCFWV3Client returns a *ServiceClient for making calls
+// to the OpenStack CFW v3 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewCFWV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCFWV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewComputeV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2.1 API. An error will be returned
 // if authentication or client creation was not possible.
@@ -219,7 +261,6 @@ func NewDDMV3Client() (*golangsdk.ServiceClient, error) {
 		Region: cc.RegionName,
 	})
 }
-
 
 // NewDNSV2Client returns a *ServiceClient for making calls
 // to the OpenStack Compute v2 API. An error will be returned
