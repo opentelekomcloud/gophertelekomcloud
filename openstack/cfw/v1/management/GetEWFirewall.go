@@ -17,11 +17,13 @@ type GetEWFirewallQueryParameters struct {
 	FwInstanceID string `q:"fw_instance_id" required:"true"`
 }
 
-// Get is used to query details about a Firewall instance.
+// Get is used to obtain east-west firewall information.
 func GetEWFirewall(client *golangsdk.ServiceClient, firewallId string) (*GetEastWestFirewallResponseBody, error) {
 	// GET /v1/{project_id}/firewall/east-west
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "east-west").WithQueryParams(&GetEWFirewallQueryParameters{
 		FwInstanceID: firewallId,
+		Offset:       0,
+		Limit:        1024,
 	}).Build()
 	if err != nil {
 		return nil, err
