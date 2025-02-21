@@ -22,7 +22,7 @@ type ListOpts struct {
 
 	// Offset, which specifies the start position of the record to be returned.
 	// The value must be a number no less than 0. The default value is 0.
-	Offset int `json:"offset" required:"true"`
+	Offset int `json:"offset"`
 }
 
 type ListTags struct {
