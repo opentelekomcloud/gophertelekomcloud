@@ -14,7 +14,7 @@ type ChangeEWProtectionStatusOpts struct {
 	// If the value of type is 1, the protected object ID belongs to the VPC border.
 	ObjectId string `json:"object_id" required:"true"`
 	// Protection status: 0 (enable), 1 (disable).
-	Status string `json:"status" required:"true"`
+	Status int `json:"status" required:"true"`
 }
 
 // This function is used to enable or disable east-west protection.
