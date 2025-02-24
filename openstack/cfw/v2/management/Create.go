@@ -55,6 +55,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateResponse, 
 // ResponseBody represents the response body parameters.
 type CreateResponse struct {
 	// job_id: Instance creation task ID. This parameter is returned only when pay-per-use instances are created.
+	// Note for developer: This is the same as instance ID.
 	JobID string `json:"job_id"`
 	// order_id: Order ID. This parameter is returned only when yearly/monthly instances are created.
 	OrderID string `json:"order_id"`

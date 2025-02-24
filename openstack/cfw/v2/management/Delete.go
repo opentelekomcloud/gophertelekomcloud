@@ -7,9 +7,9 @@ import (
 )
 
 // This function is used to delete a firewall. It takes effect only for pay-per-use firewalls.
-func Delete(client *golangsdk.ServiceClient, resourceId string) (*string, error) {
+func Delete(client *golangsdk.ServiceClient, firewallId string) (*string, error) {
 	// DELETE /v2/{project_id}/firewall/{resource_id}
-	raw, err := client.Delete(client.ServiceURL("firewall", resourceId), &golangsdk.RequestOpts{
+	raw, err := client.Delete(client.ServiceURL("firewall", firewallId), &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})
