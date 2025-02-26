@@ -8,11 +8,11 @@ import (
 	cfwjob "github.com/opentelekomcloud/gophertelekomcloud/openstack/cfw/v3/job"
 )
 
-func waitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string) error {
+func WaitForJobCompleted(client *golangsdk.ServiceClient, waitTime int, interval time.Duration, jobID string) error {
 	jobClient := *client
 	jobClient.ResourceBase = jobClient.Endpoint
 
-	return golangsdk.WaitFor(secs, func() (bool, error) {
+	return golangsdk.WaitFor(waitTime, func() (bool, error) {
 		job, err := cfwjob.Get(client, jobID)
 		if err != nil {
 			return false, err
@@ -26,7 +26,7 @@ func waitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string
 			return false, err
 		}
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(interval * time.Second)
 		return false, nil
 	})
 }

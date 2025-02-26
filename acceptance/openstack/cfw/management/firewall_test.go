@@ -43,7 +43,7 @@ func TestFirewallLifecycle(t *testing.T) {
 	createResp, err := managementv2.Create(clientv2, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instanceName, createResp.Data.Name)
-	th.AssertNoErr(t, waitForJobCompleted(clientv3, 600, createResp.JobID))
+	th.AssertNoErr(t, WaitForJobCompleted(clientv3, 600, 5, createResp.JobID))
 	instanceId := createResp.JobID
 	t.Cleanup(func() {
 		_, err = managementv2.Delete(clientv2, instanceId)
