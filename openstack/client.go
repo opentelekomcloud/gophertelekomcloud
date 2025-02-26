@@ -548,6 +548,21 @@ func NewOrchestrationV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointO
 	return initClientOpts(client, eo, "orchestration")
 }
 
+// NewCFWV1 creates a ServiceClient that may be used to access the CFW service v1 APIs.
+func NewCFWV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cfwv1")
+}
+
+// NewCFWV2 creates a ServiceClient that may be used to access the CFW service v2 APIs.
+func NewCFWV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cfwv2")
+}
+
+// NewCFWV3 creates a ServiceClient that may be used to access the CFW service v3 APIs.
+func NewCFWV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cfwv3")
+}
+
 // NewDNSV2 creates a ServiceClient that may be used to access the v2 DNS
 // service.
 func NewDNSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
