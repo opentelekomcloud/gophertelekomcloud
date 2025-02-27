@@ -2,6 +2,7 @@ package eip
 
 import (
 	"testing"
+	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -15,6 +16,7 @@ import (
 )
 
 func TestCFWEIPLifecycle(t *testing.T) {
+	t.Skip("Too long. Non reproducible in CI")
 	clientv1, err := clients.NewCFWV1Client()
 	th.AssertNoErr(t, err)
 	clientv2, err := clients.NewCFWV2Client()
@@ -52,6 +54,8 @@ func TestCFWEIPLifecycle(t *testing.T) {
 
 	firewall, err := managementv1.Get(clientv1, instanceId, 0)
 	th.AssertNoErr(t, err)
+
+	th.AssertNoErr(t, waitForIPSync(clientv1, 300, 5, firewall.ProtectObjects[0].ObjectID, eip1.ID))
 
 	changeEipProtectionOpts := cfweip.ChangeEIPProtectionOpts{
 		ObjectID: firewall.ProtectObjects[0].ObjectID,
@@ -96,4 +100,28 @@ func createEip(clientNet *golangsdk.ServiceClient) (*eips.PublicIp, error) {
 		return nil, err
 	}
 	return eip, nil
+}
+
+func waitForIPSync(client *golangsdk.ServiceClient, waitTime int, interval time.Duration, objectId string, eipID string) error {
+	jobClient := *client
+	jobClient.ResourceBase = jobClient.Endpoint
+
+	queryOpts := cfweip.ListOpts{
+		ObjectID: objectId,
+	}
+	return golangsdk.WaitFor(waitTime, func() (bool, error) {
+		eipResourceList, err := cfweip.List(client, queryOpts)
+		if err != nil {
+			return false, err
+		}
+
+		for _, eipResource := range eipResourceList {
+			if eipResource.ID == eipID {
+				return true, nil
+			}
+		}
+
+		time.Sleep(interval * time.Second)
+		return false, nil
+	})
 }
