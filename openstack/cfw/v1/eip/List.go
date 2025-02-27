@@ -39,7 +39,7 @@ type ListOpts struct {
 // This function function is used to query the EIP list and display their protection status among other details.
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]EipResource, error) {
 	// GET /v1/{project_id}/eips/protect
-	url, err := golangsdk.NewURLBuilder().WithEndpoints("eips", "list").WithQueryParams(opts).Build()
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("eips", "protect").WithQueryParams(opts).Build()
 	if err != nil {
 		return nil, err
 	}
