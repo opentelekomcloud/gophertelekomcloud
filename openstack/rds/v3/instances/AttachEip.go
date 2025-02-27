@@ -20,15 +20,15 @@ type AttachEipOpts struct {
 	IsBind *bool `json:"is_bind" required:"true"`
 }
 
-func AttachEip(client *golangsdk.ServiceClient, opts AttachEipOpts) (err error) {
+func AttachEip(client *golangsdk.ServiceClient, opts AttachEipOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/public-ip
-	_, err = client.Put(client.ServiceURL("instances", opts.InstanceId, "public-ip"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "public-ip"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return
+	return extraJob(err, raw)
 }

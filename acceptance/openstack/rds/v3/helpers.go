@@ -32,8 +32,8 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 	createRdsOpts := instances.CreateRdsOpts{
 		Name:             rdsName,
 		Port:             "8635",
-		Password:         "acc-test-password1!",
-		FlavorRef:        "rds.pg.c2.medium",
+		Password:         "Postgres!120521",
+		FlavorRef:        "rds.pg.n1.large.2",
 		Region:           region,
 		AvailabilityZone: az,
 		VpcId:            vpcID,
@@ -42,12 +42,12 @@ func CreateRDS(t *testing.T, client *golangsdk.ServiceClient, region string) *in
 		DiskEncryptionId: kmsID,
 
 		Volume: &instances.Volume{
-			Type: "COMMON",
+			Type: "CLOUDSSD",
 			Size: 100,
 		},
 		Datastore: &instances.Datastore{
 			Type:    "PostgreSQL",
-			Version: "11",
+			Version: "15",
 		},
 		UnchangeableParam: &instances.Param{
 			LowerCaseTableNames: "0",
