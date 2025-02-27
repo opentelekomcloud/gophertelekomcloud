@@ -21,7 +21,8 @@ type ChangeEIPProtectionOpts struct {
 	// If the value of type is 1, the protected object ID belongs to the VPC border.
 	ObjectID string `json:"object_id" required:"true"`
 	// Status that an EIP will be changed to: 0 (protected), 1 (unprotected).
-	Status int `json:"status" required:"true"`
+	// Note for dev: Don't add required tag to this field since Status: 0 will return missing input error during validation.
+	Status int `json:"status"`
 	// List of EIPs whose protection status is changed.
 	IPInfos []IPInfo `json:"ip_infos" required:"true"`
 }
