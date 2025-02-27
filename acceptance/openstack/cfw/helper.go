@@ -1,4 +1,4 @@
-package management
+package cfw
 
 import (
 	"fmt"

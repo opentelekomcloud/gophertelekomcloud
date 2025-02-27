@@ -8,7 +8,7 @@ import (
 // GetQueryParameters represents the query parameters for the firewall instance list.
 type GetEWFirewallQueryParameters struct {
 	// Offset, which specifies the start position of the record to be returned. The value must be a number no less than 0. The default value is 0.
-	Offset int `q:"offset" required:"true"`
+	Offset string `q:"offset" required:"true"`
 	// Number of records displayed on each page. The value ranges from 1 to 1024.
 	Limit int `q:"limit" required:"true"`
 	// Enterprise project ID
@@ -22,7 +22,7 @@ func GetEWFirewall(client *golangsdk.ServiceClient, firewallId string) (*GetEast
 	// GET /v1/{project_id}/firewall/east-west
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "east-west").WithQueryParams(&GetEWFirewallQueryParameters{
 		FwInstanceID: firewallId,
-		Offset:       0,
+		Offset:       "0",
 		Limit:        1024,
 	}).Build()
 	if err != nil {

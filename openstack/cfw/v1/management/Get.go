@@ -2,7 +2,6 @@ package management
 
 import (
 	"fmt"
-	"strconv"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -15,7 +14,7 @@ type GetQueryParameters struct {
 	// Number of records displayed on each page. The value ranges from 1 to 1024.
 	Limit int `q:"limit" required:"true"`
 	// Service type. Currently, only 0 (Internet protection) is supported.
-	ServiceType string `q:"service_type" required:"true"`
+	ServiceType *int `q:"service_type" required:"true"`
 	// Enterprise project ID
 	EnterpriseProjectID string `q:"enterprise_project_id,omitempty"`
 	// Firewall instance ID.
@@ -27,11 +26,10 @@ type GetQueryParameters struct {
 // This function is used to query details about a Firewall instance.
 func Get(client *golangsdk.ServiceClient, instanceID string, serviceType int) (*GetFirewallInstanceResponseRecord, error) {
 	// GET /v1/{project_id}/firewall/exist
-	serviceTypeStr := strconv.Itoa(serviceType)
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "exist").WithQueryParams(&GetQueryParameters{
 		Limit:        1024,
 		Offset:       "0",
-		ServiceType:  serviceTypeStr,
+		ServiceType:  &serviceType,
 		FwInstanceID: instanceID,
 	}).Build()
 	if err != nil {
