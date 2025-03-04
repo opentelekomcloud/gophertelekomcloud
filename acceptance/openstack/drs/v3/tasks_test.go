@@ -65,7 +65,7 @@ func TestDrsTaskLifecycle(t *testing.T) {
 
 	t.Log("AttachEip")
 
-	err = instances.AttachEip(rdsClient, instances.AttachEipOpts{
+	_, err = instances.AttachEip(rdsClient, instances.AttachEipOpts{
 		InstanceId: rdsSource.Id,
 		PublicIp:   elasticIP.PublicAddress,
 		PublicIpId: elasticIP.ID,
@@ -73,7 +73,7 @@ func TestDrsTaskLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = instances.AttachEip(rdsClient, instances.AttachEipOpts{
+		_, err = instances.AttachEip(rdsClient, instances.AttachEipOpts{
 			InstanceId: rdsSource.Id,
 			IsBind:     pointerto.Bool(false),
 		})
