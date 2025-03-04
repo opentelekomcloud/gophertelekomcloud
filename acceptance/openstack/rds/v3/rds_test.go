@@ -139,7 +139,7 @@ func TestRdsLifecycle(t *testing.T) {
 
 	resize, err := instances.Resize(client, instances.ResizeOpts{
 		InstanceId: rds.Id,
-		SpecCode:   "rds.pg.c2.large",
+		SpecCode:   "rds.pg.n1.large.4",
 	})
 	th.AssertNoErr(t, err)
 	err = instances.WaitForJobCompleted(client, 600, *resize)
@@ -168,18 +168,25 @@ func TestRdsLifecycle(t *testing.T) {
 
 	t.Log("AttachEip")
 
-	err = instances.AttachEip(client, instances.AttachEipOpts{
+	jobId, err := instances.AttachEip(client, instances.AttachEipOpts{
 		InstanceId: rds.Id,
 		PublicIp:   elasticIP.PublicAddress,
 		PublicIpId: elasticIP.ID,
 		IsBind:     pointerto.Bool(true),
 	})
 	th.AssertNoErr(t, err)
+
+	err = instances.WaitForJobCompleted(client, 600, *jobId)
+	th.AssertNoErr(t, err)
+
 	t.Cleanup(func() {
-		err = instances.AttachEip(client, instances.AttachEipOpts{
+		jobId, err = instances.AttachEip(client, instances.AttachEipOpts{
 			InstanceId: rds.Id,
 			IsBind:     pointerto.Bool(false),
 		})
+		th.AssertNoErr(t, err)
+
+		err = instances.WaitForJobCompleted(client, 600, *jobId)
 		th.AssertNoErr(t, err)
 	})
 
