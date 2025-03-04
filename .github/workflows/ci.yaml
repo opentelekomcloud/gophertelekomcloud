@@ -3,10 +3,6 @@ name: CI
 on:
   pull_request:
     types: [opened, synchronize]
-    branches-ignore: [ 'devel' ]
-  pull_request_target:
-    types: [opened, synchronize]
-    branches: ['devel']
   workflow_dispatch:
 
 env:
@@ -16,9 +12,6 @@ jobs:
   lint:
     name: golangci-lint
     runs-on: ubuntu-latest
-    if: >
-      github.event_name == 'pull_request_target' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -32,9 +25,6 @@ jobs:
   vet:
     name: vet
     runs-on: ubuntu-latest
-    if: >
-      github.event_name == 'pull_request_target' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -45,9 +35,6 @@ jobs:
   unit_tests:
     name: unit tests
     runs-on: ubuntu-latest
-    if: >
-      github.event_name == 'pull_request_target' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -57,9 +44,6 @@ jobs:
 
   acc_tests:
     name: acceptance tests
-    if: >
-      github.event_name == 'pull_request_target' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
     runs-on: ubuntu-latest
     environment: tests
     steps:
@@ -79,11 +63,7 @@ jobs:
   eco_check:
     name: eco/check
     if: >
-      always() &&
-      (
-        github.event_name == 'pull_request_target' ||
-        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
-      )
+      always()
     needs: [lint, vet, unit_tests, acc_tests]
     runs-on: ubuntu-latest
     steps:
