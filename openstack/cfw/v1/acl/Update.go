@@ -10,11 +10,11 @@ type UpdateACLRuleOpts struct {
 	// Rule name.
 	Name string `json:"name,omitempty"`
 	// Internet protocol type of an address (0: IPv4, 1: IPv6).
-	AddressType int `json:"address_type,omitempty"`
+	AddressType *int `json:"address_type,omitempty"`
 	// Rule action (0: Permit, 1: Deny).
-	ActionType int `json:"action_type,omitempty"`
+	ActionType *int `json:"action_type,omitempty"`
 	// Rule status (0: Disabled, 1: Enabled)
-	Status int `json:"status,omitempty"`
+	Status *int `json:"status,omitempty"`
 	// Rule application list. Rule application type:
 	// HTTP, HTTPS, TLS1, DNS, SSH, MYSQL, SMTP, RDP, RDPS, VNC, POP3, IMAP4, SMTPS, POP3S, FTPS, ANY, or BGP.
 	Applications []string `json:"applications,omitempty"`
@@ -29,11 +29,11 @@ type UpdateACLRuleOpts struct {
 	// Persistent connection duration (seconds).
 	LongConnectTimeSecond int64 `json:"long_connect_time_second,omitempty"`
 	// Whether to enable long connection (0: No, 1: Yes).
-	LongConnectEnable int `json:"long_connect_enable,omitempty"`
+	LongConnectEnable *int `json:"long_connect_enable,omitempty"`
 	// Description of the rule.
 	Description string `json:"description,omitempty"`
 	// Direction of rule (0: Inbound, 1: Outbound). This parameter is mandatory when type is set to 0 (Internet rule) or 2 (NAT rule).
-	Direction int `json:"direction,omitempty"`
+	Direction *int `json:"direction,omitempty"`
 	// Source address Data Transport Object.
 	Source RuleAddressDtoRequest `json:"source,omitempty"`
 	// Destination address Data Transport Object.
@@ -41,7 +41,7 @@ type UpdateACLRuleOpts struct {
 	// Service object associated with the rule.
 	Service RuleServiceDto `json:"service,omitempty"`
 	// Rule type: 0 (Internet border rule), 1 (inter-VPC rule), or 2 (NAT rule).
-	Type int `json:"type,omitempty"`
+	Type *int `json:"type,omitempty"`
 	// Tag object attached to a rule.
 	Tag TagsVO `json:"tag,omitempty"`
 }
