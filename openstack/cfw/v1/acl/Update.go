@@ -35,15 +35,15 @@ type UpdateACLRuleOpts struct {
 	// Direction of rule (0: Inbound, 1: Outbound). This parameter is mandatory when type is set to 0 (Internet rule) or 2 (NAT rule).
 	Direction *int `json:"direction,omitempty"`
 	// Source address Data Transport Object.
-	Source RuleAddressDtoRequest `json:"source,omitempty"`
+	Source *RuleAddressDtoRequest `json:"source,omitempty"`
 	// Destination address Data Transport Object.
-	Destination RuleAddressDtoRequest `json:"destination,omitempty"`
+	Destination *RuleAddressDtoRequest `json:"destination,omitempty"`
 	// Service object associated with the rule.
-	Service RuleServiceDto `json:"service,omitempty"`
+	Service *RuleServiceDto `json:"service,omitempty"`
 	// Rule type: 0 (Internet border rule), 1 (inter-VPC rule), or 2 (NAT rule).
 	Type *int `json:"type,omitempty"`
 	// Tag object attached to a rule.
-	Tag TagsVO `json:"tag,omitempty"`
+	Tag *TagsVO `json:"tag,omitempty"`
 }
 
 // This function is used to update an ACL rule.

@@ -61,7 +61,7 @@ type Rule struct {
 	// Service object associated with the rule.
 	Service RuleServiceDto `json:"service" required:"true"`
 	// Tag object attached to a rule.
-	Tag TagsVO `json:"tag,omitempty"`
+	Tag *TagsVO `json:"tag,omitempty"`
 }
 
 // This function is used to create an ACL rule.
