@@ -122,9 +122,10 @@ func TestLtsTransferLifecycle(t *testing.T) {
 		StorageFormat: "RAW",
 		SwitchOn:      &switchOn,
 		PrefixName:    "test",
-		DirPrefixName: "dir-test",
-		Period:        3,
-		PeriodUnit:    "hour",
+		// broken attribute
+		// DirPrefixName: "dir-test",
+		Period:     3,
+		PeriodUnit: "hour",
 	}
 	logDumpId, err := transfers.CreateLogDumpObs(client, createTransferOpts)
 	th.AssertNoErr(t, err)
