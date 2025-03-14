@@ -7,7 +7,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	commontags "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/instance"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/tags"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -53,6 +55,29 @@ func TestEnterpriseRouterLifeCycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 		err = waitForInstanceDeleted(client, 500, createResp.Instance.ID)
 	})
+
+	tOpts := tags.TagOpts{
+		Tag: commontags.ResourceTag{
+			Key:   "TestKey",
+			Value: "TestValue",
+		},
+	}
+	err = tags.Create(client, "instance", createResp.Instance.ID, tOpts)
+	th.AssertNoErr(t, err)
+
+	getResp, err := instance.Get(client, createResp.Instance.ID)
+	th.AssertNoErr(t, err)
+
+	tList, err := tags.List(client, "instance", createResp.Instance.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, tList[0].Value, getResp.Instance.Tags[0].Value)
+
+	err = tags.Delete(client, "instance", createResp.Instance.ID, tList[0].Key)
+	th.AssertNoErr(t, err)
+
+	tListEmpty, err := tags.List(client, "instance", createResp.Instance.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(tListEmpty), 0)
 
 	updateOpts := instance.UpdateOpts{
 		InstanceID:                  createResp.Instance.ID,
