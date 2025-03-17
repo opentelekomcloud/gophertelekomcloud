@@ -991,6 +991,17 @@ func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewCCIClient returns authenticated CCI v2 client
+func NewCCIClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCCIServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func UpdatePeerTenantDetails(cloud *openstack.Cloud) error {
 	if id := EnvOS.GetEnv("Peer_Tenant_ID"); id != "" {
 		cloud.AuthInfo.ProjectID = id
