@@ -31,7 +31,7 @@ type CreateOpts struct {
 }
 
 // This function is used to create a blacklist or whitelist rule.
-func CreateBlacklistOrWhitelistRule(client *golangsdk.ServiceClient, firewallId string, opts CreateOpts) (*BlackWhiteListId, error) {
+func CreateBlacklistOrWhitelistRule(client *golangsdk.ServiceClient, opts CreateOpts) (*BlackWhiteListId, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err

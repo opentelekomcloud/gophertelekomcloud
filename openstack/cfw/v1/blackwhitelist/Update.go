@@ -23,6 +23,8 @@ type UpdateOpts struct {
 }
 
 // This function is used to update a blacklist or whitelist.
+// listId: Blacklist or whitelist ID. It is the same as ID retuned while creating a rule.
+// You can also obtain it using GetBlacklistOrWhitelistRule.
 func UpdateBlacklistOrWhitelistRule(client *golangsdk.ServiceClient, listId string, opts UpdateOpts) (*BlackWhiteListId, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
