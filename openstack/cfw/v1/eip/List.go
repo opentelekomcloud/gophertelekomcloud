@@ -18,8 +18,6 @@ type ListOpts struct {
 	KeyWord string `q:"key_word,omitempty"`
 	// Protection status: null (all), 0 (enabled), or 1 (disabled).
 	Status string `q:"status,omitempty"`
-	// Whether to synchronize tenant EIP data: 0 (no), 1 (yes).
-	Sync *int `q:"sync,omitempty"`
 	// Enterprise project ID of a project based on organizations. If not enabled, the value is 0.
 	EnterpriseProjectID string `q:"enterprise_project_id,omitempty"`
 	// Device keyword, which is the name or ID of the asset bound to an EIP.
@@ -43,7 +41,7 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]EipResource, error)
 	if err != nil {
 		return nil, err
 	}
-	urlFixed := fmt.Sprintf("%s&limit=1024&offset=0", url.String())
+	urlFixed := fmt.Sprintf("%s&limit=1024&offset=0&sync=1", url.String())
 
 	raw, err := client.Get(client.ServiceURL(urlFixed), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
