@@ -374,14 +374,14 @@ type BucketWormPolicy struct {
 
 // BucketInventoryConfiguration defines the bucket inventory configuration
 type BucketInventoryConfiguration struct {
-	XMLName                xml.Name                  `xml:"InventoryConfiguration"`
-	Id                     string                    `xml:"Id"`
-	IsEnabled              bool                      `xml:"IsEnabled"`
-	Filter                 InventoryFilter           `xml:"Filter,omitempty"`
-	Schedule               InventorySchedule         `xml:"Schedule"`
-	Destination            InventoryDestination      `xml:"Destination"`
-	IncludedObjectVersions string                    `xml:"IncludedObjectVersions"`
-	OptionalFields         []InventoryOptionalFields `xml:"OptionalFields,omitempty"`
+	XMLName                xml.Name                `xml:"InventoryConfiguration"`
+	Id                     string                  `xml:"Id"`
+	IsEnabled              bool                    `xml:"IsEnabled"`
+	Filter                 InventoryFilter         `xml:"Filter,omitempty"`
+	Schedule               InventorySchedule       `xml:"Schedule"`
+	Destination            InventoryDestination    `xml:"Destination"`
+	IncludedObjectVersions string                  `xml:"IncludedObjectVersions"`
+	OptionalFields         InventoryOptionalFields `xml:"OptionalFields,omitempty"`
 }
 
 type InventoryFilter struct {
@@ -399,5 +399,5 @@ type InventoryDestination struct {
 }
 
 type InventoryOptionalFields struct {
-	Field string `xml:"Field"`
+	Field []string `xml:"Field"`
 }
