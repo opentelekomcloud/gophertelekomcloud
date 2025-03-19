@@ -46,10 +46,8 @@ func TestOBSInventories(t *testing.T) {
 				Prefix: "test",
 			},
 			IncludedObjectVersions: "All",
-			OptionalFields: []obs.InventoryOptionalFields{
-				{
-					Field: "Size",
-				},
+			OptionalFields: obs.InventoryOptionalFields{
+				Field: []string{"Size", "EncryptionStatus"},
 			},
 		},
 	}
@@ -62,6 +60,7 @@ func TestOBSInventories(t *testing.T) {
 		InventoryConfigId: configId,
 	})
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(getResp.OptionalFields.Field), 2)
 
 	tools.PrintResource(t, getResp)
 

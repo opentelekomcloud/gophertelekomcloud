@@ -1001,10 +1001,10 @@ func ConvertInventoryConfigurationToXml(input BucketInventoryConfiguration, retu
 	inclVersions := XmlTranscoding(input.IncludedObjectVersions)
 	xml = append(xml, fmt.Sprintf("<IncludedObjectVersions>%s</IncludedObjectVersions>", inclVersions))
 
-	if len(input.OptionalFields) > 0 {
+	if len(input.OptionalFields.Field) > 0 {
 		xml = append(xml, "<OptionalFields>")
-		for _, field := range input.OptionalFields {
-			xml = append(xml, fmt.Sprintf("<Field>%s</Field>", XmlTranscoding(field.Field)))
+		for _, field := range input.OptionalFields.Field {
+			xml = append(xml, fmt.Sprintf("<Field>%s</Field>", XmlTranscoding(field)))
 		}
 		xml = append(xml, "</OptionalFields>")
 	}
