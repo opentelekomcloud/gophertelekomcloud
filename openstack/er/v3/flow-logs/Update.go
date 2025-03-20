@@ -12,7 +12,7 @@ type UpdateOpts struct {
 	// Flow log name
 	Name string `json:"name,omitempty"`
 	// Supplementary information about flow log
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, flowLogID string, opts UpdateOpts) (*FlowLogResponse, error) {

@@ -8,6 +8,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	fl "github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/flow-logs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/vpc"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/groups"
@@ -90,10 +91,10 @@ func TestFlowLogsLifeCycle(t *testing.T) {
 	t.Logf("Attempting to update flow log")
 	flUpdated, err := fl.Update(client, flowLog.ID, fl.UpdateOpts{
 		RouterID:    routerID,
-		Description: "updated",
+		Description: pointerto.String(""),
 	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "updated", flUpdated.Description)
+	th.AssertEquals(t, "", flUpdated.Description)
 
 	t.Logf("Attempting to enable flow log")
 	enabled, err := fl.Enable(client, routerID, flowLog.ID)
