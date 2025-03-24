@@ -31,7 +31,8 @@ func TestNamespaceLifecycle(t *testing.T) {
 	namespace, err := ns.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	err = waitForStatusActive(client, 600, namespace.Status.Phase)
+	err = waitForStatusActive(client, 600, namespace.Metadata.Name)
+	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete namespace")
@@ -41,6 +42,7 @@ func TestNamespaceLifecycle(t *testing.T) {
 		_, err = ns.Delete(client, deleteOpts)
 		th.AssertNoErr(t, err)
 		err = waitForStatusDeleted(client, 500, nsName)
+		th.AssertNoErr(t, err)
 	})
 
 	t.Logf("Attempting to retrieve namespace")
