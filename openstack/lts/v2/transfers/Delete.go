@@ -6,8 +6,10 @@ type deleteOpts struct {
 	LogTransferId string `q:"log_transfer_id"`
 }
 
-func DeleteTransfer(client *golangsdk.ServiceClient, transferId string) (err error) {
-	url, err := golangsdk.NewURLBuilder().WithEndpoints("transfers").WithQueryParams(&deleteOpts{LogTransferId: transferId}).Build()
+func Delete(client *golangsdk.ServiceClient, transferId string) (err error) {
+	url, err := golangsdk.NewURLBuilder().
+		WithEndpoints("transfers").
+		WithQueryParams(&deleteOpts{LogTransferId: transferId}).Build()
 	if err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 // CreateOpts is a struct that contains all the parameters.
@@ -16,9 +17,13 @@ type CreateOpts struct {
 	LogGroupName string `json:"log_group_name" required:"true"`
 	// Log retention duration, in days (fixed to 7 days).
 	TTLInDays int `json:"ttl_in_days"`
+	// Tags - tags of a group.
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
+	// Log group alias.
+	Alias string `json:"log_group_name_alias,omitempty"`
 }
 
-func CreateLogGroup(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err

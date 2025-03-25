@@ -4,6 +4,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type CreateOpts struct {
@@ -15,9 +16,15 @@ type CreateOpts struct {
 	// Enumerated value:
 	// lts-stream-13ci
 	LogStreamName string `json:"log_stream_name" required:"true"`
+	// Tags - tags of a group.
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
+	// Log stream alias.
+	Alias string `json:"log_stream_name_alias,omitempty"`
+	// Enterprise project name.
+	EnterpriseProjectName string `json:"enterprise_project_name,omitempty"`
 }
 
-func CreateLogStream(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return "", err

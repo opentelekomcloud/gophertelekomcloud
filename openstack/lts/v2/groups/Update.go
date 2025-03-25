@@ -4,6 +4,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type UpdateLogGroupOpts struct {
@@ -13,9 +14,11 @@ type UpdateLogGroupOpts struct {
 	LogGroupId string `json:"-" required:"true"`
 	// Log retention duration, in days (fixed to 7 days).
 	TTLInDays int32 `json:"ttl_in_days" required:"true"`
+	// Tags - tags of a group.
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
-func UpdateLogGroup(client *golangsdk.ServiceClient, opts UpdateLogGroupOpts) (*LogGroup, error) {
+func Update(client *golangsdk.ServiceClient, opts UpdateLogGroupOpts) (*LogGroup, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
