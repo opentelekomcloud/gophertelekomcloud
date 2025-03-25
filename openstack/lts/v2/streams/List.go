@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ListLogStream(client *golangsdk.ServiceClient, groupId string) ([]LogStream, error) {
+func List(client *golangsdk.ServiceClient, groupId string) ([]LogStream, error) {
 	// GET /v2/{project_id}/groups/{log_group_id}/streams
 	raw, err := client.Get(client.ServiceURL("groups", groupId, "streams"), nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{
@@ -38,4 +38,6 @@ type LogStream struct {
 	FilterCount int32 `json:"filter_count"`
 	// Log stream tag.
 	Tag map[string]string `json:"tag,omitempty"`
+	// Whether to add a log stream to favorites.
+	IsFavorite bool `json:"is_favorite,omitempty"`
 }

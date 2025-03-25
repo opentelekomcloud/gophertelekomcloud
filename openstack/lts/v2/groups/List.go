@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func ListLogGroups(client *golangsdk.ServiceClient) ([]LogGroup, error) {
+func List(client *golangsdk.ServiceClient) ([]LogGroup, error) {
 	// GET /v2/{project_id}/groups
 	raw, err := client.Get(client.ServiceURL("groups"), nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{
