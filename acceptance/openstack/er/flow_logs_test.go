@@ -124,18 +124,18 @@ func createLtsObjects(t *testing.T) (string, string, error) {
 		TTLInDays:    7,
 	}
 	t.Logf("Attempting to create LTS log group")
-	logId, err := groups.CreateLogGroup(client, createOpts)
+	logId, err := groups.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete LTS log group")
-		err = groups.DeleteLogGroup(client, logId)
+		err = groups.Delete(client, logId)
 		th.AssertNoErr(t, err)
 	})
 
 	sname := tools.RandomString("test-stream-", 3)
 	t.Logf("Attempting to create LTS log stream")
-	streamId, err := streams.CreateLogStream(client, streams.CreateOpts{
+	streamId, err := streams.Create(client, streams.CreateOpts{
 		GroupId:       logId,
 		LogStreamName: sname,
 	})
@@ -143,7 +143,7 @@ func createLtsObjects(t *testing.T) (string, string, error) {
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete LTS log stream")
-		err = streams.DeleteLogStream(client, streams.DeleteOpts{
+		err = streams.Delete(client, streams.DeleteOpts{
 			GroupId:  logId,
 			StreamId: streamId,
 		})
@@ -183,7 +183,7 @@ func createLtsObjects(t *testing.T) (string, string, error) {
 	t.Logf("Obs log dump created, id: %s", logDumpId)
 
 	t.Cleanup(func() {
-		err = transfers.DeleteTransfer(client, logDumpId)
+		err = transfers.Delete(client, logDumpId)
 		th.AssertNoErr(t, err)
 	})
 	return logId, streamId, nil
