@@ -5,13 +5,18 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	rt "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/streams"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/tags"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestLtsLifecycle(t *testing.T) {
 	client, err := clients.NewLtsV2Client()
+	th.AssertNoErr(t, err)
+
+	clientV1, err := clients.NewLtsV1Client()
 	th.AssertNoErr(t, err)
 
 	name := tools.RandomString("test-group-", 3)
@@ -37,10 +42,45 @@ func TestLtsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 3, group.TTLInDays)
 
+	t.Logf("Attempting to Add tag to Log Groups")
+	err = tags.Manage(clientV1, "groups", created, tags.TagOpts{
+		Action: "create",
+		IsOpen: true,
+		Tags: []rt.ResourceTag{
+			{
+				Key:   "TestKey",
+				Value: "TestValue",
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+
 	t.Logf("Attempting to List Log Groups")
 	got, err := groups.List(client)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, len(got) > 0)
+	th.AssertEquals(t, "TestValue", got[0].Tag["TestKey"])
+	th.AssertEquals(t, 2, len(got[0].Tag))
+	tools.PrintResource(t, got)
+
+	t.Logf("Attempting to Remove tag from Log Groups")
+	err = tags.Manage(clientV1, "groups", created, tags.TagOpts{
+		Action: "delete",
+		IsOpen: true,
+		Tags: []rt.ResourceTag{
+			{
+				Key:   "TestKey",
+				Value: "TestValue",
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to List Log Groups")
+	gotNew, err := groups.List(client)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, len(gotNew) > 0)
+	th.AssertEquals(t, 1, len(gotNew[0].Tag))
 	tools.PrintResource(t, got)
 
 	t.Logf("Attempting to Create Log Stream")
