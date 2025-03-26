@@ -64,7 +64,7 @@ func TestLtsLifecycle(t *testing.T) {
 	update, err := streams.Update(client, streams.UpdateLogStreamOpts{
 		GroupId:   created,
 		StreamId:  stream,
-		TTLInDays: 7,
+		TTLInDays: 6,
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, stream, update.LogStreamId)
