@@ -40,4 +40,6 @@ type LogStream struct {
 	Tag map[string]string `json:"tag,omitempty"`
 	// Whether to add a log stream to favorites.
 	IsFavorite bool `json:"is_favorite,omitempty"`
+	// Log retention duration, in days (fixed to 7 days).
+	TTLInDays int `json:"ttl_in_days"`
 }
