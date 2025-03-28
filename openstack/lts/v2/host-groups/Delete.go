@@ -24,6 +24,9 @@ func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (*DeleteResult, er
 		},
 		OkCodes: []int{200},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res DeleteResult
 	err = extract.Into(raw.Body, &res)
