@@ -15,11 +15,11 @@ type UpdateLogGroupOpts struct {
 	// Do not start with a period or underscore or end with a period.
 	Name string `json:"host_group_name,omitempty"`
 	// Host ID list. The host type must be the same as the host group type.
-	HostIdList []string `json:"host_id_list,omitempty"`
+	HostIdList *[]string `json:"host_id_list,omitempty"`
 	// Host group tags. A key must be unique. Up to 20 keys are allowed.
-	Tags []tags.ResourceTag `json:"host_group_tag,omitempty"`
+	Tags *[]tags.ResourceTag `json:"host_group_tag,omitempty"`
 	// Host group identifier. If the host access type is LABEL, this field saves the host group identifier.
-	Labels []string `json:"labels,omitempty"`
+	Labels *[]string `json:"labels,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateLogGroupOpts) (*HostGroupResponse, error) {

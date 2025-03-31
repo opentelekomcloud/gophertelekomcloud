@@ -85,11 +85,15 @@ set -o history
 	t.Logf("Attempting to Update Host Group")
 	nameUpdate := tools.RandomString("test-hgroup-up", 3)
 	uHg, err := hg.Update(client, hg.UpdateLogGroupOpts{
-		ID:   created.ID,
-		Name: nameUpdate,
+		ID:         created.ID,
+		Name:       nameUpdate,
+		HostIdList: &[]string{},
+		Tags:       &[]tags.ResourceTag{},
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, nameUpdate, uHg.Name)
+	th.AssertEquals(t, 0, len(uHg.HostIdList))
+	th.AssertEquals(t, 0, len(uHg.Tags))
 
 	t.Logf("Attempting to List Host Groups")
 	hList, err := hg.List(client, hg.ListOpts{})
