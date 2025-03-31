@@ -17,7 +17,7 @@ type SetProtectionModeOpts struct {
 }
 
 // This function is used to change the protection mode.
-func SetIPSProtectionMode(client *golangsdk.ServiceClient, opts SetProtectionModeOpts) error {
+func SetProtectionMode(client *golangsdk.ServiceClient, opts SetProtectionModeOpts) error {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
