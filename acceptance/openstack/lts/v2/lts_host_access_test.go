@@ -181,30 +181,38 @@ func TestLtsHostAccessLifecycle(t *testing.T) {
 		agencyStreamId != "" || agencyGroupName != "" || agencyGroupId != "" {
 		t.Logf("Attempting to Create Cross Agency Access")
 		crossName := tools.RandomString("rule_", 3)
-		access, err := ac.CrossAccess(clientV20, ac.CreateCrossOpts{
+		access, errAc := ac.CrossAccess(clientV20, ac.CreateCrossOpts{
 			PreviewAgencyList: []ac.PreviewAgencyLogAccess{
 				{
-					AgencyAccessType: "AGENCYACCESS",
-					AgencyLogAccess:  crossName,
+					Type: "AGENCYACCESS",
+					Name: crossName,
 
-					LogStreamName: sname,
-					LogStreamId:   stream,
-					LogGroupName:  name,
-					LogGroupId:    logGroup,
+					StreamName: sname,
+					StreamId:   stream,
+					GroupName:  name,
+					GroupId:    logGroup,
 
-					ProjectId: clientV20.ProjectID,
+					AgencyStreamName: agencyStreamName,
+					AgencyStreamId:   agencyStreamId,
+					AgencyGroupName:  agencyGroupName,
+					AgencyGroupId:    agencyGroupId,
 
-					LogAgencyStreamName: agencyStreamName,
-					LogAgencyStreamId:   agencyStreamId,
-					LogAgencyGroupName:  agencyGroupName,
-					LogAgencyGroupId:    agencyGroupId,
-					AgencyProjectId:     agencyProjectId,
-					AgencyDomainName:    agencyDomainName,
-					AgencyName:          agencyName,
+					ProjectId:        clientV20.ProjectID,
+					AgencyProjectId:  agencyProjectId,
+					AgencyDomainName: agencyDomainName,
+					AgencyName:       agencyName,
 				},
 			},
 		})
-		th.AssertNoErr(t, err)
-		th.AssertEquals(t, crossName, access.AgencyLogAccess)
+		th.AssertNoErr(t, errAc)
+		th.AssertEquals(t, crossName, access[0].LogAccess.Name)
+
+		t.Cleanup(func() {
+			t.Logf("Attempting to Delete Cross Agency Access")
+			_, err = ac.Delete(clientV3, ac.DeleteOpts{
+				AccessConfigIds: []string{access[0].ID},
+			})
+			th.AssertNoErr(t, err)
+		})
 	}
 }

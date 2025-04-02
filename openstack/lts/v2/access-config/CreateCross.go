@@ -14,25 +14,25 @@ type CreateCrossOpts struct {
 
 type PreviewAgencyLogAccess struct {
 	// Log ingestion type.
-	AgencyAccessType string `json:"agency_access_type" required:"true"`
+	Type string `json:"agency_access_type" required:"true"`
 	// Cross-account log ingestion configuration name.
-	AgencyLogAccess string `json:"agency_log_access" required:"true"`
+	Name string `json:"agency_log_access" required:"true"`
 	// Delegator log stream name.
-	LogAgencyStreamName string `json:"log_agencyStream_name" required:"true"`
+	AgencyStreamName string `json:"log_agencyStream_name" required:"true"`
 	// Delegator log stream ID.
-	LogAgencyStreamId string `json:"log_agencyStream_id" required:"true"`
+	AgencyStreamId string `json:"log_agencyStream_id" required:"true"`
 	// Delegator log group name.
-	LogAgencyGroupName string `json:"log_agencyGroup_name" required:"true"`
+	AgencyGroupName string `json:"log_agencyGroup_name" required:"true"`
 	// Delegator log group ID.
-	LogAgencyGroupId string `json:"log_agencyGroup_id" required:"true"`
+	AgencyGroupId string `json:"log_agencyGroup_id" required:"true"`
 	// Delegatee log stream name.
-	LogStreamName string `json:"log_beAgencystream_name" required:"true"`
+	StreamName string `json:"log_beAgencystream_name" required:"true"`
 	// Delegatee log stream ID.
-	LogStreamId string `json:"log_beAgencystream_id" required:"true"`
+	StreamId string `json:"log_beAgencystream_id" required:"true"`
 	// Delegatee log group name.
-	LogGroupName string `json:"log_beAgencygroup_name" required:"true"`
+	GroupName string `json:"log_beAgencygroup_name" required:"true"`
 	// Delegatee log group ID.
-	LogGroupId string `json:"log_beAgencygroup_id" required:"true"`
+	GroupId string `json:"log_beAgencygroup_id" required:"true"`
 	// Delegatee project ID.
 	ProjectId string `json:"be_agency_project_id" required:"true"`
 	// Delegator project ID.
@@ -43,7 +43,7 @@ type PreviewAgencyLogAccess struct {
 	AgencyName string `json:"agency_name" required:"true"`
 }
 
-func CrossAccess(client *golangsdk.ServiceClient, opts CreateCrossOpts) (*AccessConfigResponse, error) {
+func CrossAccess(client *golangsdk.ServiceClient, opts CreateCrossOpts) ([]AccessConfigResponse, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -51,15 +51,15 @@ func CrossAccess(client *golangsdk.ServiceClient, opts CreateCrossOpts) (*Access
 
 	// POST /v2.0/{project_id}/lts/createAgencyAccess
 	raw, err := client.Post(client.ServiceURL("lts", "createAgencyAccess"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 201, 202},
+		OkCodes: []int{201},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var res AccessConfigResponse
-	err = extract.Into(raw.Body, &res)
-	return &res, err
+	var res []AccessConfigResponse
+	err = extract.IntoSlicePtr(raw.Body, &res, "")
+	return res, err
 }
 
 type AccessConfigResponse struct {
@@ -82,5 +82,5 @@ type AccessConfigResponse struct {
 	// Creation time.
 	CreatedAt int64 `json:"create_time"`
 	// Information of the delegated ingestion.
-	AgencyLogAccess *PreviewAgencyLogAccess `json:"agency_log_access"`
+	LogAccess *PreviewAgencyLogAccess `json:"agency_log_access"`
 }
