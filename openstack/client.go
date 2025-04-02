@@ -999,6 +999,14 @@ func NewLTSV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return sc, err
 }
 
+// NewLTSV20 creates a ServiceClient that may be used to access the LTS service.
+func NewLTSV20(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "lts", "v2")
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v2", "v2.0", 1)
+	sc.ResourceBase = sc.Endpoint
+	return sc, err
+}
+
 // NewSWRV2 creates a ServiceClient that may be used to access the SWR service.
 func NewSWRV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	serviceClient, err := initClientOpts(client, eo, "smn") // SMN is v2 and has no project ID

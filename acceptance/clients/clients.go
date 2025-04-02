@@ -938,6 +938,16 @@ func NewLtsV3Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewLtsV20Client returns authenticated LTS v2.0 client
+func NewLtsV20Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewLTSV20(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
 func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
 	if err != nil {
