@@ -13,7 +13,7 @@ import (
 )
 
 func TestCFWDNSLifecycle(t *testing.T) {
-	// t.Skip("Too long. Non reproducible in CI")
+	t.Skip("Too long. Non reproducible in CI")
 	clientv1, err := clients.NewCFWV1Client()
 	th.AssertNoErr(t, err)
 	clientv2, err := clients.NewCFWV2Client()
