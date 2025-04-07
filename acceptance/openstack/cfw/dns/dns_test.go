@@ -58,7 +58,7 @@ func TestCFWDNSLifecycle(t *testing.T) {
 
 	groupId := createDGResp.Id
 
-	dns.AddDomainNames(clientv1, groupId, dns.AddDomainNameListOpts{
+	_, err = dns.AddDomainNames(clientv1, groupId, dns.AddDomainNameListOpts{
 		FwInstanceID: instanceId,
 		ObjectID:     firewall.ProtectObjects[0].ObjectID,
 		DomainNames: []dns.DomainSetInfoDto{
