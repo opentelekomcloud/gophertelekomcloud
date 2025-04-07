@@ -6,7 +6,7 @@ import (
 
 type DeleteDomainNameGroupQueryParams struct {
 	// Firewall ID.
-	FwInstanceID string `json:"fw_instance_id" required:"true"`
+	FwInstanceID string `q:"fw_instance_id" required:"true"`
 }
 
 // This function is used to delete a Domain Name Group.

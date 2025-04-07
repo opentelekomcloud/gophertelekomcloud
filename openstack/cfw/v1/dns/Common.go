@@ -10,6 +10,12 @@ type DomainSetInfoDto struct {
 type GetDomainNameGroupListQueryParams struct {
 	// Firewall ID.
 	FwInstanceID string `q:"fw_instance_id" required:"true"`
+	// Protected object ID, which is used to distinguish between Internet border protection and VPC border protection
+	// after a cloud firewall is created. You can obtain the ID by calling the Get function in management package.
+	// In the return value, find the ID in ProtectObjects[n].ObjectID.
+	// If the value of type is 0, the protected object ID belongs to the Internet border.
+	// If the value of type is 1, the protected object ID belongs to the VPC border.
+	ObjectID string `q:"object_id" required:"true"`
 	// Offset, which specifies the start position of the record to be returned. The value must be a number no less than 0. The default value is 0.
 	Offset string `q:"offset" required:"true"`
 	// Number of records displayed on each page. The value ranges from 1 to 1024.
