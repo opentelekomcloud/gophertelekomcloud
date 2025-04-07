@@ -9,7 +9,7 @@ type DomainSetInfoDto struct {
 
 type GetDomainNameGroupListQueryParams struct {
 	// Firewall ID.
-	FwInstanceID string `json:"fw_instance_id" required:"true"`
+	FwInstanceID string `q:"fw_instance_id" required:"true"`
 	// Offset, which specifies the start position of the record to be returned. The value must be a number no less than 0. The default value is 0.
 	Offset string `q:"offset" required:"true"`
 	// Number of records displayed on each page. The value ranges from 1 to 1024.
@@ -20,7 +20,7 @@ type GetDomainNameGroupListQueryParams struct {
 
 type GetDomainNameListQueryParams struct {
 	// Firewall ID.
-	FwInstanceID string `json:"fw_instance_id" required:"true"`
+	FwInstanceID string `q:"fw_instance_id" required:"true"`
 	// Offset, which specifies the start position of the record to be returned. The value must be a number no less than 0. The default value is 0.
 	Offset string `q:"offset" required:"true"`
 	// Number of records displayed on each page. The value ranges from 1 to 1024.
