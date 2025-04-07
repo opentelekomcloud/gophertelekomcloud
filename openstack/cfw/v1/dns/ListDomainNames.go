@@ -19,7 +19,7 @@ func ListDomainNames(client *golangsdk.ServiceClient, groupId, firewallId string
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL(url.String(), groupId), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

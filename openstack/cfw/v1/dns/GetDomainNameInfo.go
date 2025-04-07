@@ -23,7 +23,7 @@ func GetDomainNameInfo(client *golangsdk.ServiceClient, domainName, groupId, fir
 		return nil, err
 	}
 
-	raw, err := client.Get(client.ServiceURL(url.String(), groupId), nil, nil)
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}
