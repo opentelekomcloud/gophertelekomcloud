@@ -10,7 +10,7 @@ import (
 // This function is used to obtain the list of domain name groups.
 // firewallId: Firewall Instance ID.
 // groupName: Name of Domain Name Group
-func GetDomainNameGroups(client *golangsdk.ServiceClient, groupName, firewallId string) (*DomainSetVO, error) {
+func GetDomainNameGroup(client *golangsdk.ServiceClient, groupName, firewallId string) (*DomainSetVO, error) {
 	// GET /v1/{project_id}/domain-sets
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("domain-sets").WithQueryParams(&GetDomainNameGroupListQueryParams{
 		FwInstanceID: firewallId,
