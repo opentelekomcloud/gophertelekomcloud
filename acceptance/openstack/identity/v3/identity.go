@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"fmt"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -19,7 +20,7 @@ import (
 // has so many options. An error will be returned if the project was
 // unable to be created.
 func CreateProject(t *testing.T, client *golangsdk.ServiceClient, c *projects.CreateOpts) (*projects.Project, error) {
-	name := tools.RandomString("ACPTTEST", 8)
+	name := fmt.Sprintf("%s_%s", "eu-de", tools.RandomString("acptest-", 4))
 	t.Logf("Attempting to create project: %s", name)
 
 	var createOpts projects.CreateOpts
