@@ -48,6 +48,10 @@ type Pager struct {
 
 	// Headers supplies additional HTTP headers to populate on each paged request.
 	Headers map[string]string
+
+	// in case of post request
+	Body   interface{}
+	Method string
 }
 
 // NewPager constructs a manually-configured pager.
@@ -259,9 +263,18 @@ type NewPage interface {
 }
 
 func (p Pager) newFetchNextPage(url string) (NewPage, error) {
-	resp, err := Request(p.Client, p.Headers, url)
-	if err != nil {
-		return nil, err
+	var resp *http.Response
+	var err error
+	if p.Method == "" {
+		resp, err = Request(p.Client, p.Headers, url)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		resp, err = RequestPost(p.Client, p.Headers, url, p.Body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	defer resp.Body.Close()
