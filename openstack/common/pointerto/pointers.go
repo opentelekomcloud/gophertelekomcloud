@@ -5,6 +5,10 @@ func Int(src int) *int {
 	return &src
 }
 
+func Int64(src int64) *int64 {
+	return &src
+}
+
 // String returns pointer to given string value.
 func String(src string) *string {
 	return &src
