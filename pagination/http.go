@@ -68,6 +68,14 @@ func Request(client *golangsdk.ServiceClient, headers map[string]string, url str
 	})
 }
 
+// RequestPost performs an HTTP POST request and extracts the http.Response from the result.
+func RequestPost(client *golangsdk.ServiceClient, headers map[string]string, url string, JSONBody interface{}) (*http.Response, error) {
+	return client.Post(url, JSONBody, nil, &golangsdk.RequestOpts{
+		MoreHeaders: headers,
+		OkCodes:     []int{200, 204, 300},
+	})
+}
+
 // NewPageResult stores the HTTP response that returned the current page of results.
 type NewPageResult struct {
 	// Body is the payload of the HTTP response from the server.
