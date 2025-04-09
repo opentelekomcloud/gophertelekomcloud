@@ -47,6 +47,7 @@ func TestCluster(t *testing.T) {
 	clusterGet, err := clusters.Get(client, clusterID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, cluster.Metadata.Name, clusterGet.Metadata.Name)
+	th.AssertEquals(t, cluster.Metadata.Timezone, clusterGet.Metadata.Timezone)
 
 	if clusterID != "" {
 		cce.DeleteCluster(t, clusterID)
