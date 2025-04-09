@@ -26,6 +26,8 @@ type CreateMetaData struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Cluster annotation, key/value pair format
 	Annotations map[string]string `json:"annotations,omitempty"`
+	// Cluster timezone
+	Timezone string `json:"timezone,omitempty"`
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new

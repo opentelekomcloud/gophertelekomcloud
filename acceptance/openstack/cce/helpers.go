@@ -59,7 +59,8 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 		Kind:       "Cluster",
 		ApiVersion: "v3",
 		Metadata: clusters.CreateMetaData{
-			Name: strings.ToLower(tools.RandomString("cce-gopher-turbo-", 4)),
+			Name:     strings.ToLower(tools.RandomString("cce-gopher-turbo-", 4)),
+			Timezone: "Pacific/Auckland",
 		},
 		Spec: clusters.Spec{
 			Category: "Turbo",
