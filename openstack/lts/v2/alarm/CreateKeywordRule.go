@@ -73,7 +73,7 @@ type Frequency struct {
 	FixedRate int `json:"fixed_rate,omitempty"`
 	// Unit of a period. This field is used when type is set to FIXED_RATE.
 	// It is used together with fixed_rate to indicate a fixed period.
-	FixedRateUnit int `json:"fixed_rate_unit,omitempty"`
+	FixedRateUnit string `json:"fixed_rate_unit,omitempty"`
 }
 
 type NotificationSave struct {
@@ -82,9 +82,11 @@ type NotificationSave struct {
 	// Time zone information used in a notification. Example: +08:00
 	Timezone string `json:"timezone,omitempty"`
 	// Username used in a notification. It is generally displayed in the first line of the greeting.
-	UserName     string         `json:"user_name" required:"true"`
-	Topics       []TopicsCreate `json:"topics" required:"true"`
-	TemplateName string         `json:"template_name" required:"true"`
+	UserName string `json:"user_name" required:"true"`
+	// Topic information
+	Topics []TopicsCreate `json:"topics" required:"true"`
+	// Message template name.
+	TemplateName string `json:"template_name,omitempty"`
 }
 
 type TopicsCreate struct {
@@ -108,7 +110,9 @@ func CreateKeywordRule(client *golangsdk.ServiceClient, opts CreateOpts) (string
 	raw, err := client.Post(client.ServiceURL("lts", "alarms", "keywords-alarm-rule"), b, nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{
 			"content-type": "application/json",
-		}})
+		},
+		OkCodes: []int{200},
+	})
 	if err != nil {
 		return "", err
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func List(client *golangsdk.ServiceClient) ([]KeywordRule, error) {
+func ListKeywordRules(client *golangsdk.ServiceClient) ([]KeywordRule, error) {
 	// GET /v2/{project_id}/lts/alarms/keywords-alarm-rule
 	raw, err := client.Get(client.ServiceURL("lts", "alarms", "keywords-alarm-rule"), nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{

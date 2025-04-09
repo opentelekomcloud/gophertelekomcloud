@@ -8,6 +8,7 @@ func DeleteKeywordRule(client *golangsdk.ServiceClient, ruleId string) (err erro
 		MoreHeaders: map[string]string{
 			"content-type": "application/json",
 		},
+		OkCodes: []int{200},
 	})
 	return
 }
