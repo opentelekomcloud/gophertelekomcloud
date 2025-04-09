@@ -13,7 +13,7 @@ import (
 )
 
 func TestPodLifecycle(t *testing.T) {
-	// t.Skip("Tenant not whitelisted to run CCI")
+	t.Skip("Tenant not whitelisted to run CCI")
 	client, err := clients.NewCCIClient()
 	th.AssertNoErr(t, err)
 
