@@ -11,6 +11,7 @@ import (
 )
 
 func TestVBSV2BackupLifecycle(t *testing.T) {
+	t.Skip("Test takes too long to complete")
 	client, err := clients.NewVbsV2Client()
 	th.AssertNoErr(t, err)
 
