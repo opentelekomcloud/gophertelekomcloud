@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingips"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -48,6 +49,26 @@ func TestCluster(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, cluster.Metadata.Name, clusterGet.Metadata.Name)
 	th.AssertEquals(t, cluster.Metadata.Timezone, clusterGet.Metadata.Timezone)
+
+	computeClient, err := clients.NewComputeV2Client()
+	th.AssertNoErr(t, err)
+
+	eip, err := floatingips.Create(computeClient, floatingips.CreateOpts{
+		Pool: "admin_external_net",
+	}).Extract()
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		err := floatingips.Delete(computeClient, eip.ID).ExtractErr()
+		th.CheckNoErr(t, err)
+	})
+
+	updateIpOpts := clusters.UpdateIpOpts{
+		Action:    "bind",
+		ElasticIp: eip.ID,
+	}
+	updateIpOpts.Spec.ID = eip.ID
+	err = clusters.UpdateMasterIp(client, clusterID, updateIpOpts)
+	th.AssertNoErr(t, err)
 
 	if clusterID != "" {
 		cce.DeleteCluster(t, clusterID)

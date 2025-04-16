@@ -17,7 +17,7 @@ type IpSpec struct {
 
 // Update the access information of a specified cluster.
 func UpdateMasterIp(client *golangsdk.ServiceClient, clusterId string, opts UpdateIpOpts) error {
-	b, err := build.RequestBody(opts, "")
+	b, err := build.RequestBody(opts, "spec")
 	if err != nil {
 		return err
 	}
