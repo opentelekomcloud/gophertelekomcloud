@@ -14,7 +14,7 @@ type GetQueryParameters struct {
 	// Number of records displayed on each page. The value ranges from 1 to 1024.
 	Limit int `q:"limit" required:"true"`
 	// Service type. Currently, only 0 (Internet protection) is supported.
-	ServiceType *int `q:"service_type" required:"true"`
+	ServiceType string `q:"service_type" required:"true"`
 	// Enterprise project ID
 	EnterpriseProjectID string `q:"enterprise_project_id,omitempty"`
 	// Firewall instance ID.
@@ -24,12 +24,12 @@ type GetQueryParameters struct {
 }
 
 // This function is used to query details about a Firewall instance.
-func Get(client *golangsdk.ServiceClient, instanceID string, serviceType int) (*GetFirewallInstanceResponseRecord, error) {
+func Get(client *golangsdk.ServiceClient, instanceID string, serviceType string) (*GetFirewallInstanceResponseRecord, error) {
 	// GET /v1/{project_id}/firewall/exist
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("firewall", "exist").WithQueryParams(&GetQueryParameters{
 		Limit:        1024,
 		Offset:       "0",
-		ServiceType:  &serviceType,
+		ServiceType:  serviceType,
 		FwInstanceID: instanceID,
 	}).Build()
 	if err != nil {

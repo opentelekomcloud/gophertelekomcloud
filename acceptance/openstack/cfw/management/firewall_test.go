@@ -52,7 +52,7 @@ func TestFirewallLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	firewall, err := managementv1.Get(clientv1, instanceId, 0)
+	firewall, err := managementv1.Get(clientv1, instanceId, "0")
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instanceName, firewall.FwInstanceName)
 }

@@ -52,7 +52,7 @@ func TestCFWEIPLifecycle(t *testing.T) {
 		th.AssertNoErr(t, err)
 	})
 
-	firewall, err := managementv1.Get(clientv1, instanceId, 0)
+	firewall, err := managementv1.Get(clientv1, instanceId, "0")
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, waitForIPSync(clientv1, 300, 5, firewall.ProtectObjects[0].ObjectID, eip1.ID))
