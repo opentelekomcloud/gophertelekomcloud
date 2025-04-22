@@ -49,6 +49,8 @@ type Spec struct {
 	ContainerNetwork ContainerNetworkSpec `json:"containerNetwork" required:"true"`
 	// ENI network parameters
 	EniNetwork *EniNetworkSpec `json:"eniNetwork,omitempty"`
+	// Cluster API access control
+	PublicAccess *PublicAccess `json:"publicAccess,omitempty"`
 	// Authentication parameters
 	Authentication AuthenticationSpec `json:"authentication,omitempty"`
 	// Charging mode of the cluster, which is 0 (on demand)
@@ -105,6 +107,11 @@ type EniNetworkSpec struct {
 	SubnetId string `json:"eniSubnetId" required:"true"`
 	// Eni network cidr
 	Cidr string `json:"eniSubnetCIDR" required:"true"`
+}
+
+type PublicAccess struct {
+	// Trustlist of network CIDRs that are allowed to access cluster APIs.
+	Cidrs []string `json:"cidrs,omitempty"`
 }
 
 // Authentication parameters
