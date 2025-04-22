@@ -87,6 +87,12 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 					AvailabilityZone: "eu-de-01",
 				},
 			},
+			PublicAccess: &clusters.PublicAccess{
+				Cidrs: []string{
+					"192.168.45.0/24",
+					"10.234.128.0/20",
+				},
+			},
 		},
 	})
 	th.AssertNoErr(t, err)

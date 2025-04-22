@@ -49,6 +49,7 @@ func TestCluster(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, cluster.Metadata.Name, clusterGet.Metadata.Name)
 	th.AssertEquals(t, cluster.Metadata.Timezone, clusterGet.Metadata.Timezone)
+	th.AssertEquals(t, cluster.Spec.PublicAccess.Cidrs[0], "192.168.45.0/24")
 
 	computeClient, err := clients.NewComputeV2Client()
 	th.AssertNoErr(t, err)
