@@ -101,4 +101,17 @@ type KeywordRule struct {
 	NotificationFrequency int `json:"notification_frequency"`
 	// Alarm action rule name.
 	AlarmActionRuleName string `json:"alarm_action_rule_name"`
+	// Message template name.
+	TemplateName string `json:"template_name"`
+	// Alarm status.
+	Status string `json:"status"`
+	// Number of queries in which the triggering condition is met. The default value is 1.
+	TriggerConditionCount int `json:"trigger_condition_count"`
+	// Number of times that log events meet the trigger condition. The default value is 1.
+	TriggerConditionFrequency int `json:"trigger_condition_frequency"`
+	// Whether to enable the alarm clearance notification. The default value is false.
+	EnableRecoveryPolicy bool `json:"whether_recovery_policy"`
+	// Number of queries in which the triggering condition is not met.
+	// The alarm is cleared when this number reaches the value (3 by default) of this parameter.
+	RecoveryPolicy int `json:"recovery_policy"`
 }
