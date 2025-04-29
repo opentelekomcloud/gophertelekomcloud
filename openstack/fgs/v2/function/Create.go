@@ -51,7 +51,7 @@ type FuncVpc struct {
 }
 
 type CustomImage struct {
-	Enabled    *bool  `json:"bool,omitempty"`
+	Enabled    *bool  `json:"enabled,omitempty"`
 	Image      string `json:"image,omitempty"`
 	Command    string `json:"command,omitempty"`
 	Args       string `json:"args,omitempty"`
