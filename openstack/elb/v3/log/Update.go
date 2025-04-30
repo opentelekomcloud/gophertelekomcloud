@@ -3,6 +3,7 @@ package log
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type UpdateOpts struct {
@@ -14,16 +15,18 @@ type UpdateOpts struct {
 	LogStreamId string `json:"log_topic_id,omitempty"`
 }
 
-func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (err error) {
+func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Log, error) {
 	b, err := build.RequestBody(opts, "logtank")
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	// PUT /v3/{project_id}/elb/logtanks/{logtank_id}
-	_, err = c.Put(c.ServiceURL("logtanks", id), b, nil, &golangsdk.RequestOpts{
+	raw, err := c.Put(c.ServiceURL("logtanks", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 
-	return
+	var res Log
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }

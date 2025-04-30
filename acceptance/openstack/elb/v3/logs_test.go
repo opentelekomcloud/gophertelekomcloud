@@ -96,10 +96,11 @@ func TestLogsLifecycle(t *testing.T) {
 	})
 
 	t.Logf("Attempting to Update Loadbalancer Log")
-	err = log.Update(client, logtank.Logtank.ID, log.UpdateOpts{
+	up, err := log.Update(client, logtank.Logtank.ID, log.UpdateOpts{
 		LogStreamId: streamSec,
 	})
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, streamSec, up.Logtank.LogStreamId)
 
 	t.Logf("Attempting to Get Loadbalancer Log")
 	get, err := log.Get(client, logtank.Logtank.ID)
