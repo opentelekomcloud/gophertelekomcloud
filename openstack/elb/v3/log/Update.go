@@ -25,6 +25,9 @@ func Update(c *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Log, error
 	raw, err := c.Put(c.ServiceURL("logtanks", id), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res Log
 	err = extract.Into(raw.Body, &res)
