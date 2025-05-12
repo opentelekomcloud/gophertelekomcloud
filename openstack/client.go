@@ -1087,3 +1087,12 @@ func NewCCIServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	sc.ResourceBase = strings.Replace(sc.Endpoint+"apis/cci/v2/", "cce", "cci", 1)
 	return sc, nil
 }
+
+func NewCCINetworkServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "ccev2.0")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = strings.Replace(sc.Endpoint+"apis/yangtse/v2/", "cce", "cci", 1)
+	return sc, nil
+}
