@@ -41,8 +41,8 @@ type Spec struct {
 	Version string `json:"version,omitempty"`
 	// Cluster description
 	Description string `json:"description,omitempty"`
-	// Public IP ID
-	PublicIP string `json:"publicip_id,omitempty"`
+	// Whether the cluster supports IPv6 addresses. This field is supported in clusters of v1.25 and later versions.
+	Ipv6Enable bool `json:"ipv6enable,omitempty"`
 	// Node network parameters
 	HostNetwork HostNetworkSpec `json:"hostNetwork" required:"true"`
 	// Container network parameters
@@ -53,19 +53,19 @@ type Spec struct {
 	PublicAccess *PublicAccess `json:"publicAccess,omitempty"`
 	// Authentication parameters
 	Authentication AuthenticationSpec `json:"authentication,omitempty"`
-	// Charging mode of the cluster, which is 0 (on demand)
-	BillingMode int `json:"billingMode,omitempty"`
-	// Extended parameter for a cluster
-	ExtendParam map[string]string `json:"extendParam,omitempty"`
+	// Advanced configurations of the master node.
+	Masters []MasterSpec `json:"masters,omitempty"`
 	// KubernetesSvcIpRange Service CIDR block or the IP address range which the kubernetes clusterIp must fall within.
 	// This parameter is available only for clusters of v1.11.7 and later.
 	KubernetesSvcIpRange string `json:"kubernetesSvcIpRange,omitempty"`
 	// KubeProxyMode Service forwarding mode. One of `iptables`, `ipvs`
 	KubeProxyMode string `json:"kubeProxyMode,omitempty"`
+	// Extended parameter for a cluster
+	ExtendParam map[string]string `json:"extendParam,omitempty"`
 	// The system disks and data disks of the master nodes in the cluster are encrypted.
 	EnableMasterVolumeEncryption *bool `json:"enableMasterVolumeEncryption,omitempty"`
-	// Advanced configurations of the master node.
-	Masters []MasterSpec `json:"masters,omitempty"`
+	// Charging mode of the cluster, which is 0 (on demand)
+	BillingMode int `json:"billingMode,omitempty"`
 }
 
 type Status struct {
