@@ -13,6 +13,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/instances"
 	ddsjob "github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/job"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dds/v3/logs"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/groups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/streams"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -26,10 +29,100 @@ func TestDdsList(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func TestDdsSingleLifeCycle(t *testing.T) {
+func TestDdsLtsLifeCycle(t *testing.T) {
 	client, err := clients.NewDdsV3Client()
 	th.AssertNoErr(t, err)
 
+	ltsclient, err := clients.NewLtsV2Client()
+	th.AssertNoErr(t, err)
+
+	name := tools.RandomString("test-group-", 3)
+	createOpts := groups.CreateOpts{
+		LogGroupName: name,
+		TTLInDays:    7,
+	}
+	t.Logf("Attempting to Create Log Group")
+	gr, err := groups.Create(ltsclient, createOpts)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to Delete Log Group")
+		err = groups.Delete(ltsclient, gr)
+		th.AssertNoErr(t, err)
+	})
+
+	t.Logf("Attempting to Create Log Stream")
+	sname := tools.RandomString("test-stream-", 3)
+	stream, err := streams.Create(ltsclient, streams.CreateOpts{
+		GroupId:       gr,
+		LogStreamName: sname,
+	})
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to Delete Log Stream")
+		err = streams.Delete(ltsclient, streams.DeleteOpts{
+			GroupId:  gr,
+			StreamId: stream,
+		})
+		th.AssertNoErr(t, err)
+	})
+
+	t.Logf("Attempting to create DDSv3 single instance")
+	ddsInstance := createDdsSingleInstance(t, client)
+	t.Cleanup(func() {
+		deleteDdsInstance(t, client, ddsInstance.Id)
+	})
+
+	listOpts := instances.ListInstanceOpts{Id: ddsInstance.Id}
+	newDdsInstance, err := instances.List(client, listOpts)
+	th.AssertNoErr(t, err)
+	if newDdsInstance.TotalCount == 0 {
+		t.Fatalf("No DDSv3 instance was found: %s", err)
+	}
+	t.Log(newDdsInstance.Instances[0])
+
+	t.Logf("Attempting to Enable LTS logs for instance: %s", ddsInstance.Id)
+	logOpts := logs.CreateOpts{
+		LtsConfigs: []logs.Configs{
+			{
+				InstanceID:  ddsInstance.Id,
+				LogType:     "audit_log",
+				LtsGroupId:  gr,
+				LtsStreamId: stream,
+			},
+		},
+	}
+	err = logs.Create(client, logOpts)
+	th.AssertNoErr(t, err)
+
+	err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to Disable LTS logs for instance: %s", ddsInstance.Id)
+		err = logs.Delete(client, logs.DeleteOpts{
+			LtsConfigs: []logs.LtsConfig{
+				{
+					InstanceID: ddsInstance.Id,
+					LogType:    "audit_log",
+				},
+			},
+		})
+		th.AssertNoErr(t, err)
+
+		err = waitForInstanceAvailable(client, 600, ddsInstance.Id)
+		th.AssertNoErr(t, err)
+	})
+	t.Logf("Attempting to List LTS logs for DDS instances")
+	list, err := logs.List(client, logs.ListOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, len(list.InstanceLtsConfigs) > 0)
+}
+
+func TestDdsSingleLifeCycle(t *testing.T) {
+	client, err := clients.NewDdsV3Client()
+	th.AssertNoErr(t, err)
 	t.Logf("Attempting to create DDSv3 single instance")
 	ddsInstance := createDdsSingleInstance(t, client)
 	defer deleteDdsInstance(t, client, ddsInstance.Id)
