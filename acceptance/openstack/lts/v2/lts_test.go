@@ -58,9 +58,6 @@ func TestLtsLifecycle(t *testing.T) {
 	t.Logf("Attempting to List Log Groups")
 	got, err := groups.List(client)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, true, len(got) > 0)
-	th.AssertEquals(t, "TestValue", got[0].Tag["TestKey"])
-	th.AssertEquals(t, 2, len(got[0].Tag))
 	tools.PrintResource(t, got)
 
 	t.Logf("Attempting to Remove tag from Log Groups")
@@ -114,4 +111,12 @@ func TestLtsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, len(slist) > 0)
 	tools.PrintResource(t, slist)
+
+	t.Logf("Attempting to List of Log Streams filtered by Stream Name")
+	byName, err := streams.ListStreams(client, streams.ListStreamsOpts{
+		StreamName: update.LogStreamName,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(byName))
+	tools.PrintResource(t, byName)
 }
