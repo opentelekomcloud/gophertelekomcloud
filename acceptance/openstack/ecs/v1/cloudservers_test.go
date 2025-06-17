@@ -114,3 +114,71 @@ func TestCloudServersRandomAzLifecycle(t *testing.T) {
 
 	tools.PrintResource(t, ecs)
 }
+
+func TestCloudServersIPV6(t *testing.T) {
+	client, err := clients.NewComputeV1Client()
+	th.AssertNoErr(t, err)
+
+	prefix := "ecs-"
+	ecsName := tools.RandomString(prefix, 3)
+	imageName := "Standard_Debian_11_latest"
+	flavorID := "s3.large.2"
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("IPV6_ENABLED_NETWORK_ID")
+
+	imageV2Client, err := clients.NewIMSV2Client()
+	th.AssertNoErr(t, err)
+
+	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
+		Name: imageName,
+	})
+	th.AssertNoErr(t, err)
+	if len(image) == 0 {
+		t.Skip("Change image query filter, no results returned")
+	}
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID, OS_IPV6_ENABLED_NETWORK_ID env vars is missing but ECSv1 test requires")
+	}
+
+	// Get ECSv1 createOpts
+	createOpts := cloudservers.CreateOpts{
+		ImageRef:  image[0].Id,
+		FlavorRef: flavorID,
+		Name:      ecsName,
+		VpcId:     vpcID,
+		Nics: []cloudservers.Nic{
+			{
+				SubnetId:   subnetID,
+				Ipv6Enable: true,
+			},
+		},
+		RootVolume: cloudservers.RootVolume{
+			VolumeType: "SSD",
+		},
+		DataVolumes: []cloudservers.DataVolume{
+			{
+				VolumeType: "SSD",
+				Size:       20,
+			},
+		},
+	}
+
+	// Check ECSv1 createOpts
+	openstack.DryRunCloudServerConfig(t, client, createOpts)
+	t.Logf("CreateOpts are ok for creating a cloudServer")
+
+	// Create ECSv1 instance
+	ecs := openstack.CreateCloudServer(t, client, createOpts)
+	defer openstack.DeleteCloudServer(t, client, ecs.ID)
+
+	ipv6enabled := false
+	for _, addresses := range ecs.Addresses {
+		for _, addr := range addresses {
+			if addr.Version == "6" {
+				ipv6enabled = true
+			}
+		}
+	}
+	th.AssertEquals(t, true, ipv6enabled)
+}
