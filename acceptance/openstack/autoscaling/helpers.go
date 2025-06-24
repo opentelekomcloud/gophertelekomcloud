@@ -109,10 +109,10 @@ func DeleteASConfig(t *testing.T, client *golangsdk.ServiceClient, configID stri
 func GetNotificationTopicURN(topicName string) (string, error) {
 	client, _ := clients.NewSmnV2Client()
 
-	opts := topics.CreateOps{
+	opts := topics.CreateOpts{
 		Name: topicName,
 	}
-	topic, err := topics.Create(client, opts).Extract()
+	topic, err := topics.Create(client, opts)
 
 	return topic.TopicUrn, err
 }
@@ -120,7 +120,7 @@ func GetNotificationTopicURN(topicName string) (string, error) {
 func DeleteTopic(t *testing.T, topicURN string) {
 	client, _ := clients.NewSmnV2Client()
 	t.Logf("Attempting to Delete Topic: %s", topicURN)
-	err := topics.Delete(client, topicURN).ExtractErr()
+	err := topics.Delete(client, topicURN)
 	if err != nil {
 		t.Logf("Error while deleting the topic: %s", topicURN)
 	}

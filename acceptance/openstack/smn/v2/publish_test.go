@@ -17,16 +17,16 @@ func TestMessagePublishWorkflow(t *testing.T) {
 
 	t.Logf("Attempting to create SMN topic")
 	topicName := tools.RandomString("topic-", 3)
-	opts := topics.CreateOps{
+	opts := topics.CreateOpts{
 		Name: topicName,
 	}
-	topic, err := topics.Create(client, opts).Extract()
+	topic, err := topics.Create(client, opts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created SMN topic: %s", topic.TopicUrn)
 
 	defer func() {
 		t.Logf("Attempting to delete SMN topic: %s", topic.TopicUrn)
-		err := topics.Delete(client, topic.TopicUrn).ExtractErr()
+		err := topics.Delete(client, topic.TopicUrn)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SMN topic: %s", topic.TopicUrn)
 	}()
