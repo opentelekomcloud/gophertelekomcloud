@@ -19,16 +19,16 @@ func TestLtsAlarmList(t *testing.T) {
 
 	t.Logf("Attempting to create SMN topic")
 	topicName := tools.RandomString("topic-", 3)
-	opts := topics.CreateOps{
+	opts := topics.CreateOpts{
 		Name: topicName,
 	}
-	topic, err := topics.Create(clientSMN, opts).Extract()
+	topic, err := topics.Create(clientSMN, opts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created SMN topic: %s", topic.TopicUrn)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete SMN topic: %s", topic.TopicUrn)
-		err := topics.Delete(clientSMN, topic.TopicUrn).ExtractErr()
+		err := topics.Delete(clientSMN, topic.TopicUrn)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SMN topic: %s", topic.TopicUrn)
 	})
@@ -108,16 +108,16 @@ func TestLtsAlarmsLifecycle(t *testing.T) {
 
 	t.Logf("Attempting to Create SMN topic")
 	topicName := tools.RandomString("topic-", 3)
-	opts := topics.CreateOps{
+	opts := topics.CreateOpts{
 		Name: topicName,
 	}
-	topic, err := topics.Create(clientSMN, opts).Extract()
+	topic, err := topics.Create(clientSMN, opts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created SMN topic: %s", topic.TopicUrn)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to Delete SMN topic: %s", topic.TopicUrn)
-		err := topics.Delete(clientSMN, topic.TopicUrn).ExtractErr()
+		err := topics.Delete(clientSMN, topic.TopicUrn)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SMN topic: %s", topic.TopicUrn)
 	})

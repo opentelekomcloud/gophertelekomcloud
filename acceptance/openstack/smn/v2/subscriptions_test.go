@@ -21,17 +21,22 @@ func TestTopicSubscriptionWorkflow(t *testing.T) {
 		Protocol: "email",
 	}
 
-	subscription, err := subscriptions.Create(client, createOpts, topic).Extract()
+	subscription, err := subscriptions.Create(client, createOpts, topic)
 	th.AssertNoErr(t, err)
 	t.Logf("Created SMN subscription: %s", subscription.SubscriptionUrn)
 	defer func() {
 		t.Logf("Attempting to delete SMN subscription: %s", subscription.SubscriptionUrn)
-		err := subscriptions.Delete(client, subscription.SubscriptionUrn).ExtractErr()
+		err := subscriptions.Delete(client, subscription.SubscriptionUrn)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SMN subscription: %s", subscription.SubscriptionUrn)
 	}()
 
-	subscriptionList, err := subscriptions.List(client).Extract()
+	subscriptionList, err := subscriptions.List(client, subscriptions.ListOpts{})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(subscriptionList))
+
+	_, err = subscriptions.ListTopic(client, subscriptions.ListTopicOpts{
+		TopicUrn: topic,
+	})
+	th.AssertNoErr(t, err)
 }

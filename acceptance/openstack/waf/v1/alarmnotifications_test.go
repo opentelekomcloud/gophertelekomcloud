@@ -64,10 +64,10 @@ func TestAlarmNotificationWorkflow(t *testing.T) {
 
 func createTopic(t *testing.T, client *golangsdk.ServiceClient) string {
 	t.Logf("Attempting to create SMN topic")
-	opts := topics.CreateOps{
+	opts := topics.CreateOpts{
 		Name: tools.RandomString("topic-", 3),
 	}
-	topic, err := topics.Create(client, opts).Extract()
+	topic, err := topics.Create(client, opts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created SMN topic: %s", topic.TopicUrn)
 	return topic.TopicUrn
@@ -75,7 +75,7 @@ func createTopic(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func deleteTopic(t *testing.T, client *golangsdk.ServiceClient, topicURN string) {
 	t.Logf("Attempting to delete SMN topic: %s", topicURN)
-	err := topics.Delete(client, topicURN).ExtractErr()
+	err := topics.Delete(client, topicURN)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted SMN topic: %s", topicURN)
 }
