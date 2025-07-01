@@ -74,6 +74,8 @@ type CreateOpts struct {
 	// Whether to automatically expand the vault capacity.
 	// Only pay-per-use vaults support this function.
 	AutoExpand bool `json:"auto_expand,omitempty"`
+	// Whether the vault is locked. A locked vault cannot be unlocked.
+	Locked *bool `json:"locked,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Vault, error) {

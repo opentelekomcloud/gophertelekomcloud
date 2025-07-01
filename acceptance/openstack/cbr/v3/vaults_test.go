@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/policies"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -25,6 +26,7 @@ func TestVaultLifecycle(t *testing.T) {
 		Description: "gophertelemocloud testing vault",
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
+		Locked:      pointerto.Bool(true),
 	}
 	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
