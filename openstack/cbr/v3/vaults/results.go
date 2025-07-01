@@ -46,4 +46,5 @@ type Vault struct {
 	UserID      string             `json:"user_id"`
 	CreatedAt   string             `json:"created_at"`
 	AutoExpand  bool               `json:"auto_expand"`
+	Locked      bool               `json:"locked"`
 }

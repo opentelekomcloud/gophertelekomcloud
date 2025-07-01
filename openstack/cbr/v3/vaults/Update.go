@@ -22,6 +22,7 @@ type UpdateOpts struct {
 	AutoBind   *bool           `json:"auto_bind,omitempty"`
 	BindRules  *VaultBindRules `json:"bind_rules,omitempty"`
 	AutoExpand *bool           `json:"auto_expand,omitempty"`
+	Locked     *bool           `json:"locked,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Vault, error) {
