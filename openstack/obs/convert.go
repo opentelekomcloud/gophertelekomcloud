@@ -313,6 +313,17 @@ func convertExpirationToXml(expiration Expiration) string {
 	return ""
 }
 
+func convertLifeCycleFilterToXML(filter LifecycleFilter) string {
+	if filter.Prefix == "" && len(filter.Tags) == 0 {
+		return ""
+	}
+	data, err := TransToXml(filter)
+	if err != nil {
+		return ""
+	}
+	return string(data)
+}
+
 func convertNoncurrentVersionTransitionsToXml(noncurrentVersionTransitions []NoncurrentVersionTransition, isObs bool) string {
 	if length := len(noncurrentVersionTransitions); length > 0 {
 		xml := make([]string, 0, length)
@@ -346,25 +357,31 @@ func convertNoncurrentVersionExpirationToXml(noncurrentVersionExpiration Noncurr
 func ConvertLifecyleConfigurationToXml(input BucketLifecycleConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
 	xml := make([]string, 0, 2+len(input.LifecycleRules)*9)
 	xml = append(xml, "<LifecycleConfiguration>")
-	for _, lifecyleRule := range input.LifecycleRules {
+	for _, lifecycleRule := range input.LifecycleRules {
 		xml = append(xml, "<Rule>")
-		if lifecyleRule.ID != "" {
-			lifecyleRuleID := XmlTranscoding(lifecyleRule.ID)
-			xml = append(xml, fmt.Sprintf("<ID>%s</ID>", lifecyleRuleID))
+		if lifecycleRule.ID != "" {
+			lifecycleRuleID := XmlTranscoding(lifecycleRule.ID)
+			xml = append(xml, fmt.Sprintf("<ID>%s</ID>", lifecycleRuleID))
 		}
-		lifecyleRulePrefix := XmlTranscoding(lifecyleRule.Prefix)
-		xml = append(xml, fmt.Sprintf("<Prefix>%s</Prefix>", lifecyleRulePrefix))
-		xml = append(xml, fmt.Sprintf("<Status>%s</Status>", lifecyleRule.Status))
-		if ret := convertTransitionsToXml(lifecyleRule.Transitions, isObs); ret != "" {
+		lifecycleRulePrefix := XmlTranscoding(lifecycleRule.Prefix)
+		lifecycleRuleFilter := convertLifeCycleFilterToXML(lifecycleRule.Filter)
+		if lifecycleRulePrefix != "" || lifecycleRuleFilter == "" {
+			xml = append(xml, fmt.Sprintf("<Prefix>%s</Prefix>", lifecycleRulePrefix))
+		}
+		if lifecycleRuleFilter != "" {
+			xml = append(xml, lifecycleRuleFilter)
+		}
+		xml = append(xml, fmt.Sprintf("<Status>%s</Status>", lifecycleRule.Status))
+		if ret := convertTransitionsToXml(lifecycleRule.Transitions, isObs); ret != "" {
 			xml = append(xml, ret)
 		}
-		if ret := convertExpirationToXml(lifecyleRule.Expiration); ret != "" {
+		if ret := convertExpirationToXml(lifecycleRule.Expiration); ret != "" {
 			xml = append(xml, ret)
 		}
-		if ret := convertNoncurrentVersionTransitionsToXml(lifecyleRule.NoncurrentVersionTransitions, isObs); ret != "" {
+		if ret := convertNoncurrentVersionTransitionsToXml(lifecycleRule.NoncurrentVersionTransitions, isObs); ret != "" {
 			xml = append(xml, ret)
 		}
-		if ret := convertNoncurrentVersionExpirationToXml(lifecyleRule.NoncurrentVersionExpiration); ret != "" {
+		if ret := convertNoncurrentVersionExpirationToXml(lifecycleRule.NoncurrentVersionExpiration); ret != "" {
 			xml = append(xml, ret)
 		}
 		xml = append(xml, "</Rule>")
