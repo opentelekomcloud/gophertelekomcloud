@@ -262,6 +262,13 @@ type LifecycleRule struct {
 	Expiration                   Expiration                    `xml:"Expiration,omitempty"`
 	NoncurrentVersionTransitions []NoncurrentVersionTransition `xml:"NoncurrentVersionTransition,omitempty"`
 	NoncurrentVersionExpiration  NoncurrentVersionExpiration   `xml:"NoncurrentVersionExpiration,omitempty"`
+	Filter                       LifecycleFilter               `xml:"Filter,omitempty"`
+}
+
+type LifecycleFilter struct {
+	XMLName xml.Name `xml:"Filter"`
+	Prefix  string   `xml:"And>Prefix,omitempty"`
+	Tags    []Tag    `xml:"And>Tag,omitempty"`
 }
 
 // BucketEncryptionConfiguration defines the bucket encryption configuration
