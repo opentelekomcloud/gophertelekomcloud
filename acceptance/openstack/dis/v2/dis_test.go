@@ -20,6 +20,7 @@ import (
 )
 
 func TestDISWorkflow(t *testing.T) {
+	t.Skip("Api error - net/http: TLS handshake timeout")
 	client, err := clients.NewDisV2Client()
 	th.AssertNoErr(t, err)
 	now := time.Now()
