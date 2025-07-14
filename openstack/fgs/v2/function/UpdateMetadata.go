@@ -41,6 +41,7 @@ type UpdateFuncMetadataOpts struct {
 	HeartbeatHandler     string                `json:"heartbeat_handler,omitempty"`
 	EnableClassIsolation *bool                 `json:"enable_class_isolation,omitempty"`
 	GpuType              string                `json:"gpu_type,omitempty"`
+	PeeringCIDR          string                `json:"peering_cidr"`
 }
 
 func UpdateFuncMetadata(client *golangsdk.ServiceClient, opts UpdateFuncMetadataOpts) (*FuncGraph, error) {

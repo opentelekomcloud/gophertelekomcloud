@@ -173,6 +173,7 @@ type FuncGraph struct {
 	ResourceID               string               `json:"resource_id"`
 	EnableAuthInHeader       bool                 `json:"enable_auth_in_header"`
 	ReservedInstanceIdleMode bool                 `json:"reserved_instance_idle_mode"`
+	PeeringCIDR              string               `json:"peering_cidr"`
 }
 
 type StrategyConfig struct {
