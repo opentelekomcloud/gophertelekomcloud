@@ -20,6 +20,7 @@ import (
 )
 
 func TestDISWorkflow(t *testing.T) {
+	t.Skip("Servce reached EOL")
 	client, err := clients.NewDisV2Client()
 	th.AssertNoErr(t, err)
 	now := time.Now()
@@ -198,7 +199,7 @@ func TestDISWorkflow(t *testing.T) {
 }
 
 func TestDISDumpWorkflow(t *testing.T) {
-	t.Skip("Need to create dis_admin_agency first")
+	t.Skip("Servce reached EOL")
 	client, err := clients.NewDisV2Client()
 	th.AssertNoErr(t, err)
 

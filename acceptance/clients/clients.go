@@ -84,8 +84,50 @@ func NewBlockStorageV3Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewCFWV1Client returns a *ServiceClient for making calls
+// to the OpenStack CFW v1 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewCFWV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCFWV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewCFWV2Client returns a *ServiceClient for making calls
+// to the OpenStack CFW v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewCFWV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCFWV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewCFWV3Client returns a *ServiceClient for making calls
+// to the OpenStack CFW v3 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewCFWV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCFWV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewComputeV2Client returns a *ServiceClient for making calls
-// to the OpenStack Compute v2 API. An error will be returned
+// to the OpenStack Compute v2.1 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -93,9 +135,14 @@ func NewComputeV2Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 
-	return openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
+	client, err := openstack.NewComputeV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
+	if err != nil {
+		return nil, err
+	}
+	client.Microversion = "2.55"
+	return client, err
 }
 
 // NewComputeV1Client returns a *ServiceClient for making calls
@@ -146,7 +193,7 @@ func NewCTSV3Client() (*golangsdk.ServiceClient, error) {
 }
 
 // NewDCaaSV2Client returns a *ServiceClient for making calls
-// to the OpenStack v2 API. An error will be returned
+// to the OpenStack DCaaS v2 API. An error will be returned
 // if authentication or client creation was not possible.
 func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -155,6 +202,62 @@ func NewDCaaSV2Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewDCaaSV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDCaaSV3Client returns a *ServiceClient for making calls
+// to the OpenStack DCaaS v3 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDCaaSV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDCaaSV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDDMV1Client returns a *ServiceClient for making calls
+// to the OpenStack DDM v1 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDDMV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDDMV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDDMV2Client returns a *ServiceClient for making calls
+// to the OpenStack DDM v2 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDDMV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDDMV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDDMV3Client returns a *ServiceClient for making calls
+// to the OpenStack DDM v3 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewDDMV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewDDMV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
@@ -627,6 +730,17 @@ func NewVbsV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDataArtsV1Client returns authenticated DataArts v1 client
+func NewDataArtsV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDataArtsV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDataArtsV11Client returns authenticated DataArts v1.1 client
 func NewDataArtsV11Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -671,6 +785,17 @@ func NewDcsV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewDcsV2Client returns authenticated DCS v2 client
+func NewDcsV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDCSServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewDmsV1Client returns authenticated DMS v1 client
 func NewDmsV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
@@ -709,6 +834,17 @@ func NewDmsV2Client() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 	return openstack.NewDMSServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewDmsV21Client returns authenticated DMS v2 client
+func NewDmsV21Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewDMSServiceV21(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }
@@ -780,6 +916,50 @@ func NewLtsV2Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewLtsV1Client returns authenticated LTS v1 client
+func NewLtsV1Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewLTSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewLtsV3Client returns authenticated LTS v3 client
+func NewLtsV3Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewLTSV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewLtsV20Client returns authenticated LTS v2.0 client
+func NewLtsV20Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewLTSV20(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewLtsV10Client returns authenticated LTS v1.0 client
+func NewLtsV10Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewLTSV10(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
 	if err != nil {
@@ -807,6 +987,72 @@ func NewFuncGraphClient() (client *golangsdk.ServiceClient, err error) {
 		return nil, err
 	}
 	return openstack.NewFuncGraph(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewERClient returns authenticated Enterprise Router v3 client
+func NewERClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewERServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewHssClient returns authenticated HSS v5 client
+func NewHssClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewHssV5(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewEVPNClient returns authenticated HSS v5 client
+func NewEVPNClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewEVPNServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewRMSClient returns authenticated RMS v1 client
+func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewRmsServiceV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewCCIClient returns authenticated CCI v2 client
+func NewCCIClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCCIServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
+// NewCCINetworkClient returns authenticated CCI v2 network client
+func NewCCINetworkClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCCINetworkServiceV2(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 }

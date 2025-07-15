@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -65,16 +66,6 @@ func ParseStringToStorageClassType(value string) (ret StorageClassType) {
 	return
 }
 
-func prepareGrantURI(grant Grant) string {
-	if grant.Grantee.URI == GroupAllUsers || grant.Grantee.URI == GroupAuthenticatedUsers {
-		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/global/", grant.Grantee.URI)
-	}
-	if grant.Grantee.URI == GroupLogDelivery {
-		return fmt.Sprintf("<URI>%s%s</URI>", "http://acs.amazonaws.com/groups/s3/", grant.Grantee.URI)
-	}
-	return fmt.Sprintf("<URI>%s</URI>", grant.Grantee.URI)
-}
-
 func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	xml := make([]string, 0, 4)
 	if !isObs {
@@ -95,9 +86,9 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 		}
 		xml = append(xml, "</Grantee>")
 	} else {
-		if !isObs {
-			xml = append(xml, fmt.Sprintf("<Grant><Grantee xsi:type=\"%s\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">", grant.Grantee.Type))
-			xml = append(xml, prepareGrantURI(grant))
+		if grant.Grantee.URI == GroupLogDelivery {
+			xml = append(xml, "<Grant><Grantee>")
+			xml = append(xml, "<Canned>LogDelivery</Canned>")
 			xml = append(xml, "</Grantee>")
 		} else if grant.Grantee.URI == GroupAllUsers {
 			xml = append(xml, "<Grant><Grantee>")
@@ -109,7 +100,7 @@ func convertGrantToXml(grant Grant, isObs bool, isBucket bool) string {
 	}
 
 	xml = append(xml, fmt.Sprintf("<Permission>%s</Permission>", grant.Permission))
-	if isObs && isBucket {
+	if isObs && isBucket && grant.Grantee.URI != GroupLogDelivery {
 		xml = append(xml, fmt.Sprintf("<Delivered>%t</Delivered>", grant.Delivered))
 	}
 	xml = append(xml, "</Grant>")
@@ -322,6 +313,17 @@ func convertExpirationToXml(expiration Expiration) string {
 	return ""
 }
 
+func convertLifeCycleFilterToXML(filter LifecycleFilter) string {
+	if filter.Prefix == "" && len(filter.Tags) == 0 {
+		return ""
+	}
+	data, err := TransToXml(filter)
+	if err != nil {
+		return ""
+	}
+	return string(data)
+}
+
 func convertNoncurrentVersionTransitionsToXml(noncurrentVersionTransitions []NoncurrentVersionTransition, isObs bool) string {
 	if length := len(noncurrentVersionTransitions); length > 0 {
 		xml := make([]string, 0, length)
@@ -355,25 +357,31 @@ func convertNoncurrentVersionExpirationToXml(noncurrentVersionExpiration Noncurr
 func ConvertLifecyleConfigurationToXml(input BucketLifecycleConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
 	xml := make([]string, 0, 2+len(input.LifecycleRules)*9)
 	xml = append(xml, "<LifecycleConfiguration>")
-	for _, lifecyleRule := range input.LifecycleRules {
+	for _, lifecycleRule := range input.LifecycleRules {
 		xml = append(xml, "<Rule>")
-		if lifecyleRule.ID != "" {
-			lifecyleRuleID := XmlTranscoding(lifecyleRule.ID)
-			xml = append(xml, fmt.Sprintf("<ID>%s</ID>", lifecyleRuleID))
+		if lifecycleRule.ID != "" {
+			lifecycleRuleID := XmlTranscoding(lifecycleRule.ID)
+			xml = append(xml, fmt.Sprintf("<ID>%s</ID>", lifecycleRuleID))
 		}
-		lifecyleRulePrefix := XmlTranscoding(lifecyleRule.Prefix)
-		xml = append(xml, fmt.Sprintf("<Prefix>%s</Prefix>", lifecyleRulePrefix))
-		xml = append(xml, fmt.Sprintf("<Status>%s</Status>", lifecyleRule.Status))
-		if ret := convertTransitionsToXml(lifecyleRule.Transitions, isObs); ret != "" {
+		lifecycleRulePrefix := XmlTranscoding(lifecycleRule.Prefix)
+		lifecycleRuleFilter := convertLifeCycleFilterToXML(lifecycleRule.Filter)
+		if lifecycleRulePrefix != "" || lifecycleRuleFilter == "" {
+			xml = append(xml, fmt.Sprintf("<Prefix>%s</Prefix>", lifecycleRulePrefix))
+		}
+		if lifecycleRuleFilter != "" {
+			xml = append(xml, lifecycleRuleFilter)
+		}
+		xml = append(xml, fmt.Sprintf("<Status>%s</Status>", lifecycleRule.Status))
+		if ret := convertTransitionsToXml(lifecycleRule.Transitions, isObs); ret != "" {
 			xml = append(xml, ret)
 		}
-		if ret := convertExpirationToXml(lifecyleRule.Expiration); ret != "" {
+		if ret := convertExpirationToXml(lifecycleRule.Expiration); ret != "" {
 			xml = append(xml, ret)
 		}
-		if ret := convertNoncurrentVersionTransitionsToXml(lifecyleRule.NoncurrentVersionTransitions, isObs); ret != "" {
+		if ret := convertNoncurrentVersionTransitionsToXml(lifecycleRule.NoncurrentVersionTransitions, isObs); ret != "" {
 			xml = append(xml, ret)
 		}
-		if ret := convertNoncurrentVersionExpirationToXml(lifecyleRule.NoncurrentVersionExpiration); ret != "" {
+		if ret := convertNoncurrentVersionExpirationToXml(lifecycleRule.NoncurrentVersionExpiration); ret != "" {
 			xml = append(xml, ret)
 		}
 		xml = append(xml, "</Rule>")
@@ -967,6 +975,59 @@ func ConvertObjectLockConfigurationToXml(input BucketWormPolicy, returnMd5 bool,
 	}
 
 	xml = append(xml, "</ObjectLockConfiguration>")
+	data = strings.Join(xml, "")
+	if returnMd5 {
+		md5 = Base64Md5([]byte(data))
+	}
+	return
+}
+
+// ConvertInventoryConfigurationToXml converts BucketInventoryConfiguration value to XML data and returns it
+func ConvertInventoryConfigurationToXml(input BucketInventoryConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
+	xml := make([]string, 0, 6)
+	xml = append(xml, "<InventoryConfiguration>")
+
+	id := XmlTranscoding(input.Id)
+	xml = append(xml, fmt.Sprintf("<Id>%s</Id>", id))
+
+	isEnabled := XmlTranscoding(strconv.FormatBool(input.IsEnabled))
+	xml = append(xml, fmt.Sprintf("<IsEnabled>%s</IsEnabled>", isEnabled))
+
+	if input.Filter.Prefix != "" {
+		filter := XmlTranscoding(input.Filter.Prefix)
+		xml = append(xml, fmt.Sprintf("<Filter><Prefix>%s</Prefix></Filter>", filter))
+	}
+
+	if input.Destination.Bucket != "" && input.Destination.Format != "" {
+		xml = append(xml, "<Destination>")
+		bucket := XmlTranscoding(input.Destination.Bucket)
+		format := XmlTranscoding(input.Destination.Format)
+		xml = append(xml, fmt.Sprintf("<Format>%s</Format>", format))
+		xml = append(xml, fmt.Sprintf("<Bucket>%s</Bucket>", bucket))
+
+		if input.Destination.Prefix != "" {
+			prefix := XmlTranscoding(input.Destination.Prefix)
+			xml = append(xml, fmt.Sprintf("<Prefix>%s</Prefix>", prefix))
+		}
+		xml = append(xml, "</Destination>")
+	}
+
+	schedule := XmlTranscoding(input.Schedule.Frequency)
+	xml = append(xml, fmt.Sprintf("<Schedule><Frequency>%s</Frequency></Schedule>", schedule))
+
+	inclVersions := XmlTranscoding(input.IncludedObjectVersions)
+	xml = append(xml, fmt.Sprintf("<IncludedObjectVersions>%s</IncludedObjectVersions>", inclVersions))
+
+	if len(input.OptionalFields.Field) > 0 {
+		xml = append(xml, "<OptionalFields>")
+		for _, field := range input.OptionalFields.Field {
+			xml = append(xml, fmt.Sprintf("<Field>%s</Field>", XmlTranscoding(field)))
+		}
+		xml = append(xml, "</OptionalFields>")
+	}
+
+	xml = append(xml, "</InventoryConfiguration>")
+
 	data = strings.Join(xml, "")
 	if returnMd5 {
 		md5 = Base64Md5([]byte(data))

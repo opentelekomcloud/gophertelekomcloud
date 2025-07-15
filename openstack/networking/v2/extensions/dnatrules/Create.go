@@ -9,13 +9,32 @@ import (
 // CreateOpts contains all the values needed to create a new dnat rule
 // resource.
 type CreateOpts struct {
-	NatGatewayID        string `json:"nat_gateway_id" required:"true"`
-	PortID              string `json:"port_id,omitempty"`
-	PrivateIp           string `json:"private_ip,omitempty"`
-	InternalServicePort *int   `json:"internal_service_port" required:"true"`
-	FloatingIpID        string `json:"floating_ip_id" required:"true"`
-	ExternalServicePort *int   `json:"external_service_port" required:"true"`
-	Protocol            string `json:"protocol" required:"true"`
+	// Specifies the NAT gateway ID.
+	NatGatewayID string `json:"nat_gateway_id" required:"true"`
+	// Specifies the port ID of the cloud server (ECS or BMS).
+	// Either this parameter or private_ip must be specified.
+	// When the DNAT rule is used in the VPC scenario, use this parameter.
+	PortID string `json:"port_id,omitempty"`
+	// Specifies the private IP address, for example, the IP address of an on-premises network connected by a Direct Connect connection.
+	// This parameter and port_id are alternative.
+	// When the DNAT rule is used in the Direct Connect scenario, use this parameter.
+	PrivateIp string `json:"private_ip,omitempty"`
+	// Specifies the port number used by the cloud server (ECS or BMS) to provide services for external systems.
+	// In VPC DNAT scenarios, this parameter indicates the protocol port number of the NIC of
+	// the cloud server (ECS or BMS) in the DNAT rule. In Direct Connect DNAT scenarios,
+	// this parameter indicates the protocol port number of your private IP address in the DNAT rule.
+	// The value ranges from 0 to 65535.
+	InternalServicePort *int `json:"internal_service_port" required:"true"`
+	// Specifies the EIP ID.
+	FloatingIpID string `json:"floating_ip_id" required:"true"`
+	// Specifies the port for providing services for external systems.
+	// The value ranges from 0 to 65535.
+	ExternalServicePort *int `json:"external_service_port" required:"true"`
+	// Specifies the protocol. TCP, UDP, and ANY are supported.
+	// The protocol number of TCP, UDP, and ANY are 6, 17, and 0, respectively.
+	Protocol string `json:"protocol" required:"true"`
+	// Provides supplementary information about the DNAT rule.
+	Description string `json:"description,omitempty"`
 }
 
 // Create will create a new Waf Certificate on the values in CreateOpts.

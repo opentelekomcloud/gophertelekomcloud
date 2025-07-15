@@ -2,6 +2,7 @@ package tracker
 
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type tracker struct {
@@ -15,5 +16,11 @@ func List(client *golangsdk.ServiceClient, trackerName string) ([]Tracker, error
 	}
 	// GET /v3/{project_id}/trackers
 	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
-	return extraStruct(err, raw)
+	if err != nil {
+		return nil, err
+	}
+	var res []Tracker
+
+	err = extract.IntoSlicePtr(raw.Body, &res, "trackers")
+	return res, err
 }

@@ -52,6 +52,7 @@ type Gateway struct {
 	PrivateIps                   []IpDetail        `json:"privateips"`
 	IsReleasable                 *bool             `json:"is_releasable"`
 	IngressBandwidthChargingMode string            `json:"ingress_bandwidth_charging_mode"`
+	EnterpriseProjectId          string            `json:"enterprise_project_id"`
 }
 
 type EndpointService struct {

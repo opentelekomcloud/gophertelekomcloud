@@ -3,9 +3,17 @@
 package openstack
 
 import (
+	"bytes"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
 	"fmt"
+	"math/big"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -13,6 +21,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/extensions"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/secgroups"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/flavors"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/servers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
@@ -110,7 +120,7 @@ func DeleteVolume(t *testing.T, id string) {
 }
 
 const (
-	imageName = "Standard_Debian_10_latest"
+	imageName = "Standard_Debian_11_latest"
 	flavorID  = "s3.large.2"
 )
 
@@ -136,7 +146,9 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		Name: imageName,
 	})
 	th.AssertNoErr(t, err)
-
+	if len(image) == 0 {
+		t.Skip("Change image query filter, no results returned")
+	}
 	if vpcID == "" || subnetID == "" || az == "" {
 		t.Skip("One of OS_VPC_ID, OS_NETWORK_ID or OS_AVAILABILITY_ZONE env vars is missing but ECSv1 test requires")
 	}
@@ -168,7 +180,7 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 				},
 			},
 		},
-		AvailabilityZone: az,
+		AvailabilityZone: &az,
 	}
 
 	return createOpts
@@ -181,6 +193,7 @@ func DryRunCloudServerConfig(t *testing.T, client *golangsdk.ServiceClient, crea
 }
 
 func CreateCloudServer(t *testing.T, client *golangsdk.ServiceClient, createOpts cloudservers.CreateOpts) *cloudservers.CloudServer {
+	t.Helper()
 	t.Logf("Attempting to create ECSv1")
 
 	jobResponse, err := cloudservers.Create(client, createOpts).ExtractJobResponse()
@@ -234,4 +247,101 @@ func ValidIP(t *testing.T, networkID string) string {
 	singleIP[len(singleIP)-1] += 3
 	th.AssertEquals(t, true, nw.Contains(singleIP))
 	return singleIP.String()
+}
+
+func CreateServer(t *testing.T, client *golangsdk.ServiceClient, ecsName, imageName, flavorId, userData string) *servers.Server {
+	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if networkID == "" {
+		t.Skip("OS_NETWORK_ID env var is missing but ECS test requires using existing network")
+	}
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	imageV2Client, err := clients.NewIMSV2Client()
+	th.AssertNoErr(t, err)
+
+	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
+		Name: imageName,
+	})
+	th.AssertNoErr(t, err)
+
+	flavorID, err := flavors.IDFromName(client, flavorId)
+	th.AssertNoErr(t, err)
+
+	createOpts := servers.CreateOpts{
+		Name:      ecsName,
+		ImageRef:  image[0].Id,
+		FlavorRef: flavorID,
+		SecurityGroups: []string{
+			DefaultSecurityGroup(t),
+		},
+		AvailabilityZone: az,
+		Networks: []servers.Network{
+			{
+				UUID: networkID,
+			},
+		},
+		UserData: []byte(userData),
+	}
+
+	ecs, err := servers.Create(client, createOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	err = servers.WaitForStatus(client, ecs.ID, "ACTIVE", 1200)
+	th.AssertNoErr(t, err)
+	t.Logf("Created ECSv2: %s", ecs.ID)
+
+	server, err := servers.Get(client, ecs.ID).Extract()
+	th.AssertNoErr(t, err)
+
+	return server
+}
+
+// GenerateTestCertKeyPair generates a test certificate and private key pair
+func GenerateTestCertKeyPair(domain string) (string, string, error) {
+	pk, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return "", "", err
+	}
+
+	template := x509.Certificate{
+		SerialNumber: big.NewInt(time.Now().Unix()),
+		Subject: pkix.Name{
+			Organization: []string{"Test Organization"},
+			CommonName:   domain,
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().AddDate(1, 0, 0), // Valid for 1 year
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: true,
+		DNSNames:              []string{domain},
+	}
+
+	certBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &pk.PublicKey, pk)
+	if err != nil {
+		return "", "", err
+	}
+
+	certBuffer := new(bytes.Buffer)
+	err = pem.Encode(certBuffer, &pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: certBytes,
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	keyBuffer := new(bytes.Buffer)
+	err = pem.Encode(keyBuffer, &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(pk),
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	return certBuffer.String(), keyBuffer.String(), nil
 }

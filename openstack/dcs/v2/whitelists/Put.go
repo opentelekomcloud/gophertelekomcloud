@@ -32,7 +32,7 @@ func Put(client *golangsdk.ServiceClient, id string, opts WhitelistOpts) (err er
 
 	url := client.ServiceURL("instance", id, "whitelist")
 	_, err = client.Put(strings.Replace(url, "v1.0", "v2", 1), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
+		OkCodes: []int{204, 200},
 	})
 	return
 }

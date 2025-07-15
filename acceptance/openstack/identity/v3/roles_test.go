@@ -288,3 +288,24 @@ func TestRoleAssignToGroupOnProject(t *testing.T) {
 		tools.PrintResource(t, roleAssignment)
 	}
 }
+
+func TestRoleInheritAllProjects(t *testing.T) {
+	client, err := clients.NewIdentityV3AdminClient()
+	th.AssertNoErr(t, err)
+
+	role, err := FindRole(t, client)
+	th.AssertNoErr(t, err)
+
+	group, err := CreateGroup(t, client, nil)
+	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		DeleteGroup(t, client, group.ID)
+	})
+
+	err = roles.UpdateGroupAllProjects(client, client.DomainID, group.ID, role.ID)
+	th.AssertNoErr(t, err)
+
+	allInheritedRoles, err := roles.QueryGroupAllProjects(client, client.DomainID, group.ID)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, allInheritedRoles)
+}

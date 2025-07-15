@@ -18,7 +18,7 @@ func TestGroupCRUD(t *testing.T) {
 
 	createOpts := groups.CreateOpts{
 		Name:     "testgroup",
-		DomainID: "default",
+		DomainID: client.DomainID,
 		Extra: map[string]interface{}{
 			"email": "testgroup@example.com",
 		},
@@ -48,7 +48,7 @@ func TestGroupCRUD(t *testing.T) {
 	tools.PrintResource(t, newGroup.Extra)
 
 	listOpts := groups.ListOpts{
-		DomainID: "default",
+		DomainID: client.DomainID,
 	}
 
 	// List all Groups in default domain

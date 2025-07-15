@@ -880,3 +880,28 @@ func (input SetWORMPolicyInput) trans(isObs bool) (params map[string]string, hea
 	data, _ = ConvertObjectLockConfigurationToXml(input.BucketWormPolicy, false, isObs)
 	return
 }
+
+func (input SetBucketInventoryInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = map[string]string{
+		"id":                         input.InventoryConfigId,
+		string(SubResourceInventory): ""}
+
+	data, _ = ConvertInventoryConfigurationToXml(input.BucketInventoryConfiguration, false, isObs)
+	return
+}
+
+func (input DeleteBucketInventoryInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = map[string]string{
+		"id":                         input.InventoryConfigId,
+		string(SubResourceInventory): ""}
+
+	return
+}
+
+func (input GetBucketInventoryInput) trans(isObs bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = map[string]string{
+		"id":                         input.InventoryConfigId,
+		string(SubResourceInventory): ""}
+
+	return
+}

@@ -25,18 +25,27 @@ func TestSnatRuleLifeCycle(t *testing.T) {
 		FloatingIPID: elasticIp.ID,
 		SourceType:   0,
 	}
-	snatRule, err := snatrules.Create(client, createOpts).Extract()
+	snatRule, err := snatrules.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Created SNAT rule: %s", snatRule.ID)
 
 	defer func() {
 		t.Logf("Attempting to delete SNAT rule: %s", snatRule.ID)
-		err = snatrules.Delete(client, snatRule.ID).ExtractErr()
+		err = snatrules.Delete(client, snatRule.ID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted SNAT rule: %s", snatRule.ID)
 	}()
 
-	newSnatRule, err := snatrules.Get(client, snatRule.ID).Extract()
+	t.Logf("Attempting to Obtain SNAT rule: %s", snatRule.ID)
+	newSnatRule, err := snatrules.Get(client, snatRule.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.NatGatewayID, newSnatRule.NatGatewayID)
+
+	t.Logf("Attempting to Obtain SNAT rules in NAT Gateway: %s", natGateway.ID)
+	listnatRules, err := snatrules.List(client, snatrules.ListOpts{
+		NatGatewayId: natGateway.ID,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(listnatRules), 1)
+	th.AssertEquals(t, listnatRules[0].NatGatewayID, natGateway.ID)
 }

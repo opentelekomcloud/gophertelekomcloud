@@ -4,10 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/keypairs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -37,16 +38,20 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 				Mode:                "rbac",
 				AuthenticatingProxy: make(map[string]string),
 			},
-			KubernetesSvcIpRange: "10.247.0.0/16",
+			KubernetesSvcIpRange:         "10.247.0.0/16",
+			EnableMasterVolumeEncryption: pointerto.Bool(true),
+			ExtendParam: map[string]string{
+				"kubernetes.io/cpuManagerPolicy": "static",
+			},
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
 	return cluster.Metadata.Id
 }
 
-func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string, eniCidr string) string {
+func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string, eniCidr string) *clusters.Clusters {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
@@ -54,7 +59,8 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 		Kind:       "Cluster",
 		ApiVersion: "v3",
 		Metadata: clusters.CreateMetaData{
-			Name: strings.ToLower(tools.RandomString("cce-gopher-turbo-", 4)),
+			Name:     strings.ToLower(tools.RandomString("cce-gopher-turbo-", 4)),
+			Timezone: "Pacific/Auckland",
 		},
 		Spec: clusters.Spec{
 			Category: "Turbo",
@@ -76,18 +82,29 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 				AuthenticatingProxy: make(map[string]string),
 			},
 			KubernetesSvcIpRange: "10.247.0.0/16",
+			Masters: []clusters.MasterSpec{
+				{
+					AvailabilityZone: "eu-de-01",
+				},
+			},
+			PublicAccess: &clusters.PublicAccess{
+				Cidrs: []string{
+					"192.168.45.0/24",
+					"10.234.128.0/20",
+				},
+			},
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
-	return cluster.Metadata.Id
+	return cluster
 }
 
 func DeleteCluster(t *testing.T, clusterID string) {
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
-	err = clusters.DeleteWithOpts(client, clusterID, clusters.DeleteOpts{
+	err = clusters.Delete(client, clusterID, clusters.DeleteQueryParams{
 		DeleteEfs: "true",
 		DeleteObs: "true",
 		DeleteSfs: "true",
@@ -98,7 +115,7 @@ func DeleteCluster(t *testing.T, clusterID string) {
 
 func waitForClusterToActivate(client *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		cluster, err := clusters.Get(client, id).Extract()
+		cluster, err := clusters.Get(client, id)
 		if err != nil {
 			return false, err
 		}
@@ -114,7 +131,7 @@ func waitForClusterToActivate(client *golangsdk.ServiceClient, id string, secs i
 
 func waitForClusterToDelete(client *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := clusters.Get(client, id).Extract()
+		_, err := clusters.Get(client, id)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

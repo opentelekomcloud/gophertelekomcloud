@@ -153,3 +153,55 @@ func WaitForJob(c *golangsdk.ServiceClient, id string, secs int) error {
 		return false, nil
 	})
 }
+
+func TestGatewayFeaturesLifecycle(t *testing.T) {
+	client, err := clients.NewAPIGWClient()
+	th.AssertNoErr(t, err)
+
+	accInstanceName := "apig-do-not-delete"
+	gw, err := gateway.List(client, gateway.ListOpts{
+		InstanceName: accInstanceName,
+	})
+	th.AssertNoErr(t, err)
+	if len(gw) == 0 {
+		t.Skipf("Instance: %s, must exist for this test", accInstanceName)
+	}
+	gatewayID := gw[0].ID
+
+	t.Logf("Attempting to Get APIGW Gateway Features")
+	features, err := gateway.ListGatewayFeatures(client,
+		gateway.ListFeaturesOpts{GatewayID: gatewayID},
+	)
+	th.AssertNoErr(t, err)
+	if len(features) < 1 {
+		t.Error("no features found for selected Gateway")
+	}
+	t.Logf("Attempting to Configure APIGW Gateway Route Feature for: %s", gatewayID)
+	routeFeature, err := gateway.ConfigureFeature(client, gateway.FeatureOpts{
+		GatewayID: gatewayID,
+		Name:      "route",
+		Enable:    pointerto.Bool(true),
+		Config:    "{\"user_routes\":[\"172.16.128.0/20\",\"172.16.0.0/20\"]}",
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "{\"user_routes\":[\"172.16.128.0/20\",\"172.16.0.0/20\"]}", routeFeature.Config)
+
+	t.Logf("Attempting to Configure APIGW Gateway Ratelimit Feature for: %s", gatewayID)
+	rateLimitFeature, err := gateway.ConfigureFeature(client, gateway.FeatureOpts{
+		GatewayID: gatewayID,
+		Name:      "ratelimit",
+		Enable:    pointerto.Bool(true),
+		Config:    "{\"api_limits\":300}",
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "{\"api_limits\":300}", rateLimitFeature.Config)
+
+	// Not published !!!
+	// supported, err := gateway.ListSupportedGatewayFeatures(client,
+	// 	gateway.ListSupportedFeaturesOpts{GatewayID: gatewayID},
+	// )
+	// th.AssertNoErr(t, err)
+	// if len(supported) < 1 {
+	// 	t.Error("no features found for selected Gateway")
+	// }
+}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cts"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cts/v3/tracker"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -28,8 +29,10 @@ func TestTrackersLifecycle(t *testing.T) {
 		TrackerName:  "system",
 		IsLtsEnabled: true,
 		ObsInfo: tracker.ObsInfo{
-			BucketName:     bucketName,
-			FilePrefixName: "test-prefix",
+			BucketName:      bucketName,
+			FilePrefixName:  "test-prefix",
+			CompressType:    "json",
+			IsSortByService: pointerto.Bool(true),
 		},
 	})
 
@@ -46,6 +49,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	th.AssertEquals(t, "enabled", ctsTracker.Status)
 	th.AssertEquals(t, false, *ctsTracker.ObsInfo.IsObsCreated)
 	th.AssertEquals(t, bucketName, ctsTracker.ObsInfo.BucketName)
+	th.AssertEquals(t, "json", ctsTracker.ObsInfo.CompressType)
 
 	t.Logf("Attempting to update CTSv3 Tracker: %s", ctsTracker.TrackerName)
 	ltsEnable := false
@@ -56,10 +60,11 @@ func TestTrackersLifecycle(t *testing.T) {
 		IsLtsEnabled: &ltsEnable,
 		ObsInfo: tracker.ObsInfo{
 			FilePrefixName: "test-2-",
+			CompressType:   "gzip",
 		},
 	})
 	th.AssertNoErr(t, err)
-	t.Logf("Updated CTSv1 Tracker: %s", ctsTracker.TrackerName)
+	t.Logf("Updated CTSv3 Tracker: %s", ctsTracker.TrackerName)
 
 	trackerList, err := tracker.List(client, ctsTracker.TrackerName)
 	th.AssertNoErr(t, err)
@@ -70,4 +75,6 @@ func TestTrackersLifecycle(t *testing.T) {
 	// if tracker is disabled LTS status can't be changed
 	th.AssertEquals(t, trackerGet.Lts.IsLtsEnabled, false)
 	th.AssertEquals(t, trackerGet.ObsInfo.FilePrefixName, "test-2-")
+	// update of `compress_type` doesn't work
+	// th.AssertEquals(t, "gzip", ctsTracker.ObsInfo.CompressType)
 }

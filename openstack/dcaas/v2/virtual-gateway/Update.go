@@ -11,8 +11,10 @@ type UpdateOpts struct {
 	Description string `json:"description,omitempty"`
 	// Specifies the virtual gateway name.
 	Name string `json:"name,omitempty"`
-	// Specifies the ID of the local endpoint group that records CIDR blocks of the VPC subnets.
+	// Specifies the ID of the local endpoint group that records IPV4 CIDR blocks of the VPC subnets.
 	LocalEndpointGroupId string `json:"local_ep_group_id,omitempty"`
+	// Specifies the ID of the local endpoint group that records IPV6 CIDR blocks of the VPC subnets.
+	LocalEndpointGroupIpv6Id string `json:"local_ep_group_ipv6_id,omitempty"`
 }
 
 // Update is an operation which modifies the attributes of the specified

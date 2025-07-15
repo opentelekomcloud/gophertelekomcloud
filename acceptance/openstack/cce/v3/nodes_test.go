@@ -5,64 +5,41 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/suite"
-
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-type testNodes struct {
-	suite.Suite
-
-	vpcID     string
-	subnetID  string
-	clusterID string
-	kmsID     string
-}
-
-func TestNodes(t *testing.T) {
-	suite.Run(t, new(testNodes))
-}
-
-func (s *testNodes) SetupSuite() {
-	t := s.T()
-	s.vpcID = clients.EnvOS.GetEnv("VPC_ID")
-	s.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	s.kmsID = clients.EnvOS.GetEnv("KMS_ID")
-	if s.vpcID == "" || s.subnetID == "" {
+func TestNodeLifecycle(t *testing.T) {
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	kmsID := clients.EnvOS.GetEnv("KMS_ID")
+	if vpcID == "" || subnetID == "" {
 		t.Skip("OS_VPC_ID and OS_NETWORK_ID are required for this test")
 	}
-	s.clusterID = cce.CreateCluster(t, s.vpcID, s.subnetID)
-}
+	clusterID := cce.CreateCluster(t, vpcID, subnetID)
+	t.Cleanup(func() {
+		cce.DeleteCluster(t, clusterID)
+	})
 
-func (s *testNodes) TearDownSuite() {
-	t := s.T()
-	if s.clusterID != "" {
-		cce.DeleteCluster(t, s.clusterID)
-		s.clusterID = ""
-	}
-}
-
-func (s *testNodes) TestNodeLifecycle() {
-	t := s.T()
 	client, err := clients.NewCceV3Client()
 	th.AssertNoErr(t, err)
 
-	privateIP := "192.168.0.12" // suppose used subnet is 192.168.0.0/16
+	nodesListInit, err := nodes.List(client, clusterID, nodes.ListOpts{})
+	th.AssertNoErr(t, err)
+	initNodeNum := len(nodesListInit)
 
+	privateIP := "192.168.0.12" // suppose used subnet is 192.168.0.0/16
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)
-
 	var encryption string
-	if s.kmsID != "" {
+	if kmsID != "" {
 		encryption = "1"
 	} else {
 		encryption = "0"
 	}
-
 	opts := nodes.CreateOpts{
 		Kind:       "Node",
 		ApiVersion: "v3",
@@ -86,14 +63,14 @@ func (s *testNodes) TestNodeLifecycle() {
 					VolumeType: "SSD",
 					Metadata: map[string]interface{}{
 						"__system__encrypted": encryption,
-						"__system__cmkid":     s.kmsID,
+						"__system__cmkid":     kmsID,
 					},
 				},
 			},
 			Count: 1,
 			NodeNicSpec: nodes.NodeNicSpec{
 				PrimaryNic: nodes.PrimaryNic{
-					SubnetId: s.subnetID,
+					SubnetId: subnetID,
 					FixedIPs: []string{privateIP},
 				},
 			},
@@ -106,18 +83,16 @@ func (s *testNodes) TestNodeLifecycle() {
 			},
 		},
 	}
-
 	if v := os.Getenv("OS_AGENCY_NAME"); v != "" {
 		opts.Spec.ExtendParam.AgencyName = v
 	}
-
-	node, err := nodes.Create(client, s.clusterID, opts).Extract()
+	node, err := nodes.Create(client, clusterID, opts)
 	th.AssertNoErr(t, err)
 
 	nodeID := node.Metadata.Id
 
 	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
-		n, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+		n, err := nodes.Get(client, clusterID, nodeID)
 		if err != nil {
 			return false, err
 		}
@@ -128,14 +103,38 @@ func (s *testNodes) TestNodeLifecycle() {
 		return false, nil
 	}))
 
-	state, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+	nodesList, err := nodes.List(client, clusterID, nodes.ListOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, initNodeNum+1, len(nodesList))
+
+	state, err := nodes.Get(client, clusterID, nodeID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
 
-	th.AssertNoErr(t, nodes.Delete(client, s.clusterID, nodeID).ExtractErr())
+	updatedNode, err := nodes.Update(client, clusterID, nodeID, nodes.UpdateOpts{
+		Metadata: nodes.UpdateMetadata{
+			Name: "node-updated",
+		},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "node-updated", updatedNode.Metadata.Name)
+
+	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
+		n, err := nodes.Get(client, clusterID, nodeID)
+		if err != nil {
+			return false, err
+		}
+		if n.Status.Phase == "Active" {
+			return true, nil
+		}
+		time.Sleep(10 * time.Second)
+		return false, nil
+	}))
+
+	th.AssertNoErr(t, nodes.Delete(client, clusterID, nodeID))
 
 	err = golangsdk.WaitFor(1800, func() (bool, error) {
-		_, err := nodes.Get(client, s.clusterID, nodeID).Extract()
+		_, err := nodes.Get(client, clusterID, nodeID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil

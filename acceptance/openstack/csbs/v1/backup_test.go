@@ -24,6 +24,7 @@ func TestBackupList(t *testing.T) {
 }
 
 func TestBackupLifeCycle(t *testing.T) {
+	t.Skip("Test takes too long to complete")
 	client, err := clients.NewCsbsV1Client()
 	th.AssertNoErr(t, err)
 

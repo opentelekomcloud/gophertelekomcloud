@@ -218,7 +218,7 @@ func (obsClient ObsClient) SetBucketAcl(input *SetBucketAclInput) (output *BaseM
 
 func (obsClient ObsClient) getBucketACLObs(bucketName string) (output *GetBucketAclOutput, err error) {
 	output = &GetBucketAclOutput{}
-	var outputObs = &GetBucketAclOutput{}
+	outputObs := &getBucketACLOutputObs{}
 	err = obsClient.doActionWithBucket("GetBucketAcl", HTTP_GET, bucketName, newSubResourceSerial(SubResourceAcl), outputObs)
 	if err != nil {
 		output = nil
@@ -232,8 +232,20 @@ func (obsClient ObsClient) getBucketACLObs(bucketName string) (output *GetBucket
 			tempOutput.Permission = valGrant.Permission
 			tempOutput.Grantee.DisplayName = valGrant.Grantee.DisplayName
 			tempOutput.Grantee.ID = valGrant.Grantee.ID
-			tempOutput.Grantee.Type = valGrant.Grantee.Type
-			tempOutput.Grantee.URI = GroupAllUsers
+			if valGrant.Grantee.Canned == "" {
+				tempOutput.Grantee.Type = GranteeUser
+				tempOutput.Grantee.URI = GroupAllUsers
+			} else {
+				tempOutput.Grantee.Type = GranteeGroup
+				switch valGrant.Grantee.Canned {
+				case "LogDelivery":
+					tempOutput.Grantee.URI = GroupLogDelivery
+				case "AuthenticatedUsers":
+					tempOutput.Grantee.URI = GroupAuthenticatedUsers
+				default:
+					tempOutput.Grantee.URI = GroupAllUsers
+				}
+			}
 
 			output.Grants = append(output.Grants, tempOutput)
 		}
@@ -699,6 +711,41 @@ func (obsClient ObsClient) SetBucketCustomDomain(input *SetBucketCustomDomainInp
 func (obsClient ObsClient) GetBucketCustomDomain(bucketName string) (output *GetBucketCustomDomainOuput, err error) {
 	output = &GetBucketCustomDomainOuput{}
 	err = obsClient.doActionWithBucket("GetBucketCustomDomain", HTTP_GET, bucketName, newSubResourceSerial(SubResourceCustomDomain), output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) SetBucketInventory(input *SetBucketInventoryInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("SetBucketInventoryInput is nil")
+	}
+
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("SetBucketInventory", HTTP_PUT, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) DeleteBucketInventory(input *DeleteBucketInventoryInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("DeleteBucketInventoryInput is nil")
+	}
+
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("DeleteBucketInventory", HTTP_DELETE, input.Bucket, input, output)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) GetBucketInventory(input GetBucketInventoryInput) (output *GetBucketInventoryOutput, err error) {
+	output = &GetBucketInventoryOutput{}
+	err = obsClient.doActionWithBucket("GetBucketInventory", HTTP_GET, input.BucketName, input, output)
 	if err != nil {
 		output = nil
 	}

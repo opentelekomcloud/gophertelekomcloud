@@ -51,7 +51,7 @@ type FuncVpc struct {
 }
 
 type CustomImage struct {
-	Enabled    *bool  `json:"bool,omitempty"`
+	Enabled    *bool  `json:"enabled,omitempty"`
 	Image      string `json:"image,omitempty"`
 	Command    string `json:"command,omitempty"`
 	Args       string `json:"args,omitempty"`
@@ -154,7 +154,7 @@ type FuncGraph struct {
 	InitHandler              string               `json:"initializer_handler"`
 	InitTimeout              int                  `json:"initializer_timeout"`
 	PreStopHandler           string               `json:"pre_stop_handler"`
-	PreStopTimeout           string               `json:"pre_stop_timeout"`
+	PreStopTimeout           int                  `json:"pre_stop_timeout"`
 	LongTime                 bool                 `json:"long_time"`
 	LogGroupID               string               `json:"log_group_id"`
 	LogStreamID              string               `json:"log_stream_id"`
@@ -173,6 +173,7 @@ type FuncGraph struct {
 	ResourceID               string               `json:"resource_id"`
 	EnableAuthInHeader       bool                 `json:"enable_auth_in_header"`
 	ReservedInstanceIdleMode bool                 `json:"reserved_instance_idle_mode"`
+	PeeringCIDR              string               `json:"peering_cidr"`
 }
 
 type StrategyConfig struct {

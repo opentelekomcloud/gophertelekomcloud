@@ -13,8 +13,12 @@ type CreateOpts struct {
 	Description string `json:"description,omitempty"`
 	// Specifies the ID of the VPC to be accessed.
 	VpcId string `json:"vpc_id" required:"true"`
-	// Specifies the ID of the local endpoint group that records CIDR blocks of the VPC subnets.
-	LocalEndpointGroupId string `json:"local_ep_group_id" required:"true"`
+	// Specifies the ID of the local endpoint group that records IPV4 CIDR blocks of the VPC subnets.
+	// Either `LocalEndpointGroupId` or `LocalEndpointGroupIpv6Id` have to be specified
+	LocalEndpointGroupId string `json:"local_ep_group_id,omitempty"`
+	// Specifies the ID of the local endpoint group that records IPV6 CIDR blocks of the VPC subnets.
+	// Either `LocalEndpointGroupId` or `LocalEndpointGroupIpv6Id` have to be specified
+	LocalEndpointGroupIpv6Id string `json:"local_ep_group_ipv6_id,omitempty"`
 	// Specifies the BGP ASN of the virtual gateway.
 	BgpAsn int `json:"bgp_asn,omitempty"`
 	// Specifies the ID of the physical device used by the virtual gateway.

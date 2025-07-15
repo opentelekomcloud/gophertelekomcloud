@@ -35,6 +35,8 @@ type UpdateNotificationOpts struct {
 	TopicId string `json:"topic_id,omitempty"`
 	// Notification ID.
 	NotificationId string `json:"notification_id"`
+	// Advanced filter of key event notifications.
+	Filter *Filter `json:"filter,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateNotificationOpts) (*NotificationResponse, error) {

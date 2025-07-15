@@ -15,7 +15,7 @@ func TestFlavorsList(t *testing.T) {
 
 	listOpts := flavors.ListOpts{
 		DatabaseName: "PostgreSQL",
-		VersionName:  "10",
+		VersionName:  "16",
 	}
 
 	rdsFlavors, err := flavors.ListFlavors(client, listOpts)
@@ -28,7 +28,7 @@ func TestFlavorsList(t *testing.T) {
 
 	storageTypes, err := flavors.ListStorageTypes(client, flavors.ListStorageTypesOpts{
 		DatabaseName: "PostgreSQL",
-		VersionName:  "12",
+		VersionName:  "16",
 	})
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, storageTypes)

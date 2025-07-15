@@ -99,6 +99,11 @@ type GetBucketAclOutput struct {
 	AccessControlPolicy
 }
 
+type getBucketACLOutputObs struct {
+	BaseModel
+	accessControlPolicyObs
+}
+
 // SetBucketAclInput is the input parameter of SetBucketAcl function
 type SetBucketAclInput struct {
 	Bucket string  `xml:"-"`
@@ -324,4 +329,28 @@ type SetBucketCustomDomainInput struct {
 type Domain struct {
 	DomainName string `xml:"DomainName"`
 	CreateTime string `xml:"CreateTime"`
+}
+
+// SetBucketInventoryInput is the input parameter of SetBucketInventory function
+type SetBucketInventoryInput struct {
+	Bucket            string `xml:"-"`
+	InventoryConfigId string `xml:"-"`
+	BucketInventoryConfiguration
+}
+
+// DeleteBucketInventoryInput is the input parameter of DeleteBucketInventory function
+type DeleteBucketInventoryInput struct {
+	Bucket            string `xml:"-"`
+	InventoryConfigId string `xml:"-"`
+}
+
+// GetBucketInventoryOutput is the result of GetBucketInventory function
+type GetBucketInventoryOutput struct {
+	BaseModel
+	BucketInventoryConfiguration
+}
+
+type GetBucketInventoryInput struct {
+	BucketName        string `xml:""`
+	InventoryConfigId string `xml:""`
 }

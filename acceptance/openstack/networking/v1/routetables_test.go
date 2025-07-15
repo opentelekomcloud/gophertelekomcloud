@@ -205,7 +205,7 @@ func TestRouteTablesLifecycle(t *testing.T) {
 					Size:       40,
 				},
 			},
-			AvailabilityZone: az,
+			AvailabilityZone: &az,
 		}
 		t.Logf("Attempting to create cloud server: %s", sererName)
 		ecs := openstack.CreateCloudServer(t, clientCompute, createEcsOpts)

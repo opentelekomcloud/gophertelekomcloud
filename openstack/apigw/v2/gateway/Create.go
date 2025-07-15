@@ -27,6 +27,7 @@ type CreateOpts struct {
 	IngressBandwidthChargingMode string             `json:"ingress_bandwidth_charging_mode,omitempty"`
 	EipId                        string             `json:"eip_id,omitempty"`
 	Ipv6Enable                   bool               `json:"ipv6_enable,omitempty"`
+	EnterpriseProjectId          string             `json:"enterprise_project_id,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*GatewayResp, error) {

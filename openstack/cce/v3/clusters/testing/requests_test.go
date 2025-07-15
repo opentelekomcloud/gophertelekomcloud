@@ -22,7 +22,7 @@ func TestGetV3Cluster(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Extract()
+	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -41,7 +41,7 @@ func TestGetV3ClusterOTC(t *testing.T) {
 		_, _ = fmt.Fprint(w, OutputOTC)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").Extract()
+	actual, err := clusters.Get(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54")
 	th.AssertNoErr(t, err)
 	expected := ExpectedOTC
 	th.AssertDeepEquals(t, expected, actual)
@@ -158,7 +158,7 @@ func TestCreateV3Cluster(t *testing.T) {
 				AuthenticatingProxy: make(map[string]string)},
 		},
 	}
-	actual, err := clusters.Create(fake.ServiceClient(), options).Extract()
+	actual, err := clusters.Create(fake.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -231,7 +231,7 @@ func TestCreateV3TurboCluster(t *testing.T) {
 				AuthenticatingProxy: make(map[string]string)},
 		},
 	}
-	actual, err := clusters.Create(fake.ServiceClient(), options).Extract()
+	actual, err := clusters.Create(fake.ServiceClient(), options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -261,7 +261,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 	options := clusters.UpdateOpts{Spec: clusters.UpdateSpec{Description: "new description"}}
-	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options).Extract()
+	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -277,7 +277,7 @@ func TestDeleteV3Cluster(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").ExtractErr()
+	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", clusters.DeleteQueryParams{})
 	th.AssertNoErr(t, err)
 
 }
@@ -292,7 +292,7 @@ func TestDeleteV3TurboCluster(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54").ExtractErr()
+	err := clusters.Delete(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", clusters.DeleteQueryParams{})
 	th.AssertNoErr(t, err)
 
 }

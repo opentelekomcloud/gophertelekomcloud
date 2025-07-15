@@ -42,22 +42,22 @@ func TestFunctionTriggerLifecycle(t *testing.T) {
 		TTLInDays:    7,
 	}
 
-	logId, err := groups.CreateLogGroup(clientLts, createOpts)
+	logId, err := groups.Create(clientLts, createOpts)
 	th.AssertNoErr(t, err)
 
 	defer func(client *golangsdk.ServiceClient, id string) {
-		err = groups.DeleteLogGroup(clientLts, logId)
+		err = groups.Delete(clientLts, logId)
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
-	streamId, err := streams.CreateLogStream(clientLts, streams.CreateOpts{
+	streamId, err := streams.Create(clientLts, streams.CreateOpts{
 		GroupId:       logId,
 		LogStreamName: tools.RandomString("test-stream-", 3),
 	})
 	th.AssertNoErr(t, err)
 
 	defer func(client *golangsdk.ServiceClient, id string) {
-		err = streams.DeleteLogStream(clientLts, streams.DeleteOpts{
+		err = streams.Delete(clientLts, streams.DeleteOpts{
 			GroupId:  logId,
 			StreamId: streamId,
 		})

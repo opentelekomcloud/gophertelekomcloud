@@ -60,7 +60,7 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	t.Log("DataArts cluster was created")
 
 	t.Log("schedule clusters cleanup")
-	t.Cleanup(func() { deleteCluster(t, client, createResp.Id) })
+	t.Cleanup(func() { DeleteCluster(t, client, createResp.Id) })
 
 	t.Log("check cluster status, should be normal")
 	th.AssertNoErr(t, waitForState(client, 1200, createResp.Id, "200"))
@@ -69,4 +69,14 @@ func TestDataArtsClusterLifecycle(t *testing.T) {
 	getCluster, err := cluster.Get(client, createResp.Id)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, getCluster)
+
+	t.Log("stop cluster")
+	_, err = cluster.Stop(client, getCluster.Id, cluster.StopOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "900"))
+
+	t.Log("start cluster")
+	_, err = cluster.Start(client, getCluster.Id, cluster.StartOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, waitForState(client, 300, createResp.Id, "200"))
 }

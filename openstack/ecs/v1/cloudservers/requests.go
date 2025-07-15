@@ -3,7 +3,7 @@ package cloudservers
 import (
 	"encoding/base64"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type CreateOpts struct {
@@ -49,7 +49,7 @@ type CreateOpts struct {
 	SecurityGroups []SecurityGroup `json:"security_groups,omitempty"`
 
 	// AvailabilityZone specifies name of the AZ where the ECS is located.
-	AvailabilityZone string `json:"availability_zone" required:"true"`
+	AvailabilityZone *string `json:"availability_zone,omitempty"`
 
 	// ExtendParam provides the supplementary information about the ECS to be created.
 	ExtendParam *ServerExtendParam `json:"extendparam,omitempty"`
@@ -64,6 +64,9 @@ type CreateOpts struct {
 	Tags []string `json:"tags,omitempty"`
 
 	ServerTags []ServerTags `json:"server_tags,omitempty"`
+
+	// Specifies whether ECSs can be deployed in multiple random AZs. The default value is false.
+	CreateInMultiAz *bool `json:"batch_create_in_multi_az,omitempty"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -106,6 +109,12 @@ type Nic struct {
 
 	// ExtraDhcpOpts indicates extended DHCP options.
 	ExtraDhcpOpts []ExtraDhcpOpts `json:"extra_dhcp_opts,omitempty"`
+
+	// Specifies whether to support IPv6 addresses. If this parameter is set to true, the NIC supports IPv6 addresses.
+	Ipv6Enable bool `json:"ipv6_enable,omitempty"`
+
+	// Specifies the bound shared bandwidth
+	Ipv6Bandwidth Ipv6Bandwidth `json:"ipv6_bandwidth,omitempty"`
 }
 
 type BindingProfile struct {
@@ -119,6 +128,11 @@ type ExtraDhcpOpts struct {
 
 	// OptValue specifies the NIC MTU, which ranges from 1280 to 8888.
 	OptValue int `json:"opt_value" required:"true"`
+}
+
+type Ipv6Bandwidth struct {
+	// Specifies the ID of an IPv6 bandwidth.
+	Id string `json:"id,omitempty"`
 }
 
 type PublicIp struct {

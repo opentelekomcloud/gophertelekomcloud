@@ -116,7 +116,7 @@ func TestGetV3Node(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 
-	actual, err := nodes.Get(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926").Extract()
+	actual, err := nodes.Get(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -206,7 +206,7 @@ func TestCreateV3Node(t *testing.T) {
 			},
 		},
 	}
-	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options).Extract()
+	actual, err := nodes.Create(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -235,7 +235,7 @@ func TestUpdateV3Node(t *testing.T) {
 		_, _ = fmt.Fprint(w, Output)
 	})
 	options := nodes.UpdateOpts{Metadata: nodes.UpdateMetadata{Name: "test-node"}}
-	actual, err := nodes.Update(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926", options).Extract()
+	actual, err := nodes.Update(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926", options)
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -251,7 +251,7 @@ func TestDeleteNode(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := nodes.Delete(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926").ExtractErr()
+	err := nodes.Delete(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
 	th.AssertNoErr(t, err)
 
 }
@@ -268,7 +268,7 @@ func TestGetV3Job(t *testing.T) {
 		_, _ = fmt.Fprint(w, JobOutput)
 	})
 
-	actual, err := nodes.GetJobDetails(fake.ServiceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f").ExtractJob()
+	actual, err := nodes.GetJobDetails(fake.ServiceClient(), "73ce03fd-8b1b-11e8-8f9d-0255ac10193f")
 	th.AssertNoErr(t, err)
 	expected := ExpectedJob
 	th.AssertDeepEquals(t, expected, actual)

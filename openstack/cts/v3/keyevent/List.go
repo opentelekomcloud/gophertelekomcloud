@@ -62,4 +62,6 @@ type NotificationResponse struct {
 	ProjectId string `json:"project_id,omitempty"`
 	// Time when a notification rule was created.
 	CreateTime int64 `json:"create_time,omitempty"`
+	// Advanced filter of key event notifications.
+	Filter Filter `json:"filter,omitempty"`
 }

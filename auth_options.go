@@ -152,7 +152,8 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 	}
 
 	type totpUserReq struct {
-		ID       string `json:"id"`
+		ID       string `json:"id,omitempty"`
+		Name     string `json:"name,omitempty"`
 		Passcode string `json:"passcode"`
 	}
 
@@ -253,12 +254,13 @@ func (opts *AuthOptions) ToTokenV3CreateMap(scope map[string]interface{}) (map[s
 			}
 		}
 		if opts.Passcode != "" {
-			if opts.UserID == "" {
-				return nil, ErrUserIDNotFound{}
+			if opts.Username == "" && opts.UserID == "" {
+				return nil, ErrUsernameOrUserID{}
 			}
 			req.Auth.Identity.TOTP = &totpReq{
 				User: totpUserReq{
 					ID:       opts.UserID,
+					Name:     opts.Username,
 					Passcode: opts.Passcode,
 				},
 			}

@@ -106,10 +106,25 @@ type Grantee struct {
 	URI         GroupUriType `xml:"URI,omitempty"`
 }
 
+type granteeObs struct {
+	XMLName     xml.Name    `xml:"Grantee"`
+	Type        GranteeType `xml:"type,attr"`
+	ID          string      `xml:"ID,omitempty"`
+	DisplayName string      `xml:"DisplayName,omitempty"`
+	Canned      string      `xml:"Canned,omitempty"`
+}
+
 // Grant defines grant properties
 type Grant struct {
 	XMLName    xml.Name       `xml:"Grant"`
 	Grantee    Grantee        `xml:"Grantee"`
+	Permission PermissionType `xml:"Permission"`
+	Delivered  bool           `xml:"Delivered"`
+}
+
+type grantObs struct {
+	XMLName    xml.Name       `xml:"Grant"`
+	Grantee    granteeObs     `xml:"Grantee"`
 	Permission PermissionType `xml:"Permission"`
 	Delivered  bool           `xml:"Delivered"`
 }
@@ -120,6 +135,12 @@ type AccessControlPolicy struct {
 	Owner     Owner    `xml:"Owner"`
 	Grants    []Grant  `xml:"AccessControlList>Grant"`
 	Delivered string   `xml:"Delivered,omitempty"`
+}
+
+type accessControlPolicyObs struct {
+	XMLName xml.Name   `xml:"AccessControlPolicy"`
+	Owner   Owner      `xml:"Owner"`
+	Grants  []grantObs `xml:"AccessControlList>Grant"`
 }
 
 // CorsRule defines the CORS rules
@@ -241,6 +262,13 @@ type LifecycleRule struct {
 	Expiration                   Expiration                    `xml:"Expiration,omitempty"`
 	NoncurrentVersionTransitions []NoncurrentVersionTransition `xml:"NoncurrentVersionTransition,omitempty"`
 	NoncurrentVersionExpiration  NoncurrentVersionExpiration   `xml:"NoncurrentVersionExpiration,omitempty"`
+	Filter                       LifecycleFilter               `xml:"Filter,omitempty"`
+}
+
+type LifecycleFilter struct {
+	XMLName xml.Name `xml:"Filter"`
+	Prefix  string   `xml:"And>Prefix,omitempty"`
+	Tags    []Tag    `xml:"And>Tag,omitempty"`
 }
 
 // BucketEncryptionConfiguration defines the bucket encryption configuration
@@ -349,4 +377,34 @@ type BucketWormPolicy struct {
 	Mode              string   `xml:"Rule>DefaultRetention>Mode,omitempty"`
 	Days              string   `xml:"Rule>DefaultRetention>Days,omitempty"`
 	Years             string   `xml:"Rule>DefaultRetention>Years,omitempty"`
+}
+
+// BucketInventoryConfiguration defines the bucket inventory configuration
+type BucketInventoryConfiguration struct {
+	XMLName                xml.Name                `xml:"InventoryConfiguration"`
+	Id                     string                  `xml:"Id"`
+	IsEnabled              bool                    `xml:"IsEnabled"`
+	Filter                 InventoryFilter         `xml:"Filter,omitempty"`
+	Schedule               InventorySchedule       `xml:"Schedule"`
+	Destination            InventoryDestination    `xml:"Destination"`
+	IncludedObjectVersions string                  `xml:"IncludedObjectVersions"`
+	OptionalFields         InventoryOptionalFields `xml:"OptionalFields,omitempty"`
+}
+
+type InventoryFilter struct {
+	Prefix string `xml:"Prefix,omitempty"`
+}
+
+type InventorySchedule struct {
+	Frequency string `xml:"Frequency,omitempty"`
+}
+
+type InventoryDestination struct {
+	Format string `xml:"Format,omitempty"`
+	Bucket string `xml:"Bucket,omitempty"`
+	Prefix string `xml:"Prefix,omitempty"`
+}
+
+type InventoryOptionalFields struct {
+	Field []string `xml:"Field"`
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/policies"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cbr/v3/vaults"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -25,6 +26,7 @@ func TestVaultLifecycle(t *testing.T) {
 		Description: "gophertelemocloud testing vault",
 		Name:        tools.RandomString("cbr-test-", 5),
 		Resources:   []vaults.ResourceCreate{},
+		Locked:      pointerto.Bool(true),
 	}
 	vault, err := vaults.Create(client, opts)
 	th.AssertNoErr(t, err)
@@ -161,4 +163,72 @@ func TestVaultPolicy(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vault.ID, unbind.VaultID)
 	th.AssertEquals(t, policy.ID, unbind.PolicyID)
+}
+
+func TestVaultMigrateResources(t *testing.T) {
+	client, err := clients.NewCbrV3Client()
+	th.AssertNoErr(t, err)
+
+	opts := vaults.CreateOpts{
+		Billing: &vaults.BillingCreate{
+			ConsistentLevel: "crash_consistent",
+			ObjectType:      "disk",
+			ProtectType:     "backup",
+			Size:            100,
+		},
+		Description: "gophertelemocloud testing vault",
+		Name:        tools.RandomString("cbr-test-", 5),
+		Resources:   []vaults.ResourceCreate{},
+	}
+	vault, err := vaults.Create(client, opts)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
+	})
+
+	optsM := vaults.CreateOpts{
+		Billing: &vaults.BillingCreate{
+			ConsistentLevel: "crash_consistent",
+			ObjectType:      "disk",
+			ProtectType:     "backup",
+			Size:            100,
+		},
+		Description: "gophertelemocloud testing vault",
+		Name:        tools.RandomString("cbr-test-migrate", 5),
+		Resources:   []vaults.ResourceCreate{},
+	}
+	vaultM, err := vaults.Create(client, optsM)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		th.AssertNoErr(t, vaults.Delete(client, vaultM.ID))
+	})
+
+	resourceType := "OS::Cinder::Volume"
+	volume := openstack.CreateVolume(t)
+	t.Cleanup(func() {
+		openstack.DeleteVolume(t, volume.ID)
+	})
+
+	aOpts := vaults.AssociateResourcesOpts{
+		Resources: []vaults.ResourceCreate{
+			{
+				ID:   volume.ID,
+				Type: resourceType,
+				Name: "cbr-vault-test-volume",
+			},
+		},
+	}
+	associated, err := vaults.AssociateResources(client, vault.ID, aOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(associated))
+	th.AssertEquals(t, volume.ID, associated[0])
+
+	migrate, err := vaults.MigrateResources(client, vault.ID, vaults.MigrateOpts{
+		DestinationVaultId: vaultM.ID,
+		ResourceIds:        associated,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(migrate))
 }

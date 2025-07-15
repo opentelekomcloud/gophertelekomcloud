@@ -97,6 +97,9 @@ func TestWafPremiumPolicyWorkflow(t *testing.T) {
 		},
 		Level:         1,
 		FullDetection: pointerto.Bool(true),
+		Extend: &policies.ExtendParams{
+			Extend: "{\"deep_decode\":false,\"check_all_headers\":true,\"shiro_rememberMe_enable\":false}",
+		},
 	}
 	updated, err := policies.Update(client, policy.ID, updateOpts)
 	th.AssertNoErr(t, err)
@@ -104,4 +107,5 @@ func TestWafPremiumPolicyWorkflow(t *testing.T) {
 	th.AssertEquals(t, *updated.FullDetection, true)
 	th.AssertEquals(t, updated.Action.Category, "block")
 	th.AssertEquals(t, *updated.Options.WebAttack, false)
+	th.AssertEquals(t, updated.Extend.Extend, "{\"deep_decode\":false,\"check_all_headers\":true,\"shiro_rememberMe_enable\":false}")
 }

@@ -7,7 +7,17 @@ import (
 
 type ProtectionPolicy struct {
 	// Indicates whether operation protection has been enabled. The value can be true or false.
-	OperationProtection *bool `json:"operation_protection" required:"true"`
+	OperationProtection *bool `json:"operation_protection"`
+	// Specifies whether a person is designated for verification.
+	AdminCheck string `json:"admin_check"`
+	// The verification method
+	Scene string `json:"scene"`
+	// The IAM attributes which user can modify
+	AllowUser *AllowUser `json:"allow_user"`
+	// Specifies mobile number used for verification
+	Mobile string `json:"mobile"`
+	// Specifies email address used for verification
+	Email string `json:"email"`
 }
 
 func GetOperationProtectionPolicy(client *golangsdk.ServiceClient, id string) (*ProtectionPolicy, error) {

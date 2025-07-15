@@ -3,6 +3,7 @@ package tracker
 import (
 	"github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 type UpdateOpts struct {
@@ -29,5 +30,11 @@ func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Tracker, error) 
 	raw, err := client.Put(client.ServiceURL("tracker"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return extra(err, raw)
+	if err != nil {
+		return nil, err
+	}
+
+	var res Tracker
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }

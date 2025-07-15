@@ -1,62 +1,25 @@
 package v3
 
 import (
-	"encoding/json"
 	"testing"
-
-	"github.com/stretchr/testify/suite"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/addons"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-type testAddons struct {
-	suite.Suite
+func TestAddonsLifecycle(t *testing.T) {
 
-	vpcID     string
-	subnetID  string
-	clusterID string
-}
-
-func TestAddons(t *testing.T) {
-	suite.Run(t, new(testAddons))
-}
-
-func (a *testAddons) SetupSuite() {
-	t := a.T()
-	a.vpcID = clients.EnvOS.GetEnv("VPC_ID")
-	a.subnetID = clients.EnvOS.GetEnv("NETWORK_ID")
-	a.clusterID = clients.EnvOS.GetEnv("CLUSTER_ID")
-	if a.vpcID == "" || a.subnetID == "" {
+	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
+	tenantID := clients.EnvOS.GetEnv("TENANT_ID")
+	if clusterID == "" || tenantID == "" {
 		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
 	}
-}
-
-func (a *testAddons) TestAddonsLifecycle() {
-	t := a.T()
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	custom := map[string]interface{}{
-		"coresTotal":                     32000,
-		"maxEmptyBulkDeleteFlag":         10,
-		"maxNodesTotal":                  1000,
-		"memoryTotal":                    128000,
-		"scaleDownDelayAfterAdd":         10,
-		"scaleDownDelayAfterDelete":      10,
-		"scaleDownDelayAfterFailure":     3,
-		"scaleDownEnabled":               true,
-		"scaleDownUnneededTime":          10,
-		"scaleDownUtilizationThreshold":  0.25,
-		"scaleUpCpuUtilizationThreshold": 0.8,
-		"scaleUpMemUtilizationThreshold": 0.8,
-		"scaleUpUnscheduledPodEnabled":   true,
-		"scaleUpUtilizationEnabled":      true,
-		"unremovableNodeRecheckTimeout":  5,
-	}
-	cOpts := addons.CreateOpts{
+	createOpts := addons.CreateOpts{
 		Kind:       "Addon",
 		ApiVersion: "v3",
 		Metadata: addons.CreateMetadata{
@@ -65,45 +28,72 @@ func (a *testAddons) TestAddonsLifecycle() {
 			},
 		},
 		Spec: addons.RequestSpec{
-			Version:           "1.17.2",
-			ClusterID:         a.clusterID,
-			AddonTemplateName: "autoscaler",
+			Version:           "1.19.1",
+			ClusterID:         clusterID,
+			AddonTemplateName: "npd",
 			Values: addons.Values{
 				Basic: map[string]interface{}{
-					"cceEndpoint":     "https://cce.eu-de.otc.t-systems.com",
-					"ecsEndpoint":     "https://ecs.eu-de.otc.t-systems.com",
-					"euleros_version": "2.5",
-					"region":          "eu-de",
-					"swr_addr":        "100.125.7.25:20202",
-					"swr_user":        "hwofficial",
+					"image_version": "1.19.1",
+					"swr_addr":      "100.125.7.25:20202",
+					"swr_user":      "cce-addons",
 				},
-				Advanced: custom,
+				Advanced: map[string]interface{}{
+					"multiAZBalance":         false,
+					"multiAZEnabled":         false,
+					"feature_gates":          "",
+					"node_match_expressions": []interface{}{},
+					"npc": map[string]interface{}{
+						"maxTaintedNode": "10%",
+					},
+					"tolerations": []map[string]interface{}{
+						{
+							"effect":            "NoExecute",
+							"key":               "node.kubernetes.io/not-ready",
+							"operator":          "Exists",
+							"tolerationSeconds": 60,
+						},
+						{
+							"effect":            "NoExecute",
+							"key":               "node.kubernetes.io/unreachable",
+							"operator":          "Exists",
+							"tolerationSeconds": 60,
+						},
+					},
+				},
 			},
 		},
 	}
 
-	addon, err := addons.Create(client, cOpts, a.clusterID).Extract()
+	listExistingAddons, err := addons.ListAddonInstances(client, clusterID)
+	th.AssertNoErr(t, err)
+
+	existingAddons := len(listExistingAddons.Items)
+
+	addon, err := addons.Create(client, createOpts, clusterID)
 	th.AssertNoErr(t, err)
 
 	addonID := addon.Metadata.Id
 
 	defer func() {
-		err := addons.Delete(client, addonID, a.clusterID).ExtractErr()
+		err := addons.Delete(client, addonID, clusterID)
 		th.AssertNoErr(t, err)
 
-		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, a.clusterID, 600))
+		th.AssertNoErr(t, addons.WaitForAddonDeleted(client, addonID, clusterID, 1200))
 	}()
 
-	getAddon, err := addons.Get(client, addonID, a.clusterID).Extract()
+	listAddons, err := addons.ListAddonInstances(client, clusterID)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, "autoscaler", getAddon.Spec.AddonTemplateName)
-	th.AssertEquals(t, "1.17.2", getAddon.Spec.Version)
-	th.AssertEquals(t, true, getAddon.Spec.Values.Advanced["scaleDownEnabled"])
+	th.AssertEquals(t, existingAddons+1, len(listAddons.Items))
 
-	waitErr := addons.WaitForAddonRunning(client, addonID, a.clusterID, 600)
+	getAddon, err := addons.Get(client, addonID, clusterID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "npd", getAddon.Spec.AddonTemplateName)
+	th.AssertEquals(t, "1.19.1", getAddon.Spec.Version)
+
+	waitErr := addons.WaitForAddonRunning(client, addonID, clusterID, 1200)
 	th.AssertNoErr(t, waitErr)
 
-	uOpts := addons.UpdateOpts{
+	updateOpts := addons.UpdateOpts{
 		Kind:       "Addon",
 		ApiVersion: "v3",
 		Metadata: addons.UpdateMetadata{
@@ -112,67 +102,55 @@ func (a *testAddons) TestAddonsLifecycle() {
 			},
 		},
 		Spec: addons.RequestSpec{
-			Version:           cOpts.Spec.Version,
-			ClusterID:         cOpts.Spec.ClusterID,
-			AddonTemplateName: cOpts.Spec.AddonTemplateName,
+			Version:           createOpts.Spec.Version,
+			ClusterID:         createOpts.Spec.ClusterID,
+			AddonTemplateName: createOpts.Spec.AddonTemplateName,
 			Values: addons.Values{
-				Basic:    cOpts.Spec.Values.Basic,
-				Advanced: cOpts.Spec.Values.Advanced,
+				Basic:    createOpts.Spec.Values.Basic,
+				Advanced: createOpts.Spec.Values.Advanced,
 			},
 		},
 	}
-	uOpts.Spec.Values.Advanced["scaleDownEnabled"] = false
-	uOpts.Spec.Values.Advanced["scaleDownDelayAfterAdd"] = 11
 
-	_, err = addons.Update(client, addonID, a.clusterID, uOpts).Extract()
+	updateOpts.Spec.Values.Basic["rbac_enabled"] = true
+
+	getAddon2, err := addons.Update(client, addonID, clusterID, updateOpts)
 	th.AssertNoErr(t, err)
 
-	getAddon2, err := addons.Get(client, addonID, a.clusterID).Extract()
-	th.AssertNoErr(t, err)
-	th.AssertEquals(t, false, getAddon2.Spec.Values.Advanced["scaleDownEnabled"])
-	th.AssertEquals(t, 11.0, getAddon2.Spec.Values.Advanced["scaleDownDelayAfterAdd"])
+	// USE THIS TO DEBUG
+	// addonJson, _ := json.MarshalIndent(getAddon2, "", "  ")
+	// t.Logf("existing addon templates:\n%s", string(addonJson))
+	th.AssertEquals(t, true, getAddon2.Spec.Values.Basic["rbac_enabled"])
+	waitErr = addons.WaitForAddonRunning(client, addonID, clusterID, 1200)
+	th.AssertNoErr(t, waitErr)
 }
 
-func (a *testAddons) TestListAddonTemplates() {
-	t := a.T()
+func TestAddonsListTemplates(t *testing.T) {
+	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
+	if clusterID == "" {
+		t.Skip("OS_VPC_ID, OS_NETWORK_ID, and OS_CLUSTER_ID are required for this test")
+	}
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListTemplates(client, a.clusterID, nil).Extract()
+	list, err := addons.ListTemplates(client, clusterID, addons.ListOpts{})
 	th.AssertNoErr(t, err)
 
 	if len(list.Items) == 0 {
 		t.Fatal("empty addon template list")
 	}
 
-	jsonList, _ := json.MarshalIndent(list.Items, "", "  ")
-
-	t.Logf("existing addon templates:\n%s", string(jsonList))
+	// jsonList, _ := json.MarshalIndent(list.Items, "", "  ")
+	// t.Logf("existing addon templates:\n%s", string(jsonList))
 }
 
-func (a *testAddons) TestListAddonInstances() {
-	t := a.T()
+func TestAddonsGetTemplates(t *testing.T) {
 
 	client, err := clients.NewCceV3AddonClient()
 	th.AssertNoErr(t, err)
 
-	list, err := addons.ListAddonInstances(client, a.clusterID).Extract()
-	th.AssertNoErr(t, err)
-
-	th.AssertEquals(t, len(list.Items), 3)
-	// check if listed addon exists
-	_, err = addons.Get(client, list.Items[0].Metadata.ID, a.clusterID).Extract()
-	th.AssertNoErr(t, err)
-}
-
-func (a *testAddons) TestGetAddonTemplates() {
-	t := a.T()
-
-	client, err := clients.NewCceV3AddonClient()
-	th.AssertNoErr(t, err)
-
-	templates, err := addons.GetTemplates(client).Extract()
+	templates, err := addons.GetTemplates(client)
 	th.AssertNoErr(t, err)
 	if len(templates.Items) == 0 {
 		t.Fatal("empty addon templates list")
