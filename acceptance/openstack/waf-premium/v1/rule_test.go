@@ -538,6 +538,9 @@ func TestWafPremiumInformationLeakageProtectionRuleWorkflow(t *testing.T) {
 		Category:    "sensitive",
 		Contents:    []string{"id_card"},
 		Description: "desc",
+		Action: &rules.LeakageAction{
+			Category: "block",
+		},
 	}
 	t.Logf("Attempting to Create WAF Premium information leakage protection rule")
 	ilp, err := rules.CreateAntiLeakage(client, policy.ID, ilpOpts)
