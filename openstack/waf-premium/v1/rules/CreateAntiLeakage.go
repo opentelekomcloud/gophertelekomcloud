@@ -21,6 +21,15 @@ type CreateAntiLeakageOpts struct {
 	Contents []string `json:"contents" required:"true"`
 	// Rule description.
 	Description string `json:"description"`
+	// Protective action of the antileakage rule
+	Action *LeakageAction `json:"action,omitempty"`
+}
+
+type LeakageAction struct {
+	// Protection type
+	// block: WAF blocks attacks.
+	// log: WAF only logs discovered attacks.
+	Category string `json:"category" required:"true"`
 }
 
 // CreateAntiLeakage will create an information leakage protection rule on the values in CreateOpts.

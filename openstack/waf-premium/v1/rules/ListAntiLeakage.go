@@ -23,7 +23,11 @@ func ListAntiLeakage(client *golangsdk.ServiceClient, policyId string, opts List
 
 	// GET /v1/{project_id}/waf/policy/{policy_id}/antileakage
 	url := client.ServiceURL("waf", "policy", policyId, "antileakage") + query.String()
-	raw, err := client.Get(url, nil, nil)
+	raw, err := client.Get(url, nil, &golangsdk.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Content-Type": "application/json;charset=utf8",
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
