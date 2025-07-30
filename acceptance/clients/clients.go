@@ -6,6 +6,8 @@ package clients
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"regexp"
 	"strings"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -883,15 +885,28 @@ func NewSmnV2TagsClient() (client *golangsdk.ServiceClient, err error) {
 }
 
 // NewTmsV1Client returns authenticated TMS v1.0 client
-func NewTmsV1Client() (client *golangsdk.ServiceClient, err error) {
-	iamClient, err := NewIdentityV3AdminClient()
+func NewTmsV1Client() (*golangsdk.ServiceClient, error) {
+	client, err := NewIdentityV3AdminClient()
 	if err != nil {
 		return nil, err
 	}
 
-	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "v3", "v1.0", 1)
-	iamClient.Endpoint = strings.Replace(iamClient.Endpoint, "iam", "tms", 1)
-	return iamClient, err
+	parsedURL, err := url.Parse(client.Endpoint)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse IAM endpoint: %w", err)
+	}
+	re := regexp.MustCompile(`^[^.]+`)
+	parsedURL.Host = re.ReplaceAllString(parsedURL.Host, "tms")
+	segments := strings.Split(parsedURL.Path, "/")
+	if len(segments) > 1 {
+		segments[1] = "v1.0"
+	}
+	parsedURL.Path = strings.Join(segments, "/")
+
+	client.Endpoint = parsedURL.String()
+	client.ResourceBase = client.Endpoint
+	client.Type = "tms"
+	return client, nil
 }
 
 // NewCesV1Client returns authenticated CES v1 client
