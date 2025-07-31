@@ -46,6 +46,9 @@ func ListResources(client *golangsdk.ServiceClient, opts ListResourceOpts) ([]Re
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res []ResourceResp
 	err = extract.IntoSlicePtr(raw.Body, &res, "resources")

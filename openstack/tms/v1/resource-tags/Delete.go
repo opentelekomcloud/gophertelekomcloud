@@ -18,6 +18,9 @@ func Delete(client *golangsdk.ServiceClient, opts BatchOpts) ([]FailedResource, 
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res []FailedResource
 	err = extract.IntoSlicePtr(raw.Body, &res, "failed_resources")
