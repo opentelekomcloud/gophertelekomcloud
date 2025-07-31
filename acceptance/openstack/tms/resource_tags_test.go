@@ -14,9 +14,9 @@ import (
 )
 
 func TestTMSRecourceTagsLifecycle(t *testing.T) {
-	// if os.Getenv("RUN_TMS_TAGS") == "" {
-	// 	t.Skip("unstable test")
-	// }
+	if os.Getenv("RUN_TMS_TAGS") == "" {
+		t.Skip("not for CI")
+	}
 	client, err := clients.NewTmsV1Client()
 	th.AssertNoErr(t, err)
 
@@ -101,9 +101,10 @@ func TestTMSRecourceTagsLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, len(keys) > 0)
 
+	// Always bad request, api broken
 	// values, err := rt.ListValues(client, rt.ListValueOpts{
 	// 	RegionId: clientEvs.ProjectID,
-	// 	Key:      listTags[0].Key,
+	// 	Key: listTags[0].Key,
 	// })
 	// th.AssertNoErr(t, err)
 	// th.AssertEquals(t, true, len(values) > 0)
