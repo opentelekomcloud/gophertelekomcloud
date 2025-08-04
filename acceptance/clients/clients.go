@@ -909,6 +909,31 @@ func NewTmsV1Client() (*golangsdk.ServiceClient, error) {
 	return client, nil
 }
 
+// NewTmsV2Client returns authenticated TMS v2.0 client
+func NewTmsV2Client() (*golangsdk.ServiceClient, error) {
+	client, err := NewIdentityV3AdminClient()
+	if err != nil {
+		return nil, err
+	}
+
+	parsedURL, err := url.Parse(client.Endpoint)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse IAM endpoint: %w", err)
+	}
+	re := regexp.MustCompile(`^[^.]+`)
+	parsedURL.Host = re.ReplaceAllString(parsedURL.Host, "tms")
+	segments := strings.Split(parsedURL.Path, "/")
+	if len(segments) > 1 {
+		segments[1] = "v2.0"
+	}
+	parsedURL.Path = strings.Join(segments, "/")
+
+	client.Endpoint = parsedURL.String()
+	client.ResourceBase = client.Endpoint
+	client.Type = "tms"
+	return client, nil
+}
+
 // NewCesV1Client returns authenticated CES v1 client
 func NewCesV1Client() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
