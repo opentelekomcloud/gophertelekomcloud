@@ -1,13 +1,14 @@
 package v2
 
 import (
+	"testing"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evs/v2/cloudvolumes"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
-	"testing"
 )
 
 func TestEVSv2List(t *testing.T) {
@@ -15,8 +16,9 @@ func TestEVSv2List(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	createOpts := volumes.CreateOpts{
-		Size: 40,
-		Name: tools.RandomString("tf-evs-disk-", 4),
+		Size:       40,
+		Name:       tools.RandomString("tf-evs-disk-", 4),
+		VolumeType: "SSD",
 	}
 
 	resp, err := volumes.Create(client, createOpts).Extract()
