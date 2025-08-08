@@ -33,16 +33,18 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*GroupResp, error
 }
 
 type GroupResp struct {
-	ID           string       `json:"id"`
-	Name         string       `json:"name"`
-	Status       int          `json:"status"`
-	SlDomain     string       `json:"sl_domain"`
-	RegisterTime string       `json:"register_time"`
-	UpdateTime   string       `json:"update_time"`
-	OnSellStatus int          `json:"on_sell_status"`
-	UrlDomains   []UrlDomains `json:"url_domains"`
-	SlDomains    []string     `json:"sl_domains"`
-	Description  string       `json:"remark"`
+	ID               string       `json:"id"`
+	Name             string       `json:"name"`
+	Status           int          `json:"status"`
+	SlDomain         string       `json:"sl_domain"`
+	RegisterTime     string       `json:"register_time"`
+	UpdateTime       string       `json:"update_time"`
+	OnSellStatus     int          `json:"on_sell_status"`
+	UrlDomains       []UrlDomains `json:"url_domains"`
+	SlDomainsEnabled bool         `json:"sl_domain_access_enabled"`
+	SlDomains        []string     `json:"sl_domains"`
+	Description      string       `json:"remark"`
+	IsDefault        int          `json:"is_default"`
 }
 
 type UrlDomains struct {
