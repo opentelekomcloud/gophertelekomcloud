@@ -1009,6 +1009,15 @@ func NewGaussDBClient() (client *golangsdk.ServiceClient, err error) {
 	return openstack.NewGaussDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
 }
 
+func NewTaurusDBV3Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewTaurusDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
 // NewAPIGWClient returns authenticated APIGW v2 client
 func NewAPIGWClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
