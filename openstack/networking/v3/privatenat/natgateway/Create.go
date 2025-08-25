@@ -42,7 +42,7 @@ type TagOptions struct {
 }
 
 // This function is used to create a Private NAT gateway.
-func CreateACLRule(client *golangsdk.ServiceClient, opts CreateGatewayOpts) (*GatewayCommonResponse, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateGatewayOpts) (*GatewayCommonResponse, error) {
 	b, err := build.RequestBody(opts, "gateway")
 	if err != nil {
 		return nil, err
