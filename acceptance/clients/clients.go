@@ -504,6 +504,18 @@ func NewNatV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewNatV3Client returns authenticated NAT v2 client
+func NewNatV3Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewNatV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewPeerNetworkV2Client returns a *ServiceClient for making calls to the
 // OpenStack Networking v2 API for Peer. An error will be returned if authentication
 // or client creation was not possible.
