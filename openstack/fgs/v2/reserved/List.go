@@ -28,7 +28,7 @@ func ListReservedInst(client *golangsdk.ServiceClient, opts ListOpts) (*FuncRese
 }
 
 type FuncReservedInstResp struct {
-	ReservedInstances []FuncReservedResp `json:"reserved_instances"`
+	ReservedInstances []FuncReservedResp `json:"reservedinstances"`
 	PageInfo          *PageInfo          `json:"page_info"`
 	Count             int                `json:"count"`
 }

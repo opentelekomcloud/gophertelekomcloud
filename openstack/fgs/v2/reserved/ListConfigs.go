@@ -8,7 +8,7 @@ import (
 type ListConfigOpts struct {
 	Marker  string `q:"marker"`
 	Limit   string `q:"limit"`
-	FuncUrn string `q:"urn"`
+	FuncUrn string `q:"function_urn"`
 }
 
 func ListReservedInstConfigs(client *golangsdk.ServiceClient, opts ListConfigOpts) (*FuncReservedConfigResp, error) {
@@ -34,13 +34,12 @@ type FuncReservedConfigResp struct {
 }
 
 type FuncReservedInstances struct {
-	FuncUrn       string        `json:"func_urn"`
+	FuncUrn       string        `json:"function_urn"`
 	QualifierType string        `json:"qualifier_type"`
 	QualifierName string        `json:"qualifier_name"`
 	MinCount      int           `json:"min_count"`
 	IdleMode      bool          `json:"idle_mode"`
 	TacticsConfig TacticsConfig `json:"tactics_config"`
-	Count         int           `json:"count"`
 }
 
 type PageInfo struct {
