@@ -36,7 +36,7 @@ type ListTransitIpsQueryParams struct {
 }
 
 // This function is used to query transit IP addresses.
-func List(client *golangsdk.ServiceClient, opts ListResponse) (*ListResponse, error) {
+func List(client *golangsdk.ServiceClient, opts ListTransitIpsQueryParams) (*ListResponse, error) {
 	// GET /v3/{project_id}/private-nat/transit-ips
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("private-nat", "transit-ips").
