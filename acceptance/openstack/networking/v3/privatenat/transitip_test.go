@@ -26,7 +26,7 @@ func TestPrivateNatTransitIpLifecycle(t *testing.T) {
 	t.Cleanup(func() {
 		t.Logf("Deleting Transit IP: %s", transitIpId)
 		th.AssertNoErr(t, transitip.Delete(client, transitIpId))
-		t.Logf("Deleting Transit IP: %s", transitIpId)
+		t.Logf("Deleted Transit IP: %s", transitIpId)
 	})
 
 	getResponse, err := transitip.Get(client, transitIpId)

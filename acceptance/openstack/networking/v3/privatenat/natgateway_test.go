@@ -23,6 +23,12 @@ func TestPrivateNatGatewayLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, natGateway.Name, getResponse.Gateway.Name)
 
+	listResponse, err := natgateway.List(client, natgateway.ListGatewaysQueryParams{
+		Id: []string{natGateway.Id},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listResponse.Gateways))
+
 	updateResponse, err := natgateway.Update(client, natGateway.Id, natgateway.UpdateGatewayOpts{
 		Description: "updated",
 	})

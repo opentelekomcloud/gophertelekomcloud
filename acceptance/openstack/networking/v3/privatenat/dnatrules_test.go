@@ -35,12 +35,18 @@ func TestPrivateNatDnatRulesLifecycle(t *testing.T) {
 	t.Cleanup(func() {
 		t.Logf("Deleting DNAT rule: %s", ruleId)
 		th.AssertNoErr(t, dnatrules.Delete(client, ruleId))
-		t.Logf("Deleting DNAT rule: %s", ruleId)
+		t.Logf("Deleted DNAT rule: %s", ruleId)
 	})
 
 	getResponse, err := dnatrules.Get(client, ruleId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "created", getResponse.DnatRule.Description)
+
+	listResponse, err := dnatrules.List(client, dnatrules.ListDnatRulesQueryParams{
+		Id: []string{ruleId},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listResponse.DnatRules))
 
 	updateResponse, err := dnatrules.Update(client, ruleId, dnatrules.UpdatePrivateDnatOpts{
 		Description: "updated",
