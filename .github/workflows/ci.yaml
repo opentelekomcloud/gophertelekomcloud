@@ -61,7 +61,7 @@ jobs:
           OS_REGION: "eu-de"
 
   eco_check:
-    name: eco/check
+    name: check
     if: >
       always()
     needs: [lint, vet, unit_tests, acc_tests]
