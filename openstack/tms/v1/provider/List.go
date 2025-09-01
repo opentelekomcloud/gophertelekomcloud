@@ -16,7 +16,7 @@ type ListOpts struct {
 	// The value must be a number and cannot be negative. The default value is 0.
 	Offset *int `q:"offset"`
 	// Specifies the cloud service name.
-	Provider *int `q:"provider"`
+	Provider string `q:"provider"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Providers, error) {
