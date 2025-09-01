@@ -51,6 +51,9 @@ func TestBackupLifecycle(t *testing.T) {
 }
 
 func TestBackupListing(t *testing.T) {
+	if os.Getenv("RUN_CBR") == "" {
+		t.Skip("too long to run in ci")
+	}
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
