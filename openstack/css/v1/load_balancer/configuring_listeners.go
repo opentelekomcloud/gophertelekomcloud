@@ -13,13 +13,13 @@ type LoadBalancingListenerOpts struct {
 	// Port.
 	ProtocolPort int `json:"protocol_port" required:"true"`
 	// Server certificate ID. This parameter is mandatory when protocol is set to HTTPS.
-	ServerCertId string `json:"server_cert_id"`
+	ServerCertId string `json:"server_cert_id,omitempty"`
 	// CA certificate ID. This parameter is mandatory when protocol is set to HTTPS and bidirectional authentication is used.
-	CaCertId string `json:"ca_cert_id"`
+	CaCertId string `json:"ca_cert_id,omitempty"`
 	// Type: searchTool indicates that the listener is configured for Elasticsearch/OpenSearch.
 	// viewTool indicates that the listener is configured for Kibana/OpenSearch Dashboards.
 	// The default value is searchTool.
-	Type string `json:"type"`
+	Type string `json:"type,omitempty"`
 }
 
 // ConfigureLoadBalancingListeners will configure load balancing listeners for a CSS cluster based on LoadBalancingListenerOpts.

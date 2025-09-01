@@ -64,13 +64,13 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	clientELB, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
-	configuringOpts := load_balancer.LoadBalancingListenerOpts{
+	configureListenerOpts := load_balancer.LoadBalancingListenerOpts{
 		Protocol:     "HTTPS",
 		ProtocolPort: 81,
 		ServerCertId: createCertificate(t, clientELB),
 	}
 
-	load_balancerID, err := load_balancer.ConfigureLoadBalancingListeners(client, clusterID, configuringOpts)
+	load_balancerID, err := load_balancer.ConfigureLoadBalancingListeners(client, clusterID, configureListenerOpts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, load_balancerID)
 
@@ -89,17 +89,14 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 
 	time.Sleep(8 * time.Second)
 
-	configuringUpdateOpts := load_balancer.UpdatingListenerOpts{
-		Listener: load_balancer.EsListenerRequest{
-			DefaultTlsContainerRef: createCertificate(t, clientELB),
-		},
-	}
+	updateListenerOpts := load_balancer.UpdateListenerOpts{}
+	updateListenerOpts.Listener.ServerCertId = createCertificate(t, clientELB)
 
 	NewElbDetails, err := load_balancer.Get(client, clusterID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, NewElbDetails)
 
-	updated, err := load_balancer.UpdatingLoadBalancingListeners(client, clusterID, listenerID, configuringUpdateOpts)
+	updated, err := load_balancer.UpdatingLoadBalancingListeners(client, clusterID, listenerID, updateListenerOpts)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, updated)
 
@@ -109,8 +106,8 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 
 	th.AssertNoErr(t, clusters.WaitForCluster(client, clusterID, timeout))
 
-	defer deleteCertificate(t, clientELB, configuringOpts.ServerCertId)
-	defer deleteCertificate(t, clientELB, configuringUpdateOpts.Listener.DefaultTlsContainerRef)
+	defer deleteCertificate(t, clientELB, configureListenerOpts.ServerCertId)
+	defer deleteCertificate(t, clientELB, updateListenerOpts.Listener.ServerCertId)
 
 	err = load_balancer.DisableLoadBalancer(client, clusterID)
 

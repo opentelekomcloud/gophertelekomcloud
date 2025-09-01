@@ -41,17 +41,17 @@ type LoadBalancer struct {
 	// Description.
 	Description string `json:"description"`
 	// ID of the VPC to which the load balancer belongs
-	Vpc_id string `json:"vpc_id"`
+	VpcId string `json:"vpc_id"`
 	// Provisioning status of the load balancer
-	Provisioning_status string `json:"provisioning_status"`
+	ProvisioningStatus string `json:"provisioning_status"`
 	// Associated listener list
 	Listeners []*IdListWrapper `json:"listeners"`
 	// IPv4 virtual IP address bound to the load balancer
-	Vip_address string `json:"vip_address"`
+	VipAddress string `json:"vip_address"`
 	// Port ID bound to the private IPv4 IP address of the load balancer.
-	Vip_port_id string `json:"vip_port_id"`
+	VipPortId string `json:"vip_port_id"`
 	// IPv6 address of the load balancer.
-	Ipv6_vip_address string `json:"ipv6_vip_address"`
+	Ipv6VipAddress string `json:"ipv6_vip_address"`
 	// EIP bound to the load balancer
 	Publicips []*PublicIpInfo `json:"publicips"`
 }
@@ -64,7 +64,7 @@ type Elbv3Listener struct {
 	// Protocol used by the listener
 	Protocol string `json:"protocol"`
 	// Port used by the listener.
-	Protocol_port int `json:"protocol_port"`
+	ProtocolPort int `json:"protocol_port"`
 	// ipgroup information in the listener object.
 	Ipgroup *ListenerIpGroup `json:"ipgroup"`
 }
@@ -77,13 +77,13 @@ type Member struct {
 	// Private IP address bound to the backend server.
 	Address string `json:"address"`
 	// Specifies the port used by the backend server.
-	Protocol_port int `json:"protocol_port"`
+	ProtocolPort int `json:"protocol_port"`
 	// Specifies the operating status of the backend server. - ONLINE: The backend server is running normally.
 	// NO_MONITOR: No health check is configured for the backend server group to which the backend server belongs.
 	// OFFLINE: The cloud server used as the backend server is stopped or does not exist.
-	Operating_status string `json:"operating_status"`
+	OperatingStatus string `json:"operating_status"`
 	// ID of the instance used as the backend server. If this parameter is left blank, the backend server is not an ECS.
-	Instance_id string `json:"instance_id"`
+	InstanceId string `json:"instance_id"`
 }
 
 type IdListWrapper struct {
@@ -93,18 +93,18 @@ type IdListWrapper struct {
 
 type PublicIpInfo struct {
 	// EIP configuration ID
-	Publicip_id string `json:"publicip_id"`
+	PublicIpId string `json:"publicip_id"`
 	// Specifies the EIP.
-	Publicip_address string `json:"publicip_address"`
+	PublicIpAddress string `json:"publicip_address"`
 	// IP address version. Value range: 4 and 6. 4 indicates IPv4, and 6 indicates IPv6.
-	Ip_version int `json:"ip_version"`
+	IpVersion int `json:"ip_version"`
 }
 
 type ListenerIpGroup struct {
 	// ID of the IP address group associated with the listener This parameter is mandatory during creation and is optional during update.
-	Ipgroup_id string `json:"ipgroup_id"`
+	IpgroupId string `json:"ipgroup_id"`
 	// Status of an access control group. True: Enable access control. False: Disable access control.
-	Enable_ipgroup bool `json:"enable_ipgroup"`
+	EnableIpgroup bool `json:"enable_ipgroup"`
 }
 
 // This API is used to obtain information about the load balancers of a cluster.
