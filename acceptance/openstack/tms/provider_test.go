@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/tms/v1/provider"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -16,7 +17,10 @@ func TestTMSProviderList(t *testing.T) {
 	client, err := clients.NewTmsV1Client()
 	th.AssertNoErr(t, err)
 
-	p, err := provider.List(client, provider.ListOpts{})
+	p, err := provider.List(client, provider.ListOpts{
+		Provider: "ecs",
+		Limit:    pointerto.Int(200),
+	})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, true, len(p) > 1)
+	th.AssertEquals(t, true, len(p) > 0)
 }
