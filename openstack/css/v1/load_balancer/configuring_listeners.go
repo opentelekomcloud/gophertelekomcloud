@@ -23,10 +23,10 @@ type LoadBalancingListenerOpts struct {
 }
 
 // ConfigureLoadBalancingListeners will configure load balancing listeners for a CSS cluster based on LoadBalancingListenerOpts.
-func ConfigureLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID string, opts LoadBalancingListenerOpts) (string, error) {
+func ConfigureLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID string, opts LoadBalancingListenerOpts) (*ConfiguredListenerResp, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	url := client.ServiceURL("clusters", clusterID, "es-listeners")
@@ -39,12 +39,15 @@ func ConfigureLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID 
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var res struct {
-		ElbId string `json:"elb_id"`
-	}
+	var res ConfiguredListenerResp
 	err = extract.IntoStructPtr(raw.Body, &res, "")
-	return res.ElbId, err
+	return &res, err
+}
+
+type ConfiguredListenerResp struct {
+	// ELB ID
+	ElbId string `json:"elb_id"`
 }

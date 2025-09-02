@@ -1,37 +1,15 @@
 package v1
 
 import (
-	"log"
 	"testing"
-	"time"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/css/v1/clusters"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/css/v1/load_balancer"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/certificates"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
-
-func TestGetCSSConfiguringLBListenersHTTP(t *testing.T) {
-	clusterID := clients.EnvOS.GetEnv("CSS_CLUSTER_ID")
-	if clusterID == "" {
-		t.Skip("`OS_CSS_CLUSTER_ID` must be defined")
-	}
-
-	configuringOpts := load_balancer.LoadBalancingListenerOpts{
-		Protocol:     "HTTP",
-		ProtocolPort: 80,
-	}
-
-	client, err := clients.NewCssV1Client()
-	th.AssertNoErr(t, err)
-
-	got, err := load_balancer.ConfigureLoadBalancingListeners(client, clusterID, configuringOpts)
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, got)
-}
 
 func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	clusterID := clients.EnvOS.GetEnv("CSS_CLUSTER_ID")
@@ -42,8 +20,8 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	if agency == "" {
 		t.Skipf("OS_AGENCY_NAME is required for this test")
 	}
-	elbid := clients.EnvOS.GetEnv("ELB_ID")
-	if elbid == "" {
+	elbId := clients.EnvOS.GetEnv("ELB_ID")
+	if elbId == "" {
 		t.Skipf("OS_ELB_ID is required for this test")
 	}
 
@@ -51,15 +29,13 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	basicOptsEnable := load_balancer.EnableLoadBalancerOpts{
-		ElbId:  elbid,
+		ElbId:  elbId,
 		Agency: agency,
 	}
-	elbID, err := load_balancer.EnableLoadBalancer(client, clusterID, basicOptsEnable)
+	elbEnabled, err := load_balancer.EnableLoadBalancer(client, clusterID, basicOptsEnable)
 	th.AssertNoErr(t, err)
-	log.Println("CSS loadbalancer id")
-	tools.PrintResource(t, elbID)
-
-	th.AssertNoErr(t, clusters.WaitForCluster(client, clusterID, timeout))
+	t.Logf("Associated load balacer with CSS cluster")
+	tools.PrintResource(t, elbEnabled)
 
 	clientELB, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
@@ -69,53 +45,43 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 		ProtocolPort: 81,
 		ServerCertId: createCertificate(t, clientELB),
 	}
-
-	load_balancerID, err := load_balancer.ConfigureLoadBalancingListeners(client, clusterID, configureListenerOpts)
+	defer deleteCertificate(t, clientELB, configureListenerOpts.ServerCertId)
+	configured, err := load_balancer.ConfigureLoadBalancingListeners(client, clusterID, configureListenerOpts)
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, load_balancerID)
+	t.Logf("Response after configuring listener")
+	tools.PrintResource(t, configured)
 
-	log.Println("The load balancer listener for the CSS cluster is available.")
-
-	th.AssertNoErr(t, clusters.WaitForCluster(client, clusterID, timeout))
-	time.Sleep(8 * time.Second)
+	th.AssertNoErr(t, load_balancer.WaitForListenerStatus(client, clusterID, timeout))
+	t.Log("The load balancer listener for the CSS cluster is configured.")
 
 	elbDetails, err := load_balancer.Get(client, clusterID)
 	th.AssertNoErr(t, err)
+	t.Logf("ELB Details after configuring listener:")
 	tools.PrintResource(t, elbDetails)
 
 	listenerID := elbDetails.Listener.Id
+	t.Logf("listenerID: %s", listenerID)
 
-	log.Printf("The ID: %s", elbDetails.Listener.Id)
-
-	time.Sleep(8 * time.Second)
-
+	// Update listener Certificate
 	updateListenerOpts := load_balancer.UpdateListenerOpts{}
 	updateListenerOpts.Listener.ServerCertId = createCertificate(t, clientELB)
-
-	NewElbDetails, err := load_balancer.Get(client, clusterID)
-	th.AssertNoErr(t, err)
-	tools.PrintResource(t, NewElbDetails)
-
+	defer deleteCertificate(t, clientELB, updateListenerOpts.Listener.ServerCertId)
 	updated, err := load_balancer.UpdatingLoadBalancingListeners(client, clusterID, listenerID, updateListenerOpts)
 	th.AssertNoErr(t, err)
+	t.Logf("Response after updating listener:")
 	tools.PrintResource(t, updated)
+	t.Log("The load balancer listener for the CSS cluster is updated.")
 
-	time.Sleep(8 * time.Second)
+	elbDetails, err = load_balancer.Get(client, clusterID)
+	th.AssertNoErr(t, err)
+	t.Logf("ELB Details after updating listener certificate:")
+	tools.PrintResource(t, elbDetails)
 
-	log.Println("The load balancer listener for the CSS cluster is updated.")
-
-	th.AssertNoErr(t, clusters.WaitForCluster(client, clusterID, timeout))
-
-	defer deleteCertificate(t, clientELB, configureListenerOpts.ServerCertId)
-	defer deleteCertificate(t, clientELB, updateListenerOpts.Listener.ServerCertId)
-
-	err = load_balancer.DisableLoadBalancer(client, clusterID)
-
-	log.Println("The load balancer of the CSS cluster is disabled.")
+	elbDisabled, err := load_balancer.DisableLoadBalancer(client, clusterID)
 
 	th.AssertNoErr(t, err)
-
-	th.AssertNoErr(t, clusters.WaitForCluster(client, clusterID, timeout))
+	t.Log("The load balancer of the CSS cluster is disabled.")
+	tools.PrintResource(t, elbDisabled)
 
 }
 

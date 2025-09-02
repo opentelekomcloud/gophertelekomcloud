@@ -1,8 +1,6 @@
 package load_balancer
 
 import (
-	"log"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -31,8 +29,6 @@ func UpdatingLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID s
 	}
 
 	url := client.ServiceURL("clusters", clusterID, "es-listeners", listenerID)
-
-	log.Println(b)
 
 	raw, err := client.Put(url, b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
