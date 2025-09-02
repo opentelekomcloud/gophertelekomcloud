@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type GetLoadBalancerInfo struct {
+type LoadBalancerResp struct {
 	// The cluster agency
 	Agency string `json:"agency"`
 	// Server certificate name
@@ -17,9 +17,9 @@ type GetLoadBalancerInfo struct {
 	// CA certificate ID
 	CacertId string `json:"cacertId"`
 	// Indicates whether ELB is enabled
-	Elb_enable bool `json:"elb_enable"`
+	Enabled bool `json:"elb_enable"`
 	// Authentication mode
-	Authentication_type string `json:"authentication_type"`
+	AuthenticationType string `json:"authentication_type"`
 	// Load balancer object information
 	LoadBalancer LoadBalancer `json:"loadBalancer"`
 	// Start time of automatic log backup.
@@ -37,7 +37,7 @@ type LoadBalancer struct {
 	Guaranteed string `json:"guaranteed"`
 	// Resource billing information. If the value is left blank, the resource will be billed in pay-per-use mode. If the value is not left blank,
 	// the resource is billed on a yearly/monthly basis.
-	Billing_info string `json:"billing_info"`
+	BillingInfo string `json:"billing_info"`
 	// Description.
 	Description string `json:"description"`
 	// ID of the VPC to which the load balancer belongs
@@ -108,7 +108,7 @@ type ListenerIpGroup struct {
 }
 
 // This API is used to obtain information about the load balancers of a cluster.
-func Get(client *golangsdk.ServiceClient, id string) (*GetLoadBalancerInfo, error) {
+func Get(client *golangsdk.ServiceClient, id string) (*LoadBalancerResp, error) {
 	raw, err := client.Get(client.ServiceURL("clusters", id, "es-listeners"), nil, &golangsdk.RequestOpts{
 		MoreHeaders: map[string]string{
 			"Content-Type": "application/json",
@@ -118,7 +118,7 @@ func Get(client *golangsdk.ServiceClient, id string) (*GetLoadBalancerInfo, erro
 		return nil, err
 	}
 
-	var res GetLoadBalancerInfo
+	var res LoadBalancerResp
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }

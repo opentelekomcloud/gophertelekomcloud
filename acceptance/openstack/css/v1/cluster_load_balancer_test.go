@@ -28,6 +28,9 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	client, err := clients.NewCssV1Client()
 	th.AssertNoErr(t, err)
 
+	clientELB, err := clients.NewElbV3Client()
+	th.AssertNoErr(t, err)
+
 	basicOptsEnable := load_balancer.EnableLoadBalancerOpts{
 		ElbId:  elbId,
 		Agency: agency,
@@ -37,8 +40,10 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	t.Logf("Associated load balacer with CSS cluster")
 	tools.PrintResource(t, elbEnabled)
 
-	clientELB, err := clients.NewElbV3Client()
+	elbDetails, err := load_balancer.Get(client, clusterID)
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, elbDetails.Enabled, true)
+	th.AssertEquals(t, elbDetails.LoadBalancer.ProvisioningStatus, "ACTIVE")
 
 	configureListenerOpts := load_balancer.LoadBalancingListenerOpts{
 		Protocol:     "HTTPS",
@@ -54,10 +59,9 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	th.AssertNoErr(t, load_balancer.WaitForListenerStatus(client, clusterID, timeout))
 	t.Log("The load balancer listener for the CSS cluster is configured.")
 
-	elbDetails, err := load_balancer.Get(client, clusterID)
+	elbDetails, err = load_balancer.Get(client, clusterID)
 	th.AssertNoErr(t, err)
-	t.Logf("ELB Details after configuring listener:")
-	tools.PrintResource(t, elbDetails)
+	th.AssertEquals(t, len(elbDetails.Healthmonitors) > 0, true)
 
 	listenerID := elbDetails.Listener.Id
 	t.Logf("listenerID: %s", listenerID)
@@ -74,14 +78,17 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 
 	elbDetails, err = load_balancer.Get(client, clusterID)
 	th.AssertNoErr(t, err)
-	t.Logf("ELB Details after updating listener certificate:")
-	tools.PrintResource(t, elbDetails)
+	th.AssertEquals(t, elbDetails.ServerCertId, updateListenerOpts.Listener.ServerCertId)
 
 	elbDisabled, err := load_balancer.DisableLoadBalancer(client, clusterID)
 
 	th.AssertNoErr(t, err)
 	t.Log("The load balancer of the CSS cluster is disabled.")
 	tools.PrintResource(t, elbDisabled)
+
+	elbDetails, err = load_balancer.Get(client, clusterID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, elbDetails.Enabled, false)
 
 }
 

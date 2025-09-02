@@ -16,9 +16,13 @@ func WaitForListenerStatus(client *golangsdk.ServiceClient, id string, timeout i
 			if _, ok := err.(golangsdk.BaseError); ok {
 				return true, err
 			}
-			log.Printf("Error while waiting for cluster's status to change to active: %s", err)
+			log.Printf("Error while waiting for listener's status to change to online: %s", err)
 			return false, nil
 		}
+		if len(elb.Healthmonitors) == 0 {
+			return false, fmt.Errorf("healthmonitors list is empty: %v", elb.Healthmonitors)
+		}
+
 		if elb.Healthmonitors[0].OperatingStatus == "ONLINE" {
 			return true, nil
 		}
