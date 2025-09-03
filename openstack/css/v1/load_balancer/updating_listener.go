@@ -20,8 +20,8 @@ type UpdateListenerOpts struct {
 	Type string `json:"type,omitempty"`
 }
 
-// UpdatingLoadBalancingListeners will update load balancing listeners for a CSS cluster based on UpdatingListenerOpts.
-func UpdatingLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID string, listenerID string, opts UpdateListenerOpts) (*EsListenerResponse, error) {
+// UpdateLoadBalancerListener will update load balancing listeners for a CSS cluster based on UpdatingListenerOpts.
+func UpdateListener(client *golangsdk.ServiceClient, clusterID string, listenerID string, opts UpdateListenerOpts) (*UpdateListenerResponse, error) {
 
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
@@ -41,12 +41,12 @@ func UpdatingLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID s
 		return nil, err
 	}
 
-	var res EsListenerResponse
+	var res UpdateListenerResponse
 	err = extract.IntoStructPtr(raw.Body, &res, "listener")
 	return &res, err
 }
 
-type EsListenerResponse struct {
+type UpdateListenerResponse struct {
 	// These parameters are part of an EsListenerResponse object.
 	// Protocol used by the listener.
 	Protocol string `json:"protocol"`
@@ -57,15 +57,13 @@ type EsListenerResponse struct {
 	// Port used by the listener.
 	ProtocolPort int `json:"protocol_port"`
 	// Access control information of the listener object.
-	Ipgroup EsIpgroupResource `json:"ipgroup"`
-}
-
-type EsIpgroupResource struct {
-	// These parameters are part of an EsIpgroupResource object.
-	// ID of the IP address group associated with the listener.
-	IpgroupId string `json:"ipgroup_id"`
-	// Status of an access control group.
-	EnableIpgroup bool `json:"enable_ipgroup"`
-	// Type of an access control group.
-	Type string `json:"type"`
+	Ipgroup struct {
+		// These parameters are part of an EsIpgroupResource object.
+		// ID of the IP address group associated with the listener.
+		IpgroupId string `json:"ipgroup_id"`
+		// Status of an access control group.
+		EnableIpgroup bool `json:"enable_ipgroup"`
+		// Type of an access control group.
+		Type string `json:"type"`
+	} `json:"ipgroup"`
 }

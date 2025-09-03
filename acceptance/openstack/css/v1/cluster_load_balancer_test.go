@@ -45,13 +45,13 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	th.AssertEquals(t, elbDetails.Enabled, true)
 	th.AssertEquals(t, elbDetails.LoadBalancer.ProvisioningStatus, "ACTIVE")
 
-	configureListenerOpts := load_balancer.LoadBalancingListenerOpts{
+	configureListenerOpts := load_balancer.CongigureListenerOpts{
 		Protocol:     "HTTPS",
 		ProtocolPort: 81,
 		ServerCertId: createCertificate(t, clientELB),
 	}
 	defer deleteCertificate(t, clientELB, configureListenerOpts.ServerCertId)
-	configured, err := load_balancer.ConfigureLoadBalancingListeners(client, clusterID, configureListenerOpts)
+	configured, err := load_balancer.ConfigureListener(client, clusterID, configureListenerOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Response after configuring listener")
 	tools.PrintResource(t, configured)
@@ -70,7 +70,7 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	updateListenerOpts := load_balancer.UpdateListenerOpts{}
 	updateListenerOpts.Listener.ServerCertId = createCertificate(t, clientELB)
 	defer deleteCertificate(t, clientELB, updateListenerOpts.Listener.ServerCertId)
-	updated, err := load_balancer.UpdatingLoadBalancingListeners(client, clusterID, listenerID, updateListenerOpts)
+	updated, err := load_balancer.UpdateListener(client, clusterID, listenerID, updateListenerOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Response after updating listener:")
 	tools.PrintResource(t, updated)

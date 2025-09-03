@@ -6,7 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type LoadBalancingListenerOpts struct {
+type CongigureListenerOpts struct {
 	// These parameters passed to the load_balancers.ConfigureLoadBalancingListeners function.
 	// Protocol type. HTTP and HTTPS are supported.
 	Protocol string `json:"protocol" required:"true"`
@@ -22,8 +22,8 @@ type LoadBalancingListenerOpts struct {
 	Type string `json:"type,omitempty"`
 }
 
-// ConfigureLoadBalancingListeners will configure load balancing listeners for a CSS cluster based on LoadBalancingListenerOpts.
-func ConfigureLoadBalancingListeners(client *golangsdk.ServiceClient, clusterID string, opts LoadBalancingListenerOpts) (*ConfiguredListenerResp, error) {
+// ConfigureListener will configure load balancer listener for a CSS cluster based on CongigureListenerOpts.
+func ConfigureListener(client *golangsdk.ServiceClient, clusterID string, opts CongigureListenerOpts) (*ConfiguredListenerResp, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
