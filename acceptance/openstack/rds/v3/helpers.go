@@ -89,6 +89,7 @@ func CreateMySqlRDS(t *testing.T, client *golangsdk.ServiceClient, region string
 		VpcId:            vpcID,
 		SubnetId:         subnetID,
 		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
+		TimeZone:         "UTC+01:00",
 
 		Volume: &instances.Volume{
 			Type: "COMMON",
