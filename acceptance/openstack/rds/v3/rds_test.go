@@ -523,3 +523,34 @@ func TestRdsAutoScaling(t *testing.T) {
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, scaling)
 }
+
+func TestRdsTimeZone(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating RDS instance with time_zone UTC+08:00")
+
+	// Create RDSv3 instance with time_zone
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	t.Log("Verifying time_zone is set correctly in instance details")
+
+	instanceList, err := instances.List(client, instances.ListOpts{
+		Id: rds.Id,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, len(instanceList.Instances), 1)
+	th.AssertEquals(t, instanceList.Instances[0].TimeZone, "UTC+01:00")
+}
