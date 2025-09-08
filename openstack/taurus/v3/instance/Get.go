@@ -17,28 +17,29 @@ func Get(client *golangsdk.ServiceClient, instanceId string) (*TaurusDBInstance,
 }
 
 type TaurusDBInstance struct {
-	Id                string   `json:"id"`
-	Name              string   `json:"name"`
-	Alias             string   `json:"alias"`
-	Status            string   `json:"status"`
-	Type              string   `json:"type"`
-	Port              string   `json:"port"`
-	NodeCount         int      `json:"node_count"`
-	VpcId             string   `json:"vpc_id"`
-	SubnetId          string   `json:"subnet_id"`
-	SecurityGroupId   string   `json:"security_group_id"`
-	ConfigurationId   string   `json:"configuration_id"`
-	AZMode            string   `json:"az_mode"`
-	MasterAZ          string   `json:"master_az_code"`
-	TimeZone          string   `json:"time_zone"`
-	ProjectId         string   `json:"project_id"`
-	DbUserName        string   `json:"db_user_name"`
-	PublicIps         string   `json:"public_ips"`
-	PrivateIps        []string `json:"private_write_ips"`
-	Created           string   `json:"created"`
-	Updated           string   `json:"updated"`
-	MaintenanceWindow string   `json:"maintenance_window"`
-	BackupUsedSpace   float64  `json:"backup_used_space"`
+	Id                  string   `json:"id"`
+	Name                string   `json:"name"`
+	Alias               string   `json:"alias"`
+	Status              string   `json:"status"`
+	Type                string   `json:"type"`
+	Port                string   `json:"port"`
+	NodeCount           int      `json:"node_count"`
+	VpcId               string   `json:"vpc_id"`
+	SubnetId            string   `json:"subnet_id"`
+	SecurityGroupId     string   `json:"security_group_id"`
+	ConfigurationId     string   `json:"configuration_id"`
+	AZMode              string   `json:"az_mode"`
+	MasterAZ            string   `json:"master_az_code"`
+	TimeZone            string   `json:"time_zone"`
+	ProjectId           string   `json:"project_id"`
+	DbUserName          string   `json:"db_user_name"`
+	PublicIps           string   `json:"public_ips"`
+	PrivateIps          []string `json:"private_write_ips"`
+	Created             string   `json:"created"`
+	Updated             string   `json:"updated"`
+	MaintenanceWindow   string   `json:"maintenance_window"`
+	BackupUsedSpace     float64  `json:"backup_used_space"`
+	EnterpriseProjectId string   `json:"enterprise_project_id"`
 
 	Nodes          []Nodes        `json:"nodes"`
 	DataStore      DataStore      `json:"datastore"`
