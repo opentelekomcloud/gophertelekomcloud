@@ -42,6 +42,9 @@ func TestObsBucketLifecycleConfigurationBasic(t *testing.T) {
 						Expiration: obs.Expiration{
 							Days: 60,
 						},
+						AbortIncompleteMultipartUpload: obs.AbortIncompleteMultipartUpload{
+							DaysAfterInitiation: 15,
+						},
 					},
 				},
 			},

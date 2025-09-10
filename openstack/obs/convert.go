@@ -353,6 +353,13 @@ func convertNoncurrentVersionExpirationToXml(noncurrentVersionExpiration Noncurr
 	return ""
 }
 
+func convertAbortIncompleteMultipartUploadToXML(abortIncompleteMultipartUpload AbortIncompleteMultipartUpload) string {
+	if abortIncompleteMultipartUpload.DaysAfterInitiation > 0 {
+		return fmt.Sprintf("<AbortIncompleteMultipartUpload><DaysAfterInitiation>%d</DaysAfterInitiation></AbortIncompleteMultipartUpload>", abortIncompleteMultipartUpload.DaysAfterInitiation)
+	}
+	return ""
+}
+
 // ConvertLifecyleConfigurationToXml converts BucketLifecyleConfiguration value to XML data and returns it
 func ConvertLifecyleConfigurationToXml(input BucketLifecycleConfiguration, returnMd5 bool, isObs bool) (data string, md5 string) {
 	xml := make([]string, 0, 2+len(input.LifecycleRules)*9)
@@ -382,6 +389,9 @@ func ConvertLifecyleConfigurationToXml(input BucketLifecycleConfiguration, retur
 			xml = append(xml, ret)
 		}
 		if ret := convertNoncurrentVersionExpirationToXml(lifecycleRule.NoncurrentVersionExpiration); ret != "" {
+			xml = append(xml, ret)
+		}
+		if ret := convertAbortIncompleteMultipartUploadToXML(lifecycleRule.AbortIncompleteMultipartUpload); ret != "" {
 			xml = append(xml, ret)
 		}
 		xml = append(xml, "</Rule>")
