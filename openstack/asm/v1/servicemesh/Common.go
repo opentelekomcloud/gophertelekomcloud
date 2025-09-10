@@ -19,7 +19,7 @@ type MeshMetadataResponse struct {
 	// Service mesh name. Format: 1–63 characters,
 	// lowercase letters, digits, hyphens, must start with lowercase and end with letter/digit.
 	Name string `json:"name"`
-	// Service mesh description. 0–255 characters, letters/digits/underscores/hyphens only.
+	// Service mesh ID, which is unique and automatically generated after the service mesh is created. A custom value will not take effect.
 	UID string `json:"uid"`
 	// Time when the service mesh was created.
 	CreationTimestamp string `json:"creationTimestamp"`

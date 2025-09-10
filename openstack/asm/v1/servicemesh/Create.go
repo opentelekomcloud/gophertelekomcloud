@@ -32,7 +32,7 @@ type MeshSpec struct {
 	// Service mesh version.
 	Version string `json:"version" required:"true"`
 	// Extensions of the service mesh.
-	ExtendParams MeshExtendParams `json:"extendParams" required:"true"`
+	ExtendParams *MeshExtendParams `json:"extendParams" required:"true"`
 	// Whether the service mesh supports IPv6.
 	IPv6Enable bool `json:"ipv6Enable,omitempty"`
 	// Service mesh configuration.
@@ -48,24 +48,24 @@ type MeshCluster struct {
 	// Cluster ID, which is unique and can be used to query the cluster to be added.
 	ClusterID string `json:"clusterID" required:"true"`
 	// Sidecar injection configuration.
-	Injection InjectionConfig `json:"injection,omitempty"`
+	Injection *InjectionConfig `json:"injection,omitempty"`
 	// Installation configuration of service mesh components.
-	Installation InstallationConfig `json:"installation" required:"true"`
+	Installation *InstallationConfig `json:"installation" required:"true"`
 }
 
 type InjectionConfig struct {
 	// Namespaces where sidecars to be injected.
-	Namespaces Selector `json:"namespaces,omitempty"`
+	Namespaces *Selector `json:"namespaces,omitempty"`
 }
 
 type InstallationConfig struct {
 	// Nodes where service mesh components are installed.
-	Nodes Selector `json:"nodes" required:"true"`
+	Nodes *Selector `json:"nodes" required:"true"`
 }
 
 type Selector struct {
 	// Field selector.
-	FieldSelector FieldSelector `json:"fieldSelector" required:"true"`
+	FieldSelector *FieldSelector `json:"fieldSelector" required:"true"`
 }
 
 type FieldSelector struct {
@@ -79,9 +79,9 @@ type FieldSelector struct {
 
 type MeshConfig struct {
 	// Data plane configuration of the service mesh.
-	ProxyConfig ProxyConfig `json:"proxyConfig,omitempty"`
+	ProxyConfig *ProxyConfig `json:"proxyConfig,omitempty"`
 	// Observability configuration of the service mesh.
-	TelemetryConfig TelemetryConfig `json:"telemetryConfig,omitempty"`
+	TelemetryConfig *TelemetryConfig `json:"telemetryConfig,omitempty"`
 }
 
 type ProxyConfig struct {
@@ -101,7 +101,7 @@ type ProxyConfig struct {
 
 type TelemetryConfig struct {
 	// Tracing configuration, which is used to report traces in the service mesh.
-	Tracing Tracing `json:"tracing,omitempty"`
+	Tracing *Tracing `json:"tracing,omitempty"`
 }
 
 type Tracing struct {
