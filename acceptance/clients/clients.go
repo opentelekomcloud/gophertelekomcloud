@@ -44,6 +44,20 @@ func NewAutoscalingV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewASMV1Client returns a *ServiceClient for making calls
+// to the OpenStack ASM v1 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewASMV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewASMV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewBlockStorageV1Client returns a *ServiceClient for making calls
 // to the OpenStack Block Storage v1 API. An error will be returned
 // if authentication or client creation was not possible.

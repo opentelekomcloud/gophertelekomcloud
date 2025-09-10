@@ -1106,3 +1106,8 @@ func NewCCINetworkServiceV2(client *golangsdk.ProviderClient, eo golangsdk.Endpo
 	sc.ResourceBase = strings.Replace(sc.Endpoint+"apis/yangtse/v2/", "cce", "cci", 1)
 	return sc, nil
 }
+
+// NewASMV1 creates a ServiceClient that may be used to access the ASM service.
+func NewASMV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "asmv1")
+}
