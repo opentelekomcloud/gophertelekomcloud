@@ -33,14 +33,14 @@ env vars is missing but SFS Turbo test requires`)
 		Description:      "some interesting description",
 	}
 
-	share, err := shares.Create(client, createOpts).Extract()
+	share, err := shares.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Waiting for SFS Turbo %s to be active", share.ID)
 	err = waitForShareToActive(client, share.ID, 600)
 	th.AssertNoErr(t, err)
 
-	newShare, err := shares.Get(client, share.ID).Extract()
+	newShare, err := shares.Get(client, share.ID)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Created SFS turbo: %s", newShare.ID)
@@ -51,7 +51,7 @@ env vars is missing but SFS Turbo test requires`)
 func deleteShare(t *testing.T, client *golangsdk.ServiceClient, shareID string) {
 	t.Logf("Attempting to delete SFS Turbo: %s", shareID)
 
-	err := shares.Delete(client, shareID).ExtractErr()
+	err := shares.Delete(client, shareID)
 	th.AssertNoErr(t, err)
 
 	err = waitForShareToDelete(client, shareID, 600)
@@ -69,13 +69,13 @@ func expandShare(t *testing.T, client *golangsdk.ServiceClient, shareID string) 
 		},
 	}
 
-	err := shares.Expand(client, shareID, expandOpts).ExtractErr()
+	err := shares.Expand(client, shareID, expandOpts)
 	th.AssertNoErr(t, err)
 
 	err = waitForShareSubStatusSuccess(client, shareID, 600)
 	th.AssertNoErr(t, err)
 
-	newShare, err := shares.Get(client, shareID).Extract()
+	newShare, err := shares.Get(client, shareID)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Expanded SFS turbo: %s", shareID)
@@ -92,13 +92,13 @@ func changeShareSG(t *testing.T, client *golangsdk.ServiceClient, shareID string
 		},
 	}
 
-	err := shares.ChangeSG(client, shareID, changeSGOpts).ExtractErr()
+	err := shares.ChangeSG(client, shareID, changeSGOpts)
 	th.AssertNoErr(t, err)
 
 	err = waitForShareSubStatusSuccess(client, shareID, 600)
 	th.AssertNoErr(t, err)
 
-	newShare, err := shares.Get(client, shareID).Extract()
+	newShare, err := shares.Get(client, shareID)
 	th.AssertNoErr(t, err)
 
 	t.Logf("Change SG SFS turbo: %s", shareID)
@@ -108,7 +108,7 @@ func changeShareSG(t *testing.T, client *golangsdk.ServiceClient, shareID string
 
 func waitForShareToActive(client *golangsdk.ServiceClient, shareID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		share, err := shares.Get(client, shareID).Extract()
+		share, err := shares.Get(client, shareID)
 		if err != nil {
 			return false, err
 		}
@@ -122,7 +122,7 @@ func waitForShareToActive(client *golangsdk.ServiceClient, shareID string, secs 
 
 func waitForShareToDelete(client *golangsdk.ServiceClient, shareID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		_, err := shares.Get(client, shareID).Extract()
+		_, err := shares.Get(client, shareID)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				return true, nil
@@ -135,7 +135,7 @@ func waitForShareToDelete(client *golangsdk.ServiceClient, shareID string, secs 
 
 func waitForShareSubStatusSuccess(client *golangsdk.ServiceClient, shareID string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		share, err := shares.Get(client, shareID).Extract()
+		share, err := shares.Get(client, shareID)
 		if err != nil {
 			return false, err
 		}

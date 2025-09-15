@@ -15,10 +15,7 @@ func TestSFSTurboList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := shares.ListOpts{}
-	allSharesPages, err := shares.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	sfsTurboShares, err := shares.ExtractTurbos(allSharesPages)
+	sfsTurboShares, err := shares.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, share := range sfsTurboShares {
@@ -42,7 +39,7 @@ func TestSFSTurboLifecycle(t *testing.T) {
 	th.AssertEquals(t, "1000.00", share.Size)
 	share = changeShareSG(t, client, share.ID, secGroupID)
 
-	newShare, err := shares.Get(client, share.ID).Extract()
+	newShare, err := shares.Get(client, share.ID)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, newShare)
 }
