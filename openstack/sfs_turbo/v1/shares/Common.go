@@ -1,7 +1,7 @@
 package shares
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -50,6 +50,8 @@ type Turbo struct {
 	AvailCapacity string `json:"avail_capacity"`
 	// bandwidth is returned for an enhanced file system
 	ExpandType string `json:"expand_type"`
+	// File system bandwidth.
+	HpcBW string `json:"hpc_bw"`
 	// The ID of the encryption key
 	CryptKeyID string `json:"crypt_key_id"`
 	// The billing mode, 0 indicates pay-per-use, 1 indicates yearly/monthly subscription
