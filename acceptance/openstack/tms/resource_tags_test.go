@@ -96,18 +96,17 @@ func TestTMSRecourceTagsLifecycle(t *testing.T) {
 
 	t.Log("Attempting to list all TMS Resource Tag keys")
 	keys, err := rt.ListKeys(client, rt.ListKeysOpts{
-		RegionId: clientEvs.ProjectID,
+		RegionId: clientEvs.RegionID,
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, len(keys) > 0)
 
-	// Always bad request, api broken
-	// values, err := rt.ListValues(client, rt.ListValueOpts{
-	// 	RegionId: clientEvs.ProjectID,
-	// 	Key: listTags[0].Key,
-	// })
-	// th.AssertNoErr(t, err)
-	// th.AssertEquals(t, true, len(values) > 0)
+	values, err := rt.ListValues(client, rt.ListValueOpts{
+		RegionId: clientEvs.RegionID,
+		Key:      listTags[0].Key,
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, len(values) > 0)
 }
 
 func TestTMSQuotaList(t *testing.T) {
