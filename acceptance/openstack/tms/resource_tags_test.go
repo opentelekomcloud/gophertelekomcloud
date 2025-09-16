@@ -14,9 +14,9 @@ import (
 )
 
 func TestTMSRecourceTagsLifecycle(t *testing.T) {
-	// if os.Getenv("RUN_TMS_TAGS") == "" {
-	// 	t.Skip("not for CI")
-	// }
+	if os.Getenv("RUN_TMS_TAGS") == "" {
+		t.Skip("not for CI")
+	}
 	client, err := clients.NewTmsV1Client()
 	th.AssertNoErr(t, err)
 
