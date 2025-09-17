@@ -67,9 +67,7 @@ type RestoreToNewOpts struct {
 	// Specifies the restoration information.
 	RestorePoint RestorePoint `json:"restore_point" required:"true"`
 	// This parameter applies only to Microsoft SQL Server DB instances.
-	Collation string `json:"collation,omitempty"`
-	// Specifies the UTC time zone.
-	TimeZone          string           `json:"time_zone,omitempty"`
+	Collation         string           `json:"collation,omitempty"`
 	UnchangeableParam *instances.Param `json:"unchangeable_param,omitempty"`
 }
 
