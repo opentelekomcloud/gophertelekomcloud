@@ -66,7 +66,7 @@ type CreateRdsOpts struct {
 	// This parameter applies only to Microsoft SQL Server DB instances.
 	Collation string `json:"collation,omitempty"`
 	// Specifies the UTC time zone.
-	TimeZone          string `json:"time_zone,omitempty"`
+	TimeZone string `json:"time_zone,omitempty"`
 	UnchangeableParam *Param `json:"unchangeable_param,omitempty"`
 }
 
