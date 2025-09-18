@@ -64,7 +64,9 @@ type CreateRdsOpts struct {
 	// Specifies the billing information, which is pay-per-use. By default, pay-per-use is used.
 	ChargeInfo *ChargeInfo `json:"charge_info,omitempty"`
 	// This parameter applies only to Microsoft SQL Server DB instances.
-	Collation         string `json:"collation,omitempty"`
+	Collation string `json:"collation,omitempty"`
+	// Specifies the UTC time zone.
+	TimeZone string `json:"time_zone,omitempty"`
 	UnchangeableParam *Param `json:"unchangeable_param,omitempty"`
 }
 
@@ -187,4 +189,6 @@ type Instance struct {
 	ChargeInfo ChargeInfo `json:"charge_info"`
 	// Indicates the Collation set for Microsoft SQL Server.
 	Collation string `json:"collation"`
+	// Indicates the UTC time zone of the DB instance.
+	TimeZone string `json:"time_zone"`
 }
