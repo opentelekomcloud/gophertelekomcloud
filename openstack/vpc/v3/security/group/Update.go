@@ -29,7 +29,7 @@ type SecurityGroupUpdateOptions struct {
 }
 
 // This function is used to update a security group.
-func Update(client *golangsdk.ServiceClient, groupId string, opts CreateOpts) (*SecurityGroup, error) {
+func Update(client *golangsdk.ServiceClient, groupId string, opts UpdateOpts) (*SecurityGroup, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
