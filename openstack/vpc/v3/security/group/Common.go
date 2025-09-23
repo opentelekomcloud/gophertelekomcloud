@@ -1,0 +1,102 @@
+package group
+
+// COMMON RESPONSE STRUCTS
+
+type SecurityGroupResponse struct {
+	// Request ID.
+	RequestID string `json:"request_id"`
+	// Response body for creating a security group.
+	SecurityGroup SecurityGroup `json:"security_group"`
+}
+
+type SecurityGroup struct {
+	// Security group ID, which uniquely identifies the security group.
+	// The value is in UUID format with hyphens (-).
+	ID string `json:"id"`
+	// Security group name.
+	// The value can contain 1 to 64 characters, including letters, digits, underscores (_), hyphens (-), and periods (.).
+	Name string `json:"name"`
+	// Description about the security group.
+	// The value can contain up to 255 characters and cannot contain angle brackets (< or >).
+	Description string `json:"description"`
+	// ID of the project to which the security group belongs.
+	ProjectID string `json:"project_id"`
+	// Time when the security group was created.
+	// The value is a UTC time in the format of yyyy-MM-ddTHH:mm:ssZ.
+	CreatedAt string `json:"created_at"`
+	// Time when the security group was updated.
+	// The value is a UTC time in the format of yyyy-MM-ddTHH:mm:ssZ.
+	UpdatedAt string `json:"updated_at"`
+	// ID of the enterprise project to which the security group belongs.
+	// The project ID can be 0 or a string that contains a maximum of 36 characters in UUID format with hyphens (-). 0 indicates the default enterprise project.
+	EnterpriseProjectID string `json:"enterprise_project_id"`
+	// Security group tags. For details, see the tag objects.
+	// Value range: 0 to 20 key-value pairs.
+	Tags []Tag `json:"tags"`
+	// Security group rules.
+	SecurityGroupRules []SecurityGroupRule `json:"security_group_rules"`
+}
+
+type Tag struct {
+	// Tag key.
+	// Value ranges:
+	// * Each key can contain up to 36 Unicode characters and cannot be left blank.
+	// * Each key value of a resource must be unique.
+	// * The value can contain: Letters, Digits, Special characters: underscores (_), at signs (@), and hyphens (-).
+	Key string `json:"key"`
+	// Tag value.
+	// Value range:
+	// * Each value can contain up to 43 Unicode characters and can be left blank.
+	// * The value can contain: Letters, Digits, Special characters underscore (_), at signs (@), and hyphen (-).
+	Value string `json:"value"`
+}
+
+type SecurityGroupRule struct {
+	// Security group rule ID, which uniquely identifies the security group rule.
+	// The value is in UUID format with hyphens (-).
+	ID string `json:"id"`
+	// Provides supplementary information about the security group rule.
+	// The value can contain no more than 255 characters and cannot contain angle brackets (< or >).
+	Description string `json:"description"`
+	// ID of the security group to which the security group rule belongs.
+	SecurityGroupID string `json:"security_group_id"`
+	// Inbound or outbound direction of a security group rule.
+	// The value can be: ingress or egress.
+	Direction string `json:"direction"`
+	// Protocol type.
+	// The value can be icmp, tcp, udp, icmpv6, or an IP number.
+	// If protocol is left blank, all protocols are supported.
+	Protocol string `json:"protocol"`
+	// IP version.
+	// The value can be IPv4 or IPv6.
+	// If you do not set this parameter, IPv4 is used by default.
+	Ethertype string `json:"ethertype"`
+	// Port or port range. Can be a single port (80), a port range (1-30), or non-consecutive ports separated by commas (22,3389,80).
+	Multiport string `json:"multiport"`
+	// Action of the security group rule.
+	// The value can be: allow or deny.
+	// The default value is deny.
+	Action string `json:"action"`
+	// Rule priority.
+	// The value is from 1 to 100. The value 1 indicates the highest priority.
+	Priority int `json:"priority"`
+	// Time when the security group rule is created.
+	// UTC time in the format of yyyy-MM-ddTHH:mm:ssZ.
+	CreatedAt string `json:"created_at"`
+	// Time when the security group rule is updated.
+	// UTC time in the format of yyyy-MM-ddTHH:mm:ssZ.
+	UpdatedAt string `json:"updated_at"`
+	// ID of the project to which the security group rule belongs.
+	ProjectID string `json:"project_id"`
+	// ID of the remote security group, which allows or denies traffic to and from the security group.
+	// Value range: ID of an existing security group.
+	// Mutually exclusive with remote_ip_prefix and remote_address_group_id.
+	RemoteGroupID string `json:"remote_group_id"`
+	// Remote IP address or CIDR block.
+	// If direction is egress: source IP; if ingress: destination IP.
+	// Mutually exclusive with remote_group_id and remote_address_group_id.
+	RemoteIPPrefix string `json:"remote_ip_prefix"`
+	// ID of the remote IP address group.
+	// Mutually exclusive with remote_ip_prefix and remote_group_id.
+	RemoteAddressGroupID string `json:"remote_address_group_id"`
+}
