@@ -45,7 +45,7 @@ func TestCSSLoadBalancerFullLifecycle(t *testing.T) {
 	th.AssertEquals(t, elbDetails.Enabled, true)
 	th.AssertEquals(t, elbDetails.LoadBalancer.ProvisioningStatus, "ACTIVE")
 
-	configureListenerOpts := load_balancer.CongigureListenerOpts{
+	configureListenerOpts := load_balancer.ConfigureListenerOpts{
 		Protocol:     "HTTPS",
 		ProtocolPort: 81,
 		ServerCertId: createCertificate(t, clientELB),
