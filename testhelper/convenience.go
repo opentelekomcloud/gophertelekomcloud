@@ -221,6 +221,15 @@ func AssertEquals(t *testing.T, expected, actual interface{}) {
 	}
 }
 
+// AssertNotEquals compares two arbitrary values and performs a comparison. If the
+// comparison fails, a fatal error is raised that will fail the test
+func AssertNotEquals(t *testing.T, expected, actual interface{}) {
+	t.Helper()
+	if expected == actual {
+		logFatal(t, fmt.Sprintf("expected NOT %s but got %s", green(expected), yellow(actual)))
+	}
+}
+
 // CheckEquals is similar to AssertEquals, except with a non-fatal error
 func CheckEquals(t *testing.T, expected, actual interface{}) {
 	t.Helper()
