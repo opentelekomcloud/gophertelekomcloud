@@ -3,6 +3,7 @@ package group
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type ListQueryParams struct {
@@ -79,7 +80,7 @@ type SecurityGroupListObject struct {
 	EnterpriseProjectID string `json:"enterprise_project_id"`
 	// Security group tags. For details, see the tag objects.
 	// Value range: 0 to 20 key-value pairs.
-	Tags []Tag `json:"tags"`
+	Tags []tags.ResourceTag `json:"tags"`
 }
 
 type PageInfo struct {

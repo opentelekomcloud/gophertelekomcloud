@@ -1,5 +1,7 @@
 package group
 
+import "github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
+
 // COMMON RESPONSE STRUCTS
 
 type SecurityGroupResponse struct {
@@ -32,23 +34,9 @@ type SecurityGroup struct {
 	EnterpriseProjectID string `json:"enterprise_project_id"`
 	// Security group tags. For details, see the tag objects.
 	// Value range: 0 to 20 key-value pairs.
-	Tags []Tag `json:"tags"`
+	Tags []tags.ResourceTag `json:"tags"`
 	// Security group rules.
 	SecurityGroupRules []SecurityGroupRule `json:"security_group_rules"`
-}
-
-type Tag struct {
-	// Tag key.
-	// Value ranges:
-	// * Each key can contain up to 36 Unicode characters and cannot be left blank.
-	// * Each key value of a resource must be unique.
-	// * The value can contain: Letters, Digits, Special characters: underscores (_), at signs (@), and hyphens (-).
-	Key string `json:"key"`
-	// Tag value.
-	// Value range:
-	// * Each value can contain up to 43 Unicode characters and can be left blank.
-	// * The value can contain: Letters, Digits, Special characters underscore (_), at signs (@), and hyphen (-).
-	Value string `json:"value"`
 }
 
 type SecurityGroupRule struct {

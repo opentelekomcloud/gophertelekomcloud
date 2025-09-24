@@ -4,6 +4,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
 
 type CreateOpts struct {
@@ -32,19 +33,7 @@ type SecurityGroupOptions struct {
 	// 0 indicates the default enterprise project.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 	// Security group tags. Value range: 0 to 20 key-value pairs.
-	Tags []TagOption `json:"tags,omitempty"`
-}
-
-type TagOption struct {
-	// Tag key.
-	// - Can contain up to 36 Unicode characters and cannot be left blank.
-	// - Each key value of a resource must be unique.
-	// - Value can contain: Letters, Digits, and special characters (_ @ -).
-	Key string `json:"key" required:"true"`
-	// Tag value.
-	// - Can contain up to 43 Unicode characters and can be left blank.
-	// - Value can contain: Letters, Digits, and special characters (_ @ -).
-	Value string `json:"value" required:"true"`
+	Tags []tags.ResourceTag `json:"tags,omitempty"`
 }
 
 // This function is used to create a security group.
