@@ -318,6 +318,14 @@ func updateDdsInstance(t *testing.T, client *golangsdk.ServiceClient, instance i
 	th.AssertNoErr(t, err)
 	err = waitForJobCompleted(client, 600, *job)
 	th.AssertNoErr(t, err)
+
+	t.Log("Modify instance maintenance window")
+	err = instances.ModifyMaintenanceWindow(client, instances.ModifyMaintenanceWindowOpt{
+		InstanceId: instance.Id,
+		StartTime:  "14:00",
+		EndTime:    "15:00",
+	})
+	th.AssertNoErr(t, err)
 }
 
 func createDdsSingleInstance(t *testing.T, client *golangsdk.ServiceClient) *instances.Instance {
