@@ -31,11 +31,14 @@ type CreateOpts struct {
 	InitTimeout         *int                  `json:"initializer_timeout,omitempty"`
 	PreStopHandler      string                `json:"pre_stop_handler,omitempty"`
 	PreStopTimeout      *int                  `json:"pre_stop_timeout,omitempty"`
+	EnterpriseProjectId string                `json:"enterprise_project_id,omitempty"`
 	Type                string                `json:"type,omitempty"`
 	LogConfig           *FuncLogConfig        `json:"log_config,omitempty"`
 	NetworkController   *NetworkControlConfig `json:"network_controller,omitempty"`
 	IsStatefulFunction  *bool                 `json:"is_stateful_function,omitempty"`
 	EnableDynamicMemory *bool                 `json:"enable_dynamic_memory,omitempty"`
+	LtsCustomTag        map[string]string     `json:"lts_custom_tag,omitempty"`
+	EnableLtsLog        *bool                 `json:"enable_lts_log,omitempty"`
 }
 
 type FuncVpc struct {
@@ -160,6 +163,7 @@ type FuncGraph struct {
 	LogStreamID              string               `json:"log_stream_id"`
 	Type                     string               `json:"type"`
 	EnableDynamicMemory      bool                 `json:"enable_dynamic_memory"`
+	EnterpriseProjectId      string               `json:"enterprise_project_id"`
 	IsStatefulFunction       bool                 `json:"is_stateful_function"`
 	CustomImage              CustomImage          `json:"custom_image"`
 	IsBridgeFunction         bool                 `json:"is_bridge_function"`
@@ -174,6 +178,8 @@ type FuncGraph struct {
 	EnableAuthInHeader       bool                 `json:"enable_auth_in_header"`
 	ReservedInstanceIdleMode bool                 `json:"reserved_instance_idle_mode"`
 	PeeringCIDR              string               `json:"peering_cidr"`
+	LtsCustomTag             map[string]string    `json:"lts_custom_tag"`
+	EnableLtsLog             *bool                `json:"enable_lts_log"`
 }
 
 type StrategyConfig struct {

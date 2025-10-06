@@ -30,6 +30,7 @@ type UpdateFuncMetadataOpts struct {
 	PreStopHandler       string                `json:"pre_stop_handler,omitempty"`
 	PreStopTimeout       *int                  `json:"pre_stop_timeout,omitempty"`
 	EphemeralStorage     *int                  `json:"ephemeral_storage,omitempty"`
+	EnterpriseProjectId  string                `json:"enterprise_project_id,omitempty"`
 	LogConfig            *FuncLogConfig        `json:"log_config,omitempty"`
 	NetworkController    *NetworkControlConfig `json:"network_controller,omitempty"`
 	IsStatefulFunction   *bool                 `json:"is_stateful_function,omitempty"`
@@ -42,6 +43,8 @@ type UpdateFuncMetadataOpts struct {
 	EnableClassIsolation *bool                 `json:"enable_class_isolation,omitempty"`
 	GpuType              string                `json:"gpu_type,omitempty"`
 	PeeringCIDR          string                `json:"peering_cidr,omitempty"`
+	LtsCustomTag         map[string]string     `json:"lts_custom_tag"`
+	EnableLtsLog         *bool                 `json:"enable_lts_log"`
 }
 
 func UpdateFuncMetadata(client *golangsdk.ServiceClient, opts UpdateFuncMetadataOpts) (*FuncGraph, error) {
