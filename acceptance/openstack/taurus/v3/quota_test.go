@@ -11,6 +11,7 @@ import (
 )
 
 func TestProjectQuotasList(t *testing.T) {
+	t.Skip("EPS is not available on acceptance test tenant")
 	client, err := clients.NewTaurusDBV3Client()
 	th.AssertNoErr(t, err)
 
@@ -21,6 +22,7 @@ func TestProjectQuotasList(t *testing.T) {
 }
 
 func TestQuotasLifecycle(t *testing.T) {
+	t.Skip("EPS is not available on acceptance test tenant")
 	client, err := clients.NewTaurusDBV3Client()
 	th.AssertNoErr(t, err)
 
