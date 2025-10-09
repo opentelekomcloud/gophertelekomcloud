@@ -171,3 +171,29 @@ func TestTaurusReadReplicaLifecycle(t *testing.T) {
 		th.AssertNoErr(t, job.WaitForJobSuccess(client, 600, *deleteNodeJob))
 	})
 }
+
+func TestTaurusListDatastores(t *testing.T) {
+	client, err := clients.NewTaurusDBV3Client()
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to list taurus db data stores")
+	listResp, err := instance.ListDatastores(client, "gaussdb-mysql")
+	th.AssertNoErr(t, err)
+
+	tools.PrintResource(t, listResp)
+}
+
+func TestTaurusListFlavors(t *testing.T) {
+	client, err := clients.NewTaurusDBV3Client()
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to list taurus db flavors")
+	flavorOpts := instance.ListFlavorsOpts{
+		AvailabilityZoneMode: "multi",
+		DatabaseName:         "gaussdb-mysql",
+	}
+	listResp, err := instance.ListFlavors(client, flavorOpts)
+	th.AssertNoErr(t, err)
+
+	tools.PrintResource(t, listResp[0])
+}
