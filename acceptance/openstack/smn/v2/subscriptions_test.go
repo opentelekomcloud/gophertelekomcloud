@@ -19,6 +19,9 @@ func TestTopicSubscriptionWorkflow(t *testing.T) {
 	createOpts := subscriptions.CreateOpts{
 		Endpoint: "example@email.com",
 		Protocol: "email",
+		Extension: &subscriptions.SubscriptionExtension{
+			Header: map[string]string{"Content-Type": "application/json"},
+		},
 	}
 
 	subscription, err := subscriptions.Create(client, createOpts, topic)
