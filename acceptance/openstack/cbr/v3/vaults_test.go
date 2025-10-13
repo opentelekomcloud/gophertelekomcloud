@@ -110,6 +110,11 @@ func TestVaultResources(t *testing.T) {
 }
 
 func TestVaultPolicy(t *testing.T) {
+	repPolicyDestProjectId := os.Getenv("REPLICATION_POLICY_DEST_PROJECT_ID")
+	repPolicyDestRegion := os.Getenv("REPLICATION_POLICY_DEST_REGION")
+	repPolicyDestVaultId := os.Getenv("REPLICATION_VAULT_ID")
+	fmt.Print("If you want to RUN replication policy part please set next variables: REPLICATION_POLICY_DEST_PROJECT_ID, REPLICATION_POLICY_DEST_REGION and REPLICATION_VAULT_ID")
+
 	client, err := clients.NewCbrV3Client()
 	th.AssertNoErr(t, err)
 
@@ -132,10 +137,6 @@ func TestVaultPolicy(t *testing.T) {
 	})
 	iTrue := true
 
-	repPolicyDestProjectId := os.Getenv("REPLICATION_POLICY_DEST_PROJECT_ID")
-	repPolicyDestRegion := os.Getenv("REPLICATION_POLICY_DEST_REGION")
-	repPolicyDestVaultId := os.Getenv("REPLICATION_VAULT_ID")
-	fmt.Printf("Ror running replication policy part please set next variables: REPLICATION_POLICY_DEST_PROJECT_ID, REPLICATION_POLICY_DEST_REGION and REPLICATION_VAULT_ID")
 	if repPolicyDestProjectId != "" && repPolicyDestRegion != "" && repPolicyDestVaultId != "" {
 		policyRep, err := policies.Create(client, policies.CreateOpts{
 			Name: "test-vault-policy-rep",
