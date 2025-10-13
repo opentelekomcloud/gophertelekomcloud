@@ -1,6 +1,8 @@
 package v3
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -114,7 +116,7 @@ func TestVaultPolicy(t *testing.T) {
 	opts := vaults.CreateOpts{
 		Billing: &vaults.BillingCreate{
 			ConsistentLevel: "crash_consistent",
-			ObjectType:      "disk",
+			ObjectType:      "server",
 			ProtectType:     "backup",
 			Size:            100,
 		},
@@ -128,8 +130,48 @@ func TestVaultPolicy(t *testing.T) {
 	t.Cleanup(func() {
 		th.AssertNoErr(t, vaults.Delete(client, vault.ID))
 	})
-
 	iTrue := true
+
+	repPolicyDestProjectId := os.Getenv("REPLICATION_POLICY_DEST_PROJECT_ID")
+	repPolicyDestRegion := os.Getenv("REPLICATION_POLICY_DEST_REGION")
+	repPolicyDestVaultId := os.Getenv("REPLICATION_VAULT_ID")
+	fmt.Printf("Ror running replication policy part please set next variables: REPLICATION_POLICY_DEST_PROJECT_ID, REPLICATION_POLICY_DEST_REGION and REPLICATION_VAULT_ID")
+	if repPolicyDestProjectId != "" && repPolicyDestRegion != "" && repPolicyDestVaultId != "" {
+		policyRep, err := policies.Create(client, policies.CreateOpts{
+			Name: "test-vault-policy-rep",
+			OperationDefinition: &policies.PolicyODCreate{
+				DailyBackups:         1,
+				WeekBackups:          2,
+				YearBackups:          3,
+				MonthBackups:         4,
+				MaxBackups:           10,
+				Timezone:             "UTC+03:00",
+				DestinationProjectId: repPolicyDestProjectId,
+				DestinationRegion:    repPolicyDestRegion,
+			},
+			Trigger: &policies.Trigger{
+				Properties: policies.TriggerProperties{
+					Pattern: []string{"FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;BYHOUR=14;BYMINUTE=00"},
+				},
+			},
+			Enabled:       &iTrue,
+			OperationType: "replication",
+		})
+		th.AssertNoErr(t, err)
+
+		t.Cleanup(func() {
+			th.AssertNoErr(t, policies.Delete(client, policyRep.ID))
+		})
+
+		bindRep, err := vaults.BindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policyRep.ID, DestinationVaultId: repPolicyDestVaultId})
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, policyRep.ID, bindRep.PolicyID)
+
+		unbindRep, err := vaults.UnbindPolicy(client, vault.ID, vaults.BindPolicyOpts{PolicyID: policyRep.ID})
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, policyRep.ID, unbindRep.PolicyID)
+	}
+
 	policy, err := policies.Create(client, policies.CreateOpts{
 		Name: "test-vault-policy",
 		OperationDefinition: &policies.PolicyODCreate{

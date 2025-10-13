@@ -7,7 +7,8 @@ import (
 )
 
 type BindPolicyOpts struct {
-	PolicyID string `json:"policy_id"`
+	PolicyID           string `json:"policy_id"`
+	DestinationVaultId string `json:"destination_vault_id,omitempty"`
 }
 
 func BindPolicy(client *golangsdk.ServiceClient, vaultID string, opts BindPolicyOpts) (*PolicyBinding, error) {
