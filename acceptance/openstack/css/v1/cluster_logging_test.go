@@ -40,6 +40,7 @@ func TestCSSLoggingFullLifecycle(t *testing.T) {
 	}
 
 	i, err := strconv.Atoi(keepDays)
+	th.AssertNoErr(t, err)
 
 	client, err := clients.NewCssV1Client()
 	th.AssertNoErr(t, err)
@@ -167,6 +168,7 @@ func TestEnableLogSwitch(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	err = logs.EnableAutomaticBackups(client, clusterID, automaticLogBackupOpts)
+	th.AssertNoErr(t, err)
 
 	err = logs.DisableAutomaticBackups(client, clusterID)
 	th.AssertNoErr(t, err)
@@ -193,6 +195,7 @@ func TestEnableLogIngestion(t *testing.T) {
 	}
 
 	i, err := strconv.Atoi(keepDays)
+	th.AssertNoErr(t, err)
 
 	logSwitchOpts := logs.LogsOpts{
 		IndexPrefix:     indexPrefix,
@@ -265,6 +268,7 @@ func TestUpdateCSSLoggingRealTimeConfigurations(t *testing.T) {
 	}
 
 	i, err := strconv.Atoi(keepDays)
+	th.AssertNoErr(t, err)
 
 	client, err := clients.NewCssV1Client()
 	th.AssertNoErr(t, err)
