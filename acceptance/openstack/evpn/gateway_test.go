@@ -8,7 +8,10 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/er"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/instance"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/evpn/v5/gateway"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/eips"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/subnets"
@@ -33,7 +36,7 @@ func TestGatewaysAZsList(t *testing.T) {
 	tools.PrintResource(t, azs)
 }
 
-func TestGatewayVPCLifecycle(t *testing.T) {
+func TestGatewayLifecycle(t *testing.T) {
 	t.Skip("unstable creation of gateway")
 	subnetId := os.Getenv("OS_SUBNET_ID")
 	vpcId := os.Getenv("OS_VPC_ID")
@@ -159,4 +162,90 @@ func WaitForGatewayDeleted(c *golangsdk.ServiceClient, id string, secs int) erro
 		}
 		return false, nil
 	})
+}
+
+func TestGatewayWithERLifecycle(t *testing.T) {
+	// t.Skip("unstable creation of gateway")
+	subnetId := os.Getenv("OS_SUBNET_ID")
+	vpcId := os.Getenv("OS_VPC_ID")
+
+	if subnetId == "" && vpcId == "" {
+		t.Skip("`OS_SUBNET_ID` and `OS_VPC_ID` and needs to be defined for test")
+	}
+
+	clientER, err := clients.NewERClient()
+	th.AssertNoErr(t, err)
+	routerName := tools.RandomString("acctest_er_router-", 4)
+
+	erRouter, err := erRouterCreate(t, routerName, clientER)
+	th.AssertNoErr(t, err)
+
+	clientEVPN, err := clients.NewEVPNClient()
+	th.AssertNoErr(t, err)
+
+	clientNetV2, err := clients.NewNetworkV2Client()
+	th.AssertNoErr(t, err)
+
+	subnet, err := subnets.Get(clientNetV2, subnetId).Extract()
+	th.AssertNoErr(t, err)
+
+	name := tools.RandomString("acc_evpn_gateway_", 5)
+	cOpts := gateway.CreateOpts{
+		Name:                name,
+		AttachmentType:      "er",
+		ErId:                erRouter.Instance.ID,
+		NetworkType:         "private",
+		AccessVpcId:         vpcId,
+		AccessSubnetId:      subnet.NetworkID,
+		AccessPrivateIp1:    "10.0.0.10",
+		AccessPrivateIp2:    "10.0.0.11",
+		AvailabilityZoneIds: []string{"eu-de-01", "eu-de-02"},
+	}
+	t.Logf("Attempting to CREATE Enterprise VPN Gateway: %s", name)
+	gw, err := gateway.Create(clientEVPN, cOpts)
+	th.AssertNoErr(t, err)
+	th.AssertNoErr(t, WaitForGatewayActive(clientEVPN, gw.ID, 800))
+	th.AssertEquals(t, name, gw.Name)
+	t.Cleanup(func() {
+		t.Logf("Attempting to DELETE Enterprise VPN Gateway: %s", gw.ID)
+		th.AssertNoErr(t, gateway.Delete(clientEVPN, gw.ID))
+		th.AssertNoErr(t, WaitForGatewayDeleted(clientEVPN, gw.ID, 800))
+	})
+	t.Logf("Attempting to GET Enterprise VPN Gateway: %s", gw.ID)
+	gwGet, err := gateway.Get(clientEVPN, gw.ID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, len(gwGet.ErAttachmentId) > 0)
+}
+
+func erRouterCreate(t *testing.T, routerName string, c *golangsdk.ServiceClient) (*instance.RouterInstanceResp, error) {
+	createOpts := instance.CreateOpts{
+		Name:                        routerName,
+		Description:                 "terraform created enterprise router",
+		Asn:                         64512,
+		EnableDefaultAssociation:    pointerto.Bool(true),
+		EnableDefaultPropagation:    pointerto.Bool(true),
+		AutoAcceptSharedAttachments: pointerto.Bool(true),
+		AvailabilityZoneIDs: []string{
+			"eu-de-01",
+			"eu-de-02",
+		},
+	}
+
+	t.Logf("Attempting to create enterprise router")
+
+	createResp, err := instance.Create(c, createOpts)
+	th.AssertNoErr(t, err)
+
+	err = er.WaitForInstanceAvailable(c, 100, createResp.Instance.ID)
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, createOpts.Name, createResp.Instance.Name)
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete enterprise router")
+		err = instance.Delete(c, createResp.Instance.ID)
+		th.AssertNoErr(t, err)
+		err = er.WaitForInstanceDeleted(c, 500, createResp.Instance.ID)
+	})
+	return createResp, err
 }

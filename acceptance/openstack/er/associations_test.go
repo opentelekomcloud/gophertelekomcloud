@@ -39,14 +39,14 @@ func TestERAssociationsLifeCycle(t *testing.T) {
 	createResp, err := instance.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
-	err = waitForInstanceAvailable(client, 100, createResp.Instance.ID)
+	err = WaitForInstanceAvailable(client, 100, createResp.Instance.ID)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete enterprise router")
 		err = instance.Delete(client, createResp.Instance.ID)
 		th.AssertNoErr(t, err)
-		err = waitForInstanceDeleted(client, 500, createResp.Instance.ID)
+		err = WaitForInstanceDeleted(client, 500, createResp.Instance.ID)
 	})
 
 	createRouteTableOpts := route_table.CreateOpts{
