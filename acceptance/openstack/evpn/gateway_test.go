@@ -165,7 +165,7 @@ func WaitForGatewayDeleted(c *golangsdk.ServiceClient, id string, secs int) erro
 }
 
 func TestGatewayWithERLifecycle(t *testing.T) {
-	// t.Skip("unstable creation of gateway")
+	t.Skip("unstable creation of gateway")
 	subnetId := os.Getenv("OS_SUBNET_ID")
 	vpcId := os.Getenv("OS_VPC_ID")
 
