@@ -81,7 +81,7 @@ func TestFunctionGraphLifecycle(t *testing.T) {
 			MaxInstanceNum: 200,
 		})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, updateFuncInstance.StrategyConfig.Concurrency, 200)
+	th.AssertEquals(t, *updateFuncInstance.StrategyConfig.Concurrency, 200)
 
 	// API not registered
 	// err = function.UpdateStatus(client, funcUrn, "true")

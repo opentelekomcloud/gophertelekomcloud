@@ -183,8 +183,8 @@ type FuncGraph struct {
 }
 
 type StrategyConfig struct {
-	Concurrency   int `json:"concurrency"`
-	ConcurrentNum int `json:"concurrent_num"`
+	Concurrency   *int `json:"concurrency"`
+	ConcurrentNum int  `json:"concurrent_num"`
 }
 
 type Dependency struct {
