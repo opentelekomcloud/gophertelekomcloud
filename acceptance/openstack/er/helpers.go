@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/er/v3/instance"
 )
 
-func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
+func WaitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		erInstance, err := instance.Get(client, instanceID)
 		if err != nil {
@@ -18,7 +18,7 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 	})
 }
 
-func waitForInstanceDeleted(client *golangsdk.ServiceClient, secs int, instanceID string) error {
+func WaitForInstanceDeleted(client *golangsdk.ServiceClient, secs int, instanceID string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		_, err := instance.Get(client, instanceID)
 		if err != nil {

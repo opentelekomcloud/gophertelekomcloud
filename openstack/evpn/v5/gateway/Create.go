@@ -195,6 +195,8 @@ type Gateway struct {
 	// Specifies a private IP address used by the VPN gateway to connect to
 	// a customer gateway when the network type is private network.
 	AccessPrivateIp2 string `json:"access_private_ip_2"`
+	// ID of the enterprise router attachment associated with the VPN gateway.
+	ErAttachmentId string `json:"er_attachment_id"`
 }
 
 type PolicyTemplate struct {
