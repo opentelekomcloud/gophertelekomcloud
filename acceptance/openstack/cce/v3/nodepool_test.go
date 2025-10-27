@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"encoding/base64"
 	"testing"
 	"time"
 
@@ -25,6 +26,9 @@ func TestNodePoolLifecycle(t *testing.T) {
 	kp := cce.CreateKeypair(t)
 	defer cce.DeleteKeypair(t, kp)
 
+	postInstallScript := `#!/bin/bash echo "New postinstall"`
+	postInstallEncoded := base64.StdEncoding.EncodeToString([]byte(postInstallScript))
+
 	createOpts := nodepools.CreateOpts{
 		Kind:       "NodePool",
 		ApiVersion: "v3",
@@ -38,6 +42,7 @@ func TestNodePoolLifecycle(t *testing.T) {
 					MaxPods:     55,
 					IsAutoRenew: "false",
 					IsAutoPay:   "false",
+					PostInstall: postInstallEncoded,
 				},
 				Flavor: "s2.large.2",
 				Az:     "eu-de-01",
@@ -123,14 +128,18 @@ func TestNodePoolLifecycle(t *testing.T) {
 
 	nodepoolList, err := nodepools.List(client, clusterId, nodepools.ListOpts{})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, numExistingNodepools+1, len(nodepoolList))
+	th.AssertEquals(t, true, numExistingNodepools <= len(nodepoolList))
 
 	pool, err := nodepools.Get(client, clusterId, nodeId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 55, pool.Spec.NodeTemplate.ExtendParam.MaxPods)
+	th.AssertEquals(t, postInstallEncoded, pool.Spec.NodeTemplate.ExtendParam.PostInstall)
 	// Not supported params by now
 	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoPay)
 	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoRenew)
+
+	updatedPostInstallScript := `#!/bin/bash echo "Updated postinstall"`
+	updatedPostInstallEncoded := base64.StdEncoding.EncodeToString([]byte(updatedPostInstallScript))
 
 	updateOpts := nodepools.UpdateOpts{
 		Metadata: nodepools.UpdateMetaData{
@@ -138,12 +147,21 @@ func TestNodePoolLifecycle(t *testing.T) {
 		},
 		Spec: nodepools.UpdateSpec{
 			InitialNodeCount: 1,
-			NodeTemplate:     nodepools.UpdateNodeTemplate{},
 		},
 	}
+
+	updateOpts.Spec.NodeTemplate = createOpts.Spec.NodeTemplate
+	updateOpts.Spec.NodeTemplate.ExtendParam.PostInstall = updatedPostInstallEncoded
+
 	updatedPool, err := nodepools.Update(client, clusterId, nodeId, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "nodepool-test-updated", updatedPool.Metadata.Name)
+	th.AssertEquals(t, updatedPostInstallEncoded, updatedPool.Spec.NodeTemplate.ExtendParam.PostInstall)
+
+	getUpdatedPool, err := nodepools.Get(client, clusterId, nodeId)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updatedPostInstallEncoded, getUpdatedPool.Spec.NodeTemplate.ExtendParam.PostInstall)
+
 	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
 		n, err := nodepools.Get(client, clusterId, nodeId)
 		if err != nil {

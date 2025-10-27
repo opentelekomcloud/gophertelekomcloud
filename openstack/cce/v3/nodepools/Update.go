@@ -24,7 +24,7 @@ type UpdateMetaData struct {
 // UpdateSpec describes Node pools update specification
 type UpdateSpec struct {
 	// Node template
-	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate" required:"true"`
+	NodeTemplate nodes.Spec `json:"nodeTemplate" required:"true"`
 	// Initial number of expected nodes
 	InitialNodeCount int `json:"initialNodeCount" required:"true"`
 	// Auto scaling parameters
