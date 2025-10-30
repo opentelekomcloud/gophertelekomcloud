@@ -26,9 +26,6 @@ func TestTrackersLifecycle(t *testing.T) {
 	t.Logf("Attempting to create CTSv1 Tracker")
 	ctsTracker, err := tracker.Create(client, tracker.CreateOpts{
 		BucketName: bucketName,
-		Lts: tracker.CreateLts{
-			IsLtsEnabled: pointerto.Bool(true),
-		},
 	})
 
 	t.Cleanup(func() {
