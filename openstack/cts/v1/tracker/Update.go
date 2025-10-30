@@ -1,7 +1,7 @@
 package tracker
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
@@ -17,7 +17,7 @@ type UpdateOpts struct {
 	Status string `json:"status,omitempty"`
 	// Whether trace analysis is enabled.
 	// When you enable trace analysis, a log group named CTS and a log stream named system-trace are created in LTS.
-	Lts CreateLts `json:"lts,omitempty"`
+	Lts *CreateLts `json:"lts,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateOpts, trackerName string) (*Tracker, error) {

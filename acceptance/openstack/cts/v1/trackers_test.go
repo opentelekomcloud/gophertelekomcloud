@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cts"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cts/v1/tracker"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -26,8 +25,10 @@ func TestTrackersLifecycle(t *testing.T) {
 	t.Logf("Attempting to create CTSv1 Tracker")
 	ctsTracker, err := tracker.Create(client, tracker.CreateOpts{
 		BucketName: bucketName,
-		Lts: tracker.CreateLts{
-			IsLtsEnabled: pointerto.Bool(true),
+		Lts: &tracker.CreateLts{
+			IsLtsEnabled: true,
+			LogGroupName: "test-acc-cts-group",
+			LogTopicName: "test-acc-cts-topic",
 		},
 	})
 
