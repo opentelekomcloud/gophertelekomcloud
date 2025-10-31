@@ -47,7 +47,7 @@ func CreateCluster(t *testing.T, vpcID, subnetID string) string {
 	})
 	th.AssertNoErr(t, err)
 
-	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
+	th.AssertNoErr(t, WaitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
 	return cluster.Metadata.Id
 }
 
@@ -97,7 +97,7 @@ func CreateTurboCluster(t *testing.T, vpcID, subnetID string, eniSubnetID string
 	})
 	th.AssertNoErr(t, err)
 
-	th.AssertNoErr(t, waitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
+	th.AssertNoErr(t, WaitForClusterToActivate(client, cluster.Metadata.Id, 30*60))
 	return cluster
 }
 
@@ -113,7 +113,7 @@ func DeleteCluster(t *testing.T, clusterID string) {
 	th.AssertNoErr(t, waitForClusterToDelete(client, clusterID, 20*60))
 }
 
-func waitForClusterToActivate(client *golangsdk.ServiceClient, id string, secs int) error {
+func WaitForClusterToActivate(client *golangsdk.ServiceClient, id string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		cluster, err := clusters.Get(client, id)
 		if err != nil {

@@ -66,6 +66,22 @@ type Spec struct {
 	EnableMasterVolumeEncryption *bool `json:"enableMasterVolumeEncryption,omitempty"`
 	// Charging mode of the cluster, which is 0 (on demand)
 	BillingMode int `json:"billingMode,omitempty"`
+	// Custom san list for certificates
+	CustomSan []string `json:"customSan,omitempty"`
+	// Whether Istio is supported.
+	SupportIstio *bool `json:"supportIstio,omitempty"`
+	// configurationsOverride
+	ConfigurationsOverride []PackageConfiguration `json:"configurationsOverride,omitempty"`
+}
+
+type PackageConfiguration struct {
+	Name           string          `json:"name,omitempty"`
+	Configurations []Configuration `json:"configurations,omitempty"`
+}
+
+type Configuration struct {
+	Name  string      `json:"name,omitempty"`
+	Value interface{} `json:"value,omitempty"`
 }
 
 type Status struct {
