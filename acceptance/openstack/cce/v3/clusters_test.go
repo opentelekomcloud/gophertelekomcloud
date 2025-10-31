@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack/cce"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodepools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingips"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -79,7 +80,7 @@ func TestCluster(t *testing.T) {
 }
 
 func TestTurboClusterWithCillium(t *testing.T) {
-	t.Skip("Only available in whitelisted tenants")
+	// t.Skip("Only available in whitelisted tenants")
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	if vpcID == "" {
 		t.Skip("OS_VPC_ID is required for this test")
@@ -171,6 +172,29 @@ func TestTurboClusterWithCillium(t *testing.T) {
 	th.AssertEquals(t, cluster.Metadata.Name, clusterGet.Metadata.Name)
 	th.AssertEquals(t, cluster.Metadata.Timezone, clusterGet.Metadata.Timezone)
 	th.AssertEquals(t, cluster.Spec.PublicAccess.Cidrs[0], "192.168.45.0/24")
+
+	updatedConf, err := nodepools.UpdateConfiguration(client, clusterID, "master", nodepools.UpdateConfigurationOpts{
+		Kind:       "Configuration",
+		APIVersion: "v3",
+		Metadata: nodepools.ConfigurationMetadata{
+			Name: "configuration",
+		},
+		Spec: nodepools.ClusterConfigurationsSpec{
+			Packages: []clusters.PackageConfiguration{
+				{
+					Name: "kube-apiserver",
+					Configurations: []clusters.Configuration{
+						{
+							Name:  "support-overload",
+							Value: false,
+						},
+					},
+				},
+			},
+		},
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updatedConf.Metadata.Name, "configuration")
 
 	if clusterID != "" {
 		cce.DeleteCluster(t, clusterID)
