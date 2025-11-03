@@ -1053,6 +1053,15 @@ func NewGeminiDBClient() (client *golangsdk.ServiceClient, err error) {
 	return openstack.NewGeminiDBV3(cc.ProviderClient, golangsdk.EndpointOpts{})
 }
 
+func NewGeminiDBSpecClient() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewGeminiDBV3Spec(cc.ProviderClient, golangsdk.EndpointOpts{})
+}
+
 // NewAPIGWClient returns authenticated APIGW v2 client
 func NewAPIGWClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()

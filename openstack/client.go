@@ -1050,6 +1050,16 @@ func NewGeminiDBV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 	return initClientOpts(client, eo, "geminidb")
 }
 
+func NewGeminiDBV3Spec(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "geminidb")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v3", "v3.1", 1)
+	sc.ResourceBase = sc.Endpoint
+	return sc, err
+}
+
 func NewDataArtsV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initCommonServiceClient(client, eo, "dayu-dlf", "v1")
 }
