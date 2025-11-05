@@ -12,6 +12,7 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/gpfs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/credentials"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 )
@@ -568,6 +569,29 @@ func NewOBSClient() (*obs.ObsClient, error) {
 	return obs.New(
 		opts.AccessKey, opts.SecretKey, client.Endpoint,
 		obs.WithSecurityToken(opts.SecurityToken), obs.WithSignature(obs.SignatureObs),
+	)
+}
+
+func NewGPFSClient() (*gpfs.ObsClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := setupTemporaryAKSK(cc); err != nil {
+		return nil, fmt.Errorf("failed to construct OBS client without AK/SK: %s", err)
+	}
+
+	client, err := openstack.NewOBSService(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	opts := cc.AKSKAuthOptions
+	return gpfs.New(
+		opts.AccessKey, opts.SecretKey, client.Endpoint,
+		gpfs.WithSecurityToken(opts.SecurityToken), gpfs.WithSignature(gpfs.SignatureObs),
 	)
 }
 
