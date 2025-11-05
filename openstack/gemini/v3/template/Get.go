@@ -16,22 +16,12 @@ func Get(client *golangsdk.ServiceClient, configId string) (*GetResponse, error)
 }
 
 type GetResponse struct {
-	Id                      string                   `json:"id"`
-	Name                    string                   `json:"name"`
-	Description             string                   `json:"description"`
-	DataStoreVersionName    string                   `json:"datastore_version_name"`
-	DataStoreName           string                   `json:"datastore_name"`
-	Created                 string                   `json:"created"`
-	Updated                 string                   `json:"updated"`
-	ConfigurationParameters []GetConfigurationResult `json:"configuration_parameters"`
-}
-
-type GetConfigurationResult struct {
-	Name            string `json:"name"`
-	Value           string `json:"value"`
-	RestartRequired bool   `json:"restart_required"`
-	Readonly        bool   `json:"readonly"`
-	ValueRange      string `json:"value_range"`
-	Type            string `json:"type"`
-	Description     string `json:"description"`
+	Id                      string                    `json:"id"`
+	Name                    string                    `json:"name"`
+	Description             string                    `json:"description"`
+	DataStoreVersionName    string                    `json:"datastore_version_name"`
+	DataStoreName           string                    `json:"datastore_name"`
+	Created                 string                    `json:"created"`
+	Updated                 string                    `json:"updated"`
+	ConfigurationParameters []InstanceParameterResult `json:"configuration_parameters"`
 }
