@@ -16,7 +16,7 @@ type ListGeminiDBOpts struct {
 	Limit         int    `q:"limit"`
 }
 
-func ListGeminiDB(client *golangsdk.ServiceClient, opts ListGeminiDBOpts) (*ListGeminiDBResponse, error) {
+func ListGeminiDB(client *golangsdk.ServiceClient, opts ListGeminiDBOpts) ([]ListResult, error) {
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("instances").
 		WithQueryParams(&opts).Build()
@@ -31,13 +31,8 @@ func ListGeminiDB(client *golangsdk.ServiceClient, opts ListGeminiDBOpts) (*List
 		return nil, err
 	}
 
-	var res ListGeminiDBResponse
-	return &res, extract.Into(raw.Body, &res)
-}
-
-type ListGeminiDBResponse struct {
-	Instances  []ListResult `json:"instances"`
-	TotalCount int          `json:"total_count"`
+	var res []ListResult
+	return res, extract.IntoSlicePtr(raw.Body, &res, "instances")
 }
 
 type ListResult struct {

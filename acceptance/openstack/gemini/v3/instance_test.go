@@ -74,12 +74,12 @@ func TestGeminiInstanceLifecycle(t *testing.T) {
 
 	listResp, err := instance.ListGeminiDB(client, instance.ListGeminiDBOpts{Id: createResp.Id})
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, len(listResp.Instances), 1)
+	th.AssertEquals(t, len(listResp), 1)
 
 	var foundInstance *instance.ListResult
-	for i := range listResp.Instances {
-		if listResp.Instances[i].Id == createResp.Id {
-			foundInstance = &listResp.Instances[i]
+	for i := range listResp {
+		if listResp[i].Id == createResp.Id {
+			foundInstance = &listResp[i]
 			break
 		}
 	}
@@ -226,7 +226,7 @@ func waitForInstanceAvailable(client *golangsdk.ServiceClient, secs int, instanc
 		if err != nil {
 			return false, err
 		}
-		if gemInstances.Instances[0].Status == "normal" && len(gemInstances.Instances[0].Actions) == 0 {
+		if gemInstances[0].Status == "normal" && len(gemInstances[0].Actions) == 0 {
 			return true, nil
 		}
 		return false, nil
