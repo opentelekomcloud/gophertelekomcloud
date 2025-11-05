@@ -13,7 +13,7 @@ import (
 )
 
 func TestGeminiInstanceLogs(t *testing.T) {
-	// t.Skip("too long to run in ci")
+	t.Skip("too long to run in ci")
 	vpcID := os.Getenv("OS_VPC_ID")
 	subnetID := os.Getenv("OS_NETWORK_ID")
 	secGroupID := os.Getenv("OS_SECURITY_GROUP_ID")
