@@ -41,7 +41,7 @@ func prepareHeaders(headers map[string][]string, meta bool, isObs bool) map[stri
 	return _headers
 }
 
-func (obsClient ObsClient) doActionWithoutBucket(action, method string, input ISerializable, output IBaseModel) error {
+func (obsClient ObsClient) doActionWithoutFS(action, method string, input ISerializable, output IBaseModel) error {
 	return obsClient.doAction(action, method, "", "", input, output, true, true)
 }
 
