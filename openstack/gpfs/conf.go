@@ -21,10 +21,18 @@ type securityProvider struct {
 	securityToken string
 }
 
+func (s *securityProvider) String() string {
+	return "securityProvider{ak: [REDACTED], sk: [REDACTED], securityToken: [REDACTED]}"
+}
+
 type urlHolder struct {
 	scheme string
 	host   string
 	port   int
+}
+
+func (u *urlHolder) String() string {
+	return fmt.Sprintf("urlHolder{scheme: %s, host: %s, port: %d}", u.scheme, u.host, u.port)
 }
 
 type config struct {
