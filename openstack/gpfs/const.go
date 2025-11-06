@@ -14,65 +14,13 @@ const (
 	HEADER_ACCESSS_KEY_AMZ = "AWSAccessKeyId"
 	PREFIX_META            = "meta-"
 
-	HEADER_CONTENT_SHA256_AMZ               = "x-amz-content-sha256"
-	HEADER_ACL_AMZ                          = "x-amz-acl"
-	HEADER_ACL_OBS                          = "x-obs-acl"
-	HEADER_ACL                              = "acl"
-	HEADER_LOCATION_AMZ                     = "location"
-	HEADER_BUCKET_LOCATION_OBS              = "bucket-location"
-	HEADER_COPY_SOURCE                      = "copy-source"
-	HEADER_COPY_SOURCE_RANGE                = "copy-source-range"
-	HEADER_RANGE                            = "Range"
-	HEADER_STORAGE_CLASS                    = "x-default-storage-class"
-	HEADER_STORAGE_CLASS_OBS                = "x-obs-storage-class"
-	HEADER_VERSION_OBS                      = "version"
-	HEADER_GRANT_READ_OBS                   = "grant-read"
-	HEADER_GRANT_WRITE_OBS                  = "grant-write"
-	HEADER_GRANT_READ_ACP_OBS               = "grant-read-acp"
-	HEADER_GRANT_WRITE_ACP_OBS              = "grant-write-acp"
-	HEADER_GRANT_FULL_CONTROL_OBS           = "grant-full-control"
-	HEADER_GRANT_READ_DELIVERED_OBS         = "grant-read-delivered"
-	HEADER_GRANT_FULL_CONTROL_DELIVERED_OBS = "grant-full-control-delivered"
-	HEADER_REQUEST_ID                       = "request-id"
-	HEADER_BUCKET_REGION                    = "bucket-region"
-	HEADER_ACCESS_CONRTOL_ALLOW_ORIGIN      = "access-control-allow-origin"
-	HEADER_ACCESS_CONRTOL_ALLOW_HEADERS     = "access-control-allow-headers"
-	HEADER_ACCESS_CONRTOL_MAX_AGE           = "access-control-max-age"
-	HEADER_ACCESS_CONRTOL_ALLOW_METHODS     = "access-control-allow-methods"
-	HEADER_ACCESS_CONRTOL_EXPOSE_HEADERS    = "access-control-expose-headers"
-	HEADER_EPID_HEADERS                     = "epid"
-	HEADER_VERSION_ID                       = "version-id"
-	HEADER_COPY_SOURCE_VERSION_ID           = "copy-source-version-id"
-	HEADER_DELETE_MARKER                    = "delete-marker"
-	HEADER_WEBSITE_REDIRECT_LOCATION        = "website-redirect-location"
-	HEADER_METADATA_DIRECTIVE               = "metadata-directive"
-	HEADER_EXPIRATION                       = "expiration"
-	HEADER_EXPIRES_OBS                      = "x-obs-expires"
-	HEADER_RESTORE                          = "restore"
-	HEADER_OBJECT_TYPE                      = "object-type"
-	HEADER_NEXT_APPEND_POSITION             = "next-append-position"
-	HEADER_STORAGE_CLASS2                   = "storage-class"
-	HEADER_CONTENT_LENGTH                   = "content-length"
-	HEADER_CONTENT_TYPE                     = "content-type"
-	HEADER_CONTENT_LANGUAGE                 = "content-language"
-	HEADER_EXPIRES                          = "expires"
-	HEADER_CACHE_CONTROL                    = "cache-control"
-	HEADER_CONTENT_DISPOSITION              = "content-disposition"
-	HEADER_CONTENT_ENCODING                 = "content-encoding"
-	HEADER_BUCKET_TYPE                      = "bucket-type"
+	HEADER_AZ_REDUNDANCY = "x-obs-az-redundancy"
+	HEADER_BUCKET_TYPE   = "x-obs-bucket-type"
 
-	HEADER_ETAG         = "etag"
-	HEADER_LASTMODIFIED = "last-modified"
-
-	HEADER_COPY_SOURCE_IF_MATCH            = "copy-source-if-match"
-	HEADER_COPY_SOURCE_IF_NONE_MATCH       = "copy-source-if-none-match"
-	HEADER_COPY_SOURCE_IF_MODIFIED_SINCE   = "copy-source-if-modified-since"
-	HEADER_COPY_SOURCE_IF_UNMODIFIED_SINCE = "copy-source-if-unmodified-since"
-
-	HEADER_IF_MATCH            = "If-Match"
-	HEADER_IF_NONE_MATCH       = "If-None-Match"
-	HEADER_IF_MODIFIED_SINCE   = "If-Modified-Since"
-	HEADER_IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
+	HEADER_CONTENT_SHA256_AMZ = "x-amz-content-sha256"
+	HEADER_REQUEST_ID         = "request-id"
+	HEADER_CONTENT_LENGTH     = "content-length"
+	HEADER_CONTENT_TYPE       = "content-type"
 
 	HEADER_SSEC_ENCRYPTION = "server-side-encryption-customer-algorithm"
 	HEADER_SSEC_KEY        = "server-side-encryption-customer-key"
@@ -119,7 +67,6 @@ const (
 	PARAM_RESPONSE_CACHE_CONTROL       = "response-cache-control"
 	PARAM_RESPONSE_CONTENT_DISPOSITION = "response-content-disposition"
 	PARAM_RESPONSE_CONTENT_ENCODING    = "response-content-encoding"
-	PARAM_IMAGE_PROCESS                = "x-image-process"
 
 	PARAM_ALGORITHM_AMZ_CAMEL     = "X-Amz-Algorithm"
 	PARAM_CREDENTIAL_AMZ_CAMEL    = "X-Amz-Credential"
@@ -155,25 +102,12 @@ const (
 	V4_HASH_PREFIX = "AWS4-HMAC-SHA256"
 	V4_HASH_PRE    = "AWS4"
 
-	DEFAULT_SSE_KMS_ENCRYPTION     = "aws:kms"
-	DEFAULT_SSE_KMS_ENCRYPTION_OBS = "kms"
-
-	DEFAULT_SSE_C_ENCRYPTION = "AES256"
-
 	HTTP_GET     = "GET"
 	HTTP_POST    = "POST"
 	HTTP_PUT     = "PUT"
 	HTTP_DELETE  = "DELETE"
 	HTTP_HEAD    = "HEAD"
 	HTTP_OPTIONS = "OPTIONS"
-
-	MAX_PART_SIZE     = 5 * 1024 * 1024 * 1024
-	MIN_PART_SIZE     = 100 * 1024
-	DEFAULT_PART_SIZE = 9 * 1024 * 1024
-	MAX_PART_NUM      = 10000
-
-	// SubResourceReplication subResource value: replication
-	SubResourceReplication SubResourceType = "replication"
 )
 
 type SignatureType string
@@ -268,50 +202,6 @@ const (
 	HttpMethodDelete HttpMethodType = HTTP_DELETE
 )
 
-type SubResourceType string
-
-const (
-	SubResourceStoragePolicy SubResourceType  = "storagePolicy"
-	SubResourceStorageClass  SubResourceType  = "storageClass"
-	SubResourceQuota         SubResourceType  = "quota"
-	SubResourceStorageInfo   SubResourceType  = "storageinfo"
-	SubResourceLocation      SubResourceType  = "location"
-	SubResourceAcl           SubResourceType  = "acl"
-	SubResourcePolicy        SubResourceType  = "policy"
-	SubResourceCors          SubResourceType  = "cors"
-	SubResourceVersioning    SubResourceType  = "versioning"
-	SubResourceWebsite       SubResourceType  = "website"
-	SubResourceLogging       SubResourceType  = "logging"
-	SubResourceLifecycle     SubResourceType  = "lifecycle"
-	SubResourceNotification  SubResourceType  = "notification"
-	SubResourceEncryption    SubResourceType  = "encryption"
-	SubResourceObjectLock    SubResourceType  = "object-lock"
-	SubResourceCustomDomain  SubResourceType  = "customdomain"
-	SubResourceInventory     SubResourceType  = "inventory"
-	SubResourceTagging       SubResourceType  = "tagging"
-	SubResourceDelete        SubResourceType  = "delete"
-	SubResourceVersions      SubResourceType  = "versions"
-	SubResourceUploads       SubResourceType  = "uploads"
-	SubResourceRestore       SubResourceType  = "restore"
-	SubResourceMetadata      SubResourceType  = "metadata"
-	storageClassStandardIA   StorageClassType = "STANDARD_IA"
-	storageClassGlacier      StorageClassType = "GLACIER"
-)
-
-type AclType string
-
-const (
-	AclPrivate                 AclType = "private"
-	AclPublicRead              AclType = "public-read"
-	AclPublicReadWrite         AclType = "public-read-write"
-	AclAuthenticatedRead       AclType = "authenticated-read"
-	AclBucketOwnerRead         AclType = "bucket-owner-read"
-	AclBucketOwnerFullControl  AclType = "bucket-owner-full-control"
-	AclLogDeliveryWrite        AclType = "log-delivery-write"
-	AclPublicReadDelivery      AclType = "public-read-delivered"
-	AclPublicReadWriteDelivery AclType = "public-read-write-delivered"
-)
-
 type StorageClassType string
 
 const (
@@ -319,111 +209,3 @@ const (
 	StorageClassWarm     StorageClassType = "WARM"
 	StorageClassCold     StorageClassType = "COLD"
 )
-
-type PermissionType string
-
-const (
-	PermissionRead        PermissionType = "READ"
-	PermissionWrite       PermissionType = "WRITE"
-	PermissionReadAcp     PermissionType = "READ_ACP"
-	PermissionWriteAcp    PermissionType = "WRITE_ACP"
-	PermissionFullControl PermissionType = "FULL_CONTROL"
-)
-
-type GranteeType string
-
-const (
-	GranteeGroup GranteeType = "Group"
-	GranteeUser  GranteeType = "CanonicalUser"
-)
-
-type GroupUriType string
-
-const (
-	GroupAllUsers           GroupUriType = "AllUsers"
-	GroupAuthenticatedUsers GroupUriType = "AuthenticatedUsers"
-	GroupLogDelivery        GroupUriType = "LogDelivery"
-)
-
-type VersioningStatusType string
-
-const (
-	VersioningStatusEnabled   VersioningStatusType = "Enabled"
-	VersioningStatusSuspended VersioningStatusType = "Suspended"
-)
-
-type ProtocolType string
-
-const (
-	ProtocolHttp  ProtocolType = "http"
-	ProtocolHttps ProtocolType = "https"
-)
-
-type RuleStatusType string
-
-const (
-	RuleStatusEnabled  RuleStatusType = "Enabled"
-	RuleStatusDisabled RuleStatusType = "Disabled"
-)
-
-type RestoreTierType string
-
-const (
-	RestoreTierExpedited RestoreTierType = "Expedited"
-	RestoreTierStandard  RestoreTierType = "Standard"
-	RestoreTierBulk      RestoreTierType = "Bulk"
-)
-
-type MetadataDirectiveType string
-
-const (
-	CopyMetadata    MetadataDirectiveType = "COPY"
-	ReplaceNew      MetadataDirectiveType = "REPLACE_NEW"
-	ReplaceMetadata MetadataDirectiveType = "REPLACE"
-)
-
-type EventType string
-
-const (
-	ObjectCreatedAll  EventType = "ObjectCreated:*"
-	ObjectCreatedPut  EventType = "ObjectCreated:Put"
-	ObjectCreatedPost EventType = "ObjectCreated:Post"
-
-	ObjectCreatedCopy                    EventType = "ObjectCreated:Copy"
-	ObjectCreatedCompleteMultipartUpload EventType = "ObjectCreated:CompleteMultipartUpload"
-	ObjectRemovedAll                     EventType = "ObjectRemoved:*"
-	ObjectRemovedDelete                  EventType = "ObjectRemoved:Delete"
-	ObjectRemovedDeleteMarkerCreated     EventType = "ObjectRemoved:DeleteMarkerCreated"
-)
-
-// PayerType defines type of payer
-type PayerType string
-
-const (
-	// BucketOwnerPayer type of payer: BucketOwner
-	BucketOwnerPayer PayerType = "BucketOwner"
-
-	// RequesterPayer type of payer: Requester
-	RequesterPayer PayerType = "Requester"
-
-	// Requester header for requester-Pays
-	Requester PayerType = "requester"
-)
-
-// BucketType defines type of bucket
-type BucketType string
-
-const (
-	OBJECT BucketType = "OBJECT"
-	POSIX  BucketType = "POSIX"
-)
-
-const (
-	FSStatusEnabled  FSStatusType = "Enabled"
-	FSStatusDisabled FSStatusType = "Disabled"
-)
-
-type FSStatusType string
-
-// EnabledType defines a common status type
-type EnabledType string

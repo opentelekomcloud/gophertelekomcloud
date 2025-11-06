@@ -11,18 +11,15 @@ type Bucket struct {
 	Name         string    `xml:"Name"`
 	CreationDate time.Time `xml:"CreationDate"`
 	Location     string    `xml:"Location"`
-	BucketType   string    `xml:"BucketType,omitempty"`
 }
 
 // Owner defines owner properties
 type Owner struct {
-	XMLName     xml.Name `xml:"Owner"`
-	ID          string   `xml:"ID"`
-	DisplayName string   `xml:"DisplayName,omitempty"`
+	ID string `xml:"ID"`
 }
 
 // BucketLocation defines bucket location configuration
 type BucketLocation struct {
 	XMLName  xml.Name `xml:"CreateBucketConfiguration"`
-	Location string   `xml:"LocationConstraint,omitempty"`
+	Location string   `xml:"Location,omitempty"`
 }
