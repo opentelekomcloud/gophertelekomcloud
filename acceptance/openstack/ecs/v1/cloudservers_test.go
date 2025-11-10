@@ -3,11 +3,14 @@ package v1
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/blockstorage/v2/volumes"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/cloudservers"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ecs/v1/disk"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/ims/v2/images"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -181,4 +184,86 @@ func TestCloudServersIPV6(t *testing.T) {
 		}
 	}
 	th.AssertEquals(t, true, ipv6enabled)
+}
+
+func TestCloudServerVolumeLifecycle(t *testing.T) {
+	client, err := clients.NewComputeV1Client()
+	th.AssertNoErr(t, err)
+
+	clientEvs, err := clients.NewBlockStorageV2Client()
+	th.AssertNoErr(t, err)
+
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		t.Skip("OS_AVAILABILITY_ZONE env vars is missing but ECSv1 test requires")
+	}
+	createVolumeOpts := volumes.CreateOpts{
+		Size:             40,
+		Name:             tools.RandomString("tf-evs-disk-", 4),
+		VolumeType:       "SSD",
+		AvailabilityZone: az,
+	}
+
+	vol, err := volumes.Create(clientEvs, createVolumeOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	err = waitForEvsAvailable(clientEvs, 100, vol.ID)
+	th.AssertNoErr(t, err)
+
+	t.Cleanup(func() {
+		err = volumes.Delete(clientEvs, vol.ID, volumes.DeleteOpts{}).ExtractErr()
+		th.AssertNoErr(t, err)
+	})
+
+	// Get ECSv1 createOpts
+	createOpts := openstack.GetCloudServerCreateOpts(t)
+
+	// Check ECSv1 createOpts
+	openstack.DryRunCloudServerConfig(t, client, createOpts)
+	t.Logf("CreateOpts are ok for creating a cloudServer")
+
+	// Create ECSv1 instance
+	ecs := openstack.CreateCloudServer(t, client, createOpts)
+
+	t.Cleanup(func() {
+		openstack.DeleteCloudServer(t, client, ecs.ID)
+	})
+
+	t.Logf("Attaching volume to cloudserver: %s", vol.ID)
+	attach, err := disk.Attach(client, disk.CreateOpts{
+		ServerID: ecs.ID,
+		VolumeAttachment: &disk.VolumeAttachment{
+			VolumeID: vol.ID,
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	err = cloudservers.WaitForJobSuccess(client, 120, attach.JobID)
+	th.AssertNoErr(t, err)
+
+	t.Logf("Get all attached volumes to cloudserver: %s", ecs.ID)
+	attachments, err := disk.GetAttachments(client, ecs.ID)
+
+	tools.PrintResource(t, attachments)
+
+	t.Logf("Force Detaching volume from cloudserver: %s", vol.ID)
+	detach, err := disk.Detach(client, ecs.ID, vol.ID, 1)
+	th.AssertNoErr(t, err)
+
+	err = cloudservers.WaitForJobSuccess(client, 120, detach.JobID)
+	th.AssertNoErr(t, err)
+}
+
+func waitForEvsAvailable(client *golangsdk.ServiceClient, secs int, volId string) error {
+	return golangsdk.WaitFor(secs, func() (bool, error) {
+		vol, err := volumes.Get(client, volId).Extract()
+		if err != nil {
+			return false, err
+		}
+
+		if vol.Status == "available" {
+			return true, nil
+		}
+		return false, nil
+	})
 }
