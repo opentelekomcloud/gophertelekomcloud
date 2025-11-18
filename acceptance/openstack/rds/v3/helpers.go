@@ -83,7 +83,7 @@ func CreateMySqlRDS(t *testing.T, client *golangsdk.ServiceClient, region string
 		Name:             rdsName,
 		Port:             "8635",
 		Password:         "acc-test-password1!",
-		FlavorRef:        "rds.mysql.c2.medium",
+		FlavorRef:        "rds.mysql.n1.large.4",
 		Region:           region,
 		AvailabilityZone: az,
 		VpcId:            vpcID,
@@ -92,7 +92,7 @@ func CreateMySqlRDS(t *testing.T, client *golangsdk.ServiceClient, region string
 		TimeZone:         "UTC+01:00",
 
 		Volume: &instances.Volume{
-			Type: "COMMON",
+			Type: "CLOUDSSD",
 			Size: 100,
 		},
 		Datastore: &instances.Datastore{

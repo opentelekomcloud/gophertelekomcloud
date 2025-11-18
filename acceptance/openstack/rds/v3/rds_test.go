@@ -554,3 +554,31 @@ func TestRdsTimeZone(t *testing.T) {
 	th.AssertEquals(t, len(instanceList.Instances), 1)
 	th.AssertEquals(t, instanceList.Instances[0].TimeZone, "UTC+01:00")
 }
+
+func TestRdsUpgradeVersion(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("new RDS have latest minor versions")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance")
+
+	// Create MySql RDSv3 instance
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	upgradeOpts := instances.UpgradeDbVersionOpts{
+		InstanceId: rds.Id,
+		Delay:      false,
+	}
+
+	upgradeResp, err := instances.UpgradeDbVersion(client, upgradeOpts)
+	th.AssertNoErr(t, err)
+
+	_ = instances.WaitForJobCompleted(client, 600, *upgradeResp)
+}
