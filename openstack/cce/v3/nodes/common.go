@@ -61,9 +61,9 @@ type Spec struct {
 	// Tag of a VM, key value pair format
 	UserTags []tags.ResourceTag `json:"userTags,omitempty"`
 	// Tag of a Kubernetes node, key value pair format
-	K8sTags map[string]string `json:"k8sTags,omitempty"`
+	K8sTags map[string]string `json:"k8sTags"`
 	// taints to created nodes to configure anti-affinity
-	Taints []TaintSpec `json:"taints,omitempty"`
+	Taints []TaintSpec `json:"taints"`
 	// Container runtime. The default value is docker.
 	Runtime RuntimeSpec `json:"runtime,omitempty"`
 }
