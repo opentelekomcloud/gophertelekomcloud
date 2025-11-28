@@ -73,18 +73,20 @@ func TestListNode(t *testing.T) {
 
 	listNodes := nodes.ListOpts{Name: "test-node-1234"}
 	actual, err := nodes.List(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", listNodes)
-
 	if err != nil {
 		t.Errorf("Failed to extract nodes: %v", err)
 	}
 
-	var expected = []nodes.Nodes{
+	expected := []nodes.Nodes{
 		{
 			Kind:       "Host",
 			Apiversion: "v3",
-			Metadata: nodes.Metadata{Name: "test-node-1234",
-				Id: "b99acd73-5d7c-11e8-8e76-0255ac101929"},
-			Spec: nodes.Spec{Az: "cn-east-2a",
+			Metadata: nodes.Metadata{
+				Name: "test-node-1234",
+				Id:   "b99acd73-5d7c-11e8-8e76-0255ac101929",
+			},
+			Spec: nodes.Spec{
+				Az:          "cn-east-2a",
 				Login:       nodes.LoginSpec{SshKey: "test-keypair"},
 				RootVolume:  nodes.VolumeSpec{Size: 40, VolumeType: "SATA"},
 				BillingMode: 0,
@@ -92,7 +94,8 @@ func TestListNode(t *testing.T) {
 					{
 						VolumeType: "SATA",
 						Size:       100,
-					}},
+					},
+				},
 				Flavor: "s1.medium",
 				Runtime: nodes.RuntimeSpec{
 					Name: "containerd",
@@ -120,7 +123,6 @@ func TestGetV3Node(t *testing.T) {
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
-
 }
 
 func TestCreateV3Node(t *testing.T) {
@@ -152,6 +154,7 @@ func TestCreateV3Node(t *testing.T) {
 	      }
 	    ],
 	    "flavor": "s3.large.2",
+        "k8sTags": null,
 	    "login": {
 	      "sshKey": "test-keypair",
 	      "userPassword": {
@@ -173,7 +176,8 @@ func TestCreateV3Node(t *testing.T) {
 	    },
 		"runtime": {
           "name": "containerd"
-        }
+        },
+        "taints": null
 	  }
 	}
 `)
@@ -182,7 +186,8 @@ func TestCreateV3Node(t *testing.T) {
 		w.WriteHeader(http.StatusCreated)
 		_, _ = fmt.Fprint(w, Output)
 	})
-	options := nodes.CreateOpts{Kind: "Node",
+	options := nodes.CreateOpts{
+		Kind:       "Node",
 		ApiVersion: "v3",
 		Metadata:   nodes.CreateMetaData{Name: "test-node"},
 		Spec: nodes.Spec{
@@ -210,7 +215,6 @@ func TestCreateV3Node(t *testing.T) {
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
-
 }
 
 func TestUpdateV3Node(t *testing.T) {
@@ -253,7 +257,6 @@ func TestDeleteNode(t *testing.T) {
 
 	err := nodes.Delete(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926", "cf4bc001-58f1-11e8-ad73-0255ac101926")
 	th.AssertNoErr(t, err)
-
 }
 
 func TestGetV3Job(t *testing.T) {
@@ -272,5 +275,4 @@ func TestGetV3Job(t *testing.T) {
 	th.AssertNoErr(t, err)
 	expected := ExpectedJob
 	th.AssertDeepEquals(t, expected, actual)
-
 }
