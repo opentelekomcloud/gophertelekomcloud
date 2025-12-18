@@ -10,6 +10,7 @@ import (
 )
 
 func TestAlarms(t *testing.T) {
+	t.Skip("API is faulty - returning 400 error.")
 	client, err := clients.NewCesV1Client()
 	th.AssertNoErr(t, err)
 
