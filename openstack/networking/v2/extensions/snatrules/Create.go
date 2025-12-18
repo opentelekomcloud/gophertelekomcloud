@@ -79,4 +79,6 @@ type SnatRule struct {
 	// Its value rounds to 6 decimal places for seconds.
 	// The format is yyyy-mm-dd hh:mm:ss.
 	CreatedAt string `json:"created_at"`
+	// Provides supplementary information about the SNAT rule.
+	Description string `json:"description"`
 }
