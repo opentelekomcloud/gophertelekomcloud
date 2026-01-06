@@ -35,13 +35,13 @@ func TestPolicyLifecycle(t *testing.T) {
 		PolicyType:   "RECURRENCE",
 		ResourceID:   groupID,
 		ResourceType: "SCALING_GROUP",
-		SchedulePolicy: policies.SchedulePolicyOpts{
+		SchedulePolicy: &policies.SchedulePolicyOpts{
 			LaunchTime:      "10:30",
 			RecurrenceType:  "Weekly",
 			RecurrenceValue: "1,3,5",
 			EndTime:         "2040-12-31T10:30Z",
 		},
-		PolicyAction: policies.ActionOpts{
+		PolicyAction: &policies.ActionOpts{
 			Operation:  "ADD",
 			Percentage: 15,
 		},
@@ -74,7 +74,7 @@ func TestPolicyLifecycle(t *testing.T) {
 		ResourceID:     groupID,
 		ResourceType:   "SCALING_GROUP",
 		SchedulePolicy: createOpts.SchedulePolicy,
-		PolicyAction: policies.ActionOpts{
+		PolicyAction: &policies.ActionOpts{
 			Percentage: 30,
 		},
 		CoolDownTime: 0,
