@@ -624,6 +624,17 @@ func NewCESClient(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+// NewCESV2 creates a ServiceClient that may be used to access the CES v2 API.
+func NewCESV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "volumev2")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "evs", "ces", 1)
+	sc.ResourceBase = sc.Endpoint
+	return sc, err
+}
+
 // NewComputeV1 creates a ServiceClient that may be used with the v1 compute
 // package.
 func NewComputeV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {

@@ -971,6 +971,17 @@ func NewCesV1Client() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewCesV2Client returns authenticated CES v2 client
+func NewCesV2Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewCESV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewLtsV2Client returns authenticated LTS v2 client
 func NewLtsV2Client() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
