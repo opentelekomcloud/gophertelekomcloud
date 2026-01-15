@@ -13,12 +13,6 @@ func TestAlarmsCRUD(t *testing.T) {
 	client, err := clients.NewCesV2Client()
 	th.AssertNoErr(t, err)
 
-	t.Log("Attempting to list alarm rules")
-	listResp, err := alarms.List(client, alarms.ListOpts{
-		Limit: 10,
-	})
-	th.AssertNoErr(t, err)
-
 	t.Log("Attempting to create alarm rule")
 	createOpts := alarms.CreateOpts{
 		Name:      "test-alarm-v2-acc",
@@ -60,7 +54,7 @@ func TestAlarmsCRUD(t *testing.T) {
 	})
 
 	t.Log("Attempting to get alarm rule")
-	listResp, err = alarms.List(client, alarms.ListOpts{
+	listResp, err := alarms.List(client, alarms.ListOpts{
 		AlarmId: alarmId,
 	})
 	th.AssertNoErr(t, err)
