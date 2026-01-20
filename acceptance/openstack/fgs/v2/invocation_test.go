@@ -34,7 +34,11 @@ func TestFunctionGraphSync(t *testing.T) {
 		"t": "start",
 	}
 
-	syncResp, syncRespHeaders, err := invoke.LaunchSync(client, funcUrn, body, invoke.NewLaunchSyncHeaders())
+	h := invoke.NewLaunchSyncHeaders()
+	// request logs with the response
+	h.LogType = "tail"
+
+	syncResp, syncRespHeaders, err := invoke.LaunchSync(client, funcUrn, body, h)
 
 	th.AssertNoErr(t, err)
 
@@ -43,6 +47,11 @@ func TestFunctionGraphSync(t *testing.T) {
 
 	// test for http status
 	th.AssertEquals(t, 200, syncResp.Status)
+
+	// test for log presence if requested
+	if h.LogType == "tail" {
+		th.AssertNotEquals(t, "", syncResp.Log)
+	}
 
 	tools.PrintResource(t, syncResp)
 	tools.PrintResource(t, syncRespHeaders)

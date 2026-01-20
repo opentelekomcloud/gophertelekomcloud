@@ -1,9 +1,9 @@
 package invoke
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"errors"
 	"reflect"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -20,13 +20,27 @@ func LaunchSync(client *golangsdk.ServiceClient, funcUrn string, body map[string
 		return nil, nil, err
 	}
 
-	// overwrite RequestVersion to "v1",as response is expected in json format
-	// v0 will not work here
-	headers.RequestVersion = "v1"
-
-	headerJson, _ := json.Marshal(headers)
+	// manually prepare headers and set defaults where needed
 	headerMap := make(map[string]string)
-	json.Unmarshal(headerJson, &headerMap)
+	if headers.ContentType != "" {
+		headerMap["Content-Type"] = headers.ContentType
+	} else {
+		// Content-Type header is mandatory
+		return nil, nil, errors.New("Missing header 'Content-Type'.")
+	}
+
+	if headers.LogType != "" {
+		headerMap["X-Cff-Log-Type"] = headers.LogType
+	}
+
+	// always set RequestVersion to "v1",
+	// as response is expected in json format
+	// v0 (text format) will not work here
+	headerMap["X-Cff-Request-Version"] = "v1"
+
+	if headers.InstanceMemory != "" {
+		headerMap["X-Cff-Instance-Memory"] = headers.InstanceMemory
+	}
 
 	raw, err := client.Post(client.ServiceURL("fgs", "functions", funcUrn, "invocations"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
@@ -53,12 +67,6 @@ type LaunchSyncHeaders struct {
 	// Options: tail (4 KB logs will be returned) and null (no logs will be returned).
 	LogType string `json:"X-Cff-Log-Type"`
 
-	// Response body format. Options: v0 and v1.
-	// v0: text format.
-	// v1: JSON format. Select this format when using an SDK.
-	// Must be set to "v1" to get JSON format response.
-	RequestVersion string `json:"X-Cff-Request-Version"`
-
 	// Dynamic memory allocation for function.
 	// Options:
 	// - empty or
@@ -73,7 +81,6 @@ func NewLaunchSyncHeaders() LaunchSyncHeaders {
 	return LaunchSyncHeaders{
 		ContentType:    "application/json",
 		LogType:        "",
-		RequestVersion: "v1",
 		InstanceMemory: "",
 	}
 }
