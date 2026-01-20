@@ -29,10 +29,23 @@ func TestFunctionGraphSync(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
-	syncResp, err := invoke.LaunchSync(client, funcUrn)
+	body := map[string]interface{}{
+		"k": "v",
+		"t": "start",
+	}
+
+	syncResp, syncRespHeaders, err := invoke.LaunchSync(client, funcUrn, body, invoke.NewLaunchSyncHeaders())
+
 	th.AssertNoErr(t, err)
 
+	// test for function error
+	th.AssertEquals(t, false, syncRespHeaders.IsFuncErr)
+
+	// test for http status
+	th.AssertEquals(t, 200, syncResp.Status)
+
 	tools.PrintResource(t, syncResp)
+	tools.PrintResource(t, syncRespHeaders)
 }
 
 func TestFunctionGraphAsync(t *testing.T) {
