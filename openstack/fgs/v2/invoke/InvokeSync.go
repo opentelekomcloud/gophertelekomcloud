@@ -3,31 +3,22 @@ package invoke
 import (
 	"net/http"
 
-	"errors"
 	"reflect"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // LaunchSync is used to execute a function synchronously.
 // Clients must wait for explicit responses to their requests from the function.
 // Responses are returned only after function invocation is complete.
-func LaunchSync(client *golangsdk.ServiceClient, funcUrn string, body map[string]interface{}, headers LaunchSyncHeaders) (*LaunchSyncResp, *LaunchSyncResponseHeaders, error) {
-	b, err := build.RequestBody(body, "")
-	if err != nil {
-		return nil, nil, err
-	}
+func LaunchSync(client *golangsdk.ServiceClient, funcUrn string, JSONBody interface{}, headers LaunchSyncHeaders) (*LaunchSyncResp, *LaunchSyncResponseHeaders, error) {
 
 	// manually prepare headers and set defaults where needed
 	headerMap := make(map[string]string)
-	if headers.ContentType != "" {
-		headerMap["Content-Type"] = headers.ContentType
-	} else {
-		// Content-Type header is mandatory
-		return nil, nil, errors.New("Missing header 'Content-Type'.")
-	}
+
+	// Content-Type header is mandatory
+	headerMap["Content-Type"] = "application/json"
 
 	if headers.LogType != "" {
 		headerMap["X-Cff-Log-Type"] = headers.LogType
@@ -42,7 +33,7 @@ func LaunchSync(client *golangsdk.ServiceClient, funcUrn string, body map[string
 		headerMap["X-Cff-Instance-Memory"] = headers.InstanceMemory
 	}
 
-	raw, err := client.Post(client.ServiceURL("fgs", "functions", funcUrn, "invocations"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("fgs", "functions", funcUrn, "invocations"), JSONBody, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: headerMap,
 	})
@@ -61,9 +52,6 @@ func LaunchSync(client *golangsdk.ServiceClient, funcUrn string, body map[string
 
 // LaunchSyncHeaders represents the request headers for a synchronous function invocation
 type LaunchSyncHeaders struct {
-	// Content type of the request body.
-	ContentType string `json:"Content-Type"` // e.g. "application/json"
-
 	// Options: tail (4 KB logs will be returned) and null (no logs will be returned).
 	LogType string `json:"X-Cff-Log-Type"`
 
@@ -79,7 +67,6 @@ type LaunchSyncHeaders struct {
 // NewLaunchSyncHeaders creates default headers for LaunchSync function invocation
 func NewLaunchSyncHeaders() LaunchSyncHeaders {
 	return LaunchSyncHeaders{
-		ContentType:    "application/json",
 		LogType:        "",
 		InstanceMemory: "",
 	}
