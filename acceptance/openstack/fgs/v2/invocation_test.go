@@ -31,7 +31,7 @@ func TestFunctionGraphSync(t *testing.T) {
 
 	body := map[string]interface{}{
 		"k": "v",
-		"t": "start",
+		"t": map[string]int{"a": 1, "b": 2},
 	}
 
 	h := invoke.NewLaunchSyncHeaders()
@@ -73,13 +73,16 @@ func TestFunctionGraphAsync(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
-	asyncOpts := map[string]string{
+	asyncOpts := map[string]interface{}{
 		"k":    "v",
-		"test": "start",
+		"test": map[string]int{"a": 1, "b": 2},
 	}
 
 	syncResp, err := invoke.LaunchAsync(client, funcUrn, asyncOpts)
 	th.AssertNoErr(t, err)
+
+	// check that we have a request ID
+	th.AssertNotEquals(t, "", syncResp.RequestID)
 
 	tools.PrintResource(t, syncResp)
 }
