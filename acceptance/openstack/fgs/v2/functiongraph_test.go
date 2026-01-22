@@ -137,7 +137,7 @@ func createFunctionGraph(t *testing.T, client *golangsdk.ServiceClient) (*functi
 		Package:    "default",
 		Runtime:    "Python3.9",
 		Timeout:    200,
-		Handler:    "index.py",
+		Handler:    "index.handler",
 		MemorySize: 512,
 		CodeType:   "zip",
 		CodeURL:    "https://regr-func-graph.obs.eu-de.otc.t-systems.com/index.py",

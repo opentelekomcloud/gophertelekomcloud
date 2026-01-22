@@ -29,10 +29,32 @@ func TestFunctionGraphSync(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
-	syncResp, err := invoke.LaunchSync(client, funcUrn)
+	body := map[string]interface{}{
+		"k": "v",
+		"t": map[string]int{"a": 1, "b": 2},
+	}
+
+	h := invoke.NewLaunchSyncHeaders()
+	// request logs with the response
+	h.LogType = "tail"
+
+	syncResp, syncRespHeaders, err := invoke.LaunchSync(client, funcUrn, body, h)
+
 	th.AssertNoErr(t, err)
 
+	// test for function error
+	th.AssertEquals(t, false, syncRespHeaders.IsFuncErr)
+
+	// test for http status
+	th.AssertEquals(t, 200, syncResp.Status)
+
+	// test for log presence if requested
+	if h.LogType == "tail" {
+		th.AssertNotEquals(t, "", syncResp.Log)
+	}
+
 	tools.PrintResource(t, syncResp)
+	tools.PrintResource(t, syncRespHeaders)
 }
 
 func TestFunctionGraphAsync(t *testing.T) {
@@ -51,13 +73,16 @@ func TestFunctionGraphAsync(t *testing.T) {
 		th.AssertNoErr(t, err)
 	}(client, funcUrn)
 
-	asyncOpts := map[string]string{
+	asyncOpts := map[string]interface{}{
 		"k":    "v",
-		"test": "start",
+		"test": map[string]int{"a": 1, "b": 2},
 	}
 
 	syncResp, err := invoke.LaunchAsync(client, funcUrn, asyncOpts)
 	th.AssertNoErr(t, err)
+
+	// check that we have a request ID
+	th.AssertNotEquals(t, "", syncResp.RequestID)
 
 	tools.PrintResource(t, syncResp)
 }
