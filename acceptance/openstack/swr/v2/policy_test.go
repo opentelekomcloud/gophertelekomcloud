@@ -54,6 +54,7 @@ func TestPolicyLifecycle(t *testing.T) {
 	})
 
 	retentionPolicy, err := policy.Get(client, orgName, repoName, policyId)
+	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "date_rule", retentionPolicy.Rules[0].Template)
 
 	found := false
