@@ -14,10 +14,10 @@ type CreateOpts struct {
 }
 
 // This function is used to create an image retention policy.
-func Create(client *golangsdk.ServiceClient, organization string, repository string, opts CreateOpts) (string, error) {
+func Create(client *golangsdk.ServiceClient, organization string, repository string, opts CreateOpts) (int, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
-		return "", err
+		return -1, err
 	}
 
 	// POST /v2/manage/namespaces/{namespace}/repos/{repository}/retentions
@@ -25,11 +25,11 @@ func Create(client *golangsdk.ServiceClient, organization string, repository str
 		OkCodes: []int{201},
 	})
 	if err != nil {
-		return "", err
+		return -1, err
 	}
 
 	var res struct {
-		ID string `json:"id"`
+		ID int `json:"id"`
 	}
 	err = extract.Into(raw.Body, &res)
 	return res.ID, err
