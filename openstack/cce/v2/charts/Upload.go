@@ -10,14 +10,13 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-// CreateChartOpts contains the options for uploading a chart
-type CreateChartOpts struct {
+type UploadChartOpts struct {
 	Parameters string // Chart Params
 	FilePath   string // Path to the chart (.tgz)
 }
 
 // UploadChart uploads a Helm chart to the CCE
-func UploadChart(client *golangsdk.ServiceClient, opts CreateChartOpts) (*ChartResponse, error) {
+func UploadChart(client *golangsdk.ServiceClient, opts UploadChartOpts) (*ChartResponse, error) {
 	// Open chart file
 	file, err := os.Open(opts.FilePath)
 	if err != nil {
@@ -63,7 +62,6 @@ func UploadChart(client *golangsdk.ServiceClient, opts CreateChartOpts) (*ChartR
 	return &res, extract.Into(raw.Body, &res)
 }
 
-// ChartResponse represents the response body parameters for a chart.
 type ChartResponse struct {
 	// Chart ID.
 	ID string `json:"id"`
