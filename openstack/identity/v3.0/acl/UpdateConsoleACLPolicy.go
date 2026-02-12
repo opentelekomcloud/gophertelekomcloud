@@ -7,9 +7,11 @@ import (
 )
 
 type ACLPolicy struct {
-	DomainId             string                 `json:"-"`
-	AllowAddressNetmasks []AllowAddressNetmasks `json:"allow_address_netmasks,omitempty"`
-	AllowIPRanges        []AllowIPRanges        `json:"allow_ip_ranges,omitempty"`
+	DomainId                 string                 `json:"-"`
+	AllowAddressNetmasks     []AllowAddressNetmasks `json:"allow_address_netmasks,omitempty"`
+	AllowIPRanges            []AllowIPRanges        `json:"allow_ip_ranges,omitempty"`
+	AllowAddressNetmasksIPv6 []AllowAddressNetmasks `json:"allow_address_netmasks_ipv6,omitempty"`
+	AllowIPRangesIPv6        []AllowIPRanges        `json:"allow_ip_ranges_ipv6,omitempty"`
 }
 
 type AllowAddressNetmasks struct {
