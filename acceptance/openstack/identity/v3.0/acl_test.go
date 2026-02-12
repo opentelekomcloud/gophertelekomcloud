@@ -31,6 +31,18 @@ func TestACLConsoleLifecycle(t *testing.T) {
 				Description: "test ip range description",
 			},
 		},
+		AllowAddressNetmasksIPv6: []acl.AllowAddressNetmasks{
+			{
+				AddressNetmask: "0000:0000:0000:0000:0000:0000:0000:0000/100",
+				Description:    "test IPv6 netmask",
+			},
+		},
+		AllowIPRangesIPv6: []acl.AllowIPRanges{
+			{
+				IPRange:     "0000:0000:0000:0000:0000:0000:0000:0000-FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF",
+				Description: "test IPv6 range",
+			},
+		},
 	}
 
 	resp, err := acl.ConsoleACLPolicyUpdate(client, createOpts)
@@ -42,9 +54,10 @@ func TestACLConsoleLifecycle(t *testing.T) {
 
 	getAcl, err := acl.ConsoleACLPolicyGet(client, client.DomainID)
 	th.AssertNoErr(t, err)
-
 	th.AssertEquals(t, getAcl.AllowIPRanges[0].IPRange, resp.AllowIPRanges[0].IPRange)
 	th.AssertEquals(t, getAcl.AllowIPRanges[0].Description, resp.AllowIPRanges[0].Description)
+	th.AssertEquals(t, createOpts.AllowAddressNetmasksIPv6[0].AddressNetmask, resp.AllowAddressNetmasksIPv6[0].AddressNetmask)
+	th.AssertEquals(t, createOpts.AllowIPRangesIPv6[0].IPRange, resp.AllowIPRangesIPv6[0].IPRange)
 
 	t.Cleanup(func() {
 		netmasksList := make([]acl.AllowAddressNetmasks, 0, 1)
