@@ -18,14 +18,17 @@ func PolicyGet(client *golangsdk.ServiceClient, clusterId string) (*Policy, erro
 	return &res, err
 }
 
-// Policy contains all the information associated with a snapshot policy.
 type Policy struct {
-	KeepDay       int    `json:"keepday"`
-	Period        string `json:"period"`
-	Prefix        string `json:"prefix"`
-	Bucket        string `json:"bucket"`
-	BasePath      string `json:"basePath"`
-	Agency        string `json:"agency"`
-	Enable        string `json:"enable"`
-	SnapshotCmkID string `json:"snapshotCmkId"`
+	KeepDay                    int    `json:"keepday"`
+	Period                     string `json:"period"`
+	Prefix                     string `json:"prefix"`
+	Bucket                     string `json:"bucket"`
+	BasePath                   string `json:"basePath"`
+	Agency                     string `json:"agency"`
+	Enable                     string `json:"enable"`
+	SnapshotCmkID              string `json:"snapshotCmkId"`
+	Frequency                  string `json:"frequency"`
+	Indices                    string `json:"indices"`
+	MaxSnapshotBytesPerSeconds string `json:"maxSnapshotBytesPerSeconds"`
+	MaxRestoreBytesPerSeconds  string `json:"maxRestoreBytesPerSeconds"`
 }
