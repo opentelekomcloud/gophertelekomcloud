@@ -41,6 +41,8 @@ func TestSnapshotWorkflow(t *testing.T) {
 		KeepDay:    1,
 		Enable:     "true",
 		DeleteAuto: "true",
+		Frequency:  "DAY",
+		Indices:    "*",
 	}
 	th.AssertNoErr(t, snapshots.PolicyCreate(client, policyOpts, clusterID))
 
@@ -49,6 +51,8 @@ func TestSnapshotWorkflow(t *testing.T) {
 	th.AssertEquals(t, basicOpts.Bucket, policy.Bucket)
 	th.AssertEquals(t, basicOpts.SnapshotCmkID, policy.SnapshotCmkID)
 	th.AssertEquals(t, policyOpts.Prefix, policy.Prefix)
+	th.AssertEquals(t, policyOpts.Frequency, policy.Frequency)
+	th.AssertEquals(t, policyOpts.Indices, policy.Indices)
 	tools.PrintResource(t, policy)
 
 	th.AssertNoErr(t, snapshots.Disable(client, clusterID))
