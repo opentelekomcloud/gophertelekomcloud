@@ -31,13 +31,6 @@ type UpdateSpec struct {
 	Autoscaling UpdateAutoscalingSpec `json:"autoscaling,omitempty"`
 }
 
-type UpdateNodeTemplate struct {
-	// Tag of a Kubernetes node, key value pair format
-	K8sTags map[string]string `json:"k8sTags,omitempty"`
-	// taints to created nodes to configure anti-affinity
-	Taints []nodes.TaintSpec `json:"taints,omitempty"`
-}
-
 type UpdateAutoscalingSpec struct {
 	// Whether to enable auto scaling
 	Enable bool `json:"enable,omitempty"`
