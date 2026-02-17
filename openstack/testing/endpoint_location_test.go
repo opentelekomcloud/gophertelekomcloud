@@ -77,6 +77,30 @@ var catalog3 = tokens3.ServiceCatalog{
 				},
 			},
 		},
+		{
+			Type: "wildcard",
+			Name: "wildcard",
+			Endpoints: []tokens3.Endpoint{
+				{
+					ID:        "9",
+					Region:    "*",
+					Interface: "public",
+					URL:       "https://wildcard.correct.com/",
+				},
+			},
+		},
+		{
+			Type: "same",
+			Name: "same",
+			Endpoints: []tokens3.Endpoint{
+				{
+					ID:        "10",
+					Region:    "*",
+					Interface: "public",
+					URL:       "https://wildcard.same.com/",
+				},
+			},
+		},
 	},
 }
 
@@ -109,6 +133,41 @@ func TestV3EndpointNone(t *testing.T) {
 		t.Fatalf("Expected error")
 	}
 	th.CheckEquals(t, expected.Error(), actual.Error())
+}
+
+func TestV3EndpointWildcardRegion(t *testing.T) {
+	// Endpoint with Region "*" should match when requesting a specific region with no exact match.
+	actual, err := openstack.V3EndpointURL(&catalog3, golangsdk.EndpointOpts{
+		Type:         "wildcard",
+		Name:         "wildcard",
+		Region:       "eu-de",
+		Availability: golangsdk.AvailabilityPublic,
+	})
+	th.AssertNoErr(t, err)
+	th.CheckEquals(t, "https://wildcard.correct.com/", actual)
+
+	// Endpoint with Region "*" should also match when no region is specified.
+	actual, err = openstack.V3EndpointURL(&catalog3, golangsdk.EndpointOpts{
+		Type:         "wildcard",
+		Name:         "wildcard",
+		Region:       "",
+		Availability: golangsdk.AvailabilityPublic,
+	})
+	th.AssertNoErr(t, err)
+	th.CheckEquals(t, "https://wildcard.correct.com/", actual)
+}
+
+func TestV3EndpointExactRegionPriority(t *testing.T) {
+	// When both an exact region match and a wildcard endpoint exist,
+	// the exact match must take priority.
+	actual, err := openstack.V3EndpointURL(&catalog3, golangsdk.EndpointOpts{
+		Type:         "same",
+		Name:         "same",
+		Region:       "same",
+		Availability: golangsdk.AvailabilityPublic,
+	})
+	th.AssertNoErr(t, err)
+	th.CheckEquals(t, "https://public.correct.com/", actual)
 }
 
 func TestV3EndpointBadAvailability(t *testing.T) {

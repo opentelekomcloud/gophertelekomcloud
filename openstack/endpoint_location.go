@@ -19,6 +19,7 @@ func V3EndpointURL(catalog *tokens3.ServiceCatalog, opts golangsdk.EndpointOpts)
 	// Extract Endpoints from the catalog entries that match the requested Type, Interface,
 	// Name if provided, and Region if provided.
 	var endpoints = make([]tokens3.Endpoint, 0, 1)
+	var wildcardEndpoints []tokens3.Endpoint
 	for _, entry := range catalog.Entries {
 		if (entry.Type == opts.Type) && (opts.Name == "" || entry.Name == opts.Name) {
 			for _, endpoint := range entry.Endpoints {
@@ -30,12 +31,20 @@ func V3EndpointURL(catalog *tokens3.ServiceCatalog, opts golangsdk.EndpointOpts)
 					err.Value = opts.Availability
 					return "", err
 				}
-				if opts.Availability == golangsdk.Availability(endpoint.Interface) &&
-					(opts.Region == "" || endpoint.Region == opts.Region) {
-					endpoints = append(endpoints, endpoint)
+				if opts.Availability == golangsdk.Availability(endpoint.Interface) {
+					if opts.Region == "" || endpoint.Region == opts.Region {
+						endpoints = append(endpoints, endpoint)
+					} else if endpoint.Region == "*" {
+						wildcardEndpoints = append(wildcardEndpoints, endpoint)
+					}
 				}
 			}
 		}
+	}
+
+	// Fall back to wildcard endpoints if no exact region match was found.
+	if len(endpoints) == 0 {
+		endpoints = wildcardEndpoints
 	}
 
 	// If multiple endpoints were found, use the first result
