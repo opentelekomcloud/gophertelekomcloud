@@ -6,6 +6,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/peerings"
+	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestPeeringList(t *testing.T) {
@@ -57,24 +58,20 @@ func TestRejectPeering(t *testing.T) {
 func TestPeeringCRUD(t *testing.T) {
 
 	clientV2, peerClientV2, clientV1, peerClientV1, peeringConn := InitiatePeeringConnCommonTasks(t)
-
 	// Delete a vpc peering connection
 	defer DeletePeeringConnNResources(t, clientV2, clientV1, peerClientV1, peeringConn)
 
-	tools.PrintResource(t, peeringConn)
+	th.AssertEquals(t, "Test Peering", peeringConn.Description)
+
 	updateOpts := peerings.UpdateOpts{
-		Name: "test2",
+		Name:        "test2",
+		Description: "Test Updated",
 	}
 
 	_, err := peerings.Update(clientV2, peeringConn.ID, updateOpts).Extract()
-	if err != nil {
-		t.Fatalf("Unable to update vpc peering connection: %v", err)
-	}
+	th.AssertNoErr(t, err)
 
 	peeringConnGet, err := peerings.Get(peerClientV2, peeringConn.ID).Extract()
-	if err != nil {
-		t.Fatalf("Unable to retrieve vpc peering connection: %v", err)
-	}
-
-	tools.PrintResource(t, peeringConnGet)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, updateOpts.Description, peeringConnGet.Description)
 }
