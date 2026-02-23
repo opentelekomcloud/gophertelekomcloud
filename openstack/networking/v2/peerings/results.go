@@ -1,7 +1,7 @@
 package peerings
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -21,6 +21,9 @@ type Peering struct {
 	// Name is the human readable name for the vpc_peering_connection. It does not have to be
 	// unique.
 	Name string `json:"name"`
+
+	// Provides supplementary information about the VPC peering connection.
+	Description string `json:"description"`
 
 	// Status indicates whether or not a vpc_peering_connections is currently operational.
 	Status string `json:"status"`
@@ -90,6 +93,9 @@ func (r commonResult) ExtractResult() (Peering, error) {
 		// Name is the human readable name for the vpc. It does not have to be
 		// unique.
 		Name string `json:"name"`
+
+		// Provides supplementary information about the VPC peering connection.
+		Description string `json:"description"`
 
 		// Status indicates whether or not a vpc is currently operational.
 		Status string `json:"status"`
