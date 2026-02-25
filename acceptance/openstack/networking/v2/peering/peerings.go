@@ -28,7 +28,11 @@ func CreatePeeringResourcesNConn(t *testing.T, clientV2 *golangsdk.ServiceClient
 		return nil, err
 	}
 
-	peerVpc, err := vpcs.Create(peerClientV1, createOpts).Extract()
+	createPeerOpts := vpcs.CreateOpts{
+		Name: peerVpcName,
+		CIDR: "10.0.20.0/24",
+	}
+	peerVpc, err := vpcs.Create(peerClientV1, createPeerOpts).Extract()
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +43,7 @@ func CreatePeeringResourcesNConn(t *testing.T, clientV2 *golangsdk.ServiceClient
 
 	peerCreateOpts := peerings.CreateOpts{
 		Name:           peeringConnName,
+		Description:    "Test Peering",
 		RequestVpcInfo: peerings.VpcInfo{VpcId: vpc.ID},
 		AcceptVpcInfo:  peerings.VpcInfo{VpcId: peerVpc.ID, TenantId: peerClientV2.ProjectID},
 	}
@@ -128,7 +133,7 @@ func WaitForPeeringConnToCreate(client *golangsdk.ServiceClient, peeringConnID s
 			return false, err
 		}
 
-		if conn.Status == "PENDING_ACCEPTANCE" {
+		if conn.Status == "PENDING_ACCEPTANCE" || conn.Status == "ACTIVE" {
 			return true, nil
 		}
 

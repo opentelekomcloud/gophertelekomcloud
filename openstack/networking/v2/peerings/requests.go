@@ -3,7 +3,7 @@ package peerings
 import (
 	"reflect"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -146,6 +146,7 @@ type CreateOptsBuilder interface {
 // CreateOpts is a struct which is used to create vpc peering connection.
 type CreateOpts struct {
 	Name           string  `json:"name"`
+	Description    string  `json:"description,omitempty"`
 	RequestVpcInfo VpcInfo `json:"request_vpc_info" required:"true"`
 	AcceptVpcInfo  VpcInfo `json:"accept_vpc_info" required:"true"`
 }
@@ -181,7 +182,8 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts is a struct which represents the request body of update method.
 type UpdateOpts struct {
-	Name string `json:"name,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 // ToVpcPeeringUpdateMap builds a update request body from UpdateOpts.
