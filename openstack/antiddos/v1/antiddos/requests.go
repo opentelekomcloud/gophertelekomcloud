@@ -19,10 +19,10 @@ type CreateOpts struct {
 	HttpRequestPosId int `json:"http_request_pos_id"`
 
 	// Position ID of access limit during cleaning. The value ranges from 1 to 8.
-	CleaningAccessPosId int `json:"cleaning_access_pos_id,"`
+	CleaningAccessPosId int `json:"cleaning_access_pos_id"`
 
 	// Application type ID. Possible values: 0 1
-	AppTypeId int `json:"app_type_id,"`
+	AppTypeId int `json:"app_type_id"`
 }
 
 type CreateOptsBuilder interface {
@@ -252,10 +252,10 @@ type UpdateOpts struct {
 	HttpRequestPosId int `json:"http_request_pos_id"`
 
 	// Position ID of access limit during cleaning. The value ranges from 1 to 8.
-	CleaningAccessPosId int `json:"cleaning_access_pos_id,"`
+	CleaningAccessPosId int `json:"cleaning_access_pos_id"`
 
 	// Application type ID. Possible values: 0 1
-	AppTypeId int `json:"app_type_id,"`
+	AppTypeId int `json:"app_type_id"`
 }
 
 type UpdateOptsBuilder interface {
