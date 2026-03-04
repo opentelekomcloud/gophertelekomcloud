@@ -277,7 +277,7 @@ func (p Pager) newFetchNextPage(url string) (NewPage, error) {
 		}
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

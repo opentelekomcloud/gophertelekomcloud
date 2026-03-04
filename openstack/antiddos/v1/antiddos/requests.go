@@ -10,13 +10,13 @@ import (
 
 type CreateOpts struct {
 	// Whether to enable L7 defense
-	EnableL7 bool `json:"enable_L7,"`
+	EnableL7 bool `json:"enable_L7"`
 
 	// Position ID of traffic. The value ranges from 1 to 9.
-	TrafficPosId int `json:"traffic_pos_id,"`
+	TrafficPosId int `json:"traffic_pos_id"`
 
 	// Position ID of number of HTTP requests. The value ranges from 1 to 15.
-	HttpRequestPosId int `json:"http_request_pos_id,"`
+	HttpRequestPosId int `json:"http_request_pos_id"`
 
 	// Position ID of access limit during cleaning. The value ranges from 1 to 8.
 	CleaningAccessPosId int `json:"cleaning_access_pos_id,"`
@@ -243,13 +243,13 @@ func getStructField(v *DdosStatus, field string) string {
 
 type UpdateOpts struct {
 	// Whether to enable L7 defense
-	EnableL7 bool `json:"enable_L7,"`
+	EnableL7 bool `json:"enable_L7"`
 
 	// Position ID of traffic. The value ranges from 1 to 9.
-	TrafficPosId int `json:"traffic_pos_id,"`
+	TrafficPosId int `json:"traffic_pos_id"`
 
 	// Position ID of number of HTTP requests. The value ranges from 1 to 15.
-	HttpRequestPosId int `json:"http_request_pos_id,"`
+	HttpRequestPosId int `json:"http_request_pos_id"`
 
 	// Position ID of access limit during cleaning. The value ranges from 1 to 8.
 	CleaningAccessPosId int `json:"cleaning_access_pos_id,"`

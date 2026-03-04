@@ -108,12 +108,12 @@ func TestDataArtsJobsImportExport(t *testing.T) {
 	t.Log("export job")
 	storedFile, err := job.ExportJob(client, jobName, "")
 	th.AssertNoErr(t, err)
-	defer storedFile.Close()
+	defer func() { _ = storedFile.Close() }()
 
 	f, err := os.Create("jobTest.zip")
 	th.AssertNoErr(t, err)
 
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	th.AssertNoErr(t, err)
 	_, err = f.ReadFrom(storedFile)
