@@ -5,6 +5,7 @@ linters:
       checks:
         - all
         - '-SA1008' # "content-length" is not canonical, avoid OBS headers warnings
+        - '-SA5008' # malformed json tags with trailing commas, used intentionally
         - '-SA1019' # deprecations, used to avoid Extract... deprecation warnings
         - '-ST*'    # style checks (naming, comments, etc.)
         - '-QF*'    # quick fix suggestions
