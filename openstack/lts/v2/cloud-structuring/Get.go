@@ -40,7 +40,7 @@ func Get(client *golangsdk.ServiceClient, logGroupId, logStreamId string) (*Stru
 	if err != nil {
 		return nil, fmt.Errorf("read body error: %w", err)
 	}
-	defer raw.Body.Close()
+	defer func() { _ = raw.Body.Close() }()
 
 	// First unmarshal into a string (because it's a double-encoded JSON string)
 	var rawJsonString string

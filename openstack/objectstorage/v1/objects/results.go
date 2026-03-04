@@ -211,12 +211,11 @@ func (r *DownloadResult) ExtractContent() ([]byte, error) {
 	if r.Err != nil {
 		return nil, r.Err
 	}
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
 	}
-	r.Body.Close()
 	return body, nil
 }
 

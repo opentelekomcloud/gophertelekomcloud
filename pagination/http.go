@@ -45,7 +45,7 @@ func (r PageResult) GetBodyAsMap() (map[string]any, error) {
 // PageResultFrom parses an HTTP response as JSON and returns a PageResult containing the
 // results, interpreting it as JSON if the content type indicates.
 func PageResultFrom(resp *http.Response) (PageResult, error) {
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return PageResult{}, err

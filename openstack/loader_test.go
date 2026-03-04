@@ -164,7 +164,7 @@ func TestDefaultVendor(t *testing.T) {
 
 	configPath := "/tmp/gophertest/config"
 	_ = os.MkdirAll(configPath, os.ModePerm)
-	defer os.RemoveAll(configPath)
+	defer func() { _ = os.RemoveAll(configPath) }()
 
 	clientConfigPath := filepath.Join(configPath, "/clouds.yaml")
 	_ = os.Setenv("OS_CLIENT_CONFIG_FILE", clientConfigPath)

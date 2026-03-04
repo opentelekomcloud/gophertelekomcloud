@@ -105,7 +105,7 @@ func TestConcurrentReauth(t *testing.T) {
 				t.Errorf("response body was nil")
 				return
 			}
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			actual, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				t.Errorf("error reading response body: %s", err)

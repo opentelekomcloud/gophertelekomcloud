@@ -384,7 +384,7 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 				if err != nil {
 					return nil, err
 				}
-				defer fd.Close()
+				defer func() { _ = fd.Close() }()
 				fileReaderWrapper := &fileReaderWrapper{filePath: r.filePath}
 				fileReaderWrapper.mark = r.mark
 				fileReaderWrapper.reader = fd
