@@ -11,6 +11,7 @@ type ModifyPrivateDomainNameOpts struct {
 	DnsName    string `json:"dns_name" required:"true"`
 }
 
+// This function is used to modify a private domain name.
 func ModifyPrivateDomainName(client *golangsdk.ServiceClient, opts ModifyPrivateDomainNameOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
@@ -19,7 +20,7 @@ func ModifyPrivateDomainName(client *golangsdk.ServiceClient, opts ModifyPrivate
 
 	// PUT /v3/{project_id}/instances/{instance_id}/modify-dns
 	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "modify-dns"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
+		OkCodes: []int{200, 202},
 	})
 	if err != nil {
 		return nil, err

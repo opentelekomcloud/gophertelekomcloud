@@ -5,9 +5,19 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func GetPrivateDomainName(client *golangsdk.ServiceClient, instanceId string) (*PrivateDomain, error) {
+type GetPrivateDomainNameParams struct {
+	DnsType string `q:"dns_type" required:"true"`
+}
+
+// This function is used to query the domain name of a DB instance.
+func GetPrivateDomainName(client *golangsdk.ServiceClient, instanceId string, opts GetPrivateDomainNameParams) (*PrivateDomain, error) {
 	// GET /v3/{project_id}/instances/{instance_id}/dns
-	raw, err := client.Get(client.ServiceURL("instances", instanceId, "dns"), nil, nil)
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("instances", instanceId, "dns").WithQueryParams(&opts).Build()
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := client.Get(client.ServiceURL(url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -11,6 +11,7 @@ type ApplyForPrivateDomainOpts struct {
 	DnsType    string `json:"dns_type" required:"true"`
 }
 
+// This function is used to bind a private domain name to a specified DB instance.
 func ApplyForPrivateDomain(client *golangsdk.ServiceClient, opts ApplyForPrivateDomainOpts) (*string, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
