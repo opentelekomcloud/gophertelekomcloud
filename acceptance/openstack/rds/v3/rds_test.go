@@ -2,6 +2,7 @@ package v3
 
 import (
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -581,4 +582,34 @@ func TestRdsUpgradeVersion(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	_ = instances.WaitForJobCompleted(client, 600, *upgradeResp)
+}
+
+func TestRdsPrivateDomainName(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+	rdsId := os.Getenv("OS_RDS_ID")
+	if rdsId == "" {
+		t.Skip("OS_RDS_ID env var required for the test is missing")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	dnsName := tools.RandomString("testaccdomain", 4)
+	modifyOpts := instances.ModifyPrivateDomainNameOpts{
+		InstanceId: rdsId,
+		DnsName:    dnsName,
+	}
+	modifyResp, err := instances.ModifyPrivateDomainName(client, modifyOpts)
+	th.AssertNoErr(t, err)
+
+	_ = instances.WaitForJobCompleted(client, 600, *modifyResp)
+
+	domain, err := instances.GetPrivateDomainName(client, rdsId, instances.GetPrivateDomainNameParams{
+		DnsType: "private",
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "private", domain.DnsType)
+	th.AssertEquals(t, dnsName, strings.Split(domain.DnsName, ".")[0])
 }
