@@ -786,15 +786,6 @@ func NewDDSServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	return sc, err
 }
 
-func NewDISServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "dis")
-	if err != nil {
-		return nil, err
-	}
-	sc.ResourceBase = sc.Endpoint + "v2/" + client.ProjectID + "/"
-	return sc, err
-}
-
 // NewDRSServiceV3 creates a ServiceClient that may be used to access the Document Database Service.
 func NewDRSServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initCommonServiceClient(client, eo, "drs", "v3")
