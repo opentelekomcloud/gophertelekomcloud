@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 )
 
 type JobId struct {
@@ -28,7 +28,7 @@ func WaitForJobCompleted(client *golangsdk.ServiceClient, secs int, jobID string
 			return true, nil
 		}
 		if job.Job.Status == "Failed" {
-			err = fmt.Errorf("Job failed %s.\n", job.Job.Status)
+			err = fmt.Errorf("Job failed \n%#v.\n", job.Job)
 			return false, err
 		}
 
