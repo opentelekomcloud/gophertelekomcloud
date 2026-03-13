@@ -24,12 +24,13 @@ type RDSJobStatus struct {
 }
 
 type Job struct {
-	Id       string         `json:"id"`
-	Name     string         `json:"name"`
-	Status   string         `json:"status"`
-	Created  string         `json:"created"`
-	Process  string         `json:"process"`
-	Instance RDSJobInstance `json:"instance"`
+	Id         string         `json:"id"`
+	Name       string         `json:"name"`
+	Status     string         `json:"status"`
+	Created    string         `json:"created"`
+	Process    string         `json:"process"`
+	Instance   RDSJobInstance `json:"instance"`
+	FailReason *string        `json:"fail_reason"`
 }
 
 type RDSJobInstance struct {
