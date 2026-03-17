@@ -67,6 +67,14 @@ type CreateOpts struct {
 
 	// Specifies whether ECSs can be deployed in multiple random AZs. The default value is false.
 	CreateInMultiAz *bool `json:"batch_create_in_multi_az,omitempty"`
+
+	// SecurityOptions specifies the security options of the ECS, e.g. vTPM.
+	SecurityOptions *SecurityOptions `json:"security_options,omitempty"`
+}
+
+type SecurityOptions struct {
+	// TpmEnabled specifies whether vTPM is enabled on the ECS.
+	TpmEnabled *bool `json:"tpm_enabled,omitempty"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

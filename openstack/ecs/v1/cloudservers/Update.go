@@ -23,31 +23,35 @@ type UpdateOpts struct {
 	// A hostname cannot start or end with a period (.) or hyphen (-).
 	// A hostname cannot contain consecutive periods (..) or hyphens (--).
 	Hostname string `json:"hostname,omitempty"`
+
+	// SecurityOptions specifies the security options of the ECS, e.g. vTPM.
+	SecurityOptions *SecurityOptions `json:"security_options,omitempty"`
 }
 
 // UpdateResponse represents the response from the Update ECS API.
 // Unlike CloudServer, the image field is returned as a string (empty when booted from volume).
 type UpdateResponse struct {
-	Status      string                     `json:"status"`
-	Updated     time.Time                  `json:"updated"`
-	HostID      string                     `json:"hostId"`
-	Addresses   map[string][]UpdateAddress `json:"addresses"`
-	ID          string                     `json:"id"`
-	Name        string                     `json:"name"`
-	AccessIPv4  string                     `json:"accessIPv4"`
-	AccessIPv6  string                     `json:"accessIPv6"`
-	Created     time.Time                  `json:"created"`
-	Description string                     `json:"description"`
-	TenantID    string                     `json:"tenant_id"`
-	UserID      string                     `json:"user_id"`
-	Flavor      Flavor                     `json:"flavor"`
-	Metadata    Metadata                   `json:"metadata"`
-	Image       string                     `json:"image"`
-	Progress    int                        `json:"progress"`
-	DiskConfig  string                     `json:"OS-DCF:diskConfig"`
-	Hostname    string                     `json:"OS-EXT-SRV-ATTR:hostname"`
-	UserData    string                     `json:"OS-EXT-SRV-ATTR:user_data"`
-	Links       []Link                     `json:"links"`
+	Status          string                     `json:"status"`
+	Updated         time.Time                  `json:"updated"`
+	HostID          string                     `json:"hostId"`
+	Addresses       map[string][]UpdateAddress `json:"addresses"`
+	ID              string                     `json:"id"`
+	Name            string                     `json:"name"`
+	AccessIPv4      string                     `json:"accessIPv4"`
+	AccessIPv6      string                     `json:"accessIPv6"`
+	Created         time.Time                  `json:"created"`
+	Description     string                     `json:"description"`
+	TenantID        string                     `json:"tenant_id"`
+	UserID          string                     `json:"user_id"`
+	Flavor          Flavor                     `json:"flavor"`
+	Metadata        Metadata                   `json:"metadata"`
+	Image           string                     `json:"image"`
+	Progress        int                        `json:"progress"`
+	DiskConfig      string                     `json:"OS-DCF:diskConfig"`
+	Hostname        string                     `json:"OS-EXT-SRV-ATTR:hostname"`
+	UserData        string                     `json:"OS-EXT-SRV-ATTR:user_data"`
+	Links           []Link                     `json:"links"`
+	SecurityOptions *SecurityOptions           `json:"security_options"`
 }
 
 type UpdateAddress struct {

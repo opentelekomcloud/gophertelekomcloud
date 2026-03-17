@@ -121,6 +121,7 @@ type CloudServer struct {
 	HypervisorHostname string               `json:"OS-EXT-SRV-ATTR:hypervisor_hostname"`
 	VolumeAttached     []VolumeAttached     `json:"os-extended-volumes:volumes_attached"`
 	OsSchedulerHints   OsSchedulerHints     `json:"os:scheduler_hints"`
+	SecurityOptions    *SecurityOptions     `json:"security_options"`
 }
 
 // NewCloudServer defines the response from details on a single server, by ID.
