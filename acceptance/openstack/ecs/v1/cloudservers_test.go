@@ -58,6 +58,65 @@ func TestCloudServerLifecycle(t *testing.T) {
 	tools.PrintResource(t, ecs)
 }
 
+func TestCloudServerSecurityOptions(t *testing.T) {
+	client, err := clients.NewComputeV1Client()
+	th.AssertNoErr(t, err)
+
+	prefix := "ecs-vtpm-"
+	ecsName := tools.RandomString(prefix, 3)
+	imageName := "Enterprise_Windows-Server_2022_STD_amd64_uefi_latest"
+	flavorID := "pi5e.2xlarge.4"
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+
+	imageV2Client, err := clients.NewIMSV2Client()
+	th.AssertNoErr(t, err)
+
+	image, err := images.ListImages(imageV2Client, images.ListImagesOpts{
+		Name: imageName,
+	})
+	th.AssertNoErr(t, err)
+	if len(image) == 0 {
+		t.Skip("Change image query filter, no results returned")
+	}
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID, OS_NETWORK_ID env vars is missing but ECSv1 test requires")
+	}
+
+	tpmEnabled := true
+	createOpts := cloudservers.CreateOpts{
+		ImageRef:  image[0].Id,
+		FlavorRef: flavorID,
+		Name:      ecsName,
+		VpcId:     vpcID,
+		Nics: []cloudservers.Nic{
+			{
+				SubnetId: subnetID,
+			},
+		},
+		RootVolume: cloudservers.RootVolume{
+			VolumeType: "SSD",
+			Size:       40,
+		},
+		SecurityOptions: &cloudservers.SecurityOptions{
+			TpmEnabled: &tpmEnabled,
+		},
+	}
+
+	// Check ECSv1 createOpts
+	openstack.DryRunCloudServerConfig(t, client, createOpts)
+
+	// Create ECSv1 instance
+	ecs := openstack.CreateCloudServer(t, client, createOpts)
+	defer openstack.DeleteCloudServer(t, client, ecs.ID)
+
+	// Verify SecurityOptions in Get response
+	th.AssertEquals(t, true, ecs.SecurityOptions != nil)
+	th.AssertEquals(t, true, *ecs.SecurityOptions.TpmEnabled)
+	t.Logf("ECS created with SecurityOptions: tpm_enabled=%v", *ecs.SecurityOptions.TpmEnabled)
+}
+
 func TestCloudServersRandomAzLifecycle(t *testing.T) {
 	client, err := clients.NewComputeV1Client()
 	th.AssertNoErr(t, err)
