@@ -72,6 +72,9 @@ type Spec struct {
 	SupportIstio *bool `json:"supportIstio,omitempty"`
 	// configurationsOverride
 	ConfigurationsOverride []PackageConfiguration `json:"configurationsOverride,omitempty"`
+	// Cluster deletion protection: true/false.
+	// When enabled, the cluster cannot be deleted.
+	DeletionProtection *bool `json:"deletionProtection,omitempty"`
 }
 
 type PackageConfiguration struct {

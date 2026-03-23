@@ -9,6 +9,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/clusters"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/cce/v3/nodepools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/compute/v2/extensions/floatingips"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/subnets"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -199,4 +200,67 @@ func TestTurboClusterWithCillium(t *testing.T) {
 	if clusterID != "" {
 		cce.DeleteCluster(t, clusterID)
 	}
+}
+
+func TestClusterDeletionProtection(t *testing.T) {
+	if clients.EnvOS.GetEnv("RUN_CCE_DELETION_PROTECTION") == "" {
+		t.Skip("OS_RUN_CCE_DELETION_PROTECTION is required for this test")
+	}
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	if vpcID == "" {
+		t.Skip("OS_VPC_ID is required for this test")
+	}
+
+	clientNet, err := clients.NewNetworkV1Client()
+	th.AssertNoErr(t, err)
+
+	subnetsList, err := subnets.List(clientNet, subnets.ListOpts{VpcID: vpcID})
+	th.AssertNoErr(t, err)
+	if len(subnetsList) < 1 {
+		t.Skip("no subnets found in selected VPC")
+	}
+
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
+
+	cluster, err := clusters.Create(client, clusters.CreateOpts{
+		Kind:       "Cluster",
+		ApiVersion: "v3",
+		Metadata: clusters.CreateMetaData{
+			Name: strings.ToLower(tools.RandomString("cce-del-prot-", 4)),
+		},
+		Spec: clusters.Spec{
+			Type:   "VirtualMachine",
+			Flavor: "cce.s1.small",
+			HostNetwork: clusters.HostNetworkSpec{
+				VpcId:    vpcID,
+				SubnetId: subnetsList[0].NetworkID,
+			},
+			ContainerNetwork: clusters.ContainerNetworkSpec{
+				Mode: "overlay_l2",
+			},
+			Authentication: clusters.AuthenticationSpec{
+				Mode:                "rbac",
+				AuthenticatingProxy: make(map[string]string),
+			},
+			KubernetesSvcIpRange: "10.247.0.0/16",
+			DeletionProtection:   pointerto.Bool(true),
+		},
+	})
+	th.AssertNoErr(t, err)
+
+	clusterID := cluster.Metadata.Id
+	th.AssertNoErr(t, cce.WaitForClusterToActivate(client, clusterID, 30*60))
+
+	clusterGet, err := clusters.Get(client, clusterID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, *clusterGet.Spec.DeletionProtection)
+
+	// Attempt to delete — should fail due to deletion protection
+	err = clusters.Delete(client, clusterID, clusters.DeleteQueryParams{})
+	if err == nil {
+		t.Fatal("expected error when deleting cluster with deletion protection enabled, but got nil")
+	}
+	t.Logf("deletion correctly rejected: %s", err)
 }
