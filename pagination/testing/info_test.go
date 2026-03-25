@@ -128,3 +128,99 @@ func TestInfoPageAll(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, expectedPolicies, actual)
 }
+
+// NewPageInfoBase tests (new pagination API)
+
+type NewInfoPageResult struct {
+	pagination.NewPageInfoBase
+}
+
+func ExtractNewStructs(p pagination.NewPage) ([]Struct, error) {
+	var s struct {
+		Structs []Struct `json:"structs"`
+	}
+	err := json.Unmarshal(p.(NewInfoPageResult).Body, &s)
+	return s.Structs, err
+}
+
+func createNewInfoPager(t *testing.T) pagination.Pager {
+	th.SetupHTTP()
+
+	th.Mux.HandleFunc("/new-page", func(w http.ResponseWriter, r *http.Request) {
+		_ = r.ParseForm()
+		ms := r.Form["marker"]
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		switch {
+		case len(ms) == 0:
+			allJson, _ := json.MarshalIndent(expectedPolicies[:2], "", "  ")
+			response := fmt.Sprintf(`
+{
+  "page_info": {
+    "next_marker": "%s"
+  },
+  "structs": %s
+}
+`, expectedPolicies[2].ID, allJson)
+			_, _ = fmt.Fprint(w, response)
+		case len(ms) == 1 && ms[0] == expectedPolicies[2].ID:
+			allJson, _ := json.MarshalIndent(expectedPolicies[2:], "", "  ")
+			response := fmt.Sprintf(`
+{
+  "page_info": {
+  },
+  "structs": %s
+}
+`, allJson)
+			_, _ = fmt.Fprint(w, response)
+		default:
+			t.Errorf("Request with unexpected marker: [%v]", ms)
+		}
+	})
+
+	client := createClient()
+	return pagination.Pager{
+		Client:     client,
+		InitialURL: th.Server.URL + "/new-page",
+		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
+			return NewInfoPageResult{NewPageInfoBase: pagination.NewPageInfoBase{NewPageResult: r}}
+		},
+	}
+}
+
+func TestNewInfoPageEachPage(t *testing.T) {
+	pager := createNewInfoPager(t)
+	defer th.TeardownHTTP()
+
+	callCount := 0
+	err := pager.NewEachPage(func(page pagination.NewPage) (bool, error) {
+		actual, err := ExtractNewStructs(page)
+		if err != nil {
+			return false, err
+		}
+		t.Logf("Handler invoked with %+v", actual)
+
+		switch callCount {
+		case 0:
+			th.AssertDeepEquals(t, actual, expectedPolicies[:2])
+		case 1:
+			th.AssertDeepEquals(t, actual, expectedPolicies[2:])
+		}
+
+		callCount += 1
+		return true, nil
+	})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 2, callCount)
+}
+
+func TestNewInfoPageAll(t *testing.T) {
+	pager := createNewInfoPager(t)
+	defer th.TeardownHTTP()
+
+	page, err := pager.NewAllPages()
+	th.AssertNoErr(t, err)
+	actual, err := ExtractNewStructs(page)
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, expectedPolicies, actual)
+}

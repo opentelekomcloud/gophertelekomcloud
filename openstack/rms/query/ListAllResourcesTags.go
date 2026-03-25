@@ -26,7 +26,7 @@ func ListAllResourcesTags(client *golangsdk.ServiceClient, domainId string, opts
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return TagsPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return TagsPage{NewPageInfoBase: pagination.NewPageInfoBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
 	if err != nil {

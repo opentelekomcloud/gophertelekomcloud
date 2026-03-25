@@ -38,7 +38,7 @@ func TestRecorderResourceList(t *testing.T) {
 		listOpts,
 	)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, 0, len(resources))
+	th.AssertEquals(t, true, len(resources) > 0)
 }
 
 func TestServicesList(t *testing.T) {
