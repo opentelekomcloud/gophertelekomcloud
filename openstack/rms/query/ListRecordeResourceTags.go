@@ -32,7 +32,7 @@ func ListRecordedResourcesTags(client *golangsdk.ServiceClient, domainId string,
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return TagsPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return TagsPage{NewPageInfoBase: pagination.NewPageInfoBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
 	if err != nil {
@@ -42,7 +42,7 @@ func ListRecordedResourcesTags(client *golangsdk.ServiceClient, domainId string,
 }
 
 type TagsPage struct {
-	pagination.NewSinglePageBase
+	pagination.NewPageInfoBase
 }
 
 func ExtractTags(r pagination.NewPage) ([]Tag, error) {

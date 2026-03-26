@@ -16,7 +16,7 @@ type ListRulesOpts struct {
 	// Specifies the number of records returned on each page during pagination query.
 	Limit *int `q:"limit"`
 	// Specifies the pagination parameter.
-	Marker string `q:"string"`
+	Marker string `q:"marker"`
 }
 
 func ListRules(client *golangsdk.ServiceClient, opts ListRulesOpts) ([]PolicyRule, error) {
@@ -31,7 +31,7 @@ func ListRules(client *golangsdk.ServiceClient, opts ListRulesOpts) ([]PolicyRul
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return ResPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return RulesPage{NewPageInfoBase: pagination.NewPageInfoBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
 	if err != nil {
@@ -40,10 +40,14 @@ func ListRules(client *golangsdk.ServiceClient, opts ListRulesOpts) ([]PolicyRul
 	return ExtractRules(pages)
 }
 
+type RulesPage struct {
+	pagination.NewPageInfoBase
+}
+
 func ExtractRules(r pagination.NewPage) ([]PolicyRule, error) {
 	var s struct {
 		Rules []PolicyRule `json:"value"`
 	}
-	err := extract.Into(bytes.NewReader((r.(ResPage)).Body), &s)
+	err := extract.Into(bytes.NewReader((r.(RulesPage)).Body), &s)
 	return s.Rules, err
 }

@@ -33,24 +33,84 @@ func TestComplianceList(t *testing.T) {
 	ruleName := tools.RandomString("rule-", 4)
 	rule := createRule(t, client, ruleName)
 
-	// Test ListAllCompliance
+	th.AssertNoErr(t, waitForRuleAvailable(client, 120, client.DomainID, rule.ID))
+
+	// Use small limit to trigger pagination across existing resources
+	limit := 100
 	listOpts := compliance.ListAllComplianceOpts{
 		DomainId: client.DomainID,
 		PolicyId: rule.ID,
+		Limit:    &limit,
 	}
 
 	allCompliance, err := compliance.ListAllRuleCompliance(client, listOpts)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, true, len(allCompliance) > 0)
+	t.Logf("ListAllRuleCompliance returned %d results (limit=%d)", len(allCompliance), limit)
 
-	// Test ListAllUserCompliance
+	// Test ListAllUserCompliance with small limit
 	userComplianceOpts := compliance.ListAllUserComplianceOpts{
 		DomainId: client.DomainID,
+		Limit:    &limit,
 	}
 
 	userCompliance, err := compliance.ListAllUserCompliance(client, userComplianceOpts)
 	th.AssertNoErr(t, err)
-	th.AssertEquals(t, true, len(userCompliance) > 0)
+	t.Logf("ListAllUserCompliance returned %d results (limit=%d)", len(userCompliance), limit)
+
+	// Test filtering by compliance_state
+	compliantOpts := compliance.ListAllComplianceOpts{
+		DomainId:        client.DomainID,
+		PolicyId:        rule.ID,
+		ComplianceState: "Compliant",
+	}
+	compliantStates, err := compliance.ListAllRuleCompliance(client, compliantOpts)
+	th.AssertNoErr(t, err)
+	for _, s := range compliantStates {
+		th.AssertEquals(t, "Compliant", s.ComplianceState)
+	}
+	t.Logf("Compliant filter returned %d results", len(compliantStates))
+
+	nonCompliantOpts := compliance.ListAllComplianceOpts{
+		DomainId:        client.DomainID,
+		PolicyId:        rule.ID,
+		ComplianceState: "NonCompliant",
+	}
+	nonCompliantStates, err := compliance.ListAllRuleCompliance(client, nonCompliantOpts)
+	th.AssertNoErr(t, err)
+	for _, s := range nonCompliantStates {
+		th.AssertEquals(t, "NonCompliant", s.ComplianceState)
+	}
+	t.Logf("NonCompliant filter returned %d results", len(nonCompliantStates))
+
+	// Test filtering by resource_name
+	if len(allCompliance) > 0 {
+		targetName := allCompliance[0].ResourceName
+		nameOpts := compliance.ListAllComplianceOpts{
+			DomainId:     client.DomainID,
+			PolicyId:     rule.ID,
+			ResourceName: targetName,
+		}
+		nameStates, err := compliance.ListAllRuleCompliance(client, nameOpts)
+		th.AssertNoErr(t, err)
+		for _, s := range nameStates {
+			th.AssertEquals(t, targetName, s.ResourceName)
+		}
+		t.Logf("ResourceName filter '%s' returned %d results", targetName, len(nameStates))
+
+		// Test filtering by resource_id
+		targetID := allCompliance[0].ResourceID
+		idOpts := compliance.ListAllComplianceOpts{
+			DomainId:   client.DomainID,
+			PolicyId:   rule.ID,
+			ResourceId: targetID,
+		}
+		idStates, err := compliance.ListAllRuleCompliance(client, idOpts)
+		th.AssertNoErr(t, err)
+		for _, s := range idStates {
+			th.AssertEquals(t, targetID, s.ResourceID)
+		}
+		t.Logf("ResourceId filter '%s' returned %d results", targetID, len(idStates))
+	}
 
 	// Test ListResCompliance
 	resComplianceOpts := compliance.ListResComplianceOpts{

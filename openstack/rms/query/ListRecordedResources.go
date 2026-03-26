@@ -37,7 +37,7 @@ func ListRecordedResources(client *golangsdk.ServiceClient, domainId string, opt
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return ResPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return ResPage{NewPageInfoBase: pagination.NewPageInfoBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
 	if err != nil {

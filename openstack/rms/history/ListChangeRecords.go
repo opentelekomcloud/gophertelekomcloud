@@ -35,7 +35,7 @@ func ListAllRecords(client *golangsdk.ServiceClient, opts ListAllOpts) ([]Histor
 		Client:     client,
 		InitialURL: client.ServiceURL(url.String()),
 		CreatePage: func(r pagination.NewPageResult) pagination.NewPage {
-			return ResPage{NewSinglePageBase: pagination.NewSinglePageBase{NewPageResult: r}}
+			return ResPage{NewPageInfoBase: pagination.NewPageInfoBase{NewPageResult: r}}
 		},
 	}.NewAllPages()
 	if err != nil {
@@ -45,7 +45,7 @@ func ListAllRecords(client *golangsdk.ServiceClient, opts ListAllOpts) ([]Histor
 }
 
 type ResPage struct {
-	pagination.NewSinglePageBase
+	pagination.NewPageInfoBase
 }
 
 func ExtractResources(r pagination.NewPage) ([]HistoryItem, error) {
