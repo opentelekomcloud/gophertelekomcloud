@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func Get(client *golangsdk.ServiceClient, ns, name string) (*NetworkResp, error) {
+func Get(client *golangsdk.ServiceClient, ns, name string) (*Network, error) {
 	raw, err := client.Get(client.ServiceURL("namespaces", ns, "networks", name), nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json"},
@@ -15,6 +15,6 @@ func Get(client *golangsdk.ServiceClient, ns, name string) (*NetworkResp, error)
 		return nil, err
 	}
 
-	var res NetworkResp
+	var res Network
 	return &res, extract.Into(raw.Body, &res)
 }

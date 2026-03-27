@@ -8,6 +8,15 @@ import (
 
 // UpdateOpts contains all the values needed to update a ConfigMap
 type UpdateOpts struct {
+	// DryRun when present, indicates that modifications should not be persisted
+	DryRun string `json:"-" q:"dryRun,omitempty"`
+
+	// FieldManager is a name associated with the actor or entity making these changes
+	FieldManager string `json:"-" q:"fieldManager,omitempty"`
+
+	// Pretty if 'true', then the output is pretty printed
+	Pretty string `json:"-" q:"pretty,omitempty"`
+
 	// APIVersion defines the versioned schema of this representation of an object
 	APIVersion string `json:"apiVersion,omitempty"`
 
@@ -34,8 +43,15 @@ func Update(client *golangsdk.ServiceClient, namespace string, name string, opts
 		return nil, err
 	}
 
+	url, err := golangsdk.NewURLBuilder().
+		WithEndpoints("namespaces", namespace, "configmaps", name).
+		WithQueryParams(&opts).Build()
+	if err != nil {
+		return nil, err
+	}
+
 	// PUT /apis/cci/v2/namespaces/{namespace}/configmaps/{name}
-	raw, err := client.Put(client.ServiceURL("namespaces", namespace, "configmaps", name), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL(url.String()), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201},
 		MoreHeaders: map[string]string{
 			"Content-Type": "application/json",

@@ -23,7 +23,7 @@ type Preconditions struct {
 	UID             string `json:"uid,omitempty"`
 }
 
-func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (*SecretDeleteResp, error) {
+func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (*DeleteResult, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -36,12 +36,12 @@ func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (*SecretDeleteResp
 		return nil, err
 	}
 
-	var res SecretDeleteResp
+	var res DeleteResult
 	err = extract.Into(raw.Body, &res)
 	return &res, err
 }
 
-type SecretDeleteResp struct {
+type DeleteResult struct {
 	APIVersion string         `json:"apiVersion"`
 	Code       int            `json:"code"`
 	Details    *StatusDetails `json:"details"`

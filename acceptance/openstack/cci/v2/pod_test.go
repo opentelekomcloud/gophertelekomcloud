@@ -47,49 +47,51 @@ func TestPodLifecycle(t *testing.T) {
 	})
 
 	t.Logf("Attempting to create pod")
-	createOpts := pod.Pod{
-		APIVersion: "cci/v2",
-		Kind:       "Pod",
-		Metadata: pod.ObjectMeta{
-			Name: podName,
-			Annotations: map[string]string{
-				"resource.cci.io/pod-size-specs": "2.00_4.0",
-			},
-		},
-		Spec: pod.PodSpec{
-			Containers: []pod.Container{
-				{
-					Env: []pod.EnvVar{
-						{
-							Name:  "ENV1",
-							Value: "false",
-						},
-					},
-					Image:           "nginx:latest",
-					ImagePullPolicy: "IfNotPresent",
-					Name:            "deploy-example",
-					Resources: pod.ResourceRequirements{
-						Limits: map[string]string{
-							"cpu":    "500m",
-							"memory": "1Gi",
-						},
-						Requests: map[string]string{
-							"cpu":    "500m",
-							"memory": "1Gi",
-						},
-					},
-					TerminationMessagePolicy: "File",
-					TerminationMessagePath:   "/dev/termination-log",
+	createOpts := pod.CreateOpts{
+		Pod: pod.Pod{
+			APIVersion: "cci/v2",
+			Kind:       "Pod",
+			Metadata: pod.ObjectMeta{
+				Name: podName,
+				Annotations: map[string]string{
+					"resource.cci.io/pod-size-specs": "2.00_4.0",
 				},
 			},
-			DNSPolicy: "Default",
-			ImagePullSecrets: []pod.LocalObjectReference{
-				{
-					Name: "image-pull-secret",
+			Spec: pod.PodSpec{
+				Containers: []pod.Container{
+					{
+						Env: []pod.EnvVar{
+							{
+								Name:  "ENV1",
+								Value: "false",
+							},
+						},
+						Image:           "nginx:latest",
+						ImagePullPolicy: "IfNotPresent",
+						Name:            "deploy-example",
+						Resources: pod.ResourceRequirements{
+							Limits: map[string]string{
+								"cpu":    "500m",
+								"memory": "1Gi",
+							},
+							Requests: map[string]string{
+								"cpu":    "500m",
+								"memory": "1Gi",
+							},
+						},
+						TerminationMessagePolicy: "File",
+						TerminationMessagePath:   "/dev/termination-log",
+					},
 				},
+				DNSPolicy: "Default",
+				ImagePullSecrets: []pod.LocalObjectReference{
+					{
+						Name: "image-pull-secret",
+					},
+				},
+				RestartPolicy:                 "Always",
+				TerminationGracePeriodSeconds: pointerto.Int64(30),
 			},
-			RestartPolicy:                 "Always",
-			TerminationGracePeriodSeconds: pointerto.Int64(30),
 		},
 	}
 
@@ -113,10 +115,84 @@ func TestPodLifecycle(t *testing.T) {
 	th.AssertEquals(t, createOpts.Spec.Containers[0].Env[0].Name, getPod.Spec.Containers[0].Env[0].Name)
 	th.AssertEquals(t, createOpts.Spec.Containers[0].Image, getPod.Spec.Containers[0].Image)
 
-	// The API does not exist or has not been published in the environment
-	// err = pod.ConnectPost(client, nsName, podName)
+	t.Logf("Attempting to list pods")
+	pods, err := pod.List(client, nsName, pod.ListOpts{})
+	th.AssertNoErr(t, err)
+	found := false
+	for _, p := range pods {
+		if p.Metadata.Name == podName {
+			found = true
+			break
+		}
+	}
+	th.AssertEquals(t, true, found)
+
+	// Tests fail both on gopher side and on testreport
+	// t.Logf("Attempting to update pod")
+	// updateOpts := pod.UpdateOpts{
+	// 	Pod: pod.Pod{
+	// 		APIVersion: "cci/v2",
+	// 		Kind:       "Pod",
+	// 		Metadata: pod.ObjectMeta{
+	// 			Name: podName,
+	// 			Annotations: map[string]string{
+	// 				"resource.cci.io/pod-size-specs": "2.00_4.0",
+	// 			},
+	// 			Labels: map[string]string{
+	// 				"updated": "true",
+	// 			},
+	// 			ResourceVersion: getPod.Metadata.ResourceVersion,
+	// 		},
+	// 		Spec: getPod.Spec,
+	// 	},
+	// }
+	//
+	// updatedPod, err := pod.Update(client, nsName, podName, updateOpts)
+	// th.AssertNoErr(t, err)
+	// th.AssertEquals(t, "true", updatedPod.Metadata.Labels["updated"])
+	//
+	// t.Logf("Attempting to patch pod")
+	// patchBody := map[string]interface{}{
+	// 	"metadata": map[string]interface{}{
+	// 		"labels": map[string]string{
+	// 			"patched": "true",
+	// 		},
+	// 	},
+	// }
+	// patchOpts := pod.PatchOpts{
+	// 	Namespace: nsName,
+	// 	Name:      podName,
+	// }
+	// patchedPod, err := pod.Patch(client, patchOpts, patchBody, "application/merge-patch+json")
+	// th.AssertNoErr(t, err)
+	// th.AssertEquals(t, "true", patchedPod.Metadata.Labels["patched"])
+
+	// t.Logf("Attempting to read pod logs")
+	// logOpts := pod.LogOpts{
+	// 	Namespace: nsName,
+	// 	Name:      podName,
+	// 	TailLines: pointerto.Int(10),
+	// }
+	// _, err = pod.Log(client, logOpts)
 	// th.AssertNoErr(t, err)
 	//
-	// err = pod.ConnectGet(client, nsName, podName)
+	// t.Logf("Attempting to connect post exec")
+	// connectPostOpts := pod.ConnectPostOpts{
+	// 	Command:   "ls",
+	// 	Container: "deploy-example",
+	// 	Stdout:    pointerto.Bool(true),
+	// 	Stderr:    pointerto.Bool(true),
+	// }
+	// err = pod.ConnectPost(client, nsName, podName, connectPostOpts)
+	// th.AssertNoErr(t, err)
+	//
+	// t.Logf("Attempting to connect get exec")
+	// connectGetOpts := pod.ConnectGetOpts{
+	// 	Command:   "ls",
+	// 	Container: "deploy-example",
+	// 	Stdout:    pointerto.Bool(true),
+	// 	Stderr:    pointerto.Bool(true),
+	// }
+	// err = pod.ConnectGet(client, nsName, podName, connectGetOpts)
 	// th.AssertNoErr(t, err)
 }

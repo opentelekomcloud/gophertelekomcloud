@@ -27,7 +27,7 @@ type ObjectMeta struct {
 	GenerateName string `json:"generateName,omitempty"`
 
 	// Generation is a sequence number representing a specific generation of the desired state
-	Generation int64 `json:"generation,omitempty"`
+	Generation *int64 `json:"generation,omitempty"`
 
 	// Labels map of string keys and values for organization
 	Labels map[string]string `json:"labels,omitempty"`
@@ -57,22 +57,25 @@ type ObjectMeta struct {
 // ManagedFieldsEntry contains workflow-managed fields
 type ManagedFieldsEntry struct {
 	// APIVersion defines the version of this resource
-	APIVersion string `json:"apiVersion"`
+	APIVersion string `json:"apiVersion,omitempty"`
 
 	// FieldsType is the discriminator for the different fields format and version
-	FieldsType string `json:"fieldsType"`
+	FieldsType string `json:"fieldsType,omitempty"`
 
 	// FieldsV1 holds the first JSON version format
-	FieldsV1 interface{} `json:"fieldsV1,"`
+	FieldsV1 interface{} `json:"fieldsV1,omitempty"`
 
 	// Manager is an identifier of the workflow managing these fields
-	Manager string `json:"manager"`
+	Manager string `json:"manager,omitempty"`
 
 	// Operation is the type of operation which lead to this ManagedFieldsEntry
-	Operation string `json:"operation"`
+	Operation string `json:"operation,omitempty"`
+
+	// Subresource is the name of the subresource used to update that object, or empty if the object was updated through the main resource
+	Subresource string `json:"subresource,omitempty"`
 
 	// Time is timestamp of when these fields were set
-	Time string `json:"time"`
+	Time string `json:"time,omitempty"`
 }
 
 // OwnerReference contains enough information to let you identify an owning object
@@ -81,10 +84,10 @@ type OwnerReference struct {
 	APIVersion string `json:"apiVersion"`
 
 	// BlockOwnerDeletion will block garbage collection of the owner
-	BlockOwnerDeletion *bool `json:"blockOwnerDeletion"`
+	BlockOwnerDeletion *bool `json:"blockOwnerDeletion,omitempty"`
 
 	// Controller identifies whether this OwnerReference points to the managing controller
-	Controller *bool `json:"controller"`
+	Controller *bool `json:"controller,omitempty"`
 
 	// Kind of the referent
 	Kind string `json:"kind"`

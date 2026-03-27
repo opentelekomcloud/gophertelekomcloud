@@ -130,7 +130,4 @@ type DeleteResult struct {
 
 	// Metadata contains list metadata
 	Metadata ListMeta `json:"metadata,omitempty"`
-
-	// Spec defines the behavior of the Namespace
-	Spec *NamespaceSpec `json:"spec,omitempty"`
 }

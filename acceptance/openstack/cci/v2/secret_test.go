@@ -47,7 +47,7 @@ func TestSecretLifecycle(t *testing.T) {
 
 	t.Logf("Attempting to create secret")
 
-	secretOpts := secret.CreateSecretOpts{
+	secretOpts := secret.CreateOpts{
 		Namespace:  nsName,
 		APIVersion: "cci/v2",
 		Kind:       "Secret",
@@ -77,7 +77,7 @@ func TestSecretLifecycle(t *testing.T) {
 
 	t.Logf("Attempting to update secret")
 
-	updateSecretOpts := secret.UpdateSecretOpts{
+	updateSecretOpts := secret.UpdateOpts{
 		APIVersion: "cci/v2",
 		Data:       map[string]string{"key": "dGVzdA=="},
 		Kind:       "Secret",
@@ -97,4 +97,16 @@ func TestSecretLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getResp.Metadata.Name, secretName)
 	th.AssertEquals(t, updateResp.Data["key"], getResp.Data["key"])
+
+	t.Logf("Attempting to list secrets")
+	secrets, err := secret.List(client, nsName, secret.ListOpts{})
+	th.AssertNoErr(t, err)
+	found := false
+	for _, s := range secrets {
+		if s.Metadata.Name == secretName {
+			found = true
+			break
+		}
+	}
+	th.AssertEquals(t, true, found)
 }
