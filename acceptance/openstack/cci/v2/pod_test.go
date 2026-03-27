@@ -127,72 +127,84 @@ func TestPodLifecycle(t *testing.T) {
 	}
 	th.AssertEquals(t, true, found)
 
-	// Tests fail both on gopher side and on testreport
-	// t.Logf("Attempting to update pod")
-	// updateOpts := pod.UpdateOpts{
-	// 	Pod: pod.Pod{
-	// 		APIVersion: "cci/v2",
-	// 		Kind:       "Pod",
-	// 		Metadata: pod.ObjectMeta{
-	// 			Name: podName,
-	// 			Annotations: map[string]string{
-	// 				"resource.cci.io/pod-size-specs": "2.00_4.0",
-	// 			},
-	// 			Labels: map[string]string{
-	// 				"updated": "true",
-	// 			},
-	// 			ResourceVersion: getPod.Metadata.ResourceVersion,
-	// 		},
-	// 		Spec: getPod.Spec,
-	// 	},
-	// }
-	//
-	// updatedPod, err := pod.Update(client, nsName, podName, updateOpts)
-	// th.AssertNoErr(t, err)
-	// th.AssertEquals(t, "true", updatedPod.Metadata.Labels["updated"])
-	//
-	// t.Logf("Attempting to patch pod")
-	// patchBody := map[string]interface{}{
-	// 	"metadata": map[string]interface{}{
-	// 		"labels": map[string]string{
-	// 			"patched": "true",
-	// 		},
-	// 	},
-	// }
-	// patchOpts := pod.PatchOpts{
-	// 	Namespace: nsName,
-	// 	Name:      podName,
-	// }
-	// patchedPod, err := pod.Patch(client, patchOpts, patchBody, "application/merge-patch+json")
-	// th.AssertNoErr(t, err)
-	// th.AssertEquals(t, "true", patchedPod.Metadata.Labels["patched"])
+	t.Logf("Attempting to update pod")
+	latestPod, err := pod.Get(client, nsName, podName)
+	th.AssertNoErr(t, err)
 
-	// t.Logf("Attempting to read pod logs")
-	// logOpts := pod.LogOpts{
-	// 	Namespace: nsName,
-	// 	Name:      podName,
-	// 	TailLines: pointerto.Int(10),
-	// }
-	// _, err = pod.Log(client, logOpts)
-	// th.AssertNoErr(t, err)
-	//
-	// t.Logf("Attempting to connect post exec")
-	// connectPostOpts := pod.ConnectPostOpts{
-	// 	Command:   "ls",
-	// 	Container: "deploy-example",
-	// 	Stdout:    pointerto.Bool(true),
-	// 	Stderr:    pointerto.Bool(true),
-	// }
-	// err = pod.ConnectPost(client, nsName, podName, connectPostOpts)
-	// th.AssertNoErr(t, err)
-	//
-	// t.Logf("Attempting to connect get exec")
-	// connectGetOpts := pod.ConnectGetOpts{
-	// 	Command:   "ls",
-	// 	Container: "deploy-example",
-	// 	Stdout:    pointerto.Bool(true),
-	// 	Stderr:    pointerto.Bool(true),
-	// }
-	// err = pod.ConnectGet(client, nsName, podName, connectGetOpts)
-	// th.AssertNoErr(t, err)
+	updatedLabels := latestPod.Metadata.Labels
+	if updatedLabels == nil {
+		updatedLabels = map[string]string{}
+	}
+	updatedLabels["updated"] = "true"
+
+	updateOpts := pod.UpdateOpts{
+		Pod: pod.Pod{
+			APIVersion: "cci/v2",
+			Kind:       "Pod",
+			Metadata: pod.ObjectMeta{
+				Name:            podName,
+				Annotations:     latestPod.Metadata.Annotations,
+				Labels:          updatedLabels,
+				ResourceVersion: latestPod.Metadata.ResourceVersion,
+			},
+			Spec: latestPod.Spec,
+		},
+	}
+
+	updatedPod, err := pod.Update(client, nsName, podName, updateOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "true", updatedPod.Metadata.Labels["updated"])
+
+	t.Run("Patch", func(t *testing.T) {
+		t.Skip("PATCH endpoint not authorized for current IAM user (APIGW.0302)")
+		patchBody := map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"labels": map[string]string{
+					"patched": "true",
+				},
+			},
+		}
+		patchOpts := pod.PatchOpts{
+			Namespace: nsName,
+			Name:      podName,
+		}
+		patchedPod, err := pod.Patch(client, patchOpts, patchBody, "application/merge-patch+json")
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, "true", patchedPod.Metadata.Labels["patched"])
+	})
+
+	t.Run("Log", func(t *testing.T) {
+		t.Skip("Log endpoint not published in the environment")
+		logOpts := pod.LogOpts{
+			Namespace: nsName,
+			Name:      podName,
+			TailLines: pointerto.Int(10),
+		}
+		_, err := pod.Log(client, logOpts)
+		th.AssertNoErr(t, err)
+	})
+
+	t.Run("ConnectPost", func(t *testing.T) {
+		t.Skip("Exec endpoint not authorized for current IAM user (APIGW.0302)")
+		connectPostOpts := pod.ConnectPostOpts{
+			Command:   "ls",
+			Container: "deploy-example",
+			Stdout:    pointerto.Bool(true),
+			Stderr:    pointerto.Bool(true),
+		}
+		err := pod.ConnectPost(client, nsName, podName, connectPostOpts)
+		th.AssertNoErr(t, err)
+	})
+
+	t.Run("ConnectGet", func(t *testing.T) {
+		t.Skip("Exec endpoint not authorized for current IAM user (APIGW.0302)")
+		connectGetOpts := pod.ConnectGetOpts{
+			Command:   "ls",
+			Container: "deploy-example",
+			Stdout:    pointerto.Bool(true),
+			Stderr:    pointerto.Bool(true),
+		}
+		err := pod.ConnectGet(client, nsName, podName, connectGetOpts)
+		th.AssertNoErr(t, err)
+	})
 }
