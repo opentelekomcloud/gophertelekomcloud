@@ -5,7 +5,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-func Get(client *golangsdk.ServiceClient, nameSpace, name string) (*SecretResp, error) {
+func Get(client *golangsdk.ServiceClient, nameSpace, name string) (*Secret, error) {
 	raw, err := client.Get(client.ServiceURL("namespaces", nameSpace, "secrets", name), nil, &golangsdk.RequestOpts{
 		OkCodes:  []int{200},
 		JSONBody: nil,
@@ -14,6 +14,6 @@ func Get(client *golangsdk.ServiceClient, nameSpace, name string) (*SecretResp, 
 		return nil, err
 	}
 
-	var res SecretResp
+	var res Secret
 	return &res, extract.Into(raw.Body, &res)
 }

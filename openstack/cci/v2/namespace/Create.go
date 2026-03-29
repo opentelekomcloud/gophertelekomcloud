@@ -7,6 +7,15 @@ import (
 
 // CreateOpts contains the options for creating a new namespace
 type CreateOpts struct {
+	// DryRun when present, indicates that modifications should not be persisted
+	DryRun string `json:"-" q:"dryRun,omitempty"`
+
+	// FieldManager is a name associated with the actor or entity making these changes
+	FieldManager string `json:"-" q:"fieldManager,omitempty"`
+
+	// Pretty if 'true', then the output is pretty printed
+	Pretty string `json:"-" q:"pretty,omitempty"`
+
 	// APIVersion defines the versioned schema of this representation of an object
 	APIVersion string `json:"apiVersion,omitempty"`
 
@@ -24,16 +33,23 @@ type CreateOpts struct {
 }
 
 // Create requests the creation of a new namespace
-func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateOpts, error) {
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Namespace, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	var result CreateOpts
+	url, err := golangsdk.NewURLBuilder().
+		WithEndpoints("namespaces").
+		WithQueryParams(&opts).Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var result Namespace
 
 	// POST /apis/cci/v2/namespaces
-	_, err = client.Post(client.ServiceURL("namespaces"), b, &result, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL(url.String()), b, &result, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 		MoreHeaders: map[string]string{
 			"Content-Type": "application/json",

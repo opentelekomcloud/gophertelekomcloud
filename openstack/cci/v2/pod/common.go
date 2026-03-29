@@ -1,7 +1,5 @@
 package pod
 
-import "time"
-
 // Pod represents a pod in Kubernetes
 type Pod struct {
 	APIVersion string     `json:"apiVersion,omitempty"`
@@ -32,8 +30,27 @@ type PodSpec struct {
 	SetHostnameAsFQDN             *bool                      `json:"setHostnameAsFQDN,omitempty"`
 	ShareProcessNamespace         *bool                      `json:"shareProcessNamespace,omitempty"`
 	TerminationGracePeriodSeconds *int64                     `json:"terminationGracePeriodSeconds,omitempty"`
+	Tolerations                   []Toleration               `json:"tolerations,omitempty"`
 	TopologySpreadConstraints     []TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
 	Volumes                       []Volume                   `json:"volumes,omitempty"`
+}
+
+// Toleration represents a toleration that is applied to a pod to schedule it onto nodes with matching taints
+type Toleration struct {
+	// Effect indicates the taint effect to match. Empty means match all taint effects.
+	Effect string `json:"effect,omitempty"`
+
+	// Key is the taint key that the toleration applies to. Empty means match all taint keys.
+	Key string `json:"key,omitempty"`
+
+	// Operator represents a key's relationship to the value. Valid operators are Exists and Equal.
+	Operator string `json:"operator,omitempty"`
+
+	// TolerationSeconds represents the period of time the toleration tolerates the taint.
+	TolerationSeconds *int64 `json:"tolerationSeconds,omitempty"`
+
+	// Value is the taint value the toleration matches to.
+	Value string `json:"value,omitempty"`
 }
 
 // Affinity represents pod affinity and anti-affinity
@@ -210,14 +227,15 @@ type HTTPHeader struct {
 
 // Probe represents a container probe
 type Probe struct {
-	Exec                *ExecAction      `json:"exec,omitempty"`
-	FailureThreshold    int32            `json:"failureThreshold,omitempty"`
-	HTTPGet             *HTTPGetAction   `json:"httpGet,omitempty"`
-	InitialDelaySeconds int32            `json:"initialDelaySeconds,omitempty"`
-	PeriodSeconds       int32            `json:"periodSeconds,omitempty"`
-	SuccessThreshold    int32            `json:"successThreshold,omitempty"`
-	TCPSocket           *TCPSocketAction `json:"tcpSocket,omitempty"`
-	TimeoutSeconds      int32            `json:"timeoutSeconds,omitempty"`
+	Exec                          *ExecAction      `json:"exec,omitempty"`
+	FailureThreshold              int32            `json:"failureThreshold,omitempty"`
+	HTTPGet                       *HTTPGetAction   `json:"httpGet,omitempty"`
+	InitialDelaySeconds           int32            `json:"initialDelaySeconds,omitempty"`
+	PeriodSeconds                 int32            `json:"periodSeconds,omitempty"`
+	SuccessThreshold              int32            `json:"successThreshold,omitempty"`
+	TCPSocket                     *TCPSocketAction `json:"tcpSocket,omitempty"`
+	TerminationGracePeriodSeconds *int64           `json:"terminationGracePeriodSeconds,omitempty"`
+	TimeoutSeconds                int32            `json:"timeoutSeconds,omitempty"`
 }
 
 // TCPSocketAction represents a TCP socket action
@@ -275,13 +293,13 @@ type Volume struct {
 type ObjectMeta struct {
 	Annotations                map[string]string    `json:"annotations,omitempty"`
 	ClusterName                string               `json:"clusterName,omitempty"`
-	CreationTimestamp          time.Time            `json:"creationTimestamp,omitempty"`
+	CreationTimestamp          string               `json:"creationTimestamp,omitempty"`
 	DeletionGracePeriodSeconds *int64               `json:"deletionGracePeriodSeconds,omitempty"`
-	DeletionTimestamp          *time.Time           `json:"deletionTimestamp,omitempty"`
+	DeletionTimestamp          string               `json:"deletionTimestamp,omitempty"`
 	Enable                     *bool                `json:"enable,omitempty"`
 	Finalizers                 []string             `json:"finalizers,omitempty"`
 	GenerateName               string               `json:"generateName,omitempty"`
-	Generation                 int64                `json:"generation,omitempty"`
+	Generation                 *int64               `json:"generation,omitempty"`
 	Labels                     map[string]string    `json:"labels,omitempty"`
 	ManagedFields              []ManagedFieldsEntry `json:"managedFields,omitempty"`
 	Name                       string               `json:"name,omitempty"`
@@ -294,12 +312,13 @@ type ObjectMeta struct {
 
 // ManagedFieldsEntry contains information about the manager that created or modified a resource
 type ManagedFieldsEntry struct {
-	APIVersion string      `json:"apiVersion,omitempty"`
-	FieldsType string      `json:"fieldsType,omitempty"`
-	FieldsV1   interface{} `json:"fieldsV1,omitempty"`
-	Manager    string      `json:"manager,omitempty"`
-	Operation  string      `json:"operation,omitempty"`
-	Time       string      `json:"time,omitempty"`
+	APIVersion  string      `json:"apiVersion,omitempty"`
+	FieldsType  string      `json:"fieldsType,omitempty"`
+	FieldsV1    interface{} `json:"fieldsV1,omitempty"`
+	Manager     string      `json:"manager,omitempty"`
+	Operation   string      `json:"operation,omitempty"`
+	Subresource string      `json:"subresource,omitempty"`
+	Time        string      `json:"time,omitempty"`
 }
 
 // OwnerReference represents a reference to an object's owner
@@ -326,17 +345,17 @@ type PodStatus struct {
 	PodIPs                     []PodIP           `json:"podIPs,omitempty"`
 	QOSClass                   string            `json:"qosClass,omitempty"`
 	Reason                     string            `json:"reason,omitempty"`
-	StartTime                  *time.Time        `json:"startTime,omitempty"`
+	StartTime                  string            `json:"startTime,omitempty"`
 }
 
 // PodCondition represents a pod condition
 type PodCondition struct {
-	LastProbeTime      time.Time `json:"lastProbeTime,omitempty"`
-	LastTransitionTime time.Time `json:"lastTransitionTime,omitempty"`
-	Message            string    `json:"message,omitempty"`
-	Reason             string    `json:"reason,omitempty"`
-	Status             string    `json:"status"`
-	Type               string    `json:"type"`
+	LastProbeTime      string `json:"lastProbeTime,omitempty"`
+	LastTransitionTime string `json:"lastTransitionTime,omitempty"`
+	Message            string `json:"message,omitempty"`
+	Reason             string `json:"reason,omitempty"`
+	Status             string `json:"status"`
+	Type               string `json:"type"`
 }
 
 // ContainerStatus represents the status of a container
@@ -361,18 +380,18 @@ type ContainerState struct {
 
 // ContainerStateRunning represents a running container state
 type ContainerStateRunning struct {
-	StartedAt time.Time `json:"startedAt,omitempty"`
+	StartedAt string `json:"startedAt,omitempty"`
 }
 
 // ContainerStateTerminated represents a terminated container state
 type ContainerStateTerminated struct {
-	ContainerID string    `json:"containerID,omitempty"`
-	ExitCode    int32     `json:"exitCode"`
-	FinishedAt  time.Time `json:"finishedAt,omitempty"`
-	Message     string    `json:"message,omitempty"`
-	Reason      string    `json:"reason,omitempty"`
-	Signal      int32     `json:"signal,omitempty"`
-	StartedAt   time.Time `json:"startedAt,omitempty"`
+	ContainerID string `json:"containerID,omitempty"`
+	ExitCode    int32  `json:"exitCode"`
+	FinishedAt  string `json:"finishedAt,omitempty"`
+	Message     string `json:"message,omitempty"`
+	Reason      string `json:"reason,omitempty"`
+	Signal      int32  `json:"signal,omitempty"`
+	StartedAt   string `json:"startedAt,omitempty"`
 }
 
 // ContainerStateWaiting represents a waiting container state

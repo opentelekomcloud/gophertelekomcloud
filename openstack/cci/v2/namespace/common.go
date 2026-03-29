@@ -71,6 +71,9 @@ type ManagedFieldsEntry struct {
 	// Operation is the type of operation which lead to this ManagedFieldsEntry being created
 	Operation string `json:"operation,omitempty"`
 
+	// Subresource is the name of the subresource used to update that object, or empty if the object was updated through the main resource
+	Subresource string `json:"subresource,omitempty"`
+
 	// Time is timestamp of when these fields were set
 	Time string `json:"time,omitempty"`
 }

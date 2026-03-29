@@ -7,6 +7,15 @@ import (
 
 // CreateOpts contains the parameters for creating a ConfigMap
 type CreateOpts struct {
+	// DryRun when present, indicates that modifications should not be persisted
+	DryRun string `json:"-" q:"dryRun,omitempty"`
+
+	// FieldManager is a name associated with the actor or entity making these changes
+	FieldManager string `json:"-" q:"fieldManager,omitempty"`
+
+	// Pretty if 'true', then the output is pretty printed
+	Pretty string `json:"-" q:"pretty,omitempty"`
+
 	// APIVersion defines the versioned schema of this representation of an object
 	APIVersion string `json:"apiVersion,omitempty"`
 
@@ -33,9 +42,16 @@ func Create(client *golangsdk.ServiceClient, namespace string, opts CreateOpts) 
 		return nil, err
 	}
 
+	url, err := golangsdk.NewURLBuilder().
+		WithEndpoints("namespaces", namespace, "configmaps").
+		WithQueryParams(&opts).Build()
+	if err != nil {
+		return nil, err
+	}
+
 	var result ConfigMap
 
-	_, err = client.Post(client.ServiceURL("namespaces", namespace, "configmaps"), b, &result, &golangsdk.RequestOpts{
+	_, err = client.Post(client.ServiceURL(url.String()), b, &result, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 201, 202},
 	})
 

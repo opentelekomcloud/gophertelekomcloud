@@ -20,10 +20,10 @@ type ListOpts struct {
 	SendInitialEvents    *bool  `q:"sendInitialEvents,omitempty"`
 	TimeoutSeconds       *int   `q:"timeoutSeconds,omitempty"`
 	Watch                *bool  `q:"watch,omitempty"`
-	Pretty               *bool  `q:"pretty,omitempty"`
+	Pretty               string `q:"pretty,omitempty"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]NetworkResp, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Network, error) {
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("namespaces", opts.Namespace, "networks").
 		WithQueryParams(&opts).Build()
@@ -50,9 +50,9 @@ type NetworksPage struct {
 	pagination.NewSinglePageBase
 }
 
-func ExtractNetworks(r pagination.NewPage) ([]NetworkResp, error) {
+func ExtractNetworks(r pagination.NewPage) ([]Network, error) {
 	var s struct {
-		Items []NetworkResp `json:"items"`
+		Items []Network `json:"items"`
 	}
 	err := extract.Into(bytes.NewReader((r.(NetworksPage)).Body), &s)
 	return s.Items, err

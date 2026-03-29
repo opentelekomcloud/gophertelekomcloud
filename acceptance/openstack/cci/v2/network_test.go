@@ -52,7 +52,7 @@ func TestNetworkLifecycle(t *testing.T) {
 	networkClient, err := clients.NewCCINetworkClient()
 	th.AssertNoErr(t, err)
 
-	createOpts := network.CreateNetworkOpts{
+	createOpts := network.CreateOpts{
 		Namespace:  nsName,
 		APIVersion: "yangtse/v2",
 		Kind:       "Network",
@@ -78,7 +78,7 @@ func TestNetworkLifecycle(t *testing.T) {
 		},
 	}
 
-	cm, err := network.CreateNetwork(networkClient, createOpts)
+	cm, err := network.Create(networkClient, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, networkName, cm.Metadata.Name)
 
@@ -106,7 +106,7 @@ func TestNetworkLifecycle(t *testing.T) {
 	th.AssertEquals(t, getNetwork.Spec.NetworkType, "underlay_neutron")
 
 	t.Logf("Attempting to update network")
-	updateOpts := network.UpdateNetworkOpts{
+	updateOpts := network.UpdateOpts{
 		APIVersion: "yangtse/v2",
 		Kind:       "Network",
 		Namespace:  nsName,
@@ -135,7 +135,7 @@ func TestNetworkLifecycle(t *testing.T) {
 		Status: &network.NetworkStatus{},
 	}
 
-	updatedCm, err := network.UpdateNetwork(networkClient, updateOpts)
+	updatedCm, err := network.Update(networkClient, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updatedCm.Metadata.Annotations["yangtse.io/warm-pool-recycle-interval"], updateOpts.Metadata.Annotations["yangtse.io/warm-pool-recycle-interval"])
 	th.AssertEquals(t, updatedCm.Metadata.Annotations["yangtse.io/warm-pool-size"], updateOpts.Metadata.Annotations["yangtse.io/warm-pool-size"])

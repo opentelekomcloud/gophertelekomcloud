@@ -43,7 +43,7 @@ type ListOpts struct {
 	Watch *bool `q:"watch,omitempty"`
 
 	// If 'true', then the output is pretty printed
-	Pretty *bool `q:"pretty,omitempty"`
+	Pretty string `q:"pretty,omitempty"`
 }
 
 // List returns collection of namespaces
