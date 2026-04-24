@@ -17,20 +17,23 @@ type ListOptsBuilder interface {
 // by a particular port attribute. SortDir sets the direction, and is either
 // `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
-	Status       string `q:"status"`
-	Name         string `q:"name"`
-	AdminStateUp *bool  `q:"admin_state_up"`
-	NetworkID    string `q:"network_id"`
-	TenantID     string `q:"tenant_id"`
-	ProjectID    string `q:"project_id"`
-	DeviceOwner  string `q:"device_owner"`
-	MACAddress   string `q:"mac_address"`
-	ID           string `q:"id"`
-	DeviceID     string `q:"device_id"`
-	Limit        int    `q:"limit"`
-	Marker       string `q:"marker"`
-	SortKey      string `q:"sort_key"`
-	SortDir      string `q:"sort_dir"`
+	Status              string `q:"status"`
+	Name                string `q:"name"`
+	AdminStateUp        *bool  `q:"admin_state_up"`
+	NetworkID           string `q:"network_id"`
+	TenantID            string `q:"tenant_id"`
+	ProjectID           string `q:"project_id"`
+	DeviceOwner         string `q:"device_owner"`
+	MACAddress          string `q:"mac_address"`
+	ID                  string `q:"id"`
+	DeviceID            string `q:"device_id"`
+	Limit               int    `q:"limit"`
+	Marker              string `q:"marker"`
+	SortKey             string `q:"sort_key"`
+	SortDir             string `q:"sort_dir"`
+	EnterpriseProjectID string `q:"enterprise_project_id"`
+	// fixed_ips=ip_address={ip_address}&fixed_ips=subnet_id={subnet_id}
+	FixedIps []string `q:"fixed_ips"`
 }
 
 // ToPortListQuery formats a ListOpts into a query string.
@@ -77,17 +80,28 @@ type CreateOptsBuilder interface {
 
 // CreateOpts represents the attributes used when creating a new port.
 type CreateOpts struct {
-	NetworkID           string        `json:"network_id" required:"true"`
-	Name                string        `json:"name,omitempty"`
-	AdminStateUp        *bool         `json:"admin_state_up,omitempty"`
-	MACAddress          string        `json:"mac_address,omitempty"`
-	FixedIPs            interface{}   `json:"fixed_ips,omitempty"`
-	DeviceID            string        `json:"device_id,omitempty"`
-	DeviceOwner         string        `json:"device_owner,omitempty"`
-	TenantID            string        `json:"tenant_id,omitempty"`
-	ProjectID           string        `json:"project_id,omitempty"`
-	SecurityGroups      *[]string     `json:"security_groups,omitempty"`
-	AllowedAddressPairs []AddressPair `json:"allowed_address_pairs,omitempty"`
+	NetworkID           string         `json:"network_id" required:"true"`
+	Name                string         `json:"name,omitempty"`
+	AdminStateUp        *bool          `json:"admin_state_up,omitempty"`
+	MACAddress          string         `json:"mac_address,omitempty"`
+	FixedIps            []FixedIp      `json:"fixed_ips,omitempty"`
+	DeviceID            string         `json:"device_id,omitempty"`
+	DeviceOwner         string         `json:"device_owner,omitempty"`
+	TenantID            string         `json:"tenant_id,omitempty"`
+	ProjectID           string         `json:"project_id,omitempty"`
+	SecurityGroups      *[]string      `json:"security_groups,omitempty"`
+	AllowedAddressPairs []AddressPair  `json:"allowed_address_pairs,omitempty"`
+	ExtraDhcpOpts       []ExtraDhcpOpt `json:"extra_dhcp_opts,omitempty"`
+}
+
+// FixedIp is an Object specifying the IP information of the port.
+type FixedIp struct {
+	// Specifies the subnet ID.
+	// You cannot change the parameter value.
+	SubnetId string `json:"subnet_id,omitempty"`
+	// Specifies the port IP address.
+	// You cannot change the parameter value.
+	IpAddress string `json:"ip_address,omitempty"`
 }
 
 // ToPortCreateMap builds a request body from CreateOpts.
@@ -122,6 +136,7 @@ type UpdateOpts struct {
 	DeviceOwner         string         `json:"device_owner,omitempty"`
 	SecurityGroups      *[]string      `json:"security_groups,omitempty"`
 	AllowedAddressPairs *[]AddressPair `json:"allowed_address_pairs,omitempty"`
+	ExtraDhcpOpts       []ExtraDhcpOpt `json:"extra_dhcp_opts,omitempty"`
 }
 
 // ToPortUpdateMap builds a request body from UpdateOpts.
