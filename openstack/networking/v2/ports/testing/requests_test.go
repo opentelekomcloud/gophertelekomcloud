@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	fake "github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/common"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/extradhcpopts"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/extensions/portsecurity"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v2/ports"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
@@ -55,6 +54,7 @@ func TestList(t *testing.T) {
 				ID:             "d80b1a3b-4fc1-49f3-952e-1e2ab7081d8b",
 				SecurityGroups: []string{},
 				DeviceID:       "9ae135f4-b6e0-4dad-9e91-3c223e385824",
+				VnicType:       "normal",
 			},
 		}
 
@@ -84,7 +84,7 @@ func TestListWithExtensions(t *testing.T) {
 
 	type portWithExt struct {
 		ports.Port
-		portsecurity.PortSecurityExt
+		PortSecurity portsecurity.PortSecurityExt
 	}
 
 	var allPorts []portWithExt
@@ -96,7 +96,7 @@ func TestListWithExtensions(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, allPorts[0].Status, "ACTIVE")
-	th.AssertEquals(t, allPorts[0].PortSecurityEnabled, false)
+	th.AssertEquals(t, allPorts[0].PortSecurity.PortSecurityEnabled, false)
 }
 
 func TestGet(t *testing.T) {
@@ -148,14 +148,14 @@ func TestGetWithExtensions(t *testing.T) {
 
 	var portWithExtensions struct {
 		ports.Port
-		portsecurity.PortSecurityExt
+		PortSecurity portsecurity.PortSecurityExt
 	}
 
 	err := ports.Get(fake.ServiceClient(), "46d4bfb9-b26e-41f3-bd2e-e6dcc1ccedb2").ExtractInto(&portWithExtensions)
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, portWithExtensions.Status, "ACTIVE")
-	th.AssertEquals(t, portWithExtensions.PortSecurityEnabled, false)
+	th.AssertEquals(t, portWithExtensions.PortSecurity.PortSecurityEnabled, false)
 }
 
 func TestCreate(t *testing.T) {
@@ -332,7 +332,7 @@ func TestCreatePortSecurity(t *testing.T) {
 
 	var portWithExt struct {
 		ports.Port
-		portsecurity.PortSecurityExt
+		PortSecurity portsecurity.PortSecurityExt
 	}
 
 	asu := true
@@ -358,7 +358,7 @@ func TestCreatePortSecurity(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, portWithExt.Status, "DOWN")
-	th.AssertEquals(t, portWithExt.PortSecurityEnabled, false)
+	th.AssertEquals(t, portWithExt.PortSecurity.PortSecurityEnabled, false)
 }
 
 func TestUpdate(t *testing.T) {
@@ -461,7 +461,7 @@ func TestUpdatePortSecurity(t *testing.T) {
 
 	var portWithExt struct {
 		ports.Port
-		portsecurity.PortSecurityExt
+		PortSecurity portsecurity.PortSecurityExt
 	}
 
 	iFalse := false
@@ -476,7 +476,7 @@ func TestUpdatePortSecurity(t *testing.T) {
 
 	th.AssertEquals(t, portWithExt.Status, "DOWN")
 	th.AssertEquals(t, portWithExt.Name, "private-port")
-	th.AssertEquals(t, portWithExt.PortSecurityEnabled, false)
+	th.AssertEquals(t, portWithExt.PortSecurity.PortSecurityEnabled, false)
 }
 
 func TestRemoveSecurityGroups(t *testing.T) {
@@ -623,12 +623,7 @@ func TestGetWithExtraDHCPOpts(t *testing.T) {
 		_, _ = fmt.Fprint(w, GetWithExtraDHCPOptsResponse)
 	})
 
-	var s struct {
-		ports.Port
-		extradhcpopts.ExtraDHCPOptsExt
-	}
-
-	err := ports.Get(fake.ServiceClient(), "46d4bfb9-b26e-41f3-bd2e-e6dcc1ccedb2").ExtractInto(&s)
+	s, err := ports.Get(fake.ServiceClient(), "46d4bfb9-b26e-41f3-bd2e-e6dcc1ccedb2").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Status, "ACTIVE")
@@ -644,12 +639,10 @@ func TestGetWithExtraDHCPOpts(t *testing.T) {
 	th.AssertEquals(t, s.ID, "65c0ee9f-d634-4522-8954-51021b570b0d")
 	th.AssertEquals(t, s.DeviceID, "")
 
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].OptName, "option1")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].OptValue, "value1")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].IPVersion, "4")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[1].OptName, "option2")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[1].OptValue, "value2")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[1].IPVersion, "4")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[0].OptName, "option1")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[0].OptValue, "value1")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[1].OptName, "option2")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[1].OptValue, "value2")
 }
 
 func TestCreateWithExtraDHCPOpts(t *testing.T) {
@@ -670,18 +663,14 @@ func TestCreateWithExtraDHCPOpts(t *testing.T) {
 	})
 
 	adminStateUp := true
-	portCreateOpts := ports.CreateOpts{
+	createOpts := ports.CreateOpts{
 		Name:         "port-with-extra-dhcp-opts",
 		AdminStateUp: &adminStateUp,
 		NetworkID:    "a87cc70a-3e15-4acf-8205-9b711a3531b7",
 		FixedIPs: []ports.IP{
 			{SubnetID: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.2"},
 		},
-	}
-
-	createOpts := extradhcpopts.CreateOptsExt{
-		CreateOptsBuilder: portCreateOpts,
-		ExtraDHCPOpts: []extradhcpopts.CreateExtraDHCPOpt{
+		ExtraDhcpOpts: []ports.ExtraDhcpOpt{
 			{
 				OptName:  "option1",
 				OptValue: "value1",
@@ -689,12 +678,7 @@ func TestCreateWithExtraDHCPOpts(t *testing.T) {
 		},
 	}
 
-	var s struct {
-		ports.Port
-		extradhcpopts.ExtraDHCPOptsExt
-	}
-
-	err := ports.Create(fake.ServiceClient(), createOpts).ExtractInto(&s)
+	s, err := ports.Create(fake.ServiceClient(), createOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Status, "DOWN")
@@ -710,9 +694,8 @@ func TestCreateWithExtraDHCPOpts(t *testing.T) {
 	th.AssertEquals(t, s.ID, "65c0ee9f-d634-4522-8954-51021b570b0d")
 	th.AssertEquals(t, s.DeviceID, "")
 
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].OptName, "option1")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].OptValue, "value1")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].IPVersion, "4")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[0].OptName, "option1")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[0].OptValue, "value1")
 }
 
 func TestUpdateWithExtraDHCPOpts(t *testing.T) {
@@ -737,28 +720,18 @@ func TestUpdateWithExtraDHCPOpts(t *testing.T) {
 		FixedIPs: []ports.IP{
 			{SubnetID: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.3"},
 		},
-	}
-
-	edoValue2 := "value2"
-	updateOpts := extradhcpopts.UpdateOptsExt{
-		UpdateOptsBuilder: portUpdateOpts,
-		ExtraDHCPOpts: []extradhcpopts.UpdateExtraDHCPOpt{
+		ExtraDhcpOpts: []ports.ExtraDhcpOpt{
 			{
 				OptName: "option1",
 			},
 			{
 				OptName:  "option2",
-				OptValue: &edoValue2,
+				OptValue: "value2",
 			},
 		},
 	}
 
-	var s struct {
-		ports.Port
-		extradhcpopts.ExtraDHCPOptsExt
-	}
-
-	err := ports.Update(fake.ServiceClient(), "65c0ee9f-d634-4522-8954-51021b570b0d", updateOpts).ExtractInto(&s)
+	s, err := ports.Update(fake.ServiceClient(), "65c0ee9f-d634-4522-8954-51021b570b0d", portUpdateOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Status, "DOWN")
@@ -774,7 +747,6 @@ func TestUpdateWithExtraDHCPOpts(t *testing.T) {
 	th.AssertEquals(t, s.ID, "65c0ee9f-d634-4522-8954-51021b570b0d")
 	th.AssertEquals(t, s.DeviceID, "")
 
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].OptName, "option2")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].OptValue, "value2")
-	th.AssertDeepEquals(t, s.ExtraDHCPOpts[0].IPVersion, "4")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[0].OptName, "option2")
+	th.AssertDeepEquals(t, s.ExtraDhcpOpts[0].OptValue, "value2")
 }

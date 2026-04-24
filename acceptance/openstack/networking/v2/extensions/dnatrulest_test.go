@@ -68,7 +68,7 @@ func TestDnatRuleLifeCycle(t *testing.T) {
 
 		type portWithExt struct {
 			ports.Port
-			portsecurity.PortSecurityExt
+			PortSecurity portsecurity.PortSecurityExt
 		}
 
 		var allPorts []portWithExt
