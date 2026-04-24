@@ -84,7 +84,7 @@ type CreateOpts struct {
 	Name                string         `json:"name,omitempty"`
 	AdminStateUp        *bool          `json:"admin_state_up,omitempty"`
 	MACAddress          string         `json:"mac_address,omitempty"`
-	FixedIps            []FixedIp      `json:"fixed_ips,omitempty"`
+	FixedIPs            []IP           `json:"fixed_ips,omitempty"`
 	DeviceID            string         `json:"device_id,omitempty"`
 	DeviceOwner         string         `json:"device_owner,omitempty"`
 	TenantID            string         `json:"tenant_id,omitempty"`
@@ -94,14 +94,14 @@ type CreateOpts struct {
 	ExtraDhcpOpts       []ExtraDhcpOpt `json:"extra_dhcp_opts,omitempty"`
 }
 
-// FixedIp is an Object specifying the IP information of the port.
-type FixedIp struct {
+// IP is an Object specifying the IP information of the port.
+type IP struct {
 	// Specifies the subnet ID.
 	// You cannot change the parameter value.
-	SubnetId string `json:"subnet_id,omitempty"`
+	SubnetID string `json:"subnet_id,omitempty"`
 	// Specifies the port IP address.
 	// You cannot change the parameter value.
-	IpAddress string `json:"ip_address,omitempty"`
+	IPAddress string `json:"ip_address,omitempty"`
 }
 
 // ToPortCreateMap builds a request body from CreateOpts.

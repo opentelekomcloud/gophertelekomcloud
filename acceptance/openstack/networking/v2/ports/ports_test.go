@@ -31,8 +31,8 @@ func TestPortLifecycle(t *testing.T) {
 		NetworkID:    network.ID,
 		Name:         tools.RandomString("acc-port-create-", 3),
 		AdminStateUp: &adminStateUp,
-		FixedIps: []ports.FixedIp{
-			{SubnetId: subnet.ID},
+		FixedIPs: []ports.IP{
+			{SubnetID: subnet.ID},
 		},
 	}
 
@@ -47,7 +47,7 @@ func TestPortLifecycle(t *testing.T) {
 	th.AssertEquals(t, createOpts.NetworkID, port.NetworkID)
 	th.AssertEquals(t, *createOpts.AdminStateUp, port.AdminStateUp)
 	th.AssertEquals(t, 1, len(port.FixedIPs))
-	th.AssertEquals(t, subnet.ID, port.FixedIPs[0].SubnetId)
+	th.AssertEquals(t, subnet.ID, port.FixedIPs[0].SubnetID)
 	t.Logf("Created port: %s", port.ID)
 
 	updatedName := tools.RandomString("acc-port-update-", 3)

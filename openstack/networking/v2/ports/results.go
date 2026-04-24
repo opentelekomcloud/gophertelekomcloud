@@ -76,7 +76,7 @@ type Port struct {
 
 	// Specifies IP addresses for the port thus associating the port itself with
 	// the subnets where the IP addresses are picked from
-	FixedIPs []FixedIp `json:"fixed_ips"`
+	FixedIPs []IP `json:"fixed_ips"`
 
 	// TenantID is the project owner of the port.
 	TenantID string `json:"tenant_id"`
