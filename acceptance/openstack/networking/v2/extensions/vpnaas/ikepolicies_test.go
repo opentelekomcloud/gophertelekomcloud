@@ -10,6 +10,7 @@ import (
 )
 
 func TestIkePolicyList(t *testing.T) {
+	t.Skip("API disabled")
 	client, err := clients.NewNetworkV2Client()
 	if err != nil {
 		t.Fatalf("Unable to create a NetworkingV2 client: %s", err)
@@ -30,6 +31,7 @@ func TestIkePolicyList(t *testing.T) {
 }
 
 func TestIkePolicyLifeCycle(t *testing.T) {
+	t.Skip("API disabled")
 	client, err := clients.NewNetworkV2Client()
 	if err != nil {
 		t.Fatalf("Unable to create a NetworkingV2 client: %s", err)

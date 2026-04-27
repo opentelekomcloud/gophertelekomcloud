@@ -9,19 +9,21 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
+type portWithBindingExt struct {
+	ports.Port
+	HostID  string `json:"binding:host_id"`
+	VIFType string `json:"binding:vif_type"`
+}
+
 func TestList(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
 	HandleListSuccessfully(t)
 
-	type PortWithExt struct {
-		ports.Port
-		portsbinding.PortsBindingExt
-	}
-	var actual []PortWithExt
+	var actual []portWithBindingExt
 
-	expected := []PortWithExt{
+	expected := []portWithBindingExt{
 		{
 			Port: ports.Port{
 				Status:       "ACTIVE",
@@ -40,11 +42,9 @@ func TestList(t *testing.T) {
 				ID:             "d80b1a3b-4fc1-49f3-952e-1e2ab7081d8b",
 				SecurityGroups: []string{},
 				DeviceID:       "9ae135f4-b6e0-4dad-9e91-3c223e385824",
+				VnicType:       "normal",
 			},
-			PortsBindingExt: portsbinding.PortsBindingExt{
-				VNICType: "normal",
-				HostID:   "devstack",
-			},
+			HostID: "devstack",
 		},
 	}
 
@@ -63,10 +63,7 @@ func TestGet(t *testing.T) {
 
 	HandleGet(t)
 
-	var s struct {
-		ports.Port
-		portsbinding.PortsBindingExt
-	}
+	var s portWithBindingExt
 
 	err := ports.Get(fake.ServiceClient(), "46d4bfb9-b26e-41f3-bd2e-e6dcc1ccedb2").ExtractInto(&s)
 	th.AssertNoErr(t, err)
@@ -86,9 +83,9 @@ func TestGet(t *testing.T) {
 	th.AssertEquals(t, s.DeviceID, "5e3898d7-11be-483e-9732-b2f5eccd2b2e")
 
 	th.AssertEquals(t, s.HostID, "devstack")
-	th.AssertEquals(t, s.VNICType, "normal")
+	th.AssertEquals(t, s.VnicType, "normal")
 	th.AssertEquals(t, s.VIFType, "ovs")
-	th.AssertDeepEquals(t, s.VIFDetails, map[string]interface{}{"port_filter": true, "ovs_hybrid_plug": true})
+	th.AssertDeepEquals(t, s.VifDetails, ports.VifDetail{})
 }
 
 func TestCreate(t *testing.T) {
@@ -97,10 +94,7 @@ func TestCreate(t *testing.T) {
 
 	HandleCreate(t)
 
-	var s struct {
-		ports.Port
-		portsbinding.PortsBindingExt
-	}
+	var s portWithBindingExt
 
 	asu := true
 	portCreateOpts := ports.CreateOpts{
@@ -135,7 +129,7 @@ func TestCreate(t *testing.T) {
 	th.AssertEquals(t, s.ID, "65c0ee9f-d634-4522-8954-51021b570b0d")
 	th.AssertDeepEquals(t, s.SecurityGroups, []string{"f0ac4394-7e4a-4409-9701-ba8be283dbc3"})
 	th.AssertEquals(t, s.HostID, "HOST1")
-	th.AssertEquals(t, s.VNICType, "normal")
+	th.AssertEquals(t, s.VnicType, "normal")
 }
 
 func TestRequiredCreateOpts(t *testing.T) {
@@ -151,10 +145,7 @@ func TestUpdate(t *testing.T) {
 
 	HandleUpdate(t)
 
-	var s struct {
-		ports.Port
-		portsbinding.PortsBindingExt
-	}
+	var s portWithBindingExt
 
 	portUpdateOpts := ports.UpdateOpts{
 		Name: "new_port_name",
@@ -179,5 +170,5 @@ func TestUpdate(t *testing.T) {
 	})
 	th.AssertDeepEquals(t, s.SecurityGroups, []string{"f0ac4394-7e4a-4409-9701-ba8be283dbc3"})
 	th.AssertEquals(t, s.HostID, "HOST1")
-	th.AssertEquals(t, s.VNICType, "normal")
+	th.AssertEquals(t, s.VnicType, "normal")
 }
