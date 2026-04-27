@@ -108,13 +108,14 @@ type RemoveOptsBuilder interface {
 }
 
 type RemoveOpts struct {
-	ChargeMode   string           `json:"charge_mode" required:"true"`
-	Size         int              `json:"size" required:"true"`
-	PublicIpInfo []PublicIpInfoID `json:"publicip_info" required:"true"`
+	ChargeMode   string               `json:"charge_mode" required:"true"`
+	Size         int                  `json:"size" required:"true"`
+	PublicIpInfo []PublicIpInfoRemove `json:"publicip_info" required:"true"`
 }
 
-type PublicIpInfoID struct {
-	PublicIpID string `json:"publicip_id" required:"true"`
+type PublicIpInfoRemove struct {
+	PublicIpID   string `json:"publicip_id" required:"true"`
+	PublicIpType string `json:"publicip_type,omitempty"`
 }
 
 func (opts RemoveOpts) ToBandwidthRemoveMap() (map[string]interface{}, error) {

@@ -123,7 +123,7 @@ func TestBandwidthAssociate(t *testing.T) {
 	remOpts := bandwidths.RemoveOpts{
 		ChargeMode: "bandwidth",
 		Size:       1,
-		PublicIpInfo: []bandwidths.PublicIpInfoID{
+		PublicIpInfo: []bandwidths.PublicIpInfoRemove{
 			{PublicIpID: eip.ID},
 		},
 	}
