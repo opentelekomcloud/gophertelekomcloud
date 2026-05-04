@@ -79,6 +79,16 @@ func TestRdsLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
+	t.Log("UpgradeDescription")
+
+	newAlias := tools.RandomString("alias-", 8)
+	_, err = instances.UpgradeDescription(client,
+		instances.UpgradeDescriptionOpts{
+			InstanceId: rds.Id,
+			Alias:      &newAlias,
+		})
+	th.AssertNoErr(t, err)
+
 	t.Log("SetSecurityGroup")
 
 	_, err = security.SetSecurityGroup(client, security.SetSecurityGroupOpts{
