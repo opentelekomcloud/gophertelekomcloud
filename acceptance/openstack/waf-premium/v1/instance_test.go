@@ -8,6 +8,7 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/cloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/waf-premium/v1/instances"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -78,4 +79,81 @@ func TestWafPremiumInstanceWorkflow(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instanceUpdated.Name, updatedName)
+}
+
+func TestWafPremiumCloudInstance(t *testing.T) {
+	client, err := clients.NewWafdV1Client()
+	th.AssertNoErr(t, err)
+
+	queryOpts := cloud.DeleteOpts{
+		EnterpriseProjectID: os.Getenv("OS_ENTERPRISE_PROJECT_ID"),
+	}
+	if queryOpts.EnterpriseProjectID == "" {
+		queryOpts.EnterpriseProjectID = "0"
+	}
+
+	currentSubscription, err := cloud.Get(client)
+	th.AssertNoErr(t, err)
+	if currentSubscription.Type != -1 && currentSubscription.Type != 22 {
+		t.Skipf("skipping pay-per-use switch test for existing cloud WAF subscription type %d", currentSubscription.Type)
+	}
+
+	enableOpts := cloud.EnableOpts{
+		ConsoleArea:         "dt",
+		EnterpriseProjectID: queryOpts.EnterpriseProjectID,
+	}
+	initialType := currentSubscription.Type
+
+	t.Cleanup(func() {
+		latestSubscription, queryErr := cloud.Get(client)
+		if queryErr != nil {
+			t.Logf("failed to query WAF subscription during cleanup: %v", queryErr)
+			return
+		}
+
+		if initialType == 22 && latestSubscription.Type != 22 {
+			if _, restoreErr := cloud.Enable(client, enableOpts); restoreErr != nil {
+				t.Logf("failed to restore pay-per-use subscription during cleanup: %v", restoreErr)
+			}
+		}
+
+		if initialType == -1 && latestSubscription.Type != -1 {
+			if restoreErr := cloud.Disable(client, queryOpts); restoreErr != nil {
+				t.Logf("failed to restore unsubscribed state during cleanup: %v", restoreErr)
+			}
+		}
+	})
+
+	if initialType == -1 {
+		enableResponse, err := cloud.Enable(client, enableOpts)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, enableResponse.Type, 22)
+
+		enabledSubscription, err := cloud.Get(client)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, enabledSubscription.Type, 22)
+
+		err = cloud.Disable(client, queryOpts)
+		th.AssertNoErr(t, err)
+
+		disabledSubscription, err := cloud.Get(client)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, disabledSubscription.Type, -1)
+		return
+	}
+
+	err = cloud.Disable(client, queryOpts)
+	th.AssertNoErr(t, err)
+
+	disabledSubscription, err := cloud.Get(client)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, disabledSubscription.Type, -1)
+
+	enableResponse, err := cloud.Enable(client, enableOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, enableResponse.Type, 22)
+
+	enabledSubscription, err := cloud.Get(client)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, enabledSubscription.Type, 22)
 }
