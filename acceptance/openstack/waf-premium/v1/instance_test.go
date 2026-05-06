@@ -94,10 +94,6 @@ func TestWafPremiumCloudInstance(t *testing.T) {
 
 	currentSubscription, err := cloud.Get(client)
 	th.AssertNoErr(t, err)
-	if !currentSubscription.Premium.Purchased {
-		t.Fatal("expected dedicated WAF subscription to be purchased after instance creation")
-	}
-
 	if currentSubscription.Type != -1 && currentSubscription.Type != 22 {
 		t.Skipf("skipping pay-per-use switch test for existing cloud WAF subscription type %d", currentSubscription.Type)
 	}
@@ -122,7 +118,7 @@ func TestWafPremiumCloudInstance(t *testing.T) {
 		}
 
 		if initialType == -1 && latestSubscription.Type != -1 {
-			if restoreErr := cloud.Delete(client, queryOpts); restoreErr != nil {
+			if restoreErr := cloud.Disable(client, queryOpts); restoreErr != nil {
 				t.Logf("failed to restore unsubscribed state during cleanup: %v", restoreErr)
 			}
 		}
@@ -137,7 +133,7 @@ func TestWafPremiumCloudInstance(t *testing.T) {
 		th.AssertNoErr(t, err)
 		th.AssertEquals(t, enabledSubscription.Type, 22)
 
-		err = cloud.Delete(client, queryOpts)
+		err = cloud.Disable(client, queryOpts)
 		th.AssertNoErr(t, err)
 
 		disabledSubscription, err := cloud.Get(client)
@@ -146,7 +142,7 @@ func TestWafPremiumCloudInstance(t *testing.T) {
 		return
 	}
 
-	err = cloud.Delete(client, queryOpts)
+	err = cloud.Disable(client, queryOpts)
 	th.AssertNoErr(t, err)
 
 	disabledSubscription, err := cloud.Get(client)

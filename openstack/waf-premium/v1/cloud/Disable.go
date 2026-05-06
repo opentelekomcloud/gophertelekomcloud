@@ -9,7 +9,7 @@ type DeleteOpts struct {
 	EnterpriseProjectID string `json:"-" q:"enterprise_project_id,omitempty"`
 }
 
-func Delete(client *golangsdk.ServiceClient, opts DeleteOpts) (err error) {
+func Disable(client *golangsdk.ServiceClient, opts DeleteOpts) (err error) {
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("waf", "postpaid").
 		WithQueryParams(&opts).
