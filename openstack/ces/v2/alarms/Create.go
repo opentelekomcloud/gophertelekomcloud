@@ -21,7 +21,7 @@ type CreateOpts struct {
 	ResourceGroupId string `json:"resource_group_id,omitempty"`
 	// Specifies the resource list. This parameter is mandatory when type is set to MULTI_INSTANCE.
 	// A maximum of 1000 resources are supported.
-	Resources [][]Dimension `json:"resources,omitempty"`
+	Resources [][]Dimension `json:"resources"`
 	// Specifies the alarm policies.
 	// Either policies or alarm_template_id must be configured.
 	Policies []Policy `json:"policies,omitempty"`
