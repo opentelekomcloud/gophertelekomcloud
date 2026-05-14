@@ -87,15 +87,10 @@ type Disk struct {
 	// NOTE:
 	// For HANA, HL1, and HL2 ECSs, use co-p1 and uh-l1 disks. For other ECSs, do not use co-p1 or uh-l1 disks.
 	VolumeType string `json:"volume_type"`
-	// Specifies the ECS system disk type. The disk type must match the available disk type.
-	// SATA: common I/O disk type
-	// SAS: high I/O disk type
-	// SSD: ultra-high I/O disk type
-	// co-p1: high I/O (performance-optimized I) disk type
-	// uh-l1: ultra-high I/O (latency-optimized) disk type
-	// If the specified disk type is not available in the AZ, the disk will fail to create.
-	// NOTE:
-	// For HANA, HL1, and HL2 ECSs, use co-p1 and uh-l1 disks. For other ECSs, do not use co-p1 or uh-l1 disks.
+	// Specifies the disk type.
+	// The options are as follows:
+	// DATA: indicates a data disk
+	// SYS: indicates a system disk
 	DiskType string `json:"disk_type"`
 	// Specifies a DSS device ID for creating an ECS disk.
 	// NOTE:
