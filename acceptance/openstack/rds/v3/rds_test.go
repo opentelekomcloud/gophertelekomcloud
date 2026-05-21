@@ -613,3 +613,26 @@ func TestRdsPrivateDomainName(t *testing.T) {
 	th.AssertEquals(t, "private", domain.DnsType)
 	th.AssertEquals(t, dnsName, strings.Split(domain.DnsName, ".")[0])
 }
+
+func TestRdsChangeStorageType(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+	rdsId := os.Getenv("OS_RDS_ID")
+	if rdsId == "" {
+		t.Skip("OS_RDS_ID env var required for the test is missing")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	modifyOpts := instances.ChangeStorageTypeOpts{
+		InstanceId: rdsId,
+		VolumeCode: "rds.mysql.volume.essd.ha",
+	}
+	modifyResp, err := instances.ChangeStorageType(client, modifyOpts)
+	th.AssertNoErr(t, err)
+
+	err = instances.WaitForJobCompleted(client, 1200, *modifyResp)
+	th.AssertNoErr(t, err)
+}
