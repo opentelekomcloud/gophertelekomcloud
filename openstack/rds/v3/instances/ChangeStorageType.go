@@ -47,6 +47,9 @@ func ChangeStorageType(client *golangsdk.ServiceClient, opts ChangeStorageTypeOp
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var res JobId
 	err = extract.Into(raw.Body, &res)
