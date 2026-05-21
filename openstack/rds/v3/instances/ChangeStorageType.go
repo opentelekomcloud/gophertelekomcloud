@@ -44,7 +44,7 @@ func ChangeStorageType(client *golangsdk.ServiceClient, opts ChangeStorageTypeOp
 	}
 
 	// POST https://{Endpoint}/v3/{project_id}/instances/{instance_id}/action
-	raw, err := client.Put(client.ServiceURL("instances", opts.InstanceId, "action"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "action"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 202},
 	})
 
