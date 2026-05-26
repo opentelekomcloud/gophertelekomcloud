@@ -139,3 +139,31 @@ func MockDeleteResponse(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 }
+
+func MockRollbackResponse(t *testing.T) {
+	th.Mux.HandleFunc("/cloudsnapshots/d32019d3-bc6e-4319-9c1d-6722fc136a22/rollback", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, `
+{
+    "rollback": {
+        "volume_id": "5aa119a8-d25b-45a7-8d1b-88e127885635",
+        "name": "volume-001"
+    }
+}
+      `)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
+
+		_, _ = fmt.Fprint(w, `
+{
+    "rollback": {
+        "volume_id": "5aa119a8-d25b-45a7-8d1b-88e127885635"
+    }
+}
+    `)
+	})
+}
