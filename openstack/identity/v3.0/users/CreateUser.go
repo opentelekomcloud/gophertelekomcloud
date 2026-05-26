@@ -38,6 +38,14 @@ type CreateOpts struct {
 	// PasswordReset Indicates whether password reset is required at the first login.
 	// By default, password reset is true.
 	PasswordReset *bool `json:"pwd_status,omitempty"`
+
+	// XuserType is the type of the IAM user in the external system.
+	// Must be used together with XuserID. Currently only "TenantIdp" is supported.
+	XuserType string `json:"xuser_type,omitempty"`
+
+	// XuserID is the ID of the IAM user in the external system (max 128 characters).
+	// Must be used together with XuserType.
+	XuserID string `json:"xuser_id,omitempty"`
 }
 
 func CreateUser(client *golangsdk.ServiceClient, opts CreateOpts) (*User, error) {
