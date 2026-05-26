@@ -8,7 +8,7 @@ import (
 // status. It will do this for the amount of seconds defined.
 func WaitForStatus(c *golangsdk.ServiceClient, id, status string, secs int) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		current, err := Get(c, id).Extract()
+		current, err := Get(c, id)
 		if err != nil {
 			return false, err
 		}
