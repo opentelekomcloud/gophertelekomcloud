@@ -59,4 +59,5 @@ func TestSubnetsLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOpts.Name, newSubnet.Name)
 	th.AssertEquals(t, emptyDescription, newSubnet.Description)
 	th.AssertEquals(t, true, newSubnet.EnableIpv6)
+	th.AssertNotEquals(t, "", newSubnet.SubnetIDV6)
 }

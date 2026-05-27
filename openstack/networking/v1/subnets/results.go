@@ -1,7 +1,7 @@
 package subnets
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
@@ -54,6 +54,9 @@ type Subnet struct {
 
 	// Specifies the subnet ID.
 	SubnetID string `json:"neutron_subnet_id"`
+
+	// Specifies the IPV6 subnet ID.
+	SubnetIDV6 string `json:"neutron_subnet_id_v6"`
 
 	// Specifies the network ID.
 	NetworkID string `json:"neutron_network_id"`
