@@ -10,7 +10,7 @@ like the following and setting it as the provider client's HTTP Client (via the
 //...
 
 // LogRoundTripper satisfies the http.RoundTripper interface and is used to
-// customize the default Gophercloud RoundTripper to allow for logging.
+// customize the default gophertelekomcloud RoundTripper to allow for logging.
 type LogRoundTripper struct {
 	rt                http.RoundTripper
 	numReauthAttempts int
@@ -57,61 +57,76 @@ pc.HTTPClient = newHTTPClient()
 
 ## Implementing custom objects
 
-OpenStack request/response objects may differ among variable names or types.
+T-Cloud Public (former OpenTelekomCloud) request and response objects may differ among services, API
+versions, and API operations. New code should follow the operation-per-file
+style used by services such as `apigw` and `fgs`: put the operation function,
+its request options, and its response type in the same file unless the types are
+shared widely in the package.
 
 ### Custom request objects
 
-To pass custom options to a request, implement the desired `<ACTION>OptsBuilder` interface. For
-example, to pass in
+For a request body, define an operation-specific `Opts` struct with JSON tags.
+Use `json:"-"` for values that are used only to build the URL and must not be
+sent in the body:
 
 ```go
-type MyCreateServerOpts struct {
-	Name string
-	Size int
+type CreateOpts struct {
+	GatewayID   string `json:"-"`
+	Name        string `json:"name" required:"true"`
+	Description string `json:"remark,omitempty"`
+}
+
+func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*AppResp, error) {
+	b, err := build.RequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := client.Post(
+		client.ServiceURL("apigw", "instances", opts.GatewayID, "apps"),
+		b,
+		nil,
+		&golangsdk.RequestOpts{OkCodes: []int{201}},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var res AppResp
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 ```
 
-to `servers.Create`, simply implement the `servers.CreateOptsBuilder` interface:
-
-```go
-func (o MyCreateServeropts) ToServerCreateMap() (map[string]interface{}, error) {
-	return map[string]interface{}{
-		"name": o.Name,
-		"size": o.Size,
-	}, nil
-}
-```
-
-create an instance of your custom options object, and pass it to `servers.Create`:
-
-```go
-// ...
-myOpts := MyCreateServerOpts{
-	Name: "s1",
-	Size: "100",
-}
-server, err := servers.Create(computeClient, myOpts).Extract()
-// ...
-```
+For query parameters, define a `ListOpts` or other operation-specific options
+struct with `q` tags and pass it to `golangsdk.BuildQueryString(&opts)`.
 
 ### Custom response objects
 
-Some OpenStack services have extensions. Extensions that are supported in Gophercloud can be
-combined to create a custom object:
+Define response structs with JSON tags that match the API payload and decode the
+SDK response body with `extract.Into` or `extract.IntoSlicePtr`:
 
 ```go
-// ...
-type MyVolume struct {
-  volumes.Volume
-  tenantattr.VolumeExt
+type AppResp struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"remark"`
 }
 
-var v struct {
-  MyVolume `json:"volume"`
-}
+func Get(client *golangsdk.ServiceClient, gatewayID, appID string) (*AppResp, error) {
+	raw, err := client.Get(
+		client.ServiceURL("apigw", "instances", gatewayID, "apps", appID),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
 
-err := volumes.Get(client, volID).ExtractInto(&v)
-// ...
+	var res AppResp
+	err = extract.Into(raw.Body, &res)
+	return &res, err
+}
 ```
 
 ## Overriding default `UnmarshalJSON` method
@@ -122,27 +137,25 @@ necessary. To do this, declare the JSON `struct` field tag as "-" and create an 
 method on the type:
 
 ```go
-// ...
-type MyVolume struct {
-	ID string `json: "id"`
-	TimeCreated time.Time `json: "-"`
+type FunctionEvent struct {
+	ID          string    `json:"id"`
+	LastUpdate time.Time `json:"-"`
 }
 
-func (r *MyVolume) UnmarshalJSON(b []byte) error {
-	type tmp MyVolume
+func (r *FunctionEvent) UnmarshalJSON(b []byte) error {
+	type tmp FunctionEvent
 	var s struct {
 		tmp
-		TimeCreated golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
+		LastUpdate golangsdk.JSONRFC3339MilliNoZ `json:"last_update"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
 		return err
 	}
-	*r = Volume(s.tmp)
 
-	r.TimeCreated = time.Time(s.CreatedAt)
+	*r = FunctionEvent(s.tmp)
+	r.LastUpdate = time.Time(s.LastUpdate)
 
 	return err
 }
-// ...
 ```

@@ -40,19 +40,19 @@ that might not ever work. One tip is to prefix your Pull Request issue title
 with [wip] - then people know it's a work in progress.
 
 We ask that you do not submit a feature that you have not spent time researching
-and testing first-hand in an actual OpenTelekomCloud environment. While we appreciate
+and testing first-hand in an actual T-Cloud Public (former OpenTelekomCloud) environment. While we appreciate
 the contribution, submitting code which you are unfamiliar with is a risk to the
 users who will ultimately use it. See our [acceptance tests readme](/acceptance)
 for information about how you can create a local development environment to
 better understand the feature you're working on.
 
 Please do not hesitate to ask questions or request clarification. Your
-contribution is very much appreciated and we are happy to work with you to get
+contribution is very much appreciated, and we are happy to work with you to get
 it merged.
 
 ## Getting Started
 
-As a contributor you will need to setup your workspace in a slightly different
+As a contributor you will need to set up your workspace in a slightly different
 way than just downloading it. Here are the basic instructions:
 
 1. Configure your `$GOPATH` and run `go get` as described in the main
@@ -84,7 +84,7 @@ fork as `origin` instead:
    ```
 
 5. If you're working on something (discussed more in detail below), you will
-need to checkout a new feature branch:
+need to check out a new feature branch:
 
    ```bash
    git checkout -b my-new-feature
@@ -108,7 +108,7 @@ Happy Hacking!
 
 When working on a new or existing feature, testing will be the backbone of your
 work since it helps uncover and prevent regressions in the codebase. There are
-two types of test we use in Gophercloud: unit tests and acceptance tests, which
+two types of test we use in Gophertelekomcloud: unit tests and acceptance tests, which
 are both described below.
 
 ### Unit tests

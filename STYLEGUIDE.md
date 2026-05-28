@@ -8,13 +8,11 @@
 
 - A PR's description must reference the issue it closes with a `For <ISSUE NUMBER>` (e.g. For #293).
 
-- A PR's description must contain link(s) to the line(s) in the OpenStack
-  source code (on Github) that prove(s) the PR code to be valid. Links to documentation
-  are not good enough. The link(s) should be to a non-`master` branch. For example,
-  a pull request implementing the creation of a Neutron v2 subnet might put the
+- A PR's description must contain link(s) to documentation on [docs portal](https://docs.otc.t-systems.com/) For example,
+  a pull request implementing the creation of a Dedicated WAF instance might put the
   following link in the description:
 
-  https://github.com/openstack/neutron/blob/stable/mitaka/neutron/api/v2/attributes.py#L749
+  https://docs.otc.t-systems.com/web-application-firewall-dedicated/api-ref/apis/dedicated_instance_management/creating_a_dedicated_waf_engine.html#createinstance
 
   From that link, a reviewer (or user) can verify the fields in the request/response
   objects in the PR.
@@ -50,27 +48,55 @@
 
 ### File Structure
 
-- The following should be used in most cases:
+- New service packages should follow the operation-per-file layout used by
+  newer services such as `apigw` and `fgs`.
 
-  - `requests.go`: contains all the functions that make HTTP requests and the
-    types associated with the HTTP request (parameters for URL, body, etc)
-  - `results.go`: contains all the response objects and their methods
-  - `urls.go`: contains the endpoints to which the requests are made
+  - Service code lives under `openstack/<service>/<version>/<resource>/`.
+    The `<resource>` directory is the Go package name and should be lowercase.
+    Use snake case when the resource name is made of several words, for example
+    `app_auth`, `async_config`, or `dependency_version`.
+  - Each public API operation should live in its own file named after the
+    exported operation function, for example `Create.go`, `List.go`,
+    `GetMetadata.go`, `UpdateEIP.go`, or `ListAPIBoundPolicy.go`.
+  - Put the operation request options, response types, small helper types, and
+    extraction helpers in the same operation file when they are only used by
+    that operation.
+  - Shared resource types may live in the operation file where they are first
+    introduced if that matches the existing package style. Move them to a common
+    file only when they are reused widely enough to make the operation files
+    harder to read.
+  - Acceptance tests live under
+    `acceptance/openstack/<service>/<version>/` and are named after the tested
+    resource or feature in snake case, for example `gateway_test.go`,
+    `app_auth_test.go`, or `dependency_version_test.go`.
 
 ### Naming
 
-- For methods on a type in `results.go`, the receiver should be named `r` and the
-  variable into which it will be unmarshalled `s`.
+- Operation functions and files should use Go exported PascalCase names:
+  `Create`, `Delete`, `Get`, `List`, `Update`, or a more specific API action
+  such as `CreateAlias`, `InvokeAsync`, `PublishVersion`, `UpdateStatus`, or
+  `ListGatewayFeatures`.
 
-- Functions in `requests.go`, with the exception of functions that return a
-  `pagination.Pager`, should be named returns of the name `r`.
+- Request option structs should be named after the operation:
+  `CreateOpts`, `ListOpts`, `UpdateOpts`, or `<Action>Opts` when the operation
+  name is more specific, for example `CreateAliasOpts`.
 
-- Functions in `requests.go` that accept request bodies should accept as their
-  last parameter an `interface` named `<Action>OptsBuilder` (eg `CreateOptsBuilder`).
-  This `interface` should have at the least a method named `To<Resource><Action>Map`
-  (eg `ToPortCreateMap`).
+- Response structs should use clear exported names that match the API resource
+  or returned payload, for example `GatewayResp`, `FuncGraph`, or
+  `FuncAliasesResp`.
 
-- Functions in `requests.go` that accept query strings should accept as their
-  last parameter an `interface` named `<Action>OptsBuilder` (eg `ListOptsBuilder`).
-  This `interface` should have at the least a method named `To<Resource><Action>Query`
-  (eg `ToServerListQuery`).
+- Follow the acronym casing already used by the package and API. Keep common
+  API acronyms uppercase when that is the established operation name, for
+  example `UpdateEIP.go`, `ListAPIBoundPolicy.go`, `VpcID`, and `ProjectID`;
+  keep existing mixed-case names such as `GetLts.go` consistent within their
+  package.
+
+- For request body operations, build payloads with `build.RequestBody(opts, "")`
+  and keep path-only fields out of the JSON body with `json:"-"`.
+
+- For query string operations, use `q` struct tags and
+  `golangsdk.BuildQueryString(&opts)`.
+
+- Prefer short, consistent local names in operation functions:
+  `b` for request bodies, `q` for query strings, `raw` for the SDK response,
+  `res` for the decoded response value, and `err` for errors.
