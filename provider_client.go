@@ -180,6 +180,52 @@ type RequestOpts struct {
 
 var applicationJSON = "application/json"
 
+const invalidAuthTokenMessage = "X-Auth-Token is invalid"
+
+func shouldReauthenticate(statusCode int, body []byte) bool {
+	return statusCode == http.StatusUnauthorized ||
+		(statusCode == http.StatusForbidden && bytes.Contains(body, []byte(invalidAuthTokenMessage)))
+}
+
+func (client *ProviderClient) reauthenticateAndRetry(method, url string, options *RequestOpts, prereqtok string, respErr ErrUnexpectedResponseCode) (*http.Response, error) {
+	var err error
+	if client.mut != nil {
+		client.mut.Lock()
+		client.reauthmut.Lock()
+		client.reauthmut.reauthing = true
+		client.reauthmut.Unlock()
+		if curtok := client.TokenID; curtok == prereqtok {
+			err = client.ReauthFunc()
+		}
+		client.reauthmut.Lock()
+		client.reauthmut.reauthing = false
+		client.reauthmut.Unlock()
+		client.mut.Unlock()
+	} else {
+		err = client.ReauthFunc()
+	}
+	if err != nil {
+		e := &ErrUnableToReauthenticate{}
+		e.ErrOriginal = respErr
+		return nil, e
+	}
+	if options.RawBody != nil {
+		if seeker, ok := options.RawBody.(io.Seeker); ok {
+			_, e := seeker.Seek(0, 0)
+			if e != nil {
+				return nil, e
+			}
+		}
+	}
+	resp, err := client.Request(method, url, options)
+	if err != nil {
+		e := &ErrErrorAfterReauthentication{}
+		e.ErrOriginal = err
+		return nil, e
+	}
+	return resp, nil
+}
+
 // Request performs an HTTP request using the ProviderClient's current HTTPClient. An authentication
 // header will automatically be provided.
 func (client *ProviderClient) Request(method, url string, options *RequestOpts) (*http.Response, error) {
@@ -318,47 +364,16 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			}
 		case http.StatusUnauthorized:
 			if client.ReauthFunc != nil {
-				if client.mut != nil {
-					client.mut.Lock()
-					client.reauthmut.Lock()
-					client.reauthmut.reauthing = true
-					client.reauthmut.Unlock()
-					if curtok := client.TokenID; curtok == prereqtok {
-						err = client.ReauthFunc()
-					}
-					client.reauthmut.Lock()
-					client.reauthmut.reauthing = false
-					client.reauthmut.Unlock()
-					client.mut.Unlock()
-				} else {
-					err = client.ReauthFunc()
-				}
-				if err != nil {
-					e := &ErrUnableToReauthenticate{}
-					e.ErrOriginal = respErr
-					return nil, e
-				}
-				if options.RawBody != nil {
-					if seeker, ok := options.RawBody.(io.Seeker); ok {
-						_, e := seeker.Seek(0, 0)
-						if e != nil {
-							return nil, e
-						}
-					}
-				}
-				resp, err = client.Request(method, url, options)
-				if err != nil {
-					e := &ErrErrorAfterReauthentication{}
-					e.ErrOriginal = err
-					return nil, e
-				}
-				return resp, nil
+				return client.reauthenticateAndRetry(method, url, options, prereqtok, respErr)
 			}
 			err = ErrDefault401{respErr}
 			if error401er, ok := errType.(Err401er); ok {
 				err = error401er.Error401(respErr)
 			}
 		case http.StatusForbidden:
+			if shouldReauthenticate(resp.StatusCode, body) && client.ReauthFunc != nil {
+				return client.reauthenticateAndRetry(method, url, options, prereqtok, respErr)
+			}
 			err = ErrDefault403{respErr}
 			if error403er, ok := errType.(Err403er); ok {
 				err = error403er.Error403(respErr)
