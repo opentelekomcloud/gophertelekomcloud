@@ -119,3 +119,81 @@ func TestConcurrentReauth(t *testing.T) {
 
 	th.AssertEquals(t, 1, info.numreauths)
 }
+
+func TestReauthOnForbiddenInvalidAuthToken(t *testing.T) {
+	prereauthTok := client.TokenID
+	postreauthTok := "12345678"
+
+	p := new(golangsdk.ProviderClient)
+	p.SetToken(prereauthTok)
+
+	numreauths := 0
+	p.ReauthFunc = func() error {
+		numreauths++
+		p.SetToken(postreauthTok)
+		return nil
+	}
+
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	numrequests := 0
+	th.Mux.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
+		numrequests++
+		switch r.Header.Get("X-Auth-Token") {
+		case prereauthTok:
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = fmt.Fprint(w, `{"message":"X-Auth-Token is invalid"}`)
+		case postreauthTok:
+			w.Header().Add("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{}`)
+		default:
+			t.Errorf("unexpected X-Auth-Token: %s", r.Header.Get("X-Auth-Token"))
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+	})
+
+	resp, err := p.Request("GET", fmt.Sprintf("%s/route", th.Endpoint()), new(golangsdk.RequestOpts))
+	th.CheckNoErr(t, err)
+	if resp == nil {
+		t.Fatalf("got a nil response")
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	actual, err := ioutil.ReadAll(resp.Body)
+	th.CheckNoErr(t, err)
+	th.CheckByteArrayEquals(t, []byte(`{}`), actual)
+	th.AssertEquals(t, 1, numreauths)
+	th.AssertEquals(t, 2, numrequests)
+}
+
+func TestForbiddenWithoutInvalidAuthTokenDoesNotReauth(t *testing.T) {
+	p := new(golangsdk.ProviderClient)
+	p.SetToken(client.TokenID)
+
+	numreauths := 0
+	p.ReauthFunc = func() error {
+		numreauths++
+		p.SetToken("12345678")
+		return nil
+	}
+
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = fmt.Fprint(w, `{"message":"policy does not allow this request"}`)
+	})
+
+	resp, err := p.Request("GET", fmt.Sprintf("%s/route", th.Endpoint()), new(golangsdk.RequestOpts))
+	if resp == nil {
+		t.Fatalf("got a nil response")
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	th.AssertEquals(t, 0, numreauths)
+	if _, ok := err.(golangsdk.ErrDefault403); !ok {
+		t.Fatalf("expected ErrDefault403, got %T: %v", err, err)
+	}
+}
