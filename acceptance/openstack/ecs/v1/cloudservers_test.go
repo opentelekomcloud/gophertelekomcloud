@@ -30,6 +30,10 @@ func TestCloudServerLifecycle(t *testing.T) {
 	ecs := openstack.CreateCloudServer(t, client, createOpts)
 	defer openstack.DeleteCloudServer(t, client, ecs.ID)
 
+	// Verify description set during creation
+	th.AssertEquals(t, "ecs created by acc test", ecs.Description)
+	t.Logf("ECS created with description: %s", ecs.Description)
+
 	// Update ECSv1 instance
 	newName := tools.RandomString("ecs-updated-", 3)
 	newDescription := "updated ecs description"
@@ -41,6 +45,11 @@ func TestCloudServerLifecycle(t *testing.T) {
 	th.AssertEquals(t, newName, updated.Name)
 	th.AssertEquals(t, newDescription, updated.Description)
 	t.Logf("Successfully updated ECS name to %s", updated.Name)
+
+	// Verify updated description via Get
+	getEcs, err := cloudservers.Get(client, ecs.ID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, newDescription, getEcs.Description)
 
 	tagsList := []tags.ResourceTag{
 		{
