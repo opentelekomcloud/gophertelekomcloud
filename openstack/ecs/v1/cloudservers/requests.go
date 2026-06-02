@@ -16,6 +16,10 @@ type CreateOpts struct {
 	// Name of the ECS instance.
 	Name string `json:"name" required:"true"`
 
+	// Description of the ECS instance.
+	// The value consists of 0 to 85 characters. Angle brackets (<>) are not allowed.
+	Description *string `json:"description,omitempty"`
+
 	// UserData to be injected during the ECS creation process.
 	UserData []byte `json:"-"`
 

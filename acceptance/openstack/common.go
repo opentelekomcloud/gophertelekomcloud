@@ -153,11 +153,13 @@ func GetCloudServerCreateOpts(t *testing.T) cloudservers.CreateOpts {
 		t.Skip("One of OS_VPC_ID, OS_NETWORK_ID or OS_AVAILABILITY_ZONE env vars is missing but ECSv1 test requires")
 	}
 
+	ecsDescription := "ecs created by acc test"
 	createOpts := cloudservers.CreateOpts{
-		ImageRef:  image[0].Id,
-		FlavorRef: flavorID,
-		Name:      ecsName,
-		VpcId:     vpcID,
+		ImageRef:    image[0].Id,
+		FlavorRef:   flavorID,
+		Name:        ecsName,
+		Description: &ecsDescription,
+		VpcId:       vpcID,
 		Nics: []cloudservers.Nic{
 			{
 				SubnetId: subnetID,
