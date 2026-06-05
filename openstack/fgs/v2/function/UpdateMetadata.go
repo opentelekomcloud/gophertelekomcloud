@@ -25,8 +25,8 @@ type UpdateFuncMetadataOpts struct {
 	CustomImage          *CustomImage          `json:"custom_image,omitempty"`
 	Package              string                `json:"package"`
 	ExtendConfig         string                `json:"extend_config,omitempty"`
-	InitHandler          string                `json:"initializer_handler,omitempty"`
-	InitTimeout          *int                  `json:"initializer_timeout,omitempty"`
+	InitHandler          string                `json:"initializer_handler"`
+	InitTimeout          *int                  `json:"initializer_timeout"`
 	PreStopHandler       string                `json:"pre_stop_handler,omitempty"`
 	PreStopTimeout       *int                  `json:"pre_stop_timeout,omitempty"`
 	EphemeralStorage     *int                  `json:"ephemeral_storage,omitempty"`

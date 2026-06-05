@@ -8,6 +8,7 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/function"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
@@ -127,6 +128,56 @@ func TestFunctionGraphList(t *testing.T) {
 	listOpts := function.ListOpts{}
 	_, err = function.List(client, listOpts)
 	th.AssertNoErr(t, err)
+}
+
+func TestFunctionGraphInitializerDisable(t *testing.T) {
+	client, err := clients.NewFuncGraphClient()
+	th.AssertNoErr(t, err)
+
+	createResp, funcName := createFunctionGraph(t, client)
+
+	funcUrn := strings.TrimSuffix(createResp.FuncURN, ":latest")
+
+	defer func(client *golangsdk.ServiceClient, id string) {
+		err = function.Delete(client, id)
+		th.AssertNoErr(t, err)
+	}(client, funcUrn)
+
+	// Enable initialization
+	_, err = function.UpdateFuncMetadata(client, function.UpdateFuncMetadataOpts{
+		FuncUrn:     funcUrn,
+		Name:        funcName,
+		Runtime:     "Python3.9",
+		Timeout:     200,
+		Handler:     "index.handler",
+		MemorySize:  512,
+		InitHandler: "index.initializer",
+		InitTimeout: pointerto.Int(30),
+	})
+	th.AssertNoErr(t, err)
+
+	meta, err := function.GetMetadata(client, funcUrn)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "index.initializer", meta.InitHandler)
+	th.AssertEquals(t, 30, meta.InitTimeout)
+
+	// Disable initialization by passing empty values
+	_, err = function.UpdateFuncMetadata(client, function.UpdateFuncMetadataOpts{
+		FuncUrn:     funcUrn,
+		Name:        funcName,
+		Runtime:     "Python3.9",
+		Timeout:     200,
+		Handler:     "index.handler",
+		MemorySize:  512,
+		InitHandler: "",
+		InitTimeout: nil,
+	})
+	th.AssertNoErr(t, err)
+
+	meta, err = function.GetMetadata(client, funcUrn)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, "", meta.InitHandler)
+	th.AssertEquals(t, 0, meta.InitTimeout)
 }
 
 func createFunctionGraph(t *testing.T, client *golangsdk.ServiceClient) (*function.FuncGraph, string) {
