@@ -588,9 +588,10 @@ func NewOBSClientWithoutHeader() (*obs.ObsClient, error) {
 		return nil, err
 	}
 	opts := cc.AKSKAuthOptions
+	// Pinned to V2 to keep its pre-default-change behavior (not the OBS default).
 	return obs.New(
 		opts.AccessKey, opts.SecretKey, client.Endpoint,
-		obs.WithSecurityToken(opts.SecurityToken),
+		obs.WithSecurityToken(opts.SecurityToken), obs.WithSignature(obs.SignatureV2),
 	)
 }
 
