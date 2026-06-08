@@ -27,11 +27,13 @@ func TestProviderCreateRequest(t *testing.T) {
 		ID:          providerID,
 		Description: providerDescription,
 		Enabled:     true,
+		SSOType:     providerSSOType,
 	}
 	p, err := providers.Create(fake.ServiceClient(), opts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, opts.ID, p.ID)
 	th.AssertEquals(t, opts.Enabled, p.Enabled)
+	th.AssertEquals(t, providerSSOType, p.SSOType)
 	th.AssertEquals(t, 0, len(p.RemoteIDs))
 }
 
@@ -50,6 +52,7 @@ func TestProviderGetRequest(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, p.Enabled)
 	th.AssertEquals(t, providerDescription, p.Description)
+	th.AssertEquals(t, providerSSOType, p.SSOType)
 }
 
 func TestProviderListRequest(t *testing.T) {

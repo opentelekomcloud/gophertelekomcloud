@@ -8,6 +8,7 @@ import (
 const (
 	providerID          = "ACME"
 	providerDescription = "Stores ACME identities"
+	providerSSOType     = "iam_user_sso"
 
 	listURI = "/OS-FEDERATION/identity_providers"
 )
@@ -21,6 +22,7 @@ var (
         "description": "%s",
         "enabled": true,
         "id": "%s",
+        "sso_type": "%s",
         "remote_ids": [],
         "links": {
             "protocols": "https://example.com/v3/OS-FEDERATION/identity_providers/ACME/protocols",
@@ -28,7 +30,7 @@ var (
         }
     }
 }
-`, providerDescription, providerID)
+`, providerDescription, providerID, providerSSOType)
 
 	providerListResponse = fmt.Sprintf(`
 {
