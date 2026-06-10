@@ -213,10 +213,6 @@ func (conf *config) prepareConfig() {
 	if conf.maxRedirectCount < 0 {
 		conf.maxRedirectCount = DEFAULT_MAX_REDIRECT_COUNT
 	}
-
-	if conf.pathStyle && conf.signature == SignatureObs {
-		conf.signature = SignatureV2
-	}
 }
 
 func (conf *config) initConfigWithDefault() error {
@@ -343,7 +339,10 @@ func (conf *config) prepareBaseURL(bucketName string) (requestURL string, canoni
 			requestURL = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
 			canonicalizedURL = "/"
 		} else {
-			if conf.pathStyle {
+			// Dotted bucket names must use path-style: their virtual-hosted URL
+			// isn't covered by the *.<host> wildcard cert and TLS would fail.
+			usePathStyle := conf.pathStyle || strings.Contains(bucketName, ".")
+			if usePathStyle {
 				requestURL = fmt.Sprintf("%s://%s:%d/%s", urlHolder.scheme, urlHolder.host, urlHolder.port, bucketName)
 				canonicalizedURL = "/" + bucketName
 			} else {

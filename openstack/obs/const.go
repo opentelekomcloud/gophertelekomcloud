@@ -129,7 +129,8 @@ const (
 	PARAM_SIGNEDHEADERS_AMZ_CAMEL = "X-Amz-SignedHeaders"
 	PARAM_SIGNATURE_AMZ_CAMEL     = "X-Amz-Signature"
 
-	DEFAULT_SIGNATURE            = SignatureV2
+	// OTC OBS uses the OBS-native signature, so default to it.
+	DEFAULT_SIGNATURE            = SignatureObs
 	DEFAULT_REGION               = "region"
 	DEFAULT_CONNECT_TIMEOUT      = 60
 	DEFAULT_SOCKET_TIMEOUT       = 60
