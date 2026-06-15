@@ -9,6 +9,7 @@ type Provider struct {
 	ID          string            `json:"id"`
 	Description string            `json:"description"`
 	Enabled     bool              `json:"enabled"`
+	SSOType     string            `json:"sso_type"`
 	RemoteIDs   []string          `json:"remote_ids"`
 	Links       map[string]string `json:"links"`
 }

@@ -16,6 +16,10 @@ type CreateOpts struct {
 	ID          string `json:"-"`
 	Description string `json:"description,omitempty"`
 	Enabled     bool   `json:"enabled,omitempty"`
+	// SSOType is the SSO type of the identity provider. Allowed values are
+	// "virtual_user_sso" (default on the API side) and "iam_user_sso".
+	// It is set only on creation and cannot be modified afterwards.
+	SSOType string `json:"sso_type,omitempty"`
 }
 
 func (opts CreateOpts) ToProviderCreateMap() (map[string]interface{}, error) {
