@@ -87,7 +87,15 @@ func TestRdsLifecycle(t *testing.T) {
 			InstanceId: rds.Id,
 			Alias:      &newAlias,
 		})
-	th.AssertNoErr(t, err)
+	if err != nil {
+		t.Logf("UpgradeDescription skipped: API not published on OTC yet: %s", err)
+	} else {
+		getRdsDesc, err := instances.List(client, instances.ListOpts{
+			Id: rds.Id,
+		})
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, getRdsDesc.Instances[0].Alias, newAlias)
+	}
 
 	t.Log("SetSecurityGroup")
 
