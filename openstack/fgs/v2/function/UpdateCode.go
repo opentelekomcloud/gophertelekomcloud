@@ -12,7 +12,7 @@ type UpdateFuncCodeOpts struct {
 	CodeURL           string    `json:"code_url,omitempty"`
 	CodeFilename      string    `json:"code_filename,omitempty"`
 	FuncCode          *FuncCode `json:"func_code,omitempty"`
-	DependVersionList []string  `json:"depend_version_list,omitempty"`
+	DependVersionList []string  `json:"depend_version_list"`
 }
 
 func UpdateFuncCode(client *golangsdk.ServiceClient, opts UpdateFuncCodeOpts) (*FuncGraphCode, error) {
