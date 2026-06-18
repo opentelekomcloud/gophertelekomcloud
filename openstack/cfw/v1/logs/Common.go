@@ -7,7 +7,7 @@ type LogConfigOpts struct {
 	// Whether to enable LTS: 1 (yes), 0 (no).
 	// If set to 1, then LtsAttackLogStreamEnable, LtsAccessLogStreamEnable,
 	// and LtsFlowLogStreamEnable must be mandatory.
-	LtsEnable int `json:"lts_enable" required:"true"`
+	LtsEnable *int `json:"lts_enable" required:"true"`
 
 	// Log Tank Service (LTS) log group ID, which can be obtained by calling the
 	// API for querying all the log groups of an account in LTS.
@@ -41,6 +41,13 @@ type LogConfigOpts struct {
 
 	// Whether to enable the traffic log function: 1 (yes), 0 (no).
 	LtsFlowLogStreamEnable int `json:"lts_flow_log_stream_enable"`
+}
+
+type QueryParameters struct {
+	// Enterprise project ID
+	EnterpriseProjectID string `q:"enterprise_project_id,omitempty"`
+	// Firewall instance ID. This field is required.
+	FwInstanceID string `q:"fw_instance_id" required:"true"`
 }
 
 /*

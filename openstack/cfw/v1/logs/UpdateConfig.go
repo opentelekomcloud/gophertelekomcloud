@@ -8,13 +8,19 @@ import (
 
 // // This function is used to update log configurations.
 func UpdateLogConfig(client *golangsdk.ServiceClient, opts LogConfigOpts) (*string, error) {
+	// PUT /v1/{project_id}/cfw/logs/configuration
+	url, err := golangsdk.NewURLBuilder().WithEndpoints("cfw", "logs", "configuration").WithQueryParams(&QueryParameters{
+		FwInstanceID: opts.FWInstanceID,
+	}).Build()
+	if err != nil {
+		return nil, err
+	}
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	// PUT /v1/{project_id}/cfw/logs/configuration
-	raw, err := client.Put(client.ServiceURL("cfw", "logs", "configuration"), b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL(url.String()), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: map[string]string{"Content-Type": "application/json"},
 	})

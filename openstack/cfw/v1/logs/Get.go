@@ -5,15 +5,8 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
-type GetQueryParameters struct {
-	// Enterprise project ID
-	EnterpriseProjectID string `q:"enterprise_project_id,omitempty"`
-	// Firewall instance ID. This field is required.
-	FwInstanceID string `q:"fw_instance_id" required:"true"`
-}
-
 // This function is used to obtain log configurations.
-func GetLogConfig(client *golangsdk.ServiceClient, opts GetQueryParameters) (*LogConfig, error) {
+func GetLogConfig(client *golangsdk.ServiceClient, opts QueryParameters) (*LogConfig, error) {
 	// GET /v1/{project_id}/cfw/logs/configuration
 	url, err := golangsdk.NewURLBuilder().WithEndpoints("cfw", "logs", "configuration").WithQueryParams(opts).Build()
 	if err != nil {
