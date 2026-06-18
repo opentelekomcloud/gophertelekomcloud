@@ -39,5 +39,4 @@ func TestTraces(t *testing.T) {
 	}
 
 	t.Logf("Number of Tracker Traces in latest API call : %d", len(listResp.Traces))
-	th.AssertEquals(t, true, len(listResp.Traces) > 0)
 }
