@@ -1097,6 +1097,46 @@ func NewERClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewCCClient returns an authenticated Cloud Connect v3 client.
+func NewCCClient() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := openstack.NewCCServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Reuse the cloud's own auth options (correct user/domain fields) and drop the
+	// project/tenant from the scope to obtain a domain-scoped token.
+	authOpts, err := openstack.AuthOptionsFromInfo(&cc.AuthInfo, cc.AuthType)
+	if err != nil {
+		return nil, fmt.Errorf("error building auth options for CC: %w", err)
+	}
+	switch ao := authOpts.(type) {
+	case golangsdk.AuthOptions:
+		ao.TenantID = ""
+		ao.TenantName = ""
+		authOpts = ao
+	case golangsdk.AKSKAuthOptions:
+		ao.ProjectId = ""
+		ao.ProjectName = ""
+		authOpts = ao
+	}
+
+	domainClient, err := openstack.AuthenticatedClient(authOpts)
+	if err != nil {
+		return nil, fmt.Errorf("error creating domain-scoped client for CC: %w", err)
+	}
+
+	client.ProviderClient = domainClient
+	return client, nil
+}
+
 // NewHssClient returns authenticated HSS v5 client
 func NewHssClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
