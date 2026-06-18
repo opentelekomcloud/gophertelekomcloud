@@ -1111,12 +1111,24 @@ func NewCCClient() (*golangsdk.ServiceClient, error) {
 		return nil, err
 	}
 
-	domainClient, err := openstack.AuthenticatedClient(golangsdk.AuthOptions{
-		IdentityEndpoint: cc.AuthInfo.AuthURL,
-		Username:         cc.AuthInfo.Username,
-		Password:         cc.AuthInfo.Password,
-		DomainName:       cc.AuthInfo.UserDomainName,
-	})
+	// Reuse the cloud's own auth options (correct user/domain fields) and drop the
+	// project/tenant from the scope to obtain a domain-scoped token.
+	authOpts, err := openstack.AuthOptionsFromInfo(&cc.AuthInfo, cc.AuthType)
+	if err != nil {
+		return nil, fmt.Errorf("error building auth options for CC: %w", err)
+	}
+	switch ao := authOpts.(type) {
+	case golangsdk.AuthOptions:
+		ao.TenantID = ""
+		ao.TenantName = ""
+		authOpts = ao
+	case golangsdk.AKSKAuthOptions:
+		ao.ProjectId = ""
+		ao.ProjectName = ""
+		authOpts = ao
+	}
+
+	domainClient, err := openstack.AuthenticatedClient(authOpts)
 	if err != nil {
 		return nil, fmt.Errorf("error creating domain-scoped client for CC: %w", err)
 	}
