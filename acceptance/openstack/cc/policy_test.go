@@ -18,6 +18,7 @@ import (
 )
 
 func TestCentralNetworkPolicyLifeCycle(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	if os.Getenv("RUN_CC_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
 	}

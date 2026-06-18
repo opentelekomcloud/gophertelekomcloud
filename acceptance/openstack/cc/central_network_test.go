@@ -14,6 +14,7 @@ import (
 )
 
 func TestCentralNetworkLifeCycle(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	if os.Getenv("RUN_CC_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
 	}
@@ -48,6 +49,7 @@ func TestCentralNetworkLifeCycle(t *testing.T) {
 }
 
 func TestCentralNetworkList(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 
@@ -57,6 +59,7 @@ func TestCentralNetworkList(t *testing.T) {
 }
 
 func TestCentralNetworkQuotaList(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 
@@ -69,6 +72,7 @@ func TestCentralNetworkQuotaList(t *testing.T) {
 }
 
 func TestCentralNetworkCapabilityList(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 

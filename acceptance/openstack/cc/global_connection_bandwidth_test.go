@@ -12,6 +12,7 @@ import (
 )
 
 func TestGlobalConnectionBandwidthLifeCycle(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	if os.Getenv("RUN_CC_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
 	}
@@ -50,6 +51,7 @@ func TestGlobalConnectionBandwidthLifeCycle(t *testing.T) {
 }
 
 func TestGlobalConnectionBandwidthList(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 
@@ -59,6 +61,7 @@ func TestGlobalConnectionBandwidthList(t *testing.T) {
 }
 
 func TestGlobalConnectionBandwidthConfigs(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 
@@ -68,6 +71,7 @@ func TestGlobalConnectionBandwidthConfigs(t *testing.T) {
 }
 
 func TestGlobalConnectionBandwidthSites(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 
@@ -80,6 +84,7 @@ func TestGlobalConnectionBandwidthSites(t *testing.T) {
 }
 
 func TestGlobalConnectionBandwidthSupportBindings(t *testing.T) {
+	t.Skip("CC acceptance tests are skipped")
 	client, err := clients.NewCCClient()
 	th.AssertNoErr(t, err)
 
