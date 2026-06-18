@@ -1093,6 +1093,10 @@ func NewERServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts)
 	return sc, nil
 }
 
+func NewCCServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cc")
+}
+
 func NewEVPNServiceV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initCommonServiceClient(client, eo, "vpn", "v5")
 	if err != nil {

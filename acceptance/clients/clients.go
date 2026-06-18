@@ -1097,6 +1097,34 @@ func NewERClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewCCClient returns an authenticated Cloud Connect v3 client.
+func NewCCClient() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := openstack.NewCCServiceV3(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	domainClient, err := openstack.AuthenticatedClient(golangsdk.AuthOptions{
+		IdentityEndpoint: cc.AuthInfo.AuthURL,
+		Username:         cc.AuthInfo.Username,
+		Password:         cc.AuthInfo.Password,
+		DomainName:       cc.AuthInfo.UserDomainName,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error creating domain-scoped client for CC: %w", err)
+	}
+
+	client.ProviderClient = domainClient
+	return client, nil
+}
+
 // NewHssClient returns authenticated HSS v5 client
 func NewHssClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
