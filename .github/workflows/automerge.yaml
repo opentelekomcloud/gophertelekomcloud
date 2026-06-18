@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       contains(github.event.pull_request.labels.*.name, 'gate')
-    environment: github
     steps:
       - name: Create GitHub App Token
         id: app-token
