@@ -1130,6 +1130,17 @@ func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewEPSV1Client returns authenticated EPS v1 client
+func NewEPSV1Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	return openstack.NewEPSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewCCIClient returns authenticated CCI v2 client
 func NewCCIClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()

@@ -1105,6 +1105,16 @@ func NewRmsServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	return initClientOpts(client, eo, "rms")
 }
 
+// NewEPSV1 creates a ServiceClient that may be used to access the EPS service.
+func NewEPSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "eps")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint
+	return sc, nil
+}
+
 func NewCCIServiceV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "ccev2.0")
 	if err != nil {
