@@ -20,7 +20,7 @@ func TestList(t *testing.T) {
 	th.Mux.HandleFunc("/enterprise-projects", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, http.MethodGet)
 		w.Header().Add("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, `{"enterprise_projects":[{"id":"0","name":"default","description":"Default project","status":1,"created_at":"2020-01-01T00:00:00Z","updated_at":"2020-01-02T00:00:00Z","type":"prod","delete_flag":false}]}`)
+		_, _ = fmt.Fprint(w, `{"enterprise_projects":[{"id":"0","name":"default","description":"Default project","status":1,"created_at":"2020-01-01T00:00:00Z","updated_at":"2020-01-02T00:00:00Z","type":"prod","delete_flag":false}],"total_count":1}`)
 	})
 
 	pages := 0
@@ -28,9 +28,10 @@ func TestList(t *testing.T) {
 		pages++
 		actual, err := projects.ExtractProjects(page)
 		th.AssertNoErr(t, err)
-		th.AssertEquals(t, 1, len(actual))
-		th.AssertEquals(t, epID, actual[0].ID)
-		th.AssertEquals(t, "default", actual[0].Name)
+		th.AssertEquals(t, 1, len(actual.EnterpriseProjects))
+		th.AssertEquals(t, 1, actual.TotalCount)
+		th.AssertEquals(t, epID, actual.EnterpriseProjects[0].ID)
+		th.AssertEquals(t, "default", actual.EnterpriseProjects[0].Name)
 		return true, nil
 	})
 	th.AssertNoErr(t, err)
@@ -87,19 +88,6 @@ func TestUpdate(t *testing.T) {
 	actual, err := projects.Update(client.ServiceClient(), epID, projects.UpdateOpts{Name: "default", Description: "updated by test"}).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "updated by test", actual.Description)
-}
-
-func TestDelete(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	th.Mux.HandleFunc("/enterprise-projects/"+epID, func(w http.ResponseWriter, r *http.Request) {
-		th.TestMethod(t, r, http.MethodDelete)
-		w.WriteHeader(http.StatusNoContent)
-	})
-
-	err := projects.Delete(client.ServiceClient(), epID).ExtractErr()
-	th.AssertNoErr(t, err)
 }
 
 func TestAction(t *testing.T) {

@@ -1130,15 +1130,40 @@ func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
-// NewEPSV1Client returns authenticated EPS v1 client
+// NewEPSV1Client returns authenticated EPS v1 client with domain-scoped token.
+// EPS is a global service that requires domain-scoped authentication and is not
+// in the Keystone service catalog, so the endpoint is constructed from the auth URL.
 func NewEPSV1Client() (client *golangsdk.ServiceClient, err error) {
-	cc, err := CloudAndClient()
+	cloud, err := EnvOS.Cloud()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error constructing cloud configuration: %w", err)
 	}
-	return openstack.NewEPSV1(cc.ProviderClient, golangsdk.EndpointOpts{
-		Region: cc.RegionName,
-	})
+
+	opts := golangsdk.AuthOptions{
+		IdentityEndpoint: cloud.AuthInfo.AuthURL,
+		Username:         cloud.AuthInfo.Username,
+		Password:         cloud.AuthInfo.Password,
+		DomainName:       cloud.AuthInfo.UserDomainName,
+	}
+
+	pClient, err := openstack.AuthenticatedClient(opts)
+	if err != nil {
+		return nil, fmt.Errorf("error creating domain-scoped provider client: %w", err)
+	}
+
+	// Derive EPS endpoint from IAM URL: https://iam.{region}.xxx → https://eps.{region}.xxx/v1.0/
+	u, err := url.Parse(cloud.AuthInfo.AuthURL)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing auth URL: %w", err)
+	}
+	epsHost := strings.Replace(u.Host, "iam.", "eps.", 1)
+	epsEndpoint := fmt.Sprintf("https://%s/v1.0/", epsHost)
+
+	return &golangsdk.ServiceClient{
+		ProviderClient: pClient,
+		Endpoint:       epsEndpoint,
+		ResourceBase:   epsEndpoint,
+	}, nil
 }
 
 // NewCCIClient returns authenticated CCI v2 client

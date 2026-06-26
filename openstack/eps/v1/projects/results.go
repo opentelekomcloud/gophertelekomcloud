@@ -9,11 +9,11 @@ type EnterpriseProject struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Type        string `json:"type"`
 	Status      int    `json:"status"`
+	DeleteFlag  bool   `json:"delete_flag"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
-	Type        string `json:"type"`
-	DeleteFlag  bool   `json:"delete_flag"`
 }
 
 type commonResult struct {
@@ -25,7 +25,10 @@ func (r commonResult) Extract() (*EnterpriseProject, error) {
 		EnterpriseProject *EnterpriseProject `json:"enterprise_project"`
 	}
 	err := r.ExtractInto(&s)
-	return s.EnterpriseProject, err
+	if err != nil {
+		return nil, err
+	}
+	return s.EnterpriseProject, nil
 }
 
 type CreateResult struct {
@@ -40,10 +43,6 @@ type UpdateResult struct {
 	commonResult
 }
 
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
 type ProjectPage struct {
 	pagination.SinglePageBase
 }
@@ -53,13 +52,16 @@ func (r ProjectPage) IsEmpty() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return len(data) == 0, err
+	return len(data.EnterpriseProjects) == 0, err
 }
 
-func ExtractProjects(r pagination.Page) ([]EnterpriseProject, error) {
-	var s struct {
-		EnterpriseProjects []EnterpriseProject `json:"enterprise_projects"`
-	}
+type ProjectListResult struct {
+	EnterpriseProjects []EnterpriseProject `json:"enterprise_projects"`
+	TotalCount         int                 `json:"total_count"`
+}
+
+func ExtractProjects(r pagination.Page) (*ProjectListResult, error) {
+	var s ProjectListResult
 	err := (r.(ProjectPage)).ExtractInto(&s)
-	return s.EnterpriseProjects, err
+	return &s, err
 }

@@ -106,13 +106,6 @@ func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) 
 	return
 }
 
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202, 204},
-	})
-	return
-}
-
 type ActionOptsBuilder interface {
 	ToProjectActionMap() (map[string]interface{}, error)
 }
