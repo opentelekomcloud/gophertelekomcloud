@@ -9,6 +9,7 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/catalog"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/credentials"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/domains"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/projects"
 	tokens3 "github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/tokens"
@@ -358,50 +359,36 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 		return fmt.Errorf("must config domain name")
 	}
 
-	opts2 := golangsdk.AgencyAuthOptions{
-		AgencyName:       opts.AgencyName,
-		AgencyDomainName: opts.AgencyDomainName,
-		DelegatedProject: opts.DelegatedProject,
-	}
-	result := tokens3.Create(v3Client, &opts2)
-	token, err := result.ExtractToken()
+	credential, err := credentials.CreateTemporary(v3Client, credentials.CreateTemporaryOpts{
+		Methods:    []string{"assume_role"},
+		DomainName: opts.AgencyDomainName,
+		AgencyName: opts.AgencyName,
+	}).Extract()
 	if err != nil {
-		return err
+		return fmt.Errorf("error obtaining temporary AK/SK for agency: %w", err)
 	}
 
-	project, err := result.ExtractProject()
-	if err != nil {
-		return fmt.Errorf("error extracting project info: %s", err)
+	agencyOpts := golangsdk.AKSKAuthOptions{
+		IdentityEndpoint: opts.IdentityEndpoint,
+		ProjectName:      opts.DelegatedProject,
+		Region:           opts.Region,
+		AccessKey:        credential.AccessKey,
+		SecretKey:        credential.SecretKey,
+		SecurityToken:    credential.SecurityToken,
+	}
+	if opts.DelegatedProject == "" {
+		agencyOpts.Domain = opts.AgencyDomainName
 	}
 
-	user, err := result.ExtractUser()
-	if err != nil {
-		return fmt.Errorf("error extracting user info: %s", err)
+	if err := v3AKSKAuth(client, endpoint, agencyOpts, eo); err != nil {
+		return fmt.Errorf("error authenticating with temporary agency credentials: %w", err)
 	}
-
-	serviceCatalog, err := result.ExtractServiceCatalog()
-	if err != nil {
-		return err
+	if opts.DelegatedProject == "" {
+		client.DomainID = client.AKSKAuthOptions.DomainID
 	}
-
-	client.TokenID = token.ID
-	if project != nil {
-		client.ProjectID = project.ID
-	}
-	if user != nil {
-		client.UserID = user.ID
-	}
-
 	client.ReauthFunc = func() error {
-		client.TokenID = ""
 		return authWithAgencyByAKSK(client, endpoint, opts, eo)
 	}
-
-	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
-		return V3EndpointURL(serviceCatalog, opts)
-	}
-
-	client.AKSKAuthOptions.AccessKey = ""
 	return nil
 }
 
