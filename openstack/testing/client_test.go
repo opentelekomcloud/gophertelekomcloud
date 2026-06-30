@@ -227,6 +227,7 @@ func TestAuthenticatedClientV3WithAgencyAKSKUsesTemporaryCredentials(t *testing.
 	defer th.TeardownHTTP()
 
 	var temporaryCredentialRequests int
+	var catalogRequests int
 
 	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintf(w, `
@@ -251,6 +252,10 @@ func TestAuthenticatedClientV3WithAgencyAKSKUsesTemporaryCredentials(t *testing.
 		if r.Header.Get("Authorization") == "" {
 			t.Errorf("expected request to be signed")
 		}
+		if strings.Contains(r.Header.Get("Authorization"), "Credential=temporary-ak") {
+			t.Errorf("catalog must not be fetched with assumed-role credentials, got %q", r.Header.Get("Authorization"))
+		}
+		catalogRequests++
 
 		_, _ = fmt.Fprintf(w, `
 			{
@@ -349,6 +354,7 @@ func TestAuthenticatedClientV3WithAgencyAKSKUsesTemporaryCredentials(t *testing.
 	client, err := openstack.AuthenticatedClient(options)
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, 1, temporaryCredentialRequests)
+	th.CheckEquals(t, 1, catalogRequests)
 	th.CheckEquals(t, "temporary-ak-1", client.AKSKAuthOptions.AccessKey)
 	th.CheckEquals(t, "temporary-sk-1", client.AKSKAuthOptions.SecretKey)
 	th.CheckEquals(t, "temporary-security-token-1", client.AKSKAuthOptions.SecurityToken)
@@ -357,6 +363,7 @@ func TestAuthenticatedClientV3WithAgencyAKSKUsesTemporaryCredentials(t *testing.
 	err = client.ReauthFunc()
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, 2, temporaryCredentialRequests)
+	th.CheckEquals(t, 2, catalogRequests)
 	th.CheckEquals(t, "temporary-ak-2", client.AKSKAuthOptions.AccessKey)
 	th.CheckEquals(t, "temporary-sk-2", client.AKSKAuthOptions.SecretKey)
 	th.CheckEquals(t, "temporary-security-token-2", client.AKSKAuthOptions.SecurityToken)
@@ -365,6 +372,8 @@ func TestAuthenticatedClientV3WithAgencyAKSKUsesTemporaryCredentials(t *testing.
 func TestAuthenticatedClientV3WithAgencyAKSKWithoutDelegatedProjectKeepsDomainScope(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
+
+	var catalogRequests int
 
 	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintf(w, `
@@ -385,6 +394,10 @@ func TestAuthenticatedClientV3WithAgencyAKSKWithoutDelegatedProjectKeepsDomainSc
 	})
 
 	th.Mux.HandleFunc("/v3/auth/catalog", func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.Header.Get("Authorization"), "Credential=temporary-ak") {
+			t.Errorf("catalog must not be fetched with assumed-role credentials, got %q", r.Header.Get("Authorization"))
+		}
+		catalogRequests++
 		_, _ = fmt.Fprintf(w, `
 			{
 				"catalog": [
@@ -471,6 +484,7 @@ func TestAuthenticatedClientV3WithAgencyAKSKWithoutDelegatedProjectKeepsDomainSc
 
 	client, err := openstack.AuthenticatedClient(options)
 	th.AssertNoErr(t, err)
+	th.CheckEquals(t, 1, catalogRequests)
 	th.CheckEquals(t, "target-domain-id", client.DomainID)
 	th.CheckEquals(t, "target-domain-id", client.AKSKAuthOptions.DomainID)
 	th.CheckEquals(t, "temporary-ak", client.AKSKAuthOptions.AccessKey)
