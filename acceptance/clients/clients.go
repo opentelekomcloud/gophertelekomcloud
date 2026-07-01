@@ -1130,40 +1130,39 @@ func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
-// NewEPSV1Client returns authenticated EPS v1 client with domain-scoped token.
-// EPS is a global service that requires domain-scoped authentication and is not
-// in the Keystone service catalog, so the endpoint is constructed from the auth URL.
+// NewEPSV1Client returns authenticated EPS v1 client.
+// EPS requires domain-scoped authentication. The endpoint is discovered via
+// NewEPSV1 (project-scoped catalog), then re-authenticated with domain scope.
 func NewEPSV1Client() (client *golangsdk.ServiceClient, err error) {
-	cloud, err := EnvOS.Cloud()
+	cc, err := CloudAndClient()
 	if err != nil {
-		return nil, fmt.Errorf("error constructing cloud configuration: %w", err)
+		return nil, err
+	}
+	sc, err := openstack.NewEPSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
 	}
 
-	opts := golangsdk.AuthOptions{
+	// Re-authenticate with domain scope for EPS API
+	cloud, err := EnvOS.Cloud()
+	if err != nil {
+		return nil, err
+	}
+	domainOpts := golangsdk.AuthOptions{
 		IdentityEndpoint: cloud.AuthInfo.AuthURL,
 		Username:         cloud.AuthInfo.Username,
 		Password:         cloud.AuthInfo.Password,
 		DomainName:       cloud.AuthInfo.UserDomainName,
+		AllowReauth:      true,
 	}
-
-	pClient, err := openstack.AuthenticatedClient(opts)
+	domainProvider, err := openstack.AuthenticatedClient(domainOpts)
 	if err != nil {
-		return nil, fmt.Errorf("error creating domain-scoped provider client: %w", err)
+		return nil, err
 	}
-
-	// Derive EPS endpoint from IAM URL: https://iam.{region}.xxx → https://eps.{region}.xxx/v1.0/
-	u, err := url.Parse(cloud.AuthInfo.AuthURL)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing auth URL: %w", err)
-	}
-	epsHost := strings.Replace(u.Host, "iam.", "eps.", 1)
-	epsEndpoint := fmt.Sprintf("https://%s/v1.0/", epsHost)
-
-	return &golangsdk.ServiceClient{
-		ProviderClient: pClient,
-		Endpoint:       epsEndpoint,
-		ResourceBase:   epsEndpoint,
-	}, nil
+	sc.ProviderClient = domainProvider
+	return sc, nil
 }
 
 // NewCCIClient returns authenticated CCI v2 client

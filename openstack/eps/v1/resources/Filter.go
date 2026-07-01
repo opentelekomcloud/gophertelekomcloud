@@ -39,15 +39,13 @@ type FilterOpts struct {
 	Matches       []Match  `json:"matches,omitempty"`
 }
 
-// Filter queries resources belonging to an enterprise project.
 func Filter(client *golangsdk.ServiceClient, projectID string, opts FilterOpts) (*FilterResult, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
 	}
 
-	url := client.ServiceURL("enterprise-projects", projectID, "resources", "filter")
-	raw, err := client.Post(url, b, nil, &golangsdk.RequestOpts{
+	raw, err := client.Post(client.ServiceURL("enterprise-projects", projectID, "resources", "filter"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
 	if err != nil {
@@ -57,29 +55,4 @@ func Filter(client *golangsdk.ServiceClient, projectID string, opts FilterOpts) 
 	var res FilterResult
 	err = extract.Into(raw.Body, &res)
 	return &res, err
-}
-
-type MigrateResource struct {
-	ResourceID   string `json:"resource_id"`
-	ResourceType string `json:"resource_type"`
-	RegionID     string `json:"region_id,omitempty"`
-}
-
-type MigrateOpts struct {
-	ProjectID string            `json:"project_id"`
-	Resources []MigrateResource `json:"resources"`
-}
-
-// Migrate moves resources from one enterprise project to another.
-func Migrate(client *golangsdk.ServiceClient, projectID string, opts MigrateOpts) error {
-	b, err := build.RequestBody(opts, "")
-	if err != nil {
-		return err
-	}
-
-	url := client.ServiceURL("enterprise-projects", projectID, "resources-migrate")
-	_, err = client.Post(url, b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
-	})
-	return err
 }

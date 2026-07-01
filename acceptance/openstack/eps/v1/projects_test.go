@@ -17,13 +17,10 @@ func TestEnterpriseProjectsListAndGet(t *testing.T) {
 	client, err := clients.NewEPSV1Client()
 	th.AssertNoErr(t, err)
 
-	allPages, err := projects.List(client, projects.ListOpts{}).AllPages()
+	allProjects, err := projects.List(client, projects.ListOpts{})
 	th.AssertNoErr(t, err)
 
-	allProjects, err := projects.ExtractProjects(allPages)
-	th.AssertNoErr(t, err)
-
-	enterpriseProjectID := clients.EnvOS.GetEnv("OS_ENTERPRISE_PROJECT_ID")
+	enterpriseProjectID := clients.EnvOS.GetEnv("ENTERPRISE_PROJECT_ID")
 	if enterpriseProjectID == "" {
 		if len(allProjects.EnterpriseProjects) == 0 {
 			t.Skip("no enterprise projects are available")
@@ -31,7 +28,7 @@ func TestEnterpriseProjectsListAndGet(t *testing.T) {
 		enterpriseProjectID = allProjects.EnterpriseProjects[0].ID
 	}
 
-	p, err := projects.Get(client, enterpriseProjectID).Extract()
+	p, err := projects.Get(client, enterpriseProjectID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, enterpriseProjectID, p.ID)
 }
@@ -48,57 +45,50 @@ func TestEnterpriseProjectsLifecycle(t *testing.T) {
 	created, err := projects.Create(client, projects.CreateOpts{
 		Name:        createName,
 		Description: "Created by gophertelekomcloud acceptance test",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createName, created.Name)
 	t.Logf("Created enterprise project: %s (%s)", created.Name, created.ID)
 
 	// Ensure cleanup
 	defer func() {
-		_ = projects.Action(client, created.ID, projects.ActionOpts{Action: "disable"}).ExtractErr()
+		_ = projects.Action(client, created.ID, projects.ActionOpts{Action: "disable"})
 	}()
 
 	// Update
 	updated, err := projects.Update(client, created.ID, projects.UpdateOpts{
 		Name:        updateName,
 		Description: "Updated by acceptance test",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateName, updated.Name)
 
 	// List with name filter
-	allPages, err := projects.List(client, projects.ListOpts{
+	filtered, err := projects.List(client, projects.ListOpts{
 		Name: updateName,
-	}).AllPages()
+	})
 	th.AssertNoErr(t, err)
-
-	allProjects, err := projects.ExtractProjects(allPages)
-	th.AssertNoErr(t, err)
-	if allProjects.TotalCount < 1 {
+	if filtered.TotalCount < 1 {
 		t.Fatal("expected at least 1 project in filtered list")
 	}
 
 	// Disable (Action)
-	err = projects.Action(client, created.ID, projects.ActionOpts{
-		Action: "disable",
-	}).ExtractErr()
+	err = projects.Action(client, created.ID, projects.ActionOpts{Action: "disable"})
 	th.AssertNoErr(t, err)
 	t.Log("Disabled enterprise project")
 
 	// Verify disabled
-	disabled, err := projects.Get(client, created.ID).Extract()
+	disabled, err := projects.Get(client, created.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 2, disabled.Status)
 
 	// Enable (Action)
-	err = projects.Action(client, created.ID, projects.ActionOpts{
-		Action: "enable",
-	}).ExtractErr()
+	err = projects.Action(client, created.ID, projects.ActionOpts{Action: "enable"})
 	th.AssertNoErr(t, err)
 	t.Log("Enabled enterprise project")
 
 	// Verify enabled
-	enabled, err := projects.Get(client, created.ID).Extract()
+	enabled, err := projects.Get(client, created.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, enabled.Status)
 }
@@ -144,7 +134,6 @@ func TestResourcesFilter(t *testing.T) {
 		t.Skip("OS_PROJECT_ID is required for resource filtering")
 	}
 
-	// Use the default enterprise project (ID "0") and filter by actual OpenStack project
 	result, err := resources.Filter(client, "0", resources.FilterOpts{
 		Projects:      []string{projectID},
 		ResourceTypes: []string{"ecs"},

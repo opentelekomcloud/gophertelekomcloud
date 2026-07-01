@@ -24,7 +24,6 @@ func TestFilter(t *testing.T) {
 	result, err := resources.Filter(client.ServiceClient(), "project-id-1", resources.FilterOpts{
 		Projects:      []string{"project-id-1"},
 		ResourceTypes: []string{"ecs"},
-		Offset:        0,
 		Limit:         10,
 		Matches:       []resources.Match{{Key: "resource_name", Value: "my-server"}},
 	})
