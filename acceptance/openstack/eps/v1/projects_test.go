@@ -96,6 +96,7 @@ func TestEnterpriseProjectsLifecycle(t *testing.T) {
 }
 
 func TestVersions(t *testing.T) {
+	t.Skip("enterprise project tests not for CI")
 	client, err := clients.NewEPSV1Client()
 	th.AssertNoErr(t, err)
 
@@ -112,6 +113,7 @@ func TestVersions(t *testing.T) {
 }
 
 func TestProviders(t *testing.T) {
+	t.Skip("enterprise project tests not for CI")
 	client, err := clients.NewEPSV1Client()
 	th.AssertNoErr(t, err)
 
