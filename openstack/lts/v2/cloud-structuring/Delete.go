@@ -20,7 +20,7 @@ func Delete(client *golangsdk.ServiceClient, id string) (err error) {
 		MoreHeaders: map[string]string{
 			"content-type": "application/json",
 		},
-		OkCodes: []int{200},
+		OkCodes: []int{200, 204},
 	})
 	if err != nil {
 		return err

@@ -1170,6 +1170,41 @@ func NewRMSClient() (client *golangsdk.ServiceClient, err error) {
 	})
 }
 
+// NewEPSV1Client returns authenticated EPS v1 client.
+// EPS requires domain-scoped authentication. The endpoint is discovered via
+// NewEPSV1 (project-scoped catalog), then re-authenticated with domain scope.
+func NewEPSV1Client() (client *golangsdk.ServiceClient, err error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+	sc, err := openstack.NewEPSV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Re-authenticate with domain scope for EPS API
+	cloud, err := EnvOS.Cloud()
+	if err != nil {
+		return nil, err
+	}
+	domainOpts := golangsdk.AuthOptions{
+		IdentityEndpoint: cloud.AuthInfo.AuthURL,
+		Username:         cloud.AuthInfo.Username,
+		Password:         cloud.AuthInfo.Password,
+		DomainName:       cloud.AuthInfo.UserDomainName,
+		AllowReauth:      true,
+	}
+	domainProvider, err := openstack.AuthenticatedClient(domainOpts)
+	if err != nil {
+		return nil, err
+	}
+	sc.ProviderClient = domainProvider
+	return sc, nil
+}
+
 // NewCCIClient returns authenticated CCI v2 client
 func NewCCIClient() (client *golangsdk.ServiceClient, err error) {
 	cc, err := CloudAndClient()
