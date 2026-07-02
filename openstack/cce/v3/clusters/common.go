@@ -95,7 +95,7 @@ type Status struct {
 	// Reasons for the cluster to become current
 	Reason string `json:"reason"`
 	// The status of each component in the cluster
-	Conditions Conditions `json:"conditions"`
+	Conditions []Conditions `json:"conditions"`
 	// Kube-apiserver access address in the cluster
 	Endpoints []Endpoints `json:"-"`
 }

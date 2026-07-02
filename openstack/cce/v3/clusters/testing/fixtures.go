@@ -27,6 +27,18 @@ const Output = `
     },
     "status": {
         "phase": "Available",
+        "conditions": [
+            {
+                "type": "ClusterCertificate",
+                "status": "False",
+                "reason": "CertificateValid"
+            },
+            {
+                "type": "ElasticPublicIP",
+                "status": "BOUND",
+                "reason": "ACTIVE"
+            }
+        ],
         "endpoints": [
                     {
                         "url": "https://192.168.0.68:5443",
@@ -59,12 +71,24 @@ const OutputOTC = `
     },
     "status": {
         "phase": "Available",
+        "conditions": [
+            {
+                "type": "ClusterCertificate",
+                "status": "False",
+                "reason": "CertificateValid"
+            },
+            {
+                "type": "ElasticPublicIP",
+                "status": "BOUND",
+                "reason": "ACTIVE"
+            }
+        ],
         "endpoints": {
 			"internal": "https://192.168.0.68:5443",
             "external": "https://10.34.56.78:5443",
 			"external_otc": "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"
 		}
-                
+
     }
 }`
 
@@ -90,6 +114,10 @@ var Expected = &clusters.Clusters{
 	},
 	Status: clusters.Status{
 		Phase: "Available",
+		Conditions: []clusters.Conditions{
+			{Type: "ClusterCertificate", Status: "False", Reason: "CertificateValid"},
+			{Type: "ElasticPublicIP", Status: "BOUND", Reason: "ACTIVE"},
+		},
 		Endpoints: []clusters.Endpoints{
 			{Url: "https://192.168.0.68:5443", Type: "Internal"},
 		},
@@ -118,6 +146,10 @@ var ExpectedOTC = &clusters.Clusters{
 	},
 	Status: clusters.Status{
 		Phase: "Available",
+		Conditions: []clusters.Conditions{
+			{Type: "ClusterCertificate", Status: "False", Reason: "CertificateValid"},
+			{Type: "ElasticPublicIP", Status: "BOUND", Reason: "ACTIVE"},
+		},
 		Endpoints: []clusters.Endpoints{
 			{Internal: "https://192.168.0.68:5443", External: "https://10.34.56.78:5443",
 				ExternalOTC: "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"},
@@ -150,6 +182,18 @@ const ListOutput = `
             },
             "status": {
                 "phase": "Available",
+                "conditions": [
+                    {
+                        "type": "ClusterCertificate",
+                        "status": "False",
+                        "reason": "CertificateValid"
+                    },
+                    {
+                        "type": "ElasticPublicIP",
+                        "status": "BOUND",
+                        "reason": "ACTIVE"
+                    }
+                ],
                 "endpoints": [
                     {
                         "url": "https://192.168.0.68:5443",
@@ -187,6 +231,18 @@ const ListOutputOTC = `
             },
             "status": {
                 "phase": "Available",
+                "conditions": [
+          {
+            "type": "ClusterCertificate",
+            "status": "False",
+            "reason": "CertificateValid"
+          },
+          {
+            "type": "ElasticPublicIP",
+            "status": "BOUND",
+            "reason": "ACTIVE"
+          }
+        ],
                 "endpoints": {
 					"internal": "https://192.168.0.68:5443",
             		"external": "https://10.34.56.78:5443",
@@ -210,7 +266,14 @@ var ListExpected = []clusters.Clusters{
 			BillingMode:      0,
 			Version:          "v1.7.3-r10",
 		},
-		Status: clusters.Status{Phase: "Available", Endpoints: []clusters.Endpoints{{Url: "https://192.168.0.68:5443", Type: "Internal"}}},
+		Status: clusters.Status{
+			Phase: "Available",
+			Conditions: []clusters.Conditions{
+				{Type: "ClusterCertificate", Status: "False", Reason: "CertificateValid"},
+				{Type: "ElasticPublicIP", Status: "BOUND", Reason: "ACTIVE"},
+			},
+			Endpoints: []clusters.Endpoints{{Url: "https://192.168.0.68:5443", Type: "Internal"}},
+		},
 	},
 }
 
@@ -228,6 +291,10 @@ var ListExpectedOTC = []clusters.Clusters{
 		},
 		Status: clusters.Status{
 			Phase: "Available",
+			Conditions: []clusters.Conditions{
+				{Type: "ClusterCertificate", Status: "False", Reason: "CertificateValid"},
+				{Type: "ElasticPublicIP", Status: "BOUND", Reason: "ACTIVE"},
+			},
 			Endpoints: []clusters.Endpoints{
 				{Internal: "https://192.168.0.68:5443", External: "https://10.34.56.78:5443",
 					ExternalOTC: "https://4d1ecb2c-229a-11e8-9c75-0255ac100ceb.container.eu-de.otc.t-systems.com"},
