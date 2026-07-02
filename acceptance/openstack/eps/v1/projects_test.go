@@ -14,6 +14,7 @@ import (
 )
 
 func TestEnterpriseProjectsListAndGet(t *testing.T) {
+	t.Skip("enterprise project tests not for CI")
 	client, err := clients.NewEPSV1Client()
 	th.AssertNoErr(t, err)
 
@@ -34,6 +35,7 @@ func TestEnterpriseProjectsListAndGet(t *testing.T) {
 }
 
 func TestEnterpriseProjectsLifecycle(t *testing.T) {
+	t.Skip("enterprise project tests not for CI")
 	client, err := clients.NewEPSV1Client()
 	th.AssertNoErr(t, err)
 
@@ -126,6 +128,7 @@ func TestProviders(t *testing.T) {
 }
 
 func TestResourcesFilter(t *testing.T) {
+	t.Skip("enterprise project tests not for CI")
 	client, err := clients.NewEPSV1Client()
 	th.AssertNoErr(t, err)
 
