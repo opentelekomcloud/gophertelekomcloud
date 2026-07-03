@@ -55,6 +55,24 @@ func (r RecordSetPage) IsEmpty() (bool, error) {
 	return len(s) == 0, err
 }
 
+// NextPageURL returns the URL of the next page. The DNS API omits the
+// "next" link on marker-based pages, so when it is absent the URL is built
+// manually from the last recordset ID.
+func (r RecordSetPage) NextPageURL() (string, error) {
+	next, err := r.LinkedPageBase.NextPageURL()
+	if err != nil || next != "" {
+		return next, err
+	}
+	s, err := ExtractRecordSets(r)
+	if err != nil {
+		return "", err
+	}
+	if len(s) == 0 {
+		return "", nil
+	}
+	return r.WrapNextPageURL(s[len(s)-1].ID)
+}
+
 // ExtractRecordSets extracts a slice of RecordSets from a List result.
 func ExtractRecordSets(r pagination.Page) ([]RecordSet, error) {
 	var s struct {
