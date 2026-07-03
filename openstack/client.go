@@ -128,7 +128,7 @@ func Authenticate(client *golangsdk.ProviderClient, options golangsdk.AuthOption
 			if akskAuthOptions.AgencyDomainName != "" && akskAuthOptions.AgencyName != "" {
 				return authWithAgencyByAKSK(client, endpoint, akskAuthOptions, golangsdk.EndpointOpts{})
 			}
-			return v3AKSKAuth(client, endpoint, akskAuthOptions, golangsdk.EndpointOpts{}, false)
+			return v3AKSKAuth(client, endpoint, akskAuthOptions, golangsdk.EndpointOpts{})
 
 		}
 		return fmt.Errorf("unrecognized auth options provider: %s", reflect.TypeOf(options))
@@ -267,7 +267,7 @@ func getProjectID(client *golangsdk.ServiceClient, name string) (string, error) 
 	return extractProjects[0].ID, nil
 }
 
-func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golangsdk.AKSKAuthOptions, eo golangsdk.EndpointOpts, reuseEndpointLocator bool) error {
+func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golangsdk.AKSKAuthOptions, eo golangsdk.EndpointOpts) error {
 	v3Client, err := NewIdentityV3(client, eo)
 	if err != nil {
 		return err
@@ -318,17 +318,6 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 	client.ProjectID = options.ProjectId
 	client.DomainID = options.BssDomainID
 
-	clientRegion := utils.GetRegionFromAKSK(options)
-	client.RegionID = clientRegion
-
-	// When re-authenticating with assumed-role (agency) credentials, the global
-	// catalog (GET /v3/auth/catalog) is identical to the one already fetched with
-	// the build-user identity and is forbidden (403) for the assumed identity.
-	// Reuse the EndpointLocator built by the first authentication pass.
-	if reuseEndpointLocator && client.EndpointLocator != nil {
-		return nil
-	}
-
 	var entries = make([]tokens3.CatalogEntry, 0, 1)
 	err = catalog.List(v3Client).EachPage(func(page pagination.Page) (bool, error) {
 		catalogList, err := catalog.ExtractServiceCatalog(page)
@@ -344,6 +333,8 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 	if err != nil {
 		return err
 	}
+	clientRegion := utils.GetRegionFromAKSK(options)
+	client.RegionID = clientRegion
 
 	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
 		return V3EndpointURL(&tokens3.ServiceCatalog{
@@ -354,7 +345,7 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 }
 
 func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opts golangsdk.AKSKAuthOptions, eo golangsdk.EndpointOpts) error {
-	err := v3AKSKAuth(client, endpoint, opts, eo, false)
+	err := v3AKSKAuth(client, endpoint, opts, eo)
 	if err != nil {
 		return err
 	}
@@ -377,24 +368,29 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 		return fmt.Errorf("error obtaining temporary AK/SK for agency: %w", err)
 	}
 
-	agencyOpts := golangsdk.AKSKAuthOptions{
-		IdentityEndpoint: opts.IdentityEndpoint,
-		ProjectName:      opts.DelegatedProject,
-		Region:           opts.Region,
-		AccessKey:        credential.AccessKey,
-		SecretKey:        credential.SecretKey,
-		SecurityToken:    credential.SecurityToken,
-	}
-	if opts.DelegatedProject == "" {
-		agencyOpts.Domain = opts.AgencyDomainName
+	client.AKSKAuthOptions.AccessKey = credential.AccessKey
+	client.AKSKAuthOptions.SecretKey = credential.SecretKey
+	client.AKSKAuthOptions.SecurityToken = credential.SecurityToken
+	client.AKSKAuthOptions.ProjectId = ""
+	client.AKSKAuthOptions.DomainID = ""
+
+	if opts.DelegatedProject != "" {
+		projectID, err := getProjectID(v3Client, opts.DelegatedProject)
+		if err != nil {
+			return fmt.Errorf("error resolving delegated project %q: %w", opts.DelegatedProject, err)
+		}
+		client.ProjectID = projectID
+		client.AKSKAuthOptions.ProjectId = projectID
+	} else {
+		domainID, err := getDomainID(opts.AgencyDomainName, v3Client)
+		if err != nil {
+			return fmt.Errorf("error resolving agency domain %q: %w", opts.AgencyDomainName, err)
+		}
+		client.ProjectID = ""
+		client.DomainID = domainID
+		client.AKSKAuthOptions.DomainID = domainID
 	}
 
-	if err := v3AKSKAuth(client, endpoint, agencyOpts, eo, true); err != nil {
-		return fmt.Errorf("error authenticating with temporary agency credentials: %w", err)
-	}
-	if opts.DelegatedProject == "" {
-		client.DomainID = client.AKSKAuthOptions.DomainID
-	}
 	client.ReauthFunc = func() error {
 		return authWithAgencyByAKSK(client, endpoint, opts, eo)
 	}
