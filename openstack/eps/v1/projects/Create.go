@@ -9,6 +9,7 @@ import (
 type CreateOpts struct {
 	Name        string `json:"name" required:"true"`
 	Description string `json:"description,omitempty"`
+	Type        string `json:"type,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*EnterpriseProject, error) {
