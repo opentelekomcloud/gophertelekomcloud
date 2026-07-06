@@ -52,6 +52,24 @@ func (r ZonePage) IsEmpty() (bool, error) {
 	return len(s) == 0, err
 }
 
+// NextPageURL returns the URL of the next page. The DNS API omits the
+// "next" link on marker-based pages, so when it is absent the URL is built
+// manually from the last zone ID.
+func (r ZonePage) NextPageURL() (string, error) {
+	next, err := r.LinkedPageBase.NextPageURL()
+	if err != nil || next != "" {
+		return next, err
+	}
+	s, err := ExtractZones(r)
+	if err != nil {
+		return "", err
+	}
+	if len(s) == 0 {
+		return "", nil
+	}
+	return r.WrapNextPageURL(s[len(s)-1].ID)
+}
+
 // ExtractZones extracts a slice of Zones from a List result.
 func ExtractZones(r pagination.Page) ([]Zone, error) {
 	var s struct {
