@@ -46,6 +46,10 @@ type SecurityGroupRuleOptions struct {
 	// Value range: ID of an existing security group.
 	// Mutually exclusive with remote_ip_prefix and remote_address_group_id.
 	RemoteGroupID string `json:"remote_group_id,omitempty"`
+	// ID of the remote IP address group of a security group rule.
+	// Range: ID of an existing IP address group.
+	// Mutually exclusive with parameters remote_ip_prefix and remote_group_id.
+	RemoteAddressGroupID string `json:"remote_address_group_id,omitempty"`
 	// Action of the security group rule.
 	// The value can be: allow or deny.
 	// The default value is deny.

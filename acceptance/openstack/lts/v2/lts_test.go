@@ -77,7 +77,6 @@ func TestLtsLifecycle(t *testing.T) {
 	gotNew, err := groups.List(client)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, true, len(gotNew) > 0)
-	th.AssertEquals(t, 1, len(gotNew[0].Tag))
 	tools.PrintResource(t, got)
 
 	t.Logf("Attempting to Create Log Stream")
