@@ -30,6 +30,11 @@ type AddressGroupOptions struct {
 	// 4: IPv4 address group
 	// 6: IPv6 address group
 	IpVersion int `json:"ip_version" required:"true"`
+	// Enterprise project ID.
+	// When creating an IP address group, associate an enterprise project ID with the IP address group.
+	// The project ID can be 0 or a string that contains a maximum of 36 characters in UUID format with hyphens (-).
+	// 0 indicates the default enterprise project.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 	// Maximum number of IP address entries in an IP address group.
 	// Range: 0 to 20
 	// Default: 0
