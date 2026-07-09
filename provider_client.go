@@ -96,6 +96,10 @@ type ProviderClient struct {
 	mut *sync.RWMutex
 
 	reauthmut *reauthlock
+
+	// akskMut guards concurrent access to AKSKAuthOptions. It allows request signing to read
+	// a consistent snapshot of the AK/SK credentials while a ReauthFunc refreshes them.
+	akskMut *sync.RWMutex
 }
 
 type reauthlock struct {
@@ -126,6 +130,30 @@ func (client *ProviderClient) AuthenticatedHeaders() (m map[string]string) {
 func (client *ProviderClient) UseTokenLock() {
 	client.mut = new(sync.RWMutex)
 	client.reauthmut = new(reauthlock)
+	client.akskMut = new(sync.RWMutex)
+}
+
+// AKSKOptions safely reads a consistent snapshot of the AK/SK auth options. Applications and custom
+// ReauthFuncs should use this together with UpdateAKSKOptions instead of accessing the
+// AKSKAuthOptions field directly when the client is used concurrently.
+func (client *ProviderClient) AKSKOptions() AKSKAuthOptions {
+	if client.akskMut != nil {
+		client.akskMut.RLock()
+		defer client.akskMut.RUnlock()
+	}
+	return client.AKSKAuthOptions
+}
+
+// UpdateAKSKOptions safely mutates the AK/SK auth options under the write lock. It is intended for
+// use from a custom ReauthFunc to publish refreshed temporary credentials without racing concurrent
+// request signing. The callback must not perform any I/O, as that would hold the lock across the
+// request path and deadlock concurrent readers.
+func (client *ProviderClient) UpdateAKSKOptions(update func(opts *AKSKAuthOptions)) {
+	if client.akskMut != nil {
+		client.akskMut.Lock()
+		defer client.akskMut.Unlock()
+	}
+	update(&client.AKSKAuthOptions)
 }
 
 // Token safely reads the value of the auth token from the ProviderClient. Applications should
@@ -288,19 +316,20 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 
 	prereqtok := req.Header.Get("X-Auth-Token")
 
-	if client.AKSKAuthOptions.AccessKey != "" {
+	akskOpts := client.AKSKOptions()
+	if akskOpts.AccessKey != "" {
 		Sign(req, SignOptions{
-			AccessKey: client.AKSKAuthOptions.AccessKey,
-			SecretKey: client.AKSKAuthOptions.SecretKey,
+			AccessKey: akskOpts.AccessKey,
+			SecretKey: akskOpts.SecretKey,
 		})
-		if client.AKSKAuthOptions.ProjectId != "" && client.AKSKAuthOptions.DomainID == "" {
-			req.Header.Set("X-Project-Id", client.AKSKAuthOptions.ProjectId)
+		if akskOpts.ProjectId != "" && akskOpts.DomainID == "" {
+			req.Header.Set("X-Project-Id", akskOpts.ProjectId)
 		}
-		if client.AKSKAuthOptions.DomainID != "" {
-			req.Header.Set("X-Domain-Id", client.AKSKAuthOptions.DomainID)
+		if akskOpts.DomainID != "" {
+			req.Header.Set("X-Domain-Id", akskOpts.DomainID)
 		}
-		if client.AKSKAuthOptions.SecurityToken != "" {
-			req.Header.Set("X-Security-Token", client.AKSKAuthOptions.SecurityToken)
+		if akskOpts.SecurityToken != "" {
+			req.Header.Set("X-Security-Token", akskOpts.SecurityToken)
 		}
 	}
 

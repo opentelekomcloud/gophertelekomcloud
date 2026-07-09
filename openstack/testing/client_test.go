@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud"
@@ -489,4 +490,134 @@ func TestAuthenticatedClientV3WithAgencyAKSKWithoutDelegatedProjectKeepsDomainSc
 	th.CheckEquals(t, "target-domain-id", client.AKSKAuthOptions.DomainID)
 	th.CheckEquals(t, "temporary-ak", client.AKSKAuthOptions.AccessKey)
 	th.CheckEquals(t, "temporary-security-token", client.AKSKAuthOptions.SecurityToken)
+}
+
+// TestAuthenticatedClientV3AgencyAKSKConcurrentReauthIsRaceFree drives many concurrent signed
+// requests while the agency ReauthFunc keeps refreshing the temporary AK/SK. Run with -race
+func TestAuthenticatedClientV3AgencyAKSKConcurrentReauthIsRaceFree(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = fmt.Fprintf(w, `
+			{
+				"versions": {
+					"values": [
+						{
+							"status": "stable",
+							"id": "v3.0",
+							"links": [
+								{ "href": "%s", "rel": "self" }
+							]
+						}
+					]
+				}
+			}
+		`, th.Endpoint()+"v3/")
+	})
+
+	th.Mux.HandleFunc("/v3/auth/catalog", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = fmt.Fprintf(w, `
+			{
+				"catalog": [
+					{
+						"type": "identity",
+						"name": "iam",
+						"endpoints": [
+							{
+								"interface": "public",
+								"region": "eu-de",
+								"url": "%s"
+							}
+						]
+					}
+				],
+				"links": { "next": null, "previous": null }
+			}
+		`, th.Endpoint()+"v3/")
+	})
+
+	th.Mux.HandleFunc("/v3.0/OS-CREDENTIAL/securitytokens", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusCreated)
+		_, _ = fmt.Fprint(w, `
+			{
+				"credential": {
+					"access": "temporary-ak",
+					"secret": "temporary-sk",
+					"securitytoken": "temporary-security-token",
+					"expires_at": "2030-01-01T00:00:00.000000Z"
+				}
+			}
+		`)
+	})
+
+	th.Mux.HandleFunc("/v3/projects", func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") == "" {
+			t.Errorf("expected request to be signed")
+		}
+		_, _ = fmt.Fprint(w, `
+			{
+				"projects": [
+					{
+						"id": "target-project-id",
+						"name": "target-project"
+					}
+				],
+				"links": { "next": null, "previous": null }
+			}
+		`)
+	})
+
+	options := golangsdk.AKSKAuthOptions{
+		IdentityEndpoint: th.Endpoint(),
+		DomainID:         "source-domain-id",
+		AccessKey:        "source-ak",
+		SecretKey:        "source-sk",
+		AgencyName:       "target-agency",
+		AgencyDomainName: "target-domain",
+		DelegatedProject: "target-project",
+	}
+
+	client, err := openstack.AuthenticatedClient(options)
+	th.AssertNoErr(t, err)
+
+	const (
+		readers    = 16
+		iterations = 50
+	)
+
+	var wg sync.WaitGroup
+
+	// Single writer goroutine, mirroring the serialized reauth in reauthenticateAndRetry: it keeps
+	// publishing fresh temporary credentials while the readers below sign concurrently.
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < iterations; i++ {
+			if err := client.ReauthFunc(); err != nil {
+				t.Errorf("reauth failed: %s", err)
+				return
+			}
+		}
+	}()
+
+	endpoint := th.Endpoint() + "v3/projects"
+	for r := 0; r < readers; r++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := 0; i < iterations; i++ {
+				resp, err := client.Request("GET", endpoint, &golangsdk.RequestOpts{
+					OkCodes: []int{200},
+				})
+				if err != nil {
+					t.Errorf("signed request failed: %s", err)
+					return
+				}
+				_ = resp.Body.Close()
+			}
+		}()
+	}
+
+	wg.Wait()
 }

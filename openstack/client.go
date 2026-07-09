@@ -281,12 +281,16 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 	// update AKSKAuthOptions of ProviderClient
 	// ProviderClient(client) is a reference to the ServiceClient(v3Client)
 	defer func() {
-		client.AKSKAuthOptions.ProjectId = options.ProjectId
-		client.AKSKAuthOptions.DomainID = options.DomainID
+		client.UpdateAKSKOptions(func(o *golangsdk.AKSKAuthOptions) {
+			o.ProjectId = options.ProjectId
+			o.DomainID = options.DomainID
+		})
 	}()
 
-	client.AKSKAuthOptions = options
-	client.AKSKAuthOptions.DomainID = ""
+	client.UpdateAKSKOptions(func(o *golangsdk.AKSKAuthOptions) {
+		*o = options
+		o.DomainID = ""
+	})
 
 	if options.ProjectId == "" && options.ProjectName != "" {
 		id, err := getProjectID(v3Client, options.ProjectName)
@@ -294,7 +298,9 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 			return err
 		}
 		options.ProjectId = id
-		client.AKSKAuthOptions.ProjectId = options.ProjectId
+		client.UpdateAKSKOptions(func(o *golangsdk.AKSKAuthOptions) {
+			o.ProjectId = options.ProjectId
+		})
 	}
 
 	if options.DomainID == "" && options.Domain != "" {
@@ -368,11 +374,13 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 		return fmt.Errorf("error obtaining temporary AK/SK for agency: %w", err)
 	}
 
-	client.AKSKAuthOptions.AccessKey = credential.AccessKey
-	client.AKSKAuthOptions.SecretKey = credential.SecretKey
-	client.AKSKAuthOptions.SecurityToken = credential.SecurityToken
-	client.AKSKAuthOptions.ProjectId = ""
-	client.AKSKAuthOptions.DomainID = ""
+	client.UpdateAKSKOptions(func(o *golangsdk.AKSKAuthOptions) {
+		o.AccessKey = credential.AccessKey
+		o.SecretKey = credential.SecretKey
+		o.SecurityToken = credential.SecurityToken
+		o.ProjectId = ""
+		o.DomainID = ""
+	})
 
 	if opts.DelegatedProject != "" {
 		projectID, err := getProjectID(v3Client, opts.DelegatedProject)
@@ -380,7 +388,9 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 			return fmt.Errorf("error resolving delegated project %q: %w", opts.DelegatedProject, err)
 		}
 		client.ProjectID = projectID
-		client.AKSKAuthOptions.ProjectId = projectID
+		client.UpdateAKSKOptions(func(o *golangsdk.AKSKAuthOptions) {
+			o.ProjectId = projectID
+		})
 	} else {
 		domainID, err := getDomainID(opts.AgencyDomainName, v3Client)
 		if err != nil {
@@ -388,7 +398,9 @@ func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opt
 		}
 		client.ProjectID = ""
 		client.DomainID = domainID
-		client.AKSKAuthOptions.DomainID = domainID
+		client.UpdateAKSKOptions(func(o *golangsdk.AKSKAuthOptions) {
+			o.DomainID = domainID
+		})
 	}
 
 	client.ReauthFunc = func() error {
