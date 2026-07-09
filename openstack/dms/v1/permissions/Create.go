@@ -23,7 +23,7 @@ func Create(client *golangsdk.ServiceClient, instanceId string, opts []CreateOpt
 	}
 	url := client.ServiceURL("instances", instanceId, "topics", "accesspolicy")
 	_, err = client.Post(url, b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
+		OkCodes: []int{200, 204},
 	})
 
 	return err
