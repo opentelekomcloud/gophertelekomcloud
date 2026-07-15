@@ -96,3 +96,21 @@ func TestAction(t *testing.T) {
 	err := projects.Action(client.ServiceClient(), "0", projects.ActionOpts{Action: "enable"})
 	th.AssertNoErr(t, err)
 }
+
+func TestListQuotas(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/enterprise-projects/quotas", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, http.MethodGet)
+		w.Header().Add("Content-Type", "application/json")
+		_, _ = fmt.Fprint(w, `{"quotas":{"resources":[{"type":"enterprise_project","used":1,"quota":100}]}}`)
+	})
+
+	actual, err := projects.ListQuotas(client.ServiceClient())
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(actual.Resources))
+	th.AssertEquals(t, "enterprise_project", actual.Resources[0].Type)
+	th.AssertEquals(t, 1, actual.Resources[0].Used)
+	th.AssertEquals(t, 100, actual.Resources[0].Quota)
+}

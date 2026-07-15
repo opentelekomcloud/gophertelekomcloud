@@ -95,6 +95,22 @@ func TestEnterpriseProjectsLifecycle(t *testing.T) {
 	th.AssertEquals(t, 1, enabled.Status)
 }
 
+func TestEnterpriseProjectsListQuotas(t *testing.T) {
+	t.Skip("enterprise project tests not for CI")
+	client, err := clients.NewEPSV1Client()
+	th.AssertNoErr(t, err)
+
+	quotas, err := projects.ListQuotas(client)
+	th.AssertNoErr(t, err)
+
+	if len(quotas.Resources) == 0 {
+		t.Fatal("expected at least one enterprise project quota resource")
+	}
+	for _, quota := range quotas.Resources {
+		t.Logf("Quota %s: used=%d quota=%d", quota.Type, quota.Used, quota.Quota)
+	}
+}
+
 func TestVersions(t *testing.T) {
 	t.Skip("enterprise project tests not for CI")
 	client, err := clients.NewEPSV1Client()
