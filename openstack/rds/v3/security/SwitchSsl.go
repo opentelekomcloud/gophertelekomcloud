@@ -23,6 +23,6 @@ func SwitchSsl(c *golangsdk.ServiceClient, opts SwitchSslOpts) (err error) {
 
 	// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/ssl
 	_, err = c.Put(c.ServiceURL("instances", opts.InstanceId, "ssl"), b, nil,
-		&golangsdk.RequestOpts{OkCodes: []int{200}})
+		&golangsdk.RequestOpts{OkCodes: []int{200, 202}})
 	return
 }

@@ -87,14 +87,6 @@ func TestRdsLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 
-	t.Log("SwitchSsl")
-
-	err = security.SwitchSsl(client, security.SwitchSslOpts{
-		InstanceId: rds.Id,
-		SslOption:  true,
-	})
-	th.AssertEquals(t, true, err != nil)
-
 	t.Log("UpdatePort")
 
 	port, err := security.UpdatePort(client, security.UpdatePortOpts{
@@ -523,6 +515,21 @@ func TestRdsAutoScaling(t *testing.T) {
 	scaling, err := instances.GetAutoScaling(client, rds.Id)
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, scaling)
+
+	t.Log("SwitchSsl")
+
+	// SwitchSsl is supported for MySQL only. The API answers asynchronously
+	// with 202 Accepted (+ job_id), so this also guards against regressions
+	// where only 200 is accepted.
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	err = security.SwitchSsl(client, security.SwitchSslOpts{
+		InstanceId: rds.Id,
+		SslOption:  true,
+	})
+	th.AssertNoErr(t, err)
 }
 
 func TestRdsTimeZone(t *testing.T) {
