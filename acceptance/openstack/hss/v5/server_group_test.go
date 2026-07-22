@@ -15,6 +15,7 @@ import (
 )
 
 func TestServerGroupList(t *testing.T) {
+	t.Skip("Service disabled")
 	client, err := clients.NewHssClient()
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, client)
@@ -25,6 +26,7 @@ func TestServerGroupList(t *testing.T) {
 }
 
 func TestServerList(t *testing.T) {
+	t.Skip("Service disabled")
 	client, err := clients.NewHssClient()
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, client)
@@ -35,6 +37,7 @@ func TestServerList(t *testing.T) {
 }
 
 func TestServerLifecycle(t *testing.T) {
+	t.Skip("Service disabled")
 	// if os.Getenv("RUN_HSS_LIFECYCLE") == "" {
 	// 	t.Skip("too slow to run in zuul")
 	// }

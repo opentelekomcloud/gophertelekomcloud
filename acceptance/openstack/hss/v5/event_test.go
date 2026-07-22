@@ -25,6 +25,7 @@ rm -f hostguard_setup_config.conf
 rm -f hostguard.x86_64.deb`
 
 func TestEventsList(t *testing.T) {
+	t.Skip("Service disabled")
 	client, err := clients.NewHssClient()
 	th.AssertNoErr(t, err)
 	tools.PrintResource(t, client)

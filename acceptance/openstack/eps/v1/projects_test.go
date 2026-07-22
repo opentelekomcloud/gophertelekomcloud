@@ -140,8 +140,58 @@ func TestProviders(t *testing.T) {
 		t.Fatal("expected at least one provider")
 	}
 	t.Logf("Found %d provider(s)", len(allProviders))
-	for _, p := range allProviders[:3] {
-		t.Logf("  %s (%s)", p.Provider, p.ProviderI18nDisplay)
+
+	localizedProviders, err := providers.List(client, providers.ListOpts{
+		Locale: "en-us",
+		Limit:  1,
+	})
+	th.AssertNoErr(t, err)
+	if len(localizedProviders) == 0 {
+		t.Fatal("expected at least one provider with locale query")
+	}
+	if localizedProviders[0].ProviderI18nDisplay == "" {
+		t.Fatal("expected localized provider display name with locale query")
+	}
+
+	limitedProviders, err := providers.List(client, providers.ListOpts{
+		Limit:  1,
+		Offset: 0,
+	})
+	th.AssertNoErr(t, err)
+	if len(limitedProviders) > 1 {
+		t.Fatalf("expected at most 1 provider with limit=1, got %d", len(limitedProviders))
+	}
+
+	if len(allProviders) > 1 {
+		offsetProviders, err := providers.List(client, providers.ListOpts{
+			Limit:  1,
+			Offset: 1,
+		})
+		th.AssertNoErr(t, err)
+		if len(offsetProviders) > 1 {
+			t.Fatalf("expected at most 1 provider with limit=1 and offset=1, got %d", len(offsetProviders))
+		}
+	}
+
+	providerName := allProviders[0].Provider
+	filteredProviders, err := providers.List(client, providers.ListOpts{
+		Provider: providerName,
+		Limit:    10,
+	})
+	th.AssertNoErr(t, err)
+	if len(filteredProviders) == 0 {
+		t.Fatalf("expected at least one provider for provider query %q", providerName)
+	}
+
+	found := false
+	for _, provider := range filteredProviders {
+		if provider.Provider == providerName {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("expected provider query result to contain %q", providerName)
 	}
 }
 
