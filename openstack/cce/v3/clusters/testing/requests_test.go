@@ -123,6 +123,7 @@ func TestCreateV3Cluster(t *testing.T) {
         "type": "VirtualMachine",
         "flavor": "cce.s1.small",
         "version": "v1.7.3-r10",
+        "agencyName": "test-agency",
          "hostNetwork": {
             "vpc": "3305eb40-2707-4940-921c-9f335f84a2ca",
             "subnet": "00e41db7-e56b-4946-bf91-27bb9effd664"
@@ -147,8 +148,9 @@ func TestCreateV3Cluster(t *testing.T) {
 		ApiVersion: "v3",
 		Metadata:   clusters.CreateMetaData{Name: "test-cluster"},
 		Spec: clusters.Spec{Type: "VirtualMachine",
-			Flavor:  "cce.s1.small",
-			Version: "v1.7.3-r10",
+			Flavor:     "cce.s1.small",
+			Version:    "v1.7.3-r10",
+			AgencyName: "test-agency",
 			HostNetwork: clusters.HostNetworkSpec{
 				VpcId:    "3305eb40-2707-4940-921c-9f335f84a2ca",
 				SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664"},
@@ -250,7 +252,8 @@ func TestUpdateV3Cluster(t *testing.T) {
 		th.TestJSONRequest(t, r, `
 {
     "spec": {
-        "description": "new description"
+        "description": "new description",
+        "agencyName": "new-test-agency"
     }
 }
 			`)
@@ -260,7 +263,10 @@ func TestUpdateV3Cluster(t *testing.T) {
 
 		_, _ = fmt.Fprint(w, Output)
 	})
-	options := clusters.UpdateOpts{Spec: clusters.UpdateSpec{Description: "new description"}}
+	options := clusters.UpdateOpts{Spec: clusters.UpdateSpec{
+		Description: "new description",
+		AgencyName:  "new-test-agency",
+	}}
 	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options)
 	th.AssertNoErr(t, err)
 	expected := Expected

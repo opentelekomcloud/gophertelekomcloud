@@ -14,6 +14,8 @@ type UpdateOpts struct {
 type UpdateSpec struct {
 	// Cluster description
 	Description string `json:"description,omitempty"`
+	// Custom IAM agency name for the cluster
+	AgencyName string `json:"agencyName,omitempty"`
 }
 
 // Update allows clusters to update description.

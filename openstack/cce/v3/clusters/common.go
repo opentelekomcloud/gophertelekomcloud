@@ -41,6 +41,8 @@ type Spec struct {
 	Version string `json:"version,omitempty"`
 	// Cluster description
 	Description string `json:"description,omitempty"`
+	// Custom IAM agency name for the cluster
+	AgencyName string `json:"agencyName,omitempty"`
 	// Whether the cluster supports IPv6 addresses. This field is supported in clusters of v1.25 and later versions.
 	Ipv6Enable bool `json:"ipv6enable,omitempty"`
 	// Node network parameters

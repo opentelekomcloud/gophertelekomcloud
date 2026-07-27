@@ -16,6 +16,7 @@ const Output = `
         "type": "VirtualMachine",
         "flavor": "cce.s1.small",
         "version": "v1.7.3-r10",
+        "agencyName": "test-agency",
         "hostNetwork": {
             "vpc": "3305eb40-2707-4940-921c-9f335f84a2ca",
             "subnet": "00e41db7-e56b-4946-bf91-27bb9effd664"
@@ -48,6 +49,7 @@ const OutputOTC = `
         "type": "VirtualMachine",
         "flavor": "cce.s1.small",
         "version": "v1.7.3-r10",
+        "agencyName": "test-agency",
         "hostNetwork": {
             "vpc": "3305eb40-2707-4940-921c-9f335f84a2ca",
             "subnet": "00e41db7-e56b-4946-bf91-27bb9effd664"
@@ -76,9 +78,10 @@ var Expected = &clusters.Clusters{
 		Id:   "daa97872-59d7-11e8-a787-0255ac101f54",
 	},
 	Spec: clusters.Spec{
-		Type:    "VirtualMachine",
-		Flavor:  "cce.s1.small",
-		Version: "v1.7.3-r10",
+		Type:       "VirtualMachine",
+		Flavor:     "cce.s1.small",
+		Version:    "v1.7.3-r10",
+		AgencyName: "test-agency",
 		HostNetwork: clusters.HostNetworkSpec{
 			VpcId:    "3305eb40-2707-4940-921c-9f335f84a2ca",
 			SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664",
@@ -104,9 +107,10 @@ var ExpectedOTC = &clusters.Clusters{
 		Id:   "daa97872-59d7-11e8-a787-0255ac101f54",
 	},
 	Spec: clusters.Spec{
-		Type:    "VirtualMachine",
-		Flavor:  "cce.s1.small",
-		Version: "v1.7.3-r10",
+		Type:       "VirtualMachine",
+		Flavor:     "cce.s1.small",
+		Version:    "v1.7.3-r10",
+		AgencyName: "test-agency",
 		HostNetwork: clusters.HostNetworkSpec{
 			VpcId:    "3305eb40-2707-4940-921c-9f335f84a2ca",
 			SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664",
@@ -139,6 +143,7 @@ const ListOutput = `
                 "type": "VirtualMachine",
                 "flavor": "cce.s1.small",
                 "version": "v1.7.3-r10",
+                "agencyName": "test-agency",
                 "hostNetwork": {
                     "vpc": "3305eb40-2707-4940-921c-9f335f84a2ca",
                     "subnet": "00e41db7-e56b-4946-bf91-27bb9effd664"
@@ -176,6 +181,7 @@ const ListOutputOTC = `
                 "type": "VirtualMachine",
                 "flavor": "cce.s1.small",
                 "version": "v1.7.3-r10",
+                "agencyName": "test-agency",
                 "hostNetwork": {
                     "vpc": "3305eb40-2707-4940-921c-9f335f84a2ca",
                     "subnet": "00e41db7-e56b-4946-bf91-27bb9effd664"
@@ -205,6 +211,7 @@ var ListExpected = []clusters.Clusters{
 		Metadata:   clusters.MetaData{Name: "test123", Id: "daa97872-59d7-11e8-a787-0255ac101f54"},
 		Spec: clusters.Spec{Type: "VirtualMachine",
 			Flavor:           "cce.s1.small",
+			AgencyName:       "test-agency",
 			HostNetwork:      clusters.HostNetworkSpec{VpcId: "3305eb40-2707-4940-921c-9f335f84a2ca", SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664"},
 			ContainerNetwork: clusters.ContainerNetworkSpec{Mode: "overlay_l2"},
 			BillingMode:      0,
@@ -221,6 +228,7 @@ var ListExpectedOTC = []clusters.Clusters{
 		Metadata:   clusters.MetaData{Name: "test123", Id: "daa97872-59d7-11e8-a787-0255ac101f54"},
 		Spec: clusters.Spec{Type: "VirtualMachine",
 			Flavor:           "cce.s1.small",
+			AgencyName:       "test-agency",
 			HostNetwork:      clusters.HostNetworkSpec{VpcId: "3305eb40-2707-4940-921c-9f335f84a2ca", SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664"},
 			ContainerNetwork: clusters.ContainerNetworkSpec{Mode: "overlay_l2"},
 			BillingMode:      0,
