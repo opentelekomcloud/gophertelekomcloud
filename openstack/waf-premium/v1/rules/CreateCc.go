@@ -14,10 +14,10 @@ type CreateCcOpts struct {
 	Mode *int `json:"mode" required:"true"`
 	// Path to be protected in the CC attack protection rule.
 	// This parameter is mandatory when the CC attack protection rule is in standard mode (i.e. the value of mode is 0).
-	Url string `json:"url" required:"true"`
+	Url string `json:"url,omitempty"`
 	// Rate limit conditions of the CC protection rule.
 	// This parameter is mandatory when the CC protection rule is in advanced mode (i.e. the value of mode is 1).
-	Conditions []CcConditionsObject `json:"conditions"`
+	Conditions []CcConditionsObject `json:"conditions,omitempty"`
 	// Protection action to take if the number of requests reaches the upper limit.
 	Action *CcActionObject `json:"action" required:"true"`
 	// Rate limit mode.
@@ -76,11 +76,11 @@ type CcConditionsObject struct {
 	// Reference table ID. It can be obtained by calling the API Querying the Reference Table List.
 	// This parameter is mandatory when the suffix of logic_operation is any or all.
 	// The reference table type must be the same as the category type.
-	ValueListId string `json:"value_list_id"`
+	ValueListId string `json:"value_list_id,omitempty"`
 	// Subfield. When category is set to params, cookie, or header,
 	// set this parameter based on site requirements.
 	// This parameter is mandatory.
-	Index string `json:"index"`
+	Index *string `json:"index"`
 }
 
 type CcActionObject struct {
@@ -102,7 +102,7 @@ type CcActionObject struct {
 	// you need to set the returned block page.
 	// If you want to use the default block page, this parameter can be excluded.
 	// If you want to use a custom block page, set this parameter.
-	Detail *CcDetailObject `json:"detail"`
+	Detail *CcDetailObject `json:"detail,omitempty"`
 }
 
 type CcDetailObject struct {

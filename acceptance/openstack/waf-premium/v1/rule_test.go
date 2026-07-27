@@ -176,6 +176,34 @@ func TestWafPremiumCcRuleWorkflow(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, getCc.Url, "/path1")
 	th.AssertEquals(t, getCc.Action.Category, "log")
+
+	advancedCcOpts := rules.CreateCcOpts{
+		Mode: pointerto.Int(1),
+		Conditions: []rules.CcConditionsObject{{
+			Category:       "url",
+			LogicOperation: "contain",
+			Contents:       []string{"/url"},
+		}},
+		Description: "advanced log rule",
+		Action: &rules.CcActionObject{
+			Category: "log",
+		},
+		TagType:     "ip",
+		LimitNum:    10,
+		LimitPeriod: 60,
+	}
+	t.Logf("Attempting to Create WAF Premium advanced cc rule with log action")
+	advancedCc, err := rules.CreateCc(client, policy.ID, advancedCcOpts)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, advancedCc.Mode, 1)
+	th.AssertEquals(t, advancedCc.Action.Category, "log")
+	th.AssertEquals(t, advancedCc.Conditions[0].Category, "url")
+
+	t.Cleanup(func() {
+		t.Logf("Attempting to delete WAF Premium advanced cc rule: %s", advancedCc.ID)
+		th.AssertNoErr(t, rules.DeleteCcRule(client, policy.ID, advancedCc.ID))
+		t.Logf("Deleted WAF Premium advanced cc rule: %s", advancedCc.ID)
+	})
 }
 
 func TestWafPremiumCustomRuleWorkflow(t *testing.T) {
