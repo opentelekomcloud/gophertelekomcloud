@@ -1149,3 +1149,16 @@ func NewCCINetworkServiceV2(client *golangsdk.ProviderClient, eo golangsdk.Endpo
 func NewASMV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "asmv1")
 }
+
+// NewUCSV1 creates a ServiceClient that may be used to access the UCS service.
+func NewUCSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initCommonServiceClient(client, eo, "ucs", "v1")
+	if err != nil {
+		return nil, err
+	}
+	if client.ProjectID != "" {
+		sc.Endpoint = strings.Replace(sc.Endpoint, client.ProjectID+"/", "", 1)
+	}
+	sc.ResourceBase = sc.Endpoint
+	return sc, nil
+}
