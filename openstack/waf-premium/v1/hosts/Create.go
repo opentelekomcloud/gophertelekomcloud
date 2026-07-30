@@ -40,6 +40,8 @@ type CreateOpts struct {
 	WebTag string `json:"web_tag"`
 	// Description
 	Description string `json:"description"`
+	// Alarm configuration page.
+	BlockPage *BlockPage `json:"block_page,omitempty"`
 }
 
 type PremiumWafServer struct {

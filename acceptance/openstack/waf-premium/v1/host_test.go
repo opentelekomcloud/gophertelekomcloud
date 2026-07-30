@@ -48,10 +48,17 @@ func TestWafPremiumHostWorkflow(t *testing.T) {
 	hostUpdated, err := hosts.Update(client, hostId, hosts.UpdateOpts{
 		Proxy:       pointerto.Bool(true),
 		Description: "updated",
+		BlockPage: &hosts.BlockPage{
+			Template: "default",
+		},
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, hostUpdated.Proxy, true)
 	th.AssertEquals(t, hostUpdated.Description, "updated")
+	if hostUpdated.BlockPage == nil {
+		t.Fatal("missing block page in updated WAF Premium host")
+	}
+	th.AssertEquals(t, hostUpdated.BlockPage.Template, "default")
 
 	t.Logf("Attempting to Update WAF Premium host protect status: %s", hostId)
 	err = hosts.UpdateProtectStatus(client, hostId, hosts.ProtectUpdateOpts{
@@ -63,6 +70,10 @@ func TestWafPremiumHostWorkflow(t *testing.T) {
 	hu, err := hosts.Get(client, hostId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, hu.ProtectStatus, 0)
+	if hu.BlockPage == nil {
+		t.Fatal("missing block page in WAF Premium host")
+	}
+	th.AssertEquals(t, hu.BlockPage.Template, "default")
 }
 
 func createHost(t *testing.T, client *golangsdk.ServiceClient, vpcID string) string {
@@ -81,9 +92,26 @@ func createHost(t *testing.T, client *golangsdk.ServiceClient, vpcID string) str
 		Proxy:       pointerto.Bool(false),
 		Server:      []hosts.PremiumWafServer{server},
 		Description: "description",
+		BlockPage: &hosts.BlockPage{
+			Template: "custom",
+			CustomPage: &hosts.CustomPage{
+				StatusCode:  "403",
+				ContentType: "text/html",
+				Content:     "<html><body>Access denied</body></html>",
+			},
+		},
 	}
 	h, err := hosts.Create(client, opts)
 	th.AssertNoErr(t, err)
+	if h.BlockPage == nil {
+		t.Fatal("missing block page in created WAF Premium host")
+	}
+	th.AssertEquals(t, h.BlockPage.Template, "custom")
+	if h.BlockPage.CustomPage == nil {
+		t.Fatal("missing custom block page in created WAF Premium host")
+	}
+	th.AssertEquals(t, h.BlockPage.CustomPage.StatusCode, opts.BlockPage.CustomPage.StatusCode)
+	th.AssertEquals(t, h.BlockPage.CustomPage.ContentType, opts.BlockPage.CustomPage.ContentType)
 	t.Logf("Created WAF host: %s", h.ID)
 	return h.ID
 }
