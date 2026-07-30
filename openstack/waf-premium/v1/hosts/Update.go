@@ -36,7 +36,7 @@ type UpdateOpts struct {
 	// -1: Enabled. WAF detects attacks based on the configured policy.
 	ProtectStatus int `json:"protect_status"`
 	// Alarm configuration page.
-	BlockPage *BlockPage `json:"block_page"`
+	BlockPage *BlockPage `json:"block_page,omitempty"`
 	// Feature switch for configuring compliance certification
 	// checks for domain names protected with the dedicated WAF instance.
 	Flag *FlagObject `json:"flag"`
@@ -56,9 +56,9 @@ type BlockPage struct {
 	// Template name
 	Template string `json:"template" required:"true"`
 	// Custom alarm page
-	CustomPage *CustomPage `json:"custom_page"`
+	CustomPage *CustomPage `json:"custom_page,omitempty"`
 	// Redirection URL
-	RedirectUrl string `json:"redirect_url"`
+	RedirectUrl string `json:"redirect_url,omitempty"`
 }
 
 type CustomPage struct {
