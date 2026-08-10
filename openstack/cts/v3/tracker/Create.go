@@ -1,7 +1,7 @@
 package tracker
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -15,6 +15,10 @@ type CreateOpts struct {
 	ObsInfo ObsInfo `json:"obs_info,omitempty"`
 	// Indicates whether to enable trace analysis.
 	IsLtsEnabled bool `json:"is_lts_enabled,omitempty"`
+	// Whether trace file verification is enabled for trace transfer.
+	// When this function is enabled, integrity verification will be performed to check
+	// whether trace files in OBS buckets have been tampered with.
+	IsSupportValidate *bool `json:"is_support_validate,omitempty"`
 }
 
 type ObsInfo struct {
@@ -70,6 +74,8 @@ type Tracker struct {
 	Detail string `json:"detail"`
 	// Tracker type
 	ObsInfo ObsInfo `json:"obs_info"`
+	// Whether to enable trace file verification.
+	IsSupportValidate bool `json:"is_support_validate,omitempty"`
 }
 
 type Lts struct {

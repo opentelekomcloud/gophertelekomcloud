@@ -1,7 +1,7 @@
 package tracker
 
 import (
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
@@ -18,6 +18,10 @@ type UpdateOpts struct {
 	// Status of a tracker. The value can be enabled or disabled.
 	// If you change the value to disabled, the tracker stops recording traces.
 	Status string `json:"status,omitempty"`
+	// Whether trace file verification is enabled for trace transfer.
+	// When this function is enabled, integrity verification will be performed to check
+	// whether trace files in OBS buckets have been tampered with.
+	IsSupportValidate *bool `json:"is_support_validate,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, opts UpdateOpts) (*Tracker, error) {
