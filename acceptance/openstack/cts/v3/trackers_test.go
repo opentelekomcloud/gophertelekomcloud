@@ -25,9 +25,10 @@ func TestTrackersLifecycle(t *testing.T) {
 
 	t.Logf("Attempting to create CTSv3 Tracker")
 	ctsTracker, err := tracker.Create(client, tracker.CreateOpts{
-		TrackerType:  "system",
-		TrackerName:  "system",
-		IsLtsEnabled: true,
+		TrackerType:       "system",
+		TrackerName:       "system",
+		IsLtsEnabled:      true,
+		IsSupportValidate: pointerto.Bool(true),
 		ObsInfo: tracker.ObsInfo{
 			BucketName:      bucketName,
 			FilePrefixName:  "test-prefix",
@@ -50,14 +51,16 @@ func TestTrackersLifecycle(t *testing.T) {
 	th.AssertEquals(t, false, *ctsTracker.ObsInfo.IsObsCreated)
 	th.AssertEquals(t, bucketName, ctsTracker.ObsInfo.BucketName)
 	th.AssertEquals(t, "json", ctsTracker.ObsInfo.CompressType)
+	th.AssertDeepEquals(t, true, ctsTracker.IsSupportValidate)
 
 	t.Logf("Attempting to update CTSv3 Tracker: %s", ctsTracker.TrackerName)
 	ltsEnable := false
 	_, err = tracker.Update(client, tracker.UpdateOpts{
-		TrackerName:  "system",
-		TrackerType:  "system",
-		Status:       "enabled",
-		IsLtsEnabled: &ltsEnable,
+		TrackerName:       "system",
+		TrackerType:       "system",
+		Status:            "enabled",
+		IsLtsEnabled:      &ltsEnable,
+		IsSupportValidate: pointerto.Bool(false),
 		ObsInfo: tracker.ObsInfo{
 			FilePrefixName: "test-2-",
 			CompressType:   "gzip",
@@ -75,6 +78,7 @@ func TestTrackersLifecycle(t *testing.T) {
 	// if tracker is disabled LTS status can't be changed
 	th.AssertEquals(t, trackerGet.Lts.IsLtsEnabled, false)
 	th.AssertEquals(t, trackerGet.ObsInfo.FilePrefixName, "test-2-")
+	th.AssertEquals(t, false, trackerGet.IsSupportValidate)
 	// update of `compress_type` doesn't work
 	// th.AssertEquals(t, "gzip", ctsTracker.ObsInfo.CompressType)
 }
