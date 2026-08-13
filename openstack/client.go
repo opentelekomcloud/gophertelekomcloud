@@ -1151,13 +1151,25 @@ func NewASMV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 }
 
 // NewUCSV1 creates a ServiceClient that may be used to access the UCS service.
+// UCS is a global control-plane service hosted only in the eu-nl region and is
+// absent from the service catalog, so its endpoint is derived from the IAM host
+// with a fixed eu-nl region.
 func NewUCSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initCommonServiceClient(client, eo, "ucs", "v1")
+	if client.IdentityEndpoint == "" {
+		return nil, fmt.Errorf("unable to determine UCS endpoint: identity endpoint is empty")
+	}
+	u, err := url.Parse(client.IdentityEndpoint)
 	if err != nil {
 		return nil, err
 	}
-	if client.ProjectID != "" {
-		sc.Endpoint = strings.Replace(sc.Endpoint, client.ProjectID+"/", "", 1)
+	domain := u.Hostname()
+	if parts := strings.SplitN(domain, ".", 3); len(parts) == 3 {
+		domain = parts[2]
+	}
+	sc := &golangsdk.ServiceClient{
+		ProviderClient: client,
+		Endpoint:       fmt.Sprintf("%s://ucs.eu-nl.%s/v1/", u.Scheme, domain),
+		Type:           "ucs",
 	}
 	sc.ResourceBase = sc.Endpoint
 	return sc, nil
