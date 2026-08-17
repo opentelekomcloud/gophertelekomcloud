@@ -24,18 +24,7 @@ const (
 	histogramResponse = `
 {
   "count": 1,
-  "histogram": [
-    {
-      "num": 1,
-      "startTime": 1637821594579,
-      "endTime": 1637821595000
-    },
-    {
-      "num": 0,
-      "startTime": 1637821654000,
-      "endTime": 1637821654579
-    }
-  ],
+  "histogram": "[{\"num\":1,\"startTime\":1637821594579,\"endTime\":1637821595000},{\"num\":0,\"startTime\":1637821654000,\"endTime\":1637821654579}]",
   "isQueryComplete": true
 }`
 )

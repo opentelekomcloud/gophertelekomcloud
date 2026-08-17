@@ -1,6 +1,8 @@
 package log_statistics
 
 import (
+	"encoding/json"
+
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
@@ -33,6 +35,28 @@ type LogHistogram struct {
 	Num       int64 `json:"num"`
 	StartTime int64 `json:"startTime"`
 	EndTime   int64 `json:"endTime"`
+}
+
+// UnmarshalJSON decodes the JSON-encoded histogram returned by LTS.
+func (r *LogHistogramResponse) UnmarshalJSON(data []byte) error {
+	var response struct {
+		Count           int64  `json:"count"`
+		Histogram       string `json:"histogram"`
+		IsQueryComplete bool   `json:"isQueryComplete"`
+	}
+	if err := json.Unmarshal(data, &response); err != nil {
+		return err
+	}
+
+	r.Count = response.Count
+	r.IsQueryComplete = response.IsQueryComplete
+	r.Histogram = nil
+
+	if response.Histogram == "" {
+		return nil
+	}
+
+	return json.Unmarshal([]byte(response.Histogram), &r.Histogram)
 }
 
 func ListLogHistogram(client *golangsdk.ServiceClient, opts ListLogHistogramOpts) (*LogHistogramResponse, error) {
