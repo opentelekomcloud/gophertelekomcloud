@@ -9,7 +9,7 @@ type ListOpts struct {
 	ID string `q:"id"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]CustomTemplate, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]StructTemplateModel, error) {
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("lts", "struct", "customtemplate").
 		WithQueryParams(&opts).Build()
@@ -27,47 +27,67 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]CustomTemplate, err
 		return nil, err
 	}
 
-	var res []CustomTemplate
+	var res []StructTemplateModel
 	err = extract.IntoSlicePtr(raw.Body, &res, "results")
 	return res, err
 }
 
-type CustomTemplate struct {
+type StructTemplateModel struct {
 	// Project ID.
-	ProjectId string `json:"projectId"`
+	ProjectId string `json:"project_id"`
 	// Template name.
-	Name string `json:"templateName"`
+	Name string `json:"template_name"`
 	// Structuring type. Currently, regular expression, JSON, delimiters, and Nginx are supported.
 	Type string `json:"template_type"`
 	// Sample log event.
-	DemoLog string `json:"demoLog"`
+	DemoLog string `json:"demo_log"`
 	// Structured field.
-	DemoFields []FieldFullResponse `json:"demo_fields"`
+	DemoFields []DemoField `json:"demo_fields"`
 	// Keyword details.
-	TagFields []FieldResponse `json:"tag_fields"`
+	TagFields []TagFieldNew `json:"tag_fields"`
 	// Structuring method.
-	Rule *RuleResponse `json:"rule"`
+	Rule *TemplateRule `json:"rule"`
 	// Attributes of the sample log event.
-	DemoLabel string `json:"demoLabel"`
+	DemoLabel string `json:"demo_label"`
 	// Template creation/update time.
 	CreatedAt int64 `json:"create_time"`
 	// Structuring rule ID.
 	ID string `json:"id"`
 }
 
-type FieldFullResponse struct {
+type DemoField struct {
 	// Field name.
-	Name string `json:"fieldName"`
+	Name string `json:"field_name"`
 	// Field content.
 	Content string `json:"content"`
 	// Field data type.
 	Type string `json:"type"`
 	// Whether parsing is enabled.
-	IsAnalysis bool `json:"isAnalysis"`
+	IsAnalysis bool `json:"is_analysis"`
 	// Field sequence number.
 	Index int `json:"index"`
 	// Describes the hierarchical relationship between fields in a multi-level JSON file.
 	Relation string `json:"relation"`
 	// Custom field alias in JSON and Nginx modes.
 	UserDefinedName string `json:"user_defined_name"`
+}
+
+type TagFieldNew struct {
+	// Field name.
+	Name string `json:"field_name"`
+	// Field content.
+	Content string `json:"content"`
+	// Field data type.
+	Type string `json:"type"`
+	// Whether parsing is enabled.
+	IsAnalysis bool `json:"is_analysis"`
+	// Field sequence number.
+	Index int `json:"index"`
+}
+
+type TemplateRule struct {
+	// Structuring type.
+	Type string `json:"type"`
+	// Type-specific structuring rule.
+	Param string `json:"param"`
 }
