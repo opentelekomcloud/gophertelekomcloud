@@ -54,7 +54,7 @@ func handleListCustom(t *testing.T) {
 		th.TestHeader(t, r, "content-type", "application/json")
 		th.TestFormValues(t, r, map[string]string{"id": "template-id"})
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, listCustomResponse)
+		_, _ = fmt.Fprint(w, listCustomResponse)
 	})
 }
 
