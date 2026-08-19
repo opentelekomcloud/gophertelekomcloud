@@ -9,7 +9,7 @@ type ListOpts struct {
 	ID string `q:"id"`
 }
 
-func List(client *golangsdk.ServiceClient, opts ListOpts) ([]CustomTemplate, error) {
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]StructTemplateModel, error) {
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("lts", "struct", "customtemplate").
 		WithQueryParams(&opts).Build()
@@ -28,10 +28,8 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) ([]CustomTemplate, err
 	}
 
 	var res []StructTemplateModel
-	if err := extract.IntoSlicePtr(raw.Body, &res, "results"); err != nil {
-		return nil, err
-	}
-	return convertStructTemplateModels(res), nil
+	err = extract.IntoSlicePtr(raw.Body, &res, "results")
+	return res, err
 }
 
 type StructTemplateModel struct {
@@ -57,19 +55,6 @@ type StructTemplateModel struct {
 	ID string `json:"id"`
 }
 
-type CustomTemplate struct {
-	ProjectId  string              `json:"projectId"`
-	Name       string              `json:"templateName"`
-	Type       string              `json:"template_type"`
-	DemoLog    string              `json:"demoLog"`
-	DemoFields []FieldFullResponse `json:"demo_fields"`
-	TagFields  []FieldResponse     `json:"tag_fields"`
-	Rule       *RuleResponse       `json:"rule"`
-	DemoLabel  string              `json:"demoLabel"`
-	CreatedAt  int64               `json:"create_time"`
-	ID         string              `json:"id"`
-}
-
 type DemoField struct {
 	// Field name.
 	Name string `json:"field_name"`
@@ -84,16 +69,6 @@ type DemoField struct {
 	// Describes the hierarchical relationship between fields in a multi-level JSON file.
 	Relation string `json:"relation"`
 	// Custom field alias in JSON and Nginx modes.
-	UserDefinedName string `json:"user_defined_name"`
-}
-
-type FieldFullResponse struct {
-	Name            string `json:"fieldName"`
-	Content         string `json:"content"`
-	Type            string `json:"type"`
-	IsAnalysis      bool   `json:"isAnalysis"`
-	Index           int    `json:"index"`
-	Relation        string `json:"relation"`
 	UserDefinedName string `json:"user_defined_name"`
 }
 
@@ -115,72 +90,4 @@ type TemplateRule struct {
 	Type string `json:"type"`
 	// Type-specific structuring rule.
 	Param string `json:"param"`
-}
-
-func convertStructTemplateModels(models []StructTemplateModel) []CustomTemplate {
-	if models == nil {
-		return nil
-	}
-	result := make([]CustomTemplate, len(models))
-	for i, model := range models {
-		result[i] = CustomTemplate{
-			ProjectId:  model.ProjectId,
-			Name:       model.Name,
-			Type:       model.Type,
-			DemoLog:    model.DemoLog,
-			DemoFields: convertDemoFields(model.DemoFields),
-			TagFields:  convertTagFields(model.TagFields),
-			Rule:       convertTemplateRule(model.Rule),
-			DemoLabel:  model.DemoLabel,
-			CreatedAt:  model.CreatedAt,
-			ID:         model.ID,
-		}
-	}
-	return result
-}
-
-func convertDemoFields(fields []DemoField) []FieldFullResponse {
-	if fields == nil {
-		return nil
-	}
-	result := make([]FieldFullResponse, len(fields))
-	for i, field := range fields {
-		result[i] = FieldFullResponse{
-			Name:            field.Name,
-			Content:         field.Content,
-			Type:            field.Type,
-			IsAnalysis:      field.IsAnalysis,
-			Index:           field.Index,
-			Relation:        field.Relation,
-			UserDefinedName: field.UserDefinedName,
-		}
-	}
-	return result
-}
-
-func convertTagFields(fields []TagFieldNew) []FieldResponse {
-	if fields == nil {
-		return nil
-	}
-	result := make([]FieldResponse, len(fields))
-	for i, field := range fields {
-		result[i] = FieldResponse{
-			Name:       field.Name,
-			Content:    field.Content,
-			Type:       field.Type,
-			IsAnalysis: field.IsAnalysis,
-			Index:      field.Index,
-		}
-	}
-	return result
-}
-
-func convertTemplateRule(rule *TemplateRule) *RuleResponse {
-	if rule == nil {
-		return nil
-	}
-	return &RuleResponse{
-		Type:  rule.Type,
-		Param: rule.Param,
-	}
 }
