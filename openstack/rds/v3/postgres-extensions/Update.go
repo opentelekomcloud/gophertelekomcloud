@@ -12,7 +12,7 @@ func Update(client *golangsdk.ServiceClient, instanceId string, opts PostgresExt
 		return err
 	}
 
-	// POST https://{Endpoint}/v3/{project_id}/instances/{instance_id}/extensions
+	// PUT https://{Endpoint}/v3/{project_id}/instances/{instance_id}/extensions
 	_, err = client.Put(client.ServiceURL("instances", instanceId, "extensions"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
