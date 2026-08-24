@@ -284,14 +284,14 @@ func TestCloudServerVolumeLifecycle(t *testing.T) {
 		AvailabilityZone: az,
 	}
 
-	vol, err := volumes.Create(clientEvs, createVolumeOpts).Extract()
+	vol, err := volumes.Create(clientEvs, createVolumeOpts)
 	th.AssertNoErr(t, err)
 
 	err = waitForEvsAvailable(clientEvs, 100, vol.ID)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = volumes.Delete(clientEvs, vol.ID, volumes.DeleteOpts{}).ExtractErr()
+		err = volumes.Delete(clientEvs, vol.ID, volumes.DeleteOpts{})
 		th.AssertNoErr(t, err)
 	})
 
@@ -336,7 +336,7 @@ func TestCloudServerVolumeLifecycle(t *testing.T) {
 
 func waitForEvsAvailable(client *golangsdk.ServiceClient, secs int, volId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		vol, err := volumes.Get(client, volId).Extract()
+		vol, err := volumes.Get(client, volId)
 		if err != nil {
 			return false, err
 		}

@@ -13,16 +13,51 @@ func MockListResponse(t *testing.T) {
 	th.Mux.HandleFunc("/snapshots", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		expected := map[string]string{
+			"limit":      "2",
+			"name":       "snapshot-001",
+			"name~":      "snapshot",
+			"offset":     "1",
+			"sort_dir":   "asc",
+			"sort_key":   "name",
+			"status":     "available",
+			"status~":    "avail",
+			"volume_id":  "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
+			"volume_id~": "521752",
+			"with_count": "true",
+		}
+		expected["marker"] = r.URL.Query().Get("marker")
+		th.TestFormValues(t, r, expected)
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		_ = r.ParseForm()
-		marker := r.Form.Get("marker")
-		switch marker {
-		case "":
-			_, _ = fmt.Fprintf(w, `
+		if r.URL.Query().Get("marker") == "96c3bda7-c82a-4f50-be73-ca7621794835" {
+			_, _ = fmt.Fprint(w, `
     {
+      "count": 3,
+      "snapshots": [
+        {
+          "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22",
+          "name": "snapshot-003",
+          "volume_id": "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
+          "description": "Monthly Backup",
+          "status": "available",
+          "size": 50,
+          "metadata": {},
+          "created_at": "2017-06-01T03:35:03.000000",
+          "updated_at": null
+        }
+      ],
+      "snapshots_links": null
+    }
+    `)
+			return
+		}
+
+		_, _ = fmt.Fprintf(w, `
+    {
+      "count": 3,
       "snapshots": [
         {
           "id": "289da7f8-6440-407c-9fb4-7db01ec49164",
@@ -30,8 +65,10 @@ func MockListResponse(t *testing.T) {
           "volume_id": "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
           "description": "Daily Backup",
           "status": "available",
-          "size": 30,
-		  "created_at": "2017-05-30T03:35:03.000000"
+          "size": 0,
+          "metadata": {},
+		  "created_at": "2017-05-30T03:35:03.000000",
+          "updated_at": null
         },
         {
           "id": "96c3bda7-c82a-4f50-be73-ca7621794835",
@@ -40,21 +77,20 @@ func MockListResponse(t *testing.T) {
           "description": "Weekly Backup",
           "status": "available",
           "size": 25,
-		  "created_at": "2017-05-30T03:35:03.000000"
+          "metadata": {
+            "environment": "test"
+          },
+		  "created_at": "2017-05-30T03:35:03.000000",
+          "updated_at": "2017-05-31T03:35:03.000000"
         }
       ],
       "snapshots_links": [
         {
-            "href": "%s/snapshots?marker=1",
+            "href": "%s/snapshots?limit=2&marker=96c3bda7-c82a-4f50-be73-ca7621794835&name=snapshot-001&name~=snapshot&offset=1&sort_dir=asc&sort_key=name&status=available&status~=avail&volume_id=521752a6-acf6-4b2d-bc7a-119f9148cd8c&volume_id~=521752&with_count=true",
             "rel": "next"
         }]
     }
     `, th.Server.URL)
-		case "1":
-			_, _ = fmt.Fprint(w, `{"snapshots": []}`)
-		default:
-			t.Fatalf("Unexpected marker: [%s]", marker)
-		}
 	})
 }
 
@@ -73,8 +109,10 @@ func MockGetResponse(t *testing.T) {
         "description": "Daily backup",
         "volume_id": "521752a6-acf6-4b2d-bc7a-119f9148cd8c",
         "status": "available",
-        "size": 30,
-		"created_at": "2017-05-30T03:35:03.000000"
+        "size": 0,
+        "metadata": {},
+		"created_at": "2017-05-30T03:35:03.000000",
+        "updated_at": null
     }
 }
       `)
@@ -91,7 +129,12 @@ func MockCreateResponse(t *testing.T) {
 {
     "snapshot": {
         "volume_id": "1234",
-        "name": "snapshot-001"
+        "force": true,
+        "name": "snapshot-001",
+        "description": "Daily backup",
+        "metadata": {
+            "environment": "test"
+        }
     }
 }
       `)
@@ -106,9 +149,11 @@ func MockCreateResponse(t *testing.T) {
         "name": "snapshot-001",
         "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22",
         "description": "Daily backup",
-        "volume_id": "1234",
-        "status": "available",
-        "size": 30,
+        "status": "creating",
+        "size": 0,
+        "metadata": {
+            "environment": "test"
+        },
 		"created_at": "2017-05-30T03:35:03.000000"
   }
 }
@@ -121,17 +166,22 @@ func MockUpdateMetadataResponse(t *testing.T) {
 		th.TestMethod(t, r, "PUT")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
 		th.TestJSONRequest(t, r, `
     {
       "metadata": {
+        "empty": "",
         "key": "v1"
       }
     }
     `)
 
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, `
       {
         "metadata": {
+          "empty": "",
           "key": "v1"
         }
       }
@@ -143,6 +193,6 @@ func MockDeleteResponse(t *testing.T) {
 	th.Mux.HandleFunc("/snapshots/d32019d3-bc6e-4319-9c1d-6722fc136a22", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusAccepted)
 	})
 }
