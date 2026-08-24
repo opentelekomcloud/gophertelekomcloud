@@ -56,7 +56,18 @@ func MockListResponse(t *testing.T) {
 }
   `, th.Server.URL)
 		case "1":
-			_, _ = fmt.Fprint(w, `{"volume_types": []}`)
+			_, _ = fmt.Fprint(w, `{
+		"volume_types": [{
+			"name": "SAS",
+			"qos_specs_id": null,
+			"os-volume-type-access:is_public": false,
+			"extra_specs": {},
+			"is_public": false,
+			"id": "0d05383a-6db1-4c73-9258-5f8f73f18462",
+			"description": null
+		}],
+		"volume_type_links": null
+	}`)
 		default:
 			t.Fatalf("Unexpected marker: [%s]", marker)
 		}
@@ -114,7 +125,6 @@ func MockCreateResponse(t *testing.T) {
 {
     "volume_type": {
         "name": "test_type",
-        "extra_specs": {},
         "is_public": true,
         "os-volume-type-access:is_public": true,
         "id": "6d0ff92a-0007-4780-9ece-acfe5876966a",
@@ -128,26 +138,33 @@ func MockCreateResponse(t *testing.T) {
 	})
 }
 
-func MockDeleteResponse(t *testing.T) {
-	th.Mux.HandleFunc("/types/d32019d3-bc6e-4319-9c1d-6722fc136a22", func(w http.ResponseWriter, r *http.Request) {
-		th.TestMethod(t, r, "DELETE")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
-		w.WriteHeader(http.StatusAccepted)
-	})
-}
-
 func MockUpdateResponse(t *testing.T) {
 	th.Mux.HandleFunc("/types/d32019d3-bc6e-4319-9c1d-6722fc136a22", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PUT")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, `
+{
+    "volume_type": {
+        "name": "vol-type-002",
+        "description": "volume type 0002",
+        "is_public": false
+    }
+}
+`)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, `
 {
     "volume_type": {
         "name": "vol-type-002",
-        "description": "volume type 0001",
-        "is_public": true,
-        "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22"
+        "description": "volume type 0002",
+        "is_public": false,
+        "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22",
+        "extra_specs": {
+            "capabilities": "gpu"
+        }
     }
 }`)
 	})

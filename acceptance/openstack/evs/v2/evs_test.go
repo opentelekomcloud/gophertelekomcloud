@@ -22,14 +22,14 @@ func TestEVSv2List(t *testing.T) {
 		VolumeType: "SSD",
 	}
 
-	resp, err := volumes.Create(client, createOpts).Extract()
+	resp, err := volumes.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 
 	err = waitForEvsAvailable(client, 100, resp.ID)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = volumes.Delete(client, resp.ID, volumes.DeleteOpts{}).ExtractErr()
+		err = volumes.Delete(client, resp.ID, volumes.DeleteOpts{})
 		th.AssertNoErr(t, err)
 	})
 
@@ -51,11 +51,11 @@ func TestEVSv2SnapshotWorkflow(t *testing.T) {
 		VolumeType: "SSD",
 	}
 
-	volume, err := volumes.Create(client, createVolumeOpts).Extract()
+	volume, err := volumes.Create(client, createVolumeOpts)
 	th.AssertNoErr(t, err)
 
 	t.Cleanup(func() {
-		err = volumes.Delete(client, volume.ID, volumes.DeleteOpts{}).ExtractErr()
+		err = volumes.Delete(client, volume.ID, volumes.DeleteOpts{})
 		th.AssertNoErr(t, err)
 	})
 
@@ -115,7 +115,7 @@ func TestEVSv2SnapshotWorkflow(t *testing.T) {
 
 func waitForEvsAvailable(client *golangsdk.ServiceClient, secs int, volId string) error {
 	return golangsdk.WaitFor(secs, func() (bool, error) {
-		vol, err := volumes.Get(client, volId).Extract()
+		vol, err := volumes.Get(client, volId)
 		if err != nil {
 			return false, err
 		}

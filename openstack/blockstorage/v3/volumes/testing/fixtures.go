@@ -157,8 +157,17 @@ func MockCreateResponse(t *testing.T) {
 		th.TestJSONRequest(t, r, `
 {
     "volume": {
-    	"name": "vol-001",
-        "size": 75
+        "size": 40,
+        "availability_zone": "az-dc-1",
+        "consistencygroup_id": "consistency-group-id",
+        "description": "create for api test",
+        "metadata": {
+            "volume_owner": "openapi"
+        },
+        "name": "openapi_vol01",
+        "imageRef": "027cf713-45a6-45f0-ac1b-0ccc57ac12e2",
+        "volume_type": "SSD",
+        "multiattach": true
     }
 }
       `)
@@ -169,35 +178,30 @@ func MockCreateResponse(t *testing.T) {
 		_, _ = fmt.Fprint(w, `
 {
   "volume": {
-    "size": 75,
-    "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22",
-    "metadata": {},
-    "created_at": "2015-09-17T03:32:29.044216",
-    "encrypted": false,
-    "bootable": "false",
-    "availability_zone": "nova",
     "attachments": [],
-    "user_id": "ff1ce52c03ab433aaba9108c2e3ef541",
-    "status": "creating",
-    "description": null,
-    "volume_type": "lvmdriver-1",
-    "name": "vol-001",
+    "availability_zone": "az-dc-1",
+    "bootable": "false",
+    "consistencygroup_id": "consistency-group-id",
+    "created_at": "2016-05-25T02:38:40.392463",
+    "description": "create for api test",
+    "encrypted": false,
+    "id": "8dd7c486-8e9f-49fe-bceb-26aa7e312b66",
+    "metadata": {
+      "volume_owner": "openapi"
+    },
+    "name": "openapi_vol01",
     "replication_status": "disabled",
-    "consistencygroup_id": null,
-    "source_volid": null,
+    "multiattach": true,
+    "size": 40,
     "snapshot_id": null,
-    "multiattach": false
+    "source_volid": null,
+    "status": "creating",
+    "updated_at": null,
+    "user_id": "39f6696ae23740708d0f358a253c2637",
+    "volume_type": "SSD"
   }
 }
     `)
-	})
-}
-
-func MockDeleteResponse(t *testing.T) {
-	th.Mux.HandleFunc("/volumes/d32019d3-bc6e-4319-9c1d-6722fc136a22", func(w http.ResponseWriter, r *http.Request) {
-		th.TestMethod(t, r, "DELETE")
-		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
-		w.WriteHeader(http.StatusAccepted)
 	})
 }
 
@@ -205,11 +209,32 @@ func MockUpdateResponse(t *testing.T) {
 	th.Mux.HandleFunc("/volumes/d32019d3-bc6e-4319-9c1d-6722fc136a22", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PUT")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, `{
+			"volume": {
+				"name": "vol-002",
+				"description": "updated volume",
+				"metadata": {
+					"key": "value"
+				},
+				"display_name": "legacy-vol-002",
+				"display_description": "legacy updated volume"
+			}
+		}`)
+
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprint(w, `
 {
   "volume": {
-    "name": "vol-002"
+    "id": "d32019d3-bc6e-4319-9c1d-6722fc136a22",
+    "name": "vol-002",
+    "description": "updated volume",
+    "metadata": {
+      "key": "value"
+    },
+    "status": "available"
   }
 }
         `)

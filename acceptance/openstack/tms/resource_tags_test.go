@@ -31,7 +31,7 @@ func TestTMSRecourceTagsLifecycle(t *testing.T) {
 		Name: tools.RandomString("tf-evs-disk-", 4),
 	}
 	t.Log("Attempting to create EVS volume")
-	vol, err := volumes.Create(clientEvs, createVolOpts).Extract()
+	vol, err := volumes.Create(clientEvs, createVolOpts)
 	th.AssertNoErr(t, err)
 
 	err = volumes.WaitForStatus(clientEvs, vol.ID, "available", 120)
@@ -39,7 +39,7 @@ func TestTMSRecourceTagsLifecycle(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Logf("Attempting to delete EVS Volume: %s", vol.ID)
-		err = volumes.Delete(clientEvs, vol.ID, volumes.DeleteOpts{}).ExtractErr()
+		err = volumes.Delete(clientEvs, vol.ID, volumes.DeleteOpts{})
 		th.AssertNoErr(t, err)
 	})
 

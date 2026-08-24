@@ -92,11 +92,11 @@ func CreateVolume(t *testing.T) *volumes.Volume {
 		Name:       tools.RandomString("test-vol-", 6),
 		Size:       10,
 		VolumeType: "SSD",
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 
 	err = golangsdk.WaitFor(300, func() (bool, error) {
-		volume, err := volumes.Get(client, vol.ID).Extract()
+		volume, err := volumes.Get(client, vol.ID)
 		if err != nil {
 			return false, err
 		}
@@ -116,7 +116,7 @@ func CreateVolume(t *testing.T) *volumes.Volume {
 func DeleteVolume(t *testing.T, id string) {
 	client, err := clients.NewBlockStorageV3Client()
 	th.AssertNoErr(t, err)
-	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}).ExtractErr())
+	th.AssertNoErr(t, volumes.Delete(client, id, volumes.DeleteOpts{Cascade: true}))
 }
 
 const (
