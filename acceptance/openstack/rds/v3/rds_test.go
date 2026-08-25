@@ -593,7 +593,7 @@ func TestRdsUpgradeVersion(t *testing.T) {
 
 func TestRdsPrivateDomainName(t *testing.T) {
 	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
-		t.Skip("new RDS have latest minor versions")
+		t.Skip("Too slow for CI")
 	}
 
 	client, err := clients.NewRdsV3()
