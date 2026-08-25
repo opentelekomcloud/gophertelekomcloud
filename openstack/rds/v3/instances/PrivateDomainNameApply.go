@@ -20,7 +20,7 @@ func ApplyForPrivateDomain(client *golangsdk.ServiceClient, opts ApplyForPrivate
 
 	// POST /v3/{project_id}/instances/{instance_id}/create-dns
 	raw, err := client.Post(client.ServiceURL("instances", opts.InstanceId, "create-dns"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
+		OkCodes: []int{200, 202},
 	})
 	if err != nil {
 		return nil, err
