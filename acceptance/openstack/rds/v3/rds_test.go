@@ -593,27 +593,41 @@ func TestRdsUpgradeVersion(t *testing.T) {
 
 func TestRdsPrivateDomainName(t *testing.T) {
 	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
-		t.Skip("too slow to run in zuul")
-	}
-	rdsId := os.Getenv("OS_RDS_ID")
-	if rdsId == "" {
-		t.Skip("OS_RDS_ID env var required for the test is missing")
+		t.Skip("new RDS have latest minor versions")
 	}
 
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
-	dnsName := tools.RandomString("testaccdomain", 4)
-	modifyOpts := instances.ModifyPrivateDomainNameOpts{
-		InstanceId: rdsId,
-		DnsName:    dnsName,
-	}
-	modifyResp, err := instances.ModifyPrivateDomainName(client, modifyOpts)
+	cc, err := clients.CloudAndClient()
 	th.AssertNoErr(t, err)
 
-	_ = instances.WaitForJobCompleted(client, 600, *modifyResp)
+	t.Log("Creating instance")
 
-	domain, err := instances.GetPrivateDomainName(client, rdsId, instances.GetPrivateDomainNameParams{
+	// Create MySql RDSv3 instance
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+	th.AssertEquals(t, "mysql", strings.ToLower(rds.Datastore.Type))
+
+	// Apply can only be tested on MySQL database
+	applyJobId, err := instances.ApplyForPrivateDomain(client, instances.ApplyForPrivateDomainOpts{
+		InstanceId: rds.Id,
+		DnsType:    "private",
+	})
+	th.AssertNoErr(t, err)
+	_ = instances.WaitForJobCompleted(client, 600, *applyJobId)
+
+	dnsName := tools.RandomString("testaccdomain", 4)
+	modifyOpts := instances.ModifyPrivateDomainNameOpts{
+		InstanceId: rds.Id,
+		DnsName:    dnsName,
+	}
+	modifyJobId, err := instances.ModifyPrivateDomainName(client, modifyOpts)
+	th.AssertNoErr(t, err)
+
+	_ = instances.WaitForJobCompleted(client, 600, *modifyJobId)
+
+	domain, err := instances.GetPrivateDomainName(client, rds.Id, instances.GetPrivateDomainNameParams{
 		DnsType: "private",
 	})
 	th.AssertNoErr(t, err)
