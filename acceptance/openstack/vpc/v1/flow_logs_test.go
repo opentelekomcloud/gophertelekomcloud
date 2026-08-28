@@ -8,23 +8,23 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/groups"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/lts/v2/streams"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v1/flow_logs"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v1/vpcs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestVPCFlowLogLifecycle(t *testing.T) {
-	vpcClient, err := clients.NewNetworkV1Client()
+	vpcClient, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 	ltsClient, err := clients.NewLtsV2Client()
 	th.AssertNoErr(t, err)
 
 	vpc, err := vpcs.Create(vpcClient, vpcs.CreateOpts{
 		Name: tools.RandomString("vpc-flow-log-", 4),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		th.AssertNoErr(t, vpcs.Delete(vpcClient, vpc.ID).ExtractErr())
+		th.AssertNoErr(t, vpcs.Delete(vpcClient, vpc.ID))
 	})
 
 	logGroupID, err := groups.Create(ltsClient, groups.CreateOpts{

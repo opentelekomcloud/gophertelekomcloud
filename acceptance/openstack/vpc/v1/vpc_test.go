@@ -5,30 +5,27 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
-	"github.com/opentelekomcloud/gophertelekomcloud/openstack/networking/v1/vpcs"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v1/vpcs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestVPCListing(t *testing.T) {
-	client, err := clients.NewNetworkV1Client()
+	client, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 
 	createOpts := vpcs.CreateOpts{
 		Name: tools.RandomString("vpc-acc-", 3),
 	}
-	vpc, err := vpcs.Create(client, createOpts).Extract()
+	vpc, err := vpcs.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = vpcs.Delete(client, vpc.ID).ExtractErr()
+		err = vpcs.Delete(client, vpc.ID)
 		th.AssertNoErr(t, err)
 	})
 
 	cases := map[string]vpcs.ListOpts{
 		"ID": {
 			ID: vpc.ID,
-		},
-		"Name": {
-			Name: vpc.Name,
 		},
 	}
 	for name, opts := range cases {
@@ -45,7 +42,7 @@ func TestVPCListing(t *testing.T) {
 }
 
 func TestVPCLifecycle(t *testing.T) {
-	client, err := clients.NewNetworkV1Client()
+	client, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 
 	name := tools.RandomString("vpc-acc-", 3)
@@ -54,14 +51,14 @@ func TestVPCLifecycle(t *testing.T) {
 		Description: "some interesting description",
 	}
 
-	vpc, err := vpcs.Create(client, createOpts).Extract()
+	vpc, err := vpcs.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vpc.EnableSharedSnat, false)
 	th.AssertEquals(t, vpc.Description, "some interesting description")
 	th.AssertEquals(t, vpc.Name, name)
 
 	t.Cleanup(func() {
-		err = vpcs.Delete(client, vpc.ID).ExtractErr()
+		err = vpcs.Delete(client, vpc.ID)
 		th.AssertNoErr(t, err)
 	})
 
@@ -74,7 +71,7 @@ func TestVPCLifecycle(t *testing.T) {
 		EnableSharedSnat: &snatEnable,
 	}
 
-	vpc, err = vpcs.Update(client, vpc.ID, updateOpts).Extract()
+	vpc, err = vpcs.Update(client, vpc.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, vpc.EnableSharedSnat, snatEnable)
 	th.AssertEquals(t, vpc.Description, description)

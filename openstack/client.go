@@ -684,6 +684,16 @@ func NewNetworkV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+// NewVpcV1 creates a ServiceClient that may be used with the v1 VPC service.
+func NewVpcV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "vpc")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = strings.TrimSuffix(sc.Endpoint, client.ProjectID+"/")
+	return sc, nil
+}
+
 // NewVpcEpV1 creates a ServiceClient that may be used with the v1 VPC Endpoint service
 func NewVpcEpV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "vpcep")
