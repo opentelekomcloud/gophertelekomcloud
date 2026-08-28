@@ -14,4 +14,7 @@ type Vpc struct {
 	Routes              []Route `json:"routes"`
 	EnterpriseProjectID string  `json:"enterprise_project_id"`
 	EnableSharedSnat    bool    `json:"enable_shared_snat"`
+	TenantId            string  `json:"tenant_id"`
+	CreatedAt           string  `json:"created_at"`
+	UpdatedAt           string  `json:"updated_at"`
 }
