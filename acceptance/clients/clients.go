@@ -427,6 +427,17 @@ func NewNetworkV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+func NewVPCV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewVpcV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func NewVPCEndpointV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
