@@ -33,8 +33,8 @@ func TestVPCListing(t *testing.T) {
 			opts := opts
 			t.Parallel()
 
-			list, err := vpcs.List(client, opts)
-			th.AssertNoErr(t, err)
+			list, listErr := vpcs.List(client, opts)
+			th.AssertNoErr(t, listErr)
 			th.AssertEquals(t, 1, len(list))
 			th.AssertEquals(t, vpc.ID, list[0].ID)
 		})

@@ -28,8 +28,8 @@ func TestEIPListing(t *testing.T) {
 	eip, err := eips.Apply(client, eipCreateOpts).Extract()
 	th.AssertNoErr(t, err)
 	t.Cleanup(func() {
-		err = eips.Delete(client, eip.ID).ExtractErr()
-		th.AssertNoErr(t, err)
+		cleanupErr := eips.Delete(client, eip.ID).ExtractErr()
+		th.AssertNoErr(t, cleanupErr)
 	})
 
 	cases := map[string]eips.ListOpts{
@@ -45,8 +45,8 @@ func TestEIPListing(t *testing.T) {
 			opts := opts
 			t.Parallel()
 
-			list, err := eips.List(client, opts)
-			th.AssertNoErr(t, err)
+			list, listErr := eips.List(client, opts)
+			th.AssertNoErr(t, listErr)
 			th.AssertEquals(t, 1, len(list))
 			th.AssertEquals(t, eip.ID, list[0].ID)
 		})
