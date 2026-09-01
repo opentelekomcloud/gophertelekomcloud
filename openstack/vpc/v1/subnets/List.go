@@ -2,11 +2,15 @@ package subnets
 
 import (
 	"bytes"
+	"fmt"
+	"strconv"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
+
+const defaultPageLimit = 2000
 
 type ListOpts struct {
 	Marker string `q:"marker,omitempty"`
@@ -43,6 +47,16 @@ func (p SubnetPage) NewNextPageURL() (string, error) {
 	subnets, err := ExtractSubnets(p)
 	if err != nil || len(subnets) == 0 {
 		return "", err
+	}
+	limit := defaultPageLimit
+	if value := p.URL.Query().Get("limit"); value != "" {
+		limit, err = strconv.Atoi(value)
+		if err != nil {
+			return "", fmt.Errorf("invalid subnet page limit %q: %w", value, err)
+		}
+	}
+	if limit > 0 && len(subnets) < limit {
+		return "", nil
 	}
 	next := p.URL
 	query := next.Query()
