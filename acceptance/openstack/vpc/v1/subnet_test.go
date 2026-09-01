@@ -81,13 +81,32 @@ func waitForSubnetDeleted(client *golangsdk.ServiceClient, id string, secs int) 
 	})
 }
 
+func deleteTestVPC(t *testing.T, client *golangsdk.ServiceClient, id string) {
+	t.Helper()
+
+	err := golangsdk.WaitFor(600, func() (bool, error) {
+		err := vpcs.Delete(client, id)
+		if err == nil {
+			return true, nil
+		}
+		if _, ok := err.(golangsdk.ErrDefault404); ok {
+			return true, nil
+		}
+		if _, ok := err.(golangsdk.ErrDefault409); ok {
+			return false, nil
+		}
+		return false, err
+	})
+	th.AssertNoErr(t, err)
+}
+
 func TestSubnetList(t *testing.T) {
 	client, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 
 	vpc := createSubnetVPC(t, client)
 	t.Cleanup(func() {
-		th.AssertNoErr(t, vpcs.Delete(client, vpc.ID))
+		deleteTestVPC(t, client, vpc.ID)
 	})
 
 	subnet := createTestSubnet(t, client, vpc.ID)
@@ -108,7 +127,7 @@ func TestSubnetLifecycle(t *testing.T) {
 
 	vpc := createSubnetVPC(t, client)
 	t.Cleanup(func() {
-		th.AssertNoErr(t, vpcs.Delete(client, vpc.ID))
+		deleteTestVPC(t, client, vpc.ID)
 	})
 
 	subnet := createTestSubnet(t, client, vpc.ID)
