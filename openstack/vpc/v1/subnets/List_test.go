@@ -14,7 +14,9 @@ func TestListAllOptionsAndPagination(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
+	requestCount := 0
 	th.Mux.HandleFunc("/project-id/subnets", func(w http.ResponseWriter, r *http.Request) {
+		requestCount++
 		th.TestMethod(t, r, http.MethodGet)
 		expected := map[string]string{
 			"limit":  "2",
@@ -40,8 +42,6 @@ func TestListAllOptionsAndPagination(t *testing.T) {
 				`{"subnets":[%s]}`,
 				strings.ReplaceAll(subnetJSON, `"id": "subnet-id"`, `"id": "subnet-3"`),
 			)
-		case "subnet-3":
-			_, _ = w.Write([]byte(`{"subnets":[]}`))
 		default:
 			t.Fatalf("unexpected marker %q", r.URL.Query().Get("marker"))
 		}
@@ -57,6 +57,7 @@ func TestListAllOptionsAndPagination(t *testing.T) {
 	th.AssertEquals(t, "subnet-1", actual[0].ID)
 	th.AssertEquals(t, "subnet-3", actual[2].ID)
 	th.AssertEquals(t, "192.168.20.0/24", actual[0].CIDR)
+	th.AssertEquals(t, 3, requestCount)
 }
 
 func TestListZeroLimit(t *testing.T) {
@@ -80,15 +81,15 @@ func TestListNoOptions(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
+	requestCount := 0
 	th.Mux.HandleFunc("/project-id/subnets", func(w http.ResponseWriter, r *http.Request) {
+		requestCount++
 		switch r.URL.Query().Get("marker") {
 		case "":
 			if actual := r.URL.RawQuery; actual != "" {
 				t.Fatalf("unexpected query %q", actual)
 			}
 			_, _ = w.Write([]byte(`{"subnets":[` + subnetJSON + `]}`))
-		case "subnet-id":
-			_, _ = w.Write([]byte(`{"subnets":[]}`))
 		default:
 			t.Fatalf("unexpected marker %q", r.URL.Query().Get("marker"))
 		}
@@ -99,6 +100,7 @@ func TestListNoOptions(t *testing.T) {
 	th.AssertEquals(t, 1, len(actual))
 	th.AssertEquals(t, "subnet-id", actual[0].ID)
 	th.AssertEquals(t, "vpc-id", actual[0].VpcID)
+	th.AssertEquals(t, 2, requestCount)
 }
 
 func TestListInvalidResponse(t *testing.T) {
