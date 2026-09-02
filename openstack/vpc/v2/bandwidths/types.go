@@ -58,8 +58,6 @@ type Bandwidth struct {
 	BillingInfo string `json:"billing_info"`
 
 	// Specifies the enterprise project ID.
-	//
-	// This parameter is unsupported by OTC; do not use it.
 	EnterpriseProjectId string `json:"enterprise_project_id"`
 
 	// Specifies the bandwidth status. Possible values are FREEZED (frozen)

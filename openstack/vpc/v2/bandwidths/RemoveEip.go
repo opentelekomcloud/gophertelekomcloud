@@ -35,7 +35,7 @@ func RemoveEip(client *golangsdk.ServiceClient, id string, opts RemoveEipOpts) e
 		return err
 	}
 	_, err = client.Post(client.ServiceURL(client.ProjectID, "bandwidths", id, "remove"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{200, 204},
 	})
 	return err
 }

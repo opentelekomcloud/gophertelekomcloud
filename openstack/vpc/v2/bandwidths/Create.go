@@ -19,8 +19,6 @@ type CreateOpts struct {
 	Size int `json:"size" required:"true"`
 
 	// Specifies the enterprise project ID.
-	//
-	// This parameter is unsupported by OTC; do not use it.
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 
 	// Specifies whether it is in a central site or an edge site. This
