@@ -438,6 +438,20 @@ func NewVPCV1Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewVPCV2Client returns a *ServiceClient for making calls to the v2.0 VPC
+// API (used e.g. by the shared bandwidth API). An error will be returned if
+// authentication or client creation was not possible.
+func NewVPCV2Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewVpcV2(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 func NewVPCEndpointV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
