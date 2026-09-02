@@ -3,12 +3,32 @@ package v2
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	vpcv1 "github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v1/publicips"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/vpc/v2/bandwidths"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
+
+// waitForPublicIPActive polls the EIP until it leaves "PENDING_CREATE" status,
+// since fields required to attach it to a shared bandwidth (and the
+// attachment operation itself) are not reliable until provisioning finishes.
+func waitForPublicIPActive(t *testing.T, client *golangsdk.ServiceClient, id string) (*vpcv1.PublicIP, error) {
+	var result *vpcv1.PublicIP
+	err := tools.WaitFor(func() (bool, error) {
+		ip, err := vpcv1.Get(client, id)
+		if err != nil {
+			return false, err
+		}
+		if ip.Status == "PENDING_CREATE" {
+			return false, nil
+		}
+		result = ip
+		return true, nil
+	})
+	return result, err
+}
 
 func TestSharedBandwidthLifecycle(t *testing.T) {
 	bandwidthClient, err := clients.NewVPCV2Client()
@@ -46,6 +66,9 @@ func TestSharedBandwidthLifecycle(t *testing.T) {
 	t.Cleanup(func() {
 		th.AssertNoErr(t, vpcv1.Delete(vpcClient, publicIP.ID))
 	})
+
+	publicIP, err = waitForPublicIPActive(t, vpcClient, publicIP.ID)
+	th.AssertNoErr(t, err)
 
 	added, err := bandwidths.AddEip(bandwidthClient, bandwidthID, bandwidths.AddEipOpts{
 		PublicipInfo: []bandwidths.InsertPublicIPInfo{
