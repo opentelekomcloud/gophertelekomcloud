@@ -14,6 +14,8 @@ func TestBandwidthLifecycle(t *testing.T) {
 	client, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 
+	tools.AcquireQuota(t, "eip", 1)
+
 	publicIP, err := publicips.Create(client, publicips.CreateOpts{
 		Publicip: publicips.PublicIPRequest{
 			Type:  "5_bgp",

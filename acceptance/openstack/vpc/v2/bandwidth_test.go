@@ -16,6 +16,8 @@ func TestSharedBandwidthLifecycle(t *testing.T) {
 	vpcClient, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 
+	tools.AcquireQuota(t, "eip", 1)
+
 	shared, err := bandwidths.Create(bandwidthClient, bandwidths.CreateOpts{
 		Name: tools.RandomString("shared-bandwidth-acc-", 4),
 		Size: 5,

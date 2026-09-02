@@ -16,6 +16,8 @@ func createPublicIP(t *testing.T) (*publicips.PublicIP, *golangsdk.ServiceClient
 	client, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
 
+	tools.AcquireQuota(t, "eip", 1)
+
 	createOpts := publicips.CreateOpts{
 		Publicip: publicips.PublicIPRequest{
 			Type:  "5_bgp",
