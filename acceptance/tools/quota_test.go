@@ -162,12 +162,12 @@ func bumpCounter(t *testing.T, path string, delta int) int {
 	if err != nil {
 		t.Fatalf("failed to open counter lock: %v", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	if err := flockExclusive(f); err != nil {
 		t.Fatalf("failed to lock counter: %v", err)
 	}
-	defer flockUnlock(f)
+	defer func() { _ = flockUnlock(f) }()
 
 	cur := 0
 	if data, err := os.ReadFile(path); err == nil && len(data) > 0 {
