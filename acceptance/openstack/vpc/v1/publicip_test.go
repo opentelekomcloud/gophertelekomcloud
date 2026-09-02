@@ -60,7 +60,6 @@ func TestPublicIPLifecycle(t *testing.T) {
 	publicIP, client := createPublicIP(t)
 
 	th.AssertEquals(t, "5_bgp", publicIP.Type)
-	th.AssertEquals(t, 10, publicIP.BandwidthSize)
 	th.AssertNotEquals(t, "", publicIP.PublicIpAddress)
 
 	tools.PrintResource(t, publicIP)
@@ -74,5 +73,6 @@ func TestPublicIPLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, publicIP.ID, got.ID)
 	th.AssertEquals(t, alias, got.Alias)
+	th.AssertEquals(t, 10, got.BandwidthSize)
 	th.AssertEquals(t, "PER", got.BandwidthShareType)
 }
