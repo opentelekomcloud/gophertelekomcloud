@@ -13,6 +13,8 @@ func TestEIPListing(t *testing.T) {
 	client, err := clients.NewNetworkV1Client()
 	th.AssertNoErr(t, err)
 
+	tools.AcquireQuota(t, "eip", 1)
+
 	eipName := tools.RandomString("eip-test-", 5)
 	eipCreateOpts := eips.ApplyOpts{
 		IP: eips.PublicIpOpts{

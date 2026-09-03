@@ -703,6 +703,18 @@ func NewVpcEpV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*g
 	return sc, err
 }
 
+// NewVpcV2 creates a ServiceClient that may be used with the v2.0 VPC
+// service (used e.g. by the shared bandwidth API).
+func NewVpcV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "vpc")
+	if err != nil {
+		return nil, err
+	}
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "v2.0", 1)
+	sc.ResourceBase = strings.TrimSuffix(sc.Endpoint, client.ProjectID+"/")
+	return sc, nil
+}
+
 // NewVpcV3 creates a ServiceClient that may be used with the v3 VPC service
 func NewVpcV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "vpc")

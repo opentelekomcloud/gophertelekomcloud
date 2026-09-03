@@ -10,11 +10,36 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
+// waitForPublicIPActive polls a VPC v1 EIP until it leaves the
+// "PENDING_CREATE" status. Fields that are only populated once provisioning
+// completes (e.g. BandwidthId) are not reliably present on the resource
+// returned directly by publicips.Create/Update.
+func waitForPublicIPActive(t *testing.T, client *golangsdk.ServiceClient, id string) *publicips.PublicIP {
+	t.Helper()
+
+	var result *publicips.PublicIP
+	err := tools.WaitFor(func() (bool, error) {
+		got, err := publicips.Get(client, id)
+		if err != nil {
+			return false, err
+		}
+		if got.Status == "PENDING_CREATE" {
+			return false, nil
+		}
+		result = got
+		return true, nil
+	})
+	th.AssertNoErr(t, err)
+	return result
+}
+
 func createPublicIP(t *testing.T) (*publicips.PublicIP, *golangsdk.ServiceClient) {
 	t.Helper()
 
 	client, err := clients.NewVPCV1Client()
 	th.AssertNoErr(t, err)
+
+	tools.AcquireQuota(t, "eip", 1)
 
 	createOpts := publicips.CreateOpts{
 		Publicip: publicips.PublicIPRequest{
@@ -36,6 +61,8 @@ func createPublicIP(t *testing.T) (*publicips.PublicIP, *golangsdk.ServiceClient
 		th.AssertNoErr(t, publicips.Delete(client, publicIP.ID))
 		t.Logf("Deleted EIP: %s", publicIP.ID)
 	})
+
+	publicIP = waitForPublicIPActive(t, client, publicIP.ID)
 
 	return publicIP, client
 }
