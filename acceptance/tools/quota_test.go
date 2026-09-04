@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"sync"
 	"sync/atomic"
-	"syscall"
 	"testing"
 	"time"
 
@@ -178,12 +177,4 @@ func bumpCounter(t *testing.T, path string, delta int) int {
 		t.Fatalf("failed to write counter: %v", err)
 	}
 	return cur
-}
-
-func flockExclusive(f *os.File) error {
-	return syscall.Flock(int(f.Fd()), syscall.LOCK_EX)
-}
-
-func flockUnlock(f *os.File) error {
-	return syscall.Flock(int(f.Fd()), syscall.LOCK_UN)
 }

@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"syscall"
 	"testing"
 	"time"
 )
@@ -95,7 +94,7 @@ func tryLockSlot(resource string, slot int) (*os.File, bool) {
 	if err != nil {
 		return nil, false
 	}
-	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+	if err := tryLockFile(f); err != nil {
 		_ = f.Close()
 		return nil, false
 	}
@@ -145,7 +144,7 @@ func AcquireQuota(t *testing.T, resource string, units int) func() {
 	release = func() {
 		once.Do(func() {
 			for _, f := range held {
-				_ = syscall.Flock(int(f.Fd()), syscall.LOCK_UN)
+				_ = unlockFile(f)
 				_ = f.Close()
 			}
 		})
