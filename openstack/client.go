@@ -1150,10 +1150,13 @@ func NewASMV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	return initClientOpts(client, eo, "asmv1")
 }
 
+// defaultUCSRegion is used when EndpointOpts carries no region: UCS is a global
+// control-plane service and is currently deployed only in eu-nl.
+const defaultUCSRegion = "eu-nl"
+
 // NewUCSV1 creates a ServiceClient that may be used to access the UCS service.
-// UCS is a global control-plane service hosted only in the eu-nl region and is
-// absent from the service catalog, so its endpoint is derived from the IAM host
-// with a fixed eu-nl region.
+// UCS is absent from the service catalog, so the endpoint is derived from the IAM
+// host. The region is taken from eo and is not the caller's working region.
 func NewUCSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	if client.IdentityEndpoint == "" {
 		return nil, fmt.Errorf("unable to determine UCS endpoint: identity endpoint is empty")
@@ -1166,9 +1169,13 @@ func NewUCSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*gol
 	if parts := strings.SplitN(domain, ".", 3); len(parts) == 3 {
 		domain = parts[2]
 	}
+	region := eo.Region
+	if region == "" {
+		region = defaultUCSRegion
+	}
 	sc := &golangsdk.ServiceClient{
 		ProviderClient: client,
-		Endpoint:       fmt.Sprintf("%s://ucs.eu-nl.%s/v1/", u.Scheme, domain),
+		Endpoint:       fmt.Sprintf("%s://ucs.%s.%s/v1/", u.Scheme, region, domain),
 		Type:           "ucs",
 	}
 	sc.ResourceBase = sc.Endpoint

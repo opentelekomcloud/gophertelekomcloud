@@ -61,6 +61,8 @@ func NewASMV1Client() (*golangsdk.ServiceClient, error) {
 // NewUCSV1Client returns a *ServiceClient for making calls
 // to the OpenStack UCS v1 API. An error will be returned
 // if authentication or client creation was not possible.
+// UCS is a global service, so its region is taken from OS_UCS_REGION
+// rather than from the working region.
 func NewUCSV1Client() (*golangsdk.ServiceClient, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
@@ -68,7 +70,7 @@ func NewUCSV1Client() (*golangsdk.ServiceClient, error) {
 	}
 
 	return openstack.NewUCSV1(cc.ProviderClient, golangsdk.EndpointOpts{
-		Region: cc.RegionName,
+		Region: EnvOS.GetEnv("UCS_REGION"),
 	})
 }
 
