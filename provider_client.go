@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -14,6 +15,10 @@ import (
 
 // DefaultUserAgent is the default User-Agent string set in the request header.
 const DefaultUserAgent = "golangsdk/2.0.0"
+
+const defaultMaxBackoffRetries = 20
+
+const defaultBackoffRetryTimeout = 60 * time.Second
 
 // UserAgent represents a User-Agent header.
 type UserAgent struct {
@@ -80,9 +85,11 @@ type ProviderClient struct {
 	// UserAgent represents the User-Agent header in the HTTP request.
 	UserAgent UserAgent
 
-	// MaxBackoffRetries set the maximum number of backoffs. When not set, defaults to defaultMaxBackoffRetryLimit
+	// MaxBackoffRetries sets the maximum number of retries for each request that receives a 429 response.
+	// When not set, it defaults to 20.
 	MaxBackoffRetries *int
-	// BackoffRetryTimeout specifies time before next retry on 429. When not set, defaults to defaultBackoffTimeout
+	// BackoffRetryTimeout specifies the delay before retrying a 429 response when Retry-After is absent
+	// or invalid. When not set, it defaults to 60 seconds.
 	BackoffRetryTimeout *time.Duration
 	// ReauthFunc is the function used to re-authenticate the user if the request
 	// fails with a 401 HTTP response code. This a needed because there may be multiple
@@ -257,6 +264,20 @@ func (client *ProviderClient) reauthenticateAndRetry(method, url string, options
 // Request performs an HTTP request using the ProviderClient's current HTTPClient. An authentication
 // header will automatically be provided.
 func (client *ProviderClient) Request(method, url string, options *RequestOpts) (*http.Response, error) {
+	maxBackoffRetries := defaultMaxBackoffRetries
+	if client.MaxBackoffRetries != nil {
+		maxBackoffRetries = *client.MaxBackoffRetries
+	}
+
+	backoffRetryTimeout := defaultBackoffRetryTimeout
+	if client.BackoffRetryTimeout != nil {
+		backoffRetryTimeout = *client.BackoffRetryTimeout
+	}
+
+	return client.request(method, url, options, maxBackoffRetries, backoffRetryTimeout)
+}
+
+func (client *ProviderClient) request(method, url string, options *RequestOpts, backoffRetries int, backoffRetryTimeout time.Duration) (*http.Response, error) {
 	var body io.Reader
 	var contentType *string
 
@@ -354,16 +375,6 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 		options.RetryTimeout = &defaultRetryTimeout
 	}
 
-	if client.MaxBackoffRetries == nil {
-		defaultMaxBackoffRetryLimit := 20
-		client.MaxBackoffRetries = &defaultMaxBackoffRetryLimit
-	}
-
-	if client.BackoffRetryTimeout == nil {
-		defaultBackoffTimeout := 60 * time.Second
-		client.BackoffRetryTimeout = &defaultBackoffTimeout
-	}
-
 	// Validate the HTTP response status.
 	var ok bool
 	for _, code := range options.OkCodes {
@@ -432,10 +443,12 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if error429er, ok := errType.(Err429er); ok {
 				err = error429er.Error429(respErr)
 			}
-			if *client.MaxBackoffRetries > 0 {
-				*client.MaxBackoffRetries -= 1
-				time.Sleep(*client.BackoffRetryTimeout)
-				return client.Request(method, url, options)
+			if backoffRetries > 0 {
+				if err := rewindRawBody(options.RawBody); err != nil {
+					return resp, err
+				}
+				time.Sleep(retryAfter(resp.Header.Get("Retry-After"), backoffRetryTimeout))
+				return client.request(method, url, options, backoffRetries-1, backoffRetryTimeout)
 			}
 		case http.StatusInternalServerError:
 			err = ErrDefault500{respErr}
@@ -446,7 +459,7 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 			if *options.RetryCount > 0 {
 				*options.RetryCount -= 1
 				time.Sleep(*options.RetryTimeout)
-				return client.Request(method, url, options)
+				return client.request(method, url, options, backoffRetries, backoffRetryTimeout)
 			}
 		case http.StatusServiceUnavailable:
 			err = ErrDefault503{respErr}
@@ -487,6 +500,39 @@ func (client *ProviderClient) Request(method, url string, options *RequestOpts) 
 	}
 
 	return resp, nil
+}
+
+func retryAfter(value string, fallback time.Duration) time.Duration {
+	if seconds, err := strconv.ParseInt(strings.TrimSpace(value), 10, 64); err == nil && seconds >= 0 {
+		return time.Duration(seconds) * time.Second
+	}
+
+	if retryAt, err := http.ParseTime(value); err == nil {
+		if delay := time.Until(retryAt); delay > 0 {
+			return delay
+		}
+		return 0
+	}
+
+	if fallback < 0 {
+		return 0
+	}
+	return fallback
+}
+
+func rewindRawBody(body io.Reader) error {
+	if body == nil {
+		return nil
+	}
+
+	seeker, ok := body.(io.Seeker)
+	if !ok {
+		return fmt.Errorf("cannot retry request with non-seekable RawBody")
+	}
+	if _, err := seeker.Seek(0, io.SeekStart); err != nil {
+		return fmt.Errorf("cannot rewind RawBody for retry: %w", err)
+	}
+	return nil
 }
 
 func defaultOkCodes(method string) []int {
