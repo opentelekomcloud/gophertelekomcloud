@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -39,6 +40,109 @@ func TestUserAgent(t *testing.T) {
 	expected = "golangsdk/2.0.0"
 	actual = p.UserAgent.Join()
 	th.CheckEquals(t, expected, actual)
+}
+
+func TestTooManyRequestsUsesPerRequestRetryBudgetAndRetryAfter(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	requests := 0
+	th.Mux.HandleFunc("/rate-limited", func(w http.ResponseWriter, _ *http.Request) {
+		requests++
+		if requests%2 != 0 {
+			retryAfter := "0"
+			if requests > 1 {
+				retryAfter = time.Now().Add(-time.Minute).UTC().Format(http.TimeFormat)
+			}
+			w.Header().Set("Retry-After", retryAfter)
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	})
+
+	retries := 1
+	fallback := time.Hour
+	p := &golangsdk.ProviderClient{
+		HTTPClient:          http.Client{},
+		MaxBackoffRetries:   &retries,
+		BackoffRetryTimeout: &fallback,
+	}
+
+	for i := 0; i < 2; i++ {
+		resp, err := p.Request(http.MethodGet, fmt.Sprintf("%srate-limited", th.Endpoint()), &golangsdk.RequestOpts{
+			OkCodes: []int{http.StatusOK},
+		})
+		th.AssertNoErr(t, err)
+		_ = resp.Body.Close()
+	}
+
+	th.AssertEquals(t, 4, requests)
+	th.AssertEquals(t, 1, retries)
+}
+
+func TestTooManyRequestsStopsAfterRetryBudget(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	requests := 0
+	th.Mux.HandleFunc("/rate-limited", func(w http.ResponseWriter, _ *http.Request) {
+		requests++
+		w.Header().Set("Retry-After", "0")
+		w.WriteHeader(http.StatusTooManyRequests)
+	})
+
+	retries := 1
+	p := &golangsdk.ProviderClient{
+		HTTPClient:        http.Client{},
+		MaxBackoffRetries: &retries,
+	}
+
+	resp, err := p.Request(http.MethodGet, fmt.Sprintf("%srate-limited", th.Endpoint()), &golangsdk.RequestOpts{
+		OkCodes: []int{http.StatusOK},
+	})
+	if resp != nil {
+		_ = resp.Body.Close()
+	}
+	if _, ok := err.(golangsdk.ErrDefault429); !ok {
+		t.Fatalf("expected ErrDefault429, got %T: %v", err, err)
+	}
+	th.AssertEquals(t, 2, requests)
+	th.AssertEquals(t, 1, retries)
+}
+
+func TestTooManyRequestsRewindsRawBody(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	const expectedBody = "request body"
+	requests := 0
+	th.Mux.HandleFunc("/rate-limited", func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		body, err := ioutil.ReadAll(r.Body)
+		th.AssertNoErr(t, err)
+		th.AssertEquals(t, expectedBody, string(body))
+		if requests == 1 {
+			w.Header().Set("Retry-After", "0")
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	})
+
+	retries := 1
+	p := &golangsdk.ProviderClient{
+		HTTPClient:        http.Client{},
+		MaxBackoffRetries: &retries,
+	}
+
+	resp, err := p.Request(http.MethodPost, fmt.Sprintf("%srate-limited", th.Endpoint()), &golangsdk.RequestOpts{
+		RawBody: bytes.NewReader([]byte(expectedBody)),
+		OkCodes: []int{http.StatusOK},
+	})
+	th.AssertNoErr(t, err)
+	_ = resp.Body.Close()
+	th.AssertEquals(t, 2, requests)
 }
 
 func TestConcurrentReauth(t *testing.T) {
