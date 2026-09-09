@@ -38,6 +38,14 @@ type CreateDataImageOpts struct {
 	//
 	// Use either tags or image_tags.
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
+	// Specifies the enterprise project that an image belongs to.
+	//
+	// If only enterprise project authorization is used, the enterprise_project_id parameter must be specified. Otherwise, an error may occur, indicating that you do not have the required permissions.
+	//
+	// If the value is 0 or left blank, the image belongs to the default enterprise project.
+	// If the value is a UUID, the image belongs to the enterprise project corresponding to the UUID.
+	// For more information about enterprise projects and how to obtain enterprise project IDs, see Enterprise Project Service User Guide.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 // CreateDataImage This API is used to create a data disk image from a data disk image file uploaded to the OBS bucket. The API is an asynchronous one. If it is successfully called, the cloud service system receives the request. However, you need to use the asynchronous job query API to query the image creation status. For details, see Asynchronous Job Query.

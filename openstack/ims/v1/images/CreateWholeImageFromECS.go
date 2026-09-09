@@ -39,6 +39,14 @@ type CreateWholeImageFromECSOpts struct {
 	//
 	// You can obtain the vault ID from the CBR console or section "Querying the Vault List" in Cloud Backup and Recovery API Reference.
 	VaultId string `json:"vault_id,omitempty"`
+	// Specifies the enterprise project that an image belongs to.
+	//
+	// If only enterprise project authorization is used, the enterprise_project_id parameter must be specified. Otherwise, an error may occur, indicating that you do not have the required permissions.
+	//
+	// If the value is 0 or left blank, an image belongs to the default enterprise project.
+	// If the value is a UUID, an image belongs to the enterprise project with this UUID.
+	// For more information about enterprise projects and how to obtain enterprise project IDs, see Enterprise Project Service User Guide.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 func CreateWholeImageFromECS(client *golangsdk.ServiceClient, opts CreateWholeImageFromECSOpts) (*string, error) {

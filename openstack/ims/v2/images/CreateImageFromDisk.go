@@ -50,6 +50,14 @@ type CreateImageFromDiskOpts struct {
 	//
 	// Use either tags or image_tags.
 	ImageTags []tags.ResourceTag `json:"image_tags,omitempty"`
+	// Specifies the enterprise project that an image belongs to.
+	//
+	// If only enterprise project authorization is used, the enterprise_project_id parameter must be specified. Otherwise, an error may occur, indicating that you do not have the required permissions.
+	//
+	// If the value is 0 or left blank, an image belongs to the default enterprise project.
+	// If the value is a UUID, an image belongs to the enterprise project with this UUID.
+	// For more information about enterprise projects and how to obtain enterprise project IDs, see Enterprise Project Service User Guide.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 // CreateImageFromDisk Constraints (Creating a System Disk Image Using a Data Disk)
