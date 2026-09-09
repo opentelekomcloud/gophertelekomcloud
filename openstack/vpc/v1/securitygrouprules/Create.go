@@ -25,7 +25,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*SecurityGroupRul
 		return nil, err
 	}
 	raw, err := client.Post(client.ServiceURL(client.ProjectID, "security-group-rules"), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
+		OkCodes: []int{200, 201},
 	})
 	if err != nil {
 		return nil, err
