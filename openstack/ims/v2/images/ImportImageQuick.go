@@ -39,6 +39,14 @@ type ImportImageQuickOpts struct {
 	// The parameter value is ECS/BMS for system disk images. The default value is ECS.
 	// The parameter value is DataImage for data disk images.
 	Type string `json:"type,omitempty"`
+	// Specifies the enterprise project that an image belongs to.
+	//
+	// If only enterprise project authorization is used, the enterprise_project_id parameter must be specified. Otherwise, an error may occur, indicating that you do not have the required permissions.
+	//
+	// If the value is 0 or left blank, the image belongs to the default enterprise project.
+	// If the value is a UUID, the image belongs to the enterprise project corresponding to the UUID.
+	// For more information about enterprise projects and how to obtain enterprise project IDs, see Enterprise Project Service User Guide.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 func ImportImageQuick(client *golangsdk.ServiceClient, opts ImportImageQuickOpts) (*string, error) {

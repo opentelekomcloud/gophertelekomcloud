@@ -50,6 +50,14 @@ type CreateWholeImageFromCBRorCSBSOpts struct {
 	//
 	// If you do not specify this parameter, value CSBS is used by default.
 	WholeImageType string `json:"whole_image_type,omitempty"`
+	// Specifies the enterprise project that an image belongs to.
+	//
+	// If only enterprise project authorization is used, the enterprise_project_id parameter must be specified. Otherwise, an error may occur, indicating that you do not have the required permissions.
+	//
+	// If the value is 0 or left blank, an image belongs to the default enterprise project.
+	// If the value is a UUID, an image belongs to the enterprise project with this UUID.
+	// For more information about enterprise projects and how to obtain enterprise project IDs, see Enterprise Project Service User Guide.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 func CreateWholeImageFromCBRorCSBS(client *golangsdk.ServiceClient, opts CreateWholeImageFromCBRorCSBSOpts) (*string, error) {
