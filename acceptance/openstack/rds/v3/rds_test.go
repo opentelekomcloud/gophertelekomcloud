@@ -689,10 +689,14 @@ func TestRdsGPSSD2Lifecycle(t *testing.T) {
 	th.AssertEquals(t, "GPSSD2", listed.Instances[0].Volume.Type)
 	th.AssertEquals(t, 100, listed.Instances[0].Volume.Size)
 
-	// The API does not return iops/throughput, even though the docs list them:
-	// the volume holds only type and size. Log them instead of asserting.
+	// FIXME: the API does not return iops and throughput. The docs list both as
+	// part of the volume in the response, but it holds only type and size, in the
+	// create and the list response alike (checked in eu-de against a live GPSSD2
+	// instance). Restore the asserts below once the API is fixed.
 	t.Logf("Volume in the create response: %+v", rds.Volume)
 	t.Logf("Volume in the list response: %+v", listed.Instances[0].Volume)
+	// th.AssertEquals(t, 3000, listed.Instances[0].Volume.Iops)
+	// th.AssertEquals(t, 125, listed.Instances[0].Volume.Throughput)
 }
 
 func TestRdsChangeStorageTypeGPSSD2(t *testing.T) {
