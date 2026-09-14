@@ -657,3 +657,83 @@ func TestRdsChangeStorageType(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 1200, *modifyResp)
 	th.AssertNoErr(t, err)
 }
+
+func TestRdsGPSSD2Lifecycle(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance with a GPSSD2 volume")
+
+	rds := CreateGPSSD2RDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	// The API rejects a GPSSD2 request with missing or invalid iops/throughput,
+	// so a created instance is what proves they are sent correctly.
+	th.AssertEquals(t, "GPSSD2", rds.Volume.Type)
+	th.AssertEquals(t, 100, rds.Volume.Size)
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	listed, err := instances.List(client, instances.ListOpts{Id: rds.Id})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listed.Instances))
+	th.AssertEquals(t, "GPSSD2", listed.Instances[0].Volume.Type)
+	th.AssertEquals(t, 100, listed.Instances[0].Volume.Size)
+
+	// FIXME: the API does not return iops and throughput. The docs list both as
+	// part of the volume in the response, but it holds only type and size, in the
+	// create and the list response alike (checked in eu-de against a live GPSSD2
+	// instance). Restore the asserts below once the API is fixed.
+	t.Logf("Volume in the create response: %+v", rds.Volume)
+	t.Logf("Volume in the list response: %+v", listed.Instances[0].Volume)
+	// th.AssertEquals(t, 3000, listed.Instances[0].Volume.Iops)
+	// th.AssertEquals(t, 125, listed.Instances[0].Volume.Throughput)
+}
+
+func TestRdsChangeStorageTypeGPSSD2(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	// Creates its own CLOUDSSD instance to switch over, so that the test does not
+	// depend on a pre-existing one: changing the storage type cannot be undone.
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	// iops and throughput are required when switching to GPSSD2.
+	modifyOpts := instances.ChangeStorageTypeOpts{
+		InstanceId: rds.Id,
+		VolumeCode: "rds.mysql.volume.gpssd2",
+		Iops:       3000,
+		Throughput: 125,
+	}
+	modifyResp, err := instances.ChangeStorageType(client, modifyOpts)
+	th.AssertNoErr(t, err)
+
+	err = instances.WaitForJobCompleted(client, 1200, *modifyResp)
+	th.AssertNoErr(t, err)
+
+	listed, err := instances.List(client, instances.ListOpts{Id: rds.Id})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listed.Instances))
+	th.AssertEquals(t, "GPSSD2", listed.Instances[0].Volume.Type)
+}

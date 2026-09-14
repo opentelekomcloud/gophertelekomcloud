@@ -17,6 +17,10 @@ type ChangeStorageTypeOpts struct {
 	// * rds.mysql.volume.cloudssd.ha: cloud SSD specification code for primary/standby DB instances
 	// * rds.mysql.volume.cloudssd.rr: cloud SSD specification code for read replicas
 	// * rds.mysql.volume.cloudssd: cloud SSD specification code for single-node DB instances
+	// -- If the target storage type is GPSSD2:
+	// * rds.mysql.volume.gpssd2.ha: GPSSD2 specification code for primary/standby DB instances
+	// * rds.mysql.volume.gpssd2.rr: GPSSD2 specification code for read replicas
+	// * rds.mysql.volume.gpssd2: GPSSD2 specification code for single-node DB instances
 	// Values for RDS for PostgreSQL:
 	// -- If the target storage type is ESSD:
 	// * rds.pg.volume.essd.ha: ESSD specification code for primary/standby DB instances
@@ -25,6 +29,10 @@ type ChangeStorageTypeOpts struct {
 	// * rds.pg.volume.cloudssd.ha: cloud SSD specification code for primary/standby DB instances
 	// * rds.pg.volume.cloudssd.rr: cloud SSD specification code for read replicas
 	// * rds.pg.volume.cloudssd: cloud SSD specification code for single-node DB instances
+	// -- If the target storage type is GPSSD2:
+	// * rds.pg.volume.gpssd2.ha: GPSSD2 specification code for primary/standby DB instances
+	// * rds.pg.volume.gpssd2.rr: GPSSD2 specification code for read replicas
+	// * rds.pg.volume.gpssd2: GPSSD2 specification code for single-node DB instances
 	// Values for RDS for SQL Server:
 	// -- If the target storage type is ESSD:
 	// * rds.mssql.volume.essd.ha: ESSD specification code for primary/standby DB instances
@@ -34,7 +42,17 @@ type ChangeStorageTypeOpts struct {
 	// * rds.mssql.volume.cloudssd.ha: cloud SSD specification code for primary/standby DB instances
 	// * rds.mssql.volume.cloudssd.rr: cloud SSD specification code for read replicas
 	// * rds.mssql.volume.cloudssd: cloud SSD specification code for single-node DB instances
+	// -- If the target storage type is GPSSD2:
+	// * rds.mssql.volume.gpssd2.ha: GPSSD2 specification code for primary/standby DB instances
+	// * rds.mssql.volume.gpssd2.rr: GPSSD2 specification code for read replicas
+	// * rds.mssql.volume.gpssd2: GPSSD2 specification code for single-node DB instances
 	VolumeCode string `json:"volume_code"`
+	// IOPS of the disk. Only for GPSSD2, where it is required.
+	// From 3000 to 128000, and no more than 500 times the volume size.
+	Iops int `json:"iops,omitempty"`
+	// Throughput of the disk in MiB/s. Only for GPSSD2, where it is required.
+	// From 125 to 1000, and no more than the IOPS divided by 4.
+	Throughput int `json:"throughput,omitempty"`
 }
 
 func ChangeStorageType(client *golangsdk.ServiceClient, opts ChangeStorageTypeOpts) (*string, error) {

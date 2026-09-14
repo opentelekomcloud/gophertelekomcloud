@@ -82,7 +82,7 @@ func CreateMySqlRDS(t *testing.T, client *golangsdk.ServiceClient, region string
 	createRdsOpts := instances.CreateRdsOpts{
 		Name:             rdsName,
 		Port:             "8635",
-		Password:         "acc-test-password1!",
+		Password:         "MySql!120521",
 		FlavorRef:        "rds.mysql.n1.large.4",
 		Region:           region,
 		AvailabilityZone: az,
@@ -201,4 +201,54 @@ func updateRDSConfiguration(t *testing.T, client *golangsdk.ServiceClient, rdsCo
 	th.AssertNoErr(t, err)
 
 	t.Logf("RDSv3 configuration updated")
+}
+
+func CreateGPSSD2RDS(t *testing.T, client *golangsdk.ServiceClient, region string) *instances.Instance {
+	t.Logf("Attempting to create RDSv3 with a GPSSD2 volume")
+
+	rdsName := tools.RandomString("rds-gpssd2-test-", 8)
+
+	az := clients.EnvOS.GetEnv("AVAILABILITY_ZONE")
+	if az == "" {
+		az = "eu-de-01"
+	}
+
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	if vpcID == "" || subnetID == "" {
+		t.Skip("One of OS_VPC_ID or OS_NETWORK_ID env vars is missing but RDS test requires using existing network")
+	}
+
+	createRdsOpts := instances.CreateRdsOpts{
+		Name:             rdsName,
+		Port:             "8635",
+		Password:         "MySql!120521",
+		FlavorRef:        "rds.mysql.n1.large.4",
+		Region:           region,
+		AvailabilityZone: az,
+		VpcId:            vpcID,
+		SubnetId:         subnetID,
+		SecurityGroupId:  openstack.DefaultSecurityGroup(t),
+		TimeZone:         "UTC+01:00",
+
+		// 100 GB allows up to 50000 IOPS, and 3000 IOPS up to 750 MiB/s.
+		Volume: &instances.Volume{
+			Type:       "GPSSD2",
+			Size:       100,
+			Iops:       3000,
+			Throughput: 125,
+		},
+		Datastore: &instances.Datastore{
+			Type:    "MySQL",
+			Version: "8.0",
+		},
+	}
+
+	rds, err := instances.Create(client, createRdsOpts)
+	th.AssertNoErr(t, err)
+	err = instances.WaitForJobCompleted(client, 1200, rds.JobId)
+	th.AssertNoErr(t, err)
+	t.Logf("Created RDSv3: %s", rds.Instance.Id)
+
+	return &rds.Instance
 }
