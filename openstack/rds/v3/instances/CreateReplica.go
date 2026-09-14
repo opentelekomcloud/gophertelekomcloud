@@ -37,10 +37,19 @@ type Volume struct {
 	// Its value can be any of the following and is case-sensitive:
 	// COMMON: indicates the SATA type.
 	// ULTRAHIGH: indicates the SSD type.
+	// CLOUDSSD: indicates the cloud SSD type.
+	// ESSD: indicates the extreme SSD type.
+	// GPSSD2: indicates the flexible SSD type (general-purpose SSD V2).
 	Type string `json:"type" required:"true"`
 	// Indicates the volume size.
 	// Its value range is from 40 GB to 4000 GB. The value must be a multiple of 10.
 	Size int `json:"size,omitempty"`
+	// Indicates the IOPS of the disk. Only for GPSSD2.
+	// From 3000 to 128000, and no more than 500 times the volume size.
+	Iops int `json:"iops,omitempty"`
+	// Indicates the throughput of the disk in MiB/s. Only for GPSSD2.
+	// From 125 to 1000, and no more than the IOPS divided by 4.
+	Throughput int `json:"throughput,omitempty"`
 }
 
 type ChargeInfo struct {

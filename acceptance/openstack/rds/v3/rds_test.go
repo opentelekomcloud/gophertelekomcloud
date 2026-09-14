@@ -657,3 +657,66 @@ func TestRdsChangeStorageType(t *testing.T) {
 	err = instances.WaitForJobCompleted(client, 1200, *modifyResp)
 	th.AssertNoErr(t, err)
 }
+
+func TestRdsGPSSD2Lifecycle(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	t.Log("Creating instance with a GPSSD2 volume")
+
+	rds := CreateGPSSD2RDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	// The API rejects a GPSSD2 request with missing or invalid iops/throughput,
+	// so a created instance is what proves they are sent correctly.
+	th.AssertEquals(t, "GPSSD2", rds.Volume.Type)
+	th.AssertEquals(t, 100, rds.Volume.Size)
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
+	listed, err := instances.List(client, instances.ListOpts{Id: rds.Id})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listed.Instances))
+	th.AssertEquals(t, "GPSSD2", listed.Instances[0].Volume.Type)
+	th.AssertEquals(t, 100, listed.Instances[0].Volume.Size)
+
+	// The API does not return iops/throughput, even though the docs list them:
+	// the volume holds only type and size. Log them instead of asserting.
+	t.Logf("Volume in the create response: %+v", rds.Volume)
+	t.Logf("Volume in the list response: %+v", listed.Instances[0].Volume)
+}
+
+func TestRdsChangeStorageTypeGPSSD2(t *testing.T) {
+	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
+		t.Skip("too slow to run in zuul")
+	}
+	rdsId := os.Getenv("OS_RDS_ID")
+	if rdsId == "" {
+		t.Skip("OS_RDS_ID env var required for the test is missing")
+	}
+
+	client, err := clients.NewRdsV3()
+	th.AssertNoErr(t, err)
+
+	// iops and throughput are required when switching to GPSSD2.
+	modifyOpts := instances.ChangeStorageTypeOpts{
+		InstanceId: rdsId,
+		VolumeCode: "rds.mysql.volume.gpssd2.ha",
+		Iops:       3000,
+		Throughput: 125,
+	}
+	modifyResp, err := instances.ChangeStorageType(client, modifyOpts)
+	th.AssertNoErr(t, err)
+
+	err = instances.WaitForJobCompleted(client, 1200, *modifyResp)
+	th.AssertNoErr(t, err)
+}
