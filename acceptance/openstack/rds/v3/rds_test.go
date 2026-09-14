@@ -703,18 +703,26 @@ func TestRdsChangeStorageTypeGPSSD2(t *testing.T) {
 	if os.Getenv("RUN_RDS_LIFECYCLE") == "" {
 		t.Skip("too slow to run in zuul")
 	}
-	rdsId := os.Getenv("OS_RDS_ID")
-	if rdsId == "" {
-		t.Skip("OS_RDS_ID env var required for the test is missing")
-	}
 
 	client, err := clients.NewRdsV3()
 	th.AssertNoErr(t, err)
 
+	cc, err := clients.CloudAndClient()
+	th.AssertNoErr(t, err)
+
+	// Creates its own CLOUDSSD instance to switch over, so that the test does not
+	// depend on a pre-existing one: changing the storage type cannot be undone.
+	rds := CreateMySqlRDS(t, client, cc.RegionName)
+	t.Cleanup(func() { DeleteRDS(t, client, rds.Id) })
+
+	if err := instances.WaitForStateAvailable(client, 600, rds.Id); err != nil {
+		t.Fatalf("Status available wasn't present")
+	}
+
 	// iops and throughput are required when switching to GPSSD2.
 	modifyOpts := instances.ChangeStorageTypeOpts{
-		InstanceId: rdsId,
-		VolumeCode: "rds.mysql.volume.gpssd2.ha",
+		InstanceId: rds.Id,
+		VolumeCode: "rds.mysql.volume.gpssd2",
 		Iops:       3000,
 		Throughput: 125,
 	}
@@ -723,4 +731,9 @@ func TestRdsChangeStorageTypeGPSSD2(t *testing.T) {
 
 	err = instances.WaitForJobCompleted(client, 1200, *modifyResp)
 	th.AssertNoErr(t, err)
+
+	listed, err := instances.List(client, instances.ListOpts{Id: rds.Id})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listed.Instances))
+	th.AssertEquals(t, "GPSSD2", listed.Instances[0].Volume.Type)
 }

@@ -82,7 +82,7 @@ func CreateMySqlRDS(t *testing.T, client *golangsdk.ServiceClient, region string
 	createRdsOpts := instances.CreateRdsOpts{
 		Name:             rdsName,
 		Port:             "8635",
-		Password:         "acc-test-password1!",
+		Password:         "MySql!120521",
 		FlavorRef:        "rds.mysql.n1.large.4",
 		Region:           region,
 		AvailabilityZone: az,
