@@ -67,7 +67,7 @@ type IpExtraSetRespOption struct {
 	// or a CIDR block (e.g. 192.168.21.0/24).
 	IP string `json:"ip"`
 	// Remark or description for the IP address entry.
-	Remark string `json:"remark"`
+	Remarks string `json:"remarks"`
 }
 
 // ResponseTag represents a tag object associated with an IP address group.
