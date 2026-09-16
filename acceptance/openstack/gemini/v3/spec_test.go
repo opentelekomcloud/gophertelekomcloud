@@ -19,6 +19,36 @@ func TestGeminiListFlavors(t *testing.T) {
 	th.AssertEquals(t, len(listResp.Flavors) > 1, true)
 }
 
+func TestGeminiListInfluxFlavors(t *testing.T) {
+	client, err := clients.NewGeminiDBSpecClient()
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to list GeminiDB Influx flavors")
+	listResp, err := spec.ListFlavors(client, spec.ListFlavorsOpts{
+		EngineName: "influxdb",
+	})
+	th.AssertNoErr(t, err)
+
+	for _, flavor := range listResp.Flavors {
+		th.AssertEquals(t, "influxdb", flavor.EngineName)
+	}
+	tools.PrintResource(t, listResp)
+}
+
+func TestGeminiListCloudNativeFlavors(t *testing.T) {
+	client, err := clients.NewGeminiDBSpecClient()
+	th.AssertNoErr(t, err)
+
+	t.Logf("Attempting to list GeminiDB Influx flavors with cloud native storage")
+	listResp, err := spec.ListFlavors(client, spec.ListFlavorsOpts{
+		EngineName: "influxdb",
+		Mode:       "CloudNativeCluster",
+	})
+	th.AssertNoErr(t, err)
+
+	tools.PrintResource(t, listResp)
+}
+
 func TestGeminiGetVersions(t *testing.T) {
 	client, err := clients.NewGeminiDBClient()
 	th.AssertNoErr(t, err)

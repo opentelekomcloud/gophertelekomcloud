@@ -24,6 +24,7 @@ func ListFlavors(client *golangsdk.ServiceClient, opts ListFlavorsOpts) (*ListFl
 
 type ListFlavorsOpts struct {
 	EngineName string `q:"engine_name"`
+	Mode       string `q:"mode"`
 	Offset     *int   `q:"offset"`
 	Limit      *int   `q:"limit"`
 }
