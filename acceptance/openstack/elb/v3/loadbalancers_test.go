@@ -38,7 +38,7 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 		Description:              &emptyDescription,
 		DeletionProtectionEnable: pointerto.Bool(true),
 	}
-	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpE).Extract()
+	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpE)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
@@ -52,7 +52,7 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 		Description:              &emptyDescription,
 		DeletionProtectionEnable: pointerto.Bool(false),
 	}
-	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpD).Extract()
+	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpD)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
