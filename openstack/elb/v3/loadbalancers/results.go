@@ -1,6 +1,8 @@
 package loadbalancers
 
 import (
+	"encoding/json"
+
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -179,7 +181,82 @@ type Extension struct {
 	EpServiceID string `json:"ep_service_id"`
 }
 
-// StatusTree represents the status of a loadbalancer.
+// StatusTree represents the status of a load balancer.
 type StatusTree struct {
-	Loadbalancer *LoadBalancer `json:"loadbalancer"`
+	// Loadbalancer is retained for compatibility. Use LoadBalancer for the
+	// complete status tree.
+	Loadbalancer *LoadBalancer       `json:"-"`
+	LoadBalancer *LoadBalancerStatus `json:"-"`
+}
+
+func (s *StatusTree) UnmarshalJSON(data []byte) error {
+	var raw struct {
+		LoadBalancer json.RawMessage `json:"loadbalancer"`
+	}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+	if len(raw.LoadBalancer) == 0 || string(raw.LoadBalancer) == "null" {
+		return nil
+	}
+	if err := json.Unmarshal(raw.LoadBalancer, &s.LoadBalancer); err != nil {
+		return err
+	}
+	return json.Unmarshal(raw.LoadBalancer, &s.Loadbalancer)
+}
+
+type LoadBalancerStatus struct {
+	Name               string                       `json:"name"`
+	ProvisioningStatus string                       `json:"provisioning_status"`
+	Listeners          []LoadBalancerStatusListener `json:"listeners"`
+	Pools              []LoadBalancerStatusPool     `json:"pools"`
+	ID                 string                       `json:"id"`
+	OperatingStatus    string                       `json:"operating_status"`
+}
+
+type LoadBalancerStatusListener struct {
+	Name               string                     `json:"name"`
+	ProvisioningStatus string                     `json:"provisioning_status"`
+	Pools              []LoadBalancerStatusPool   `json:"pools"`
+	L7Policies         []LoadBalancerStatusPolicy `json:"l7policies"`
+	ID                 string                     `json:"id"`
+	OperatingStatus    string                     `json:"operating_status"`
+}
+
+type LoadBalancerStatusPolicy struct {
+	Action             string                     `json:"action"`
+	ID                 string                     `json:"id"`
+	ProvisioningStatus string                     `json:"provisioning_status"`
+	Name               string                     `json:"name"`
+	Rules              []LoadBalancerStatusL7Rule `json:"rules"`
+}
+
+type LoadBalancerStatusL7Rule struct {
+	ID                 string `json:"id"`
+	Type               string `json:"type"`
+	ProvisioningStatus string `json:"provisioning_status"`
+}
+
+type LoadBalancerStatusPool struct {
+	ProvisioningStatus string                           `json:"provisioning_status"`
+	Name               string                           `json:"name"`
+	HealthMonitor      *LoadBalancerStatusHealthMonitor `json:"healthmonitor"`
+	Members            []LoadBalancerStatusMember       `json:"members"`
+	ID                 string                           `json:"id"`
+	OperatingStatus    string                           `json:"operating_status"`
+}
+
+type LoadBalancerStatusHealthMonitor struct {
+	Type               string `json:"type"`
+	ID                 string `json:"id"`
+	Name               string `json:"name"`
+	ProvisioningStatus string `json:"provisioning_status"`
+}
+
+type LoadBalancerStatusMember struct {
+	ProvisioningStatus string `json:"provisioning_status"`
+	Address            string `json:"address"`
+	ProtocolPort       int    `json:"protocol_port"`
+	ID                 string `json:"id"`
+	OperatingStatus    string `json:"operating_status"`
 }

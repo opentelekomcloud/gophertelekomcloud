@@ -61,4 +61,8 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOptsDpD.Name, newLoadbalancer.Name)
 	th.AssertEquals(t, emptyDescription, newLoadbalancer.Description)
 	th.AssertEquals(t, false, newLoadbalancer.DeletionProtectionEnable)
+
+	statuses, err := loadbalancers.GetStatuses(client, loadbalancerID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, loadbalancerID, statuses.LoadBalancer.ID)
 }
