@@ -56,7 +56,7 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
-	newLoadbalancer, err := loadbalancers.Get(client, loadbalancerID).Extract()
+	newLoadbalancer, err := loadbalancers.Get(client, loadbalancerID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOptsDpD.Name, newLoadbalancer.Name)
 	th.AssertEquals(t, emptyDescription, newLoadbalancer.Description)

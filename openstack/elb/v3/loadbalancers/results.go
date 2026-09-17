@@ -216,12 +216,6 @@ func (r GetStatusesResult) Extract() (*StatusTree, error) {
 	return s, nil
 }
 
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a LoadBalancer.
-type GetResult struct {
-	commonResult
-}
-
 // UpdateResult represents the result of an update operation. Call its Extract
 // method to interpret it as a LoadBalancer.
 type UpdateResult struct {
