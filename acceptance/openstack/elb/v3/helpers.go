@@ -50,7 +50,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 		IpTargetEnable: &ipTargetEnable,
 	}
 
-	loadbalancer, err := loadbalancers.Create(client, createOpts).Extract()
+	loadbalancer, err := loadbalancers.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, loadbalancer.Name)
 	th.AssertEquals(t, createOpts.Description, loadbalancer.Description)
