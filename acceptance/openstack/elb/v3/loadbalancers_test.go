@@ -15,10 +15,7 @@ func TestLoadBalancerList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := loadbalancers.ListOpts{}
-	loadbalancerPages, err := loadbalancers.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	loadbalancerList, err := loadbalancers.ExtractLoadbalancers(loadbalancerPages)
+	loadbalancerList, err := loadbalancers.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, lb := range loadbalancerList {

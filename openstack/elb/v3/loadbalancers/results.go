@@ -4,7 +4,6 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // LoadBalancer is the primary load balancing configuration object that
@@ -110,8 +109,25 @@ type LoadBalancer struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 
-	// Ip Target Enable.
-	DeletionProtectionEnable bool `json:"deletion_protection_enable"`
+	DeletionProtectionEnable bool                     `json:"deletion_protection_enable"`
+	EnterpriseProjectID      string                   `json:"enterprise_project_id"`
+	BillingInfo              string                   `json:"billing_info"`
+	GlobalEips               []GlobalEipInfo          `json:"global_eips"`
+	Autoscaling              AutoscalingRef           `json:"autoscaling"`
+	PublicBorderGroup        string                   `json:"public_border_group"`
+	WafFailureAction         string                   `json:"waf_failure_action"`
+	ChargeMode               string                   `json:"charge_mode"`
+	ProtectionStatus         string                   `json:"protection_status"`
+	ProtectionReason         string                   `json:"protection_reason"`
+	LoadbalancerType         string                   `json:"loadbalancer_type"`
+	GwFlavorID               string                   `json:"gw_flavor_id"`
+	InstanceType             string                   `json:"instance_type"`
+	InstanceID               string                   `json:"instance_id"`
+	LogGroupID               string                   `json:"log_group_id"`
+	LogTopicID               string                   `json:"log_topic_id"`
+	CustomQosLimit           CustomQosLimit           `json:"custom_qos_limit"`
+	ServiceLBMode            string                   `json:"service_lb_mode"`
+	ProxyProtocolExtensions  []ProxyProtocolExtension `json:"proxy_protocol_extensions"`
 }
 
 type EipInfo struct {
@@ -130,6 +146,38 @@ type PublicIpInfo struct {
 	PublicIpAddress string `json:"publicip_address"`
 	// IP Version
 	IpVersion int `json:"ip_version"`
+}
+
+type GlobalEipInfo struct {
+	GlobalEipID      string `json:"global_eip_id"`
+	GlobalEipAddress string `json:"global_eip_address"`
+	IpVersion        int    `json:"ip_version"`
+}
+
+type AutoscalingRef struct {
+	Enable        bool   `json:"enable"`
+	MinL7FlavorID string `json:"min_l7_flavor_id"`
+}
+
+type CustomQosLimit struct {
+	L4 QosLimit `json:"l4"`
+	L7 QosLimit `json:"l7"`
+}
+
+type QosLimit struct {
+	Connection int `json:"connection"`
+	CPS        int `json:"cps"`
+}
+
+type ProxyProtocolExtension struct {
+	VipAddress     string    `json:"vip_address"`
+	IpV6VipAddress string    `json:"ipv6_vip_address"`
+	Extension      Extension `json:"extension"`
+}
+
+type Extension struct {
+	EpID        string `json:"ep_id"`
+	EpServiceID string `json:"ep_service_id"`
 }
 
 // StatusTree represents the status of a loadbalancer.
@@ -162,30 +210,6 @@ type GetStatusesResult struct {
 func (r GetStatusesResult) Extract() (*StatusTree, error) {
 	s := new(StatusTree)
 	err := r.ExtractIntoStructPtr(s, "statuses")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// LoadbalancerPage is the page returned by a pager when traversing over a
-// collection of loadbalancer.
-type LoadbalancerPage struct {
-	pagination.PageWithInfo
-}
-
-// IsEmpty checks whether a FlavorsPage struct is empty.
-func (r LoadbalancerPage) IsEmpty() (bool, error) {
-	is, err := ExtractLoadbalancers(r)
-	return len(is) == 0, err
-}
-
-// ExtractLoadbalancers accepts a Page struct, specifically a LoadbalancerPage struct,
-// and extracts the elements into a slice of loadbalancer structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractLoadbalancers(r pagination.Page) ([]LoadBalancer, error) {
-	var s []LoadBalancer
-	err := (r.(LoadbalancerPage)).ExtractIntoSlicePtr(&s, "loadbalancers")
 	if err != nil {
 		return nil, err
 	}
