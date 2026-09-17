@@ -15,10 +15,7 @@ func TestLoadBalancerList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := loadbalancers.ListOpts{}
-	loadbalancerPages, err := loadbalancers.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	loadbalancerList, err := loadbalancers.ExtractLoadbalancers(loadbalancerPages)
+	loadbalancerList, err := loadbalancers.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, lb := range loadbalancerList {
@@ -41,11 +38,11 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 		Description:              &emptyDescription,
 		DeletionProtectionEnable: pointerto.Bool(true),
 	}
-	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpE).Extract()
+	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpE)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
-	err = loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err = loadbalancers.Delete(client, loadbalancerID)
 	if err != nil {
 		t.Logf("Cannot delete, Deletion Protection enabled for ELBv3 LoadBalancer: %s", loadbalancerID)
 	}
@@ -55,13 +52,17 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 		Description:              &emptyDescription,
 		DeletionProtectionEnable: pointerto.Bool(false),
 	}
-	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpD).Extract()
+	_, err = loadbalancers.Update(client, loadbalancerID, updateOptsDpD)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
-	newLoadbalancer, err := loadbalancers.Get(client, loadbalancerID).Extract()
+	newLoadbalancer, err := loadbalancers.Get(client, loadbalancerID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOptsDpD.Name, newLoadbalancer.Name)
 	th.AssertEquals(t, emptyDescription, newLoadbalancer.Description)
 	th.AssertEquals(t, false, newLoadbalancer.DeletionProtectionEnable)
+
+	statuses, err := loadbalancers.GetStatuses(client, loadbalancerID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, loadbalancerID, statuses.LoadBalancer.ID)
 }
