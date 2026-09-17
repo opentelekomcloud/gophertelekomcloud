@@ -74,12 +74,16 @@ func (p LoadbalancerPage) NewNextPageURL() (string, error) {
 	if err := extract.Into(bytes.NewReader(p.Body), &res); err != nil {
 		return "", err
 	}
-	if res.PageInfo.NextMarker == "" {
+	marker := res.PageInfo.NextMarker
+	if p.URL.Query().Get("page_reverse") == "true" {
+		marker = res.PageInfo.PreviousMarker
+	}
+	if marker == "" {
 		return "", nil
 	}
 	next := p.URL
 	query := next.Query()
-	query.Set("marker", res.PageInfo.NextMarker)
+	query.Set("marker", marker)
 	next.RawQuery = query.Encode()
 	return next.String(), nil
 }

@@ -28,10 +28,10 @@ func TestListAllOptionsAndPagination(t *testing.T) {
 		th.AssertEquals(t, "protection", query.Get("protection_status"))
 		switch query.Get("marker") {
 		case "start":
-			_, _ = fmt.Fprintf(w, `{"loadbalancers":[%s,%s],"page_info":{"next_marker":"lb-2","current_count":2}}`,
+			_, _ = fmt.Fprintf(w, `{"loadbalancers":[%s,%s],"page_info":{"previous_marker":"lb-1","next_marker":"lb-2","current_count":2}}`,
 				strings.ReplaceAll(loadBalancerJSON, "loadbalancer-id", "lb-1"),
 				strings.ReplaceAll(loadBalancerJSON, "loadbalancer-id", "lb-2"))
-		case "lb-2":
+		case "lb-1":
 			_, _ = fmt.Fprintf(w, `{"loadbalancers":[%s],"page_info":{"current_count":1}}`,
 				strings.ReplaceAll(loadBalancerJSON, "loadbalancer-id", "lb-3"))
 		default:

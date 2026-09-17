@@ -205,6 +205,18 @@ func (s *StatusTree) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(raw.LoadBalancer, &s.Loadbalancer)
 }
 
+func (s StatusTree) MarshalJSON() ([]byte, error) {
+	loadBalancer := interface{}(s.LoadBalancer)
+	if s.LoadBalancer == nil {
+		loadBalancer = s.Loadbalancer
+	}
+	return json.Marshal(struct {
+		LoadBalancer interface{} `json:"loadbalancer"`
+	}{
+		LoadBalancer: loadBalancer,
+	})
+}
+
 type LoadBalancerStatus struct {
 	Name               string                       `json:"name"`
 	ProvisioningStatus string                       `json:"provisioning_status"`

@@ -1,7 +1,9 @@
 package loadbalancers_test
 
 import (
+	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/loadbalancers"
@@ -60,6 +62,11 @@ func TestGetStatuses(t *testing.T) {
 	th.AssertEquals(t, "rule-id", actual.LoadBalancer.Listeners[0].L7Policies[0].Rules[0].ID)
 	th.AssertEquals(t, "loadbalancer-id", actual.Loadbalancer.ID)
 	th.AssertEquals(t, "listener-id", actual.Loadbalancer.Listeners[0].ID)
+	encoded, err := json.Marshal(actual)
+	th.AssertNoErr(t, err)
+	if !strings.Contains(string(encoded), `"loadbalancer":{"name":"loadbalancer-test"`) {
+		t.Fatalf("expected loadbalancer JSON field, got %s", encoded)
+	}
 }
 
 func TestGetStatusesInvalidID(t *testing.T) {
