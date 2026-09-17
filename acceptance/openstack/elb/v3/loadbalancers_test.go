@@ -42,7 +42,7 @@ func TestLoadBalancerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 LoadBalancer: %s", loadbalancerID)
 
-	err = loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err = loadbalancers.Delete(client, loadbalancerID)
 	if err != nil {
 		t.Logf("Cannot delete, Deletion Protection enabled for ELBv3 LoadBalancer: %s", loadbalancerID)
 	}

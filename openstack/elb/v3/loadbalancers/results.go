@@ -1,7 +1,6 @@
 package loadbalancers
 
 import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -183,41 +182,4 @@ type Extension struct {
 // StatusTree represents the status of a loadbalancer.
 type StatusTree struct {
 	Loadbalancer *LoadBalancer `json:"loadbalancer"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a loadbalancer.
-func (r commonResult) Extract() (*LoadBalancer, error) {
-	s := new(LoadBalancer)
-	err := r.ExtractIntoStructPtr(s, "loadbalancer")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// GetStatusesResult represents the result of a GetStatuses operation.
-// Call its Extract method to interpret it as a StatusTree.
-type GetStatusesResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts the status of
-// a Loadbalancer.
-func (r GetStatusesResult) Extract() (*StatusTree, error) {
-	s := new(StatusTree)
-	err := r.ExtractIntoStructPtr(s, "statuses")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// DeleteResult represents the result of a delete operation. Call its
-// ExtractErr method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
 }

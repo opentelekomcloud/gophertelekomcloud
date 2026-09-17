@@ -61,7 +61,7 @@ func createLoadBalancer(t *testing.T, client *golangsdk.ServiceClient) string {
 
 func deleteLoadbalancer(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID string) {
 	t.Logf("Attempting to delete ELBv3 LoadBalancer: %s", loadbalancerID)
-	err := loadbalancers.Delete(client, loadbalancerID).ExtractErr()
+	err := loadbalancers.Delete(client, loadbalancerID)
 	th.AssertNoErr(t, err)
 	t.Logf("Deleted ELBv3 LoadBalancer: %s", loadbalancerID)
 }
