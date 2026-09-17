@@ -27,6 +27,7 @@ type ListOpts struct {
 	AvailabilityZoneList []string `q:"availability_zone_list"`
 	L7FlavorID           []string `q:"l7_flavor_id"`
 	L7ScaleFlavorID      []string `q:"l7_scale_flavor_id"`
+	EnterpriseProjectID  []string `q:"enterprise_project_id"`
 	Limit                int      `q:"limit"`
 	Marker               string   `q:"marker"`
 }
@@ -114,6 +115,10 @@ type CreateOpts struct {
 
 	// Specifies whether to enable deletion protection for the load balancer.
 	DeletionProtectionEnable *bool `json:"deletion_protection_enable,omitempty"`
+
+	// The ID of the enterprise project that the load balancer belongs to.
+	// The value cannot be "", "0", or the ID of a non-existent enterprise project.
+	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 }
 
 type BandwidthRef struct {

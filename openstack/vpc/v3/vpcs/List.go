@@ -23,6 +23,8 @@ type ListOpts struct {
 	Description []string `q:"description,omitempty"`
 	// VPC CIDR block, which can be used to filter VPCs.
 	Cidr []string `q:"cidr,omitempty"`
+	// ID of the enterprise project that a VPC belongs to, which can be used to filter VPCs.
+	EnterpriseProjectId []string `q:"enterprise_project_id,omitempty"`
 }
 
 // List is used to query VPCs.

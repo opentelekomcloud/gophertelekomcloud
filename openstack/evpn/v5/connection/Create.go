@@ -72,6 +72,9 @@ type CreateOpts struct {
 	HaRole string `json:"ha_role,omitempty"`
 	// Specifies a tag list.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
+	// Specifies an enterprise project ID. The value is a UUID containing 36 characters.
+	// The value must be the same as the enterprise project ID of the VPN gateway specified by vgw_id.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 type IkePolicy struct {
@@ -294,4 +297,6 @@ type Connection struct {
 	// FREEZED: frozen
 	// UNKNOWN: unknown
 	Status string `json:"status"`
+	// Specifies an enterprise project ID. The value is a UUID containing 36 characters.
+	EnterpriseProjectId string `json:"enterprise_project_id"`
 }

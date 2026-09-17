@@ -50,6 +50,9 @@ type CreateOpts struct {
 	// Specifies the description of the VPC endpoint.
 	// The description can contain a maximum of 128 characters and cannot contain left angle brackets (<) or right angle brackets (>).
 	Description string `json:"description,omitempty"`
+	// Specifies the enterprise project ID. The value is `0` or a string of a maximum of 36 bytes in UUID format.
+	// `0` indicates the default enterprise project.
+	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 }
 
 type PolicyStatement struct {
@@ -134,6 +137,8 @@ type Endpoint struct {
 	Description string `json:"description"`
 	// Specifies the IP address for accessing the associated VPC endpoint service.
 	IP string `json:"ip"`
+	// Specifies the enterprise project ID of the VPC endpoint.
+	EnterpriseProjectID string `json:"enterprise_project_id"`
 }
 
 func WaitForEndpointStatus(client *golangsdk.ServiceClient, id string, status Status, timeout int) error {

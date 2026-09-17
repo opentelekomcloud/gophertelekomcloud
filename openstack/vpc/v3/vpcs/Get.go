@@ -69,4 +69,7 @@ type Vpc struct {
 	// VPC tags. For details, see the tag objects.
 	// Value range: 0 to 10 tag key-value pairs
 	Tags []tags.ResourceTag `json:"tags"`
+	// ID of the enterprise project that the VPC belongs to.
+	// The value is 0 or a string of a maximum of 36 characters in UUID format with hyphens (-).
+	EnterpriseProjectId string `json:"enterprise_project_id"`
 }

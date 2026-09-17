@@ -112,6 +112,9 @@ type LoadBalancer struct {
 
 	// Ip Target Enable.
 	DeletionProtectionEnable bool `json:"deletion_protection_enable"`
+
+	// The ID of the enterprise project that the load balancer belongs to.
+	EnterpriseProjectID string `json:"enterprise_project_id"`
 }
 
 type EipInfo struct {

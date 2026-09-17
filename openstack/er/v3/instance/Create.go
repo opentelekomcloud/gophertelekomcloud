@@ -32,6 +32,8 @@ type CreateOpts struct {
 	AutoAcceptSharedAttachments *bool `json:"auto_accept_shared_attachments,omitempty"`
 	// Enterprise router CIDR block. This parameter is not supported for now.
 	CidrBlocks []string `json:"cidr_blocks,omitempty"`
+	// Enterprise project ID
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*RouterInstanceResp, error) {
@@ -93,4 +95,6 @@ type RouterInstance struct {
 	AutoAcceptSharedAttachments bool `json:"auto_accept_shared_attachments"`
 	// Enterprise router CIDR block. This parameter is not supported for now.
 	CidrBlocks []string `json:"cidr_blocks"`
+	// Enterprise project ID
+	EnterpriseProjectId string `json:"enterprise_project_id"`
 }
