@@ -607,7 +607,7 @@ func NewGPFSClient() (*gpfs.ObsClient, error) {
 		return nil, fmt.Errorf("failed to construct OBS client without AK/SK: %s", err)
 	}
 
-	client, err := openstack.NewOBSService(cc.ProviderClient, golangsdk.EndpointOpts{
+	client, err := openstack.NewSFSV3(cc.ProviderClient, golangsdk.EndpointOpts{
 		Region: cc.RegionName,
 	})
 	if err != nil {
