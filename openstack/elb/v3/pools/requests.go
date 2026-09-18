@@ -17,18 +17,19 @@ type ListOptsBuilder interface {
 // sort by a particular Pool attribute. SortDir sets the direction, and is
 // either `asc` or `desc`. Marker and Limit are used for pagination.
 type ListOpts struct {
-	Description     []string `q:"description"`
-	HealthMonitorID []string `q:"healthmonitor_id"`
-	LBMethod        []string `q:"lb_algorithm"`
-	Protocol        []string `q:"protocol"`
-	AdminStateUp    *bool    `q:"admin_state_up"`
-	Name            []string `q:"name"`
-	ID              []string `q:"id"`
-	LoadbalancerID  []string `q:"loadbalancer_id"`
-	Limit           int      `q:"limit"`
-	Marker          string   `q:"marker"`
-	SortKey         string   `q:"sort_key"`
-	SortDir         string   `q:"sort_dir"`
+	Description         []string `q:"description"`
+	HealthMonitorID     []string `q:"healthmonitor_id"`
+	LBMethod            []string `q:"lb_algorithm"`
+	Protocol            []string `q:"protocol"`
+	AdminStateUp        *bool    `q:"admin_state_up"`
+	Name                []string `q:"name"`
+	ID                  []string `q:"id"`
+	LoadbalancerID      []string `q:"loadbalancer_id"`
+	EnterpriseProjectID []string `q:"enterprise_project_id"`
+	Limit               int      `q:"limit"`
+	Marker              string   `q:"marker"`
+	SortKey             string   `q:"sort_key"`
+	SortDir             string   `q:"sort_dir"`
 }
 
 // ToPoolListQuery formats a ListOpts into a query string.

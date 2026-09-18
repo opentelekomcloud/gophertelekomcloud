@@ -18,6 +18,8 @@ type ListOpts struct {
 	VgwIp string `q:"vgw_ip"`
 	// Specifies a VPN gateway ID.
 	VgwId string `q:"vgw_id"`
+	// Specifies an enterprise project ID. Multiple IDs can be queried at a time.
+	EnterpriseProjectId []string `q:"enterprise_project_id"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Connection, error) {

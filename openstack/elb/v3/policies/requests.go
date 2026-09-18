@@ -183,18 +183,19 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
-	Marker             string   `q:"marker"`
-	Limit              int      `q:"limit"`
-	PageReverse        bool     `q:"page_reverse"`
-	ID                 []string `q:"id"`
-	Name               []string `q:"name"`
-	Description        []string `q:"description"`
-	ListenerID         []string `q:"listener_id"`
-	Action             []string `q:"action"`
-	RedirectPoolID     []string `q:"redirect_pool_id"`
-	RedirectListenerID []string `q:"redirect_listener_id"`
-	ProvisioningStatus []string `q:"provisioning_status"`
-	DisplayAllRules    bool     `q:"display_all_rules"`
+	Marker              string   `q:"marker"`
+	Limit               int      `q:"limit"`
+	PageReverse         bool     `q:"page_reverse"`
+	ID                  []string `q:"id"`
+	Name                []string `q:"name"`
+	Description         []string `q:"description"`
+	ListenerID          []string `q:"listener_id"`
+	Action              []string `q:"action"`
+	RedirectPoolID      []string `q:"redirect_pool_id"`
+	RedirectListenerID  []string `q:"redirect_listener_id"`
+	ProvisioningStatus  []string `q:"provisioning_status"`
+	EnterpriseProjectID []string `q:"enterprise_project_id"`
+	DisplayAllRules     bool     `q:"display_all_rules"`
 }
 
 func (opts ListOpts) ToPolicyListQuery() (string, error) {

@@ -22,6 +22,8 @@ type ListOpts struct {
 	//
 	// Sorting order. There are two value options: asc (ascending order) and desc (descending order).
 	SortDir []string `q:"sort_dir"`
+	// Enterprise project ID. Multiple IDs can be queried at a time.
+	EnterpriseProjectId []string `q:"enterprise_project_id"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) (*ListRouterInstanceResp, error) {

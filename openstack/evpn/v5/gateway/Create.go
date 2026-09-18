@@ -95,6 +95,8 @@ type CreateOpts struct {
 	AccessPrivateIp2 string `json:"access_private_ip_2,omitempty"`
 	// Specifies a tag list.
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
+	// Specifies an enterprise project ID. The value is a UUID (36 characters) or 0.
+	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
 type Eip struct {
@@ -197,6 +199,8 @@ type Gateway struct {
 	AccessPrivateIp2 string `json:"access_private_ip_2"`
 	// ID of the enterprise router attachment associated with the VPN gateway.
 	ErAttachmentId string `json:"er_attachment_id"`
+	// Specifies an enterprise project ID. The value is a UUID (36 characters) or 0.
+	EnterpriseProjectId string `json:"enterprise_project_id"`
 }
 
 type PolicyTemplate struct {

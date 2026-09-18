@@ -17,18 +17,19 @@ type ListOptsBuilder interface {
 // you to sort by a particular Member attribute. SortDir sets the direction,
 // and is either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
-	Name            string `q:"name"`
-	Weight          int    `q:"weight"`
-	AdminStateUp    *bool  `q:"admin_state_up"`
-	SubnetID        string `q:"subnet_sidr_id"`
-	Address         string `q:"address"`
-	ProtocolPort    int    `q:"protocol_port"`
-	ID              string `q:"id"`
-	OperatingStatus string `q:"operating_status"`
-	Limit           int    `q:"limit"`
-	Marker          string `q:"marker"`
-	SortKey         string `q:"sort_key"`
-	SortDir         string `q:"sort_dir"`
+	Name                string   `q:"name"`
+	Weight              int      `q:"weight"`
+	AdminStateUp        *bool    `q:"admin_state_up"`
+	SubnetID            string   `q:"subnet_sidr_id"`
+	Address             string   `q:"address"`
+	ProtocolPort        int      `q:"protocol_port"`
+	ID                  string   `q:"id"`
+	OperatingStatus     string   `q:"operating_status"`
+	EnterpriseProjectID []string `q:"enterprise_project_id"`
+	Limit               int      `q:"limit"`
+	Marker              string   `q:"marker"`
+	SortKey             string   `q:"sort_key"`
+	SortDir             string   `q:"sort_dir"`
 }
 
 // ToMembersListQuery formats a ListOpts into a query string.

@@ -3,7 +3,7 @@ package services
 import (
 	"fmt"
 
-	"github.com/opentelekomcloud/gophertelekomcloud"
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
@@ -68,6 +68,9 @@ type CreateOpts struct {
 	Description string `json:"description,omitempty"`
 	// Specifies the ID of the virtual NIC to which the virtual IP address is bound.
 	VIPPortID string `json:"vip_port_id,omitempty"`
+	// Specifies the enterprise project ID. The value is `0` or a string of a maximum of 36 bytes in UUID format.
+	// `0` indicates the default enterprise project.
+	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 }
 
 type PortMapping struct {
@@ -137,6 +140,8 @@ type Service struct {
 	// Error is set in `Get` and `List` only
 	Error     []ErrorParameters `json:"error"`
 	VIPPortID string            `json:"vip_port_id"`
+	// Specifies the enterprise project ID of the VPC endpoint service.
+	EnterpriseProjectID string `json:"enterprise_project_id"`
 }
 
 type ErrorParameters struct {

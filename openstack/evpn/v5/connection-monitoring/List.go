@@ -8,6 +8,8 @@ import (
 type ListOpts struct {
 	// Specifies a VPN connection ID.
 	ConnectionId string `q:"vpn_connection_id"`
+	// Specifies an enterprise project ID. Multiple IDs can be queried at a time.
+	EnterpriseProjectId []string `q:"enterprise_project_id"`
 }
 
 func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Monitor, error) {

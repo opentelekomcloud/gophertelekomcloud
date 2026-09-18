@@ -275,6 +275,7 @@ type ListOpts struct {
 	MemberTimeout           []int      `q:"member_timeout"`
 	ClientTimeout           []int      `q:"client_timeout"`
 	KeepAliveTimeout        []int      `q:"keepalive_timeout"`
+	EnterpriseProjectID     []string   `q:"enterprise_project_id"`
 }
 
 func (opts ListOpts) ToListenerListQuery() (string, error) {

@@ -113,10 +113,11 @@ type ListOptsBuilder interface {
 }
 
 type ListOpts struct {
-	ID          []string      `q:"id"`
-	CompareType []CompareType `q:"compare_type"`
-	Value       []string      `q:"value"`
-	Type        []RuleType    `q:"type"`
+	ID                  []string      `q:"id"`
+	CompareType         []CompareType `q:"compare_type"`
+	Value               []string      `q:"value"`
+	Type                []RuleType    `q:"type"`
+	EnterpriseProjectID []string      `q:"enterprise_project_id"`
 
 	Limit       int    `q:"limit"`
 	Marker      string `q:"marker"`
