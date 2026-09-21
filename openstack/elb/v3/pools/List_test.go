@@ -19,7 +19,7 @@ func TestList(t *testing.T) {
 		q := r.URL.Query()
 		th.AssertEquals(t, "true", q.Get("page_reverse"))
 		th.AssertEquals(t, "false", q.Get("member_deletion_protection_enable"))
-		th.AssertEquals(t, "4", q.Get("ip_version"))
+		th.AssertEquals(t, "v4", q.Get("ip_version"))
 		th.AssertEquals(t, "member-address", q.Get("member_address"))
 		th.AssertEquals(t, "member-device-id", q.Get("member_device_id"))
 		th.AssertEquals(t, "listener-id", q.Get("listener_id"))
@@ -46,7 +46,7 @@ func TestList(t *testing.T) {
 		LBMethod: []string{"LEAST_CONNECTIONS"}, Protocol: []string{"HTTP"},
 		AdminStateUp: pointerto.Bool(true), Name: []string{"pool-test"}, ID: []string{"pool-id"},
 		LoadbalancerID: []string{"loadbalancer-id"}, EnterpriseProjectID: []string{"enterprise-project-id"},
-		IPVersion: []int{4}, MemberAddress: []string{"member-address"},
+		IPVersion: []string{"v4"}, MemberAddress: []string{"member-address"},
 		MemberDeviceID: []string{"member-device-id"}, MemberDeletionProtectionEnable: pointerto.Bool(false),
 		ListenerID: []string{"listener-id"}, MemberInstanceID: []string{"member-instance-id"},
 		VpcID: []string{"vpc-id"}, Type: []string{"instance"}, ProtectionStatus: []string{"PROTECTED"},

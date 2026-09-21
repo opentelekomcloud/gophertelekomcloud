@@ -21,7 +21,7 @@ type ListOpts struct {
 	ID                             []string `q:"id,omitempty"`
 	LoadbalancerID                 []string `q:"loadbalancer_id,omitempty"`
 	EnterpriseProjectID            []string `q:"enterprise_project_id,omitempty"`
-	IPVersion                      []int    `q:"ip_version,omitempty"`
+	IPVersion                      []string `q:"ip_version,omitempty"`
 	MemberAddress                  []string `q:"member_address,omitempty"`
 	MemberDeviceID                 []string `q:"member_device_id,omitempty"`
 	MemberDeletionProtectionEnable *bool    `q:"member_deletion_protection_enable,omitempty"`
