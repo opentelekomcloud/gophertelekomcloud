@@ -62,12 +62,6 @@ type InsertHeaders struct {
 	ForwardedTLSJA4Alias                  string `json:"X-Forwarded-Tls-Ja4-alias,omitempty"`
 }
 
-// UpdateOptsBuilder allows extensions to add additional parameters to the
-// Update request.
-type UpdateOptsBuilder interface {
-	ToListenerUpdateMap() (map[string]interface{}, error)
-}
-
 type IpGroupUpdate struct {
 	IpGroupId string `json:"ipgroup_id,omitempty"`
 	Enable    *bool  `json:"enable_ipgroup,omitempty"`
@@ -139,25 +133,10 @@ type UpdateOpts struct {
 
 	// Enhance L7policy enable
 	EnhanceL7policy *bool `json:"enhance_l7policy_enable,omitempty"`
-}
 
-// ToListenerUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToListenerUpdateMap() (map[string]interface{}, error) {
-	return golangsdk.BuildRequestBody(opts, "listener")
-}
-
-// Update is an operation which modifies the attributes of the specified
-// Listener.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToListenerUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Put(resourceURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202},
-	})
-	return
+	ProtectionStatus                 string                          `json:"protection_status,omitempty"`
+	ProtectionReason                 string                          `json:"protection_reason,omitempty"`
+	AccessLogCustomizedHeadersConfig *AccessLogCustomizedHeadersOpts `json:"access_log_customized_headers_config,omitempty"`
 }
 
 // Delete will permanently delete a particular Listeners based on its unique ID.

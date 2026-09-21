@@ -58,7 +58,7 @@ func TestListenerLifecycle(t *testing.T) {
 		Name:         &listenerName,
 		SniMatchAlgo: "longest_suffix",
 	}
-	_, err = listeners.Update(client, listener.ID, updateOpts).Extract()
+	_, err = listeners.Update(client, listener.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Listener: %s", listener.ID)
 

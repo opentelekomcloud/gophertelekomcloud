@@ -139,12 +139,6 @@ func (r commonResult) Extract() (*Listener, error) {
 	return s, nil
 }
 
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Listener.
-type UpdateResult struct {
-	commonResult
-}
-
 // DeleteResult represents the result of a delete operation. Call its
 // ExtractErr method to determine if the request succeeded or failed.
 type DeleteResult struct {
