@@ -139,12 +139,6 @@ func (r commonResult) Extract() (*Listener, error) {
 	return s, nil
 }
 
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Listener.
-type GetResult struct {
-	commonResult
-}
-
 // UpdateResult represents the result of an update operation. Call its Extract
 // method to interpret it as a Listener.
 type UpdateResult struct {

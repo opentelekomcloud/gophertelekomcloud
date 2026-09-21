@@ -62,12 +62,6 @@ type InsertHeaders struct {
 	ForwardedTLSJA4Alias                  string `json:"X-Forwarded-Tls-Ja4-alias,omitempty"`
 }
 
-// Get retrieves a particular Listeners based on its unique ID.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {

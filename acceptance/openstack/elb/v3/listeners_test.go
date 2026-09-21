@@ -62,7 +62,7 @@ func TestListenerLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Listener: %s", listener.ID)
 
-	newListener, err := listeners.Get(client, listener.ID).Extract()
+	newListener, err := listeners.Get(client, listener.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, listenerName, newListener.Name)
 	th.AssertEquals(t, emptyDescription, newListener.Description)

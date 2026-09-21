@@ -139,7 +139,7 @@ func TestPolicyAssignment(t *testing.T) {
 
 		_ = listeners.Update(client, listener.ID, updateOpts)
 
-		updatedListener, err := listeners.Get(client, listener.ID).Extract()
+		updatedListener, err := listeners.Get(client, listener.ID)
 		th.AssertNoErr(t, err)
 		th.AssertEquals(t, updatedListener.SecurityPolicy, secPolicyUpdatedID)
 	})
