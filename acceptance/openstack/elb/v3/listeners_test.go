@@ -5,8 +5,10 @@ import (
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/listeners"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/pools"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -83,14 +85,39 @@ func TestListenerForceDelete(t *testing.T) {
 	defer deleteLoadbalancer(t, client, loadbalancerID)
 
 	listenerID := createListener(t, client, loadbalancerID)
-	deleted := false
+	listenerGone := false
+	poolGone := false
+	poolID := ""
 	defer func() {
-		if !deleted {
+		if !poolGone && poolID != "" {
+			deletePool(t, client, poolID)
+		}
+		if !listenerGone {
 			deleteListener(t, client, listenerID)
 		}
 	}()
 
+	pool, err := pools.Create(client, pools.CreateOpts{
+		LBMethod:                 "LEAST_CONNECTIONS",
+		Protocol:                 "HTTP",
+		ListenerID:               listenerID,
+		Name:                     tools.RandomString("force-delete-pool-", 3),
+		VpcId:                    clients.EnvOS.GetEnv("VPC_ID"),
+		Type:                     "instance",
+		DeletionProtectionEnable: pointerto.Bool(false),
+	}).Extract()
+	th.AssertNoErr(t, err)
+	poolID = pool.ID
+
 	err = listeners.ForceDelete(client, listenerID)
 	th.AssertNoErr(t, err)
-	deleted = true
+
+	if _, err = listeners.Get(client, listenerID); err == nil {
+		t.Fatal("expected force-deleted listener to be absent")
+	}
+	listenerGone = true
+	if _, err = pools.Get(client, poolID).Extract(); err == nil {
+		t.Fatal("expected associated pool to be deleted")
+	}
+	poolGone = true
 }
