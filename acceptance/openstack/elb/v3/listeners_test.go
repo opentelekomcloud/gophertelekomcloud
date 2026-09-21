@@ -69,9 +69,7 @@ func TestListenerLifecycle(t *testing.T) {
 	th.AssertEquals(t, "longest_suffix", newListener.SniMatchAlgo)
 
 	listOpts := listeners.ListOpts{LoadBalancerID: []string{loadbalancerID}}
-	pages, err := listeners.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-	listenerSlice, err := listeners.ExtractListeners(pages)
+	listenerSlice, err := listeners.List(client, listOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(listenerSlice))
 	th.AssertDeepEquals(t, *newListener, listenerSlice[0])
