@@ -42,7 +42,7 @@ func TestPoolLifecycle(t *testing.T) {
 		LBMethod:                 "ROUND_ROBIN",
 		DeletionProtectionEnable: pointerto.Bool(false),
 	}
-	_, err = pools.Update(client, poolID, updateOpts).Extract()
+	_, err = pools.Update(client, poolID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Pool: %s", poolID)
 
