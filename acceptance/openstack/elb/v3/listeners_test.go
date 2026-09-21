@@ -79,6 +79,7 @@ func TestListenerLifecycle(t *testing.T) {
 }
 
 func TestListenerForceDelete(t *testing.T) {
+	t.Skip("Backend servers groups cannot be deleted, API broken")
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
