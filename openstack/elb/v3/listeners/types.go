@@ -1,7 +1,6 @@
 package listeners
 
 import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 )
@@ -123,18 +122,4 @@ type AccessLogCustomizedHeadersConfig struct {
 	Enable         bool     `json:"enable"`
 	IncludeHeaders []string `json:"include_headers"`
 	ExcludeHeaders []string `json:"exclude_headers"`
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a listener.
-func (r commonResult) Extract() (*Listener, error) {
-	s := new(Listener)
-	err := r.ExtractIntoStructPtr(s, "listener")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
 }
