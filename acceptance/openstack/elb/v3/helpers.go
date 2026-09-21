@@ -190,5 +190,5 @@ func createListener(t *testing.T, client *golangsdk.ServiceClient, loadbalancerI
 }
 
 func deleteListener(t *testing.T, client *golangsdk.ServiceClient, listenerID string) {
-	th.AssertNoErr(t, listeners.Delete(client, listenerID).ExtractErr())
+	th.AssertNoErr(t, listeners.Delete(client, listenerID))
 }

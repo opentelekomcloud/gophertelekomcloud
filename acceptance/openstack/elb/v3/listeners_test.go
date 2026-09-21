@@ -41,7 +41,7 @@ func TestListenerLifecycle(t *testing.T) {
 	listener, err := listeners.Create(client, createOpts)
 	defer func() {
 		t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
-		err := listeners.Delete(client, listener.ID).ExtractErr()
+		err := listeners.Delete(client, listener.ID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Listener: %s", listener.ID)
 	}()

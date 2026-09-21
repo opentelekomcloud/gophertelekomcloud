@@ -1,9 +1,5 @@
 package listeners
 
-import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
-)
-
 // Protocol represents a listener protocol.
 type Protocol string
 
@@ -137,10 +133,4 @@ type UpdateOpts struct {
 	ProtectionStatus                 string                          `json:"protection_status,omitempty"`
 	ProtectionReason                 string                          `json:"protection_reason,omitempty"`
 	AccessLogCustomizedHeadersConfig *AccessLogCustomizedHeadersOpts `json:"access_log_customized_headers_config,omitempty"`
-}
-
-// Delete will permanently delete a particular Listeners based on its unique ID.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
-	return
 }
