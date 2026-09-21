@@ -15,10 +15,7 @@ func TestPoolList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := pools.ListOpts{}
-	poolPages, err := pools.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	poolList, err := pools.ExtractPools(poolPages)
+	poolList, err := pools.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, pool := range poolList {
