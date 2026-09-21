@@ -99,7 +99,7 @@ func TestPolicyAssignment(t *testing.T) {
 			SecurityPolicy:         secPolicyID,
 		}
 
-		listener, err := listeners.Create(client, createOpts).Extract()
+		listener, err := listeners.Create(client, createOpts)
 		defer func() {
 			t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
 			err := listeners.Delete(client, listener.ID).ExtractErr()
@@ -124,7 +124,7 @@ func TestPolicyAssignment(t *testing.T) {
 			ProtocolPort:           443,
 		}
 
-		listener, err := listeners.Create(client, createOpts).Extract()
+		listener, err := listeners.Create(client, createOpts)
 		th.AssertNoErr(t, err)
 		defer func() {
 			t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)

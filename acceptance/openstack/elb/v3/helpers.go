@@ -184,7 +184,7 @@ func createListener(t *testing.T, client *golangsdk.ServiceClient, loadbalancerI
 		LoadbalancerID: loadbalancerID,
 		Protocol:       listeners.ProtocolHTTP,
 		ProtocolPort:   80,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	return listener.ID
 }
