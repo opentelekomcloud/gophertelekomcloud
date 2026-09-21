@@ -74,3 +74,23 @@ func TestListenerLifecycle(t *testing.T) {
 	th.AssertEquals(t, 1, len(listenerSlice))
 	th.AssertDeepEquals(t, *newListener, listenerSlice[0])
 }
+
+func TestListenerForceDelete(t *testing.T) {
+	client, err := clients.NewElbV3Client()
+	th.AssertNoErr(t, err)
+
+	loadbalancerID := createLoadBalancer(t, client)
+	defer deleteLoadbalancer(t, client, loadbalancerID)
+
+	listenerID := createListener(t, client, loadbalancerID)
+	deleted := false
+	defer func() {
+		if !deleted {
+			deleteListener(t, client, listenerID)
+		}
+	}()
+
+	err = listeners.ForceDelete(client, listenerID)
+	th.AssertNoErr(t, err)
+	deleted = true
+}
