@@ -1,10 +1,8 @@
 package listeners
 
 import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
-	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
 
 // Listener is the primary load balancing configuration object that specifies
@@ -95,63 +93,33 @@ type Listener struct {
 
 	// Enhance L7policy enable
 	EnhanceL7policy bool `json:"enhance_l7policy_enable"`
+
+	QuicConfig                       *QuicConfig                      `json:"quic_config"`
+	ProtectionStatus                 string                           `json:"protection_status"`
+	ProtectionReason                 string                           `json:"protection_reason"`
+	GzipEnable                       bool                             `json:"gzip_enable"`
+	CPS                              int                              `json:"cps"`
+	Connection                       int                              `json:"connection"`
+	Nat64Enable                      bool                             `json:"nat64_enable"`
+	ProxyProtocolEnable              bool                             `json:"proxy_protocol_enable"`
+	TracingConfig                    TracingConfig                    `json:"tracing_config"`
+	AccessLogCustomizedHeadersConfig AccessLogCustomizedHeadersConfig `json:"access_log_customized_headers_config"`
 }
 
-type commonResult struct {
-	golangsdk.Result
+type QuicConfig struct {
+	QuicListenerID    string `json:"quic_listener_id"`
+	EnableQuicUpgrade bool   `json:"enable_quic_upgrade"`
 }
 
-// Extract is a function that accepts a result and extracts a listener.
-func (r commonResult) Extract() (*Listener, error) {
-	s := new(Listener)
-	err := r.ExtractIntoStructPtr(s, "listener")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
+type TracingConfig struct {
+	TracingEnable   bool   `json:"tracing_enable"`
+	TracingStrategy string `json:"tracing_strategy"`
+	TracingSample   int    `json:"tracing_sample"`
+	TracingType     string `json:"tracing_type"`
 }
 
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a Listener.
-type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Listener.
-type GetResult struct {
-	commonResult
-}
-
-// UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Listener.
-type UpdateResult struct {
-	commonResult
-}
-
-// DeleteResult represents the result of a delete operation. Call its
-// ExtractErr method to determine if the request succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
-}
-
-type ListenerPage struct {
-	pagination.PageWithInfo
-}
-
-func (p ListenerPage) IsEmpty() (bool, error) {
-	l, err := ExtractListeners(p)
-	if err != nil {
-		return false, err
-	}
-	return len(l) == 0, nil
-}
-
-func ExtractListeners(r pagination.Page) ([]Listener, error) {
-	var s []Listener
-	err := (r.(ListenerPage)).ExtractIntoSlicePtr(&s, "listeners")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
+type AccessLogCustomizedHeadersConfig struct {
+	Enable         bool     `json:"enable"`
+	IncludeHeaders []string `json:"include_headers"`
+	ExcludeHeaders []string `json:"exclude_headers"`
 }

@@ -88,7 +88,7 @@ func TestIpGroupsLifecycle(t *testing.T) {
 			IpGroupID: ipGroup.ID,
 			Enable:    pointerto.Bool(true),
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, *listener.IpGroup.Enable, true)
 
@@ -98,7 +98,7 @@ func TestIpGroupsLifecycle(t *testing.T) {
 			IpGroupId: ipGroup.ID,
 			Enable:    pointerto.Bool(false),
 		},
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, *listenerUpdated.IpGroup.Enable, false)
 

@@ -184,11 +184,11 @@ func createListener(t *testing.T, client *golangsdk.ServiceClient, loadbalancerI
 		LoadbalancerID: loadbalancerID,
 		Protocol:       listeners.ProtocolHTTP,
 		ProtocolPort:   80,
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	return listener.ID
 }
 
 func deleteListener(t *testing.T, client *golangsdk.ServiceClient, listenerID string) {
-	th.AssertNoErr(t, listeners.Delete(client, listenerID).ExtractErr())
+	th.AssertNoErr(t, listeners.Delete(client, listenerID))
 }

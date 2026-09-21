@@ -3,10 +3,13 @@ package v3
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/tags"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/listeners"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/pools"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
@@ -38,10 +41,10 @@ func TestListenerLifecycle(t *testing.T) {
 		},
 	}
 
-	listener, err := listeners.Create(client, createOpts).Extract()
+	listener, err := listeners.Create(client, createOpts)
 	defer func() {
 		t.Logf("Attempting to delete ELBv3 Listener: %s", listener.ID)
-		err := listeners.Delete(client, listener.ID).ExtractErr()
+		err := listeners.Delete(client, listener.ID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Listener: %s", listener.ID)
 	}()
@@ -58,21 +61,76 @@ func TestListenerLifecycle(t *testing.T) {
 		Name:         &listenerName,
 		SniMatchAlgo: "longest_suffix",
 	}
-	_, err = listeners.Update(client, listener.ID, updateOpts).Extract()
+	_, err = listeners.Update(client, listener.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Listener: %s", listener.ID)
 
-	newListener, err := listeners.Get(client, listener.ID).Extract()
+	newListener, err := listeners.Get(client, listener.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, listenerName, newListener.Name)
 	th.AssertEquals(t, emptyDescription, newListener.Description)
 	th.AssertEquals(t, "longest_suffix", newListener.SniMatchAlgo)
 
 	listOpts := listeners.ListOpts{LoadBalancerID: []string{loadbalancerID}}
-	pages, err := listeners.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-	listenerSlice, err := listeners.ExtractListeners(pages)
+	listenerSlice, err := listeners.List(client, listOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 1, len(listenerSlice))
 	th.AssertDeepEquals(t, *newListener, listenerSlice[0])
+}
+
+func TestListenerForceDelete(t *testing.T) {
+	t.Skip("Backend servers groups cannot be deleted, API broken")
+	client, err := clients.NewElbV3Client()
+	th.AssertNoErr(t, err)
+
+	loadbalancerID := createLoadBalancer(t, client)
+	defer deleteLoadbalancer(t, client, loadbalancerID)
+
+	listenerID := createListener(t, client, loadbalancerID)
+	listenerGone := false
+	poolGone := false
+	poolID := ""
+	defer func() {
+		if !poolGone && poolID != "" {
+			deletePool(t, client, poolID)
+		}
+		if !listenerGone {
+			deleteListener(t, client, listenerID)
+		}
+	}()
+
+	pool, err := pools.Create(client, pools.CreateOpts{
+		LBMethod:                 "LEAST_CONNECTIONS",
+		Protocol:                 "HTTP",
+		ListenerID:               listenerID,
+		Name:                     tools.RandomString("force-delete-pool-", 3),
+		VpcId:                    clients.EnvOS.GetEnv("VPC_ID"),
+		Type:                     "instance",
+		DeletionProtectionEnable: pointerto.Bool(false),
+	}).Extract()
+	th.AssertNoErr(t, err)
+	poolID = pool.ID
+
+	err = listeners.ForceDelete(client, listenerID)
+	th.AssertNoErr(t, err)
+
+	err = golangsdk.WaitFor(600, func() (bool, error) {
+		_, err := listeners.Get(client, listenerID)
+		if _, ok := err.(golangsdk.ErrDefault404); ok {
+			return true, nil
+		}
+		return false, err
+	})
+	th.AssertNoErr(t, err)
+	listenerGone = true
+
+	err = golangsdk.WaitFor(600, func() (bool, error) {
+		_, err := pools.Get(client, poolID).Extract()
+		if _, ok := err.(golangsdk.ErrDefault404); ok {
+			return true, nil
+		}
+		return false, err
+	})
+	th.AssertNoErr(t, err)
+	poolGone = true
 }

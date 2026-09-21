@@ -86,7 +86,7 @@ func TestPolicyWorkflowFixedResponse(t *testing.T) {
 		Protocol:        listeners.ProtocolHTTP,
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	defer deleteListener(t, client, listener.ID)
 
@@ -162,7 +162,7 @@ func TestPolicyWorkflowUlrRedirect(t *testing.T) {
 		Protocol:        listeners.ProtocolHTTP,
 		ProtocolPort:    80,
 		EnhanceL7policy: pointerto.Bool(true),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	defer deleteListener(t, client, listener.ID)
 
