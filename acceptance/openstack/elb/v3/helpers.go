@@ -159,7 +159,7 @@ func createPool(t *testing.T, client *golangsdk.ServiceClient, loadbalancerID st
 		DeletionProtectionEnable: pointerto.Bool(true),
 	}
 
-	pool, err := pools.Create(client, createOpts).Extract()
+	pool, err := pools.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, createOpts.Name, pool.Name)
 	th.AssertEquals(t, createOpts.Description, pool.Description)

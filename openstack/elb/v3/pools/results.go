@@ -18,12 +18,6 @@ func (r commonResult) Extract() (*Pool, error) {
 	return s, nil
 }
 
-// CreateResult represents the result of a Create operation. Call its Extract
-// method to interpret the result as a Pool.
-type CreateResult struct {
-	commonResult
-}
-
 // GetResult represents the result of a Get operation. Call its Extract
 // method to interpret the result as a Pool.
 type GetResult struct {

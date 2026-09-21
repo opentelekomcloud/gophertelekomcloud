@@ -107,7 +107,7 @@ func TestListenerForceDelete(t *testing.T) {
 		VpcId:                    clients.EnvOS.GetEnv("VPC_ID"),
 		Type:                     "instance",
 		DeletionProtectionEnable: pointerto.Bool(false),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	poolID = pool.ID
 
