@@ -14,7 +14,7 @@ func TestUpdate(t *testing.T) {
 	defer th.TeardownHTTP()
 	th.Mux.HandleFunc("/pools/pool-id", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, http.MethodPut)
-		th.TestJSONRequest(t, r, `{"pool":{"name":"","description":"","lb_algorithm":"ROUND_ROBIN","session_persistence":{"type":"SOURCE_IP","persistence_timeout":5},"admin_state_up":true,"slow_start":{"enable":false,"duration":0},"member_deletion_protection_enable":false,"vpc_id":"vpc-id","type":"instance"}}`)
+		th.TestJSONRequest(t, r, `{"pool":{"name":"","description":"","lb_algorithm":"ROUND_ROBIN","session_persistence":{"type":"SOURCE_IP","persistence_timeout":5},"admin_state_up":true,"slow_start":{"enable":false,"duration":0},"member_deletion_protection_enable":false,"vpc_id":"vpc-id","type":"instance","protection_status":"NON_PROTECTED","protection_reason":"released"}}`)
 		_, _ = w.Write([]byte(`{"pool":` + poolJSON + `}`))
 	})
 	empty := ""
@@ -23,6 +23,7 @@ func TestUpdate(t *testing.T) {
 		Persistence:  &pools.SessionPersistence{Type: "SOURCE_IP", PersistenceTimeout: 5},
 		AdminStateUp: pointerto.Bool(true), SlowStart: &pools.SlowStart{},
 		DeletionProtectionEnable: pointerto.Bool(false), VpcId: "vpc-id", Type: "instance",
+		ProtectionStatus: "NON_PROTECTED", ProtectionReason: "released",
 	})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "pool-id", actual.ID)

@@ -20,6 +20,8 @@ type CreateOpts struct {
 	DeletionProtectionEnable *bool               `json:"member_deletion_protection_enable,omitempty"`
 	VpcId                    string              `json:"vpc_id,omitempty"`
 	Type                     string              `json:"type,omitempty"`
+	ProtectionStatus         string              `json:"protection_status,omitempty"`
+	ProtectionReason         string              `json:"protection_reason,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*Pool, error) {

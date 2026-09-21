@@ -16,6 +16,8 @@ type UpdateOpts struct {
 	DeletionProtectionEnable *bool               `json:"member_deletion_protection_enable,omitempty"`
 	VpcId                    string              `json:"vpc_id,omitempty"`
 	Type                     string              `json:"type,omitempty"`
+	ProtectionStatus         string              `json:"protection_status,omitempty"`
+	ProtectionReason         string              `json:"protection_reason,omitempty"`
 }
 
 func Update(client *golangsdk.ServiceClient, id string, opts UpdateOpts) (*Pool, error) {
