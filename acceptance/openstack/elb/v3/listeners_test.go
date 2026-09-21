@@ -3,6 +3,7 @@ package v3
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
@@ -112,12 +113,23 @@ func TestListenerForceDelete(t *testing.T) {
 	err = listeners.ForceDelete(client, listenerID)
 	th.AssertNoErr(t, err)
 
-	if _, err = listeners.Get(client, listenerID); err == nil {
-		t.Fatal("expected force-deleted listener to be absent")
-	}
+	err = golangsdk.WaitFor(600, func() (bool, error) {
+		_, err := listeners.Get(client, listenerID)
+		if _, ok := err.(golangsdk.ErrDefault404); ok {
+			return true, nil
+		}
+		return false, err
+	})
+	th.AssertNoErr(t, err)
 	listenerGone = true
-	if _, err = pools.Get(client, poolID).Extract(); err == nil {
-		t.Fatal("expected associated pool to be deleted")
-	}
+
+	err = golangsdk.WaitFor(600, func() (bool, error) {
+		_, err := pools.Get(client, poolID).Extract()
+		if _, ok := err.(golangsdk.ErrDefault404); ok {
+			return true, nil
+		}
+		return false, err
+	})
+	th.AssertNoErr(t, err)
 	poolGone = true
 }
