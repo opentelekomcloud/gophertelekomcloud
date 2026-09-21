@@ -46,7 +46,7 @@ func TestPoolLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Pool: %s", poolID)
 
-	newPool, err := pools.Get(client, poolID).Extract()
+	newPool, err := pools.Get(client, poolID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, *updateOpts.Name, newPool.Name)
 	th.AssertEquals(t, emptyDescription, newPool.Description)
