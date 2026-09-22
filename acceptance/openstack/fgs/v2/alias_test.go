@@ -6,7 +6,6 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
-	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/alias"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/fgs/v2/function"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
@@ -44,7 +43,9 @@ func TestFunctionGraphListAliases(t *testing.T) {
 		FuncUrn: publishOptsResp.FuncURN,
 	})
 	th.AssertNoErr(t, err)
-	tools.PrintResource(t, listVersion)
+	th.AssertNotEquals(t, 0, listVersion.Count)
+	// TO DEBUG
+	// tools.PrintResource(t, listVersion)
 
 	createAliasResp, err := alias.CreateAlias(client, createAliasOpts)
 	th.AssertNoErr(t, err)
