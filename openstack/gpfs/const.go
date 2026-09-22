@@ -14,8 +14,8 @@ const (
 	HEADER_ACCESSS_KEY_AMZ = "AWSAccessKeyId"
 	PREFIX_META            = "meta-"
 
-	HEADER_AZ_REDUNDANCY = "x-obs-az-redundancy"
-	HEADER_BUCKET_TYPE   = "x-obs-bucket-type"
+	HEADER_AZ_REDUNDANCY = "az-redundancy"
+	HEADER_BUCKET_TYPE   = "bucket-type"
 
 	HEADER_CONTENT_SHA256_AMZ = "x-amz-content-sha256"
 	HEADER_REQUEST_ID         = "request-id"

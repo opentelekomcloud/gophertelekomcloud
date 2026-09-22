@@ -208,6 +208,24 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 		}
 
 		req.Header[HEADER_USER_AGENT_CAMEL] = []string{USER_AGENT}
+		// FOR DEBUGGING
+		// fmt.Printf("GPFS-DEBUG >>> METHOD=%s URL=%s\n", method, requestUrl)
+		// fmt.Printf("GPFS-DEBUG >>> HOST=%s\n", req.Host)
+		// for hk, hv := range req.Header {
+		// 	fmt.Printf("GPFS-DEBUG >>> HEADER %s=%v\n", hk, hv)
+		// }
+		// if _data != nil {
+		// 	var dbg []byte
+		// 	switch r := _data.(type) {
+		// 	case *strings.Reader:
+		// 		dbg, _ = io.ReadAll(r)
+		// 		_, _ = r.Seek(0, 0)
+		// 	case *bytes.Reader:
+		// 		dbg, _ = io.ReadAll(r)
+		// 		_, _ = r.Seek(0, 0)
+		// 	}
+		// 	fmt.Printf("GPFS-DEBUG >>> BODY=%s\n", string(dbg))
+		// }
 
 		start := GetCurrentTimestamp()
 		resp, err = obsClient.httpClient.Do(req)
@@ -228,6 +246,12 @@ func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params m
 			if resp.StatusCode < 300 {
 				break
 			} else if !repeatable || (resp.StatusCode >= 400 && resp.StatusCode < 500) || resp.StatusCode == 304 {
+				// FOR DEBUGGING
+				// if resp.Body != nil {
+				// 	rawBody, _ := io.ReadAll(resp.Body)
+				// 	resp.Body = io.NopCloser(bytes.NewReader(rawBody))
+				// 	fmt.Printf("GPFS-DEBUG <<< STATUS=%d BODY=%s\n", resp.StatusCode, string(rawBody))
+				// }
 				respError = ParseResponseToObsError(resp, obsClient.conf.signature == SignatureObs)
 				resp = nil
 				break
