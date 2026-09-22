@@ -68,7 +68,7 @@ func TestMemberLifecycle(t *testing.T) {
 	updateOptsPool := pools.UpdateOpts{
 		DeletionProtectionEnable: pointerto.Bool(false),
 	}
-	_, err = pools.Update(client, poolID, updateOptsPool).Extract()
+	_, err = pools.Update(client, poolID, updateOptsPool)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Pool: %s", poolID)
 }

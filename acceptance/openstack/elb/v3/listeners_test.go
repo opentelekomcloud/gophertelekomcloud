@@ -107,7 +107,7 @@ func TestListenerForceDelete(t *testing.T) {
 		VpcId:                    clients.EnvOS.GetEnv("VPC_ID"),
 		Type:                     "instance",
 		DeletionProtectionEnable: pointerto.Bool(false),
-	}).Extract()
+	})
 	th.AssertNoErr(t, err)
 	poolID = pool.ID
 
@@ -125,7 +125,7 @@ func TestListenerForceDelete(t *testing.T) {
 	listenerGone = true
 
 	err = golangsdk.WaitFor(600, func() (bool, error) {
-		_, err := pools.Get(client, poolID).Extract()
+		_, err := pools.Get(client, poolID)
 		if _, ok := err.(golangsdk.ErrDefault404); ok {
 			return true, nil
 		}
