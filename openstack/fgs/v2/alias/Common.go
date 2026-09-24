@@ -1,15 +1,15 @@
 package alias
 
 type VectorStrategy struct {
-	CombineType string                `json:"combine_type"`
-	Rules       *VersionStrategyRules `json:"rules"`
+	CombineType string                 `json:"combine_type,omitempty"`
+	Rules       []VersionStrategyRules `json:"rules,omitempty"`
 }
 
 type VersionStrategyRules struct {
-	RuleType string `json:"rule_type"`
-	Param    string `json:"param"`
-	Op       string `json:"op"`
-	Value    string `json:"value"`
+	RuleType string `json:"rule_type,omitempty"`
+	Param    string `json:"param,omitempty"`
+	Op       string `json:"op,omitempty"`
+	Value    string `json:"value,omitempty"`
 }
 
 // ####### RESPONSE STRUCTURES ########
