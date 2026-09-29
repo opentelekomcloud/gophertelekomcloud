@@ -183,34 +183,6 @@ func createRocketMQGroup(t *testing.T, client *golangsdk.ServiceClient, instance
 	return group.Name
 }
 
-// createRocketMQTopic creates a topic directly through the API, as the SDK has
-// no RocketMQ topic management yet.
-// Send POST to /v2/{project_id}/instances/{instance_id}/topics
-func createRocketMQTopic(t *testing.T, client *golangsdk.ServiceClient, instanceID string) string {
-	name := tools.RandomString("topic-acc-", 8)
-	t.Logf("Attempting to create RocketMQ topic: %s", name)
-
-	_, err := client.Post(client.ServiceURL("instances", instanceID, "topics"), map[string]interface{}{
-		"name":         name,
-		"queue_num":    3,
-		"message_type": "NORMAL",
-	}, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	th.AssertNoErr(t, err)
-
-	t.Cleanup(func() {
-		_, err := client.Delete(client.ServiceURL("instances", instanceID, "topics", name), &golangsdk.RequestOpts{
-			OkCodes: []int{204},
-		})
-		if err != nil {
-			t.Errorf("failed to delete RocketMQ topic %s: %s", name, err)
-		}
-	})
-
-	return name
-}
-
 // hasErrorCode reports whether err is a 400 response with the given DMS error
 // code. RocketMQ answers with 400 rather than 404 for a missing consumer group.
 func hasErrorCode(err error, code string) bool {
