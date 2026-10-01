@@ -38,17 +38,35 @@ func TestMigrate(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
-	th.Mux.HandleFunc("/enterprise-projects/source-project/resources-migrate", func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/enterprise-projects/target-enterprise-project/resources-migrate", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, http.MethodPost)
-		th.TestJSONRequest(t, r, `{"project_id":"target-project","resources":[{"resource_id":"res-1","resource_type":"ecs"}]}`)
+		th.TestJSONRequest(t, r, `{"project_id":"regional-project","resource_id":"res-1","resource_type":"ecs"}`)
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	err := resources.Migrate(client.ServiceClient(), "source-project", resources.MigrateOpts{
-		ProjectID: "target-project",
-		Resources: []resources.MigrateResource{
-			{ResourceID: "res-1", ResourceType: "ecs"},
-		},
+	err := resources.Migrate(client.ServiceClient(), "target-enterprise-project", resources.MigrateOpts{
+		ProjectID:    "regional-project",
+		ResourceID:   "res-1",
+		ResourceType: "ecs",
+	})
+	th.AssertNoErr(t, err)
+}
+
+func TestMigrateBucket(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/enterprise-projects/0/resources-migrate", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, http.MethodPost)
+		th.TestJSONRequest(t, r, `{"project_id":"regional-project","resource_id":"example-bucket","resource_type":"bucket","region_id":"eu-de"}`)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	err := resources.Migrate(client.ServiceClient(), "0", resources.MigrateOpts{
+		ProjectID:    "regional-project",
+		ResourceID:   "example-bucket",
+		ResourceType: "bucket",
+		RegionID:     "eu-de",
 	})
 	th.AssertNoErr(t, err)
 }
