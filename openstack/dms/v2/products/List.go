@@ -12,6 +12,10 @@ type ListOpts struct {
 	Engine string `json:"-"`
 	// The product ID.
 	ProductId string `q:"product_id"`
+	// Number of records to query.
+	Limit int `q:"limit,omitempty"`
+	// Offset where the query starts. Must be greater than or equal to 0.
+	Offset int `q:"offset,omitempty"`
 }
 
 // Get products
@@ -38,6 +42,12 @@ func List(client *golangsdk.ServiceClient, opts ListOpts) (*GetResp, error) {
 }
 
 type GetResp struct {
+	// Total number of products.
+	Total int `json:"total"`
+	// Offset of the next page.
+	NextOffset int `json:"next_offset"`
+	// Offset of the previous page.
+	PreviousOffset int `json:"previous_offset"`
 	// Message engine of DMS.
 	Engine string `json:"engine"`
 	// Supported versions.
@@ -121,4 +131,25 @@ type EngineProperties struct {
 	MaxTPSPerBroker string `json:"max_tps_per_broker"`
 	// Alias of product_id.
 	ProductAlias string `json:"product_alias"`
+
+	// RocketMQ only properties.
+
+	// Maximum number of topics.
+	MaxTopic string `json:"max_topic"`
+	// Broker quantity.
+	BrokerNum string `json:"broker_num"`
+	// Number of billing cores of an entire instance.
+	Core string `json:"core"`
+	// Maximum number of consumers in an instance.
+	MaxConsumer string `json:"max_consumer"`
+	// Traffic unit, rcu x max_tps_per_rcu = maximum flavor TPS.
+	RCU string `json:"rcu"`
+	// Maximum storage space, in GB.
+	MaxStorage string `json:"max_storage"`
+	// Minimum storage space, in GB.
+	MinStorage string `json:"min_storage"`
+	// Maximum TPS of each RCU.
+	MaxTPSPerRCU string `json:"max_tps_per_rcu"`
+	// Maximum number of topics that can be created on each broker.
+	MaxTopicPerBroker string `json:"max_topic_per_broker"`
 }
