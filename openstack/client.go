@@ -970,6 +970,16 @@ func NewCCE(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golan
 	return sc, err
 }
 
+// NewCCEv2 creates a ServiceClient that may be used to access the CCE v2 service.
+func NewCCEv2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "ccev2.0")
+	if err != nil {
+		return nil, err
+	}
+	sc.ResourceBase = sc.Endpoint + "api/v2/"
+	return sc, err
+}
+
 // NewWAFV1 creates a ServiceClient that may be used to access the WAF service.
 func NewWAFV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "waf")
