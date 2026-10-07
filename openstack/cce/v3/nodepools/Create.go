@@ -38,6 +38,8 @@ type CreateSpec struct {
 	Autoscaling AutoscalingSpec `json:"autoscaling,omitempty"`
 	// Node management parameters
 	NodeManagement NodeManagementSpec `json:"nodeManagement,omitempty"`
+	// Extended scaling groups with node flavors or AZs that differ from the default node template.
+	ExtensionScaleGroups []ExtensionScaleGroup `json:"extensionScaleGroups,omitempty"`
 	// Custom security group settings for a node pool
 	CustomSecurityGroupIds []string `json:"customSecurityGroups,omitempty"`
 }
