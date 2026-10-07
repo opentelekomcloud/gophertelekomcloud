@@ -46,10 +46,14 @@ func (obsClient ObsClient) doActionWithoutFS(action, method string, input ISeria
 }
 
 func (obsClient ObsClient) doActionWithFS(action, method, bucketName string, input ISerializable, output IBaseModel) error {
+	return obsClient.doActionWithFSResult(action, method, bucketName, input, output, true)
+}
+
+func (obsClient ObsClient) doActionWithFSResult(action, method, bucketName string, input ISerializable, output IBaseModel, xmlResult bool) error {
 	if strings.TrimSpace(bucketName) == "" && !obsClient.conf.cname {
 		return errors.New("Bucket is empty")
 	}
-	return obsClient.doAction(action, method, bucketName, "", input, output, true, true)
+	return obsClient.doAction(action, method, bucketName, "", input, output, xmlResult, true)
 }
 
 func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string, input ISerializable, output IBaseModel, xmlResult bool, repeatable bool) error {

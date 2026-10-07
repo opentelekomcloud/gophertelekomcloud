@@ -108,6 +108,8 @@ const (
 	HTTP_DELETE  = "DELETE"
 	HTTP_HEAD    = "HEAD"
 	HTTP_OPTIONS = "OPTIONS"
+
+	subResourceSFSACL = "sfsacl"
 )
 
 type SignatureType string
@@ -150,6 +152,7 @@ var (
 
 	allowedResourceParameterNames = map[string]bool{
 		"acl":                          true,
+		subResourceSFSACL:              true,
 		"backtosource":                 true,
 		"policy":                       true,
 		"torrent":                      true,
@@ -208,4 +211,22 @@ const (
 	StorageClassStandard StorageClassType = "STANDARD"
 	StorageClassWarm     StorageClassType = "WARM"
 	StorageClassCold     StorageClassType = "COLD"
+)
+
+// AccessRuleAction defines the access granted to a VPC by a file system access rule.
+type AccessRuleAction string
+
+const (
+	// AccessRuleActionFullControl grants read and write access.
+	AccessRuleActionFullControl AccessRuleAction = "FullControl"
+	// AccessRuleActionRead grants read-only access.
+	AccessRuleActionRead AccessRuleAction = "Read"
+)
+
+// AccessRuleEffect defines whether a file system access rule grants access.
+type AccessRuleEffect string
+
+const (
+	// AccessRuleEffectAllow grants the access specified by the rule action.
+	AccessRuleEffectAllow AccessRuleEffect = "Allow"
 )

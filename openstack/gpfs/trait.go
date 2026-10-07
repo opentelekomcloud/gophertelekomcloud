@@ -2,6 +2,7 @@ package gpfs
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -54,6 +55,10 @@ func (input DefaultSerializable) trans(_ bool) (map[string]string, map[string][]
 
 var defaultSerializable = &DefaultSerializable{}
 
+func newSubResourceSerial(subResource string) *DefaultSerializable {
+	return &DefaultSerializable{params: map[string]string{subResource: ""}}
+}
+
 func (baseModel *BaseModel) setStatusCode(statusCode int) {
 	baseModel.StatusCode = statusCode
 }
@@ -101,6 +106,13 @@ func (input CreateFSInput) trans(isObs bool) (params map[string]string, headers 
 
 		data = strings.Join(xml, "")
 	}
+	return
+}
+
+func (input CreateFSAccessRulesInput) trans(_ bool) (params map[string]string, headers map[string][]string, data interface{}, err error) {
+	params = map[string]string{subResourceSFSACL: ""}
+	headers = map[string][]string{HEADER_CONTENT_TYPE: {"application/json"}}
+	data, err = json.Marshal(input)
 	return
 }
 

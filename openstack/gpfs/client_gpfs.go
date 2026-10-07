@@ -45,3 +45,39 @@ func (obsClient ObsClient) DeleteFS(fsName string) (output *BaseModel, err error
 	}
 	return
 }
+
+// CreateFSAccessRules configures access rules for a general-purpose file system.
+//
+// Each rule grants a VPC read/write or read-only access. Configuring rules replaces
+// the current file system access-rule configuration.
+func (obsClient ObsClient) CreateFSAccessRules(input *CreateFSAccessRulesInput) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("CreateFSAccessRulesInput is nil")
+	}
+	output = &BaseModel{}
+	err = obsClient.doActionWithFSResult("CreateFSAccessRules", HTTP_PUT, input.FSName, input, output, false)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// GetFSAccessRules queries the access rules configured for a general-purpose file system.
+func (obsClient ObsClient) GetFSAccessRules(fsName string) (output *GetFSAccessRulesOutput, err error) {
+	output = &GetFSAccessRulesOutput{Statement: []AccessRule{}}
+	err = obsClient.doActionWithFSResult("GetFSAccessRules", HTTP_GET, fsName, newSubResourceSerial(subResourceSFSACL), output, false)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+// DeleteFSAccessRules deletes all access rules configured for a general-purpose file system.
+func (obsClient ObsClient) DeleteFSAccessRules(fsName string) (output *BaseModel, err error) {
+	output = &BaseModel{}
+	err = obsClient.doActionWithFSResult("DeleteFSAccessRules", HTTP_DELETE, fsName, newSubResourceSerial(subResourceSFSACL), output, false)
+	if err != nil {
+		output = nil
+	}
+	return
+}
