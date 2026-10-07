@@ -102,6 +102,17 @@ func TestNodePoolLifecycle(t *testing.T) {
 				},
 			},
 			InitialNodeCount: 1,
+			ExtensionScaleGroups: []nodepools.ExtensionScaleGroup{
+				{
+					Metadata: &nodepools.ExtensionScaleGroupMetadata{
+						Name: "nodepool-test-extension",
+					},
+					Spec: &nodepools.ExtensionScaleGroupSpec{
+						Flavor: "s2.xlarge.2",
+						Az:     "eu-de-02",
+					},
+				},
+			},
 		},
 	}
 
@@ -134,19 +145,36 @@ func TestNodePoolLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 55, pool.Spec.NodeTemplate.ExtendParam.MaxPods)
 	th.AssertEquals(t, postInstallEncoded, pool.Spec.NodeTemplate.ExtendParam.PostInstall)
+	extensionScaleGroup := assertExtensionScaleGroup(t, pool.Spec.ExtensionScaleGroups)
+	if extensionScaleGroup.Metadata.Uid == "" {
+		t.Fatal("missing extension scale group UID")
+	}
 	// Not supported params by now
 	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoPay)
 	// th.AssertEquals(t, "false", pool.Spec.NodeTemplate.ExtendParam.IsAutoRenew)
 
 	updatedPostInstallScript := `#!/bin/bash echo "Updated postinstall"`
 	updatedPostInstallEncoded := base64.StdEncoding.EncodeToString([]byte(updatedPostInstallScript))
+	updatedExtensionScaleGroups := []nodepools.ExtensionScaleGroup{
+		{
+			Metadata: &nodepools.ExtensionScaleGroupMetadata{
+				Uid:  extensionScaleGroup.Metadata.Uid,
+				Name: extensionScaleGroup.Metadata.Name,
+			},
+			Spec: &nodepools.ExtensionScaleGroupSpec{
+				Flavor: extensionScaleGroup.Spec.Flavor,
+				Az:     extensionScaleGroup.Spec.Az,
+			},
+		},
+	}
 
 	updateOpts := nodepools.UpdateOpts{
 		Metadata: nodepools.UpdateMetaData{
 			Name: "nodepool-test-updated",
 		},
 		Spec: nodepools.UpdateSpec{
-			InitialNodeCount: 1,
+			InitialNodeCount:     1,
+			ExtensionScaleGroups: &updatedExtensionScaleGroups,
 		},
 	}
 
@@ -157,10 +185,14 @@ func TestNodePoolLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, "nodepool-test-updated", updatedPool.Metadata.Name)
 	th.AssertEquals(t, updatedPostInstallEncoded, updatedPool.Spec.NodeTemplate.ExtendParam.PostInstall)
+	updatedExtensionScaleGroup := assertExtensionScaleGroup(t, updatedPool.Spec.ExtensionScaleGroups)
+	th.AssertEquals(t, extensionScaleGroup.Metadata.Uid, updatedExtensionScaleGroup.Metadata.Uid)
 
 	getUpdatedPool, err := nodepools.Get(client, clusterId, nodeId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updatedPostInstallEncoded, getUpdatedPool.Spec.NodeTemplate.ExtendParam.PostInstall)
+	getUpdatedExtensionScaleGroup := assertExtensionScaleGroup(t, getUpdatedPool.Spec.ExtensionScaleGroups)
+	th.AssertEquals(t, extensionScaleGroup.Metadata.Uid, getUpdatedExtensionScaleGroup.Metadata.Uid)
 
 	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
 		n, err := nodepools.Get(client, clusterId, nodeId)
@@ -187,4 +219,24 @@ func TestNodePoolLifecycle(t *testing.T) {
 		return false, nil
 	})
 	th.AssertNoErr(t, err)
+}
+
+func assertExtensionScaleGroup(t *testing.T, extensionScaleGroups []nodepools.ExtensionScaleGroup) nodepools.ExtensionScaleGroup {
+	t.Helper()
+
+	if len(extensionScaleGroups) != 1 {
+		t.Fatalf("expected one extension scale group, got %d", len(extensionScaleGroups))
+	}
+	extensionScaleGroup := extensionScaleGroups[0]
+	if extensionScaleGroup.Metadata == nil {
+		t.Fatal("missing extension scale group metadata")
+	}
+	if extensionScaleGroup.Spec == nil {
+		t.Fatal("missing extension scale group specification")
+	}
+	th.AssertEquals(t, "nodepool-test-extension", extensionScaleGroup.Metadata.Name)
+	th.AssertEquals(t, "s2.xlarge.2", extensionScaleGroup.Spec.Flavor)
+	th.AssertEquals(t, "eu-de-02", extensionScaleGroup.Spec.Az)
+
+	return extensionScaleGroup
 }

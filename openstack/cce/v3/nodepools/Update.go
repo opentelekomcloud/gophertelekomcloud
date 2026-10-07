@@ -29,6 +29,9 @@ type UpdateSpec struct {
 	InitialNodeCount int `json:"initialNodeCount" required:"true"`
 	// Auto scaling parameters
 	Autoscaling UpdateAutoscalingSpec `json:"autoscaling,omitempty"`
+	// Extended scaling groups. A nil value keeps the current configuration; an
+	// explicitly provided empty slice removes all extended scaling groups.
+	ExtensionScaleGroups *[]ExtensionScaleGroup `json:"extensionScaleGroups,omitempty"`
 }
 
 type UpdateAutoscalingSpec struct {
