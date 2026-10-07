@@ -1,46 +1,35 @@
 package gpfs
 
-import (
-	"fmt"
-	"net/http"
-	"strings"
-)
+import "net/http"
 
-// ObsClient defines OBS client.
-type ObsClient struct {
+// Client is a client for the SFS Turbo general-purpose file system API.
+type Client struct {
 	conf       *config
 	httpClient *http.Client
 }
 
-// New creates a new ObsClient instance.
-func New(ak, sk, endpoint string, configurers ...Configurer) (*ObsClient, error) {
-	conf := &config{securityProvider: &securityProvider{ak: ak, sk: sk}, endpoint: endpoint}
-	conf.maxRetryCount = -1
-	conf.maxRedirectCount = -1
-	for _, configurer := range configurers {
-		configurer(conf)
+// New creates a GPFS client. The endpoint is expected to be the SFS3 endpoint.
+func New(ak, sk, endpoint string, configurers ...Configurer) (*Client, error) {
+	conf := &config{
+		securityProvider: &securityProvider{ak: ak, sk: sk},
+		sslVerify:        true,
+		maxRetryCount:    -1,
+		maxRedirectCount: -1,
 	}
-
-	if err := conf.initConfigWithDefault(); err != nil {
+	for _, configure := range configurers {
+		configure(conf)
+	}
+	if err := conf.initialize(endpoint); err != nil {
 		return nil, err
 	}
-	err := conf.getTransport()
-	if err != nil {
+	if err := conf.getTransport(); err != nil {
 		return nil, err
 	}
-
-	if isWarnLogEnabled() {
-		info := make([]string, 3)
-		info[0] = fmt.Sprintf("[OBS SDK Version=%s", obs_sdk_version)
-		info[1] = fmt.Sprintf("Endpoint=%s", conf.endpoint)
-		accessMode := "Virtual Hosting"
-		if conf.pathStyle {
-			accessMode = "Path"
-		}
-		info[2] = fmt.Sprintf("Access Mode=%s]", accessMode)
-		doLog(LEVEL_WARN, strings.Join(info, "];["))
-	}
-	doLog(LEVEL_DEBUG, "Create obsclient with config:\n%s\n", conf)
-	obsClient := &ObsClient{conf: conf, httpClient: &http.Client{Transport: conf.transport, CheckRedirect: checkRedirectFunc}}
-	return obsClient, nil
+	return &Client{
+		conf: conf,
+		httpClient: &http.Client{
+			Transport:     conf.transport,
+			CheckRedirect: checkRedirectFunc,
+		},
+	}, nil
 }

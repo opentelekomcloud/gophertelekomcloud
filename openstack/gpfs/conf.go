@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -21,36 +20,17 @@ type securityProvider struct {
 	securityToken string
 }
 
-func (s *securityProvider) String() string {
-	return "securityProvider{ak: [REDACTED], sk: [REDACTED], securityToken: [REDACTED]}"
-}
-
-type urlHolder struct {
-	scheme string
-	host   string
-	port   int
-}
-
-func (u *urlHolder) String() string {
-	return fmt.Sprintf("urlHolder{scheme: %s, host: %s, port: %d}", u.scheme, u.host, u.port)
-}
-
 type config struct {
 	securityProvider *securityProvider
-	urlHolder        *urlHolder
-	pathStyle        bool
-	cname            bool
+	endpoint         *url.URL
 	sslVerify        bool
-	endpoint         string
-	signature        SignatureType
-	region           string
 	connectTimeout   int
 	socketTimeout    int
 	headerTimeout    int
 	idleConnTimeout  int
 	finalTimeout     int
 	maxRetryCount    int
-	proxyUrl         string
+	proxyURL         string
 	maxConnsPerHost  int
 	pemCerts         []byte
 	transport        *http.Transport
@@ -59,406 +39,203 @@ type config struct {
 }
 
 func (conf config) String() string {
-	return fmt.Sprintf("[endpoint:%s, signature:%s, pathStyle:%v, region:%s"+
-		"\nconnectTimeout:%d, socketTimeout:%dheaderTimeout:%d, idleConnTimeout:%d"+
-		"\nmaxRetryCount:%d, maxConnsPerHost:%d, sslVerify:%v, proxyUrl:%s, maxRedirectCount:%d]",
-		conf.endpoint, conf.signature, conf.pathStyle, conf.region,
-		conf.connectTimeout, conf.socketTimeout, conf.headerTimeout, conf.idleConnTimeout,
-		conf.maxRetryCount, conf.maxConnsPerHost, conf.sslVerify, conf.proxyUrl, conf.maxRedirectCount,
+	endpoint := ""
+	if conf.endpoint != nil {
+		endpoint = conf.endpoint.String()
+	}
+	return fmt.Sprintf("[endpoint:%s, connectTimeout:%d, socketTimeout:%d, headerTimeout:%d, "+
+		"idleConnTimeout:%d, maxRetryCount:%d, maxConnsPerHost:%d, sslVerify:%v, "+
+		"proxyConfigured:%t, maxRedirectCount:%d]",
+		endpoint, conf.connectTimeout, conf.socketTimeout, conf.headerTimeout,
+		conf.idleConnTimeout, conf.maxRetryCount, conf.maxConnsPerHost, conf.sslVerify,
+		conf.proxyURL != "", conf.maxRedirectCount,
 	)
 }
 
+// Configurer configures a Client.
 type Configurer func(conf *config)
 
-// WithSslVerify is a wrapper for WithSslVerifyAndPemCerts.
-func WithSslVerify(sslVerify bool) Configurer {
-	return WithSslVerifyAndPemCerts(sslVerify, nil)
+// WithSslVerify controls TLS certificate verification.
+func WithSslVerify(value bool) Configurer { return WithSslVerifyAndPemCerts(value, nil) }
+
+// WithSslVerifyAndPemCerts controls TLS verification and supplies additional root certificates.
+func WithSslVerifyAndPemCerts(value bool, certs []byte) Configurer {
+	return func(conf *config) { conf.sslVerify, conf.pemCerts = value, certs }
 }
 
-// WithSslVerifyAndPemCerts is a configurer for ObsClient to set conf.sslVerify and conf.pemCerts.
-func WithSslVerifyAndPemCerts(sslVerify bool, pemCerts []byte) Configurer {
-	return func(conf *config) {
-		conf.sslVerify = sslVerify
-		conf.pemCerts = pemCerts
-	}
+// WithHeaderTimeout sets the response-header timeout in seconds.
+func WithHeaderTimeout(value int) Configurer {
+	return func(conf *config) { conf.headerTimeout = value }
 }
 
-// WithHeaderTimeout is a configurer for ObsClient to set the timeout period of obtaining the response headers.
-func WithHeaderTimeout(headerTimeout int) Configurer {
-	return func(conf *config) {
-		conf.headerTimeout = headerTimeout
-	}
+// WithProxyUrl sets the HTTP proxy URL.
+func WithProxyUrl(value string) Configurer { return func(conf *config) { conf.proxyURL = value } }
+
+// WithMaxConnections sets the maximum number of idle connections per host.
+func WithMaxConnections(value int) Configurer {
+	return func(conf *config) { conf.maxConnsPerHost = value }
 }
 
-// WithProxyUrl is a configurer for ObsClient to set HTTP proxy.
-func WithProxyUrl(proxyUrl string) Configurer {
-	return func(conf *config) {
-		conf.proxyUrl = proxyUrl
-	}
+// WithConnectTimeout sets the connection timeout in seconds.
+func WithConnectTimeout(value int) Configurer {
+	return func(conf *config) { conf.connectTimeout = value }
 }
 
-// WithMaxConnections is a configurer for ObsClient to set the maximum number of idle HTTP connections.
-func WithMaxConnections(maxConnsPerHost int) Configurer {
-	return func(conf *config) {
-		conf.maxConnsPerHost = maxConnsPerHost
-	}
+// WithSocketTimeout sets the socket timeout in seconds.
+func WithSocketTimeout(value int) Configurer {
+	return func(conf *config) { conf.socketTimeout = value }
 }
 
-// WithPathStyle is a configurer for ObsClient.
-func WithPathStyle(pathStyle bool) Configurer {
-	return func(conf *config) {
-		conf.pathStyle = pathStyle
-	}
+// WithIdleConnTimeout sets the idle-connection timeout in seconds.
+func WithIdleConnTimeout(value int) Configurer {
+	return func(conf *config) { conf.idleConnTimeout = value }
 }
 
-// WithSignature is a configurer for ObsClient.
-func WithSignature(signature SignatureType) Configurer {
-	return func(conf *config) {
-		conf.signature = signature
-	}
+// WithMaxRetryCount sets the maximum number of retries for transient failures.
+func WithMaxRetryCount(value int) Configurer {
+	return func(conf *config) { conf.maxRetryCount = value }
 }
 
-// WithRegion is a configurer for ObsClient.
-func WithRegion(region string) Configurer {
-	return func(conf *config) {
-		conf.region = region
-	}
+// WithSecurityToken sets the token used with temporary access keys.
+func WithSecurityToken(value string) Configurer {
+	return func(conf *config) { conf.securityProvider.securityToken = value }
 }
 
-// WithConnectTimeout is a configurer for ObsClient to set timeout period for establishing
-// a http/https connection, in seconds.
-func WithConnectTimeout(connectTimeout int) Configurer {
-	return func(conf *config) {
-		conf.connectTimeout = connectTimeout
-	}
+// WithHttpTransport sets a custom HTTP transport.
+func WithHttpTransport(value *http.Transport) Configurer {
+	return func(conf *config) { conf.transport = value }
 }
 
-// WithSocketTimeout is a configurer for ObsClient to set the timeout duration for transmitting data at
-// the socket layer, in seconds.
-func WithSocketTimeout(socketTimeout int) Configurer {
-	return func(conf *config) {
-		conf.socketTimeout = socketTimeout
-	}
+// WithRequestContext sets the context used for requests.
+func WithRequestContext(value context.Context) Configurer {
+	return func(conf *config) { conf.ctx = value }
 }
 
-// WithIdleConnTimeout is a configurer for ObsClient to set the timeout period of an idle HTTP connection
-// in the connection pool, in seconds.
-func WithIdleConnTimeout(idleConnTimeout int) Configurer {
-	return func(conf *config) {
-		conf.idleConnTimeout = idleConnTimeout
-	}
+// WithMaxRedirectCount sets the maximum number of redirects.
+func WithMaxRedirectCount(value int) Configurer {
+	return func(conf *config) { conf.maxRedirectCount = value }
 }
 
-// WithMaxRetryCount is a configurer for ObsClient to set the maximum number of retries when an HTTP/HTTPS connection is abnormal.
-func WithMaxRetryCount(maxRetryCount int) Configurer {
-	return func(conf *config) {
-		conf.maxRetryCount = maxRetryCount
-	}
-}
-
-// WithSecurityToken is a configurer for ObsClient to set the security token in the temporary access keys.
-func WithSecurityToken(securityToken string) Configurer {
-	return func(conf *config) {
-		conf.securityProvider.securityToken = securityToken
-	}
-}
-
-// WithHttpTransport is a configurer for ObsClient to set the customized http Transport.
-func WithHttpTransport(transport *http.Transport) Configurer {
-	return func(conf *config) {
-		conf.transport = transport
-	}
-}
-
-// WithRequestContext is a configurer for ObsClient to set the context for each HTTP request.
-func WithRequestContext(ctx context.Context) Configurer {
-	return func(conf *config) {
-		conf.ctx = ctx
-	}
-}
-
-// WithCustomDomainName is a configurer for ObsClient.
-func WithCustomDomainName(cname bool) Configurer {
-	return func(conf *config) {
-		conf.cname = cname
-	}
-}
-
-// WithMaxRedirectCount is a configurer for ObsClient to set the maximum number of times that the request is redirected.
-func WithMaxRedirectCount(maxRedirectCount int) Configurer {
-	return func(conf *config) {
-		conf.maxRedirectCount = maxRedirectCount
-	}
-}
-
-func (conf *config) prepareConfig() {
+func (conf *config) prepareDefaults() {
 	if conf.connectTimeout <= 0 {
-		conf.connectTimeout = DEFAULT_CONNECT_TIMEOUT
+		conf.connectTimeout = defaultConnectTimeout
 	}
-
 	if conf.socketTimeout <= 0 {
-		conf.socketTimeout = DEFAULT_SOCKET_TIMEOUT
+		conf.socketTimeout = defaultSocketTimeout
 	}
-
 	conf.finalTimeout = conf.socketTimeout * 10
-
 	if conf.headerTimeout <= 0 {
-		conf.headerTimeout = DEFAULT_HEADER_TIMEOUT
+		conf.headerTimeout = defaultHeaderTimeout
 	}
-
 	if conf.idleConnTimeout < 0 {
-		conf.idleConnTimeout = DEFAULT_IDLE_CONN_TIMEOUT
+		conf.idleConnTimeout = defaultIdleConnTimeout
 	}
-
 	if conf.maxRetryCount < 0 {
-		conf.maxRetryCount = DEFAULT_MAX_RETRY_COUNT
+		conf.maxRetryCount = defaultMaxRetryCount
 	}
-
 	if conf.maxConnsPerHost <= 0 {
-		conf.maxConnsPerHost = DEFAULT_MAX_CONN_PER_HOST
+		conf.maxConnsPerHost = defaultMaxConnsPerHost
 	}
-
 	if conf.maxRedirectCount < 0 {
-		conf.maxRedirectCount = DEFAULT_MAX_REDIRECT_COUNT
-	}
-
-	if conf.pathStyle && conf.signature == SignatureObs {
-		conf.signature = SignatureV2
+		conf.maxRedirectCount = defaultMaxRedirectCount
 	}
 }
 
-func (conf *config) initConfigWithDefault() error {
+func (conf *config) initialize(endpoint string) error {
 	conf.securityProvider.ak = strings.TrimSpace(conf.securityProvider.ak)
 	conf.securityProvider.sk = strings.TrimSpace(conf.securityProvider.sk)
 	conf.securityProvider.securityToken = strings.TrimSpace(conf.securityProvider.securityToken)
-	conf.endpoint = strings.TrimSpace(conf.endpoint)
-	if conf.endpoint == "" {
+	endpoint = strings.TrimSpace(endpoint)
+	if endpoint == "" {
 		return errors.New("endpoint is not set")
 	}
-
-	if index := strings.Index(conf.endpoint, "?"); index > 0 {
-		conf.endpoint = conf.endpoint[:index]
+	if !strings.Contains(endpoint, "://") {
+		endpoint = "https://" + endpoint
 	}
-
-	for strings.LastIndex(conf.endpoint, "/") == len(conf.endpoint)-1 {
-		conf.endpoint = conf.endpoint[:len(conf.endpoint)-1]
+	parsed, err := url.Parse(endpoint)
+	if err != nil {
+		return errors.New("invalid endpoint")
 	}
-
-	if conf.signature == "" {
-		conf.signature = DEFAULT_SIGNATURE
+	if parsed.Hostname() == "" {
+		return errors.New("endpoint host is not set")
 	}
-
-	urlHolder := &urlHolder{}
-	var address string
-	if strings.HasPrefix(conf.endpoint, "https://") {
-		urlHolder.scheme = "https"
-		address = conf.endpoint[len("https://"):]
-	} else if strings.HasPrefix(conf.endpoint, "http://") {
-		urlHolder.scheme = "http"
-		address = conf.endpoint[len("http://"):]
-	} else {
-		urlHolder.scheme = "https"
-		address = conf.endpoint
+	if parsed.User != nil {
+		return errors.New("endpoint must not contain user information")
 	}
-
-	addr := strings.Split(address, ":")
-	if len(addr) == 2 {
-		if port, err := strconv.Atoi(addr[1]); err == nil {
-			urlHolder.port = port
-		}
-	}
-	urlHolder.host = addr[0]
-	if urlHolder.port == 0 {
-		if urlHolder.scheme == "https" {
-			urlHolder.port = 443
-		} else {
-			urlHolder.port = 80
-		}
-	}
-
-	if IsIP(urlHolder.host) {
-		conf.pathStyle = true
-	}
-
-	conf.urlHolder = urlHolder
-
-	conf.region = strings.TrimSpace(conf.region)
-	if conf.region == "" {
-		conf.region = DEFAULT_REGION
-	}
-
-	conf.prepareConfig()
-	conf.proxyUrl = strings.TrimSpace(conf.proxyUrl)
+	parsed.Path, parsed.RawPath, parsed.RawQuery, parsed.Fragment = "", "", "", ""
+	conf.endpoint = parsed
+	conf.proxyURL = strings.TrimSpace(conf.proxyURL)
+	conf.prepareDefaults()
 	return nil
 }
 
 func (conf *config) getTransport() error {
-	if conf.transport == nil {
-		conf.transport = &http.Transport{
-			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
-				conn, err := net.DialTimeout(network, addr, time.Second*time.Duration(conf.connectTimeout))
-				if err != nil {
-					return nil, err
-				}
-				return getConnDelegate(conn, conf.socketTimeout, conf.finalTimeout), nil
-			},
-			MaxIdleConns:          conf.maxConnsPerHost,
-			MaxIdleConnsPerHost:   conf.maxConnsPerHost,
-			ResponseHeaderTimeout: time.Second * time.Duration(conf.headerTimeout),
-			IdleConnTimeout:       time.Second * time.Duration(conf.idleConnTimeout),
-		}
-
-		if conf.proxyUrl != "" {
-			proxyUrl, err := url.Parse(conf.proxyUrl)
-			if err != nil {
-				return err
-			}
-			conf.transport.Proxy = http.ProxyURL(proxyUrl)
-		}
-
-		tlsConfig := &tls.Config{InsecureSkipVerify: !conf.sslVerify}
-		if conf.sslVerify && conf.pemCerts != nil {
-			pool := x509.NewCertPool()
-			pool.AppendCertsFromPEM(conf.pemCerts)
-			tlsConfig.RootCAs = pool
-		}
-
-		conf.transport.TLSClientConfig = tlsConfig
+	if conf.transport != nil {
+		return nil
 	}
-
+	conf.transport = &http.Transport{
+		DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
+			conn, err := (&net.Dialer{Timeout: time.Duration(conf.connectTimeout) * time.Second}).DialContext(ctx, network, address)
+			if err != nil {
+				return nil, err
+			}
+			return getConnDelegate(conn, conf.socketTimeout, conf.finalTimeout), nil
+		},
+		MaxIdleConns: conf.maxConnsPerHost, MaxIdleConnsPerHost: conf.maxConnsPerHost,
+		ResponseHeaderTimeout: time.Duration(conf.headerTimeout) * time.Second,
+		IdleConnTimeout:       time.Duration(conf.idleConnTimeout) * time.Second,
+	}
+	if conf.proxyURL != "" {
+		proxy, err := url.Parse(conf.proxyURL)
+		if err != nil {
+			return errors.New("invalid proxy URL")
+		}
+		conf.transport.Proxy = http.ProxyURL(proxy)
+	}
+	tlsConfig := &tls.Config{InsecureSkipVerify: !conf.sslVerify} // #nosec G402 -- explicitly configurable for private endpoints.
+	if conf.sslVerify && len(conf.pemCerts) > 0 {
+		pool, err := x509.SystemCertPool()
+		if err != nil {
+			pool = x509.NewCertPool()
+		}
+		if !pool.AppendCertsFromPEM(conf.pemCerts) {
+			return errors.New("failed to parse PEM certificates")
+		}
+		tlsConfig.RootCAs = pool
+	}
+	conf.transport.TLSClientConfig = tlsConfig
 	return nil
 }
 
-func checkRedirectFunc(_ *http.Request, _ []*http.Request) error {
-	return http.ErrUseLastResponse
-}
+func checkRedirectFunc(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse }
 
-func DummyQueryEscape(s string) string {
-	return s
-}
-
-func (conf *config) prepareBaseURL(bucketName string) (requestURL string, canonicalizedURL string) {
-	urlHolder := conf.urlHolder
-	if conf.cname {
-		requestURL = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
-		if conf.signature == "v4" {
-			canonicalizedURL = "/"
-		} else {
-			canonicalizedURL = "/" + urlHolder.host + "/"
+func (conf *config) formatURLs(fsName string, params map[string]string) (string, string) {
+	requestURL := *conf.endpoint
+	canonicalURL := "/"
+	if fsName != "" {
+		host := fsName + "." + conf.endpoint.Hostname()
+		if port := conf.endpoint.Port(); port != "" {
+			host = net.JoinHostPort(host, port)
 		}
-	} else {
-		if bucketName == "" {
-			requestURL = fmt.Sprintf("%s://%s:%d", urlHolder.scheme, urlHolder.host, urlHolder.port)
-			canonicalizedURL = "/"
-		} else {
-			if conf.pathStyle {
-				requestURL = fmt.Sprintf("%s://%s:%d/%s", urlHolder.scheme, urlHolder.host, urlHolder.port, bucketName)
-				canonicalizedURL = "/" + bucketName
-			} else {
-				requestURL = fmt.Sprintf("%s://%s.%s:%d", urlHolder.scheme, bucketName, urlHolder.host, urlHolder.port)
-				if conf.signature == "v2" || conf.signature == "OBS" {
-					canonicalizedURL = "/" + bucketName + "/"
-				} else {
-					canonicalizedURL = "/"
-				}
-			}
-		}
+		requestURL.Host, requestURL.Path = host, "/"
+		canonicalURL = "/" + fsName + "/"
 	}
-	return
-}
-
-func (conf *config) prepareObjectKey(escape bool, objectKey string, escapeFunc func(s string) string) (encodeObjectKey string) {
-	if escape {
-		tempKey := []rune(objectKey)
-		result := make([]string, 0, len(tempKey))
-		for _, value := range tempKey {
-			if string(value) == "/" {
-				result = append(result, string(value))
-			} else {
-				if string(value) == " " {
-					result = append(result, url.PathEscape(string(value)))
-				} else {
-					result = append(result, url.QueryEscape(string(value)))
-				}
-			}
-		}
-		encodeObjectKey = strings.Join(result, "")
-	} else {
-		encodeObjectKey = escapeFunc(objectKey)
-	}
-	return
-}
-
-func (conf *config) prepareEscapeFunc(escape bool) (escapeFunc func(s string) string) {
-	if escape {
-		return url.QueryEscape
-	}
-	return DummyQueryEscape
-}
-
-func (conf *config) formatUrls(bucketName, objectKey string, params map[string]string, escape bool) (requestUrl string, canonicalizedUrl string) {
-	requestUrl, canonicalizedUrl = conf.prepareBaseURL(bucketName)
-
-	if objectKey != "" {
-		encodeObjectKey := conf.prepareObjectKey(escape, objectKey, conf.prepareEscapeFunc(escape))
-		requestUrl += "/" + encodeObjectKey
-		if !strings.HasSuffix(canonicalizedUrl, "/") {
-			canonicalizedUrl += "/"
-		}
-		canonicalizedUrl += encodeObjectKey
-	}
-
 	keys := make([]string, 0, len(params))
 	for key := range params {
 		keys = append(keys, strings.TrimSpace(key))
 	}
 	sort.Strings(keys)
-	i := 0
-
-	for index, key := range keys {
-		if index == 0 {
-			requestUrl += "?"
-		} else {
-			requestUrl += "&"
+	query := make([]string, 0, len(keys))
+	for _, key := range keys {
+		part := url.QueryEscape(key)
+		if value := params[key]; value != "" {
+			part += "=" + url.QueryEscape(value)
 		}
-		_key := url.QueryEscape(key)
-		requestUrl += _key
-
-		_value := params[key]
-		if conf.signature == "v4" {
-			requestUrl += "=" + url.QueryEscape(_value)
-		} else {
-			if _value != "" {
-				requestUrl += "=" + url.QueryEscape(_value)
-				_value = "=" + _value
-			} else {
-				_value = ""
-			}
-			lowerKey := strings.ToLower(key)
-			_, ok := allowedResourceParameterNames[lowerKey]
-			prefixHeader := HEADER_PREFIX
-			isObs := conf.signature == SignatureObs
-			if isObs {
-				prefixHeader = HEADER_PREFIX_OBS
-			}
-			ok = ok || strings.HasPrefix(lowerKey, prefixHeader)
-			if ok {
-				if i == 0 {
-					canonicalizedUrl += "?"
-				} else {
-					canonicalizedUrl += "&"
-				}
-				canonicalizedUrl += getQueryUrl(_key, _value)
-				i++
-			}
-		}
+		query = append(query, part)
 	}
-	return
-}
-
-func getQueryUrl(key, value string) string {
-	queryUrl := ""
-	queryUrl += key
-	queryUrl += value
-	return queryUrl
+	requestURL.RawQuery = strings.Join(query, "&")
+	if len(query) > 0 {
+		canonicalURL += "?" + strings.Join(query, "&")
+	}
+	return requestURL.String(), canonicalURL
 }

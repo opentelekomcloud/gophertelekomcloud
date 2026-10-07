@@ -597,14 +597,14 @@ func NewOBSClient() (*obs.ObsClient, error) {
 	)
 }
 
-func NewGPFSClient() (*gpfs.ObsClient, error) {
+func NewGPFSClient() (*gpfs.Client, error) {
 	cc, err := CloudAndClient()
 	if err != nil {
 		return nil, err
 	}
 
 	if err := setupTemporaryAKSK(cc); err != nil {
-		return nil, fmt.Errorf("failed to construct OBS client without AK/SK: %s", err)
+		return nil, fmt.Errorf("failed to construct GPFS client without AK/SK: %w", err)
 	}
 
 	client, err := openstack.NewSFSV3(cc.ProviderClient, golangsdk.EndpointOpts{
@@ -616,7 +616,7 @@ func NewGPFSClient() (*gpfs.ObsClient, error) {
 	opts := cc.AKSKAuthOptions
 	return gpfs.New(
 		opts.AccessKey, opts.SecretKey, client.Endpoint,
-		gpfs.WithSecurityToken(opts.SecurityToken), gpfs.WithSignature(gpfs.SignatureObs),
+		gpfs.WithSecurityToken(opts.SecurityToken),
 	)
 }
 
