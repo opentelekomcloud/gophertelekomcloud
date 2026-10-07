@@ -31,7 +31,7 @@ func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params m
 	}
 
 	isV4 := obsClient.conf.signature == SignatureV4
-	prepareHostAndDate(headers, hostName, isV4)
+	prepareHostAndDate(headers, hostName, isV4, isObs)
 
 	if isAkSkEmpty {
 		doLog(LEVEL_WARN, "No ak/sk provided, skip to construct authorization")
@@ -56,8 +56,17 @@ func (obsClient ObsClient) doAuth(method, bucketName, objectKey string, params m
 	return
 }
 
-func prepareHostAndDate(headers map[string][]string, hostName string, isV4 bool) {
+func prepareHostAndDate(headers map[string][]string, hostName string, isV4, isObs bool) {
 	headers[HEADER_HOST_CAMEL] = []string{hostName}
+	if isObs {
+		for header := range headers {
+			if strings.EqualFold(header, HEADER_DATE_OBS) {
+				return
+			}
+		}
+		headers[HEADER_DATE_OBS] = []string{FormatUtcToRfc1123(time.Now().UTC())}
+		return
+	}
 	if date, ok := headers[HEADER_DATE_AMZ]; ok {
 		flag := false
 		if len(date) == 1 {
