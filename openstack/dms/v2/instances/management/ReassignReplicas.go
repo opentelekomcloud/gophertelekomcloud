@@ -12,14 +12,14 @@ type ReassignReplicasOpts struct {
 
 type Partition struct {
 	// Partition ID.
-	PartitionID int `json:"partition,omitempty"`
+	PartitionID *int `json:"partition,omitempty"`
 	// ID of the broker where the replica is expected to reside. The first integer in the array represents the leader replica broker ID. All partitions must have the same number of replicas. The number of replicas cannot be larger than the number of brokers.
 	Replicas []int `json:"replicas,omitempty"`
 }
 
 // ReassignReplicas is used to reassign replicas of a topic for a Kafka instance.
 // Send POST /v2/{project_id}/instances/{instance_id}/management/topics/{topic}/replicas-reassignment
-func ReassignReplicas(client *golangsdk.ServiceClient, instanceId, topic string, opts ResetMessageOffsetOpts) error {
+func ReassignReplicas(client *golangsdk.ServiceClient, instanceId, topic string, opts ReassignReplicasOpts) error {
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
