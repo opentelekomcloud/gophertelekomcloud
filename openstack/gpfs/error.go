@@ -5,7 +5,8 @@ import (
 	"fmt"
 )
 
-type ObsError struct {
+// Error represents an error returned by the GPFS service.
+type Error struct {
 	BaseModel
 	Status   string
 	XMLName  xml.Name `xml:"Error"`
@@ -15,7 +16,7 @@ type ObsError struct {
 	HostId   string   `xml:"HostId"`
 }
 
-func (err ObsError) Error() string {
-	return fmt.Sprintf("obs: service returned error: Status=%s, Code=%s, Message=%s, RequestId=%s",
+func (err Error) Error() string {
+	return fmt.Sprintf("gpfs: service returned error: Status=%s, Code=%s, Message=%s, RequestId=%s",
 		err.Status, err.Code, err.Message, err.RequestId)
 }

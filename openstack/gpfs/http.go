@@ -4,401 +4,170 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"math/rand"
 	"net"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 )
 
-func prepareHeaders(headers map[string][]string, meta bool, isObs bool) map[string][]string {
-	_headers := make(map[string][]string, len(headers))
+func (client Client) doActionWithoutFS(method string, input serializable, output responseModel) error {
+	return client.doAction(method, "", input, output, true)
+}
 
-	for key, value := range headers {
-		key = strings.TrimSpace(key)
-		if key == "" {
-			continue
-		}
-		_key := strings.ToLower(key)
-		if _, ok := allowedRequestHttpHeaderMetadataNames[_key]; !ok && !strings.HasPrefix(key, HEADER_PREFIX) && !strings.HasPrefix(key, HEADER_PREFIX_OBS) {
-			if !meta {
-				continue
-			}
-			if !isObs {
-				_key = HEADER_PREFIX_META + _key
-			} else {
-				_key = HEADER_PREFIX_META_OBS + _key
-			}
-		} else {
-			_key = key
-		}
-		_headers[_key] = value
+func (client Client) doActionWithFS(method, fsName string, input serializable, output responseModel) error {
+	return client.doActionWithFSResult(method, fsName, input, output, true)
+}
+
+func (client Client) doActionWithFSResult(method, fsName string, input serializable, output responseModel, xmlResult bool) error {
+	if strings.TrimSpace(fsName) == "" {
+		return errors.New("file system name is empty")
 	}
-
-	return _headers
+	return client.doAction(method, fsName, input, output, xmlResult)
 }
 
-func (obsClient ObsClient) doActionWithoutFS(action, method string, input ISerializable, output IBaseModel) error {
-	return obsClient.doAction(action, method, "", "", input, output, true, true)
-}
-
-func (obsClient ObsClient) doActionWithFS(action, method, bucketName string, input ISerializable, output IBaseModel) error {
-	if strings.TrimSpace(bucketName) == "" && !obsClient.conf.cname {
-		return errors.New("Bucket is empty")
-	}
-	return obsClient.doAction(action, method, bucketName, "", input, output, true, true)
-}
-
-func (obsClient ObsClient) doAction(action, method, bucketName, objectKey string, input ISerializable, output IBaseModel, xmlResult bool, repeatable bool) error {
-	var resp *http.Response
-	var respError error
-	doLog(LEVEL_INFO, "Enter method %s...", action)
-	start := GetCurrentTimestamp()
-
-	params, headers, data, err := input.trans(obsClient.conf.signature == SignatureObs)
+func (client Client) doAction(method, fsName string, input serializable, output responseModel, xmlResult bool) error {
+	params, headers, body, err := input.serialize()
 	if err != nil {
 		return err
 	}
 	if params == nil {
 		params = make(map[string]string)
 	}
-
 	if headers == nil {
 		headers = make(map[string][]string)
 	}
+	resp, err := client.doHTTP(method, strings.TrimSpace(fsName), params, headers, body)
+	if err != nil {
+		return err
+	}
+	if output == nil {
+		_ = resp.Body.Close()
+		return nil
+	}
+	return parseResponse(resp, output, xmlResult)
+}
 
-	switch method {
-	case HTTP_GET:
-		resp, respError = obsClient.doHttpGet(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_POST:
-		resp, respError = obsClient.doHttpPost(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_PUT:
-		resp, respError = obsClient.doHttpPut(bucketName, objectKey, params, headers, data, repeatable)
-	case HTTP_DELETE:
-		resp, respError = obsClient.doHttpDelete(bucketName, objectKey, params, headers, data, repeatable)
+func requestBody(data interface{}) ([]byte, error) {
+	switch value := data.(type) {
+	case nil:
+		return nil, nil
+	case string:
+		return []byte(value), nil
+	case []byte:
+		return value, nil
 	default:
-		respError = errors.New("unexpected http method error")
+		return nil, fmt.Errorf("unsupported request body type %T", data)
 	}
-	if respError == nil && output != nil {
-		respError = ParseResponseToBaseModel(resp, output, xmlResult, obsClient.conf.signature == SignatureObs)
-		if respError != nil {
-			doLog(LEVEL_WARN, "Parse response to BaseModel with error: %v", respError)
-		}
-	} else {
-		doLog(LEVEL_WARN, "Do http request with error: %v", respError)
-	}
+}
 
-	if isDebugLogEnabled() {
-		doLog(LEVEL_DEBUG, "End method %s, obsclient cost %d ms", action, GetCurrentTimestamp()-start)
+func (client Client) doHTTP(method, fsName string, params map[string]string, headers map[string][]string, data interface{}) (*http.Response, error) {
+	body, err := requestBody(data)
+	if err != nil {
+		return nil, err
+	}
+	if body != nil {
+		headers[headerContentLength] = []string{fmt.Sprintf("%d", len(body))}
 	}
 
-	return respError
-}
-
-func (obsClient ObsClient) doHttpGet(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_GET, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
-}
-
-func (obsClient ObsClient) doHttpDelete(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_DELETE, bucketName, objectKey, params, prepareHeaders(headers, false, obsClient.conf.signature == SignatureObs), data, repeatable)
-}
-
-func (obsClient ObsClient) doHttpPut(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_PUT, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
-}
-
-func (obsClient ObsClient) doHttpPost(bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (*http.Response, error) {
-	return obsClient.doHttp(HTTP_POST, bucketName, objectKey, params, prepareHeaders(headers, true, obsClient.conf.signature == SignatureObs), data, repeatable)
-}
-
-func (obsClient ObsClient) doHttp(method, bucketName, objectKey string, params map[string]string,
-	headers map[string][]string, data interface{}, repeatable bool) (resp *http.Response, respError error) {
-
-	bucketName = strings.TrimSpace(bucketName)
-
-	method = strings.ToUpper(method)
-
-	var redirectUrl string
-	var requestUrl string
-	maxRetryCount := obsClient.conf.maxRetryCount
-	maxRedirectCount := obsClient.conf.maxRedirectCount
-
-	var _data io.Reader
-	if data != nil {
-		if dataStr, ok := data.(string); ok {
-			doLog(LEVEL_DEBUG, "Do http request with string: %s", dataStr)
-			headers["Content-Length"] = []string{IntToString(len(dataStr))}
-			_data = strings.NewReader(dataStr)
-		} else if dataByte, ok := data.([]byte); ok {
-			doLog(LEVEL_DEBUG, "Do http request with byte array")
-			headers["Content-Length"] = []string{IntToString(len(dataByte))}
-			_data = bytes.NewReader(dataByte)
-		} else if dataReader, ok := data.(io.Reader); ok {
-			_data = dataReader
-		} else {
-			doLog(LEVEL_WARN, "Data is not a valid io.Reader")
-			return nil, errors.New("data is not a valid io.Reader")
-		}
-	}
-
-	redirectFlag := false
-	for i, redirectCount := 0, 0; i <= maxRetryCount; i++ {
-		if redirectUrl != "" {
-			if !redirectFlag {
-				parsedRedirectUrl, err := url.Parse(redirectUrl)
-				if err != nil {
-					return nil, err
-				}
-				requestUrl, _ = obsClient.doAuth(method, bucketName, objectKey, params, headers, parsedRedirectUrl.Host)
-				if parsedRequestUrl, err := url.Parse(requestUrl); err != nil {
-					return nil, err
-				} else if parsedRequestUrl.RawQuery != "" && parsedRedirectUrl.RawQuery == "" {
-					redirectUrl += "?" + parsedRequestUrl.RawQuery
-				}
-			}
-			requestUrl = redirectUrl
-		} else {
-			var err error
-			requestUrl, err = obsClient.doAuth(method, bucketName, objectKey, params, headers, "")
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		req, err := http.NewRequest(method, requestUrl, _data)
+	var redirectURL string
+	redirectCount := 0
+	maxAttempts := client.conf.maxRetryCount + 1
+	var lastErr error
+	for attempt := 0; attempt < maxAttempts; attempt++ {
+		requestURL, err := client.authorize(method, fsName, params, headers, redirectHost(redirectURL))
 		if err != nil {
-			return nil, fmt.Errorf("failed to build a request: %s", err)
+			return nil, err
 		}
-		if obsClient.conf.ctx != nil {
-			req = req.WithContext(obsClient.conf.ctx)
-		}
-		doLog(LEVEL_DEBUG, "Do request with url [%s] and method [%s]", requestUrl, method)
-
-		if isDebugLogEnabled() {
-			auth := headers[HEADER_AUTH_CAMEL]
-			delete(headers, HEADER_AUTH_CAMEL)
-			doLog(LEVEL_DEBUG, "Request headers: %v", headers)
-			headers[HEADER_AUTH_CAMEL] = auth
+		if redirectURL != "" {
+			requestURL = redirectURL
 		}
 
-		if req == nil {
-			return nil, fmt.Errorf("error building a requiest, `req` is nil")
-		}
-
-		if req.Header == nil {
-			req.Header = make(http.Header)
-		}
-		for key, value := range headers {
-			if key == HEADER_HOST_CAMEL {
-				req.Host = value[0]
-				delete(headers, key)
-			} else if key == HEADER_CONTENT_LENGTH_CAMEL {
-				req.ContentLength = StringToInt64(value[0], -1)
-				delete(headers, key)
-			} else {
-				req.Header[key] = value
-			}
-		}
-
-		req.Header[HEADER_USER_AGENT_CAMEL] = []string{USER_AGENT}
-		// FOR DEBUGGING
-		// fmt.Printf("GPFS-DEBUG >>> METHOD=%s URL=%s\n", method, requestUrl)
-		// fmt.Printf("GPFS-DEBUG >>> HOST=%s\n", req.Host)
-		// for hk, hv := range req.Header {
-		// 	fmt.Printf("GPFS-DEBUG >>> HEADER %s=%v\n", hk, hv)
-		// }
-		// if _data != nil {
-		// 	var dbg []byte
-		// 	switch r := _data.(type) {
-		// 	case *strings.Reader:
-		// 		dbg, _ = io.ReadAll(r)
-		// 		_, _ = r.Seek(0, 0)
-		// 	case *bytes.Reader:
-		// 		dbg, _ = io.ReadAll(r)
-		// 		_, _ = r.Seek(0, 0)
-		// 	}
-		// 	fmt.Printf("GPFS-DEBUG >>> BODY=%s\n", string(dbg))
-		// }
-
-		start := GetCurrentTimestamp()
-		resp, err = obsClient.httpClient.Do(req)
-		if isInfoLogEnabled() {
-			doLog(LEVEL_INFO, "Do http request cost %d ms", GetCurrentTimestamp()-start)
-		}
-
-		var msg interface{}
+		req, err := http.NewRequest(method, requestURL, bytes.NewReader(body))
 		if err != nil {
-			msg = err
-			respError = err
-			resp = nil
-			if !repeatable {
-				break
-			}
-		} else {
-			doLog(LEVEL_DEBUG, "Response headers: %v", resp.Header)
-			if resp.StatusCode < 300 {
-				break
-			} else if !repeatable || (resp.StatusCode >= 400 && resp.StatusCode < 500) || resp.StatusCode == 304 {
-				// FOR DEBUGGING
-				// if resp.Body != nil {
-				// 	rawBody, _ := io.ReadAll(resp.Body)
-				// 	resp.Body = io.NopCloser(bytes.NewReader(rawBody))
-				// 	fmt.Printf("GPFS-DEBUG <<< STATUS=%d BODY=%s\n", resp.StatusCode, string(rawBody))
-				// }
-				respError = ParseResponseToObsError(resp, obsClient.conf.signature == SignatureObs)
-				resp = nil
-				break
-			} else if resp.StatusCode >= 300 && resp.StatusCode < 400 {
-				if location := resp.Header.Get(HEADER_LOCATION_CAMEL); location != "" && redirectCount < maxRedirectCount {
-					redirectUrl = location
-					doLog(LEVEL_WARN, "Redirect request to %s", redirectUrl)
-					msg = resp.Status
-					maxRetryCount++
-					redirectCount++
-					if resp.StatusCode == 302 && method == HTTP_GET {
-						redirectFlag = true
-					} else {
-						redirectFlag = false
-					}
-				} else {
-					respError = ParseResponseToObsError(resp, obsClient.conf.signature == SignatureObs)
-					resp = nil
-					break
+			return nil, fmt.Errorf("failed to build GPFS request: %w", err)
+		}
+		if client.conf.ctx != nil {
+			req = req.WithContext(client.conf.ctx)
+		}
+		for key, values := range headers {
+			switch {
+			case strings.EqualFold(key, headerHost):
+				if len(values) > 0 {
+					req.Host = values[0]
 				}
-			} else {
-				msg = resp.Status
+			case strings.EqualFold(key, headerContentLength):
+				req.ContentLength = int64(len(body))
+			default:
+				req.Header[key] = append([]string(nil), values...)
 			}
 		}
-		if i != maxRetryCount {
-			if resp != nil {
-				_err := resp.Body.Close()
-				if _err != nil {
-					doLog(LEVEL_WARN, "Failed to close resp body with reason: %v", _err)
-				}
-				resp = nil
+		req.Header.Set(headerUserAgent, userAgent)
+		resp, err := client.httpClient.Do(req)
+		if err != nil {
+			lastErr = err
+		} else if resp.StatusCode < http.StatusMultipleChoices {
+			return resp, nil
+		} else if resp.StatusCode >= http.StatusBadRequest && resp.StatusCode < http.StatusInternalServerError {
+			return nil, parseServiceError(resp)
+		} else if resp.StatusCode >= http.StatusMultipleChoices && resp.StatusCode < http.StatusBadRequest {
+			location := resp.Header.Get(headerLocation)
+			if location == "" || redirectCount >= client.conf.maxRedirectCount {
+				return nil, parseServiceError(resp)
 			}
-			delete(headers, HEADER_AUTH_CAMEL)
-			doLog(LEVEL_WARN, "Failed to send request with reason:%v, will try again", msg)
-			if r, ok := _data.(*strings.Reader); ok {
-				_, err := r.Seek(0, 0)
-				if err != nil {
-					return nil, err
-				}
-			} else if r, ok := _data.(*bytes.Reader); ok {
-				_, err := r.Seek(0, 0)
-				if err != nil {
-					return nil, err
-				}
-			} else if r, ok := _data.(*fileReaderWrapper); ok {
-				fd, err := os.Open(r.filePath)
-				if err != nil {
-					return nil, err
-				}
-				defer func() { _ = fd.Close() }()
-				fileReaderWrapper := &fileReaderWrapper{filePath: r.filePath}
-				fileReaderWrapper.mark = r.mark
-				fileReaderWrapper.reader = fd
-				fileReaderWrapper.totalCount = r.totalCount
-				_data = fileReaderWrapper
-				_, err = fd.Seek(r.mark, 0)
-				if err != nil {
-					return nil, err
-				}
-			} else if r, ok := _data.(*readerWrapper); ok {
-				_, err := r.seek(0, 0)
-				if err != nil {
-					return nil, err
-				}
-			}
-			time.Sleep(time.Duration(float64(i+2) * rand.Float64() * float64(time.Second)))
+			_ = resp.Body.Close()
+			redirectURL = location
+			redirectCount++
+			maxAttempts++
+			continue
 		} else {
-			doLog(LEVEL_ERROR, "Failed to send request with reason:%v", msg)
-			if resp != nil {
-				respError = ParseResponseToObsError(resp, obsClient.conf.signature == SignatureObs)
-				resp = nil
+			if attempt+1 >= maxAttempts {
+				return nil, parseServiceError(resp)
 			}
+			lastErr = fmt.Errorf("GPFS service returned %s", resp.Status)
+			_ = resp.Body.Close()
+		}
+		if attempt+1 < maxAttempts {
+			time.Sleep(time.Duration(float64(attempt+1) * rand.Float64() * float64(time.Second)))
 		}
 	}
-	return
+	return nil, fmt.Errorf("failed to send GPFS request: %w", lastErr)
+}
+
+func redirectHost(rawURL string) string {
+	if rawURL == "" {
+		return ""
+	}
+	parsed, err := url.Parse(rawURL)
+	if err != nil {
+		return ""
+	}
+	return parsed.Host
 }
 
 type connDelegate struct {
-	conn          net.Conn
+	net.Conn
 	socketTimeout time.Duration
 	finalTimeout  time.Duration
 }
 
-func getConnDelegate(conn net.Conn, socketTimeout int, finalTimeout int) *connDelegate {
-	return &connDelegate{
-		conn:          conn,
-		socketTimeout: time.Second * time.Duration(socketTimeout),
-		finalTimeout:  time.Second * time.Duration(finalTimeout),
-	}
+func getConnDelegate(conn net.Conn, socketTimeout, finalTimeout int) *connDelegate {
+	return &connDelegate{Conn: conn, socketTimeout: time.Duration(socketTimeout) * time.Second, finalTimeout: time.Duration(finalTimeout) * time.Second}
 }
 
-func (delegate *connDelegate) Read(b []byte) (n int, err error) {
-	setReadDeadlineErr := delegate.SetReadDeadline(time.Now().Add(delegate.socketTimeout))
-	flag := isDebugLogEnabled()
-
-	if setReadDeadlineErr != nil && flag {
-		doLog(LEVEL_DEBUG, "Failed to set read deadline with reason: %v, but it's ok", setReadDeadlineErr)
-	}
-
-	n, err = delegate.conn.Read(b)
-	setReadDeadlineErr = delegate.SetReadDeadline(time.Now().Add(delegate.finalTimeout))
-	if setReadDeadlineErr != nil && flag {
-		doLog(LEVEL_DEBUG, "Failed to set read deadline with reason: %v, but it's ok", setReadDeadlineErr)
-	}
+func (delegate *connDelegate) Read(data []byte) (int, error) {
+	_ = delegate.SetReadDeadline(time.Now().Add(delegate.socketTimeout))
+	n, err := delegate.Conn.Read(data)
+	_ = delegate.SetReadDeadline(time.Now().Add(delegate.finalTimeout))
 	return n, err
 }
 
-func (delegate *connDelegate) Write(b []byte) (n int, err error) {
-	setWriteDeadlineErr := delegate.SetWriteDeadline(time.Now().Add(delegate.socketTimeout))
-	flag := isDebugLogEnabled()
-	if setWriteDeadlineErr != nil && flag {
-		doLog(LEVEL_DEBUG, "Failed to set write deadline with reason: %v, but it's ok", setWriteDeadlineErr)
-	}
-
-	n, err = delegate.conn.Write(b)
-	finalTimeout := time.Now().Add(delegate.finalTimeout)
-	setWriteDeadlineErr = delegate.SetWriteDeadline(finalTimeout)
-	if setWriteDeadlineErr != nil && flag {
-		doLog(LEVEL_DEBUG, "Failed to set write deadline with reason: %v, but it's ok", setWriteDeadlineErr)
-	}
-	setReadDeadlineErr := delegate.SetReadDeadline(finalTimeout)
-	if setReadDeadlineErr != nil && flag {
-		doLog(LEVEL_DEBUG, "Failed to set read deadline with reason: %v, but it's ok", setReadDeadlineErr)
-	}
+func (delegate *connDelegate) Write(data []byte) (int, error) {
+	_ = delegate.SetWriteDeadline(time.Now().Add(delegate.socketTimeout))
+	n, err := delegate.Conn.Write(data)
+	deadline := time.Now().Add(delegate.finalTimeout)
+	_ = delegate.SetWriteDeadline(deadline)
+	_ = delegate.SetReadDeadline(deadline)
 	return n, err
-}
-
-func (delegate *connDelegate) Close() error {
-	return delegate.conn.Close()
-}
-
-func (delegate *connDelegate) LocalAddr() net.Addr {
-	return delegate.conn.LocalAddr()
-}
-
-func (delegate *connDelegate) RemoteAddr() net.Addr {
-	return delegate.conn.RemoteAddr()
-}
-
-func (delegate *connDelegate) SetDeadline(t time.Time) error {
-	return delegate.conn.SetDeadline(t)
-}
-
-func (delegate *connDelegate) SetReadDeadline(t time.Time) error {
-	return delegate.conn.SetReadDeadline(t)
-}
-
-func (delegate *connDelegate) SetWriteDeadline(t time.Time) error {
-	return delegate.conn.SetWriteDeadline(t)
 }

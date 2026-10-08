@@ -11,6 +11,11 @@ import (
 )
 
 func TestGPFSFileSystemLifecycle(t *testing.T) {
+	vpcID := clients.EnvOS.GetEnv("VPC_ID")
+	if vpcID == "" {
+		t.Skip("OS_VPC_ID is required for this test")
+	}
+
 	client, err := clients.NewGPFSClient()
 	th.AssertNoErr(t, err)
 
@@ -32,4 +37,47 @@ func TestGPFSFileSystemLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 	th.AssertNotEquals(t, 0, len(fileSystems.Buckets))
+
+	accessRules := []gpfs.AccessRule{
+		{
+			ID:     "gpfs-sdk-test-rule",
+			Action: gpfs.AccessRuleActionFullControl,
+			Effect: gpfs.AccessRuleEffectAllow,
+			Condition: gpfs.AccessRuleCondition{
+				SourceVPC: vpcID,
+			},
+		},
+	}
+	_, err = client.CreateFSAccessRules(&gpfs.CreateFSAccessRulesInput{
+		FSName:    fsName,
+		Statement: accessRules,
+	})
+	th.AssertNoErr(t, err)
+	rulesDeleted := false
+	t.Cleanup(func() {
+		if !rulesDeleted {
+			_, err = client.DeleteFSAccessRules(fsName)
+			th.AssertNoErr(t, err)
+		}
+	})
+
+	err = tools.WaitFor(func() (bool, error) {
+		output, err := client.GetFSAccessRules(fsName)
+		if err != nil {
+			return false, err
+		}
+		for _, rule := range output.Statement {
+			if rule.Condition.SourceVPC == vpcID {
+				th.AssertEquals(t, gpfs.AccessRuleActionFullControl, rule.Action)
+				th.AssertEquals(t, gpfs.AccessRuleEffectAllow, rule.Effect)
+				return true, nil
+			}
+		}
+		return false, nil
+	})
+	th.AssertNoErr(t, err)
+
+	_, err = client.DeleteFSAccessRules(fsName)
+	th.AssertNoErr(t, err)
+	rulesDeleted = true
 }
