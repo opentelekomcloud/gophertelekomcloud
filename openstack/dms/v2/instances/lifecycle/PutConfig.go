@@ -3,6 +3,7 @@ package lifecycle
 import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
+	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
 // UpdateInstanceConfOpts is a struct which represents the parameters of update function
@@ -18,19 +19,24 @@ type KafkaConfig struct {
 	Value string `json:"value"`
 }
 
-// UpdateInstanceConf is  used to modify instance configurations.
-// via accessing to the service with Put method and parameters
-// Send PUT /v2/{project_id}/instances/{instance_id}
-func UpdateInstanceConf(client *golangsdk.ServiceClient, id string, opts UpdateInstanceConfOpts) error {
+// UpdateInstanceConf is used to modify instance configurations.
+// Send PUT /v2/{project_id}/instances/{instance_id}/configs
+func UpdateInstanceConf(client *golangsdk.ServiceClient, id string, opts UpdateInstanceConfOpts) (*UpdateInstanceConfResp, error) {
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = client.Put(client.ServiceURL("instances", id, "configs"), body, nil, &golangsdk.RequestOpts{
+	raw, err := client.Put(client.ServiceURL("instances", id, "configs"), body, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200},
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	var res UpdateInstanceConfResp
+	err = extract.Into(raw.Body, &res)
+	return &res, err
 }
 
 type UpdateInstanceConfResp struct {

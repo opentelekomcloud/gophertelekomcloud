@@ -33,13 +33,13 @@ type PartitionReassign struct {
 
 type TopicAssignment struct {
 	// Partition number in manual assignment.
-	Partition int `json:"partition,omitempty"`
+	Partition *int `json:"partition,omitempty"`
 	// List of brokers to be assigned to a partition in manual assignment.
 	PartitionBrokers []int `json:"partition_brokers,omitempty"`
 }
 
 // InitPartitionReassigning is used to submit a partition rebalancing task to a Kafka instance or calculate estimated rebalancing time.
-// Send POST /v2/kafka/{project_id}/instances/{instance_id}/reassign
+// Send POST /v2/{project_id}/kafka/instances/{instance_id}/reassign (the docs list /v2/kafka/{project_id}/..., the API accepts both)
 func InitPartitionReassigning(client *golangsdk.ServiceClient, instanceId string, opts *InitPartitionReassigningOpts) (*InitResp, error) {
 	body, err := build.RequestBody(opts, "")
 	if err != nil {

@@ -10,7 +10,7 @@ type BatchRestartDeleteOpts struct {
 	// Operation to be performed on instances. The value can be restart or delete.
 	Action string `json:"action" required:"true"`
 	// Indicates List of instance IDs.
-	Instances string `json:"instances,omitempty"`
+	Instances []string `json:"instances,omitempty"`
 	// Value kafka indicates all Kafka instances that fail to be created are to be deleted.
 	AllFailure string `json:"all_failure,omitempty"`
 }
@@ -19,7 +19,7 @@ type BatchRestartDeleteOpts struct {
 // When an instance is being restarted, message retrieval and creation requests of the client will be rejected.
 // Deleting an instance will delete the data in the instance without any backup. Exercise caution when performing this operation.
 // Send POST to /v2/{project_id}/instances/action
-func BatchRestartDelete(client *golangsdk.ServiceClient, opts CreateOpts) (*BatchRestartDeleteResp, error) {
+func BatchRestartDelete(client *golangsdk.ServiceClient, opts BatchRestartDeleteOpts) (*BatchRestartDeleteResp, error) {
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
