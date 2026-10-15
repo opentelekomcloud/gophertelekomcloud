@@ -44,6 +44,11 @@ to set them manually before running the suite.
 |---|---|
 |`OS_SHARE_NETWORK_ID`| The share network ID to use when creating shares|
 
+#### DMS
+|Name|Description|
+|---|---|
+|`OS_DMS_KAFKA_INSTANCE_NAME`|Name of an existing Kafka instance in the project to run read-only tests against. The test is skipped if it is not set or the instance does not exist|
+
 ### 2. Run the test suite
 
 From the root directory, run:
