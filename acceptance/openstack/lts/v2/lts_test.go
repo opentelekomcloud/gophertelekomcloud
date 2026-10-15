@@ -13,6 +13,7 @@ import (
 )
 
 func TestLtsLifecycle(t *testing.T) {
+	t.Skip("LTS tags API rate-limits: LTS.0022 too match request")
 	client, err := clients.NewLtsV2Client()
 	th.AssertNoErr(t, err)
 
