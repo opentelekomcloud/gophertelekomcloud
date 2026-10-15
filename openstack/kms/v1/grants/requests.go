@@ -21,6 +21,8 @@ type CreateOpts struct {
 	// Indicates the ID of the retiring user. The value is between 1 to 64
 	// bytes and meets the regular expression "^[a-zA-Z0-9]{1,64}$".
 	RetiringPrincipal string `json:"retiring_principal,omitempty"`
+	// Authorization type. The value can be user or domain. The default value is user.
+	GranteePrincipalType string `json:"grantee_principal_type,omitempty"`
 	// Sequence represents 36-byte serial number of a request message
 	Sequence string `json:"sequence,omitempty"`
 }
