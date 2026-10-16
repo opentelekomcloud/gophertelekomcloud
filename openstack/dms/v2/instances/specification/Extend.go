@@ -25,7 +25,6 @@ type IncreaseSpecOpts struct {
 	// If oper_type is set to horizontal, the storage space of each broker remains unchanged.
 	NewStorageSpace *int `json:"new_storage_space,omitempty"`
 	// This parameter is valid only when oper_type is set to horizontal.
-	// A maximum of 30 brokers are supported.
 	NewBrokerNumber *int `json:"new_broker_num,omitempty"`
 	// New product ID for scale-up.
 	// This parameter is valid and mandatory when oper_type is set to vertical.
@@ -48,6 +47,10 @@ type IncreaseSpecOpts struct {
 // IncreaseSpec is used to modify instance specifications.
 // Send POST /v2/{engine}/{project_id}/instances/{instance_id}/extend
 func IncreaseSpec(client *golangsdk.ServiceClient, instanceId string, opts IncreaseSpecOpts) (*IncreaseSpecResp, error) {
+	if instanceId == "" {
+		return nil, golangsdk.ErrMissingInput{Argument: "instanceId"}
+	}
+
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -57,6 +60,9 @@ func IncreaseSpec(client *golangsdk.ServiceClient, instanceId string, opts Incre
 	// For all requests we use schema	/v2/{project_id}/instances
 	// But for these					/v2/{engine}/{project_id}/instances
 	paths := strings.SplitN(client.Endpoint, "v2", 2)
+	if len(paths) != 2 {
+		return nil, fmt.Errorf("cannot build engine-scoped URL: endpoint %q has no v2 segment", client.Endpoint)
+	}
 	url := fmt.Sprintf("%sv2/%s%s%s/%s/%s", paths[0], opts.Engine, paths[1], "instances", instanceId, "extend")
 
 	raw, err := client.Post(url, body, nil, &golangsdk.RequestOpts{
