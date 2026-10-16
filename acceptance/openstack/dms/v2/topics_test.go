@@ -31,7 +31,16 @@ func TestDmsTopicsLifecycle(t *testing.T) {
 		Description:      "acceptance test topic",
 	})
 	th.AssertNoErr(t, err)
-	t.Cleanup(func() { deleteTopic(t, client, instanceID, topicName) })
+	t.Cleanup(func() {
+		res := deleteTopic(t, client, instanceID, topicName)
+		th.AssertEquals(t, topicName, res.Topics[0].Name)
+
+		err := golangsdk.WaitFor(60, func() (bool, error) {
+			found, err := findTopic(client, instanceID, topicName)
+			return found == nil, err
+		})
+		th.AssertNoErr(t, err)
+	})
 
 	var topic *topics.Topic
 	err = golangsdk.WaitFor(60, func() (bool, error) {
@@ -54,6 +63,43 @@ func TestDmsTopicsLifecycle(t *testing.T) {
 	th.AssertEquals(t, "acceptance test topic", topic.Description)
 	th.AssertEquals(t, 0, topic.TopicType)
 	th.AssertEquals(t, true, topic.CreatedAt > 0)
+
+	detail, err := topics.Get(client, instanceID, topicName)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, detail)
+
+	th.AssertEquals(t, topicName, detail.Name)
+	th.AssertEquals(t, 3, len(detail.Partitions))
+	for _, p := range detail.Partitions {
+		th.AssertEquals(t, 1, len(p.Replicas))
+		th.AssertEquals(t, p.Leader, p.Replicas[0].Broker)
+		th.AssertEquals(t, true, p.Replicas[0].Leader)
+		th.AssertEquals(t, true, p.Replicas[0].InSync)
+	}
+
+	partitions, err := topics.ListPartitions(client, instanceID, topicName, topics.ListPartitionsOpts{
+		Offset: pointerto.Int(0),
+		Limit:  pointerto.Int(10),
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, partitions)
+
+	th.AssertEquals(t, 3, partitions.Total)
+	th.AssertEquals(t, 3, len(partitions.Partitions))
+	for _, p := range partitions.Partitions {
+		th.AssertEquals(t, int64(0), p.MessageCount)
+	}
+
+	// No client produces to the new topic, so the list is expected to be empty.
+	producers, err := topics.ListProducers(client, instanceID, topicName, topics.ListProducersOpts{
+		Offset: pointerto.Int(0),
+		Limit:  pointerto.Int(10),
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, producers)
+
+	th.AssertEquals(t, 0, producers.Total)
+	th.AssertEquals(t, 0, len(producers.Producers))
 
 	// Explicit false for sync_message_flush checks that pointer fields are sent.
 	err = topics.Update(client, instanceID, topics.UpdateOpts{
