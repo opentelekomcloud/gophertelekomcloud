@@ -7,12 +7,13 @@ import (
 
 // UpdateOpts is a struct which represents the parameters of update function
 type UpdateOpts struct {
-	Topics []UpdateItem `json:"topics" required:"true"`
+	// Topics that were modified.
+	Topics []UpdateItem `json:"topics,omitempty"`
 }
 
 // UpdateItem represents the object of one topic in update function
 type UpdateItem struct {
-	// Name can not be updated
+	// Topic name, which cannot be modified.
 	Name string `json:"id" required:"true"`
 	// Aging time in hour.
 	RetentionTime *int `json:"retention_time,omitempty"`
@@ -31,7 +32,19 @@ type UpdateItem struct {
 }
 
 // Update is a method which can be able to update topics
+// Send PUT /v2/{project_id}/instances/{instance_id}/topics
 func Update(client *golangsdk.ServiceClient, instanceID string, opts UpdateOpts) error {
+	if instanceID == "" {
+		return golangsdk.ErrMissingInput{Argument: "instanceID"}
+	}
+
+	// build.RequestBody does not validate tags of slice elements.
+	for _, topic := range opts.Topics {
+		if err := build.ValidateTags(topic); err != nil {
+			return err
+		}
+	}
+
 	body, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

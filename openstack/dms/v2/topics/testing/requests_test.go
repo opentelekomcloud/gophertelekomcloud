@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/topics"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 	"github.com/opentelekomcloud/gophertelekomcloud/testhelper/client"
@@ -264,4 +265,125 @@ func TestListTopicsMissingInstanceID(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "instanceID") {
 		t.Fatalf("expected missing instanceID error, got %v", err)
 	}
+}
+
+func handleUpdate(t *testing.T, expectedBody string) {
+	th.Mux.HandleFunc(topicsPath, func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PUT")
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestJSONRequest(t, r, expectedBody)
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
+func TestUpdateTopic(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	handleUpdate(t, `{
+		"topics": [{
+			"id": "test01",
+			"retention_time": 72,
+			"sync_replication": false,
+			"sync_message_flush": false,
+			"new_partition_numbers": 6,
+			"new_partition_brokers": [1, 2],
+			"topic_other_configs": [
+				{"name": "message.timestamp.type", "value": "LogAppendTime"},
+				{"name": "max.message.bytes", "value": "10485760"}
+			],
+			"topic_desc": "This is a test topic"
+		}]
+	}`)
+
+	err := topics.Update(dmsClient(), instanceID, topics.UpdateOpts{
+		Topics: []topics.UpdateItem{{
+			Name:                "test01",
+			RetentionTime:       pointerto.Int(72),
+			SyncReplication:     pointerto.Bool(false),
+			SyncMessageFlush:    pointerto.Bool(false),
+			NewPartitionNumbers: pointerto.Int(6),
+			NewPartitionBrokers: []int{1, 2},
+			TopicOtherConfigs: []topics.TopicOtherConfigs{
+				{Name: "message.timestamp.type", Value: "LogAppendTime"},
+				{Name: "max.message.bytes", Value: "10485760"},
+			},
+			Description: "This is a test topic",
+		}},
+	})
+	th.AssertNoErr(t, err)
+}
+
+func TestUpdateTopicMinimal(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	// Unset optional fields are omitted, so the server keeps current values.
+	handleUpdate(t, `{"topics": [{"id": "test01"}]}`)
+
+	err := topics.Update(dmsClient(), instanceID, topics.UpdateOpts{
+		Topics: []topics.UpdateItem{{Name: "test01"}},
+	})
+	th.AssertNoErr(t, err)
+}
+
+func TestUpdateTopicWithoutTopics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	// topics is optional according to the API reference.
+	handleUpdate(t, `{}`)
+
+	err := topics.Update(dmsClient(), instanceID, topics.UpdateOpts{})
+	th.AssertNoErr(t, err)
+}
+
+func TestUpdateTopicValidation(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+		w.WriteHeader(http.StatusInternalServerError)
+	})
+
+	cases := map[string]struct {
+		instanceID string
+		opts       topics.UpdateOpts
+		errContain string
+	}{
+		"missing instance id": {"", topics.UpdateOpts{Topics: []topics.UpdateItem{{Name: "test01"}}}, "instanceID"},
+		"missing topic name":  {instanceID, topics.UpdateOpts{Topics: []topics.UpdateItem{{RetentionTime: pointerto.Int(1)}}}, "Name"},
+	}
+
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			err := topics.Update(dmsClient(), tc.instanceID, tc.opts)
+			if err == nil || !strings.Contains(err.Error(), tc.errContain) {
+				t.Fatalf("expected error containing %q, got %v", tc.errContain, err)
+			}
+		})
+	}
+}
+
+func TestUpdateTopicAPIError(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc(topicsPath, func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PUT")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = fmt.Fprint(w, `{"error_code": "DMS.TEST", "error_msg": "mocked error"}`)
+	})
+
+	err := topics.Update(dmsClient(), instanceID, topics.UpdateOpts{
+		Topics: []topics.UpdateItem{{Name: "test01"}},
+	})
+	var httpErr golangsdk.ErrDefault400
+	if !errors.As(err, &httpErr) {
+		t.Fatalf("expected ErrDefault400, got %T: %v", err, err)
+	}
+	th.AssertEquals(t, true, strings.Contains(string(httpErr.Body), "DMS.TEST"))
 }

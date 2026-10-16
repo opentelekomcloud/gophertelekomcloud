@@ -7,12 +7,13 @@ import (
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/instances/lifecycle"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/topics"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func TestDmsTopicsList(t *testing.T) {
+func TestDmsTopicsLifecycle(t *testing.T) {
 	client, err := clients.NewDmsV2Client()
 	th.AssertNoErr(t, err)
 
@@ -53,6 +54,35 @@ func TestDmsTopicsList(t *testing.T) {
 	th.AssertEquals(t, "acceptance test topic", topic.Description)
 	th.AssertEquals(t, 0, topic.TopicType)
 	th.AssertEquals(t, true, topic.CreatedAt > 0)
+
+	// Explicit false for sync_message_flush checks that pointer fields are sent.
+	err = topics.Update(client, instanceID, topics.UpdateOpts{
+		Topics: []topics.UpdateItem{{
+			Name:             topicName,
+			RetentionTime:    pointerto.Int(200),
+			SyncMessageFlush: pointerto.Bool(false),
+			Description:      "updated acceptance test topic",
+		}},
+	})
+	th.AssertNoErr(t, err)
+
+	err = golangsdk.WaitFor(60, func() (bool, error) {
+		found, err := findTopic(client, instanceID, topicName)
+		if err != nil || found == nil {
+			return false, err
+		}
+		topic = found
+		return topic.RetentionTime == 200 && !topic.SyncMessageFlush, nil
+	})
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, topic)
+
+	th.AssertEquals(t, 200, topic.RetentionTime)
+	th.AssertEquals(t, false, topic.SyncMessageFlush)
+	th.AssertEquals(t, "updated acceptance test topic", topic.Description)
+	th.AssertEquals(t, 3, topic.Partition)
+	th.AssertEquals(t, 1, topic.Replication)
+	th.AssertEquals(t, false, topic.SyncReplication)
 }
 
 // getKafkaInstanceID resolves the existing Kafka instance from OS_DMS_KAFKA_INSTANCE_NAME.
