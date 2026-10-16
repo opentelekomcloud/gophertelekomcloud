@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -156,4 +157,111 @@ func TestCreateTopicAPIError(t *testing.T) {
 		t.Fatalf("expected ErrDefault400, got %T: %v", err, err)
 	}
 	th.AssertEquals(t, true, strings.Contains(string(httpErr.Body), "DMS.TEST"))
+}
+
+const listResponse = `{
+	"total": 1,
+	"size": 0,
+	"topics": [{
+		"policiesOnly": false,
+		"name": "Topic-test01",
+		"replication": 3,
+		"partition": 3,
+		"retention_time": 72,
+		"sync_replication": true,
+		"sync_message_flush": false,
+		"topic_other_configs": [{
+			"name": "max.message.bytes",
+			"valid_values": "[0...10485760]",
+			"default_value": "10485760",
+			"config_type": "dynamic",
+			"value": "10485760",
+			"value_type": "int"
+		}],
+		"external_configs": {"key": "value"},
+		"topic_type": 0,
+		"topic_desc": "This is a test topic",
+		"created_at": 1688112779916
+	}],
+	"remain_partitions": 294,
+	"max_partitions": 300,
+	"topic_max_partitions": 200
+}`
+
+func handleList(t *testing.T, expectedQuery url.Values) {
+	th.Mux.HandleFunc(topicsPath, func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "GET")
+		th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
+		th.AssertDeepEquals(t, expectedQuery, r.URL.Query())
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = fmt.Fprint(w, listResponse)
+	})
+}
+
+func TestListTopics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	// An explicit "0" offset must be sent, as in the API reference example.
+	handleList(t, url.Values{"offset": {"0"}, "limit": {"10"}})
+
+	res, err := topics.List(dmsClient(), instanceID, topics.ListOpts{Offset: "0", Limit: "10"})
+	th.AssertNoErr(t, err)
+
+	expected := &topics.ListResponse{
+		Total:              1,
+		Size:               0,
+		RemainPartitions:   294,
+		MaxPartitions:      300,
+		TopicMaxPartitions: 200,
+		Topics: []topics.Topic{{
+			PoliciesOnly:     false,
+			Name:             "Topic-test01",
+			Replication:      3,
+			Partition:        3,
+			RetentionTime:    72,
+			SyncReplication:  true,
+			SyncMessageFlush: false,
+			ExternalConfigs:  map[string]interface{}{"key": "value"},
+			TopicType:        0,
+			TopicOtherConfigs: []topics.TopicOtherConfigsResp{{
+				Name:         "max.message.bytes",
+				ValidValues:  "[0...10485760]",
+				DefaultValue: "10485760",
+				ConfigType:   "dynamic",
+				Value:        "10485760",
+				ValueType:    "int",
+			}},
+			Description: "This is a test topic",
+			CreatedAt:   1688112779916,
+		}},
+	}
+	th.AssertDeepEquals(t, expected, res)
+}
+
+func TestListTopicsWithoutQuery(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	handleList(t, url.Values{})
+
+	res, err := topics.List(dmsClient(), instanceID, topics.ListOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(res.Topics))
+}
+
+func TestListTopicsMissingInstanceID(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+		w.WriteHeader(http.StatusInternalServerError)
+	})
+
+	_, err := topics.List(dmsClient(), "", topics.ListOpts{})
+	if err == nil || !strings.Contains(err.Error(), "instanceID") {
+		t.Fatalf("expected missing instanceID error, got %v", err)
+	}
 }
