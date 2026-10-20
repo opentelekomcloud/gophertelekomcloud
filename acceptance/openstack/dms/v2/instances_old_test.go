@@ -50,7 +50,7 @@ func TestDmsOldLifeCycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("DMSv2 Topic updated")
 
-	listTopics, err := topics.List(client, instanceID)
+	listTopics, err := topics.List(client, instanceID, topics.ListOpts{})
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, listTopics.Topics[0].Name, dmsTopic)
 
