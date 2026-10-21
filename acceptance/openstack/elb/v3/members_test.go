@@ -36,11 +36,11 @@ func TestMemberLifecycle(t *testing.T) {
 		Weight:       iInt(1),
 	}
 
-	member, err := members.Create(client, poolID, createOpts).Extract()
+	member, err := members.Create(client, poolID, createOpts)
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to delete ELBv3 Member: %s", member.ID)
-		err := members.Delete(client, poolID, member.ID).ExtractErr()
+		err := members.Delete(client, poolID, member.ID)
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Member: %s", member.ID)
 	}()
@@ -56,14 +56,22 @@ func TestMemberLifecycle(t *testing.T) {
 		Name:   &memberName,
 		Weight: iInt(0),
 	}
-	_, err = members.Update(client, poolID, member.ID, updateOpts).Extract()
+	_, err = members.Update(client, poolID, member.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Member: %s", member.ID)
 
-	newMember, err := members.Get(client, poolID, member.ID).Extract()
+	newMember, err := members.Get(client, poolID, member.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, *updateOpts.Name, newMember.Name)
 	th.AssertEquals(t, *updateOpts.Weight, newMember.Weight)
+
+	memberSlice, err := members.List(client, poolID, members.ListOpts{ID: []string{member.ID}})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(memberSlice))
+
+	projectMembers, err := members.ListAll(client, members.ListAllOpts{ID: []string{member.ID}})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, len(projectMembers) > 0)
 
 	updateOptsPool := pools.UpdateOpts{
 		DeletionProtectionEnable: pointerto.Bool(false),
