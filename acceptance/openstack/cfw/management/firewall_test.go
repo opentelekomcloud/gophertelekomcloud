@@ -1,6 +1,7 @@
 package management
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
@@ -55,4 +56,19 @@ func TestFirewallLifecycle(t *testing.T) {
 	firewall, err := managementv1.Get(clientv1, instanceId, 0)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, instanceName, firewall.FwInstanceName)
+
+	tags := []managementv2.CreateTags{{Key: "muh", Value: "kuh"}}
+	err = managementv2.CreateTag(clientv2, instanceId, managementv2.CreateTagOpts{Tags: tags})
+	th.AssertNoErr(t, err)
+
+	firewall, err = managementv1.Get(clientv1, instanceId, 0)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, true, strings.Contains(firewall.Tags, `"muh":"kuh"`))
+
+	err = managementv2.DeleteTag(clientv2, instanceId, managementv2.DeleteTagOpts{Tags: tags})
+	th.AssertNoErr(t, err)
+
+	firewall, err = managementv1.Get(clientv1, instanceId, 0)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, false, strings.Contains(firewall.Tags, `"muh"`))
 }
