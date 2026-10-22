@@ -12,10 +12,6 @@ import (
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
-func iInt(v int) *int {
-	return &v
-}
-
 func TestMemberLifecycle(t *testing.T) {
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
@@ -33,7 +29,7 @@ func TestMemberLifecycle(t *testing.T) {
 		Address:      openstack.ValidIP(t, clients.EnvOS.GetEnv("NETWORK_ID")),
 		ProtocolPort: 89,
 		Name:         memberName,
-		Weight:       iInt(1),
+		Weight:       pointerto.Int(1),
 	}
 
 	member, err := members.Create(client, poolID, createOpts)
@@ -54,7 +50,7 @@ func TestMemberLifecycle(t *testing.T) {
 	memberName = ""
 	updateOpts := members.UpdateOpts{
 		Name:   &memberName,
-		Weight: iInt(0),
+		Weight: pointerto.Int(0),
 	}
 	_, err = members.Update(client, poolID, member.ID, updateOpts)
 	th.AssertNoErr(t, err)
