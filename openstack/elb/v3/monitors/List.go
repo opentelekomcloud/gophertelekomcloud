@@ -27,16 +27,6 @@ type ListOpts struct {
 	DomainName          []string `q:"domain_name,omitempty"`
 	MaxRetriesDown      []int    `q:"max_retries_down,omitempty"`
 
-	// Repeated filters supplement the existing scalar fields without changing their types.
-	IDs                 []string `q:"id,omitempty"`
-	Names               []string `q:"name,omitempty"`
-	Types               []string `q:"type,omitempty"`
-	Delays              []int    `q:"delay,omitempty"`
-	MaxRetriesValues    []int    `q:"max_retries,omitempty"`
-	HTTPMethods         []string `q:"http_method,omitempty"`
-	URLPaths            []string `q:"url_path,omitempty"`
-	ExpectedCodesValues []string `q:"expected_codes,omitempty"`
-
 	// These filters are documented but marked unsupported by the reviewed OTC API.
 	HTTPVersion        []string `q:"http_version,omitempty"`
 	ContentCheckEnable *bool    `q:"content_check_enable,omitempty"`

@@ -41,7 +41,7 @@ func TestMonitorLifecycle(t *testing.T) {
 		Delay:         10,
 		Timeout:       5,
 		MaxRetries:    3,
-		HTTPMethod:    "OPTIONS",
+		HTTPMethod:    "GET",
 		ExpectedCodes: "200-299",
 		Name:          monitorName,
 	}
