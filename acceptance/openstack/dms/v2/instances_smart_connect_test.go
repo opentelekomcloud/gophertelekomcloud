@@ -1,54 +1,50 @@
 package v2
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/pointerto"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/instances/lifecycle"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/dms/v2/smart_connect"
+	"github.com/opentelekomcloud/gophertelekomcloud/openstack/identity/v3/credentials"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/obs"
 	th "github.com/opentelekomcloud/gophertelekomcloud/testhelper"
 )
 
 func TestSmartConnectDMS(t *testing.T) {
-	ak, sk := os.Getenv("ACCESS_KEY"), os.Getenv("SECRET_KEY")
-	if ak == "" || sk == "" {
-		t.Skip("ACCESS_KEY and SECRET_KEY are required for this test")
-	}
-
 	client, err := clients.NewDmsV2Client()
 	th.AssertNoErr(t, err)
 
-	// Create DMS instance
-	instanceID := createDmsInstance(t, client)
-	t.Cleanup(func() {
-		deleteDmsInstance(t, client, instanceID)
-	})
+	ak, sk := obsSinkCredentials(t)
 
-	t.Logf("Attempting to enable Smart Connect for instance %s", instanceID)
-	enableOpts := smart_connect.EnableOpts{
-		InstanceId: instanceID,
+	instanceID := smartConnectInstance(t, client)
+
+	if !connectorEnabled(t, client, instanceID) {
+		t.Logf("Attempting to enable Smart Connect for instance %s", instanceID)
+		_, err = smart_connect.Enable(client, smart_connect.EnableOpts{
+			InstanceId: instanceID,
+		})
+		th.AssertNoErr(t, err)
+
+		t.Cleanup(func() {
+			_, err := smart_connect.Disable(client, instanceID)
+			th.AssertNoErr(t, err)
+			th.AssertNoErr(t, waitForConnector(client, 900, instanceID, false))
+
+			t.Logf("Smart Connect disabled for instance %s", instanceID)
+		})
+
+		th.AssertNoErr(t, waitForConnector(client, 900, instanceID, true))
+
+		t.Logf("Smart Connect enabled for instance %s", instanceID)
 	}
-	_, err = smart_connect.Enable(client, enableOpts)
-	th.AssertNoErr(t, err)
-
-	t.Cleanup(func() {
-		// Disable Smart Connect
-		_, err = smart_connect.Disable(client, instanceID)
-		th.AssertNoErr(t, err)
-		err = waitForInstanceAvailable(client, 600, instanceID)
-		th.AssertNoErr(t, err)
-
-		t.Logf("Smart Connect disabled for instance %s", instanceID)
-	})
-
-	err = waitForInstanceAvailable(client, 600, instanceID)
-	th.AssertNoErr(t, err)
-
-	t.Logf("Smart Connect enabled for instance %s", instanceID)
 
 	bucketName := strings.ToLower(tools.RandomString("obs-sdk-test", 5))
 
@@ -128,4 +124,96 @@ func TestSmartConnectDMS(t *testing.T) {
 	err = smart_connect.RestartTask(client, instanceID, taskID)
 	th.AssertNoErr(t, err)
 	t.Logf("Task %s restarted", taskID)
+}
+
+// obsSinkCredentials returns ACCESS_KEY/SECRET_KEY from the environment, if set.
+// Otherwise it creates a permanent AK/SK for the current user and deletes it on cleanup:
+// the OBS_SINK task body has no security token field, so temporary AK/SK cannot be used.
+func obsSinkCredentials(t *testing.T) (string, string) {
+	t.Helper()
+
+	if ak, sk := os.Getenv("ACCESS_KEY"), os.Getenv("SECRET_KEY"); ak != "" && sk != "" {
+		return ak, sk
+	}
+
+	iamClient, err := clients.NewIdentityV3Client()
+	th.AssertNoErr(t, err)
+
+	cred, err := credentials.Create(iamClient, credentials.CreateOpts{
+		UserID:      iamClient.UserID,
+		Description: "DMS Smart Connect acceptance test key",
+	}).Extract()
+	th.AssertNoErr(t, err)
+	t.Logf("Created access key for user %s", iamClient.UserID)
+
+	t.Cleanup(func() {
+		th.AssertNoErr(t, credentials.Delete(iamClient, cred.AccessKey).ExtractErr())
+		t.Logf("Test access key deleted")
+	})
+
+	return cred.AccessKey, cred.SecretKey
+}
+
+// smartConnectInstance uses the existing instance from OS_DMS_KAFKA_INSTANCE_NAME, if set; otherwise it creates a temporary one.
+func smartConnectInstance(t *testing.T, client *golangsdk.ServiceClient) string {
+	t.Helper()
+
+	if name := clients.EnvOS.GetEnv("DMS_KAFKA_INSTANCE_NAME"); name != "" {
+		return existingKafkaInstance(t, client, name).InstanceID
+	}
+
+	instanceID := createDmsInstance(t, client)
+	t.Cleanup(func() {
+		deleteDmsInstance(t, client, instanceID)
+	})
+	return instanceID
+}
+
+// connectorState reports whether Smart Connect is enabled on the instance.
+// connector_enable is not returned by instance GET/List, so the connector tasks endpoint is used:
+// it answers 404 (DMS.00404024 "The connector does not exist.") while Smart Connect is disabled.
+func connectorState(client *golangsdk.ServiceClient, instanceID string) (bool, error) {
+	_, err := smart_connect.ListTasks(client, smart_connect.QueryTasksOpts{InstanceId: instanceID})
+	if err == nil {
+		return true, nil
+	}
+	var notFound golangsdk.ErrDefault404
+	if errors.As(err, &notFound) {
+		return false, nil
+	}
+	return false, err
+}
+
+func connectorEnabled(t *testing.T, client *golangsdk.ServiceClient, instanceID string) bool {
+	t.Helper()
+
+	enabled, err := connectorState(client, instanceID)
+	th.AssertNoErr(t, err)
+	return enabled
+}
+
+// waitForConnector waits until the instance is RUNNING and the Smart Connect state matches enabled.
+// The instance status alone is not enough: it may be RUNNING before the Smart Connect job finishes.
+// Unexpected errors are tolerated while waiting and reported if the wait times out.
+func waitForConnector(client *golangsdk.ServiceClient, secs int, instanceID string, enabled bool) error {
+	var lastErr error
+	err := golangsdk.WaitFor(secs, func() (bool, error) {
+		instance, err := lifecycle.Get(client, instanceID)
+		if err != nil {
+			return false, err
+		}
+		if instance.Status != dmsTargetStatus {
+			return false, nil
+		}
+		state, err := connectorState(client, instanceID)
+		if err != nil {
+			lastErr = err
+			return false, nil
+		}
+		return state == enabled, nil
+	})
+	if err != nil && lastErr != nil {
+		return fmt.Errorf("%w (last connector error: %v)", err, lastErr)
+	}
+	return err
 }

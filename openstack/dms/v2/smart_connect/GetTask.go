@@ -18,14 +18,14 @@ func GetTask(client *golangsdk.ServiceClient, instanceId, taskId string) (*TaskD
 }
 
 type TaskDetails struct {
-	TaskName    string                        `json:"task_name"`
-	Topics      string                        `json:"topics"`
-	TopicsRegex string                        `json:"topics_regex"`
-	SourceType  string                        `json:"source_type"`
-	SourceTask  *SmartConnectTaskSourceConfig `json:"source_task"`
-	SinkType    string                        `json:"sink_type"`
-	SinkTask    *SmartConnectTaskSinkConfig   `json:"sink_task"`
-	ID          string                        `json:"id"`
-	Status      string                        `json:"status"`
-	CreateTime  int64                         `json:"create_time"`
+	TaskName    string                            `json:"task_name"`
+	Topics      string                            `json:"topics"`
+	TopicsRegex string                            `json:"topics_regex"`
+	SourceType  string                            `json:"source_type"`
+	SourceTask  *SmartConnectTaskRespSourceConfig `json:"source_task"`
+	SinkType    string                            `json:"sink_type"`
+	SinkTask    *SmartConnectTaskRespSinkConfig   `json:"sink_task"`
+	ID          string                            `json:"id"`
+	Status      string                            `json:"status"`
+	CreateTime  int64                             `json:"create_time"`
 }
