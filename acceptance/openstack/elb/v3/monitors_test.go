@@ -64,13 +64,13 @@ func TestMonitorLifecycle(t *testing.T) {
 	t.Logf("Attempting to Update ELBv3 Monitor")
 	monitorName = tools.RandomString("update-monitor-", 3)
 	updateOpts := monitors.UpdateOpts{
-		Delay:          3,
-		Timeout:        35,
+		Delay:          15,
+		Timeout:        5,
 		MaxRetries:     5,
 		MaxRetriesDown: 3,
 		Name:           monitorName,
 	}
-	_, err = monitors.Update(client, monitor.ID, updateOpts).Extract()
+	_, err = monitors.Update(client, monitor.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Monitor: %s", monitor.ID)
 
