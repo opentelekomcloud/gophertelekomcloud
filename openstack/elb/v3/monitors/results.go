@@ -1,7 +1,6 @@
 package monitors
 
 import (
-	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/common/structs"
 	"github.com/opentelekomcloud/gophertelekomcloud/pagination"
 )
@@ -107,24 +106,4 @@ func ExtractMonitors(r pagination.Page) ([]Monitor, error) {
 		return nil, err
 	}
 	return s, nil
-}
-
-type commonResult struct {
-	golangsdk.Result
-}
-
-// Extract is a function that accepts a result and extracts a Monitor.
-func (r commonResult) Extract() (*Monitor, error) {
-	s := new(Monitor)
-	err := r.ExtractIntoStructPtr(s, "healthmonitor")
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-// DeleteResult represents the result of a delete operation. Call its
-// ExtractErr method to determine if the result succeeded or failed.
-type DeleteResult struct {
-	golangsdk.ErrResult
 }

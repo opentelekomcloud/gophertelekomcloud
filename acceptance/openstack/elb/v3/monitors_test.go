@@ -3,6 +3,7 @@ package v3
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/monitors"
@@ -51,7 +52,15 @@ func TestMonitorLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to Delete ELBv3 Monitor: %s", monitor.ID)
-		err := monitors.Delete(client, monitor.ID).ExtractErr()
+		err := monitors.Delete(client, monitor.ID)
+		th.AssertNoErr(t, err)
+		err = golangsdk.WaitFor(600, func() (bool, error) {
+			_, err := monitors.Get(client, monitor.ID)
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
+		})
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Monitor: %s", monitor.ID)
 	}()
