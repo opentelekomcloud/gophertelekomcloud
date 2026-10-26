@@ -163,12 +163,6 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-// Get retrieves a particular Health Monitor based on its unique ID.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {

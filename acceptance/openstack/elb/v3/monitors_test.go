@@ -74,7 +74,7 @@ func TestMonitorLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Monitor: %s", monitor.ID)
 
-	newMonitor, err := monitors.Get(client, monitor.ID).Extract()
+	newMonitor, err := monitors.Get(client, monitor.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newMonitor.Name)
 	th.AssertEquals(t, updateOpts.Timeout, newMonitor.Timeout)

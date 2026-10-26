@@ -73,6 +73,16 @@ type Monitor struct {
 
 	// List of pools that are associated with the health monitor.
 	Pools []structs.ResourceRef `json:"pools"`
+
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+
+	// These fields are documented but marked unsupported by the reviewed OTC API.
+	HTTPVersion        string `json:"http_version"`
+	ContentCheckEnable bool   `json:"content_check_enable"`
+	SendContent        string `json:"send_content"`
+	ReceiveContent     string `json:"receive_content"`
+	ContentFormat      string `json:"content_format"`
 }
 
 // MonitorPage is the page returned by a pager when traversing over a
@@ -116,12 +126,6 @@ func (r commonResult) Extract() (*Monitor, error) {
 // CreateResult represents the result of a create operation. Call its Extract
 // method to interpret it as a Monitor.
 type CreateResult struct {
-	commonResult
-}
-
-// GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Monitor.
-type GetResult struct {
 	commonResult
 }
 
