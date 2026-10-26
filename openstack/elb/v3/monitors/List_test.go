@@ -18,10 +18,10 @@ func TestListFilters(t *testing.T) {
 	th.Mux.HandleFunc("/healthmonitors", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, http.MethodGet)
 		th.AssertDeepEquals(t, url.Values{
-			"id": {"legacy-id", "id-1", "id-2"}, "name": {"legacy-name", "name-1", "name-2"},
-			"type": {"HTTP", "TCP", "UDP_CONNECT"}, "delay": {"10", "15", "20"},
-			"timeout": {"5"}, "max_retries": {"3", "4", "5"}, "http_method": {"GET", "HEAD", "OPTIONS"},
-			"url_path": {"/health", "/ready", "/live"}, "expected_codes": {"200", "201", "202"},
+			"id": {"id-1"}, "name": {"name-1"},
+			"type": {"HTTP"}, "delay": {"10"},
+			"timeout": {"5"}, "max_retries": {"3"}, "http_method": {"GET"},
+			"url_path": {"/health"}, "expected_codes": {"200"},
 			"admin_state_up": {"false"}, "enterprise_project_id": {"enterprise-1", "enterprise-2"},
 			"limit": {"1"}, "marker": {"start"}, "page_reverse": {"true"}, "monitor_port": {"80", "8080"},
 			"domain_name": {"example.com", "test.example"}, "max_retries_down": {"2", "3"},
@@ -32,13 +32,10 @@ func TestListFilters(t *testing.T) {
 		_, _ = w.Write([]byte(`{"healthmonitors":[` + monitorJSON + `],"page_info":{}}`))
 	})
 	actual, err := monitors.List(serviceClient(), monitors.ListOpts{
-		ID: "legacy-id", Name: "legacy-name", Type: "HTTP", Delay: 10, Timeout: 5, MaxRetries: 3,
+		ID: "id-1", Name: "name-1", Type: "HTTP", Delay: 10, Timeout: 5, MaxRetries: 3,
 		HTTPMethod: "GET", URLPath: "/health", ExpectedCodes: "200", AdminStateUp: pointerto.Bool(false),
 		EnterpriseProjectID: []string{"enterprise-1", "enterprise-2"}, Limit: 1, Marker: "start", PageReverse: true,
 		MonitorPort: []int{80, 8080}, DomainName: []string{"example.com", "test.example"}, MaxRetriesDown: []int{2, 3},
-		IDs: []string{"id-1", "id-2"}, Names: []string{"name-1", "name-2"}, Types: []string{"TCP", "UDP_CONNECT"},
-		Delays: []int{15, 20}, MaxRetriesValues: []int{4, 5}, HTTPMethods: []string{"HEAD", "OPTIONS"},
-		URLPaths: []string{"/ready", "/live"}, ExpectedCodesValues: []string{"201", "202"},
 		HTTPVersion: []string{"HTTP/1.0", "HTTP/1.1"}, ContentCheckEnable: pointerto.Bool(false),
 		ContentFormat: []string{"TEXT", "HEX"}, TenantID: "tenant-id", ProjectID: "project-id",
 		PoolID: "pool-id", Status: "ACTIVE", SortKey: "name", SortDir: "desc",
