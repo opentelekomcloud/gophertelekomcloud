@@ -15,10 +15,7 @@ func TestMonitorList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := monitors.ListOpts{}
-	monitorPages, err := monitors.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	monitorList, err := monitors.ExtractMonitors(monitorPages)
+	monitorList, err := monitors.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, monitor := range monitorList {
@@ -90,4 +87,9 @@ func TestMonitorLifecycle(t *testing.T) {
 	th.AssertEquals(t, updateOpts.Delay, newMonitor.Delay)
 	th.AssertEquals(t, updateOpts.MaxRetries, newMonitor.MaxRetries)
 	th.AssertEquals(t, createOpts.HTTPMethod, newMonitor.HTTPMethod)
+
+	monitorList, err := monitors.List(client, monitors.ListOpts{ID: monitor.ID, Limit: 1})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(monitorList))
+	th.AssertEquals(t, monitor.ID, monitorList[0].ID)
 }
