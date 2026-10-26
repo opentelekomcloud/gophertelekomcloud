@@ -40,14 +40,14 @@ func TestMonitorLifecycle(t *testing.T) {
 	createOpts := monitors.CreateOpts{
 		PoolID:        poolID,
 		Type:          monitors.TypeHTTP,
-		Delay:         1,
-		Timeout:       30,
+		Delay:         10,
+		Timeout:       5,
 		MaxRetries:    3,
 		HTTPMethod:    "OPTIONS",
 		ExpectedCodes: "200-299",
 		Name:          monitorName,
 	}
-	monitor, err := monitors.Create(client, createOpts).Extract()
+	monitor, err := monitors.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to Delete ELBv3 Monitor: %s", monitor.ID)

@@ -123,12 +123,6 @@ func (r commonResult) Extract() (*Monitor, error) {
 	return s, nil
 }
 
-// CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a Monitor.
-type CreateResult struct {
-	commonResult
-}
-
 // UpdateResult represents the result of an update operation. Call its Extract
 // method to interpret it as a Monitor.
 type UpdateResult struct {
