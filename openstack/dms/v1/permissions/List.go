@@ -5,11 +5,16 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// List sends GET /v1/{project_id}/instances/{instance_id}/topics/{topic_name}/accesspolicy
 func List(client *golangsdk.ServiceClient, instanceId, topicName string) (*Permissions, error) {
-	// GET /v2/{project_id}/instances/{instance_id}/users
+	if instanceId == "" {
+		return nil, golangsdk.ErrMissingInput{Argument: "instanceId"}
+	}
+	if topicName == "" {
+		return nil, golangsdk.ErrMissingInput{Argument: "topicName"}
+	}
 
-	url := client.ServiceURL("instances", instanceId, "topics", topicName, "accesspolicy")
-	raw, err := client.Get(url, nil, nil)
+	raw, err := client.Get(client.ServiceURL("instances", instanceId, "topics", topicName, "accesspolicy"), nil, nil)
 	if err != nil {
 		return nil, err
 	}

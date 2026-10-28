@@ -10,16 +10,19 @@ type DeleteOpts struct {
 	Users  []string `json:"users,omitempty"`
 }
 
+// Delete sends PUT /v2/{project_id}/instances/{instance_id}/users
 func Delete(client *golangsdk.ServiceClient, instanceId string, opts DeleteOpts) error {
-	// POST /v2/{project_id}/instances/{instance_id}/users
+	if instanceId == "" {
+		return golangsdk.ErrMissingInput{Argument: "instanceId"}
+	}
+
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
 	}
-	url := client.ServiceURL("instances", instanceId, "users")
-	_, err = client.Put(url, b, nil, &golangsdk.RequestOpts{
+
+	_, err = client.Put(client.ServiceURL("instances", instanceId, "users"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
-
 	return err
 }
