@@ -3,6 +3,7 @@ package v3
 import (
 	"testing"
 
+	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/elb/v3/monitors"
@@ -14,10 +15,7 @@ func TestMonitorList(t *testing.T) {
 	th.AssertNoErr(t, err)
 
 	listOpts := monitors.ListOpts{}
-	monitorPages, err := monitors.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
-
-	monitorList, err := monitors.ExtractMonitors(monitorPages)
+	monitorList, err := monitors.List(client, listOpts)
 	th.AssertNoErr(t, err)
 
 	for _, monitor := range monitorList {
@@ -40,18 +38,26 @@ func TestMonitorLifecycle(t *testing.T) {
 	createOpts := monitors.CreateOpts{
 		PoolID:        poolID,
 		Type:          monitors.TypeHTTP,
-		Delay:         1,
-		Timeout:       30,
+		Delay:         10,
+		Timeout:       5,
 		MaxRetries:    3,
-		HTTPMethod:    "OPTIONS",
+		HTTPMethod:    "GET",
 		ExpectedCodes: "200-299",
 		Name:          monitorName,
 	}
-	monitor, err := monitors.Create(client, createOpts).Extract()
+	monitor, err := monitors.Create(client, createOpts)
 	th.AssertNoErr(t, err)
 	defer func() {
 		t.Logf("Attempting to Delete ELBv3 Monitor: %s", monitor.ID)
-		err := monitors.Delete(client, monitor.ID).ExtractErr()
+		err := monitors.Delete(client, monitor.ID)
+		th.AssertNoErr(t, err)
+		err = golangsdk.WaitFor(600, func() (bool, error) {
+			_, err := monitors.Get(client, monitor.ID)
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return true, nil
+			}
+			return false, err
+		})
 		th.AssertNoErr(t, err)
 		t.Logf("Deleted ELBv3 Monitor: %s", monitor.ID)
 	}()
@@ -64,21 +70,26 @@ func TestMonitorLifecycle(t *testing.T) {
 	t.Logf("Attempting to Update ELBv3 Monitor")
 	monitorName = tools.RandomString("update-monitor-", 3)
 	updateOpts := monitors.UpdateOpts{
-		Delay:          3,
-		Timeout:        35,
+		Delay:          15,
+		Timeout:        5,
 		MaxRetries:     5,
 		MaxRetriesDown: 3,
 		Name:           monitorName,
 	}
-	_, err = monitors.Update(client, monitor.ID, updateOpts).Extract()
+	_, err = monitors.Update(client, monitor.ID, updateOpts)
 	th.AssertNoErr(t, err)
 	t.Logf("Updated ELBv3 Monitor: %s", monitor.ID)
 
-	newMonitor, err := monitors.Get(client, monitor.ID).Extract()
+	newMonitor, err := monitors.Get(client, monitor.ID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newMonitor.Name)
 	th.AssertEquals(t, updateOpts.Timeout, newMonitor.Timeout)
 	th.AssertEquals(t, updateOpts.Delay, newMonitor.Delay)
 	th.AssertEquals(t, updateOpts.MaxRetries, newMonitor.MaxRetries)
 	th.AssertEquals(t, createOpts.HTTPMethod, newMonitor.HTTPMethod)
+
+	monitorList, err := monitors.List(client, monitors.ListOpts{ID: monitor.ID, Limit: 1})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(monitorList))
+	th.AssertEquals(t, monitor.ID, monitorList[0].ID)
 }
