@@ -9,13 +9,6 @@ import (
 
 // ShowPartitionBeginningMessage sends GET /v2/{project_id}/instances/{instance_id}/management/topics/{topic}/partitions/{partition}/beginning-message
 func ShowPartitionBeginningMessage(client *golangsdk.ServiceClient, instanceID, topic string, partition int) (*ShowPartitionBeginningMessageResponse, error) {
-	if instanceID == "" {
-		return nil, golangsdk.ErrMissingInput{Argument: "instanceID"}
-	}
-	if topic == "" {
-		return nil, golangsdk.ErrMissingInput{Argument: "topic"}
-	}
-
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("instances", instanceID, "management", "topics", topic, "partitions", strconv.Itoa(partition), "beginning-message").
 		Build()

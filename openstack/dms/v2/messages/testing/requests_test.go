@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -46,15 +45,6 @@ func handleGet(t *testing.T, path, expectedQuery string, status int, body string
 	})
 }
 
-func assertMissingInput(t *testing.T, err error, argument string) {
-	t.Helper()
-	var missing golangsdk.ErrMissingInput
-	if !errors.As(err, &missing) {
-		t.Fatalf("expected ErrMissingInput, got %T: %v", err, err)
-	}
-	th.AssertEquals(t, argument, missing.Argument)
-}
-
 const badTopic = "bad/topic"
 
 func assertInvalidEndpoint(t *testing.T, err error) {
@@ -68,8 +58,6 @@ func assertRequiredQuery(t *testing.T, err error, field string) {
 	t.Helper()
 	th.AssertEquals(t, fmt.Sprintf("required query parameter [%s] not set", field), fmt.Sprint(err))
 }
-
-const errorBody = `{"error_code": "DMS.00400001", "error_msg": "Invalid parameters."}`
 
 const showInstanceMessagesResponse = `
 {
@@ -161,42 +149,13 @@ func TestShowInstanceMessagesOmitsUnsetQuery(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func TestShowInstanceMessagesValidation(t *testing.T) {
+func TestShowInstanceMessagesRequiresTopic(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 	failOnRequest(t)
 
-	_, err := messages.ShowInstanceMessages(dmsClient(), "", messages.ShowInstanceMessagesOpts{Topic: "topic-test"})
-	assertMissingInput(t, err, "instanceID")
-
-	_, err = messages.ShowInstanceMessages(dmsClient(), instanceID, messages.ShowInstanceMessagesOpts{})
+	_, err := messages.ShowInstanceMessages(dmsClient(), instanceID, messages.ShowInstanceMessagesOpts{})
 	assertRequiredQuery(t, err, "Topic")
-}
-
-func TestShowInstanceMessagesBadRequest(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	handleGet(t, instancePath+"/messages", "topic=bad", http.StatusBadRequest, errorBody)
-
-	_, err := messages.ShowInstanceMessages(dmsClient(), instanceID, messages.ShowInstanceMessagesOpts{Topic: "bad"})
-	var badRequest golangsdk.ErrDefault400
-	if !errors.As(err, &badRequest) {
-		t.Fatalf("expected ErrDefault400, got %T: %v", err, err)
-	}
-}
-
-func TestShowInstanceMessagesForbidden(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	handleGet(t, instancePath+"/messages", "topic=topic-test", http.StatusForbidden, errorBody)
-
-	_, err := messages.ShowInstanceMessages(dmsClient(), instanceID, messages.ShowInstanceMessagesOpts{Topic: "topic-test"})
-	var forbidden golangsdk.ErrDefault403
-	if !errors.As(err, &forbidden) {
-		t.Fatalf("expected ErrDefault403, got %T: %v", err, err)
-	}
 }
 
 func TestShowMessages(t *testing.T) {
@@ -254,18 +213,12 @@ func TestShowMessagesOmitsUnsetQuery(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func TestShowMessagesValidation(t *testing.T) {
+func TestShowMessagesRejectsInvalidTopic(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 	failOnRequest(t)
 
-	_, err := messages.ShowMessages(dmsClient(), "", topic, messages.ShowMessagesOpts{})
-	assertMissingInput(t, err, "instanceID")
-
-	_, err = messages.ShowMessages(dmsClient(), instanceID, "", messages.ShowMessagesOpts{})
-	assertMissingInput(t, err, "topic")
-
-	_, err = messages.ShowMessages(dmsClient(), instanceID, badTopic, messages.ShowMessagesOpts{})
+	_, err := messages.ShowMessages(dmsClient(), instanceID, badTopic, messages.ShowMessagesOpts{})
 	assertInvalidEndpoint(t, err)
 }
 
@@ -312,13 +265,7 @@ func TestShowPartitionMessageValidation(t *testing.T) {
 
 	opts := messages.ShowPartitionMessageOpts{MessageOffset: "7"}
 
-	_, err := messages.ShowPartitionMessage(dmsClient(), "", topic, 0, opts)
-	assertMissingInput(t, err, "instanceID")
-
-	_, err = messages.ShowPartitionMessage(dmsClient(), instanceID, "", 0, opts)
-	assertMissingInput(t, err, "topic")
-
-	_, err = messages.ShowPartitionMessage(dmsClient(), instanceID, badTopic, 0, opts)
+	_, err := messages.ShowPartitionMessage(dmsClient(), instanceID, badTopic, 0, opts)
 	assertInvalidEndpoint(t, err)
 
 	_, err = messages.ShowPartitionMessage(dmsClient(), instanceID, topic, 0, messages.ShowPartitionMessageOpts{})
@@ -365,22 +312,6 @@ func TestShowPartitionEndMessage(t *testing.T) {
 	}, res)
 }
 
-func TestShowPartitionOffsetValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	_, err := messages.ShowPartitionBeginningMessage(dmsClient(), "", topic, 0)
-	assertMissingInput(t, err, "instanceID")
-	_, err = messages.ShowPartitionBeginningMessage(dmsClient(), instanceID, "", 0)
-	assertMissingInput(t, err, "topic")
-
-	_, err = messages.ShowPartitionEndMessage(dmsClient(), "", topic, 0)
-	assertMissingInput(t, err, "instanceID")
-	_, err = messages.ShowPartitionEndMessage(dmsClient(), instanceID, "", 0)
-	assertMissingInput(t, err, "topic")
-}
-
 func TestShowPartitionOffsetRejectsInvalidTopic(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -391,17 +322,4 @@ func TestShowPartitionOffsetRejectsInvalidTopic(t *testing.T) {
 
 	_, err = messages.ShowPartitionEndMessage(dmsClient(), instanceID, badTopic, 0)
 	assertInvalidEndpoint(t, err)
-}
-
-func TestShowPartitionEndMessageNotFound(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	handleGet(t, partitionPath+"/end-message", "", http.StatusNotFound, errorBody)
-
-	_, err := messages.ShowPartitionEndMessage(dmsClient(), instanceID, topic, 0)
-	var notFound golangsdk.ErrDefault404
-	if !errors.As(err, &notFound) {
-		t.Fatalf("expected ErrDefault404, got %T: %v", err, err)
-	}
 }

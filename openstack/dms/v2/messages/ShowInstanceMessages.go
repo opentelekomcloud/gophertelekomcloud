@@ -20,10 +20,6 @@ type ShowInstanceMessagesOpts struct {
 
 // ShowInstanceMessages sends GET /v2/{project_id}/instances/{instance_id}/messages
 func ShowInstanceMessages(client *golangsdk.ServiceClient, instanceID string, opts ShowInstanceMessagesOpts) (*ShowInstanceMessagesResponse, error) {
-	if instanceID == "" {
-		return nil, golangsdk.ErrMissingInput{Argument: "instanceID"}
-	}
-
 	url, err := golangsdk.NewURLBuilder().
 		WithEndpoints("instances", instanceID, "messages").
 		WithQueryParams(&opts).
