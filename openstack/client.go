@@ -752,6 +752,11 @@ func NewMapReduceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts)
 	return sc, err
 }
 
+// NewAOMV2 creates a ServiceClient that may be used to access the v2 Application Operations Management.
+func NewAOMV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "aomv2")
+}
+
 // NewAntiDDoSV1 creates a ServiceClient that may be used with the v1 Anti DDoS Service
 // package.
 func NewAntiDDoSV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
