@@ -5,16 +5,19 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
 
-func ResetPassword(client *golangsdk.ServiceClient, instanceId, userName, password string) error {
-	// PUT /v2/{project_id}/instances/{instance_id}/users
-	b, err := build.RequestBody(password, "new_password")
+type ResetPasswordOpts struct {
+	NewPassword string `json:"new_password,omitempty"`
+}
+
+// ResetPassword sends PUT /v2/{project_id}/instances/{instance_id}/users/{user_name}
+func ResetPassword(client *golangsdk.ServiceClient, instanceId, userName string, opts ResetPasswordOpts) error {
+	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err
 	}
-	url := client.ServiceURL("instances", instanceId, "users", userName)
-	_, err = client.Put(url, b, nil, &golangsdk.RequestOpts{
+
+	_, err = client.Put(client.ServiceURL("instances", instanceId, "users", userName), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{204},
 	})
-
 	return err
 }

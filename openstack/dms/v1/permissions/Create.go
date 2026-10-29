@@ -15,16 +15,15 @@ type CreatePolicy struct {
 	AccessPolicy string `json:"access_policy,omitempty"`
 }
 
+// Create sends POST /v1/{project_id}/instances/{instance_id}/topics/accesspolicy
 func Create(client *golangsdk.ServiceClient, instanceId string, opts []CreateOpts) error {
-	// PUT /v2/{project_id}/instances/{instance_id}/users
 	b, err := build.RequestBody(opts, "topics")
 	if err != nil {
 		return err
 	}
-	url := client.ServiceURL("instances", instanceId, "topics", "accesspolicy")
-	_, err = client.Post(url, b, nil, &golangsdk.RequestOpts{
+
+	_, err = client.Post(client.ServiceURL("instances", instanceId, "topics", "accesspolicy"), b, nil, &golangsdk.RequestOpts{
 		OkCodes: []int{200, 204},
 	})
-
 	return err
 }

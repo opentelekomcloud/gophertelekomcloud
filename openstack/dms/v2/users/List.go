@@ -5,11 +5,9 @@ import (
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/extract"
 )
 
+// List sends GET /v2/{project_id}/instances/{instance_id}/users
 func List(client *golangsdk.ServiceClient, instanceId string) ([]Users, error) {
-	// GET /v2/{project_id}/instances/{instance_id}/users
-
-	url := client.ServiceURL("instances", instanceId, "users")
-	raw, err := client.Get(url, nil, nil)
+	raw, err := client.Get(client.ServiceURL("instances", instanceId, "users"), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -20,8 +18,9 @@ func List(client *golangsdk.ServiceClient, instanceId string) ([]Users, error) {
 }
 
 type Users struct {
-	UserName    string  `json:"user_name"`
-	Role        string  `json:"role"`
-	DefaultApp  bool    `json:"default_app"`
-	CreatedTime float64 `json:"created_time"`
+	UserName    string `json:"user_name"`
+	UserDesc    string `json:"user_desc"`
+	Role        string `json:"role"`
+	DefaultApp  bool   `json:"default_app"`
+	CreatedTime int64  `json:"created_time"`
 }
