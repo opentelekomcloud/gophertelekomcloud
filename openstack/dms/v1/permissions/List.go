@@ -7,13 +7,6 @@ import (
 
 // List sends GET /v1/{project_id}/instances/{instance_id}/topics/{topic_name}/accesspolicy
 func List(client *golangsdk.ServiceClient, instanceId, topicName string) (*Permissions, error) {
-	if instanceId == "" {
-		return nil, golangsdk.ErrMissingInput{Argument: "instanceId"}
-	}
-	if topicName == "" {
-		return nil, golangsdk.ErrMissingInput{Argument: "topicName"}
-	}
-
 	raw, err := client.Get(client.ServiceURL("instances", instanceId, "topics", topicName, "accesspolicy"), nil, nil)
 	if err != nil {
 		return nil, err

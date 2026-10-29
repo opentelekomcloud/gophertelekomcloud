@@ -11,13 +11,6 @@ type ResetPasswordOpts struct {
 
 // ResetPassword sends PUT /v2/{project_id}/instances/{instance_id}/users/{user_name}
 func ResetPassword(client *golangsdk.ServiceClient, instanceId, userName string, opts ResetPasswordOpts) error {
-	if instanceId == "" {
-		return golangsdk.ErrMissingInput{Argument: "instanceId"}
-	}
-	if userName == "" {
-		return golangsdk.ErrMissingInput{Argument: "userName"}
-	}
-
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

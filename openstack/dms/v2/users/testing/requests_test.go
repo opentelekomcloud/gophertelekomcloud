@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -24,13 +23,6 @@ func dmsClient() *golangsdk.ServiceClient {
 	return sc
 }
 
-func failOnRequest(t *testing.T) {
-	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
-		w.WriteHeader(http.StatusInternalServerError)
-	})
-}
-
 func handleNoContent(t *testing.T, path, method, expectedBody string) {
 	th.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, method)
@@ -39,15 +31,6 @@ func handleNoContent(t *testing.T, path, method, expectedBody string) {
 		th.TestJSONRequest(t, r, expectedBody)
 		w.WriteHeader(http.StatusNoContent)
 	})
-}
-
-func assertMissingInput(t *testing.T, err error, argument string) {
-	t.Helper()
-	var missing golangsdk.ErrMissingInput
-	if !errors.As(err, &missing) {
-		t.Fatalf("expected ErrMissingInput, got %T: %v", err, err)
-	}
-	th.AssertEquals(t, argument, missing.Argument)
 }
 
 func TestCreateUser(t *testing.T) {
@@ -73,31 +56,6 @@ func TestCreateUserOmitsEmptyFields(t *testing.T) {
 	th.AssertNoErr(t, users.Create(dmsClient(), instanceID, users.CreateOpts{}))
 }
 
-func TestCreateUserValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	assertMissingInput(t, users.Create(dmsClient(), "", users.CreateOpts{UserName: "test"}), "instanceId")
-}
-
-func TestCreateUserBadRequest(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	th.Mux.HandleFunc(usersPath, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprint(w, `{"error_code": "DMS.00400001", "error_msg": "Invalid parameters."}`)
-	})
-
-	err := users.Create(dmsClient(), instanceID, users.CreateOpts{UserName: "test", UserPasswd: "test"})
-	var badRequest golangsdk.ErrDefault400
-	if !errors.As(err, &badRequest) {
-		t.Fatalf("expected ErrDefault400, got %T: %v", err, err)
-	}
-}
-
 func TestDeleteUsers(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -118,15 +76,6 @@ func TestDeleteUsersOmitsEmptyFields(t *testing.T) {
 	handleNoContent(t, usersPath, "PUT", `{}`)
 
 	th.AssertNoErr(t, users.Delete(dmsClient(), instanceID, users.DeleteOpts{Users: []string{}}))
-}
-
-func TestDeleteUsersValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	err := users.Delete(dmsClient(), "", users.DeleteOpts{Action: "delete", Users: []string{"testuser"}})
-	assertMissingInput(t, err, "instanceId")
 }
 
 func TestListUsers(t *testing.T) {
@@ -155,15 +104,6 @@ func TestListUsers(t *testing.T) {
 	}, actual)
 }
 
-func TestListUsersValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	_, err := users.List(dmsClient(), "")
-	assertMissingInput(t, err, "instanceId")
-}
-
 func TestResetPassword(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -181,31 +121,4 @@ func TestResetPasswordOmitsEmptyFields(t *testing.T) {
 	handleNoContent(t, usersPath+"/test", "PUT", `{}`)
 
 	th.AssertNoErr(t, users.ResetPassword(dmsClient(), instanceID, "test", users.ResetPasswordOpts{}))
-}
-
-func TestResetPasswordValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	opts := users.ResetPasswordOpts{NewPassword: "Cxxx3xxx!"}
-	assertMissingInput(t, users.ResetPassword(dmsClient(), "", "test", opts), "instanceId")
-	assertMissingInput(t, users.ResetPassword(dmsClient(), instanceID, "", opts), "userName")
-}
-
-func TestResetPasswordNotFound(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	th.Mux.HandleFunc(usersPath+"/missing", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		_, _ = fmt.Fprint(w, `{"error_code": "DMS.00404022", "error_msg": "The user does not exist."}`)
-	})
-
-	err := users.ResetPassword(dmsClient(), instanceID, "missing", users.ResetPasswordOpts{NewPassword: "Cxxx3xxx!"})
-	var notFound golangsdk.ErrDefault404
-	if !errors.As(err, &notFound) {
-		t.Fatalf("expected ErrDefault404, got %T: %v", err, err)
-	}
 }

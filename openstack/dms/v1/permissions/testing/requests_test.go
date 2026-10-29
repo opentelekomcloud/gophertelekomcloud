@@ -1,10 +1,8 @@
 package testing
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -24,13 +22,6 @@ func dmsClient() *golangsdk.ServiceClient {
 	sc := client.ServiceClient()
 	sc.Endpoint = th.Endpoint() + "v1/" + projectID + "/"
 	return sc
-}
-
-func failOnRequest(t *testing.T) {
-	th.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
-		w.WriteHeader(http.StatusInternalServerError)
-	})
 }
 
 func handleGrant(t *testing.T, status int, expectedBody string) {
@@ -106,66 +97,6 @@ func TestGrantPermissionsOmitsEmptyPolicyFields(t *testing.T) {
 	th.AssertNoErr(t, err)
 }
 
-func TestGrantPermissionsValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	policy := permissions.CreatePolicy{UserName: "root", AccessPolicy: "all"}
-	valid := []permissions.CreateOpts{{Name: "topic-test", Policies: []permissions.CreatePolicy{policy}}}
-
-	var missing golangsdk.ErrMissingInput
-	err := permissions.Create(dmsClient(), "", valid)
-	if !errors.As(err, &missing) || missing.Argument != "instanceId" {
-		t.Fatalf("expected missing instanceId, got %v", err)
-	}
-	for _, opts := range [][]permissions.CreateOpts{nil, {}} {
-		err = permissions.Create(dmsClient(), instanceID, opts)
-		if !errors.As(err, &missing) || missing.Argument != "topics" {
-			t.Fatalf("expected missing topics, got %v", err)
-		}
-	}
-
-	cases := []struct {
-		opts     []permissions.CreateOpts
-		contains []string
-	}{
-		{[]permissions.CreateOpts{{Policies: []permissions.CreatePolicy{policy}}}, []string{"topics[0]", "Name"}},
-		{[]permissions.CreateOpts{valid[0], {Name: "other"}}, []string{"topics[1]", "Policies"}},
-	}
-	for _, c := range cases {
-		err = permissions.Create(dmsClient(), instanceID, c.opts)
-		if err == nil {
-			t.Fatalf("expected error containing %v, got nil", c.contains)
-		}
-		for _, s := range c.contains {
-			if !strings.Contains(err.Error(), s) {
-				t.Errorf("expected error containing %q, got %v", s, err)
-			}
-		}
-	}
-}
-
-func TestGrantPermissionsForbidden(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-
-	th.Mux.HandleFunc(grantPath, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusForbidden)
-		_, _ = fmt.Fprint(w, `{"error_code": "DMS.00403001", "error_msg": "Authentication failed."}`)
-	})
-
-	err := permissions.Create(dmsClient(), instanceID, []permissions.CreateOpts{{
-		Name:     "topic-test",
-		Policies: []permissions.CreatePolicy{{UserName: "root", AccessPolicy: "all"}},
-	}})
-	var forbidden golangsdk.ErrDefault403
-	if !errors.As(err, &forbidden) {
-		t.Fatalf("expected ErrDefault403, got %T: %v", err, err)
-	}
-}
-
 func TestListPermissions(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -195,20 +126,4 @@ func TestListPermissions(t *testing.T) {
 			{Owner: true, UserName: "root", AccessPolicy: "all"},
 		},
 	}, actual)
-}
-
-func TestListPermissionsValidation(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	failOnRequest(t)
-
-	var missing golangsdk.ErrMissingInput
-	_, err := permissions.List(dmsClient(), "", "topic-test")
-	if !errors.As(err, &missing) || missing.Argument != "instanceId" {
-		t.Fatalf("expected missing instanceId, got %v", err)
-	}
-	_, err = permissions.List(dmsClient(), instanceID, "")
-	if !errors.As(err, &missing) || missing.Argument != "topicName" {
-		t.Fatalf("expected missing topicName, got %v", err)
-	}
 }

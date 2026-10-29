@@ -1,8 +1,6 @@
 package permissions
 
 import (
-	"fmt"
-
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/internal/build"
 )
@@ -19,18 +17,6 @@ type CreatePolicy struct {
 
 // Create sends POST /v1/{project_id}/instances/{instance_id}/topics/accesspolicy
 func Create(client *golangsdk.ServiceClient, instanceId string, opts []CreateOpts) error {
-	if instanceId == "" {
-		return golangsdk.ErrMissingInput{Argument: "instanceId"}
-	}
-	if len(opts) == 0 {
-		return golangsdk.ErrMissingInput{Argument: "topics"}
-	}
-	for i, topic := range opts {
-		if err := build.ValidateTags(topic); err != nil {
-			return fmt.Errorf("topics[%d]: %w", i, err)
-		}
-	}
-
 	b, err := build.RequestBody(opts, "topics")
 	if err != nil {
 		return err

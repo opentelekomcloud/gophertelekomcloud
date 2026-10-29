@@ -13,10 +13,6 @@ type CreateOpts struct {
 
 // Create sends POST /v2/{project_id}/instances/{instance_id}/users
 func Create(client *golangsdk.ServiceClient, instanceId string, opts CreateOpts) error {
-	if instanceId == "" {
-		return golangsdk.ErrMissingInput{Argument: "instanceId"}
-	}
-
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

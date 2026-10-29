@@ -12,10 +12,6 @@ type DeleteOpts struct {
 
 // Delete sends PUT /v2/{project_id}/instances/{instance_id}/users
 func Delete(client *golangsdk.ServiceClient, instanceId string, opts DeleteOpts) error {
-	if instanceId == "" {
-		return golangsdk.ErrMissingInput{Argument: "instanceId"}
-	}
-
 	b, err := build.RequestBody(opts, "")
 	if err != nil {
 		return err

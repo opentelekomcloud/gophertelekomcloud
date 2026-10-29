@@ -7,10 +7,6 @@ import (
 
 // List sends GET /v2/{project_id}/instances/{instance_id}/users
 func List(client *golangsdk.ServiceClient, instanceId string) ([]Users, error) {
-	if instanceId == "" {
-		return nil, golangsdk.ErrMissingInput{Argument: "instanceId"}
-	}
-
 	raw, err := client.Get(client.ServiceURL("instances", instanceId, "users"), nil, nil)
 	if err != nil {
 		return nil, err
