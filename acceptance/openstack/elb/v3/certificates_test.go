@@ -13,15 +13,20 @@ func TestCertificateList(t *testing.T) {
 	client, err := clients.NewElbV3Client()
 	th.AssertNoErr(t, err)
 
-	listOpts := certificates.ListOpts{}
-	certificatePages, err := certificates.List(client, listOpts).AllPages()
-	th.AssertNoErr(t, err)
+	firstID := createCertificate(t, client)
+	defer deleteCertificate(t, client, firstID)
+	secondID := createCertificate(t, client)
+	defer deleteCertificate(t, client, secondID)
 
-	certificateList, err := certificates.ExtractCertificates(certificatePages)
+	certificateList, err := certificates.List(client, certificates.ListOpts{
+		ID: []string{firstID, secondID}, Limit: 1,
+	})
 	th.AssertNoErr(t, err)
-
+	th.AssertEquals(t, 2, len(certificateList))
+	expected := map[string]bool{firstID: true, secondID: true}
 	for _, cert := range certificateList {
-		tools.PrintResource(t, cert)
+		th.AssertEquals(t, true, expected[cert.ID])
+		delete(expected, cert.ID)
 	}
 }
 
@@ -40,11 +45,13 @@ func TestCertificateLifecycle(t *testing.T) {
 		Description: &emptyDescription,
 	}
 
-	_, err = certificates.Update(client, certificateID, updateOpts).Extract()
+	updated, err := certificates.Update(client, certificateID, updateOpts)
 	th.AssertNoErr(t, err)
+	th.AssertEquals(t, certName, updated.Name)
+	th.AssertEquals(t, emptyDescription, updated.Description)
 	t.Logf("Updated ELBv3 certificate: %s", certificateID)
 
-	newCertificate, err := certificates.Get(client, certificateID).Extract()
+	newCertificate, err := certificates.Get(client, certificateID)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updateOpts.Name, newCertificate.Name)
 	th.AssertEquals(t, emptyDescription, newCertificate.Description)
