@@ -21,6 +21,20 @@ const envPrefix = "OS_"
 
 var EnvOS = openstack.NewEnv(envPrefix)
 
+// NewAOMV1Client returns a *ServiceClient for making calls
+// to the OpenStack AOM v1 API. An error will be returned
+// if authentication or client creation was not possible.
+func NewAOMV1Client() (*golangsdk.ServiceClient, error) {
+	cc, err := CloudAndClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewAOMV1(cc.ProviderClient, golangsdk.EndpointOpts{
+		Region: cc.RegionName,
+	})
+}
+
 // NewAOMV2Client returns a *ServiceClient for making calls
 // to the OpenStack AOM v2 API. An error will be returned
 // if authentication or client creation was not possible.
