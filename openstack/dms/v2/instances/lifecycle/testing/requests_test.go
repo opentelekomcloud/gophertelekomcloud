@@ -65,6 +65,30 @@ func TestBatchDeleteAllFailure(t *testing.T) {
 	th.AssertEquals(t, 0, len(res.Results))
 }
 
+func TestGetInstanceIPv6(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	const instanceID = "8959ab1c-7n1a-yyb1-a05t-93dfc361b32d"
+	th.Mux.HandleFunc("/v2/"+projectID+"/instances/"+instanceID, func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "GET")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = fmt.Fprint(w, `{
+"instance_id": "8959ab1c-7n1a-yyb1-a05t-93dfc361b32d",
+"status": "RUNNING",
+"ipv6_enable": true,
+"ipv6_connect_addresses": ["2001:db8::1:9092", "2001:db8::2:9092", "2001:db8::3:9092"]
+}`)
+	})
+
+	res, err := lifecycle.Get(dmsClient(), instanceID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, instanceID, res.InstanceID)
+	th.AssertEquals(t, true, res.IPv6Enable)
+	th.AssertDeepEquals(t, []string{"2001:db8::1:9092", "2001:db8::2:9092", "2001:db8::3:9092"}, res.IPv6ConnectAddresses)
+}
+
 func TestUpdateInstanceConf(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
