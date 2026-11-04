@@ -156,6 +156,10 @@ type Instance struct {
 	StorageType string `json:"storage_type"`
 	// Message retention policy.
 	RetentionPolicy string `json:"retention_policy"`
+	// Whether IPv6 is enabled for the instance.
+	IPv6Enable bool `json:"ipv6_enable"`
+	// IPv6 connection addresses. Populated only when IPv6 is enabled.
+	IPv6ConnectAddresses []string `json:"ipv6_connect_addresses"`
 	// Whether public access is enabled for Kafka.
 	KafkaPublicStatus string `json:"kafka_public_status"`
 	// Public network access bandwidth.
