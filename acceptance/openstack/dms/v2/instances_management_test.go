@@ -187,3 +187,20 @@ func setupAutoTopicCreation(t *testing.T, client *golangsdk.ServiceClient, insta
 
 	return management.ConfAutoTopicCreation(client, instanceId, opts)
 }
+
+func TestKafkaMonitoringDimensions(t *testing.T) {
+	name := kafkaInstanceName(t)
+
+	client, err := clients.NewDmsV2Client()
+	th.AssertNoErr(t, err)
+
+	instanceID := existingKafkaInstance(t, client, name).InstanceID
+
+	dims, err := management.GetMonitoringDimensions(client, instanceID)
+	th.AssertNoErr(t, err)
+	tools.PrintResource(t, dims)
+	th.AssertEquals(t, true, len(dims.Dimensions) > 0)
+	th.AssertEquals(t, 1, len(dims.InstanceIDs))
+	th.AssertEquals(t, instanceID, dims.InstanceIDs[0].Name)
+	th.AssertEquals(t, true, len(dims.Nodes) > 0)
+}
