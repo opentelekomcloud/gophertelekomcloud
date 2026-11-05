@@ -119,3 +119,89 @@ func TestReassignReplicas(t *testing.T) {
 	}
 	th.AssertNoErr(t, management.ReassignReplicas(dmsClient(), instanceID, topic, opts))
 }
+
+func TestGetMonitoringDimensions(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v2/"+projectID+"/instances/"+instanceID+"/ces-hierarchy",
+		func(w http.ResponseWriter, r *http.Request) {
+			th.TestMethod(t, r, "GET")
+			th.TestHeader(t, r, "X-Auth-Token", client.TokenID)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `
+{
+  "dimensions" : [ {
+    "name" : "kafka_instance_id",
+    "metrics" : [ "current_partitions", "current_topics" ],
+    "key_name" : [ "instance_ids" ],
+    "dim_router" : [ "kafka_instance_id" ]
+  }, {
+    "name" : "kafka_topics",
+    "metrics" : [ "topic_data_size" ],
+    "key_name" : [ "queues" ],
+    "dim_router" : [ "kafka_instance_id", "kafka_topics" ],
+    "children" : [ {
+      "name" : "kafka_partitions",
+      "metrics" : [ "produced_messages", "partition_messages" ],
+      "key_name" : [ "queues", "partitions" ],
+      "dim_router" : [ "kafka_instance_id", "kafka_topics", "kafka_partitions" ]
+    } ]
+  } ],
+  "instance_ids" : [ { "name" : "68f3f6a0-3741-453b-bda9-a6ff6b5bb6f7" } ],
+  "nodes" : [ { "name" : "broker-0" }, { "name" : "broker-1" } ],
+  "queues" : [ {
+    "name" : "mytest",
+    "partitions" : [ { "name" : "0" }, { "name" : "1" } ]
+  } ],
+  "groups" : [ {
+    "name" : "test-consumer-group",
+    "queues" : [ {
+      "name" : "mytest",
+      "partitions" : [ { "name" : "0" } ]
+    } ]
+  } ]
+}`)
+		})
+
+	res, err := management.GetMonitoringDimensions(dmsClient(), instanceID)
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, &management.GetMonitoringDimensionsResp{
+		Dimensions: []management.Dimension{
+			{
+				Name:      "kafka_instance_id",
+				Metrics:   []string{"current_partitions", "current_topics"},
+				KeyName:   []string{"instance_ids"},
+				DimRouter: []string{"kafka_instance_id"},
+			},
+			{
+				Name:      "kafka_topics",
+				Metrics:   []string{"topic_data_size"},
+				KeyName:   []string{"queues"},
+				DimRouter: []string{"kafka_instance_id", "kafka_topics"},
+				Children: []management.DimensionChild{
+					{
+						Name:      "kafka_partitions",
+						Metrics:   []string{"produced_messages", "partition_messages"},
+						KeyName:   []string{"queues", "partitions"},
+						DimRouter: []string{"kafka_instance_id", "kafka_topics", "kafka_partitions"},
+					},
+				},
+			},
+		},
+		InstanceIDs: []management.DimensionObject{{Name: "68f3f6a0-3741-453b-bda9-a6ff6b5bb6f7"}},
+		Nodes:       []management.DimensionObject{{Name: "broker-0"}, {Name: "broker-1"}},
+		Queues: []management.DimensionQueue{
+			{Name: "mytest", Partitions: []management.DimensionObject{{Name: "0"}, {Name: "1"}}},
+		},
+		Groups: []management.DimensionGroup{
+			{
+				Name: "test-consumer-group",
+				Queues: []management.DimensionQueue{
+					{Name: "mytest", Partitions: []management.DimensionObject{{Name: "0"}}},
+				},
+			},
+		},
+	}, res)
+}
