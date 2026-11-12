@@ -145,3 +145,106 @@ func TestNodeLifecycle(t *testing.T) {
 	})
 	th.AssertNoErr(t, err)
 }
+
+func TestNodeLifecycleBasic(t *testing.T) {
+	subnetID := clients.EnvOS.GetEnv("NETWORK_ID")
+	clusterID := clients.EnvOS.GetEnv("CLUSTER_ID")
+	if subnetID == "" || clusterID == "" {
+		t.Skip("OS_NETWORK_ID and clusterID are required for this test")
+	}
+
+	client, err := clients.NewCceV3Client()
+	th.AssertNoErr(t, err)
+
+	nodesListInit, err := nodes.List(client, clusterID, nodes.ListOpts{})
+	th.AssertNoErr(t, err)
+	initNodeNum := len(nodesListInit)
+
+	privateIP := "192.168.0.12" // suppose used subnet is 192.168.0.0/16
+	kp := cce.CreateKeypair(t)
+	t.Cleanup(func() {
+		cce.DeleteKeypair(t, kp)
+	})
+	opts := nodes.CreateOpts{
+		Kind:       "Node",
+		ApiVersion: "v3",
+		Metadata: nodes.CreateMetaData{
+			Name: "nodes-test",
+		},
+		Spec: nodes.Spec{
+			Flavor: "s2.xlarge.2",
+			Az:     "eu-de-01",
+			Os:     "EulerOS 2.9",
+			Login: nodes.LoginSpec{
+				SshKey: kp,
+			},
+			RootVolume: nodes.VolumeSpec{
+				Size:       40,
+				VolumeType: "SSD",
+			},
+			DataVolumes: []nodes.VolumeSpec{
+				{
+					Size:       100,
+					VolumeType: "SSD",
+				},
+			},
+			Count: 1,
+			NodeNicSpec: nodes.NodeNicSpec{
+				PrimaryNic: nodes.PrimaryNic{
+					SubnetId: subnetID,
+					FixedIPs: []string{privateIP},
+				},
+			},
+			Runtime: nodes.RuntimeSpec{
+				Name: "containerd",
+			},
+			ExtendParam: nodes.ExtendParam{
+				MaxPods:        16,
+				DockerBaseSize: 20,
+			},
+			HostNameConfig: nodes.HostNameConfig{
+				Type: "cceNodeName",
+			},
+		},
+	}
+
+	node, err := nodes.Create(client, clusterID, opts)
+	t.Cleanup(func() {
+		th.AssertNoErr(t, nodes.Delete(client, clusterID, node.Metadata.Id))
+		err = golangsdk.WaitFor(1800, func() (bool, error) {
+			_, err := nodes.Get(client, clusterID, node.Metadata.Id)
+			if err != nil {
+				if _, ok := err.(golangsdk.ErrDefault404); ok {
+					return true, nil
+				}
+				return false, err
+			}
+			return false, nil
+		})
+		th.AssertNoErr(t, err)
+
+	})
+	th.AssertNoErr(t, err)
+
+	nodeID := node.Metadata.Id
+
+	th.AssertNoErr(t, golangsdk.WaitFor(1800, func() (bool, error) {
+		n, err := nodes.Get(client, clusterID, nodeID)
+		if err != nil {
+			return false, err
+		}
+		if n.Status.Phase == "Active" {
+			return true, nil
+		}
+		time.Sleep(10 * time.Second)
+		return false, nil
+	}))
+
+	nodesList, err := nodes.List(client, clusterID, nodes.ListOpts{})
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, initNodeNum+1, len(nodesList))
+
+	state, err := nodes.Get(client, clusterID, nodeID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, privateIP, state.Status.PrivateIP)
+}
