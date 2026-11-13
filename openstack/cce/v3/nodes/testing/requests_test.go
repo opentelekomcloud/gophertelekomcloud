@@ -152,6 +152,9 @@ func TestCreateV3Node(t *testing.T) {
 	      }
 	    ],
 	    "flavor": "s3.large.2",
+	    "hostnameConfig": {
+	      "type": "cceNodeName"
+	    },
 	    "login": {
 	      "sshKey": "test-keypair",
 	      "userPassword": {
@@ -203,6 +206,9 @@ func TestCreateV3Node(t *testing.T) {
 			Count: 1,
 			Runtime: nodes.RuntimeSpec{
 				Name: "containerd",
+			},
+			HostNameConfig: nodes.HostNameConfig{
+				Type: "cceNodeName",
 			},
 		},
 	}
