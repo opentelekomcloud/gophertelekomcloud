@@ -56,6 +56,8 @@ type Spec struct {
 	NodeNicSpec NodeNicSpec `json:"nodeNicSpec,omitempty"`
 	// Extended parameter
 	ExtendParam ExtendParam `json:"extendParam,omitempty"`
+	// Kubernetes node name configuration parameter.
+	HostNameConfig HostNameConfig `json:"hostnameConfig,omitempty"`
 	// UUID of an ECS group
 	EcsGroupID string `json:"ecsGroupId,omitempty"`
 	// Tag of a VM, key value pair format
@@ -167,6 +169,19 @@ type ExtendParam struct {
 	DockerBaseSize int `json:"dockerBaseSize,omitempty"`
 	// ConfigMap of the Docker data disk.
 	DockerLVMConfigOverride string `json:"DockerLVMConfigOverride,omitempty"`
+}
+
+type HostNameConfig struct {
+	// Configuration type of the Kubernetes node name. The default value is privateIp.
+	// Accepted values: privateIp (Use the private node IP address as the Kubernetes node name),
+	// cceNodeName (Use the CCE node name as the Kubernetes node name).
+	// The node names, Kubernetes node names, and VM names of the nodes configured with cceNodeName are the same.
+	// Node names cannot be changed. Once a VM name is altered on the ECS console,
+	// the node name cannot be modified accordingly during ECS synchronization.
+	// To prevent conflicts between Kubernetes node names,
+	// a suffix is automatically added to the node name of a node configured with cceNodeName.
+	// The suffix consists of a hyphen (-) followed by five random lowercase letters and digits (0 to 9).
+	Type string `json:"type" required:"true"`
 }
 
 type Storage struct {

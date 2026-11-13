@@ -44,6 +44,9 @@ func TestNodePoolLifecycle(t *testing.T) {
 					IsAutoPay:   "false",
 					PostInstall: postInstallEncoded,
 				},
+				HostNameConfig: nodes.HostNameConfig{
+					Type: "cceNodeName",
+				},
 				Flavor: "s2.large.2",
 				Az:     "eu-de-01",
 				Os:     "EulerOS 2.5",
