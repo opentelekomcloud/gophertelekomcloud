@@ -20,11 +20,11 @@ func notificationTestGroup(t *testing.T) (*golangsdk.ServiceClient, string, stri
 	networkID := clients.EnvOS.GetEnv("NETWORK_ID")
 	vpcID := clients.EnvOS.GetEnv("VPC_ID")
 	endpoint := clients.EnvOS.GetEnv("SMN_SUBSCRIPTION_ENDPOINT")
+	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
+	imageID := clients.EnvOS.GetEnv("IMAGE_ID")
 	if networkID == "" || vpcID == "" || endpoint == "" {
 		t.Skip("OS_NETWORK_ID, OS_VPC_ID and OS_SMN_SUBSCRIPTION_ENDPOINT (email address) are required")
 	}
-	keyPairName := clients.EnvOS.GetEnv("KEYPAIR_NAME")
-	imageID := clients.EnvOS.GetEnv("IMAGE_ID")
 	if keyPairName == "" || imageID == "" {
 		t.Skip("OS_KEYPAIR_NAME or OS_IMAGE_ID env vars is missing but AS Configuration test requires")
 	}
