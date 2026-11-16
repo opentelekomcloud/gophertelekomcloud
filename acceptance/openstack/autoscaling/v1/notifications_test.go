@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"sort"
 	"testing"
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
@@ -45,7 +46,14 @@ func TestNotificationCreate(t *testing.T) {
 	})
 	th.AssertEquals(t, topicURN, actual.TopicURN)
 	th.AssertEquals(t, true, actual.TopicName != "")
+	sort.Strings(scenes)
+	sort.Strings(actual.TopicScene)
 	th.AssertDeepEquals(t, scenes, actual.TopicScene)
+	listed, err := notifications.List(client, groupID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 1, len(listed))
+	sort.Strings(listed[0].TopicScene)
+	th.AssertDeepEquals(t, *actual, listed[0])
 }
 
 func TestNotificationDelete(t *testing.T) {
@@ -62,4 +70,7 @@ func TestNotificationDelete(t *testing.T) {
 	})
 	th.AssertNoErr(t, notifications.Delete(client, groupID, topicURN))
 	deleted = true
+	listed, err := notifications.List(client, groupID)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, 0, len(listed))
 }
