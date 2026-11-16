@@ -40,7 +40,26 @@ func TestNotificationCreate(t *testing.T) {
 		TopicURN: topicURN, TopicScene: scenes,
 	}, groupID)
 	th.AssertNoErr(t, err)
+	t.Cleanup(func() {
+		th.AssertNoErr(t, notifications.Delete(client, groupID, topicURN))
+	})
 	th.AssertEquals(t, topicURN, actual.TopicURN)
 	th.AssertEquals(t, true, actual.TopicName != "")
 	th.AssertDeepEquals(t, scenes, actual.TopicScene)
+}
+
+func TestNotificationDelete(t *testing.T) {
+	client, groupID, topicURN := notificationTestGroup(t)
+	_, err := notifications.Create(client, notifications.CreateOpts{
+		TopicURN: topicURN, TopicScene: []string{"SCALING_UP"},
+	}, groupID)
+	th.AssertNoErr(t, err)
+	deleted := false
+	t.Cleanup(func() {
+		if !deleted {
+			th.AssertNoErr(t, notifications.Delete(client, groupID, topicURN))
+		}
+	})
+	th.AssertNoErr(t, notifications.Delete(client, groupID, topicURN))
+	deleted = true
 }
