@@ -38,7 +38,8 @@ type FlavorOpt struct {
 
 type BackupStrategyOpt struct {
 	StartTime string `json:"start_time" required:"true"`
-	KeepDays  string `json:"keep_days,omitempty"`
+	// Nil uses the default retention; zero disables automated backups.
+	KeepDays *int `json:"keep_days,omitempty"`
 }
 
 func Create(client *golangsdk.ServiceClient, opts CreateOpts) (*CreateResp, error) {
@@ -91,5 +92,5 @@ type Flavor struct {
 
 type BackupStrategy struct {
 	StartTime string `json:"start_time"`
-	KeepDays  string `json:"keep_days"`
+	KeepDays  int    `json:"keep_days"`
 }
