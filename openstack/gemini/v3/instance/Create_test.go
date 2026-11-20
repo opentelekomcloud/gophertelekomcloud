@@ -84,8 +84,72 @@ func TestBackupStrategyMarshal(t *testing.T) {
 	th.AssertJSONEquals(t, `{"start_time":"02:00-03:00","keep_days":7}`, value)
 }
 
+func TestCreateBackupStrategyRequest(t *testing.T) {
+	zeroDays, sevenDays, maxDays := 0, 7, 35
+	for _, tc := range []struct {
+		name       string
+		strategy   *instance.BackupStrategyOpt
+		wantBackup string
+	}{
+		{
+			name:       "numeric_retention",
+			strategy:   &instance.BackupStrategyOpt{StartTime: "02:00-03:00", KeepDays: &sevenDays},
+			wantBackup: `{"start_time":"02:00-03:00","keep_days":7}`,
+		},
+		{
+			name:       "disable_automated_backup",
+			strategy:   &instance.BackupStrategyOpt{StartTime: "02:00-03:00", KeepDays: &zeroDays},
+			wantBackup: `{"start_time":"02:00-03:00","keep_days":0}`,
+		},
+		{
+			name:       "maximum_retention",
+			strategy:   &instance.BackupStrategyOpt{StartTime: "02:00-03:00", KeepDays: &maxDays},
+			wantBackup: `{"start_time":"02:00-03:00","keep_days":35}`,
+		},
+		{
+			name:       "default_retention",
+			strategy:   &instance.BackupStrategyOpt{StartTime: "02:00-03:00"},
+			wantBackup: `{"start_time":"02:00-03:00"}`,
+		},
+		{name: "default_strategy"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			opts := createBackupStrategyOpts()
+			opts.BackupStrategy = tc.strategy
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				th.TestMethod(t, r, http.MethodPost)
+				if r.URL.Path != "/instances" {
+					t.Errorf("unexpected create path: %s", r.URL.Path)
+				}
+				var request map[string]json.RawMessage
+				th.AssertNoErr(t, json.NewDecoder(r.Body).Decode(&request))
+				backup, present := request["backup_strategy"]
+				if tc.strategy == nil {
+					if present {
+						t.Errorf("omitted backup strategy was sent: %s", backup)
+					}
+				} else {
+					th.AssertJSONEquals(t, tc.wantBackup, backup)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusAccepted)
+				_, _ = fmt.Fprint(w, `{"id":"fixture-instance"}`)
+			}))
+			defer server.Close()
+			client := &golangsdk.ServiceClient{
+				ProviderClient: &golangsdk.ProviderClient{},
+				Endpoint:       server.URL + "/",
+			}
+			result, err := instance.Create(client, opts)
+			th.AssertNoErr(t, err)
+			th.AssertEquals(t, "fixture-instance", result.Id)
+		})
+	}
+}
+
 func createBackupStrategyOpts() instance.CreateOpts {
 	enterpriseProjectID, sslOption := "0", "1"
+	keepDays := 7
 	return instance.CreateOpts{
 		Name: "fixture-instance",
 		DataStore: instance.DataStoreOpt{
@@ -101,7 +165,7 @@ func createBackupStrategyOpts() instance.CreateOpts {
 		EnterpriseProjectId: &enterpriseProjectID,
 		SslOption:           &sslOption,
 		BackupStrategy: &instance.BackupStrategyOpt{
-			StartTime: "02:00-03:00", KeepDays: "7",
+			StartTime: "02:00-03:00", KeepDays: &keepDays,
 		},
 	}
 }

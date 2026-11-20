@@ -6,6 +6,7 @@ import (
 
 	golangsdk "github.com/opentelekomcloud/gophertelekomcloud"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/clients"
+	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/openstack"
 	"github.com/opentelekomcloud/gophertelekomcloud/acceptance/tools"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/gemini/v3/instance"
 	"github.com/opentelekomcloud/gophertelekomcloud/openstack/gemini/v3/job"
@@ -16,6 +17,7 @@ func createGeminiInstance(t *testing.T, client *golangsdk.ServiceClient, vpcID, 
 	t.Logf("Attempting to create gemini db")
 
 	geminiName := tools.RandomString("tf-gemini", 3)
+	keepDays := 7
 
 	opts := instance.CreateOpts{
 		Name: geminiName,
@@ -41,7 +43,7 @@ func createGeminiInstance(t *testing.T, client *golangsdk.ServiceClient, vpcID, 
 		},
 		BackupStrategy: &instance.BackupStrategyOpt{
 			StartTime: "02:00-03:00",
-			KeepDays:  "7",
+			KeepDays:  &keepDays,
 		},
 	}
 
@@ -61,7 +63,7 @@ func TestGeminiInstanceLifecycle(t *testing.T) {
 	t.Skip("too long to run in ci")
 	vpcID := os.Getenv("OS_VPC_ID")
 	subnetID := os.Getenv("OS_NETWORK_ID")
-	secGroupID := os.Getenv("OS_SECURITY_GROUP_ID")
+	secGroupID := openstack.DefaultSecurityGroup(t)
 
 	client, err := clients.NewGeminiDBClient()
 	th.AssertNoErr(t, err)
@@ -126,7 +128,7 @@ func TestGeminiInstanceAdvancedOperations(t *testing.T) {
 	t.Skip("too long to run in ci")
 	vpcID := os.Getenv("OS_VPC_ID")
 	subnetID := os.Getenv("OS_NETWORK_ID")
-	secGroupID := os.Getenv("OS_SECURITY_GROUP_ID")
+	secGroupID := openstack.DefaultSecurityGroup(t)
 	altSecGroupID := os.Getenv("OS_ALT_SECURITY_GROUP_ID")
 
 	client, err := clients.NewGeminiDBClient()
@@ -181,7 +183,7 @@ func TestGeminiInstanceNodeOperations(t *testing.T) {
 	t.Skip("too long to run in ci")
 	vpcID := os.Getenv("OS_VPC_ID")
 	subnetID := os.Getenv("OS_NETWORK_ID")
-	secGroupID := os.Getenv("OS_SECURITY_GROUP_ID")
+	secGroupID := openstack.DefaultSecurityGroup(t)
 
 	client, err := clients.NewGeminiDBClient()
 	th.AssertNoErr(t, err)
