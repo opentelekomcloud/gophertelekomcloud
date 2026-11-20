@@ -39,6 +39,10 @@ func createGeminiInstance(t *testing.T, client *golangsdk.ServiceClient, vpcID, 
 				SpecCode: "geminidb.cassandra.xlarge.8",
 			},
 		},
+		BackupStrategy: &instance.BackupStrategyOpt{
+			StartTime: "02:00-03:00",
+			KeepDays:  "7",
+		},
 	}
 
 	createResp, err := instance.Create(client, opts)
@@ -69,6 +73,8 @@ func TestGeminiInstanceLifecycle(t *testing.T) {
 		_, err = instance.Delete(client, createResp.Id)
 		th.AssertNoErr(t, err)
 	})
+	th.AssertEquals(t, createResp.BackupStrategy.StartTime, "02:00-03:00")
+	th.AssertEquals(t, createResp.BackupStrategy.KeepDays, 7)
 
 	t.Logf("Attempting to list gemini db instances")
 

@@ -91,5 +91,5 @@ type Flavor struct {
 
 type BackupStrategy struct {
 	StartTime string `json:"start_time"`
-	KeepDays  string `json:"keep_days"`
+	KeepDays  int    `json:"keep_days"`
 }
