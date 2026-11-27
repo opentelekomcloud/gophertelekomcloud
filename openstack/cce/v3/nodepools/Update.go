@@ -36,7 +36,7 @@ type UpdateSpec struct {
 
 type UpdateAutoscalingSpec struct {
 	// Whether to enable auto scaling
-	Enable bool `json:"enable,omitempty"`
+	Enable bool `json:"enable"`
 	// Minimum number of nodes allowed if auto scaling is enabled
 	MinNodeCount int `json:"minNodeCount,omitempty"`
 	// This value must be greater than or equal to the value of minNodeCount
