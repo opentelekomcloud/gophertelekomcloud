@@ -105,6 +105,11 @@ func TestNodePoolLifecycle(t *testing.T) {
 				},
 			},
 			InitialNodeCount: 1,
+			Autoscaling: nodepools.AutoscalingSpec{
+				Enable:       true,
+				MinNodeCount: 1,
+				MaxNodeCount: 2,
+			},
 			ExtensionScaleGroups: []nodepools.ExtensionScaleGroup{
 				{
 					Metadata: &nodepools.ExtensionScaleGroupMetadata{
@@ -148,6 +153,7 @@ func TestNodePoolLifecycle(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, 55, pool.Spec.NodeTemplate.ExtendParam.MaxPods)
 	th.AssertEquals(t, postInstallEncoded, pool.Spec.NodeTemplate.ExtendParam.PostInstall)
+	th.AssertEquals(t, true, pool.Spec.Autoscaling.Enable)
 	extensionScaleGroup := assertExtensionScaleGroup(t, pool.Spec.ExtensionScaleGroups)
 	if extensionScaleGroup.Metadata.Uid == "" {
 		t.Fatal("missing extension scale group UID")
@@ -194,6 +200,7 @@ func TestNodePoolLifecycle(t *testing.T) {
 	getUpdatedPool, err := nodepools.Get(client, clusterId, nodeId)
 	th.AssertNoErr(t, err)
 	th.AssertEquals(t, updatedPostInstallEncoded, getUpdatedPool.Spec.NodeTemplate.ExtendParam.PostInstall)
+	th.AssertEquals(t, false, getUpdatedPool.Spec.Autoscaling.Enable)
 	getUpdatedExtensionScaleGroup := assertExtensionScaleGroup(t, getUpdatedPool.Spec.ExtensionScaleGroups)
 	th.AssertEquals(t, extensionScaleGroup.Metadata.Uid, getUpdatedExtensionScaleGroup.Metadata.Uid)
 
